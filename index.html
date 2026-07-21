@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XIOM Playground v0.49.9</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#11161D; color:#ECE8DE; font-family:'Fira Code','Cascadia Code','JetBrains Mono',monospace; padding:24px; max-width:960px; margin:0 auto; }
+  h1 { color:#FF8A3D; font-size:24px; margin-bottom:4px; }
+  .ver { color:#6B7280; font-size:14px; margin-bottom:20px; }
+  #status { font-size:12px; padding:2px 10px; border-radius:12px; display:inline-block; margin-bottom:16px; }
+  .ready { background:#065F46; color:#6EE7B7; }
+  .loading { background:#78350F; color:#FBBF24; }
+  textarea { width:100%; height:280px; padding:16px; font-size:14px; font-family:inherit; color:#ECE8DE; background:#1A1F2B; border:1px solid #2D3548; border-radius:8px; resize:vertical; outline:none; tab-size:2; }
+  button { padding:10px 28px; font-size:14px; font-weight:600; color:#11161D; background:#FF8A3D; border:none; border-radius:6px; cursor:pointer; margin:16px 0; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  pre { padding:16px; font-size:13px; line-height:1.6; white-space:pre-wrap; word-break:break-word; border-radius:8px; max-height:400px; overflow:auto; }
+  .out { background:#1A1F2B; border:1px solid #2D3548; }
+  .err { background:#2D1B1B; border:1px solid #7F1D1D; }
+</style>
+</head>
+<body>
+<h1>XIOM Playground</h1>
+<div class="ver">v0.49.9</div>
+<div id="status" class="loading">Loading WASM...</div>
+<textarea id="editor" spellcheck="false">fn main() {
+    println("Hello from XIOM!");
+}</textarea>
+<button id="compileBtn" disabled>Compile</button>
+<pre id="output" style="display:none"></pre>
+
+<script>
+let wasmModule = null;
+
+async function init() {
+  try {
+    const wasm = await WebAssembly.instantiateStreaming(fetch('xiom.wasm'));
+    wasmModule = wasm.instance;
+    const st = document.getElementById('status');
+    st.textContent = 'WASM Ready';
+    st.className = 'ready';
+    document.getElementById('compileBtn').disabled = false;
+  } catch(e) {
+    document.getElementById('status').textContent = 'WASM load failed: ' + e.message;
+  }
+}
+
+async function compile() {
+  const code = document.getElementById('editor').value;
+  const out = document.getElementById('output');
+  if (!wasmModule) { out.textContent = 'WASM not loaded'; out.className='err'; out.style.display='block'; return; }
+
+  try {
+    const { compile, malloc, memory, free } = wasmModule.exports;
+    const enc = new TextEncoder();
+    const bytes = enc.encode(code + '\0');
+    const ptr = malloc(bytes.length);
+    const view = new Uint8Array(memory.buffer, ptr, bytes.length);
+    view.set(bytes);
+
+    const rptr = compile(ptr, bytes.length - 1);
+    const rview = new Uint8Array(memory.buffer, rptr);
+    let end = 0;
+    while (end < rview.length && rview[end] !== 0) end++;
+    const result = new TextDecoder().decode(rview.slice(0, end));
+
+    free(ptr);
+    free(rptr);
+
+    if (result.startsWith('ERROR:')) {
+      out.textContent = result.substring(6);
+      out.className = 'err';
+    } else {
+      out.textContent = result;
+      out.className = 'out';
+    }
+    out.style.display = 'block';
+  } catch(e) {
+    out.textContent = 'Compilation error: ' + e.message;
+    out.className = 'err';
+    out.style.display = 'block';
+  }
+}
+
+document.getElementById('compileBtn').addEventListener('click', compile);
+init();
+</script>
+</body>
+</html>
