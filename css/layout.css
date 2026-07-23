@@ -1,0 +1,82 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-btn {
+  padding: 6px 14px;
+}
+
+.main-layout {
+  display: flex;
+  height: calc(100vh - 50px - 28px);
+}
+
+.sidebar {
+  width: 280px;
+  overflow-y: auto;
+  transition: transform var(--transition);
+}
+
+.sidebar.hidden {
+  transform: translateX(-280px);
+  width: 0;
+}
+
+.sidebar-header {
+  padding: 16px 20px;
+}
+
+.lesson-list {
+  padding: 8px;
+}
+
+.lesson-item {
+  padding: 10px 12px;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-container {
+  flex: 1;
+  min-height: 0;
+}
+
+.output-panel {
+  height: 35%;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.output-tabs {
+  display: flex;
+}
+
+.output-tabs .tab {
+  flex: 1;
+  padding: 8px 12px;
+}
+
+.output-content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+.status-bar {
+  padding: 6px 20px;
+}
