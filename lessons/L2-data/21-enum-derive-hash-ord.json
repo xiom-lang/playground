@@ -1,0 +1,17 @@
+{
+  "id": "L2-18",
+  "title": "Enum Derive: Hash/Ord",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["enum", "derive", "Hash", "Ord", "ordering", "map key"],
+  "narrative": "## Hashing and Ordering Enums\n\n`Hash` enables using enums as map keys or set elements. `Ord` enables sorting and comparison operators.\n\n### Hash — Enums as Map Keys\n\n```xiom\npub type Token = enum {\n  Plus, Minus, Star, Slash,\n} derive[Eq, Hash]\n\nlet precedence = Map[Token, Int]();\nprecedence.insert(Token.Plus, 2);\nprecedence.insert(Token.Star, 3);\n```\n\n### Hash with Data\n\n```xiom\npub type Identifier = enum {\n  Named(name: Str),\n  Indexed(id: Int),\n} derive[Eq, Hash]\n\nlet symbols = Map[Identifier, Str]();\nsymbols.insert(Identifier.Named(\"pi\"), \"3.14159\");\nsymbols.insert(Identifier.Indexed(0), \"zero\");\n```\n\n### Ord — Ordering Enums\n\n`Ord` gives a total ordering. For simple enums, variants are ordered by **declaration order**:\n\n```xiom\npub type Priority = enum {\n  Low,       // 0\n  Medium,    // 1\n  High,      // 2\n  Critical,  // 3\n} derive[Ord, Eq]\n\nlet a = Priority.Low;\nlet b = Priority.High;\na < b;  // true — Low declared before High\n```\n\n### Ord with Data\n\nFor data-carrying enums, `derive[Ord]` compares the variant index first, then the data:\n\n```xiom\npub type Value = enum {\n  IntVal(v: Int),\n  FloatVal(v: Float64),\n} derive[Ord]\n\nlet a = Value.IntVal(10);\nlet b = Value.FloatVal(1.0);\na < b;  // true — IntVal declared before FloatVal\n```\n\n### Practical Use: Sorting\n\n```xiom\npub type Severity = enum {\n  Info, Warning, Error, Fatal,\n} derive[Ord, Eq, Clone, Debug]\n\nfn highest(a: &Severity, b: &Severity) -> Severity {\n  if a > b { return a.clone(); }\n  return b.clone();\n}\n```",
+  "code_template": "// TODO: define a Suit enum: Clubs, Diamonds, Hearts, Spades derive Eq, Hash, Ord\n\n// TODO: create a Map[Suit, Int] mapping suits to their bridge values (1,2,3,4)\n\n// TODO: write a function 'beats' that checks if one suit beats another (higher value)\n\nfn main() -> Int {\n  // TODO: check if Spades beats Hearts, return 1 if true, 0 if false\n  return 0;\n}",
+  "solution": "pub type Suit = enum {\n  Clubs,\n  Diamonds,\n  Hearts,\n  Spades,\n} derive[Eq, Hash, Ord, Clone]\n\nfn beats(a: &Suit, b: &Suit) -> Bool {\n  return a > b;\n}\n\nfn main() -> Int {\n  let spades = Suit.Spades;\n  let hearts = Suit.Hearts;\n  if beats(&spades, &hearts) {\n    return 1;\n  }\n  return 0;\n}",
+  "tips": [
+    "`derive[Ord]` orders variants by their declaration position in the enum",
+    "Always combine `Hash` with `Eq` — the compiler requires it",
+    "For data-carrying enums, Ord compares variant first, then inner data",
+    "Use `Clone` with Hash to make copies when retrieving from maps"
+  ],
+  "related": ["L2-14", "L2-11", "L2-19", "L2-41"]
+}

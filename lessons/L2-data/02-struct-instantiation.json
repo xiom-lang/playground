@@ -1,0 +1,17 @@
+{
+  "id": "L2-02",
+  "title": "Struct Instantiation",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["struct", "instantiation", "TypeName{ field: value }", "constructor"],
+  "narrative": "## Creating Struct Values\n\nOnce a struct type is defined, create **instances** with the syntax `TypeName{ field: value, ... }`. Every field must be given a value.\n\n### Basic Instantiation\n\n```xiom\npub type Point = {\n  x: Float64;\n  y: Float64;\n}\n\nlet origin = Point{ x: 0.0, y: 0.0 };\nlet corner = Point{ x: 10.0, y: 5.0 };\n```\n\n### Structs with Mixed Types\n\n```xiom\npub type Book = {\n  title: Str;\n  pages: Int;\n  price: Float64;\n}\n\nlet novel = Book{ title: \"1984\", pages: 328, price: 12.99 };\nlet textbook = Book{ title: \"Math 101\", pages: 500, price: 49.99 };\n```\n\n### Field Order Doesn't Matter\n\nXIOM matches by field name, not position:\n\n```xiom\nlet p1 = Point{ x: 1.0, y: 2.0 };  // x then y\nlet p2 = Point{ y: 2.0, x: 1.0 };  // y then x — same result!\n```\n\n### Nested Struct Instantiation\n\n```xiom\npub type Address = { street: Str; city: Str; }\npub type Person = { name: Str; address: Address; }\n\nlet addr = Address{ street: \"123 Main\", city: \"Lisbon\" };\nlet user = Person{ name: \"Alice\", address: addr };\n\n// Or inline:\nlet user2 = Person{\n  name: \"Bob\",\n  address: Address{ street: \"456 Oak\", city: \"Porto\" }\n};\n```\n\n### All Fields Required\n\nEvery field must be provided — no partial instantiation, no null fields:\n\n```xiom\n// let p = Point{ x: 1.0 };  // ERROR: missing field y\n```\n\n### Constructor Functions\n\nA common pattern: write a function that creates and returns a struct:\n\n```xiom\nfn new_point(x: Float64, y: Float64) -> Point {\n  return Point{ x: x, y: y };\n}\n\nlet p = new_point(3.0, 4.0);\n```",
+  "code_template": "// TODO: define a Student struct with name (Str), grade (Int), gpa (Float64)\n\n// TODO: create three different students\n\nfn main() -> Int {\n  // TODO: return the sum of all three students' grades\n  return 0;\n}",
+  "solution": "pub type Student = {\n  name: Str;\n  grade: Int;\n  gpa: Float64;\n}\n\nfn main() -> Int {\n  let s1 = Student{ name: \"Alice\", grade: 85, gpa: 3.5 };\n  let s2 = Student{ name: \"Bob\", grade: 92, gpa: 3.8 };\n  let s3 = Student{ name: \"Carol\", grade: 78, gpa: 3.1 };\n  return s1.grade + s2.grade + s3.grade;\n}",
+  "tips": [
+    "All fields must be initialized — no null or uninitialized fields in XIOM",
+    "Field order doesn't matter — XIOM matches by name, not position",
+    "Use constructor functions for complex initialization or validation",
+    "Nested structs can be created inline or via pre-created instances"
+  ],
+  "related": ["L2-01", "L2-06", "L2-07", "L2-12"]
+}

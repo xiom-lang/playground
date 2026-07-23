@@ -1,0 +1,37 @@
+{
+  "id": "L8-11",
+  "title": "gRPC Services",
+  "level": "L8",
+  "duration": "15 min",
+  "concepts": [
+    "gRPC",
+    "RPC",
+    "protobuf",
+    "service",
+    "streaming",
+    "microservices"
+  ],
+  "concept": "gRPC services in XIOM — strongly-typed RPC with Protocol Buffers for high-performance microservice communication.",
+  "why": "REST is text-heavy and loosely typed. gRPC is binary and strongly typed — faster, smaller, and with built-in code generation for client and server stubs.",
+  "theory": "## High-Performance RPC\n\n### Service Definition (.proto)\n\n```protobuf\nsyntax = \"proto3\";\n\nservice UserService {\n  rpc GetUser (GetUserRequest) returns (User);\n  rpc ListUsers (ListUsersRequest) returns (stream User);\n  rpc CreateUser (stream CreateUserRequest) returns (CreateUserResponse);\n  rpc Chat (stream ChatMessage) returns (stream ChatMessage);\n}\n\nmessage User {\n  int32 id = 1;\n  string name = 2;\n  string email = 3;\n}\n\nmessage GetUserRequest {\n  int32 user_id = 1;\n}\n```\n\n### Generated XIOM Code\n\nRunning `xiom-grpc-codegen` produces:\n\n```xiom\n// Generated: user_service.xi\npub interface UserService {\n  fn get_user(self: &Self, req: GetUserRequest) -> Result[User, Status];\n  fn list_users(self: &Self, req: ListUsersRequest) -> Stream[User];\n}\n```\n\n### Server Implementation\n\n```xiom\nuse generated::user_service;\n\npub type UserServiceImpl = { db: Database; }\n\nimpl UserService for UserServiceImpl {\n  fn get_user(self: &UserServiceImpl, req: GetUserRequest) -> Result[User, Status] {\n    let user = self.db.find_user(req.user_id)?;\n    return Ok(user);\n  }\n\n  fn list_users(self: &UserServiceImpl, req: ListUsersRequest) -> Stream[User] {\n    return self.db.all_users()\n      .filter(|u| u.active)\n      .take(req.limit);\n  }\n}\n\nfn main() -> Int {\n  let service = UserServiceImpl{ db: Database::open(\"app.db\")? };\n  let server = grpc::Server::new()\n    .add_service(UserService::new(service))\n    .listen(50051)?;\n  io.println(\"gRPC server listening on :50051\");\n  server.serve();\n  return 0;\n}\n```\n\n### Client Usage\n\n```xiom\nfn main() -> Int {\n  let client = UserServiceClient::connect(\"http://localhost:50051\")?;\n\n  // Unary call\n  let user = client.get_user(GetUserRequest{ user_id: 1 })?;\n  io.println(\"User: \" + user.name);\n\n  // Server streaming\n  let stream = client.list_users(ListUsersRequest{ limit: 10 })?;\n  for user in stream {\n    io.println(user.name);\n  }\n  return 0;\n}\n```\n\n### Streaming Patterns\n\n| Pattern | Client | Server |\n|---------|--------|--------|\n| Unary | 1 request | 1 response |\n| Server streaming | 1 request | N responses |\n| Client streaming | N requests | 1 response |\n| Bidirectional | N requests | N responses |\n\n### Error Handling\n\n```xiom\n// Server errors become gRPC status codes:\nreturn Err(Status::not_found(\"User not found\"));\nreturn Err(Status::invalid_argument(\"Email is required\"));\nreturn Err(Status::internal(\"Database error\"));\n```",
+  "syntax_ref": "# 1. Define .proto file\n# 2. Generate: xiom-grpc-codegen proto/\n# 3. Implement the generated interface\n# 4. Start server, connect client\n\n// Server:\nlet server = grpc::Server::new().add_service(MyService::new(impl)).listen(port)?;\n\n// Client:\nlet client = MyServiceClient::connect(addr)?;\nlet response = client.method(request)?;",
+  "code_template": "// Design a gRPC service for a task management system:\n// - CreateTask(title, description) → Task\n// - GetTask(id) → Task\n// - ListTasks(status) → stream Tasks\n// - UpdateTask(id, updates) → Task\n// How many RPC methods?\n\nfn main() -> Int {\n  return 4;  // 4 RPC methods\n}",
+  "solution": "fn main() -> Int {\n  return 4;\n}",
+  "tips": [
+    "gRPC uses HTTP/2 — multiplexed streams, header compression, binary framing",
+    "Protobuf is strongly typed — field numbers matter, don't change them after release",
+    "Streaming is gRPC's killer feature — use it for large datasets, live updates, and bidirectional communication",
+    "Deadlines: always set a timeout on gRPC calls to avoid hanging requests"
+  ],
+  "common_mistakes": [
+    "Changing protobuf field numbers — breaks backward compatibility",
+    "Using gRPC for browser clients without gRPC-web proxy — browsers can't do raw HTTP/2",
+    "Forgetting that gRPC is binary — debugging requires tools like grpcurl, not curl"
+  ],
+  "related": [
+    "L8-06",
+    "L8-07",
+    "L8-12"
+  ],
+  "next_lesson": "L8-12"
+}

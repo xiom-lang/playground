@@ -1,0 +1,36 @@
+{
+  "id": "L4-24",
+  "title": "Multiple invariants",
+  "level": "L4",
+  "duration": "8 min",
+  "concepts": [
+    "multiple invariants",
+    "composing checks",
+    "independent validation",
+    "invariant stacking"
+  ],
+  "concept": "Multiple invariants on a type compose independent validation checks — each one verified separately, all must hold simultaneously.",
+  "why": "Breaking complex validation into multiple simple invariants makes violations easier to debug and the code easier to maintain.",
+  "theory": "## Composing Multiple Invariants\n\n```xiom\npub type Username = Str\n  invariant: this.len() >= 3;\n  invariant: this.len() <= 20;\n  invariant: this.chars().all(|c| c.is_ascii());\n  invariant: !this.contains(\" \");\n  invariant: this.chars().next().is_alphabetic();\n```\n\n### Why Multiple Simple > One Complex\n\n```xiom\n// Hard to debug — which part failed?\npub type Username = Str\n  invariant: this.len() >= 3 && this.len() <= 20 &&\n             this.chars().all(|c| c.is_ascii()) &&\n             !this.contains(\" \");\n\n// Easy to debug — each check reports independently\npub type Username = Str\n  invariant: this.len() >= 3;            // \"username too short\"\n  invariant: this.len() <= 20;           // \"username too long\"\n  invariant: this.chars().all(|c| c.is_ascii());  // \"non-ASCII chars\"\n  invariant: !this.contains(\" \");        // \"spaces not allowed\"\n```\n\n### Order Matters for Performance\n\n```xiom\npub type FilePath = Str\n  invariant: this.len() < 4096;          // Cheap: O(1)\n  invariant: this.chars().all(|c| c != 0); // Medium: O(n)\n  invariant: !this.contains(\"..\");       // Medium: O(n)\n```\n\n### Checked Independently\nEach invariant is a separate runtime check. A violation in invariant #3 doesn't prevent #4 from being checked (in debug mode with full reporting).",
+  "syntax_ref": "pub type Name = BaseType\n  invariant: simple_check_1;\n  invariant: simple_check_2;\n  invariant: simple_check_3;",
+  "code_template": "// TODO: Define type 'Password' wrapping Str with multiple invariants:\n// - at least 8 chars\n// - at most 128 chars\n// - contains at least one digit\n// - contains at least one uppercase letter\n\nfn main() -> Int {\n  // TODO: Create valid password, return its length\n  return 0;\n}",
+  "solution": "pub type Password = Str\n  invariant: this.len() >= 8;\n  invariant: this.len() <= 128;\n  invariant: this.chars().any(|c| c.is_digit());\n  invariant: this.chars().any(|c| c.is_uppercase());\n\nfn main() -> Int {\n  let pwd: Password = \"SecurePass1\";\n  return pwd.len();\n}",
+  "tips": [
+    "Break complex validation into focused, single-responsibility invariants",
+    "Place cheap checks (length, nullity) before expensive checks (scanning, allocation)",
+    "Each invariant gets its own error message — making debugging much faster",
+    "If two invariants overlap, consider combining them to avoid redundant checks"
+  ],
+  "common_mistakes": [
+    "Creating a single mega-invariant — hard to tell which part failed",
+    "Writing overlapping invariants that check the same thing twice",
+    "Ordering expensive invariants before cheap ones — wasteful when the cheap one fails"
+  ],
+  "related": [
+    "L4-20",
+    "L4-21",
+    "L4-22",
+    "L4-25"
+  ],
+  "next_lesson": "L4-25"
+}

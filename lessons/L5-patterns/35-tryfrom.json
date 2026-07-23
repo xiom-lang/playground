@@ -1,0 +1,37 @@
+{
+  "id": "L5-35",
+  "title": "TryFrom Interface",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "TryFrom",
+    "fallible conversion",
+    "Result",
+    "error handling",
+    "validation"
+  ],
+  "concept": "TryFrom defines fallible type conversions that return Result — perfect for parsing, validation, and any conversion that might fail.",
+  "why": "Not all conversions succeed. Parse \"abc\" as Int? Fail. Validate an email? Might fail. TryFrom makes failure explicit and safe.",
+  "theory": "## Fallible Conversions\n\n```xiom\npub interface TryFrom[Src] {\n  type Error;\n  fn try_from(value: Src) -> Result[Self, Self::Error];\n}\n```\n\n### Implementing TryFrom\n\n```xiom\npub type PositiveInt = Int;\n\npub type ConversionError = enum {\n  NotPositive,\n  Overflow,\n}\n\nimpl TryFrom[Int] for PositiveInt {\n  type Error = ConversionError;\n\n  fn try_from(n: Int) -> Result[PositiveInt, ConversionError] {\n    if n <= 0 { return Err(ConversionError::NotPositive); }\n    return Ok(n);\n  }\n}\n\nfn main() {\n  match PositiveInt::try_from(5) {\n    Ok(p) => io.println(\"Valid: \" + p.to_str()),\n    Err(_) => io.println(\"Invalid input\"),\n  }\n}\n```\n\n### Parsing Strings\n\n```xiom\npub type Port = Int;\n\nimpl TryFrom[Str] for Port {\n  type Error = Str;\n\n  fn try_from(s: Str) -> Result[Port, Str] {\n    let n = s.parse_int()?;\n    if n < 1 || n > 65535 {\n      return Err(\"Port must be 1-65535\");\n    }\n    return Ok(n);\n  }\n}\n```\n\n### Using ? with TryFrom\n\n```xiom\nfn parse_config(raw: Str) -> Result[Config, ConversionError] {\n  let port: Port = raw.parse_int()?.into();  // Chained TryFrom\n  let timeout: Seconds = raw.parse_int()?.into();\n  return Ok(Config{ port: port, timeout: timeout });\n}\n```\n\n### Blanket Into from TryFrom\n\nJust like From → Into, implementing TryFrom automatically gives you TryInto.",
+  "syntax_ref": "impl TryFrom[SourceType] for TargetType {\n  type Error = MyError;\n\n  fn try_from(value: SourceType) -> Result[Self, MyError] {\n    if valid { return Ok(converted); }\n    return Err(MyError);\n  }\n}",
+  "code_template": "// TODO: Define type 'EvenInt' wrapping Int\n// Implement TryFrom[Int] for EvenInt — succeed only if n % 2 == 0\n// Error type is Str with message \"odd number\"\n// Try converting 4 and 5, return 1 if 4 succeeds and 5 fails\n\nfn main() -> Int {\n  let a = EvenInt::try_from(4);\n  let b = EvenInt::try_from(5);\n  if a.is_ok() && b.is_err() { return 1; }\n  return 0;\n}",
+  "solution": "pub type EvenInt = Int;\n\npub type ConvertError = Str;\n\nimpl TryFrom[Int] for EvenInt {\n  type Error = ConvertError;\n\n  fn try_from(n: Int) -> Result[EvenInt, ConvertError] {\n    if n % 2 != 0 { return Err(\"odd number\"); }\n    return Ok(n);\n  }\n}\n\nfn main() -> Int {\n  let a = EvenInt::try_from(4);\n  let b = EvenInt::try_from(5);\n  if a.is_ok() && b.is_err() { return 1; }\n  return 0;\n}",
+  "tips": [
+    "Use TryFrom for any conversion that can fail — parsing, validation, network requests",
+    "Define a domain-specific Error type per conversion — makes error handling precise",
+    "TryFrom + `?` creates elegant validation pipelines — chain conversions together",
+    "Never implement TryFrom for conversions that should never fail — use From instead"
+  ],
+  "common_mistakes": [
+    "Using From for fallible conversions — callers assume From always succeeds",
+    "Returning vague error types like Str — define an enum for specific error cases",
+    "Forgetting to implement TryInto — it's auto-derived from TryFrom (like Into from From)"
+  ],
+  "related": [
+    "L5-34",
+    "L2-03",
+    "L4-01",
+    "L4-23"
+  ],
+  "next_lesson": "L5-36"
+}

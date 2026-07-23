@@ -1,0 +1,36 @@
+{
+  "id": "L5-07",
+  "title": "Multiple Constraints",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "multiple constraints",
+    "T: Eq + Hash",
+    "compound bounds",
+    "+ operator"
+  ],
+  "concept": "Combine multiple constraints with + (T: Eq + Hash + Display) — the type must satisfy ALL of them.",
+  "why": "Real functions often need multiple capabilities: sorting AND displaying, hashing AND comparing. Compound constraints express these complex requirements.",
+  "theory": "## Combining Constraints with +\n\n```xiom\nfn process[T: Clone + Display + Ord](value: T) -> Str {\n  let copy = value.clone();  // T: Clone\n  io.println(copy.to_str());  // T: Display\n  let cmp = value > copy;     // T: Ord\n  return \"processed\";\n}\n```\n\n### Constraint Composition Meaning\n- T: Eq + Hash means \"T must implement BOTH Eq AND Hash\"\n- All constraints in the + chain must be satisfied\n- Order doesn't matter: Eq + Hash == Hash + Eq\n\n### Typical Combinations\n```xiom\n// HashMap keys\nfn insert[K: Eq + Hash, V](map: &mut Map[K, V], key: K, value: V) {\n  // K needs Eq (to compare keys) and Hash (to bucket them)\n}\n\n// Sortable, printable collections\nfn debug_collection[T: Ord + Display + Clone](items: &Vec[T]) {\n  let sorted = items.clone();  // Clone\n  sorted.sort();               // Ord\n  for item in sorted {\n    io.println(item.to_str());  // Display\n  }\n}\n```\n\n### Deriving Multiple Interfaces\n```xiom\n#[derive(Eq, Hash, Clone, Display)]\npub type User = {\n  id: Int;\n  name: Str;\n}\n\n// Now User can be used wherever T: Eq + Hash + Clone + Display is required\n```\n\n### Trait Implication\nSome constraints imply others. If you have T: Ord, you automatically have T: Eq (because Ord extends Eq). You don't need to write both.",
+  "syntax_ref": "fn name[T: A + B + C](param: T) {\n  // Can use methods from A, B, AND C\n}\n\n// Constraint implications:\n// T: Ord → T: Eq (automatically)\n// T: Clone does NOT → T: Copy",
+  "code_template": "// TODO: Write a function 'deduplicate' that takes &Vec[T] and returns Vec[T]\n// T needs Eq + Hash (to detect duplicates) + Clone (to copy to result)\n// Remove duplicate elements, preserving order of first occurrence\n\nfn main() -> Int {\n  // TODO: Deduplicate [1,2,2,3,3,3,1], return length\n  return 0;\n}",
+  "solution": "fn deduplicate[T: Eq + Hash + Clone](items: &Vec[T]) -> Vec[T] {\n  var seen = Set[T]();\n  var result = Vec[T]();\n  for item in items {\n    if !seen.contains(item) {\n      seen.insert(item.clone());\n      result.push(item.clone());\n    }\n  }\n  return result;\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1); v.push(2); v.push(2); v.push(3); v.push(3); v.push(3); v.push(1);\n  let d = deduplicate[Int](&v);\n  return d.len();\n}",
+  "tips": [
+    "Group related constraints logically: T: Eq + Hash for map keys",
+    "Don't include implied constraints — T: Ord already includes T: Eq",
+    "Too many constraints reduces reusability — only add what you actually need",
+    "Use #[derive(...)] on your types to automatically satisfy common constraint combinations"
+  ],
+  "common_mistakes": [
+    "Adding T: Ord + Eq when Ord already implies Eq",
+    "Writing overly constrained signatures — T: Clone + Copy + Display + Debug + Ord + Hash + Default",
+    "Forgetting that constraints apply to ALL uses of T in the function body"
+  ],
+  "related": [
+    "L5-06",
+    "L5-08",
+    "L5-65",
+    "L5-89"
+  ],
+  "next_lesson": "L5-08"
+}

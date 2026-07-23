@@ -1,0 +1,17 @@
+{
+  "id": "L2-36",
+  "title": "Vec Methods",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["Vec", "len", "is_empty", "clear", "methods", "utility"],
+  "narrative": "## Essential Vec Utility Methods\n\nBeyond `push` and `pop`, Vec provides several utility methods for common operations.\n\n### len — Size\n\n```xiom\nlet v = Vec[Int]();\nv.push(10); v.push(20); v.push(30);\nlet size = v.len();  // 3\n```\n\n### is_empty — Check for Content\n\n```xiom\nlet v = Vec[Int]();\nlet empty = v.is_empty();  // true\nv.push(1);\nlet has_items = v.is_empty();  // false\n```\n\n### clear — Remove All Elements\n\n```xiom\nvar v = Vec[Int]();\nv.push(1); v.push(2); v.push(3);\nv.clear();\n// v.len() == 0, v.is_empty() == true\n```\n\n### Practical Patterns\n\n```xiom\nfn process_queue(queue: &mut Vec[Str]) -> Vec[Str] {\n  var results = Vec[Str]();\n  while !queue.is_empty() {\n    match queue.pop() {\n      Some(item) => { results.push(\"Processed: \" + item); }\n      None => { }\n    }\n  }\n  return results;\n}\n```\n\n### Guard Clauses with len\n\n```xiom\nfn first_element(v: &Vec[Int]) -> Option[Int] {\n  if v.is_empty() {\n    return None;\n  }\n  return v.get(0);\n}\n\nfn last_element(v: &Vec[Int]) -> Option[Int] {\n  if v.len() == 0 {\n    return None;\n  }\n  return v.get(v.len() - 1);\n}\n```\n\n### Combining Methods\n\n```xiom\nfn extend(v: &mut Vec[Int], other: &Vec[Int]) -> Unit {\n  var i = 0;\n  while i < other.len() {\n    v.push(other[i]);\n    i = i + 1;\n  }\n}\n```\n\n### Method Summary\n\n| Method | Returns | Description |\n|--------|---------|-------------|\n| `.len()` | Int | Number of elements |\n| `.is_empty()` | Bool | True if no elements |\n| `.push(item)` | Unit | Add to end |\n| `.pop()` | Option[T] | Remove from end |\n| `.get(i)` | Option[T] | Safe indexed access |\n| `.clear()` | Unit | Remove all elements |",
+  "code_template": "// TODO: write a function 'is_palindrome' that checks if Vec[Int] reads same forward and backward\n\n// TODO: write a function 'remove_last' that pops and returns the removed value or -1\n\n// TODO: write a function 'duplicate_all' that doubles every element in place\n\nfn main() -> Int {\n  // TODO: test palindrome with [1, 2, 1], return 1 if palindrome else 0\n  return 0;\n}",
+  "solution": "fn is_palindrome(v: &Vec[Int]) -> Bool {\n  var left = 0;\n  var right = v.len() - 1;\n  while left < right {\n    if v[left] != v[right] {\n      return false;\n    }\n    left = left + 1;\n    right = right - 1;\n  }\n  return true;\n}\n\nfn remove_last(v: &mut Vec[Int]) -> Int {\n  if v.is_empty() { return -1; }\n  match v.pop() {\n    Some(n) => { return n; }\n    None => { return -1; }\n  }\n}\n\nfn duplicate_all(v: &mut Vec[Int]) -> Unit {\n  var i = 0;\n  while i < v.len() {\n    v[i] = v[i] * 2;\n    i = i + 1;\n  }\n}\n\nfn main() -> Int {\n  var v = Vec[Int]();\n  v.push(1); v.push(2); v.push(1);\n  if is_palindrome(&v) { return 1; }\n  return 0;\n}",
+  "tips": [
+    "Always check `.is_empty()` or `.len() == 0` before accessing elements",
+    "`.clear()` resets the Vec — elements are freed, length goes to 0",
+    "`.len()` is O(1) — it's a stored field, not a count operation",
+    "Use `.is_empty()` instead of `.len() == 0` for readability"
+  ],
+  "related": ["L2-36", "L2-37", "L2-38", "L3-01"]
+}

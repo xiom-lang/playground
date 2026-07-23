@@ -1,0 +1,37 @@
+{
+  "id": "L7-02",
+  "title": "Lexer Internals",
+  "level": "L7",
+  "duration": "20 min",
+  "concepts": [
+    "lexer",
+    "tokenizer",
+    "token",
+    "lexeme",
+    "DFA",
+    "finite automaton"
+  ],
+  "concept": "The lexer transforms raw source text into a token stream — the first stage of compilation. Understanding it reveals how XIOM reads your code.",
+  "why": "Every syntax error message starts in the lexer. Understanding tokenization helps you interpret errors, write tooling, and even contribute to the compiler.",
+  "theory": "## From Text to Tokens\n\n```\nSource: fn main() -> Int { return 42; }\n\nTokens:\n  FN          (keyword 'fn')\n  IDENT(main) (identifier)\n  LPAREN      (\n  RPAREN      )\n  ARROW       (->)\n  IDENT(Int)  (type name)\n  LBRACE      (\n  RETURN      (keyword 'return')\n  INT(42)     (integer literal)\n  SEMICOLON   (;\n  RBRACE      (})\n```\n\n### Lexer Architecture\n\n```xiom\npub type Lexer = {\n  source: Str;\n  pos: Int;      // Current position\n  line: Int;     // Current line\n  col: Int;      // Current column\n}\n\nimpl Lexer {\n  fn next_token(self: &mut Lexer) -> Token {\n    self.skip_whitespace();\n    if self.is_eof() { return Token::EOF; }\n\n    let c = self.current_char();\n    return match c {\n      '(' => { self.advance(); Token::LParen },\n      ')' => { self.advance(); Token::RParen },\n      '-' => {\n        self.advance();\n        if self.current_char() == '>' {\n          self.advance();\n          Token::Arrow\n        } else { Token::Minus }\n      },\n      'a'..='z' | 'A'..='Z' | '_' => self.lex_identifier(),\n      '0'..='9' => self.lex_number(),\n      '\"' => self.lex_string(),\n      _ => {\n        let ch = self.current_char();\n        self.advance();\n        Token::Error(\"Unexpected character: \" + ch.to_str())\n      },\n    };\n  }\n}\n```\n\n### Token Types\n\n```xiom\npub enum Token {\n  // Keywords\n  Fn, Let, Return, If, Else, While, For, Match, Pub,\n  // Literals\n  IntLiteral(value: Int),\n  FloatLiteral(value: Float64),\n  StrLiteral(value: Str),\n  CharLiteral(value: Char),\n  BoolLiteral(value: Bool),\n  // Identifiers\n  Identifier(name: Str),\n  // Operators\n  Plus, Minus, Star, Slash, Percent,\n  // Delimiters\n  LParen, RParen, LBrace, RBrace, LBracket, RBracket, Semicolon, Comma, Colon,\n  Arrow, FatArrow,\n  // Special\n  EOF,\n  Error(message: Str),\n}\n```\n\n### Performance\n\nThe lexer is the FASTEST compiler phase — designed to process megabytes per second. It uses a deterministic finite automaton (DFA) internally for O(n) performance.",
+  "syntax_ref": "// Token structure:\nToken { type: TokenType, line: Int, col: Int }\n\n// Lexer API:\nlet mut lexer = Lexer::new(source);\nvar token = lexer.next_token();\nwhile token != Token::EOF {\n  io.println(token.to_str());\n  token = lexer.next_token();\n}",
+  "code_template": "// Write a simple token type recognizer:\n// Given a string, return what kind of token it would be:\n// \"fn\" → keyword, \"42\" → integer, \"hello\" → identifier, \"+\" → operator\n\nfn classify(s: Str) -> Str {\n  if s == \"fn\" || s == \"let\" || s == \"return\" || s == \"if\" { return \"keyword\"; }\n  // TODO: complete the function\n  return \"unknown\";\n}\n\nfn main() -> Int {\n  return 0;\n}",
+  "solution": "fn is_keyword(s: Str) -> Bool {\n  return s == \"fn\" || s == \"let\" || s == \"return\" || s == \"if\" || s == \"else\" || s == \"while\" || s == \"for\" || s == \"match\" || s == \"pub\";\n}\n\nfn is_integer(s: Str) -> Bool {\n  for c in s.chars() {\n    if c < '0' || c > '9' { return false; }\n  }\n  return s.len() > 0;\n}\n\nfn classify(s: Str) -> Str {\n  if is_keyword(s) { return \"keyword\"; }\n  if is_integer(s) { return \"integer\"; }\n  if s.len() == 1 && \"+-*/().:;}{,=<>!\".contains(s) { return \"operator\"; }\n  return \"identifier\";\n}\n\nfn main() -> Int {\n  return classify(\"fn\").len();\n}",
+  "tips": [
+    "The lexer runs before any other phase — syntax errors here have the simplest fix",
+    "Token positions (line, col) are stored for error reporting — essential for good diagnostics",
+    "Whitespace and comments are skipped by the lexer — they never reach the parser",
+    "Look-ahead (peeking the next character) handles multi-character tokens like '->' and '=='"
+  ],
+  "common_mistakes": [
+    "Confusing lexer errors with parser errors — syntax errors say 'unexpected character'",
+    "Assuming the lexer validates semantics — it only recognizes tokens, not their meaning",
+    "Forgetting that lexer errors abort compilation — the parser never sees a broken token stream"
+  ],
+  "related": [
+    "L7-01",
+    "L7-03",
+    "L7-04"
+  ],
+  "next_lesson": "L7-03"
+}

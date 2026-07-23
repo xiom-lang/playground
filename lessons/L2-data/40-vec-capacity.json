@@ -1,0 +1,17 @@
+{
+  "id": "L2-37",
+  "title": "Vec with Capacity",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["Vec", "with_capacity", "capacity", "allocation", "performance"],
+  "narrative": "## Pre-Allocating Vec Capacity\n\nWhen you know how many elements you'll store, use `.with_capacity(n)` to pre-allocate memory. This avoids repeated reallocations as the Vec grows.\n\n### with_capacity vs new\n\n```xiom\n// Default: no pre-allocation, grows as needed\nlet v1 = Vec[Int]();\n\n// Pre-allocate space for 1000 elements\nlet v2 = Vec[Int]().with_capacity(1000);\n```\n\nBoth start at length 0, but `v2` already has memory reserved.\n\n### When to Use with_capacity\n\n```xiom\nfn generate_squares(up_to: Int) -> Vec[Int] {\n  let v = Vec[Int]().with_capacity(up_to);\n  var i = 1;\n  while i <= up_to {\n    v.push(i * i);\n    i = i + 1;\n  }\n  return v;\n}\n\n// Pre-allocates for 100 elements — single allocation\nlet squares = generate_squares(100);\n```\n\n### Performance Impact\n\nWithout capacity, Vec reallocates as it grows:\n- Start: capacity 0\n- Push 1: allocate space for 1\n- Push 2: reallocate to 2\n- Push 3: reallocate to 4\n- Push 5: reallocate to 8\n\nWith `with_capacity(1000)`: one allocation for all 1000 elements.\n\n### Checking Capacity\n\n```xiom\nlet v = Vec[Int]().with_capacity(100);\n// v.len() == 0 — actual elements\n// capacity is 100 — reserved space\nv.push(1);\n// v.len() == 1 — still 99 slots available\n```\n\n### When to Avoid\n\nFor small Vecs or unknown sizes, default allocation is fine. The overhead of reallocation is negligible for < 100 elements.\n\n```xiom\n// Simple: just use the default\nlet small = Vec[Int]();\nsmall.push(1); small.push(2); small.push(3);\n```",
+  "code_template": "// TODO: write a function 'fibonacci' that generates first n Fibonacci numbers using with_capacity\n\n// TODO: write a function 'range' that creates a Vec of Int from start to end with capacity\n\nfn main() -> Int {\n  // TODO: generate first 10 fibonacci numbers, return the 10th\n  return 0;\n}",
+  "solution": "fn fibonacci(n: Int) -> Vec[Int] {\n  let v = Vec[Int]().with_capacity(n);\n  if n >= 1 { v.push(0); }\n  if n >= 2 { v.push(1); }\n  var i = 2;\n  while i < n {\n    v.push(v[i - 1] + v[i - 2]);\n    i = i + 1;\n  }\n  return v;\n}\n\nfn range(start: Int, end: Int) -> Vec[Int] {\n  let v = Vec[Int]().with_capacity(end - start);\n  var i = start;\n  while i < end {\n    v.push(i);\n    i = i + 1;\n  }\n  return v;\n}\n\nfn main() -> Int {\n  let fib = fibonacci(10);\n  return fib[9];\n}",
+  "tips": [
+    "Use `.with_capacity(n)` when you know roughly how many elements you'll add",
+    "Pre-allocation avoids repeated heap reallocations during push loops",
+    "The length is still 0 after `with_capacity` — it reserves space, not elements",
+    "Don't micro-optimize — default Vec creation is fine for small collections"
+  ],
+  "related": ["L2-36", "L2-39", "L3-03", "L3-01"]
+}

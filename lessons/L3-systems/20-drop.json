@@ -1,0 +1,17 @@
+{
+  "id": "L3-20",
+  "title": "Drop",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["drop", "destructor", "cleanup", "automatic", "RAII"],
+  "narrative": "## Deterministic Cleanup with Drop\n\n**Drop** is the automatic cleanup that happens when a value goes out of scope. It frees memory, closes files, and releases resources — deterministically, at predictable points.\n\n### When Drop Happens\n\n```xiom\nfn main() -> Int {\n  let v = Vec[Int]();  // Vec allocated\n  v.push(1);\n  v.push(2);\n  return 0;\n  // v goes out of scope — Vec is DROPPED\n  // All heap memory freed, no leaks\n}\n```\n\n### Drop is Deterministic\n\nUnlike garbage-collected languages, you know exactly when cleanup happens:\n\n```xiom\nfn process() -> Unit {\n  let data = Vec[Int]();\n  data.push(42);\n  // data dropped here — always, no exceptions, no GC cycles\n}\n```\n\n### Drop for Multiple Values\n\n```xiom\nfn main() -> Int {\n  let a = Vec[Int]();\n  a.push(1);\n  let b = Vec[Int]();\n  b.push(2);\n  let c = Vec[Int]();\n  c.push(3);\n  return 0;\n  // Drop order: c (last created), then b, then a (first created)\n}\n```\n\n### Drop After Move\n\nA moved value is NOT dropped — the new owner handles cleanup:\n\n```xiom\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(42);\n  let v2 = v;  // ownership moves to v2\n  // v is NOT dropped (it's dead after move)\n  return 0;\n  // v2 is dropped — Vec freed once\n}\n```\n\n### Drop Guarantees\n\n- Every value is dropped exactly once\n- No double-free: the compiler proves it\n- No leaks: all owned memory is freed\n- Even on early returns or panics, drop runs properly",
+  "code_template": "// TODO: demonstrate that Vec is properly dropped by creating and populating one in a function\n\n// TODO: show that returning a Vec moves ownership, so no double-drop\n\nfn main() -> Int {\n  // TODO: create Vec, push elements, return len — drop handles cleanup\n  return 0;\n}",
+  "solution": "fn make_vec() -> Vec[Int] {\n  let v = Vec[Int]();\n  v.push(1); v.push(2); v.push(3);\n  return v;  // moves to caller — no drop here\n}\n\nfn main() -> Int {\n  let data = make_vec();\n  let len = data.len();\n  // data dropped here — memory freed\n  return len;\n}",
+  "tips": [
+    "Drop runs automatically at the end of every scope — no manual cleanup needed",
+    "Drop order is reverse of declaration order (LIFO)",
+    "A moved value is not dropped — only the final owner drops it",
+    "Drop is deterministic — you know exactly when cleanup happens"
+  ],
+  "related": ["L3-01", "L3-05", "L3-18", "L3-21"]
+}

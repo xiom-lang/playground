@@ -1,0 +1,17 @@
+{
+  "id": "L2-04",
+  "title": "Struct Methods",
+  "level": "L2",
+  "duration": "12 min",
+  "concepts": ["method", "self", "fn TypeName.method", "receiver", "behavior"],
+  "narrative": "## Attaching Functions to Structs\n\n**Methods** are functions that operate on a specific struct type. They use `self` to access the instance they're called on.\n\n### Defining Methods\n\nThe method name uses the pattern `TypeName.method_name`:\n\n```xiom\npub type Point = {\n  x: Float64;\n  y: Float64;\n}\n\nfn Point.length(self: &Point) -> Float64 {\n  return math.sqrt(self.x * self.x + self.y * self.y);\n}\n```\n\n### Calling Methods\n\n```xiom\nlet p = Point{ x: 3.0, y: 4.0 };\nlet len = p.length();  // 5.0 — method call on instance\n```\n\n### Self Parameter Types\n\nThree kinds of `self`:\n\n| Self Type | Usage | Effect |\n|-----------|-------|--------|\n| `&self` | Read | Shared borrow, read-only |\n| `&mut self` | Modify | Mutable borrow, reads + writes |\n| `self` | Consume | Takes ownership, destroys |\n\n```xiom\nfn Point.length(self: &Point) -> Float64 { ... }      // read only\nfn Point.translate(self: &mut Point, dx: Float64, dy: Float64) -> Unit { ... }  // modify\nfn Point.into_tuple(self: Point) -> (Float64, Float64) { ... }  // consume\n```\n\n### Multiple Methods\n\n```xiom\npub type Counter = { value: Int; }\n\nfn Counter.new() -> Counter {\n  return Counter{ value: 0 };\n}\n\nfn Counter.increment(self: &mut Counter) -> Unit {\n  self.value = self.value + 1;\n}\n\nfn Counter.current(self: &Counter) -> Int {\n  return self.value;\n}\n\nfn Counter.reset(self: &mut Counter) -> Unit {\n  self.value = 0;\n}\n```\n\n### Method Chaining\n\n```xiom\nlet c = Counter.new();\nc.increment();\nc.increment();\nlet count = c.current();  // 2\n```\n\n### Why Methods?\n\nMethods keep behavior close to data. Instead of `counter_increment(&c)`, you write `c.increment()` — the compiler knows which function to call from the type.",
+  "code_template": "// TODO: define a BankAccount struct with balance (Float64)\n\n// TODO: add methods: deposit(self: &mut, amount), withdraw(self: &mut, amount) -> Bool\n\n// TODO: add method: transfer(self: &mut, amount, &mut other) -> Bool\n\nfn main() -> Int {\n  // TODO: create two accounts, deposit to one, transfer to other, return combined balance as Int\n  return 0;\n}",
+  "solution": "pub type BankAccount = {\n  balance: Float64;\n}\n\nfn BankAccount.deposit(self: &mut BankAccount, amount: Float64) -> Unit {\n  self.balance = self.balance + amount;\n}\n\nfn BankAccount.withdraw(self: &mut BankAccount, amount: Float64) -> Bool {\n  if self.balance >= amount {\n    self.balance = self.balance - amount;\n    return true;\n  }\n  return false;\n}\n\nfn BankAccount.transfer(self: &mut BankAccount, amount: Float64, other: &mut BankAccount) -> Bool {\n  if self.withdraw(amount) {\n    other.deposit(amount);\n    return true;\n  }\n  return false;\n}\n\nfn main() -> Int {\n  var a = BankAccount{ balance: 100.0 };\n  var b = BankAccount{ balance: 50.0 };\n  a.deposit(25.0);\n  a.transfer(30.0, &mut b);\n  return (a.balance + b.balance) as Int;\n}",
+  "tips": [
+    "Use `fn TypeName.method(self: &TypeName)` — not `fn method(self)`",
+    "`&self` for read-only, `&mut self` for modification, `self` to consume",
+    "Method names follow snake_case: `calculate_total`, not `calculateTotal`",
+    "Methods can call other methods on the same struct via `self.other_method()`"
+  ],
+  "related": ["L2-01", "L2-03", "L2-08", "L1-03"]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "L4-31",
+  "title": "Error Handling Philosophy",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "fail fast",
+    "error handling",
+    "defensive programming",
+    "crash early"
+  ],
+  "concept": "XIOM's error handling philosophy: fail fast and loudly. Catch bugs at the earliest possible point rather than letting corrupted state propagate.",
+  "why": "The farther a bug propagates from its origin, the harder it is to debug. Failing fast at the contract boundary pinpoints the exact cause.",
+  "theory": "## Fail Fast, Fail Loudly\n\n### The Problem with Silent Errors\n```xiom\nfn process(data: &Vec[Int]) -> Int {\n  if data.len() == 0 { return -1; }  // Silent error code\n  let sum = 0;\n  for v in data { sum = sum + v; }\n  return sum / data.len();\n}\n\nfn main() -> Int {\n  let result = process(&empty_vec);\n  // result is -1... but is it an error or the actual average?\n  // The bug propagates silently.\n  return result;\n}\n```\n\n### The XIOM Way: Contracts\n```xiom\nfn process(data: &Vec[Int]) -> Int\n  requires: data.len() > 0;\n{\n  let sum = 0;\n  for v in data { sum = sum + v; }\n  return sum / data.len();\n}\n\nfn main() -> Int {\n  let result = process(&empty_vec);  // TRAP: contract violation\n  // Program stops HERE — no corrupted state propagates\n  return result;\n}\n```\n\n### Error Handling Hierarchy\n1. **Contracts** — catch programmer errors (violations shouldn't happen in correct code)\n2. **Option/Result** — handle expected failures (file not found, network timeout)\n3. **panic** — unrecoverable errors (out of memory, corrupted state)\n4. **@llvm.trap** — the nuclear option (immediate termination)\n\n### When to Use Each\n| Situation | Tool |\n|-----------|------|\n| Invalid function input | requires |\n| File may not exist | Option/Result |\n| Out of memory | panic |\n| Unreachable code reached | @llvm.trap |\n| Recoverable I/O error | Result |",
+  "syntax_ref": "// Fail fast hierarchy:\n// 1. requires/ensures — contract violations\n// 2. Option[T] — expected absence\n// 3. Result[T, E] — expected errors\n// 4. panic() — unrecoverable\n// 5. @llvm.trap() — immediate abort",
+  "code_template": "// TODO: Write a function 'parse_age' that takes Str and returns Option[Int]\n// Uses contracts/Result as appropriate\n// If the string is not a valid integer, return None\n// If the age is negative, return None\n\nfn main() -> Int {\n  // TODO: Parse \"25\" and \"-5\", return the valid one or 0\n  return 0;\n}",
+  "solution": "fn parse_age(input: Str) -> Option[Int] {\n  let value = input.parse_int();\n  return match value {\n    Some(v) => if v >= 0 && v <= 150 { return Some(v); } else { return None(); },\n    None => None(),\n  };\n}\n\nfn main() -> Int {\n  match parse_age(\"25\") {\n    Some(age) => return age,\n    None => return 0,\n  }\n}",
+  "tips": [
+    "Use contracts for bugs (things that should never happen) and Result for expected failures",
+    "Fail at the EARLIEST possible point — don't let bad data travel",
+    "A loud crash is better than silent corruption — you can't debug what you don't know about",
+    "Document which errors are recoverable (returned) vs unrecoverable (trapped)"
+  ],
+  "common_mistakes": [
+    "Returning error codes for programmer errors — these should be contracts",
+    "Using panic for recoverable errors — the caller can't handle a panic",
+    "Swallowing errors silently with empty catch blocks — always log or propagate"
+  ],
+  "related": [
+    "L4-32",
+    "L4-36",
+    "L4-37",
+    "L2-03"
+  ],
+  "next_lesson": "L4-32"
+}

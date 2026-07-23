@@ -1,0 +1,38 @@
+{
+  "id": "L5-23",
+  "title": "Iterator Adapters",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "iterator adapter",
+    "map",
+    "filter",
+    "take",
+    "skip",
+    "chain"
+  ],
+  "concept": "Iterator adapters transform iterators into new iterators — map, filter, take, skip, chain, zip, and more. They compose like building blocks.",
+  "why": "Instead of writing loops for every transformation, adapter chaining expresses complex data pipelines declaratively — more readable and less error-prone.",
+  "theory": "## Transforming Iterators\n\n### map — Apply a Function\n```xiom\nlet nums = Vec[Int](); nums.push(1); nums.push(2); nums.push(3);\nlet squares = nums.iter().map(|n| n * n);\n// Produces: 1, 4, 9\n```\n\n### filter — Keep Matching Elements\n```xiom\nlet evens = nums.iter().filter(|n| n % 2 == 0);\n// Produces: 2\n```\n\n### Chaining Adapters\n```xiom\nlet result = nums.iter()\n  .filter(|n| n % 2 == 0)   // Keep evens: 2\n  .map(|n| n * n)             // Square them: 4\n  .collect();                  // Collect to Vec: [4]\n```\n\n### Common Adapters\n\n| Adapter | What It Does |\n|---------|-------------|\n| .map(f) | Transform each element |\n| .filter(p) | Keep elements where p is true |\n| .take(n) | Take first n elements |\n| .skip(n) | Skip first n elements |\n| .chain(other) | Concatenate two iterators |\n| .enumerate() | Add index: (0, item), (1, item), ... |\n| .zip(other) | Pair elements: (a1,b1), (a2,b2), ... |\n| .rev() | Reverse the iterator |\n\n### Complex Pipeline\n```xiom\nfn top_scores(scores: &Vec[Int], n: Int) -> Vec[Int] {\n  return scores.iter()\n    .filter(|s| s >= 60)     // Passing only\n    .sorted()                  // Sort ascending\n    .rev()                     // Reverse to descending\n    .take(n)                   // Top n scores\n    .collect();\n}\n```",
+  "syntax_ref": "iter.map(|x| transform(x))    // Transform\n  .filter(|x| condition(x)) // Filter\n  .take(n)                  // Limit\n  .skip(n)                  // Offset\n  .collect()                // Materialize",
+  "code_template": "// TODO: Given a Vec[Int] of numbers, use iterator adapters to:\n// 1. Keep only numbers > 10\n// 2. Double each remaining number\n// 3. Take the first 3 results\n// Return the sum\n\nfn main() -> Int {\n  // TODO: Process [5, 12, 8, 20, 15, 3, 25]\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let v = Vec[Int]();\n  v.push(5); v.push(12); v.push(8); v.push(20); v.push(15); v.push(3); v.push(25);\n\n  var sum = 0;\n  var count = 0;\n  for n in v {\n    if n > 10 {\n      if count < 3 {\n        sum = sum + n * 2;\n        count = count + 1;\n      }\n    }\n  }\n  return sum;\n}",
+  "tips": [
+    "Adapters are LAZY — they don't do anything until you consume the iterator (.collect(), .fold(), for loop)",
+    "Chain adapters in logical order: filter → map → take/skip → collect",
+    "Each adapter creates a NEW iterator — zero allocation for the pipeline itself",
+    "Use .inspect(|x| io.println(x)) to debug iterator pipelines"
+  ],
+  "common_mistakes": [
+    "Expecting adapters to modify the original collection — they create new iterators",
+    "Chaining adapters in the wrong order — filter before map is more efficient",
+    "Forgetting to consume the iterator — adapters alone don't execute anything"
+  ],
+  "related": [
+    "L5-20",
+    "L5-22",
+    "L5-24",
+    "L5-25"
+  ],
+  "next_lesson": "L5-24"
+}

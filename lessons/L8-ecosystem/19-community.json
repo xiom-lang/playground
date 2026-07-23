@@ -1,0 +1,37 @@
+{
+  "id": "L8-19",
+  "title": "Community & Ecosystem",
+  "level": "L8",
+  "duration": "10 min",
+  "concepts": [
+    "community",
+    "open source",
+    "ecosystem",
+    "discord",
+    "forum",
+    "contribution"
+  ],
+  "concept": "The XIOM community and ecosystem — where to find help, share projects, contribute, and stay connected with the XIOM developer community.",
+  "why": "No language exists in isolation. The community provides support, packages, and the collective knowledge that makes a language thrive.",
+  "theory": "## The XIOM Community\n\n### Where to Find Help\n\n| Platform | Purpose | Link |\n|----------|---------|------|\n| Discord | Real-time chat, quick help | discord.gg/xiom-lang |\n| Discourse Forum | In-depth discussions, announcements | discuss.xiom-lang.org |\n| GitHub | Issues, PRs, code | github.com/xiom-lang |\n| Reddit | Community discussion | r/xiom_lang |\n| Stack Overflow | Q&A (tag: xiom) | stackoverflow.com/questions/tagged/xiom |\n\n### Community Projects\n\n| Project | Category | Description |\n|---------|----------|-------------|\n| xiom.actix | Web framework | High-performance web server |\n| xiom.bevy | Game engine | ECS-based game engine |\n| xiom.tokio | Async runtime | Async I/O framework |\n| xiom.serde | Serialization | Generic serialization framework |\n| xiom.clap | CLI | Command-line argument parser |\n| xiom.ratatui | TUI | Terminal user interface library |\n\n### Learning Resources\n\n- **The XIOM Book**: docs.xiom-lang.org/book\n- **XIOM by Example**: docs.xiom-lang.org/example\n- **Standard Library Docs**: docs.xiom-lang.org/std\n- **XIOM Playground**: play.xiom-lang.org\n- **This course!**: Lessons L0-L8\n\n### Events\n\n- **XIOMConf**: Annual conference (talks, workshops, community)\n- **XIOM Meetups**: Local user groups in major cities\n- **Hackathons**: Build projects, win prizes, meet contributors\n\n### Getting Involved\n\n1. **Use XIOM**: Build projects, file bugs, request features\n2. **Answer questions**: Help newcomers on Discord and forums\n3. **Write documentation**: Improve docs, write tutorials, translate\n4. **Create packages**: Publish useful libraries to the registry\n5. **Contribute code**: Fix bugs, implement features in the compiler\n6. **Organize events**: Start a local meetup, give talks\n7. **Sponsor**: Financially support XIOM development\n\n### Code of Conduct\n\nThe XIOM community is committed to providing a welcoming, inclusive, and harassment-free experience for everyone. Read the full Code of Conduct at xiom-lang.org/conduct.\n\n### Staying Updated\n\n- **Blog**: blog.xiom-lang.org (release announcements, team updates)\n- **This Week in XIOM**: Weekly newsletter (this-week.xiom-lang.org)\n- **Twitter/X**: @xiom_lang\n- **YouTube**: XIOM Language channel (conference talks, tutorials)\n- **Changelog**: github.com/xiom-lang/xiom/blob/main/CHANGELOG.md\n\n### The XIOM Foundation\n\nXIOM is stewarded by the XIOM Foundation, an independent non-profit that:\n- Manages the language's development and direction\n- Organizes conferences and events\n- Funds critical infrastructure and maintenance\n- Protects the XIOM trademark and brand",
+  "syntax_ref": "# Join the community:\ndiscord.gg/xiom-lang\ndiscuss.xiom-lang.org\ngithub.com/xiom-lang\n\n# Read the docs:\ndocs.xiom-lang.org/book\n\n# Stay updated:\nthis-week.xiom-lang.org\n@xiom_lang",
+  "code_template": "fn main() -> Int {\n  // Your XIOM journey is just beginning!\n  // Join the Discord, read the book, build something amazing.\n  // Welcome to the community!\n  return 2026;  // The year XIOM launched\n}",
+  "solution": "fn main() -> Int {\n  return 2026;\n}",
+  "tips": [
+    "Join the Discord — it's the most active community hub",
+    "Don't be afraid to ask questions — everyone was a beginner once",
+    "The best way to learn is to build — start a project, share it, get feedback",
+    "Contributing to open source is the fastest way to become an expert"
+  ],
+  "common_mistakes": [
+    "Asking 'is anyone here?' in chat — just ask your question directly",
+    "Not searching before asking — check docs, forum, and Stack Overflow first",
+    "Being afraid to contribute — documentation fixes are as valuable as code changes"
+  ],
+  "related": [
+    "L7-15",
+    "L7-13",
+    "L8-20"
+  ],
+  "next_lesson": "L8-20"
+}

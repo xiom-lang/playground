@@ -1,0 +1,17 @@
+{
+  "id": "L2-30",
+  "title": "Result.and_then",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["Result", "and_then", "chain", "flatmap", "composition"],
+  "narrative": "## Chaining Fallible Operations with and_then\n\n`.and_then()` chains functions that return `Result`, short-circuiting on the first `Err`. It's the Result equivalent of `Option.and_then()`.\n\n### Basic and_then\n\n```xiom\nfn validate(n: Int) -> Result[Int, Str] {\n  if n < 0 { return Err(\"negative\"); }\n  return Ok(n);\n}\n\nfn double(n: Int) -> Result[Int, Str] {\n  if n > 50 { return Err(\"overflow\"); }\n  return Ok(n * 2);\n}\n\nlet ok = validate(10).and_then(|n| double(n));\n// Ok(20)\n\nlet err = validate(-5).and_then(|n| double(n));\n// Err(\"negative\") — short-circuited, double never called\n```\n\n### Short-Circuit Behavior\n\nIf any step returns `Err`, the entire chain returns that error:\n\n```xiom\nlet result = validate(30)\n  .and_then(|n| double(n))    // returns Ok(60)\n  .and_then(|n| double(n));   // returns Err(\"overflow\") — 60 > 50\n// result is Err(\"overflow\")\n```\n\n### Multiple Dependent Operations\n\n```xiom\nfn open_file(path: Str) -> Result[Str, Str] { /* ... */ }\nfn parse_content(raw: Str) -> Result[Int, Str] { /* ... */ }\nfn validate_result(n: Int) -> Result[Int, Str] { /* ... */ }\n\nfn process_file(path: Str) -> Result[Int, Str] {\n  return open_file(path)\n    .and_then(|content| parse_content(content))\n    .and_then(|n| validate_result(n));\n}\n```\n\n### and_then vs map\n\n- `map`: transforms `Ok` value, can't introduce new errors\n- `and_then`: transforms to a new `Result`, can introduce new errors\n\n```xiom\n// map: success stays success\nOk(5).map(|x| x * 2);  // always Ok\n\n// and_then: success may become failure\nOk(5).and_then(|x| if x > 3 { Err(\"too big\") } else { Ok(x) });\n```",
+  "code_template": "// TODO: write 'validate_input' returning Result[Int, Str] (must be > 0)\n\n// TODO: write 'ensure_even' returning Result[Int, Str] (must be even)\n\n// TODO: write 'compute' that chains both with and_then, then returns square\n\nfn main() -> Int {\n  // TODO: compute(4) -> Ok, compute(3) -> Err, return Ok value or 0\n  return 0;\n}",
+  "solution": "fn validate_input(n: Int) -> Result[Int, Str] {\n  if n <= 0 { return Err(\"must be positive\"); }\n  return Ok(n);\n}\n\nfn ensure_even(n: Int) -> Result[Int, Str] {\n  if n % 2 != 0 { return Err(\"must be even\"); }\n  return Ok(n);\n}\n\nfn compute(n: Int) -> Result[Int, Str] {\n  return validate_input(n)\n    .and_then(|x| ensure_even(x))\n    .map(|x| x * x);\n}\n\nfn main() -> Int {\n  match compute(4) {\n    Ok(val) => { return val; }\n    Err(_) => { return 0; }\n  }\n}",
+  "tips": [
+    "Use .and_then() when the next step can also fail",
+    "Chain .and_then() calls for multi-step operations where each step may fail",
+    "The chain short-circuits on first Err — subsequent functions are not called",
+    "Mix .and_then() and .map() in the same pipeline as needed"
+  ],
+  "related": ["L2-26", "L2-30", "L2-32", "L2-35"]
+}

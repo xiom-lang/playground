@@ -1,0 +1,36 @@
+{
+  "id": "L8-08",
+  "title": "Redis Client",
+  "level": "L8",
+  "duration": "12 min",
+  "concepts": [
+    "Redis",
+    "cache",
+    "key-value",
+    "pub-sub",
+    "data structures"
+  ],
+  "concept": "Redis client for XIOM — connect to Redis servers for caching, message queues, pub/sub, and real-time data structures.",
+  "why": "Redis is the most popular in-memory data store. From caching to rate limiting to real-time analytics, Redis powers the data layer of modern applications.",
+  "theory": "## In-Memory Data Store\n\n### Basic Operations\n\n```xiom\nuse xiom.redis;\n\nfn main() -> Int {\n  let client = redis::Client::new(\"redis://localhost:6379\")?;\n\n  // Set and get\n  client.set(\"key\", \"value\")?;\n  let value = client.get(\"key\")?;\n\n  // With expiration\n  client.setex(\"session:abc123\", \"user_data\", 3600)?;  // 1 hour\n\n  // Increment\n  let views = client.incr(\"page:home:views\")?;\n\n  // Check existence\n  if client.exists(\"key\")? {\n    io.println(\"Key exists!\");\n  }\n  return 0;\n}\n```\n\n### Lists and Queues\n\n```xiom\n// Task queue\nclient.lpush(\"tasks\", \"send_email:123\")?;\nclient.lpush(\"tasks\", \"generate_report:456\")?;\n\n// Process tasks (FIFO)\nwhile let Some(task) = client.rpop(\"tasks\")? {\n  process_task(task);\n}\n\n// Blocking pop (wait for items)\nlet task = client.brpop(\"tasks\", timeout: 5)?;\n```\n\n### Hashes\n\n```xiom\n// Store user profile\nclient.hset(\"user:1\", \"name\", \"Alice\")?;\nclient.hset(\"user:1\", \"email\", \"alice@example.com\")?;\nclient.hset(\"user:1\", \"age\", \"30\")?;\n\n// Get all fields\nlet profile = client.hgetall(\"user:1\")?;\nio.println(profile[\"name\"]);  // \"Alice\"\n\n// Get specific field\nlet email = client.hget(\"user:1\", \"email\")?;\n```\n\n### Sets and Sorted Sets\n\n```xiom\n// Unique tags\nclient.sadd(\"article:1:tags\", \"xiom\")?;\nclient.sadd(\"article:1:tags\", \"programming\")?;\nlet tags = client.smembers(\"article:1:tags\")?;\n\n// Leaderboard (sorted set)\nclient.zadd(\"leaderboard\", \"Alice\", 1500)?;\nclient.zadd(\"leaderboard\", \"Bob\", 1200)?;\nlet top3 = client.zrevrange(\"leaderboard\", 0, 2)?;\n\n// Get rank\nlet alice_rank = client.zrevrank(\"leaderboard\", \"Alice\")?;\n```\n\n### Pub/Sub\n\n```xiom\n// Publisher\nclient.publish(\"notifications\", \"New user registered: Alice\")?;\n\n// Subscriber\nlet mut sub = client.subscribe(\"notifications\")?;\nfor message in sub.messages() {\n  io.println(\"Received: \" + message);\n  handle_notification(message);\n}\n```\n\n### Connection Pool\n\n```xiom\nlet pool = redis::Pool::new(\"redis://localhost:6379\", size: 10)?;\n\n// In request handler:\nlet conn = pool.get()?;\nconn.get(\"key\")?;\n// conn is automatically returned to pool when dropped\n```",
+  "syntax_ref": "use xiom.redis;\n\nlet client = redis::Client::new(\"redis://host:port\")?;\n\n// Strings: set, get, incr, setex\n// Lists: lpush, rpop, brpop\n// Hashes: hset, hget, hgetall\n// Sets: sadd, smembers, sismember\n// Sorted Sets: zadd, zrange, zrevrank\n// Pub/Sub: publish, subscribe",
+  "code_template": "// TODO: Design a simple caching layer using Redis concepts:\n// - cache_set(key, value, ttl_seconds)\n// - cache_get(key) → Option[value]\n// How would you implement this?\n\nfn main() -> Int {\n  // Return the number of operations in the caching layer\n  return 2;  // set + get\n}",
+  "solution": "fn main() -> Int {\n  return 2;\n}",
+  "tips": [
+    "Use SETEX for cache entries with TTL — automatic cleanup prevents memory leaks",
+    "Sorted sets are perfect for leaderboards, priority queues, and time-series data",
+    "Connection pooling is essential for web servers — one connection per request is too slow",
+    "Use Redis pipelining for batch operations — reduces round-trips dramatically"
+  ],
+  "common_mistakes": [
+    "Not setting TTL on cache entries — Redis memory grows unbounded",
+    "Using KEYS command in production — it blocks Redis. Use SCAN instead",
+    "Forgetting that Redis is single-threaded — expensive operations block all other commands"
+  ],
+  "related": [
+    "L8-09",
+    "L8-06",
+    "L8-07"
+  ],
+  "next_lesson": "L8-09"
+}

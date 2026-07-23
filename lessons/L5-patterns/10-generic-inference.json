@@ -1,0 +1,35 @@
+{
+  "id": "L5-10",
+  "title": "Generic Type Inference",
+  "level": "L5",
+  "duration": "8 min",
+  "concepts": [
+    "type inference",
+    "auto-deduced",
+    "generic inference",
+    "implicit type"
+  ],
+  "concept": "The compiler can often infer type parameters from the arguments you pass — so you don't need to write them explicitly.",
+  "why": "Explicit type parameters add noise: `first[Int](&nums)`. Inference makes generics feel natural: `first(&nums)`. Less typing, same safety.",
+  "theory": "## How Inference Works\n\n```xiom\nfn first[T](items: &Vec[T]) -> T { return items[0]; }\n\nfn main() -> Int {\n  let nums = Vec[Int]();\n  nums.push(42);\n\n  let n = first(&nums);  // T inferred as Int — no need for first[Int]\n  return n;\n}\n```\n\nThe compiler sees `&nums` is `&Vec[Int]`, matches it against `&Vec[T]`, deduces T = Int.\n\n### When Inference Works\n```xiom\nfn identity[T](x: T) -> T { return x; }\n\nlet a = identity(42);        // T = Int\nlet b = identity(\"hello\");   // T = Str\nlet c = identity(true);      // T = Bool\n```\n\n### When You Need Explicit Types\n```xiom\nfn collect[T](items: &Vec[T]) -> Vec[T] { /* ... */ }\n\nfn main() {\n  // let result = collect(&items);  // ERROR: T is ambiguous\n  let result = collect[Int](&items);  // OK: T explicitly Int\n}\n```\n\n### Partial Inference\n```xiom\nfn convert[T, U](value: T) -> U\n  where T: Into[U];\n{ return value.into(); }\n\nlet x: Float64 = convert(42);  // T = Int inferred, U = Float64 from annotation\n```\n\n### The Golden Rule\nLet inference work when it can. Add explicit types when the compiler asks or when it improves readability.",
+  "syntax_ref": "// Inference works:\nlet x = max(3, 5);        // T = Int\nlet y = first(&str_vec);   // T = Str\n\n// Explicit needed:\nlet z = collect[Int](&mixed);",
+  "code_template": "// TODO: Write a generic function 'wrap' that takes T and returns a tuple (T, Int)\n// The Int is a tag number. Test with and without explicit type params.\n\nfn main() -> Int {\n  // TODO: Call wrap(42) — infer T\n  // TODO: Call wrap[Str](\"hello\") — explicit T\n  return 0;\n}",
+  "solution": "fn wrap[T](value: T) -> (T, Int) {\n  return (value, 0);\n}\n\nfn main() -> Int {\n  let inferred = wrap(42);           // T inferred as Int\n  let explicit = wrap[Str](\"hello\"); // T explicit as Str\n  return inferred.0;\n}",
+  "tips": [
+    "Let the compiler infer types — it's almost always right and saves keystrokes",
+    "Add explicit type params when the inferred type is surprising — it documents intent",
+    "If the compiler asks for explicit types, add them — it means inference is ambiguous",
+    "Use type annotations on variables (let x: Type = ...) to guide inference"
+  ],
+  "common_mistakes": [
+    "Adding explicit type params everywhere — defeats the purpose of inference",
+    "Assuming inference always works — it needs enough context from arguments",
+    "Writing turbofish style `::<Type>` — XIOM uses square brackets: `func[Type]`"
+  ],
+  "related": [
+    "L5-01",
+    "L5-02",
+    "L0-13"
+  ],
+  "next_lesson": "L5-11"
+}

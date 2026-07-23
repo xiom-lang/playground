@@ -1,0 +1,17 @@
+{
+  "id": "L2-27",
+  "title": "Result: Ok and Err",
+  "level": "L2",
+  "duration": "12 min",
+  "concepts": ["Result", "Ok", "Err", "error handling", "fallible"],
+  "narrative": "## Handling Success and Failure with Result\n\n`Result[T, E]` is XIOM's built-in enum for operations that can succeed or fail. It carries either a success value (`Ok`) or an error (`Err`).\n\n### The Result Enum\n\n```xiom\npub type Result[T, E] = enum {\n  Ok(value: T),\n  Err(error: E),\n}\n```\n\n`T` is the success type, `E` is the error type. Both can be any type.\n\n### Creating Results\n\n```xiom\nfn divide(a: Int, b: Int) -> Result[Int, Str] {\n  if b == 0 {\n    return Err(\"Division by zero\");\n  }\n  return Ok(a / b);\n}\n\nlet ok = divide(10, 2);   // Ok(5)\nlet err = divide(10, 0);  // Err(\"Division by zero\")\n```\n\n### Matching Result\n\n```xiom\nmatch divide(10, 2) {\n  Ok(value) => { io.println(\"Result: \" + value); }\n  Err(msg) => { io.println(\"Error: \" + msg); }\n}\n```\n\n### Result vs Option\n\n- `Option[T]`: value might be missing (`None`)\n- `Result[T, E]`: value might be error (`Err`), with error details\n\nUse `Result` when you need to communicate **why** it failed.\n\n### Common Error Types\n\n```xiom\n// Str as error\nfn parse_number(s: Str) -> Result[Int, Str] { /* ... */ }\n\n// Int as error code\nfn open_file(path: Str) -> Result[Int, Int] { /* ... */ }\n```\n\n### Pattern: Early Return on Err\n\n```xiom\nfn compute(a: Int, b: Int) -> Result[Int, Str] {\n  let x = divide(a, b);\n  match x {\n    Ok(val) => { return Ok(val * 2); }\n    Err(e) => { return Err(e); }\n  }\n}\n```",
+  "code_template": "// TODO: write a function 'parse_age' that returns Result[Int, Str]\n// valid ages are 0-120, error message for invalid\n\n// TODO: write a function 'check_voting_age' that returns Result[Str, Str]\n// age >= 18 -> Ok(\"Eligible\"), age < 18 -> Err(\"Too young\")\n\nfn main() -> Int {\n  // TODO: parse \"25\", check voting age, return 1 if Ok, 0 if Err\n  return 0;\n}",
+  "solution": "fn parse_age(input: Str) -> Result[Int, Str] {\n  // simplified: only accepts \"25\"\n  if input == \"25\" { return Ok(25); }\n  return Err(\"Invalid age\");\n}\n\nfn check_voting_age(age: Int) -> Result[Str, Str] {\n  if age < 0 || age > 120 { return Err(\"Invalid age range\"); }\n  if age >= 18 { return Ok(\"Eligible\"); }\n  return Err(\"Too young\");\n}\n\nfn main() -> Int {\n  match parse_age(\"25\") {\n    Ok(age) => {\n      match check_voting_age(age) {\n        Ok(_) => { return 1; }\n        Err(_) => { return 0; }\n      }\n    }\n    Err(_) => { return 0; }\n  }\n}",
+  "tips": [
+    "Use `Result` when the failure reason matters — `Option` only says 'missing'",
+    "`Ok` and `Err` are just enum variants — all enum operations work on Result",
+    "Name the error type meaningfully: `Result[Int, Str]` for messages, `Result[Int, Int]` for codes",
+    "Check both `Ok` and `Err` — the compiler enforces exhaustive matching"
+  ],
+  "related": ["L2-15", "L2-16", "L2-23", "L2-31"]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "L5-26",
+  "title": "Clone Interface",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "Clone",
+    "deep copy",
+    "clone method",
+    "duplicate"
+  ],
+  "concept": "The Clone interface provides an explicit deep copy operation — `.clone()` creates a new, independent value from an existing one.",
+  "why": "In XIOM, moves are the default. Clone gives you an explicit way to opt into expensive copies when you truly need independent ownership of data.",
+  "theory": "## Explicit Deep Copying\n\n```xiom\npub interface Clone {\n  fn clone(self: &Self) -> Self;\n}\n```\n\nClone is for values that can be explicitly duplicated:\n\n```xiom\npub type Document = {\n  title: Str;\n  body: Str;\n}\n\nimpl Clone for Document {\n  fn clone(self: &Document) -> Document {\n    return Document{\n      title: self.title.clone(),\n      body: self.body.clone(),\n    };\n  }\n}\n\nfn main() {\n  let original = Document{ title: \"Draft\", body: \"Hello\" };\n  let copy = original.clone();  // Deep copy\n  // original and copy are independent\n}\n```\n\n### Clone vs Move\n\n```xiom\nlet a = Vec[Int](); a.push(1); a.push(2);\nlet b = a;          // MOVE: a is gone, b owns the data\nlet c = a.clone();  // CLONE: a stays, c gets its own copy\n```\n\n### Auto-Deriving Clone\n\n```xiom\n// All fields must implement Clone\n#[derive(Clone)]\npub type Point = { x: Float64; y: Float64; }\n```\n\n### When NOT to Clone\nCloning a large Vec duplicates all memory — use references (`&T`) or `Arc[T]` for shared data instead.",
+  "syntax_ref": "impl Clone for MyType {\n  fn clone(self: &Self) -> Self {\n    return Self{ field: self.field.clone(), ... };\n  }\n}\n\n// Or derive:\n#[derive(Clone)]\npub type MyType = { ... };",
+  "code_template": "// TODO: Define a struct 'User' with name: Str, age: Int\n// Implement Clone for User manually\n// Clone the user and change the clone's age\n\nfn main() -> Int {\n  // TODO: Clone user \"Alice\" (age 30), change clone age to 31, return clone age\n  return 0;\n}",
+  "solution": "pub type User = { name: Str; age: Int; }\n\nimpl Clone for User {\n  fn clone(self: &User) -> User {\n    return User{ name: self.name.clone(), age: self.age };\n  }\n}\n\nfn main() -> Int {\n  let u = User{ name: \"Alice\", age: 30 };\n  let mut u2 = u.clone();\n  u2.age = 31;\n  return u2.age;\n}",
+  "tips": [
+    "Clone is explicit — you opt in to copying, unlike implicit copy in other languages",
+    "Only implement Clone when copying is the right semantic — use references for sharing",
+    "Derive Clone when all fields are Clone — saves boilerplate",
+    "Clone is O(n) for collections — be mindful of performance"
+  ],
+  "common_mistakes": [
+    "Confusing Clone with Copy — Copy is implicit and cheap, Clone is explicit and may be expensive",
+    "Cloning when a reference would suffice — unnecessary allocations",
+    "Forgetting to clone nested fields — results in shared references instead of deep copies"
+  ],
+  "related": [
+    "L5-27",
+    "L5-32",
+    "L2-01",
+    "L3-05"
+  ],
+  "next_lesson": "L5-27"
+}

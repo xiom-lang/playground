@@ -1,0 +1,17 @@
+{
+  "id": "L3-35",
+  "title": "C FFI Basics",
+  "level": "L3",
+  "duration": "12 min",
+  "concepts": ["FFI", "extern C", "foreign function", "C ABI", "interop"],
+  "narrative": "## Calling C Functions from XIOM\n\nThe **Foreign Function Interface (FFI)** lets XIOM call C libraries using `extern \"C\"` declarations.\n\n### Declaring External Functions\n\n```xiom\nextern \"C\" {\n  fn abs(x: Int) -> Int;\n  fn strlen(s: *const Char) -> Int;\n  fn malloc(size: Int) -> *mut Unit;\n  fn free(ptr: *mut Unit) -> Unit;\n}\n```\n\n### Calling C Functions\n\n```xiom\nfn main() -> Int {\n  let x = -42;\n  let result = abs(x);  // calls C's abs()\n  return result;\n}\n```\n\nExternal function calls are inherently `unsafe` — the compiler can't verify the C code:\n\n```xiom\nunsafe {\n  let ptr = malloc(100);  // allocate 100 bytes\n  // use ptr...\n  free(ptr);              // free the memory\n}\n```\n\n### C Type Mapping\n\n| C Type | XIOM Type |\n|--------|-----------|\n| int | Int |\n| float | Float32 |\n| double | Float64 |\n| char* | *const Char |\n| void* | *mut Unit |\n| size_t | Int |\n\n### Linking\n\nC libraries are linked by listing them in the project manifest:\n\n```xiom\n// Link to libm (math library)\nextern \"C\" {\n  #[link(name = \"m\")]\n  fn sqrt(x: Float64) -> Float64;\n  fn pow(base: Float64, exp: Float64) -> Float64;\n}\n```\n\n### Basic FFI Pattern\n\n```xiom\n// 1. Declare the C function\nextern \"C\" {\n  fn getpid() -> Int;\n}\n\n// 2. Wrap in a safe function\nfn current_pid() -> Int {\n  unsafe { return getpid(); }\n}\n```",
+  "code_template": "// TODO: declare an extern C function 'abs' that takes Int and returns Int\n\n// TODO: wrap it in a safe function 'absolute_value'\n\nfn main() -> Int {\n  // TODO: call absolute_value(-50) and return result\n  return 0;\n}",
+  "solution": "extern \"C\" {\n  fn abs(x: Int) -> Int;\n}\n\nfn absolute_value(x: Int) -> Int {\n  return abs(x);\n}\n\nfn main() -> Int {\n  return absolute_value(-50);\n}",
+  "tips": [
+    "Use `extern \"C\"` blocks to declare foreign functions from C libraries",
+    "FFI calls are unsafe by nature — wrap them in safe functions",
+    "C type mapping is straightforward: int→Int, double→Float64, char*→*const Char",
+    "Link C libraries via project manifest or `#[link]` attributes"
+  ],
+  "related": ["L3-36", "L3-37", "L3-38", "L3-34"]
+}

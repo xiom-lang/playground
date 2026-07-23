@@ -1,0 +1,17 @@
+{
+  "id": "L6-02",
+  "title": "use Statement",
+  "level": 6,
+  "duration": "10 min",
+  "concepts": ["use", "import", "path", "alias"],
+  "concept": "The `use` keyword brings module paths into the local scope",
+  "why": "Fully qualified paths like `math::geometry::circle::area()` are verbose and repetitive. The `use` statement shortens these paths so you can call `area()` directly. This reduces visual noise, makes code intent clearer, and follows the principle that frequently-used names should be short.",
+  "theory": "The `use` statement creates a local binding that maps a module path to a shorter name. It supports absolute paths (from the crate root) with `::` prefix and relative paths without. You can import specific items (`use math::add`), entire modules (`use math`), or rename imports with `as` (`use math::geometry as geo`). XIOM resolves `use` at compile time — there is zero runtime cost. Wildcard imports (`use math::*`) are available but discouraged except in test modules.",
+  "syntax_ref": "use <path>;\nuse <path>::<item>;\nuse <path> as <alias>;",
+  "code_template": "mod math {\n    pub fn add(a: Int, b: Int) -> Int {\n        return a + b\n    }\n}\n\nuse math::add\n\nfn main() {\n    let result = add(10, 20)\n    io.println(\"Result: {result}\")\n}",
+  "solution": "mod math {\n    pub fn square(x: Int) -> Int { return x * x }\n    pub fn cube(x: Int) -> Int { return x * x * x }\n}\n\nuse math::square\nuse math::cube as third_power\n\nfn main() {\n    io.println(\"square(4) = {square(4)}\")\n    io.println(\"cube(4) = {third_power(4)}\")\n}",
+  "tips": ["Place all `use` statements at the top of the file", "Use `as` to disambiguate names from different modules", "Avoid `use module::*` — it makes origin of names unclear"],
+  "common_mistakes": ["Importing from a private module — the import itself is allowed but access isn't", "Shadowing a local name with an import", "Using `use` inside a function body (it must be at module level)"],
+  "related": ["L6-01-module-system", "L6-03-pub-visibility", "L6-07-dependencies"],
+  "next_lesson": "L6-03"
+}

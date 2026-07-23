@@ -1,0 +1,17 @@
+{
+  "id": "L2-38",
+  "title": "Vec Insert and Remove",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["Vec", "insert", "remove", "middle operations", "shift"],
+  "narrative": "## Inserting and Removing by Position\n\nWhile `push`/`pop` work on the end, `.insert()` and `.remove()` let you modify elements at any position.\n\n### insert — Add at Index\n\n```xiom\nvar v = Vec[Int]();\nv.push(1); v.push(3); v.push(4);\nv.insert(1, 2);  // insert 2 at index 1\n// v: [1, 2, 3, 4]\n\nv.insert(0, 0);  // insert 0 at beginning\n// v: [0, 1, 2, 3, 4]\n\nv.insert(v.len(), 5);  // insert at end (like push)\n// v: [0, 1, 2, 3, 4, 5]\n```\n\n### remove — Remove at Index\n\n```xiom\nvar v = Vec[Int]();\nv.push(10); v.push(20); v.push(30); v.push(40);\n\nlet removed = v.remove(1);  // removes element at index 1 (20)\n// v: [10, 30, 40]\n// removed: 20\n```\n\n### Performance Note\n\n`.insert()` and `.remove()` shift all subsequent elements, making them O(n). For frequent middle insertions, consider `LinkedList` instead.\n\n### Practical Uses\n\n```xiom\n// Maintain sorted order\nfn insert_sorted(v: &mut Vec[Int], value: Int) -> Unit {\n  var i = 0;\n  while i < v.len() && v[i] < value {\n    i = i + 1;\n  }\n  v.insert(i, value);\n}\n\n// Remove all occurrences\nfn remove_all(v: &mut Vec[Int], target: Int) -> Unit {\n  var i = 0;\n  while i < v.len() {\n    if v[i] == target {\n      v.remove(i);\n      // don't increment i — next element shifted into position\n    } else {\n      i = i + 1;\n    }\n  }\n}\n```\n\n### Insert/Remove Patterns\n\n```xiom\n// Insert at front (slow — O(n))\nv.insert(0, value);\n\n// Remove from front (slow — O(n))\nv.remove(0);\n\n// Insert at back (fast — O(1))\nv.insert(v.len(), value);\n// same as v.push(value);\n```",
+  "code_template": "// TODO: write a function 'splice' that inserts all elements of src at position pos in dest\n\n// TODO: write a function 'remove_range' that removes elements from start to end index\n\nfn main() -> Int {\n  // TODO: create vec [1,5,6,2], insert [2,3,4] at position 1, return new element at index 2\n  return 0;\n}",
+  "solution": "fn splice(dest: &mut Vec[Int], src: &Vec[Int], pos: Int) -> Unit {\n  var i = 0;\n  while i < src.len() {\n    dest.insert(pos + i, src[i]);\n    i = i + 1;\n  }\n}\n\nfn remove_range(v: &mut Vec[Int], start: Int, end: Int) -> Unit {\n  var count = 0;\n  while count < end - start {\n    v.remove(start);\n    count = count + 1;\n  }\n}\n\nfn main() -> Int {\n  var v = Vec[Int]();\n  v.push(1); v.push(5); v.push(6); v.push(2);\n  let insert_vals = Vec[Int]();\n  insert_vals.push(2); insert_vals.push(3); insert_vals.push(4);\n  splice(&mut v, &insert_vals, 1);\n  return v[2];\n}",
+  "tips": [
+    "`.insert(i, val)` shifts elements at i..len right by one position",
+    "`.remove(i)` shifts elements at i+1..len left by one position",
+    "Insert/remove on large Vecs at position 0 is expensive — O(n)",
+    "For frequent middle insertions, prefer a LinkedList over Vec"
+  ],
+  "related": ["L2-36", "L2-37", "L2-39", "L2-57"]
+}

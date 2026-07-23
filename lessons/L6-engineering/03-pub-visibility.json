@@ -1,0 +1,17 @@
+{
+  "id": "L6-03",
+  "title": "pub Visibility",
+  "level": 6,
+  "duration": "10 min",
+  "concepts": ["pub", "visibility", "public", "API"],
+  "concept": "The `pub` keyword marks items as part of a module's public API",
+  "why": "Encapsulation is meaningless if you cannot selectively expose an API. `pub` defines the contract between a module and its consumers. It lets library authors evolve internal details without breaking downstream code, while clearly signaling which functions, types, and constants are stable and supported.",
+  "theory": "XIOM's visibility model has three levels: **private** (default, accessible only within the declaring module), **pub** (accessible from parent modules and external crates), and **pub(crate)** (accessible anywhere within the same crate but not externally). The `pub` modifier can be placed on `fn`, `struct`, `enum`, `const`, `var`, and `type` declarations. A `pub` struct with private fields still has controlled access — users can construct it but not read internals directly.",
+  "syntax_ref": "pub fn <name>(...) { ... }\npub struct <Name> { ... }\npub(crate) fn <name>(...) { ... }",
+  "code_template": "mod database {\n    pub struct Connection {\n        host: Str,\n        port: Int,\n    }\n\n    pub fn connect(host: Str, port: Int) -> Connection {\n        return Connection { host, port }\n    }\n\n    fn private_helper() { }\n}\n\nuse database::connect\n\nfn main() {\n    let conn = connect(\"localhost\", 5432)\n}",
+  "solution": "mod account {\n    pub struct User {\n        name: Str,\n        pub email: Str,\n    }\n\n    pub fn create(name: Str, email: Str) -> User {\n        return User { name, email }\n    }\n\n    pub fn greet(user: &User) {\n        io.println(\"Hello, {user.name}!\")\n    }\n}\n\nfn main() {\n    let u = account::create(\"Ada\", \"ada@axiom.dev\")\n    account::greet(&u)\n    io.println(\"Email: {u.email}\")\n}",
+  "tips": ["Start with everything private; add `pub` only when needed", "Group `pub` items together at the top of a module", "`pub(crate)` is ideal for shared internal utilities across a crate"],
+  "common_mistakes": ["Marking everything `pub` by habit — defeats encapsulation", "Forgetting `pub` on enum variants when exposing an enum", "Assuming `pub` on a struct auto-publishes its fields"],
+  "related": ["L6-01-module-system", "L6-04-private-default", "L6-07-dependencies"],
+  "next_lesson": "L6-04"
+}

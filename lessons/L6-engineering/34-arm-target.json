@@ -1,0 +1,37 @@
+{
+  "id": "L6-34",
+  "title": "ARM Target",
+  "level": "L6",
+  "duration": "12 min",
+  "concepts": [
+    "ARM",
+    "aarch64",
+    "cross-compile",
+    "embedded",
+    "mobile",
+    "Apple Silicon"
+  ],
+  "concept": "Compile XIOM for ARM architectures — aarch64 for Apple Silicon and servers, armv7/armv8 for embedded devices and mobile platforms.",
+  "why": "ARM dominates mobile, embedded, and increasingly servers (AWS Graviton) and desktops (Apple M-series). Cross-compiling to ARM is essential for broad deployment.",
+  "theory": "## Targeting ARM Architectures\n\n### ARM Targets\n\n| Target Triple | Architecture | Devices |\n|--------------|-------------|---------|\n| `aarch64-apple-darwin` | ARM64 | Apple M1/M2/M3 Macs |\n| `aarch64-unknown-linux-gnu` | ARM64 | AWS Graviton, Raspberry Pi 4/5 |\n| `aarch64-unknown-linux-musl` | ARM64 | Alpine Linux, containers |\n| `armv7-unknown-linux-gnueabihf` | ARM32 | Raspberry Pi 2/3, older devices |\n| `aarch64-linux-android` | ARM64 | Android phones/tablets |\n\n### Cross-Compilation\n\n```sh\n# Install ARM cross-compilation toolchain\n# Ubuntu/Debian:\nsudo apt install gcc-aarch64-linux-gnu\n\n# macOS (for Linux ARM):\nbrew install aarch64-unknown-linux-gnu\n\n# Build\nxiom build --target aarch64-unknown-linux-gnu\n\n# Build for Apple Silicon\nxiom build --target aarch64-apple-darwin\n```\n\n### ARM-Specific Optimizations\n\n```sh\n# Target specific ARM CPU\nxiom build --target aarch64-unknown-linux-gnu --target-cpu cortex-a72\n\n# Enable ARM NEON SIMD\nxiom build --target aarch64-unknown-linux-gnu --target-features +neon\n```\n\n### Embedded ARM\n\n```xiom\n// Embedded: no OS, no stdlib\n#[no_std]\nfn kernel_main() {\n  // Direct hardware access\n  let uart = 0x10000000 as *mut Byte;\n  uart.write_volatile(72);  // 'H'\n}\n```\n\n### Conditional Compilation for ARM\n\n```xiom\n#[cfg(target_arch = \"aarch64\")]\nfn get_page_size() -> Int { return 16384; }  // Apple Silicon\n\n#[cfg(target_arch = \"x86_64\")]\nfn get_page_size() -> Int { return 4096; }   // x86-64\n```\n\n### CI for ARM\n\n```yaml\n# GitHub Actions: build and test on ARM\njobs:\n  arm-build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: xiom-lang/setup-xiom@v1\n      - run: sudo apt install gcc-aarch64-linux-gnu qemu-user\n      - run: xiom build --target aarch64-unknown-linux-gnu\n      - run: qemu-aarch64 ./target/aarch64-linux-gnu/debug/myapp\n```\n\n### ARM Performance Characteristics\n\n- **Weak memory ordering**: ARM has a weaker memory model than x86 — atomics behave differently\n- **More registers**: ARM64 has 31 general-purpose registers vs x86-64's 16\n- **Fixed-length instructions**: ARM64 instructions are always 4 bytes (vs variable x86)\n- **Predication**: ARM can conditionally execute most instructions (reducing branches)",
+  "syntax_ref": "# Build for ARM:\nxiom build --target aarch64-unknown-linux-gnu\nxiom build --target aarch64-apple-darwin\n\n# With specific features:\nxiom build --target aarch64-unknown-linux-gnu --target-cpu cortex-a76 --target-features +neon",
+  "code_template": "// Use #[cfg] to conditionally compile for ARM vs x86\n// Return 64 for ARM (aarch64), 32 for x86_64\n\nfn main() -> Int {\n  return 32;  // Assuming x86_64 for this exercise\n}",
+  "solution": "#[cfg(target_arch = \"aarch64\")]\nfn arch_id() -> Int { return 64; }\n\n#[cfg(target_arch = \"x86_64\")]\nfn arch_id() -> Int { return 32; }\n\nfn main() -> Int {\n  return arch_id();\n}",
+  "tips": [
+    "Test ARM builds with QEMU user-mode emulation — `qemu-aarch64 ./binary`",
+    "Use `--target-cpu` for ARM to optimize for specific chips — significant performance gains",
+    "ARM memory ordering is weaker than x86 — use proper atomics, not plain loads/stores",
+    "Docker's `--platform linux/arm64` runs native ARM containers on Apple Silicon"
+  ],
+  "common_mistakes": [
+    "Forgetting to install cross-compilation toolchain — `xiom build --target arm` fails without it",
+    "Assuming x86 atomics work the same on ARM — ARM needs explicit memory ordering",
+    "Not testing on actual ARM hardware — QEMU doesn't perfectly replicate real ARM behavior"
+  ],
+  "related": [
+    "L6-35",
+    "L6-33",
+    "L6-26"
+  ],
+  "next_lesson": "L6-35"
+}

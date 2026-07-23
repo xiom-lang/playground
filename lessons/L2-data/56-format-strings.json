@@ -1,0 +1,17 @@
+{
+  "id": "L2-53",
+  "title": "Format Strings",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["format", "format1", "format2", "string interpolation", "template"],
+  "narrative": "## Building Strings with Format\n\nFormat functions embed values into string templates. They're cleaner than manual concatenation for complex strings.\n\n### format — Multi-Value Interpolation\n\n```xiom\nlet name = \"Alice\";\nlet age = 30;\nlet score = 95.5;\n\nlet msg = format(\"{} is {} years old, scored {}\", name, age, score);\n// \"Alice is 30 years old, scored 95.5\"\n```\n\nEach `{}` is replaced by the corresponding argument.\n\n### format1 — Single Value\n\n```xiom\nlet result = format1(\"Value: {}\", 42);\n// \"Value: 42\"\n\nlet label = format1(\"User: {}\", \"Alice\");\n// \"User: Alice\"\n```\n\n### format2 — Two Values\n\n```xiom\nlet coords = format2(\"({}, {})\", 10, 20);\n// \"(10, 20)\"\n\nlet range = format2(\"{}..{}\", 0, 100);\n// \"0..100\"\n```\n\n### Format vs Concatenation\n\n```xiom\n// Manual concatenation (messy for complex strings)\nlet msg = name + \" is \" + age + \" years old\";\n\n// Format (cleaner)\nlet msg = format(\"{} is {} years old\", name, age);\n```\n\n### Practical Patterns\n\n```xiom\nfn greet(name: Str) -> Str {\n  return format1(\"Hello, {}!\", name);\n}\n\nfn report_row(label: Str, value: Int) -> Str {\n  return format2(\"{}: {}\", label, value);\n}\n\nfn error_message(code: Int, detail: Str) -> Str {\n  return format(\"Error {}: {}\", code, detail);\n}\n```\n\n### Format with Structs\n\nTypes must implement `Display` to be formatted:\n\n```xiom\npub type Point = { x: Float64; y: Float64; }\n\n// Basic types (Int, Float64, Str, Bool) are formatted automatically\nlet info = format2(\"Size: {}x{}\", 800, 600);  // \"Size: 800x600\"\n```",
+  "code_template": "// TODO: write a function 'user_card' that takes name, age, email and returns a formatted string\n\n// TODO: write a function 'progress_bar' that takes current and total and returns \"[====    ] 40%\"\n\nfn main() -> Int {\n  // TODO: format a greeting and return its length\n  return 0;\n}",
+  "solution": "fn user_card(name: Str, age: Int, email: Str) -> Str {\n  return format(\"{} ({}): {}\", name, age, email);\n}\n\nfn progress_bar(current: Int, total: Int) -> Str {\n  let percent = (current * 100) / total;\n  return format1(\"{}%\", percent);\n}\n\nfn main() -> Int {\n  let greeting = format1(\"Hello, {}!\", \"XIOM\");\n  return greeting.len();\n}",
+  "tips": [
+    "`format()` handles any number of values — one `{}` per argument",
+    "`format1()` and `format2()` are optimized for 1-2 values",
+    "Format is cleaner than `+` concatenation for complex strings",
+    "Values are automatically converted to their string representation"
+  ],
+  "related": ["L2-52", "L2-57", "L2-56", "L0-08"]
+}

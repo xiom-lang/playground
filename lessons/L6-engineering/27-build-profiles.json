@@ -1,0 +1,36 @@
+{
+  "id": "L6-27",
+  "title": "Build Profiles",
+  "level": "L6",
+  "duration": "10 min",
+  "concepts": [
+    "build profiles",
+    "debug",
+    "release",
+    "optimization",
+    "profile config"
+  ],
+  "concept": "Build profiles control optimization levels, debug info, and feature flags — debug for development, release for production, custom for specific needs.",
+  "why": "Different stages need different builds. Debug builds need fast compilation and good diagnostics. Release builds need speed and small size. Profiles control this.",
+  "theory": "## Controlling Compilation\n\n### Built-in Profiles\n\n| Profile | Optimization | Debug Info | Contracts | Use Case |\n|---------|-------------|------------|-----------|----------|\n| `debug` | -O0 | Full | Checked | Development |\n| `release` | -O3 | Stripped | Stripped | Production |\n| `test` | -O0 | Full | Checked | Running tests |\n| `bench` | -O3 | Minimal | Stripped | Benchmarking |\n\n### Using Profiles\n\n```sh\nxiom build                          # Default: debug\nxiom build --release                # Optimized for production\nxiom build --profile test           # For running tests\nxiom build --profile bench          # For benchmarking\n```\n\n### Custom Profiles\n\n```toml\n# xiom.toml\n[profile.dev]\nopt_level = 1          # Light optimization for faster debug builds\ndebug = true\n\n[profile.release]\nopt_level = 3          # Maximum optimization\nlto = true             # Link-time optimization\ncodegen_units = 1      # Single codegen unit for better optimization\nstrip = true           # Strip debug symbols\n\n[profile.custom_name]\nopt_level = 2\ndebug = \"limited\"\ncontracts = \"runtime\"  # Keep contract checks even in optimized build\n```\n\n### Profile-Specific Code\n\n```xiom\n#[cfg(profile = \"debug\")]\nfn expensive_debug_check(data: &Vec[Int]) {\n  // Only runs in debug builds\n}\n\n#[cfg(profile = \"release\")]\nfn expensive_debug_check(data: &Vec[Int]) {\n  // Optimized away in release\n}\n```\n\n### Optimization Levels\n\n| Level | Compile Speed | Runtime Speed | Binary Size |\n|-------|--------------|---------------|-------------|\n| -O0 | Fast | Slow | Large |\n| -O1 | Medium | Faster | Medium |\n| -O2 | Slow | Fast | Medium |\n| -O3 | Slowest | Fastest | Large |\n| -Os | Medium | Fast | Small |\n| -Oz | Slow | Moderately Fast | Smallest |",
+  "syntax_ref": "# Use a profile:\nxiom build --release\nxiom build --profile custom\n\n# In xiom.toml:\n[profile.custom]\nopt_level = 2\ndebug = true",
+  "code_template": "fn main() -> Int {\n  // Build this with:  xiom build --release\n  // Then:             xiom build\n  // Compare binary sizes and execution speed\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Use `debug` profile during development — fastest compile times, best error messages",
+    "Use `release` profile for production — smaller binary, faster execution",
+    "Custom profiles let you balance: fast compilation with some optimization for integration tests",
+    "LTO (Link-Time Optimization) can significantly improve performance but slows compilation"
+  ],
+  "common_mistakes": [
+    "Profiling and benchmarking debug builds — always benchmark with release or bench profile",
+    "Using release profile in development — slow compile times kill productivity",
+    "Not defining custom profiles for special needs — reinventing flags every time"
+  ],
+  "related": [
+    "L6-28",
+    "L6-25",
+    "L6-26"
+  ],
+  "next_lesson": "L6-28"
+}

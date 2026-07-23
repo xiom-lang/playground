@@ -1,0 +1,36 @@
+{
+  "id": "L8-05",
+  "title": "JSON Processing",
+  "level": "L8",
+  "duration": "12 min",
+  "concepts": [
+    "JSON",
+    "serialize",
+    "deserialize",
+    "data exchange",
+    "API"
+  ],
+  "concept": "JSON parsing and generation with xiom.json — serialize XIOM types to JSON and deserialize JSON into strongly-typed XIOM structs.",
+  "why": "JSON is the universal data interchange format. Every nontrivial program eventually needs to read or write JSON — from config files to REST APIs.",
+  "theory": "## Working with JSON\n\n### Parsing JSON\n\n```xiom\nuse xiom.json;\n\nfn main() -> Int {\n  let raw = \"{\\\"name\\\": \\\"Kilo\\\", \\\"version\\\": 2, \\\"active\\\": true}\";\n  let value = json::parse(raw)?;\n\n  // Access fields\n  let name = value[\"name\"].as_str().unwrap();\n  let version = value[\"version\"].as_int().unwrap();\n  let active = value[\"active\"].as_bool().unwrap();\n\n  io.println(\"Name: \" + name);\n  return 0;\n}\n```\n\n### Creating JSON\n\n```xiom\nuse xiom.json;\n\nfn main() -> Int {\n  let obj = json::Object::new();\n  obj.insert(\"name\", json::Value::Str(\"Kilo\"));\n  obj.insert(\"version\", json::Value::Int(2));\n  obj.insert(\"features\", json::Value::Array([\n    json::Value::Str(\"fast\"),\n    json::Value::Str(\"safe\"),\n  ]));\n\n  let output = json::to_string(&obj);\n  io.println(output);\n  return 0;\n}\n```\n\n### Type-Safe Serialization\n\n```xiom\n#[derive(Serialize, Deserialize)]\npub type Config = {\n  host: Str;\n  port: Int;\n  features: Vec[Str];\n}\n\nfn main() -> Int {\n  // Deserialize JSON → Config\n  let raw = fs::read_to_str(\"config.json\")?;\n  let config: Config = json::from_str(&raw)?;\n\n  io.println(\"Server: \" + config.host + \":\" + config.port.to_str());\n\n  // Serialize Config → JSON\n  config.host = \"0.0.0.0\";\n  let output = json::to_string_pretty(&config);\n  fs::write(\"config.json\", &output)?;\n  return 0;\n}\n```\n\n### JSON Value Types\n\n```xiom\nmatch value {\n  json::Value::Null => \"null\",\n  json::Value::Bool(b) => b.to_str(),\n  json::Value::Int(n) => n.to_str(),\n  json::Value::Float(f) => f.to_str(),\n  json::Value::Str(s) => s,\n  json::Value::Array(arr) => \"[\" + arr.len().to_str() + \" items]\",\n  json::Value::Object(obj) => \"{\" + obj.len().to_str() + \" keys}\",\n}\n```\n\n### API Client Example\n\n```xiom\nfn fetch_user(id: Int) -> Result[User, Error] {\n  let url = \"https://api.example.com/users/\" + id.to_str();\n  let response = http::get(url)?;\n  let user: User = json::from_str(&response.body)?;\n  return Ok(user);\n}\n```",
+  "syntax_ref": "use xiom.json;\n\n// Parse:\nlet value = json::parse(source)?;\nlet name = value[\"key\"].as_str()?;\n\n// Serialize:\nlet output = json::to_string(&value);\nlet pretty = json::to_string_pretty(&value);\n\n// Type-safe:\n#[derive(Serialize, Deserialize)]\npub type MyType = { ... };\nlet obj: MyType = json::from_str(&raw)?;",
+  "code_template": "// TODO: Define a struct 'Person' with name: Str, age: Int, email: Str\n// Create a Person, convert to JSON string manually\n// Parse a JSON string back into fields\n\nfn main() -> Int {\n  // TODO: Parse {\"name\":\"Alice\",\"age\":30,\"email\":\"alice@example.com\"} and return age\n  return 0;\n}",
+  "solution": "pub type Person = { name: Str; age: Int; email: Str; }\n\nfn parse_person(json_str: Str) -> Person {\n  // Simple manual parsing for exercise\n  let name_start = json_str.find(\"\\\"name\\\"\") + 8;\n  let name_end = json_str[name_start..].find(\"\\\"\") + name_start;\n  let name = json_str[name_start..name_end];\n\n  let age_start = json_str.find(\"\\\"age\\\"\") + 6;\n  let age_end = json_str[age_start..].find(\",\") + age_start;\n  let age = json_str[age_start..age_end].parse_int().unwrap();\n\n  return Person{ name: name, age: age, email: \"\" };\n}\n\nfn main() -> Int {\n  let p = parse_person(\"{\\\"name\\\":\\\"Alice\\\",\\\"age\\\":30,\\\"email\\\":\\\"alice@example.com\\\"}\");\n  return p.age;\n}",
+  "tips": [
+    "Use #[derive(Serialize, Deserialize)] for automatic JSON mapping — it's fast and type-safe",
+    "json::from_str returns Result — always handle parse errors",
+    "Pretty-print during development (`to_string_pretty`), compact for production",
+    "JSON numbers are lossy for Float64 — use string representation for exact values"
+  ],
+  "common_mistakes": [
+    "Assuming JSON keys exist — use .get() or handle Option",
+    "Forgetting that JSON numbers are always parsed as Float64 if not annotated",
+    "Not validating JSON structure before deserializing — malformed input should produce errors, not panics"
+  ],
+  "related": [
+    "L8-06",
+    "L8-09",
+    "L6-05"
+  ],
+  "next_lesson": "L8-06"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "L5-22",
+  "title": "Custom Iterator",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "custom iterator",
+    "Iterator implementation",
+    "state machine",
+    "lazy generation"
+  ],
+  "concept": "Build your own iterator from scratch by implementing the Iterator interface — creating custom data streams and lazy generators.",
+  "why": "Not all data comes from collections. Custom iterators can generate sequences, read files, or produce infinite streams — all through the same interface.",
+  "theory": "## Building a Custom Iterator\n\n### Fibonacci Iterator\n```xiom\npub type FibIter = {\n  current: Int;\n  next: Int;\n  count: Int;\n  max_count: Int;\n}\n\nimpl Iterator for FibIter {\n  type Item = Int;\n\n  fn next(self: &mut FibIter) -> Option[Int] {\n    if self.count >= self.max_count { return None(); }\n    let value = self.current;\n    let new_next = self.current + self.next;\n    self.current = self.next;\n    self.next = new_next;\n    self.count = self.count + 1;\n    return Some(value);\n  }\n}\n```\n\n### Prime Number Iterator\n```xiom\npub type PrimeIter = {\n  current: Int;\n}\n\nimpl Iterator for PrimeIter {\n  type Item = Int;\n\n  fn next(self: &mut PrimeIter) -> Option[Int] {\n    var n = self.current + 1;\n    while !is_prime(n) { n = n + 1; }\n    self.current = n;\n    return Some(n);\n  }\n}\n```\n\n### Infinite Iterator\n```xiom\npub type Counter = { value: Int; }\n\nimpl Iterator for Counter {\n  type Item = Int;\n\n  fn next(self: &mut Counter) -> Option[Int] {\n    let v = self.value;\n    self.value = self.value + 1;\n    return Some(v);  // Never returns None — infinite!\n  }\n}\n```\n\n### File Line Iterator\n```xiom\npub type LineIter = { file: File; }\n\nimpl Iterator for LineIter {\n  type Item = Str;\n\n  fn next(self: &mut LineIter) -> Option[Str] {\n    return self.file.read_line();  // Returns None at EOF\n  }\n}\n```",
+  "syntax_ref": "pub type MyIter = { state: Type; }\n\nimpl Iterator for MyIter {\n  type Item = YieldType;\n\n  fn next(self: &mut MyIter) -> Option<Self::Item> {\n    if done { return None(); }\n    // Update state, return Some(next_value)\n  }\n}",
+  "code_template": "// TODO: Build a 'CollatzIter' iterator\n// Given starting number n, apply Collatz:\n// If n is even: n / 2; if n is odd: 3n + 1; stop at 1\n// Each call to next() returns the next number in the sequence\n\nfn main() -> Int {\n  // TODO: Start with 6, collect sequence, return count of steps to reach 1\n  return 0;\n}",
+  "solution": "pub type CollatzIter = {\n  current: Int;\n  done: Bool;\n}\n\nimpl Iterator for CollatzIter {\n  type Item = Int;\n\n  fn next(self: &mut CollatzIter) -> Option[Int] {\n    if self.done { return None(); }\n    let value = self.current;\n    if self.current == 1 {\n      self.done = true;\n    } else if self.current % 2 == 0 {\n      self.current = self.current / 2;\n    } else {\n      self.current = 3 * self.current + 1;\n    }\n    return Some(value);\n  }\n}\n\nfn main() -> Int {\n  let mut iter = CollatzIter{ current: 6, done: false };\n  var steps = 0;\n  while let Some(n) = iter.next() {\n    steps = steps + 1;\n  }\n  return steps;\n}",
+  "tips": [
+    "Custom iterators are STATE MACHINES — each next() call advances the state",
+    "Return None when the sequence is exhausted — don't panic or loop forever",
+    "Iterators are lazy — values are computed on demand, not stored in memory",
+    "Implement size_hint when possible — it helps consumers pre-allocate"
+  ],
+  "common_mistakes": [
+    "Infinite iterators without a way to stop — always provide take(n) or a max limit",
+    "Mutable state bugs — next() should be deterministic and idempotent between calls",
+    "Expensive next() — it should be fast since it's called in tight loops"
+  ],
+  "related": [
+    "L5-20",
+    "L5-21",
+    "L5-23",
+    "L5-24"
+  ],
+  "next_lesson": "L5-23"
+}

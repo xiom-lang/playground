@@ -1,0 +1,17 @@
+{
+  "id": "L3-08",
+  "title": "Clone",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["clone", "deep copy", "duplicate", "allocation", ".clone()"],
+  "narrative": "## Explicit Deep Copy with Clone\n\n`.clone()` creates a deep, independent copy of a value. After cloning, both the original and the clone are valid and can be used independently.\n\n### Clone vs Move\n\n```xiom\n// MOVE: original invalidated\nlet a = Vec[Int]();\na.push(1);\nlet b = a;  // a moved to b\n// a is dead\n\n// CLONE: both valid\nlet x = Vec[Int]();\nx.push(1);\nlet y = x.clone();  // deep copy — x still valid\nx.push(2);          // modifies x only\ny.push(3);          // modifies y only\n```\n\n### Clone is Explicit\n\nUnlike Copy types (Int, Bool), Clone requires an explicit method call:\n\n```xiom\nlet a = 42;\nlet b = a;       // implicit copy (Int is Copy)\n\nlet s1 = Vec[Int]();\ns1.push(1);\nlet s2 = s1.clone();  // explicit clone required\n```\n\n### Clone Requirements\n\nTypes must implement `Clone` (via `derive[Clone]` or manual implementation):\n\n```xiom\npub type Config = {\n  host: Str;\n  port: Int;\n} derive[Clone]\n\nlet default = Config{ host: \"localhost\", port: 8080 };\nlet custom = default.clone();\n```\n\n### When to Clone\n\n- When you need an independent copy that won't be affected by changes to the original\n- Before modifying shared configuration data\n- When avoiding borrow checker complexity (not recommended for perf-critical code)\n\n### Clone Cost\n\nClone is O(n) — it copies all data:\n\n```xiom\nlet big = Vec[Int]();\n// push 1,000,000 elements...\nlet copy = big.clone();  // allocates and copies 1,000,000 integers\n```\n\nPrefer borrowing (`&T`) over cloning when you only need read access.",
+  "code_template": "// TODO: create a Vec[Int] with 5 elements, clone it, modify both independently\n\n// TODO: return sum of original + sum of clone\n\nfn main() -> Int {\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let original = Vec[Int]();\n  original.push(1);\n  original.push(2);\n  original.push(3);\n  original.push(4);\n  original.push(5);\n\n  var clone = original.clone();\n  clone.push(6);\n\n  var sum_orig = 0;\n  var i = 0;\n  while i < original.len() {\n    sum_orig = sum_orig + original[i];\n    i = i + 1;\n  }\n\n  var sum_clone = 0;\n  i = 0;\n  while i < clone.len() {\n    sum_clone = sum_clone + clone[i];\n    i = i + 1;\n  }\n\n  return sum_orig + sum_clone;\n}",
+  "tips": [
+    ".clone() creates a deep, independent copy — both original and clone remain valid",
+    "Clone is explicit — you must call .clone(), unlike Copy which is implicit",
+    "Add `derive[Clone]` to custom types to enable cloning",
+    "Prefer borrowing (&) over cloning for read-only access — it's free"
+  ],
+  "related": ["L3-05", "L3-06", "L2-09", "L3-09"]
+}

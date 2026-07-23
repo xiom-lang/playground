@@ -1,0 +1,17 @@
+{
+  "id": "L2-08",
+  "title": "Struct Derive: Eq",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["derive", "Eq", "comparison", "==", "!="],
+  "narrative": "## Comparing Structs with Eq\n\nBy default, you cannot use `==` to compare two structs. Use `derive[Eq]` to tell the compiler to generate comparison logic automatically.\n\n### Without Eq (Error)\n\n```xiom\npub type Point = { x: Int; y: Int; }\n\nlet a = Point{ x: 1, y: 2 };\nlet b = Point{ x: 1, y: 2 };\n// a == b;  // ERROR: Point does not implement Eq\n```\n\n### With Eq\n\n```xiom\npub type Point = { x: Int; y: Int; } derive[Eq]\n\nlet a = Point{ x: 1, y: 2 };\nlet b = Point{ x: 1, y: 2 };\nlet same = a == b;   // true\nlet diff = a != b;   // false\n```\n\n### How Eq Works\n\n`derive[Eq]` compares structs **field by field**. Two structs are equal if all their fields are equal:\n\n```xiom\npub type Person = { name: Str; age: Int; } derive[Eq]\n\nlet alice = Person{ name: \"Alice\", age: 30 };\nlet bob = Person{ name: \"Bob\", age: 30 };\nlet also_alice = Person{ name: \"Alice\", age: 30 };\n\nalice == bob;          // false — name differs\nalice == also_alice;   // true — both fields match\n```\n\n### Eq in Control Flow\n\n```xiom\nfn greet(user: &Person) -> Str {\n  let admin = Person{ name: \"Root\", age: 0 };\n  if user == &admin {\n    return \"Welcome, Administrator!\";\n  }\n  return \"Welcome, \" + user.name;\n}\n```\n\n### Nested Structs with Eq\n\nAll field types must also implement Eq:\n\n```xiom\npub type Address = { city: Str; } derive[Eq]\npub type Person = { name: Str; addr: Address; } derive[Eq]\n```",
+  "code_template": "// TODO: define a Color struct with r, g, b (Int) and derive Eq\n\n// TODO: write a function 'is_grayscale' that returns true if r == g and g == b\n\nfn main() -> Int {\n  // TODO: create a white color (255, 255, 255) and black (0, 0, 0)\n  // TODO: check if white and black are the same color — return 1 if they are, 0 if not\n  return 0;\n}",
+  "solution": "pub type Color = { r: Int; g: Int; b: Int; } derive[Eq]\n\nfn is_grayscale(c: &Color) -> Bool {\n  return c.r == c.g && c.g == c.b;\n}\n\nfn main() -> Int {\n  let white = Color{ r: 255, g: 255, b: 255 };\n  let black = Color{ r: 0, g: 0, b: 0 };\n  if white == black {\n    return 1;\n  }\n  return 0;\n}",
+  "tips": [
+    "Add `derive[Eq]` to any struct you want to compare or use as a map key",
+    "Eq compares all fields — use it only when field-by-field equality makes sense",
+    "All field types in the struct must also implement Eq for derive to work",
+    "Use `!=` for inequality — it's the logical negation of `==`"
+  ],
+  "related": ["L2-01", "L2-09", "L2-10", "L1-15"]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "L7-11",
+  "title": "Error Recovery",
+  "level": "L7",
+  "duration": "15 min",
+  "concepts": [
+    "error recovery",
+    "parse resilience",
+    "multiple errors",
+    "IDE support",
+    "diagnostics"
+  ],
+  "concept": "Error recovery allows the compiler to continue after encountering errors — reporting multiple issues in one compilation instead of stopping at the first error.",
+  "why": "Stopping at the first error wastes time. Error recovery reports all issues at once, enabling faster fix cycles and better IDE integration.",
+  "theory": "## Reporting Multiple Errors\n\n### Without Recovery\n\n```\n$ xiom build\nError: unexpected token ';' at line 5\nCompilation aborted.\n// You fix line 5, recompile...\nError: type mismatch at line 12\nCompilation aborted.\n// You fix line 12, recompile...\n// 5 compile cycles for 5 errors!\n```\n\n### With Recovery\n\n```\n$ xiom build\nError: unexpected token ';' at line 5\nError: type mismatch at line 12\nWarning: unused variable 'temp' at line 20\nError: contract violation possible at line 35\n\n4 issues found. Compilation aborted.\n// Fix all 4 at once!\n```\n\n### Recovery Strategies\n\n1. **Skip to synchronization point**: On parse error, skip tokens until semicolon or `}`\n2. **Insert missing tokens**: Infer missing `;`, `}`, `)` from context\n3. **Substitute error nodes**: Replace broken AST subtree with Error node\n4. **Stub generation**: For type errors, generate a stub type to continue checking\n\n### Recovery Example\n\n```xiom\n// Broken code:\nfn main() -> Int {\n  let x =     // Missing semicolon and expression\n  let y = 42;\n  let z = x + \"hello\";  // Type error (depends on x)\n}\n\n// With recovery, all 3 errors are reported:\n// Line 2: Expected expression after '=', found 'let'\n// Line 3: Variable 'x' has type '?' (recovery stub)\n// Line 4: Cannot add '?' + 'Str' (cascaded from recovery)\n```\n\n### IDE Integration\n\nError recovery is essential for IDEs:\n\n```xiom\n// As you type, the code is often invalid:\nfn process(data: &Vec[Int]) -> Int {\n  let sum =\n  //                   ↑ cursor here — incomplete statement!\n```\n\nWithout recovery, the IDE shows errors cascading from this point. With recovery, the IDE shows the SINGLE error: \"Expected expression\" and can still provide completions.\n\n### Recovery Quality Metrics\n\n- **Error count**: How many real errors are found in one pass\n- **False positive rate**: How many ghost errors from cascading failures\n- **Completion quality**: How good are IDE completions in broken code",
+  "syntax_ref": "// The compiler continues after errors:\nxiom build                  # Shows all errors\nxiom check --max-errors 10  # Limit to 10 errors\n\n// Recovery points (where parser resyncs):\n// After: ;  }  )  ]  (on newlines in some contexts)",
+  "code_template": "// This code has multiple errors — can the parser recover?\nfn main() -> Int {\n  let x =      // Error 1: missing expression\n  let y: Str = 42;  // Error 2: type mismatch\n  return z;    // Error 3: undefined variable\n}\n\n// Fix all errors to compile",
+  "solution": "fn main() -> Int {\n  let x = 42;\n  let y: Str = \"hello\";\n  return x;\n}",
+  "tips": [
+    "Error recovery enables 'fix all at once' workflows — read all errors before fixing any",
+    "The first error is usually real — subsequent errors may be cascaded from recovery stubs",
+    "IDEs depend on error recovery — without it, completions would break on every keystroke",
+    "Good error recovery is the difference between a helpful compiler and a frustrating one"
+  ],
+  "common_mistakes": [
+    "Fixing errors one at a time — read all errors first, plan fixes, then fix at once",
+    "Assuming all reported errors are real — some are cascaded from recovery stubs (false positives)",
+    "Not configuring max-errors properly — 5 is enough for a first pass, increase if debugging"
+  ],
+  "related": [
+    "L7-05",
+    "L7-04",
+    "L6-20"
+  ],
+  "next_lesson": "L7-12"
+}

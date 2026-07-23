@@ -1,0 +1,38 @@
+{
+  "id": "L5-28",
+  "title": "Ord Interface",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "Ord",
+    "ordering",
+    "<",
+    ">",
+    "<=, >=",
+    "comparison",
+    "sorting"
+  ],
+  "concept": "The Ord interface defines total ordering — `<`, `>`, `<=`, `>=` — enabling sorting, binary search, and priority-based data structures.",
+  "why": "Without Ord, you can't sort collections or use ordered data structures like BTreeMap. Ord is the gateway to algorithms that depend on ordering.",
+  "theory": "## Defining Total Ordering\n\n```xiom\npub interface Ord: Eq {\n  fn cmp(self: &Self, other: &Self) -> Ordering;\n  // Ordering is: Less, Equal, or Greater\n}\n```\n\n### Implementing Ord\n\n```xiom\npub type Person = { name: Str; age: Int; }\n\nimpl PartialEq for Person {\n  fn eq(self: &Person, other: &Person) -> Bool {\n    return self.age == other.age && self.name == other.name;\n  }\n}\nimpl Eq for Person {}\n\nimpl Ord for Person {\n  fn cmp(self: &Person, other: &Person) -> Ordering {\n    // Compare by age first, then name\n    match self.age.cmp(&other.age) {\n      Ordering::Equal => self.name.cmp(&other.name),\n      other => other,\n    }\n  }\n}\n\nfn main() -> Int {\n  let a = Person{ name: \"Alice\", age: 30 };\n  let b = Person{ name: \"Bob\", age: 25 };\n  if a > b { return 1; }  // true: Alice is older\n  return 0;\n}\n```\n\n### Derived Comparisons\n\nWhen you implement Ord, you get `<`, `>`, `<=`, `>=` for free from `cmp`:\n\n```xiom\n// These all work once Ord is implemented:\nlet younger = b < a;    // calls a.cmp(&b)\nlet oldest = max(a, b);  // Uses Ord\n```\n\n### Sorting with Ord\n\n```xiom\nfn sort_people(people: &mut Vec[Person]) {\n  people.sort();  // Requires Person: Ord\n}\n```\n\n### Reverse Order\n\n```xiom\nfn reverse_cmp[T: Ord](a: &T, b: &T) -> Ordering {\n  return b.cmp(a);  // Flip the order\n}\n```",
+  "syntax_ref": "impl Ord for MyType {\n  fn cmp(self: &Self, other: &Self) -> Ordering {\n    // Return Ordering::Less, Ordering::Equal, or Ordering::Greater\n  }\n}",
+  "code_template": "// TODO: Define a struct 'Score' with player: Str and points: Int\n// Implement Ord: compare by points (higher is greater)\n// Sort a vec of 3 scores and return the highest points\n\nfn main() -> Int {\n  // TODO: Scores: (\"A\", 100), (\"B\", 250), (\"C\", 150), return highest\n  return 0;\n}",
+  "solution": "pub type Score = { player: Str; points: Int; }\n\nimpl PartialEq for Score {\n  fn eq(self: &Score, other: &Score) -> Bool {\n    return self.points == other.points;\n  }\n}\nimpl Eq for Score {}\n\nimpl Ord for Score {\n  fn cmp(self: &Score, other: &Score) -> Ordering {\n    return self.points.cmp(&other.points);\n  }\n}\n\nfn main() -> Int {\n  let mut v = Vec[Score]();\n  v.push(Score{ player: \"A\", points: 100 });\n  v.push(Score{ player: \"B\", points: 250 });\n  v.push(Score{ player: \"C\", points: 150 });\n  v.sort();\n  return v[v.len() - 1].points;\n}",
+  "tips": [
+    "Implement Ord to enable .sort(), .binary_search(), and ordered collections",
+    "Use the @pre-existing cmp on primitive fields — self.age.cmp(&other.age)",
+    "For multi-field comparison, chain with match: try first field, fall through to second",
+    "Consistency rule: a.cmp(&b) == Ordering::Equal must imply a == b (Eq consistency)"
+  ],
+  "common_mistakes": [
+    "Implementing Ord with inconsistent PartialEq — a == b but a.cmp(&b) != Equal",
+    "Using > or < in the Ord implementation — that would be recursive (use cmp on fields)",
+    "Forgetting that Ord requires Eq — implement both"
+  ],
+  "related": [
+    "L5-27",
+    "L5-26",
+    "L2-01"
+  ],
+  "next_lesson": "L5-29"
+}

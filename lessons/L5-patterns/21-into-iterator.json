@@ -1,0 +1,36 @@
+{
+  "id": "L5-21",
+  "title": "IntoIterator",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "IntoIterator",
+    "for loop",
+    "into_iter",
+    "consuming iteration"
+  ],
+  "concept": "IntoIterator converts a type INTO an iterator — enabling for..in loops on any type implementing this interface.",
+  "why": "for..in is the most natural way to iterate. IntoIterator makes ANY collection support it — not just built-in types.",
+  "theory": "## From Type to Iterator\n\n```xiom\npub interface IntoIterator {\n  type Item;\n  type IntoIter: Iterator[Item = Self::Item];\n  fn into_iter(self: Self) -> Self::IntoIter;\n}\n```\n\n### How for..in Works\n```xiom\nfor item in collection {\n  // use item\n}\n\n// Desugars to:\nlet mut iter = collection.into_iter();\nwhile let Some(item) = iter.next() {\n  // use item\n}\n```\n\n### Implementing IntoIterator\n```xiom\npub type MyList[T] = Vec[T];\n\nimpl IntoIterator for MyList[T] {\n  type Item = T;\n  type IntoIter = VecIter[T];\n\n  fn into_iter(self: MyList[T]) -> VecIter[T] {\n    return MyList[T].iter();\n  }\n}\n\n// Now you can write:\nlet list = MyList[Int]();\nlist.push(1); list.push(2); list.push(3);\nfor item in list {\n  io.println(item.to_str());  // 1, 2, 3\n}\n```\n\n### IntoIterator vs Iterator\n```\nIntoIterator: \"I can BECOME an iterator\"\nIterator:     \"I AM an iterator\"\n\nfor..in uses IntoIterator\n.chain(), .map() use Iterator\n```\n\n### Three Forms of Iteration\n```xiom\nfor item in &collection { }   // Borrow each element (IntoIterator for &Type)\nfor item in &mut collection { } // Mutable borrow\nfor item in collection { }      // Consume the collection (IntoIterator for Type)\n```",
+  "syntax_ref": "impl IntoIterator for MyType {\n  type Item = ElementType;\n  type IntoIter = IteratorType;\n  fn into_iter(self: MyType) -> IteratorType { /* ... */ }\n}\n\n// Now MyType works with for..in",
+  "code_template": "// TODO: Implement IntoIterator for a 'Sentence' type\n// Sentence: words: Vec[Str]\n// into_iter yields each word\n\nfn main() -> Int {\n  // TODO: Create a sentence \"Hello World from XIOM\", for loop return word count\n  return 0;\n}",
+  "solution": "pub type Sentence = { words: Vec[Str]; }\n\nimpl IntoIterator for Sentence {\n  type Item = Str;\n  type IntoIter = VecIter[Str];\n\n  fn into_iter(self: Sentence) -> VecIter[Str] {\n    return self.words.into_iter();\n  }\n}\n\nfn main() -> Int {\n  let mut s = Sentence{ words: Vec[Str]() };\n  s.words.push(\"Hello\");\n  s.words.push(\"World\");\n  s.words.push(\"from\");\n  s.words.push(\"XIOM\");\n  var count = 0;\n  for word in s {\n    count = count + 1;\n  }\n  return count;\n}",
+  "tips": [
+    "Implement IntoIterator to make your custom collections work with for..in",
+    "Use into_iter() for consuming iteration, iter() for borrowing, iter_mut() for mutable",
+    "Each collection typically has 3 IntoIterator implementations: for &Type, &mut Type, and Type",
+    "for..in is the most idiomatic way to iterate in XIOM"
+  ],
+  "common_mistakes": [
+    "Confusing IntoIterator (convert to iterator) with Iterator (be an iterator)",
+    "Forgetting that for..in CONSUMES the collection unless you borrow",
+    "Implementing IntoIterator but forgetting the associated types"
+  ],
+  "related": [
+    "L5-20",
+    "L5-22",
+    "L1-23",
+    "L1-22"
+  ],
+  "next_lesson": "L5-22"
+}

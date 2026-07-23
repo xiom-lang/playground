@@ -1,0 +1,17 @@
+{
+  "id": "L2-13",
+  "title": "Match on Enum",
+  "level": "L2",
+  "duration": "12 min",
+  "concepts": ["match", "pattern matching", "exhaustive", "destructuring", "branch"],
+  "narrative": "## Pattern Matching on Enums\n\nThe `match` expression is how you destructure and respond to each variant of an enum. It's **exhaustive** — the compiler checks that every variant is handled.\n\n### Basic Match\n\n```xiom\npub type Light = enum { Red, Yellow, Green; }\n\nfn action(light: &Light) -> Str {\n  match light {\n    Red => { return \"Stop\"; }\n    Yellow => { return \"Slow\"; }\n    Green => { return \"Go\"; }\n  }\n}\n```\n\n### Match with Data Extraction\n\n```xiom\npub type Result[T, E] = enum {\n  Ok(value: T),\n  Err(error: E),\n}\n\nfn unwrap_or_default[T](r: &Result[T, Int]) -> T {\n  match r {\n    Ok(value) => { return value; }\n    Err(_) => { /* handle error */ }\n  }\n}\n```\n\n### Match as Expression\n\nMatch returns a value — you can assign its result:\n\n```xiom\nlet description = match light {\n  Red => \"Stop\",\n  Yellow => \"Slow\",\n  Green => \"Go\",\n};\n```\n\n### Exhaustiveness Check\n\nThis **won't compile** — missing a variant:\n\n```xiom\nmatch light {\n  Red => { return \"Stop\"; }\n  Green => { return \"Go\"; }\n  // ERROR: missing variant Yellow\n}\n```\n\n### Match with Multiple Arms\n\nYou can merge multiple variants with `|`:\n\n```xiom\nmatch light {\n  Red | Yellow => { return \"Don't Go\"; }\n  Green => { return \"Go\"; }\n}\n```\n\n### Nested Match Arms\n\n```xiom\npub type Shape = enum {\n  Circle(radius: Float64),\n  Rect(w: Float64, h: Float64),\n}\n\nfn is_large(s: &Shape) -> Bool {\n  match s {\n    Circle(radius) => { return radius > 10.0; }\n    Rect(w, h) => { return w > 10.0 || h > 10.0; }\n  }\n}\n```",
+  "code_template": "// TODO: define a Weather enum: Sunny(temp), Rainy(mm), Cloudy\n\n// TODO: write a function 'activity' that suggests: Sunny -> \"Beach\", Rainy -> \"Movie\", Cloudy -> \"Park\"\n\n// TODO: write a function 'temperature' that returns temp for Sunny, 0 for others\n\nfn main() -> Int {\n  // TODO: create three weather conditions and return the sum of their temperatures\n  return 0;\n}",
+  "solution": "pub type Weather = enum {\n  Sunny(temp: Int),\n  Rainy(mm: Float64),\n  Cloudy,\n}\n\nfn activity(w: &Weather) -> Str {\n  match w {\n    Sunny(_) => { return \"Beach\"; }\n    Rainy(_) => { return \"Movie\"; }\n    Cloudy => { return \"Park\"; }\n  }\n}\n\nfn temperature(w: &Weather) -> Int {\n  match w {\n    Sunny(temp) => { return temp; }\n    Rainy(_) => { return 15; }\n    Cloudy => { return 20; }\n  }\n}\n\nfn main() -> Int {\n  let w1 = Weather.Sunny(30);\n  let w2 = Weather.Rainy(5.2);\n  let w3 = Weather.Cloudy;\n  return temperature(&w1) + temperature(&w2) + temperature(&w3);\n}",
+  "tips": [
+    "Match is exhaustive — the compiler ensures every variant is handled",
+    "Use `_` wildcard to ignore values you don't need",
+    "Match can be used as an expression that returns a value",
+    "Use `|` to combine multiple variants that share the same handler"
+  ],
+  "related": ["L2-15", "L2-17", "L2-18", "L1-28"]
+}

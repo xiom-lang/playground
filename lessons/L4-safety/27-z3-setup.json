@@ -1,0 +1,36 @@
+{
+  "id": "L4-27",
+  "title": "Z3 Setup",
+  "level": "L4",
+  "duration": "8 min",
+  "concepts": [
+    "Z3",
+    "installation",
+    "PATH",
+    "z3 binary",
+    "setup"
+  ],
+  "concept": "Setting up Z3 for XIOM contract verification — finding and configuring the z3 binary so xiom verify works.",
+  "why": "Without Z3 installed and on PATH, xiom verify can't run. The setup is simple but must be done correctly.",
+  "theory": "## Installing Z3\n\n### Option 1: Package Manager\n```sh\n# macOS\nbrew install z3\n\n# Ubuntu/Debian\nsudo apt install z3\n\n# Windows (choco)\nchoco install z3\n\n# Windows (winget)\nwinget install Z3\n```\n\n### Option 2: Download Binary\n1. Visit https://github.com/Z3Prover/z3/releases\n2. Download the appropriate binary for your OS\n3. Extract and add to PATH\n\n### Verify Installation\n```sh\n$ z3 --version\nZ3 version 4.12.2 - 64 bit\n```\n\n### Configure XIOM\n```sh\n# Tell XIOM where Z3 is (if not on PATH)\nxiom config set z3.path /usr/local/bin/z3\n\n# Or set environment variable\nexport XIOM_Z3_PATH=/usr/local/bin/z3\n```\n\n### Test the Setup\n```sh\nxiom verify --check-setup\n```\nOutput:\n```\n✓ Z3 binary found: /usr/local/bin/z3\n✓ Z3 version: 4.12.2\n✓ Z3 is working correctly\n```\n\n### Common Setup Issues\n- **Z3 not found**: Add to PATH or set `xiom config set z3.path`\n- **Wrong version**: XIOM requires Z3 >= 4.8.0\n- **Permission denied**: Ensure z3 binary is executable (`chmod +x z3`)",
+  "syntax_ref": "# Install Z3:\nbrew install z3          # macOS\nsudo apt install z3      # Linux\nchoco install z3         # Windows\n\n# Verify:\nz3 --version\nxiom verify --check-setup",
+  "code_template": "// TODO: Write a simple contract-verified function\n// fn add_one(x: Int) -> Int\n//   ensures: result == x + 1;\n// Run `xiom verify` to test your Z3 setup (if installed)\n\nfn main() -> Int {\n  return add_one(41);\n}",
+  "solution": "fn add_one(x: Int) -> Int\n  ensures: result == x + 1;\n{\n  return x + 1;\n}\n\nfn main() -> Int {\n  return add_one(41);\n}",
+  "tips": [
+    "Run xiom verify --check-setup first to confirm Z3 is properly configured",
+    "Keep Z3 updated — newer versions are faster and support more theories",
+    "Add Z3 verification to your editor's save hook for instant contract checking",
+    "If Z3 isn't available, xiom verify fails with a clear error — contracts still work at runtime"
+  ],
+  "common_mistakes": [
+    "Installing Z3 but not adding it to PATH — xiom can't find it",
+    "Using a Z3 version < 4.8.0 — some contract features require newer versions",
+    "Forgetting to install Z3 on CI — verification silently skipped"
+  ],
+  "related": [
+    "L4-26",
+    "L4-28",
+    "L4-29"
+  ],
+  "next_lesson": "L4-28"
+}

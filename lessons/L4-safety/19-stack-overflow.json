@@ -1,0 +1,37 @@
+{
+  "id": "L4-19",
+  "title": "Stack Overflow",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "stack overflow",
+    "recursion",
+    "depth limit",
+    "tail recursion",
+    "guard"
+  ],
+  "concept": "Prevent stack overflow in recursive functions with depth-limit contracts and tail recursion — protecting against infinite recursion crashes.",
+  "why": "Stack overflow crashes are hard to debug because the call stack is enormous and the actual bug (missing base case) is buried at the top.",
+  "theory": "## The Infinite Descent\n\n```xiom\nfn factorial(n: Int) -> Int {\n  return n * factorial(n - 1);  // No base case! Stack overflow!\n}\n```\n\n### Mandatory Base Case\n```xiom\nfn factorial(n: Int) -> Int\n  requires: n >= 0;\n  ensures: result > 0;\n{\n  if n <= 1 { return 1; }           // Base case!\n  return n * factorial(n - 1);\n}\n```\n\n### Tail Recursion (Stack-Safe)\n```xiom\nfn factorial_tail(n: Int, acc: Int) -> Int\n  requires: n >= 0;\n{\n  if n <= 1 { return acc; }\n  return factorial_tail(n - 1, acc * n);  // Tail call: reuses stack frame\n}\n\nfn factorial(n: Int) -> Int {\n  return factorial_tail(n, 1);\n}\n```\n\nThe compiler can optimize tail-recursive calls to loops — no stack growth.\n\n### Iterative Alternative\n```xiom\nfn factorial_iter(n: Int) -> Int\n  requires: n >= 0;\n{\n  var result = 1;\n  for i in 1..=n { result = result * i; }\n  return result;\n}\n```",
+  "syntax_ref": "// Tail-recursive (stack-safe):\nfn func(params, accumulator) -> ReturnType {\n  if base_case { return accumulator; }\n  return func(new_params, new_acc);  // Tail call\n}",
+  "code_template": "// TODO: Write a tail-recursive 'fibonacci' function\n// fn fib_tail(n: Int, a: Int, b: Int) -> Int\n// requires: n >= 0\n// a = fib(0), b = fib(1) initially\n// Returns the nth Fibonacci number\n\nfn main() -> Int {\n  // TODO: Call fib_tail(10, 0, 1), return result\n  return 0;\n}",
+  "solution": "fn fib_tail(n: Int, a: Int, b: Int) -> Int\n  requires: n >= 0;\n{\n  if n == 0 { return a; }\n  return fib_tail(n - 1, b, a + b);\n}\n\nfn fibonacci(n: Int) -> Int\n  requires: n >= 0;\n{\n  return fib_tail(n, 0, 1);\n}\n\nfn main() -> Int {\n  return fibonacci(10);\n}",
+  "tips": [
+    "EVERY recursive function must have a base case — write it first",
+    "Prefer tail recursion — the compiler can optimize it to a loop",
+    "If you can't use tail recursion, add a depth parameter with a max-depth contract",
+    "For production code with deep recursion, prefer iterative solutions"
+  ],
+  "common_mistakes": [
+    "Writing recursive functions without base cases",
+    "Assuming tail-call optimization always happens — check the compiler output if depth is critical",
+    "Using recursion for problems with millions of iterations — use iteration instead"
+  ],
+  "related": [
+    "L4-18",
+    "L4-08",
+    "L1-19",
+    "L1-23"
+  ],
+  "next_lesson": "L4-20"
+}

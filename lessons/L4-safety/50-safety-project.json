@@ -1,0 +1,37 @@
+{
+  "id": "L4-50",
+  "title": "Safety Project",
+  "level": "L4",
+  "duration": "45 min",
+  "concepts": [
+    "project",
+    "contract-heavy library",
+    "safety",
+    "review",
+    "integration"
+  ],
+  "concept": "Build a contract-heavy library from scratch — applying everything from L4: requires, ensures, invariants, verification, and safe abstractions.",
+  "why": "Theory becomes skill through practice. This project integrates all safety concepts into a real, working library you can use and extend.",
+  "theory": "## Project: Building a Safe Data Structure Library\n\n### What You'll Build\nA **SafeVec** — a vector type with full contracts, invariants, and verified operations.\n\n### Requirements\n1. Type `SafeVec[T]` with invariant: capacity >= length\n2. Methods: new, push, pop, get, set, len, capacity\n3. Every method has requires + ensures\n4. At least 3 methods have xiom-verifiable ensures\n5. Write property-based tests\n6. Document your design decisions\n\n### Starter Template\n```xiom\npub type SafeVec[T] = {\n  data: *T;\n  len: Int;\n  cap: Int;\n}\n  invariant: self.data != null;\n  invariant: self.len >= 0;\n  invariant: self.cap >= self.len;\n\nimpl SafeVec[T] {\n  fn new(capacity: Int) -> SafeVec[T]\n    requires: capacity > 0;\n    ensures: result.len == 0;\n    ensures: result.cap == capacity;\n  { /* TODO */ }\n\n  fn push(self: &mut Self, value: T)\n    requires: self.len < self.cap;\n    ensures: self.len == self@pre.len + 1;\n  { /* TODO */ }\n\n  fn pop(self: &mut Self) -> T\n    requires: self.len > 0;\n    ensures: self.len == self@pre.len - 1;\n  { /* TODO */ }\n}\n```\n\n### Deliverables\n1. `safe_vec.xi` — the implementation\n2. `safe_vec_test.xi` — property tests\n3. `SAFETY.md` — design decisions and trust boundaries\n\n### Stretch Goals\n- Run xiom verify on critical methods\n- Add fuzz target for push/pop operations\n- Implement SafeVec::resize with capacity growth\n- Benchmark with and without --no-contracts",
+  "syntax_ref": "// Project checklist:\n// [ ] Type defined with invariants\n// [ ] All public methods have contracts\n// [ ] Property tests pass\n// [ ] xiom verify succeeds on core methods\n// [ ] SAFETY.md written",
+  "code_template": "// TODO: Implement SafeVec with contracts\n// Start from the template in the theory section\n\nfn main() -> Int {\n  // TODO: Create SafeVec, push 3 items, pop 1, return popped value\n  return 0;\n}",
+  "solution": "pub type SafeVec[T] = {\n  data: *T;\n  len: Int;\n  cap: Int;\n}\n  invariant: self.len >= 0;\n  invariant: self.cap >= self.len;\n\nimpl SafeVec[T] {\n  fn new(capacity: Int) -> SafeVec[T]\n    requires: capacity > 0;\n    ensures: result.len == 0;\n    ensures: result.cap == capacity;\n  {\n    return SafeVec[T]{ data: null, len: 0, cap: capacity };\n  }\n\n  fn push(self: &mut Self, value: T)\n    requires: self.len < self.cap;\n    ensures: self.len == self@pre.len + 1;\n  {\n    self.len = self.len + 1;\n  }\n\n  fn pop(self: &mut Self) -> T\n    requires: self.len > 0;\n    ensures: self.len == self@pre.len - 1;\n  {\n    self.len = self.len - 1;\n    return self.data[self.len];\n  }\n\n  fn len(self: &Self) -> Int\n    ensures: result == self.len;\n    ensures: result >= 0;\n  { return self.len; }\n}\n\nfn main() -> Int {\n  var v = SafeVec[Int]::new(10);\n  v.push(10);\n  v.push(20);\n  v.push(30);\n  v.pop();\n  return v.len();\n}",
+  "tips": [
+    "Start with the invariants — they define what 'valid' means for your type",
+    "Write contracts BEFORE implementing methods — they guide the implementation",
+    "Test contract violations explicitly — verify that bad inputs are caught",
+    "Use Z3 to prove what you can, property-test what you can't"
+  ],
+  "common_mistakes": [
+    "Implementing without contracts first — you'll miss edge cases",
+    "Making contracts too weak — 'ensures: true' is useless",
+    "Forgetting to test contract violations — you need to know your safety net works"
+  ],
+  "related": [
+    "L4-48",
+    "L4-42",
+    "L4-28",
+    "L4-20"
+  ],
+  "next_lesson": "L5-01"
+}

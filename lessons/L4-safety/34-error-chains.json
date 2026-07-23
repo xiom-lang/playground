@@ -1,0 +1,36 @@
+{
+  "id": "L4-34",
+  "title": "Error Chains",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "error chain",
+    "error wrapping",
+    "context propagation",
+    "causal chain"
+  ],
+  "concept": "Error chains wrap lower-level errors with context from each layer — creating a trail from root cause to surface symptom.",
+  "why": "A database timeout in a web request: 'connection refused' tells you nothing. 'user lookup failed: db timeout after 30s: connection refused at 10.0.1.5:5432' tells you everything.",
+  "theory": "## Building Error Chains\n\n```xiom\npub type AppError = enum {\n  Database(reason: DbError),\n  Validation(reason: ValidationError),\n  Network(reason: NetworkError),\n}\n\nfn get_user(id: Int) -> Result[User, AppError] {\n  let conn = database::connect();\n  match conn {\n    Err(e) => return Err(AppError::Database(e)),  // Wrap low-level error\n    Ok(c) => {\n      let user = database::query(c, \"SELECT * FROM users WHERE id = \" + id.to_str());\n      match user {\n        Err(e) => return Err(AppError::Database(e)),\n        Ok(u) => return Ok(u),\n      }\n    },\n  }\n}\n```\n\n### Adding Context at Each Layer\n\n```xiom\nfn handle_request(req: Request) -> Result[Response, AppError] {\n  let user_id = parse_int(req.param(\"id\"));\n  match user_id {\n    Err(e) => return Err(AppError::Validation(e)),\n    Ok(id) => {\n      let user = get_user(id);\n      match user {\n        Err(AppError::Database(e)) => {\n          io.eprintln(\"DB error getting user \" + id.to_str() + \": \" + e.to_str());\n          return Err(AppError::Database(e));\n        },\n        Err(e) => return Err(e),\n        Ok(u) => return Ok(render_user(u)),\n      }\n    },\n  }\n}\n```\n\n### The `?` Operator for Propagation\n\n```xiom\nfn get_user(id: Int) -> Result[User, AppError] {\n  let conn = database::connect()?;       // Propagates error, adds context\n  let user = database::query(conn, sql)?; // Propagates error\n  return Ok(user);\n}\n```\n\n### Displaying Error Chains\n\n```\nAppError::Database\n  → DbError::Timeout(30s)\n    → NetworkError::ConnectionRefused(\"10.0.1.5:5432\")\n```",
+  "syntax_ref": "// Wrap low-level error:\npub type HighError = enum {\n  LowLevel(reason: LowError),\n}\n\n// Propagate with ?:\nfn func() -> Result[T, HighError] {\n  let val = low_func()?;  // Auto-wraps if conversion exists\n  return Ok(val);\n}",
+  "code_template": "// TODO: Define error types:\n// - NetworkError enum { Timeout(sec: Int), DnsFailure(host: Str) }\n// - AppError enum { Network(reason: NetworkError), Parse(reason: Str) }\n// Write function 'fetch_data' that returns Result[Str, AppError]\n// Simulate a timeout and wrap it as AppError::Network\n\nfn main() -> Int {\n  // TODO: Call fetch_data, return 0 on error, 1 on success\n  return 0;\n}",
+  "solution": "pub type NetworkError = enum {\n  Timeout(sec: Int),\n  DnsFailure(host: Str),\n}\n\npub type AppError = enum {\n  Network(reason: NetworkError),\n  Parse(reason: Str),\n}\n\nfn simulate_fetch() -> Result[Str, NetworkError] {\n  return Err(NetworkError::Timeout(30));\n}\n\nfn fetch_data(url: Str) -> Result[Str, AppError] {\n  let result = simulate_fetch();\n  match result {\n    Ok(data) => return Ok(data),\n    Err(e) => return Err(AppError::Network(e)),\n  }\n}\n\nfn main() -> Int {\n  match fetch_data(\"https://example.com\") {\n    Ok(_) => return 1,\n    Err(_) => return 0,\n  }\n}",
+  "tips": [
+    "Wrap low-level errors with domain context at each layer",
+    "Use the ? operator for automatic error propagation — less boilerplate, clearer code",
+    "Each wrapper should ADD context (\"user lookup failed\" + db error) not just re-wrap",
+    "Display error chains from outermost to innermost — surface symptom to root cause"
+  ],
+  "common_mistakes": [
+    "Losing the original error when wrapping — always preserve the source error",
+    "Wrapping without adding context — the wrapper should add information, not just rename",
+    "Swallowing errors at the wrong level — propagate until something can handle it"
+  ],
+  "related": [
+    "L4-32",
+    "L4-33",
+    "L5-84",
+    "L5-85"
+  ],
+  "next_lesson": "L4-35"
+}

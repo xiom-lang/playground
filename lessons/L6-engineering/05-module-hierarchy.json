@@ -1,0 +1,17 @@
+{
+  "id": "L6-05",
+  "title": "Module Hierarchy",
+  "level": 6,
+  "duration": "12 min",
+  "concepts": ["nested modules", "module tree", "submodules", "hierarchy"],
+  "concept": "Modules can be nested to create hierarchical namespace trees",
+  "why": "Flat module structures don't scale. A library with 100 functions thrown into one module is as unmanageable as a 100-function file. Nesting creates logical trees (e.g., `net::http::client`) that mirror how engineers think about subsystems. It enables progressive disclosure — users drill into the depth they need.",
+  "theory": "XIOM supports arbitrary module nesting. A module declared inside another forms a parent-child relationship accessed with `::`. The filesystem convention is: `mod math::geometry` maps to `math/geometry.xi` or `math/geometry/mod.xi`. The compiler builds a module tree at parse time. Child modules see parent `pub` items but not parent private items. Sibling modules are isolated from each other unless items are explicitly `pub`.",
+  "syntax_ref": "mod parent {\n    pub fn top() { }\n\n    mod child {\n        pub fn leaf() { }\n    }\n}",
+  "code_template": "mod graphics {\n    pub struct Color {\n        pub r: Int,\n        pub g: Int,\n        pub b: Int,\n    }\n\n    mod shapes {\n        use super::Color\n\n        pub fn fill(c: Color) {\n            io.println(\"Filling with ({c.r},{c.g},{c.b})\")\n        }\n    }\n\n    pub use shapes::fill\n}\n\nfn main() {\n    let red = graphics::Color { r: 255, g: 0, b: 0 }\n    graphics::fill(red)\n}",
+  "solution": "mod engine {\n    pub struct Config {\n        pub debug: Bool,\n    }\n\n    mod renderer {\n        use super::Config\n\n        pub fn init(cfg: &Config) {\n            if cfg.debug {\n                io.println(\"Renderer: debug mode ON\")\n            }\n        }\n    }\n\n    mod audio {\n        pub fn play(sound: Str) {\n            io.println(\"Playing: {sound}\")\n        }\n    }\n\n    pub use renderer::init as init_renderer\n    pub use audio::play\n}\n\nfn main() {\n    let config = engine::Config { debug: true }\n    engine::init_renderer(&config)\n    engine::play(\"bgm.ogg\")\n}",
+  "tips": ["Use `super::` to access the parent module from a child", "Re-export deep items with `pub use` to flatten the public API", "Keep nesting depth to 3-4 levels maximum"],
+  "common_mistakes": ["Over-nesting — if modules have 1-2 items each, flatten them", "Forgetting `super::` when referencing parent types", "Re-exporting without `pub` — the item stays private"],
+  "related": ["L6-01-module-system", "L6-02-use-statement", "L6-06-package-manifest"],
+  "next_lesson": "L6-06"
+}

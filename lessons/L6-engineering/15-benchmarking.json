@@ -1,0 +1,17 @@
+{
+  "id": "L6-15",
+  "title": "Benchmarking",
+  "level": 6,
+  "duration": "12 min",
+  "concepts": ["benchmark", "performance", "bench module", "measurement"],
+  "concept": "Benchmarking measures code performance to guide optimization decisions",
+  "why": "Correctness alone isn't enough — production code must be fast. Benchmarking quantifies performance so you can compare implementations objectively. It answers: 'Is my new algorithm actually faster?' and 'Which approach should I use for this hot path?' Without benchmarks, optimization is guesswork.",
+  "theory": "XIOM provides the `bench` module with `@bench` attribute functions. Benchmarks are separate from tests and run with `xiom bench`. The runner warms up the JIT/CPU caches, runs the benchmark many times, and reports mean throughput (operations/sec) with standard deviation. Benchmarks should be deterministic and not include I/O. Use `bench::black_box()` to prevent the compiler from optimizing away the code being measured.",
+  "syntax_ref": "@bench\nfn bench_<name>() {\n    // code to measure\n    bench::black_box(result)\n}\n\n// Run: xiom bench",
+  "code_template": "fn fibonacci_recursive(n: Int) -> Int {\n    if n <= 1 { return n }\n    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)\n}\n\nfn fibonacci_iterative(n: Int) -> Int {\n    if n <= 1 { return n }\n    let mut a = 0\n    let mut b = 1\n    for _ in 2..=n {\n        let temp = a + b\n        a = b\n        b = temp\n    }\n    return b\n}\n\n@bench\nfn bench_fib_recursive() {\n    let result = fibonacci_recursive(20)\n    bench::black_box(result)\n}\n\n@bench\nfn bench_fib_iterative() {\n    let result = fibonacci_iterative(20)\n    bench::black_box(result)\n}",
+  "solution": "fn linear_search(data: &[Int], target: Int) -> Option<Int> {\n    for (i, val) in data.enumerate() {\n        if val == target { return Some(i) }\n    }\n    return None\n}\n\nfn binary_search(data: &[Int], target: Int) -> Option<Int> {\n    let mut lo = 0\n    let mut hi = data.len()\n    while lo < hi {\n        let mid = (lo + hi) / 2\n        if data[mid] == target { return Some(mid) }\n        if data[mid] < target { lo = mid + 1 }\n        else { hi = mid }\n    }\n    return None\n}\n\n@bench\nfn bench_linear() {\n    let arr = (0..1000).collect()\n    let r = linear_search(&arr, 999)\n    bench::black_box(r)\n}\n\n@bench\nfn bench_binary() {\n    let arr = (0..1000).collect()\n    let r = binary_search(&arr, 999)\n    bench::black_box(r)\n}",
+  "tips": ["Always use `bench::black_box()` on results to prevent dead code elimination", "Run benchmarks on a quiet machine for consistent results", "Benchmark both your approach AND alternatives to make data-driven decisions"],
+  "common_mistakes": ["Benchmarking I/O-bound code as if it were CPU-bound", "Forgetting `black_box()` — the compiler may optimize away the whole benchmark", "Comparing benchmark results across different machines without normalization"],
+  "related": ["L6-10-test", "L6-29-build-profiles", "L7-58-profiling"],
+  "next_lesson": "L6-16"
+}

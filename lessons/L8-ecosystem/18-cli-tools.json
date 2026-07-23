@@ -1,0 +1,36 @@
+{
+  "id": "L8-18",
+  "title": "CLI Tools",
+  "level": "L8",
+  "duration": "12 min",
+  "concepts": [
+    "CLI",
+    "command-line",
+    "argparse",
+    "terminal",
+    "cross-platform"
+  ],
+  "concept": "Building professional CLI tools with XIOM — argument parsing, colored output, progress bars, and interactive terminal interfaces.",
+  "why": "CLI tools are the backbone of developer workflows. XIOM's fast startup, small binaries, and cross-compilation make it perfect for CLI applications.",
+  "theory": "## Professional Command-Line Tools\n\n### Argument Parsing\n\n```xiom\nuse xiom.cli;\n\nfn main() -> Int {\n  let args = cli::App::new(\"mytool\")\n    .version(\"1.0.0\")\n    .author(\"Your Name\")\n    .about(\"Does amazing things\")\n    .arg(\n      cli::Arg::new(\"input\")\n        .help(\"Input file to process\")\n        .required(true)\n    )\n    .arg(\n      cli::Arg::new(\"output\")\n        .short('o')\n        .long(\"output\")\n        .help(\"Output file (default: stdout)\")\n    )\n    .arg(\n      cli::Arg::new(\"verbose\")\n        .short('v')\n        .long(\"verbose\")\n        .action(cli::ArgAction::Count)\n        .help(\"Increase verbosity\")\n    )\n    .get_matches();\n\n  let input = args.get::<Str>(\"input\").unwrap();\n  let verbose = args.get_count(\"verbose\");\n\n  io.println(\"Processing: \" + input);\n  return 0;\n}\n```\n\n### Colored Output\n\n```xiom\nuse xiom.term;\n\n// Basic colors\nterm::println(term::Color::Green, \"✓ Success\");\nterm::println(term::Color::Red, \"✗ Error\");\nterm::println(term::Color::Yellow, \"⚠ Warning\");\nterm::println(term::Color::Blue, \"ℹ Info\");\n\n// Styled text\nlet style = term::Style::new()\n  .fg(term::Color::White)\n  .bg(term::Color::Blue)\n  .bold(true);\nterm::println_styled(style, \" IMPORTANT \");\n\n// Detect terminal support\nif term::supports_color() {\n  term::println(term::Color::Green, \"Color supported!\");\n} else {\n  io.println(\"No color support\");\n}\n```\n\n### Progress Bars\n\n```xiom\nuse xiom.progress;\n\nfn process_files(files: &Vec[Str]) {\n  let bar = progress::Bar::new(files.len());\n  bar.set_style(\"[{bar:40}] {percent}% {pos}/{len}\");\n\n  for file in files {\n    process_file(file);\n    bar.inc(1);\n  }\n\n  bar.finish_with_message(\"Done!\");\n}\n\n// Spinner for indeterminate progress\nlet spinner = progress::Spinner::new();\nspinner.set_message(\"Connecting...\");\nspinner.set_style(progress::SpinnerStyle::Dots);\n\nlet connection = connect()?;\nspinner.finish_with_message(\"Connected!\");\n```\n\n### Interactive Prompts\n\n```xiom\nuse xiom.dialog;\n\n// Confirm\nif dialog::confirm(\"Proceed with installation?\")? {\n  install();\n}\n\n// Input\nlet name = dialog::input(\"Enter your name:\")?;\n\n// Password (hidden input)\nlet password = dialog::password(\"Enter password:\")?;\n\n// Select from list\nlet choice = dialog::select(\"Choose environment:\", &[\n  \"development\",\n  \"staging\",\n  \"production\",\n])?;\n\n// Multi-select\nlet features = dialog::multi_select(\"Select features:\", &[\n  \"authentication\",\n  \"analytics\",\n  \"notifications\",\n  \"backup\",\n])?;\n```\n\n### Tables\n\n```xiom\nuse xiom.table;\n\nlet mut table = table::Table::new();\ntable.set_header([\"ID\", \"Name\", \"Status\"]);\ntable.add_row([\"1\", \"Alice\", \"Active\"]);\ntable.add_row([\"2\", \"Bob\", \"Inactive\"]);\ntable.add_row([\"3\", \"Charlie\", \"Active\"]);\ntable.print();\n\n// Output:\n// ┌────┬─────────┬──────────┐\n// │ ID │ Name    │ Status   │\n// ├────┼─────────┼──────────┤\n// │ 1  │ Alice   │ Active   │\n// │ 2  │ Bob     │ Inactive │\n// │ 3  │ Charlie │ Active   │\n// └────┴─────────┴──────────┘\n```\n\n### Exit Codes\n\n```xiom\nfn main() -> Int {\n  match run_app() {\n    Ok(()) => 0,\n    Err(e) => {\n      term::eprintln(term::Color::Red, \"Error: \" + e.to_str());\n      1  // Non-zero exit code\n    },\n  }\n}\n```",
+  "syntax_ref": "use xiom.cli;     // Argument parsing\nuse xiom.term;    // Terminal colors and styles\nuse xiom.progress; // Progress bars and spinners\nuse xiom.dialog;  // Interactive prompts\nuse xiom.table;   // Formatted tables\n\nfn main() -> Int { /* return 0 on success */ }",
+  "code_template": "// Design a CLI tool:\n// mytool --input <file> --output <file> --verbose\n// Shows a progress bar while processing\n// Prints colored success/error messages\n// How many features?\n\nfn main() -> Int {\n  return 4;  // arg parsing, progress bar, colored output, error handling\n}",
+  "solution": "fn main() -> Int {\n  return 4;\n}",
+  "tips": [
+    "Always support --help and --version — it's the first thing users try",
+    "Use exit codes: 0 = success, non-zero = error (1 = general error, 2 = misuse, etc.)",
+    "Detect whether stdout is a terminal before using colors/progress bars (piped output should be plain)",
+    "Fast startup is critical for CLI tools — optimize cold start time over runtime performance"
+  ],
+  "common_mistakes": [
+    "Writing to stdout for errors — use stderr for error messages and diagnostics",
+    "Assuming terminal width is 80 columns — detect and adapt with term::width()",
+    "Blocking without feedback — always show a spinner or progress for operations > 1 second"
+  ],
+  "related": [
+    "L6-37",
+    "L8-05",
+    "L8-09"
+  ],
+  "next_lesson": "L8-19"
+}

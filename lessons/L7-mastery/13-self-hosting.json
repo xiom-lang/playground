@@ -1,0 +1,36 @@
+{
+  "id": "L7-13",
+  "title": "Self-Hosting",
+  "level": "L7",
+  "duration": "15 min",
+  "concepts": [
+    "self-hosting",
+    "bootstrapping",
+    "compiler",
+    "dogfooding",
+    "language design"
+  ],
+  "concept": "Self-hosting means the XIOM compiler is written IN XIOM — the language compiles itself. This is the ultimate test of a language's maturity.",
+  "why": "A self-hosted compiler proves the language is capable enough for real systems programming. It also means language improvements directly improve the compiler.",
+  "theory": "## The Compiler Compiles Itself\n\n### The Bootstrap Process\n\n```\nStage 0: Original compiler (written in C/other language)\n  ↓ Compiles XIOM source\nStage 1: First XIOM compiler (compiled by Stage 0)\n  ↓ Compiles XIOM source again\nStage 2: Self-compiled compiler (compiled by Stage 1)\n  ↓ Compiles XIOM source yet again\nStage 3: Should be IDENTICAL to Stage 2 (bootstrap verified!)\n```\n\n### Why Self-Hosting Matters\n\n1. **Dogfooding**: Compiler developers use the language they're building\n2. **Simpler toolchain**: Only need XIOM to build XIOM (after bootstrap)\n3. **Performance**: The compiler benefits from XIOM's own optimizations\n4. **Correctness**: If the compiler compiles itself, both compiler and language work\n5. **Community**: Contributors only need to know XIOM, not C\n\n### Compiler Source Structure\n\n```\nxiom-compiler/\n├── src/\n│   ├── lexer/         # Tokenizer\n│   ├── parser/        # AST builder\n│   ├── checker/       # Type checker + borrow checker\n│   ├── ir/            # Intermediate representation\n│   ├── codegen/       # LLVM IR generator\n│   ├── driver/        # Compiler driver (main)\n│   └── shared/        # Common utilities\n├── tests/\n│   ├── lexer/         # Lexer tests\n│   ├── parser/        # Parser tests\n│   └── integration/   # Full compilation tests\n└── package.xi\n```\n\n### Bootstrap Verification\n\n```sh\n# Verify the compiler is correctly self-hosted:\nxiom build --release xiom-compiler/     # Build with current compiler\n./target/release/xiom build --release xiom-compiler/  # Self-compile\nsha256sum target/release/xiom           # Hash the output\n# If output matches reference, bootstrap is verified!\n```\n\n### The Bootstrap Test Suite\n\nSelf-hosting enables unique tests:\n- **Round-trip**: Compile compiler → compile again → must produce identical binary\n- **Reflection**: Compiler can analyze its own source code\n- **Meta-programming**: Compiler extensibility through compile-time plugins",
+  "syntax_ref": "# Bootstrap the compiler:\nxiom build xiom-compiler/           # Stage 1\n./xiom build xiom-compiler/         # Stage 2 (self-compiled)\n\n# Verify:\ndiff <(sha256sum stage1/xiom) <(sha256sum stage2/xiom)",
+  "code_template": "fn main() -> Int {\n  // The XIOM compiler is written in XIOM.\n  // Every time you use the language, you're using self-hosted software.\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Self-hosting is a rite of passage for programming languages — it proves the language is 'real'",
+    "Bootstrap builds are slow but rare — they only happen when the compiler fundamentally changes",
+    "The compiler is the largest XIOM codebase — it's the best example of idiomatic XIOM code",
+    "Read the compiler source to learn advanced XIOM patterns from the language's own developers"
+  ],
+  "common_mistakes": [
+    "Breaking bootstrap — a compiler change that can't be compiled by the previous version breaks bootstrapping",
+    "Assuming the compiler is perfect — self-hosting reveals bugs, it doesn't prevent them",
+    "Forgetting that bootstrap requires a C compiler for the very first build — you can't start from nothing"
+  ],
+  "related": [
+    "L7-01",
+    "L7-14",
+    "L7-15"
+  ],
+  "next_lesson": "L7-14"
+}

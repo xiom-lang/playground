@@ -1,0 +1,36 @@
+{
+  "id": "L6-19",
+  "title": "xiom lint",
+  "level": "L6",
+  "duration": "10 min",
+  "concepts": [
+    "lint",
+    "static analysis",
+    "warnings",
+    "code quality",
+    "best practices"
+  ],
+  "concept": "`xiom lint` statically analyzes code for potential bugs, style issues, and performance problems — catching issues before they reach production.",
+  "why": "The compiler catches syntax errors. Linters catch semantic issues: unused variables, complex functions, potential bugs. Linting is your first line of defense.",
+  "theory": "## Static Code Analysis\n\n```sh\n# Run the linter\nxiom lint src/\n\n# Show all warnings (including style)\nxiom lint --pedantic src/\n\n# Treat warnings as errors (CI mode)\nxiom lint --deny-warnings src/\n\n# Fix auto-fixable issues\nxiom lint --fix src/\n```\n\n### Common Lint Rules\n\n| Rule | What It Catches |\n|------|----------------|\n| `unused-variable` | Variables never read |\n| `unused-import` | Imported but never used |\n| `dead-code` | Functions never called |\n| `complex-function` | Function cyclomatic complexity > 20 |\n| `too-many-params` | Function has > 7 parameters |\n| `missing-docs` | Public items without documentation |\n| `unsafe-without-contract` | Unsafe blocks without safety contracts |\n| `unwrap-used` | .unwrap() call (use match instead) |\n| `clone-on-copy` | Calling .clone() on Copy type |\n| `needless-borrow` | Unnecessary & reference |\n\n### Lint Output\n\n```\n$ xiom lint src/\nwarning[unused-variable]: variable `temp` is never used\n  → src/main.xi:12:9\n  12 |   let temp = compute_value();\n     |       ^^^^\n  help: remove the variable or prefix with `_` to silence\n\nwarning[unwrap-used]: consider using `match`\n  → src/user.xi:45:20\n  45 |   let name = user.unwrap().name;\n     |                    ^^^^^^\n```\n\n### Configuration\n\n```toml\n# xiomlint.toml\n[lints]\nunused-variable = \"warn\"\ndead-code = \"deny\"      # Fail the build\ncomplex-function = \"allow\"  # Disable this rule\n```",
+  "syntax_ref": "xiom lint <dir>              # Run all lint checks\nxiom lint --fix <dir>        # Auto-fix issues\nxiom lint --deny-warnings    # Fail on warnings (CI)",
+  "code_template": "// This code has intentional lint issues:\n// Unused import, unused variable, and an unwrap() call\n// Run `xiom lint` on it to see what it catches\n\nfn helper(x: Int) -> Int { return x * 2; }\n\nfn main() -> Int {\n  let unused = helper(21);\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Run `xiom lint` in CI with `--deny-warnings` — no warnings in production code",
+    "Use `--fix` to automatically resolve common issues (unused imports, formatting)",
+    "Configure lint rules per project — a game engine has different lint needs than a web server",
+    "Treat lint warnings as bugs — fix them before they become runtime problems"
+  ],
+  "common_mistakes": [
+    "Ignoring lint warnings — they often point to real bugs",
+    "Disabling lint rules globally instead of for specific lines where the exception applies",
+    "Running lint without --deny-warnings in CI — warnings accumulate into unmaintainable code"
+  ],
+  "related": [
+    "L6-18",
+    "L6-20",
+    "L4-07"
+  ],
+  "next_lesson": "L6-20"
+}

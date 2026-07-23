@@ -1,0 +1,35 @@
+{
+  "id": "L4-02",
+  "title": "requires Basics",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "requires",
+    "precondition",
+    "contract clause",
+    "defensive programming"
+  ],
+  "concept": "The `requires` clause declares what must be true when a function is called — the caller's responsibility.",
+  "why": "requires catches invalid inputs at the call site instead of letting bad data propagate through your program undetected.",
+  "theory": "## Preconditions with requires\n\nA precondition is a condition that must hold BEFORE the function executes.\n\n### Basic Syntax\n\n```xiom\nfn deposit(balance: &mut Int, amount: Int)\n  requires: amount > 0;\n{ balance = balance + amount; }\n```\n\n### Multiple requires Clauses\n\n```xiom\nfn set_age(person: &mut Person, age: Int)\n  requires: age >= 0;\n  requires: age <= 150;\n{ person.age = age; }\n```\n\nEach requires is independent — all are checked, all violations reported.\n\n### Order Is Meaningful\n\n```xiom\nfn access(arr: &Vec[Int], index: Int) -> Int\n  requires: arr != null;        // Check existence first\n  requires: index >= 0;         // Then validate index\n  requires: index < arr.len();  // Then check bounds\n{ return arr[index]; }\n```\n\n### What requires CAN'T Access\n\n`requires` can only reference: parameters, global constants, and pure functions. No side effects or I/O.",
+  "syntax_ref": "fn name(params) -> ReturnType\n  requires: condition;\n  requires: another_condition;\n{ /* body */ }",
+  "code_template": "// TODO: Write a function 'withdraw' that takes &mut Int balance and Int amount\n// requires: balance >= amount (can't withdraw more than you have)\n// requires: amount > 0\n\nfn main() -> Int {\n  // TODO: Create var balance = 100, withdraw 30, return balance\n  return 0;\n}",
+  "solution": "fn withdraw(balance: &mut Int, amount: Int)\n  requires: amount > 0;\n  requires: balance >= amount;\n{\n  balance = balance - amount;\n}\n\nfn main() -> Int {\n  var balance = 100;\n  withdraw(&mut balance, 30);\n  return balance;\n}",
+  "tips": [
+    "Use requires to validate ALL external inputs at function boundaries",
+    "Chain multiple requires from most fundamental to most specific",
+    "A function with requires documents the contract in code — no need for comments",
+    "Think of requires as the guard at the castle gate"
+  ],
+  "common_mistakes": [
+    "Forgetting that multiple requires are all checked — one failure still traps",
+    "Writing requires: balance > amount but the code never actually uses amount",
+    "Using side-effecting functions inside requires — the compiler will reject this"
+  ],
+  "related": [
+    "L4-01",
+    "L4-04",
+    "L4-07"
+  ],
+  "next_lesson": "L4-03"
+}

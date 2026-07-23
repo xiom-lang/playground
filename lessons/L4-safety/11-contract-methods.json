@@ -1,0 +1,34 @@
+{
+  "id": "L4-11",
+  "title": "Contract on Methods",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "method contract",
+    "self preconditions",
+    "self postconditions",
+    "invariant"
+  ],
+  "concept": "Methods can have contracts too — requires and ensures that reference self to validate object state before and after method execution.",
+  "why": "Object-oriented code without contracts leads to invalid object states. Method contracts ensure every operation maintains the object's integrity.",
+  "theory": "## Contracts on Method Definitions\n\n```xiom\npub type Stack = { items: Vec[Int]; }\n\nimpl Stack {\n  fn push(self: &mut Self, item: Int)\n    ensures: self.len() == self@pre.len() + 1;\n  { self.items.push(item); }\n\n  fn pop(self: &mut Self) -> Int\n    requires: self.len() > 0;\n    ensures: self.len() == self@pre.len() - 1;\n  { return self.items.pop(); }\n\n  fn len(self: &Self) -> Int { return self.items.len(); }\n}\n```\n\n### self@pre in Methods\n`self@pre` refers to the object's state BEFORE the method executed:\n\n```xiom\nimpl Counter {\n  fn increment(self: &mut Self) -> Int\n    ensures: self.value == self@pre.value + 1;\n    ensures: result == self.value;\n  {\n    self.value = self.value + 1;\n    return self.value;\n  }\n}\n```\n\n### Methods with Invariants\nWhen a type has an invariant, every method must maintain it:\n\n```xiom\npub type PositiveStack = Stack\n  invariant: self.len() >= 0;\n\nimpl PositiveStack {\n  fn clear(self: &mut Self)\n    ensures: self.len() == 0;\n  { self.items.clear(); }  // Invariant: 0 >= 0 ✓\n}\n```",
+  "syntax_ref": "impl Type {\n  fn method(self: &Self, params) -> ReturnType\n    requires: condition_on_self;\n    ensures: condition_on_result;\n  { /* body */ }\n}",
+  "code_template": "// TODO: Define a type Counter with field value: Int\n// Write method 'decrement' that subtracts 1\n// requires: value > 0 (can't go below zero)\n// ensures: value == old value - 1\n\nfn main() -> Int {\n  // TODO: Create counter with value 5, decrement, return value\n  return 0;\n}",
+  "solution": "pub type Counter = { value: Int; }\n\nimpl Counter {\n  fn decrement(self: &mut Self)\n    requires: self.value > 0;\n    ensures: self.value == self@pre.value - 1;\n  { self.value = self.value - 1; }\n}\n\nfn main() -> Int {\n  var c = Counter{ value: 5 };\n  c.decrement();\n  return c.value;\n}",
+  "tips": [
+    "Use self@pre to verify state transitions in methods",
+    "Method contracts compose with type invariants — invariant is checked AFTER method's ensures",
+    "Methods that only read (&Self) typically only need ensures, not requires"
+  ],
+  "common_mistakes": [
+    "Forgetting self@pre in ensures for mutable methods",
+    "Writing requires that duplicate the type invariant",
+    "Modifying self in a &Self (immutable) method — caught by the borrow checker"
+  ],
+  "related": [
+    "L4-06",
+    "L4-20",
+    "L2-01"
+  ],
+  "next_lesson": "L4-12"
+}

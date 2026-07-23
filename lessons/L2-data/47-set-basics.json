@@ -1,0 +1,17 @@
+{
+  "id": "L2-44",
+  "title": "Set Basics",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["Set", "insert", "contains", "unique", "collection"],
+  "narrative": "## Unique Collections with Set\n\n`Set[T]` stores unique elements — no duplicates. It's backed by a hash table, like Map, but stores only keys without values.\n\n### Creating and Using Set\n\n```xiom\nlet tags = Set[Str]();\ntags.insert(\"rust\");\ntags.insert(\"systems\");\ntags.insert(\"programming\");\ntags.insert(\"rust\");     // duplicate — ignored!\n// set contains: \"rust\", \"systems\", \"programming\"\n```\n\n### Checking Membership\n\n```xiom\nlet allowed = Set[Str]();\nallowed.insert(\"admin\");\nallowed.insert(\"moderator\");\n\nfn can_access(role: Str, roles: &Set[Str]) -> Bool {\n  return roles.contains(&role);\n}\n\ncan_access(\"admin\", &allowed);    // true\ncan_access(\"guest\", &allowed);    // false\n```\n\n### Common Set Patterns\n\n```xiom\n// Deduplicate a Vec\nfn unique(v: &Vec[Int]) -> Set[Int] {\n  let s = Set[Int]();\n  var i = 0;\n  while i < v.len() {\n    s.insert(v[i]);\n    i = i + 1;\n  }\n  return s;\n}\n\n// Check if value is in a set\nfn is_valid_choice(choice: Int, options: &Set[Int]) -> Bool {\n  return options.contains(&choice);\n}\n```\n\n### Set Properties\n\n- **Unique elements**: inserting duplicates is a no-op\n- **No ordering**: element order is not guaranteed\n- **Fast lookup**: `.contains()` is O(1) average\n\n### Element Requirements\n\nElements must implement `Hash` and `Eq`, just like Map keys:\n\n```xiom\npub type Point = { x: Int; y: Int; } derive[Hash, Eq]\n\nlet points = Set[Point]();\npoints.insert(Point{ x: 1, y: 2 });\npoints.insert(Point{ x: 1, y: 2 });  // duplicate — same hash and eq\n```",
+  "code_template": "// TODO: create a Set[Str] of banned words\n\n// TODO: write a function 'filter_banned' that returns Vec[Str] with banned words removed\n\n// TODO: write a function 'is_safe' that returns true if no banned words found\n\nfn main() -> Int {\n  // TODO: filter [\"hello\", \"bad\", \"world\"] with banned {\"bad\"}, return count of safe words\n  return 0;\n}",
+  "solution": "fn filter_banned(words: &Vec[Str], banned: &Set[Str]) -> Vec[Str] {\n  let result = Vec[Str]();\n  var i = 0;\n  while i < words.len() {\n    if !banned.contains(&words[i]) {\n      result.push(words[i]);\n    }\n    i = i + 1;\n  }\n  return result;\n}\n\nfn is_safe(word: Str, banned: &Set[Str]) -> Bool {\n  return !banned.contains(&word);\n}\n\nfn main() -> Int {\n  let banned = Set[Str]();\n  banned.insert(\"bad\");\n  banned.insert(\"evil\");\n  let words = Vec[Str]();\n  words.push(\"hello\");\n  words.push(\"bad\");\n  words.push(\"world\");\n  let filtered = filter_banned(&words, &banned);\n  return filtered.len();\n}",
+  "tips": [
+    "Set ensures uniqueness — inserting an existing element is a no-op",
+    "Use `.contains(&element)` for O(1) membership testing",
+    "Elements must implement Hash and Eq",
+    "Prefer Set over Vec when you need fast uniqueness checks"
+  ],
+  "related": ["L2-48", "L2-44", "L2-11", "L2-08"]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L6-11",
+  "title": "Writing Tests",
+  "level": 6,
+  "duration": "12 min",
+  "concepts": ["@test", "test function", "test harness", "unit test"],
+  "concept": "Test functions annotated with `@test` are discovered and executed by the test runner",
+  "why": "Tests are code that verifies other code. Writing tests forces you to think about edge cases, expected behavior, and failure modes before shipping. Each test is a small, focused assertion: 'given this input, I expect this output.' Tests also serve as executable documentation — they show how your API is meant to be used.",
+  "theory": "A test in XIOM is a function with the `@test` attribute that takes no parameters and returns nothing. The test runner compiles all `@test` functions into a test binary, calls each one, and reports pass/fail. A test passes if it runs without panicking; a test fails if an assertion fails or the function panics. Tests can live in the same file as the code (inline tests) or in dedicated test modules. The `@test` attribute supports an optional name: `@test(\"descriptive name\")`.",
+  "syntax_ref": "@test\nfn test_<name>() {\n    // arrange\n    // act\n    // assert\n}\n\n@test(\"descriptive name\")\nfn custom_name() { }",
+  "code_template": "fn is_palindrome(s: Str) -> Bool {\n    let reversed = s.chars().rev().collect()\n    return s == reversed\n}\n\n@test\nfn test_racecar_is_palindrome() {\n    assert(is_palindrome(\"racecar\"))\n}\n\n@test\nfn test_hello_is_not_palindrome() {\n    assert(!is_palindrome(\"hello\"))\n}\n\n@test\nfn test_empty_string() {\n    assert(is_palindrome(\"\"))\n}",
+  "solution": "fn factorial(n: Int) -> Int {\n    if n <= 1 {\n        return 1\n    }\n    return n * factorial(n - 1)\n}\n\n@test\nfn test_factorial_zero() {\n    assert_eq(factorial(0), 1)\n}\n\n@test\nfn test_factorial_one() {\n    assert_eq(factorial(1), 1)\n}\n\n@test\nfn test_factorial_five() {\n    assert_eq(factorial(5), 120)\n}\n\n@test(\"factorial of 10 equals 3628800\")\nfn fact_10() {\n    assert_eq(factorial(10), 3628800)\n}",
+  "tips": ["Follow the Arrange-Act-Assert pattern in every test", "Test both positive cases (expected input) and negative cases (edge cases)", "Name tests descriptively — `test_empty_input_returns_none` is better than `test1`"],
+  "common_mistakes": ["Writing tests that don't assert anything (they always pass)", "Testing too many things in one test function", "Using real network/filesystem in unit tests instead of mocking"],
+  "related": ["L6-10-test", "L6-12-test-assertions", "L6-13-test-organization"],
+  "next_lesson": "L6-12"
+}

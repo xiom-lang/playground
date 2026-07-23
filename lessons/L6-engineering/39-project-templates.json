@@ -1,0 +1,37 @@
+{
+  "id": "L6-39",
+  "title": "Project Templates",
+  "level": "L6",
+  "duration": "10 min",
+  "concepts": [
+    "scaffold",
+    "template",
+    "xiom init",
+    "project generation",
+    "boilerplate"
+  ],
+  "concept": "Project templates scaffold new projects with best practices built in — `xiom init` creates a complete project structure in seconds.",
+  "why": "Setting up a new project from scratch takes time and leads to inconsistency. Templates ensure every project starts with the right structure and tooling.",
+  "theory": "## Scaffolding New Projects\n\n### Basic Initialization\n\n```sh\n# Create a new project\nxiom init myapp\n\n# Creates:\nmyapp/\n├── package.xi          # Package manifest\n├── src/\n│   └── main.xi         # Entry point\n├── .gitignore\n├── xiom-toolchain.toml  # Pinned compiler version\n├── xiomfmt.toml         # Formatter config\n├── xiomlint.toml        # Linter config\n└── .github/\n    └── workflows/\n        └── ci.yml       # CI workflow\n```\n\n### Template Types\n\n```sh\n# Library template\nxiom init --lib mylibrary\n# Creates: src/lib.xi (not main.xi)\n\n# Workspace template\nxiom init --workspace myproject\n# Creates: multi-package workspace structure\n\n# WebAssembly template\nxiom init --wasm mywebapp\n# Creates: WASM project with JS bindings\n\n# Embedded template\nxiom init --embedded myfirmware\n# Creates: no_std project for bare metal\n\n# Custom template\nxiom init --template https://github.com/user/template myapp\n```\n\n### Template Structure\n\n```xiom\n// Generated src/main.xi\n//! ${project_name}\n//!\n//! ${project_description}\n\nmodule ${project_name}.main;\n\nfn main() -> Int {\n  io.println(\"Hello from ${project_name}!\");\n  return 0;\n}\n```\n\n### Creating Custom Templates\n\n```sh\n# Create from existing project\nxiom template create mytemplate --from ./myproject\n\n# Publish template\nxiom template publish mytemplate\n\n# List available templates\nxiom template list\n```\n\n### Template Variables\n\n| Variable | Value |\n|----------|-------|\n| `${project_name}` | Project name |\n| `${author}` | Git user name |\n| `${year}` | Current year |\n| `${xiom_version}` | Current XIOM version |",
+  "syntax_ref": "xiom init <name>                  # New project\nxiom init --lib <name>            # New library\nxiom init --wasm <name>           # New WASM project\nxiom init --template <url> <name> # From template",
+  "code_template": "fn main() -> Int {\n  // Run: xiom init test-project\n  // Explore the generated structure\n  // Observe: package.xi, .github/workflows/ci.yml, src/main.xi\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Always use `xiom init` instead of creating projects manually — templates include best practices",
+    "Library template (--lib) creates the right structure for reusable packages",
+    "Templates include CI configuration — your project is CI-ready from the first commit",
+    "Create custom templates for your team/project patterns — consistency at scale"
+  ],
+  "common_mistakes": [
+    "Creating projects manually and forgetting CI, formatter, or linter configuration",
+    "Using the wrong template type — lib template for a binary, or vice versa",
+    "Not updating the generated README and package.xi with real content"
+  ],
+  "related": [
+    "L6-37",
+    "L6-38",
+    "L6-23",
+    "L6-24"
+  ],
+  "next_lesson": "L6-40"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L2-50",
+  "title": "String Length",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["Str", "len", "char_count", "byte_count", "length"],
+  "narrative": "## Measuring String Size\n\nStrings have multiple length measurements: character count, byte count, and element count. Understanding the differences matters for correct string handling.\n\n### len — Element Count\n\n`.len()` returns the number of bytes in the UTF-8 encoding:\n\n```xiom\nlet ascii = \"Hello\";\nlet n = ascii.len();  // 5 (5 ASCII characters = 5 bytes)\n\nlet mixed = \"café\";\nlet m = mixed.len();  // 5 (c-a-f-é: é is 2 bytes in UTF-8)\n```\n\n### char_count — Unicode Characters\n\n```xiom\nlet ascii = \"Hello\";\nlet n = ascii.char_count();  // 5\n\nlet emoji = \"Hello \";\nlet c = emoji.char_count();  // 7 (5 letters + space + 1 emoji)\n```\n\n### When to Use Each\n\n| Method | Returns | Use For |\n|--------|---------|---------|\n| `.len()` | Byte count | Memory size, buffer allocation |\n| `.char_count()` | Character count | Display length, user-facing counts |\n\n### Length Patterns\n\n```xiom\nfn is_empty(s: Str) -> Bool {\n  return s.len() == 0;\n}\n\nfn is_long(s: Str, threshold: Int) -> Bool {\n  return s.char_count() > threshold;\n}\n\nfn truncate(s: Str, max_chars: Int) -> Str {\n  if s.char_count() <= max_chars { return s; }\n  // return first max_chars characters\n  return \"truncated\";\n}\n\nfn validate_length(s: Str, min: Int, max: Int) -> Bool {\n  let count = s.char_count();\n  return count >= min && count <= max;\n}\n```\n\n### Common Mistake\n\nDon't use `.len()` for display purposes — it counts bytes, not visible characters:\n\n```xiom\nlet greeting = \"Café\";\nio.println(greeting.len());         // 5 (bytes)\nio.println(greeting.char_count());  // 4 (characters)\n```",
+  "code_template": "// TODO: write a function 'is_valid_username' — must be 3-20 characters (not bytes)\n\n// TODO: write a function 'byte_size' — returns byte length as string \"N bytes\"\n\nfn main() -> Int {\n  // TODO: test \"Résumé\" — return its character count\n  return 0;\n}",
+  "solution": "fn is_valid_username(name: Str) -> Bool {\n  let count = name.char_count();\n  return count >= 3 && count <= 20;\n}\n\nfn byte_size(s: Str) -> Str {\n  return s.len() + \" bytes\";\n}\n\nfn main() -> Int {\n  let word = \"Résumé\";\n  return word.char_count();\n}",
+  "tips": [
+    "Use `.char_count()` for user-visible length (number of characters)",
+    "Use `.len()` for memory-related operations (byte count)",
+    "Multi-byte characters like é or emoji count as 1 in char_count but >1 in len",
+    "Always use `.char_count()` for validation like min/max length checks"
+  ],
+  "related": ["L2-52", "L2-54", "L2-55", "L0-08"]
+}

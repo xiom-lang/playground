@@ -1,0 +1,36 @@
+{
+  "id": "L7-03",
+  "title": "Parser Internals",
+  "level": "L7",
+  "duration": "20 min",
+  "concepts": [
+    "parser",
+    "AST",
+    "recursive descent",
+    "grammar",
+    "syntax tree"
+  ],
+  "concept": "The parser transforms tokens into an Abstract Syntax Tree (AST) — the structural representation of your program that all later passes use.",
+  "why": "Understanding parsing reveals how your code's structure is understood. It explains why some expressions need parentheses and how operator precedence works.",
+  "theory": "## From Tokens to Trees\n\n```xiom\n// Source: return x + 2;\n\n// Tokens: [RETURN, IDENT(\"x\"), PLUS, INT(2), SEMICOLON]\n\n// AST:\nReturnStmt {\n  expr: BinaryExpr {\n    op: Add,\n    left: IdentifierExpr { name: \"x\" },\n    right: IntLiteralExpr { value: 2 },\n  },\n}\n```\n\n### Recursive Descent Parser\n\n```xiom\npub type Parser = {\n  lexer: Lexer;\n  current: Token;\n}\n\nimpl Parser {\n  fn parse_function(self: &mut Parser) -> Function {\n    self.expect(Token::Fn);\n    let name = self.expect_identifier();\n    self.expect(Token::LParen);\n    let params = self.parse_parameters();\n    self.expect(Token::RParen);\n    self.expect(Token::Arrow);\n    let ret_type = self.parse_type();\n    self.expect(Token::LBrace);\n    let body = self.parse_block();\n    self.expect(Token::RBrace);\n    return Function{ name: name, params: params, ret_type: ret_type, body: body };\n  }\n\n  fn parse_expression(self: &mut Parser) -> Expr {\n    let left = self.parse_primary();\n    return self.parse_binary_op(left, 0);\n  }\n\n  fn parse_binary_op(self: &mut Parser, left: Expr, min_prec: Int) -> Expr {\n    var expr = left;\n    while self.is_binary_op() && self.precedence() >= min_prec {\n      let op = self.current;\n      self.advance();\n      let right = self.parse_primary();\n      while self.is_binary_op() && self.precedence() > op.precedence() {\n        right = self.parse_binary_op(right, op.precedence() + 1);\n      }\n      expr = BinaryExpr{ left: expr, op: op, right: right };\n    }\n    return expr;\n  }\n}\n```\n\n### Operator Precedence (Pratt Parsing)\n\n| Precedence | Operators |\n|-----------|-----------|\n| 1 (lowest) | `=` (assignment) |\n| 2 | `\\|\\|` (or) |\n| 3 | `&&` (and) |\n| 4 | `==`, `!=`, `<`, `>`, `<=`, `>=` |\n| 5 | `+`, `-` |\n| 6 | `*`, `/`, `%` |\n| 7 (highest) | `!`, `-` (unary) |\n\n### AST Node Types\n\n```xiom\npub enum Expr {\n  IntLiteral(value: Int),\n  StrLiteral(value: Str),\n  Identifier(name: Str),\n  BinaryOp(left: Expr, op: BinOp, right: Expr),\n  UnaryOp(op: UnaryOp, expr: Expr),\n  Call(func: Expr, args: Vec[Expr]),\n  If(cond: Expr, then: Block, else: Option[Block]),\n  Match(expr: Expr, arms: Vec[MatchArm]),\n  Block(stmts: Vec[Stmt]),\n}\n```\n\n### Error Recovery\n\nThe parser can recover from common errors to report multiple issues:\n\n```xiom\nfn parse_statement(self: &mut Parser) -> Result[Stmt, ParseError] {\n  // Try to parse a statement, if it fails, skip to next semicolon\n  // and report all errors, not just the first\n}\n```",
+  "syntax_ref": "// Parser API:\nlet mut parser = Parser::new(source);\nlet ast = parser.parse_module();\n\n// AST traversal:\nfn visit_expr(expr: &Expr) { /* process each node */ }",
+  "code_template": "// Given a simple expression string like \"1 + 2 * 3\",\n// write a function that evaluates it respecting operator precedence\n// (multiplication before addition)\n\nfn evaluate(expr: Str) -> Int {\n  // TODO: parse and evaluate, respecting precedence\n  return 0;\n}\n\nfn main() -> Int {\n  return evaluate(\"1 + 2 * 3\");  // Should return 7\n}",
+  "solution": "fn evaluate(s: Str) -> Int {\n  // 1 + 2 * 3 → 1 + (2 * 3) → 1 + 6 → 7\n  // Simple: find the '+' after accounting for '*' precedence\n  if s.contains(\"*\") {\n    let parts = s.split('+');\n    let left = parts[0].trim();\n    let right = parts[1].trim();\n    if right.contains(\"*\") {\n      let mul_parts = right.split('*');\n      let a = mul_parts[0].trim().parse_int().unwrap();\n      let b = mul_parts[1].trim().parse_int().unwrap();\n      return left.trim().parse_int().unwrap() + a * b;\n    }\n  }\n  return 0;\n}\n\nfn main() -> Int {\n  return evaluate(\"1 + 2 * 3\");\n}",
+  "tips": [
+    "Pratt parsing handles operator precedence with minimal code — learn it once, use it everywhere",
+    "The AST is the intermediate representation that ALL later passes consume — get it right",
+    "Parser errors cascade — one missing brace causes many errors. Error recovery mitigates this",
+    "An AST can be 'pretty-printed' back to source code — useful for formatters and refactoring tools"
+  ],
+  "common_mistakes": [
+    "Parsing expressions without respecting precedence — '1 + 2 * 3' should be 7, not 9",
+    "Not handling left-recursion — can cause infinite loops in recursive descent parsers",
+    "Forgetting that the parser builds a TREE — order of evaluation is encoded structurally, not sequentially"
+  ],
+  "related": [
+    "L7-01",
+    "L7-02",
+    "L7-04"
+  ],
+  "next_lesson": "L7-04"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "L8-12",
+  "title": "Protobuf Serialization",
+  "level": "L8",
+  "duration": "12 min",
+  "concepts": [
+    "Protobuf",
+    "serialization",
+    "binary format",
+    "schema",
+    "compact encoding"
+  ],
+  "concept": "Protocol Buffers (protobuf) serialization in XIOM — compact binary encoding with schema evolution for efficient data storage and transmission.",
+  "why": "JSON is human-readable but verbose. Protobuf is binary and compact — 3-10x smaller and faster to parse, with backward-compatible schema evolution.",
+  "theory": "## Compact Binary Serialization\n\n### Schema Definition\n\n```protobuf\nsyntax = \"proto3\";\n\nmessage Person {\n  int32 id = 1;\n  string name = 2;\n  string email = 3;\n  repeated string tags = 4;\n  Address address = 5;\n}\n\nmessage Address {\n  string street = 1;\n  string city = 2;\n  int32 zip_code = 3;\n}\n```\n\n### Serialization\n\n```xiom\nuse xiom.protobuf;\n\nfn main() -> Int {\n  let person = Person{\n    id: 1,\n    name: \"Alice\",\n    email: \"alice@example.com\",\n    tags: [\"developer\", \"xiom\"],\n    address: Some(Address{\n      street: \"123 Main St\",\n      city: \"San Francisco\",\n      zip_code: 94105,\n    }),\n  };\n\n  // Serialize to binary\n  let bytes = protobuf::serialize(&person)?;\n  io.println(\"Serialized size: \" + bytes.len().to_str() + \" bytes\");\n  // Typically 3-10x smaller than JSON equivalent\n\n  // Deserialize\n  let decoded: Person = protobuf::deserialize(&bytes)?;\n  assert(decoded.name == \"Alice\");\n  return 0;\n}\n```\n\n### Schema Evolution\n\n```protobuf\n// Version 1\nmessage User {\n  int32 id = 1;\n  string name = 2;\n}\n\n// Version 2 (add field)\nmessage User {\n  int32 id = 1;\n  string name = 2;\n  string email = 3;  // NEW — old data still readable\n}\n\n// Version 3 (deprecate field)\nmessage User {\n  int32 id = 1;\n  string name = 2 [deprecated = true];\n  string username = 3;  // Replaced 'name'\n}\n```\n\n### Wire Format\n\n```\nProtobuf binary encoding:\nField: tag (field_number << 3 | wire_type), value\n\nExample:\n  id = 42\n  → tag: 08  (1 << 3 | 0 = field 1, varint)\n  → value: 2A  (42 as varint)\n  → 2 bytes total\n\nvs JSON: {\"id\":42} = 7 bytes\n```\n\n### Comparison with JSON\n\n| Feature | JSON | Protobuf |\n|---------|------|----------|\n| Format | Text | Binary |\n| Size | Large | 3-10x smaller |\n| Parse speed | Medium | Fast |\n| Human-readable | Yes | No |\n| Schema | Optional | Required |\n| Schema evolution | Manual | Built-in |\n| Language support | Universal | Proto definitions |",
+  "syntax_ref": "use xiom.protobuf;\n\n// Serialize:\nlet bytes = protobuf::serialize(&message)?;\n\n// Deserialize:\nlet message: MyMessage = protobuf::deserialize(&bytes)?;\n\n// Size comparison:\n// JSON: typically 50-200% of protobuf size\n// Protobuf: binary, compact, field-number based",
+  "code_template": "// TODO: Define a simple message schema (conceptually):\n// message LogEntry { int64 timestamp = 1; string level = 2; string message = 3; }\n// Compare estimated sizes: JSON vs Protobuf for:\n// {\"timestamp\":1234567890,\"level\":\"INFO\",\"message\":\"Server started\"}\n\nfn main() -> Int {\n  // JSON: ~75 chars ≈ 75 bytes\n  // Protobuf: ~30 bytes (compact binary encoding)\n  return 30;  // Estimated protobuf size\n}",
+  "solution": "fn main() -> Int {\n  return 30;\n}",
+  "tips": [
+    "Protobuf field numbers must be UNIQUE within a message — plan your schema carefully",
+    "Never remove or reuse field numbers — mark as deprecated instead",
+    "Protobuf is ideal for internal service communication, file formats, and data storage",
+    "Combine protobuf with gRPC for end-to-end typed, compact, fast APIs"
+  ],
+  "common_mistakes": [
+    "Changing field types — Int32 to Int64 is OK, but Int32 to String breaks compatibility",
+    "Assuming required fields — proto3 has no required fields, all are optional with defaults",
+    "Not documenting schema versions — without comments, field numbers are meaningless"
+  ],
+  "related": [
+    "L8-11",
+    "L8-05",
+    "L8-09"
+  ],
+  "next_lesson": "L8-13"
+}

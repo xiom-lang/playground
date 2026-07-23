@@ -1,0 +1,17 @@
+{
+  "id": "L3-18",
+  "title": "Scope and Lifetime",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["scope", "lifetime", "braces", "drop", "variable lifetime"],
+  "narrative": "## How Long Do Variables Live?\n\nA variable's **lifetime** is the range of code from its declaration to the end of its enclosing scope (the closest `{ }`).\n\n### Basic Scope\n\n```xiom\nfn main() -> Int {\n  let x = 42;     // x's lifetime starts\n  io.println(x);  // x is valid\n  return 0;\n  // x's lifetime ends — x is dropped\n}\n```\n\n### Scope with Blocks\n\n```xiom\nfn main() -> Int {\n  let outer = 10;\n  {\n    let inner = 20;  // inner's lifetime starts\n    io.println(outer);  // can access outer scope\n    io.println(inner);  // can access inner scope\n  }  // inner's lifetime ends — inner is dropped\n  io.println(outer);  // outer still valid\n  // io.println(inner);  // ERROR: inner out of scope\n  return 0;\n}\n```\n\n### Borrowing and Scope\n\n```xiom\nvar data = Vec[Int]();\ndata.push(1);\n\n{\n  let m = &mut data;  // mutable borrow starts\n  m.push(2);\n}  // mutable borrow ends — data usable again\n\ndata.push(3);  // OK — borrow ended\n```\n\n### Drop Order\n\nVariables are dropped in **reverse order of declaration** within a scope:\n\n```xiom\nfn main() -> Int {\n  let a = Vec[Int]();  // created first\n  a.push(1);\n  let b = Vec[Int]();  // created second\n  b.push(2);\n  return 0;\n  // b dropped first (reverse order)\n  // a dropped second\n}\n```\n\n### Lifetimes and References\n\nA reference cannot outlive the value it points to:\n\n```xiom\n// INVALID\n// fn bad() -> &Int {\n//   let x = 42;\n//   return &x;  // x dies here, reference would dangle\n// }\n```",
+  "code_template": "// TODO: demonstrate scope by using blocks to control mutable borrow lifetimes\n\n// TODO: create Vec, mutable borrow in inner block, then use Vec after block ends\n\nfn main() -> Int {\n  // TODO: create vec [1], mutable borrow to push 2 in a block, return len after block\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var data = Vec[Int]();\n  data.push(1);\n  {\n    let m = &mut data;\n    m.push(2);\n  }\n  data.push(3);\n  return data.len();\n}",
+  "tips": [
+    "A variable lives from declaration to the closing brace of its scope",
+    "Use `{ }` blocks to control variable lifetimes and borrow scopes",
+    "Drop order is reverse declaration order — last created, first dropped",
+    "References cannot outlive the values they point to"
+  ],
+  "related": ["L3-01", "L3-12", "L3-19", "L1-26"]
+}

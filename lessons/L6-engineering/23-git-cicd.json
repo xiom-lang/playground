@@ -1,0 +1,36 @@
+{
+  "id": "L6-23",
+  "title": "Git & CI/CD",
+  "level": "L6",
+  "duration": "12 min",
+  "concepts": [
+    "git",
+    "CI/CD",
+    "continuous integration",
+    "automation",
+    "pipeline"
+  ],
+  "concept": "Set up Git-based CI/CD for XIOM projects — automated builds, tests, linting, and verification on every push and pull request.",
+  "why": "Manual testing doesn't scale. CI/CD automates quality checks: every push runs tests, lint, and verification. You catch bugs before they reach teammates.",
+  "theory": "## Automated Quality Gates\n\n### Git Hooks\n\n```sh\n# .git/hooks/pre-commit (local)\n#!/bin/sh\nxiom fmt --check src/ || exit 1\nxiom lint --deny-warnings src/ || exit 1\nxiom test || exit 1\n```\n\n### Git Attributes\n\n```\n# .gitattributes\n*.xi text eol=lf\n*.lock binary\n```\n\n### CI Pipeline Stages\n\n```yaml\n# Typical CI pipeline for XIOM projects\nstages:\n  - format       # Check code formatting\n  - lint         # Static analysis\n  - build        # Compile the project\n  - test         # Run unit tests\n  - verify       # Static contract verification (optional)\n  - benchmark    # Performance regression check\n  - package      # Create distributable artifact\n```\n\n### CI Configuration\n\n```yaml\n# .github/workflows/ci.yml (see L6-24 for full example)\nname: CI\non: [push, pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - uses: xiom-lang/setup-xiom@v1\n        with:\n          xiom-version: stable\n      - run: xiom fmt --check src/\n      - run: xiom lint --deny-warnings src/\n      - run: xiom test\n      - run: xiom build --release\n```\n\n### What to CI\n\n- **Every push**: format, lint, test (fast checks)\n- **Pull requests**: format, lint, test, build, verify (full checks)\n- **Main branch**: format, lint, test, build, verify, benchmark (fullest checks)\n- **Tags/releases**: all of above + package + publish\n\n### Branch Strategy\n\n```\nmain         ← production-ready code\n├── feat/*   ← new features\n├── fix/*    ← bug fixes\n└── release/* ← release preparation\n```",
+  "syntax_ref": "# .githooks/pre-commit:\nxiom fmt --check src/\nxiom lint --deny-warnings src/\nxiom test\n\n# CI runs the same commands — local and CI are consistent",
+  "code_template": "// TODO: Create a .github/workflows/ci.yml file for this project\n// that runs xiom fmt --check, xiom lint, and xiom test on every push\n// (Describing what to put, not creating the file)\n\nfn main() -> Int {\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "CI should mirror your local dev workflow — same commands, same flags",
+    "Fast checks first (format, lint) — fail early before expensive compilation",
+    "Cache build artifacts in CI — dramatically speeds up subsequent runs",
+    "Add status badges to your README — shows build status at a glance"
+  ],
+  "common_mistakes": [
+    "Running different commands in CI vs locally — CI green but local broken",
+    "Not caching dependencies — every CI run downloads everything from scratch",
+    "Long-running CI that discourages frequent commits — keep the basic pipeline under 5 minutes"
+  ],
+  "related": [
+    "L6-24",
+    "L6-25",
+    "L6-22"
+  ],
+  "next_lesson": "L6-24"
+}

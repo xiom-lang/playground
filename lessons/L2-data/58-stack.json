@@ -1,0 +1,17 @@
+{
+  "id": "L2-55",
+  "title": "Stack",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["Stack", "push", "pop", "peek", "LIFO", "last-in-first-out"],
+  "narrative": "## Last-In-First-Out with Stack\n\nA **stack** is a LIFO (Last In, First Out) data structure. Items are added and removed from the same end — the \"top\" of the stack.\n\n### Building a Stack with Vec\n\n```xiom\npub type Stack[T] = { items: Vec[T]; }\n\nfn Stack.new[T]() -> Stack[T] {\n  return Stack{ items: Vec[T]() };\n}\n\nfn Stack.push[T](self: &mut Stack[T], item: T) -> Unit {\n  self.items.push(item);\n}\n\nfn Stack.pop[T](self: &mut Stack[T]) -> Option[T] {\n  return self.items.pop();\n}\n\nfn Stack.peek[T](self: &Stack[T]) -> Option[T] {\n  if self.items.len() == 0 { return None; }\n  return Some(self.items[self.items.len() - 1]);\n}\n```\n\n### Using a Stack\n\n```xiom\nvar s = Stack[Int].new();\ns.push(1);\ns.push(2);\ns.push(3);  // stack: [1, 2, 3] — top is 3\n\nlet top = s.peek();   // Some(3) — look without removing\nlet val = s.pop();    // Some(3) — remove top\nlet val2 = s.pop();   // Some(2)\n```\n\n### LIFO Behavior\n\n```\npush(1):  [1]            top=1\npush(2):  [1, 2]         top=2\npush(3):  [1, 2, 3]      top=3\npop():    [1, 2]   → 3\npop():    [1]      → 2\npop():    []       → 1\n```\n\n### Practical Uses\n\n- **Undo/Redo**: push state on each action; pop to undo\n- **Expression evaluation**: parse math expressions\n- **Backtracking**: maze solving, pathfinding\n- **Function call stack**: compiler tracks calls\n\n### Stack Operations\n\n| Operation | Return | Description |\n|-----------|--------|-------------|\n| push(item) | Unit | Add to top |\n| pop() | Option[T] | Remove from top |\n| peek() | Option[T] | Look at top |\n| len() | Int | Number of items |\n| is_empty() | Bool | Check if empty |",
+  "code_template": "// TODO: implement a Stack[Int] using Vec\n\n// TODO: write 'is_balanced' that checks if parentheses are balanced using a stack\n\nfn main() -> Int {\n  // TODO: push 1,2,3; pop all; return sum\n  return 0;\n}",
+  "solution": "pub type Stack = { items: Vec[Int]; }\n\nfn Stack.new() -> Stack {\n  return Stack{ items: Vec[Int]() };\n}\n\nfn Stack.push(self: &mut Stack, item: Int) -> Unit {\n  self.items.push(item);\n}\n\nfn Stack.pop(self: &mut Stack) -> Option[Int] {\n  return self.items.pop();\n}\n\nfn main() -> Int {\n  var s = Stack.new();\n  s.push(1);\n  s.push(2);\n  s.push(3);\n  var sum = 0;\n  while true {\n    match s.pop() {\n      Some(n) => { sum = sum + n; }\n      None => { break; }\n    }\n  }\n  return sum;\n}",
+  "tips": [
+    "Stack = LIFO: last item in is first item out",
+    "Use `.push()` to add, `.pop()` to remove, `.peek()` to look without removing",
+    "Vec's `.push()` and `.pop()` naturally implement a stack",
+    "Always check `.is_empty()` or handle `None` from pop before using the result"
+  ],
+  "related": ["L2-36", "L2-59", "L2-57", "L2-23"]
+}

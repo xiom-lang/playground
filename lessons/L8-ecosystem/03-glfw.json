@@ -1,0 +1,37 @@
+{
+  "id": "L8-03",
+  "title": "GLFW Windowing",
+  "level": "L8",
+  "duration": "12 min",
+  "concepts": [
+    "GLFW",
+    "window",
+    "input",
+    "OpenGL",
+    "Vulkan",
+    "context"
+  ],
+  "concept": "GLFW bindings for XIOM — create windows, handle input, and manage OpenGL/Vulkan contexts for cross-platform graphics applications.",
+  "why": "Every graphics application needs a window. GLFW provides a simple, cross-platform windowing library that works with both OpenGL and Vulkan.",
+  "theory": "## Cross-Platform Windowing\n\n### Basic Window\n\n```xiom\nuse xiom.glfw;\n\nfn main() -> Int {\n  glfw::init()?;\n\n  let window = glfw::Window::new(800, 600, \"XIOM App\")?;\n  window.make_context_current();\n\n  while !window.should_close() {\n    // Handle input\n    if window.is_key_pressed(Key::Escape) {\n      window.set_should_close(true);\n    }\n\n    // Render frame\n    gl::clear(0.2, 0.3, 0.3, 1.0);\n\n    window.swap_buffers();\n    glfw::poll_events();\n  }\n\n  glfw::terminate();\n  return 0;\n}\n```\n\n### Input Handling\n\n```xiom\n// Keyboard\nlet keys = window.get_pressed_keys();\nif keys.contains(Key::W) { camera.move_forward(); }\nif keys.contains(Key::S) { camera.move_back(); }\n\n// Mouse\nlet (x, y) = window.get_cursor_position();\nlet scroll = window.get_scroll_delta();\n\n// Gamepad\nif let Some(gamepad) = glfw::get_gamepad(0) {\n  let left_stick = gamepad.get_axis(GamepadAxis::LeftX);\n}\n\n// Window events\nwindow.on_resize(|width, height| {\n  gl::viewport(0, 0, width, height);\n});\n```\n\n### Window Hints (before creation)\n\n```xiom\nglfw::window_hint(Hint::Resizable, false);\nglfw::window_hint(Hint::Samples, 4);  // MSAA\nglfw::window_hint(Hint::ClientApi, ClientApi::Vulkan);\nlet window = glfw::Window::new(800, 600, \"Vulkan App\")?;\n```\n\n### Multiple Windows\n\n```xiom\nlet main_window = glfw::Window::new(1024, 768, \"Editor\")?;\nlet preview_window = glfw::Window::new(320, 240, \"Preview\")?;\n\n// Switch context to render to each\nmain_window.make_context_current();\nrender_scene();\npreview_window.make_context_current();\nrender_preview();\n```\n\n### Timing\n\n```xiom\nlet last_time = glfw::get_time();\nwhile !window.should_close() {\n  let current_time = glfw::get_time();\n  let delta_time = current_time - last_time;\n  last_time = current_time;\n\n  update(delta_time);  // Frame-rate independent updates\n  render();\n}\n```",
+  "syntax_ref": "use xiom.glfw;\n\nglfw::init()?;\nlet window = glfw::Window::new(800, 600, \"Title\")?;\nwhile !window.should_close() {\n  // update + render\n  window.swap_buffers();\n  glfw::poll_events();\n}\nglfw::terminate();",
+  "code_template": "fn main() -> Int {\n  // Outline the main loop for a game:\n  // 1. Init GLFW\n  // 2. Create window\n  // 3. While not closed: handle input, update game, render, swap buffers\n  // Return the number of steps in the loop body\n  return 3;  // handle input, update, render\n}",
+  "solution": "fn main() -> Int {\n  return 3;\n}",
+  "tips": [
+    "Always pair glfw::init() with glfw::terminate() — use RAII if possible",
+    "Delta time is critical for physics — use glfw::get_time() for frame-independent updates",
+    "Window hints MUST be set BEFORE creating the window — they can't be changed after",
+    "Use glfw::poll_events() every frame — the window becomes unresponsive without it"
+  ],
+  "common_mistakes": [
+    "Forgetting to call swap_buffers() — the screen never updates",
+    "Not handling window resize — the viewport gets stretched",
+    "Calling OpenGL functions before make_context_current() — crashes with null context"
+  ],
+  "related": [
+    "L8-02",
+    "L8-04",
+    "L8-14"
+  ],
+  "next_lesson": "L8-04"
+}

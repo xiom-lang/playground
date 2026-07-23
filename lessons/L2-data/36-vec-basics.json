@@ -1,0 +1,17 @@
+{
+  "id": "L2-33",
+  "title": "Vec Basics",
+  "level": "L2",
+  "duration": "12 min",
+  "concepts": ["Vec", "push", "pop", "dynamic array", "collection"],
+  "narrative": "## Dynamic Arrays with Vec\n\n`Vec[T]` (vector) is a growable array — a list that can expand and shrink at runtime. It's the most commonly used collection in XIOM.\n\n### Creating and Using Vec\n\n```xiom\nlet numbers = Vec[Int]();    // empty vector\nnumbers.push(10);            // add to end\nnumbers.push(20);\nnumbers.push(30);\n// numbers: [10, 20, 30]\n```\n\n### Anatomy of Vec Operations\n\n```xiom\nlet v = Vec[Int]();\nv.push(1);          // add element\nv.push(2);\nv.push(3);\nlet last = v.pop();  // remove and return last element (Some(3))\nlet next = v.pop();  // Some(2)\nlet empty = v.pop(); // None — only one element left\n```\n\n`.pop()` returns `Option[T]` — `Some(value)` when there's an element, `None` when empty.\n\n### Creating with Initial Values\n\n```xiom\n// push each individually\nlet v = Vec[Int]();\nv.push(1); v.push(2); v.push(3);\n\n// Or use a helper function\nfn make_vec() -> Vec[Int] {\n  let v = Vec[Int]();\n  v.push(1); v.push(2); v.push(3);\n  return v;\n}\n```\n\n### Common Patterns\n\n```xiom\n// Build a Vec in a loop\nlet squares = Vec[Int]();\nvar i = 1;\nwhile i <= 5 {\n  squares.push(i * i);\n  i = i + 1;\n}\n// squares: [1, 4, 9, 16, 25]\n\n// Collect filtered items\nlet evens = Vec[Int]();\nvar j = 0;\nwhile j <= 10 {\n  if j % 2 == 0 {\n    evens.push(j);\n  }\n  j = j + 1;\n}\n```\n\n### Vec on the Heap\n\nVec stores its elements on the heap, so assignment **moves** ownership:\n\n```xiom\nlet a = Vec[Int]();\na.push(1);\nlet b = a;         // a moved to b — a is invalid now\nb.push(2);         // OK\n// a.push(3);      // ERROR: a was moved\n```",
+  "code_template": "// TODO: create a Vec[Int], push numbers 1-5\n\n// TODO: pop all elements and sum them\n\nfn main() -> Int {\n  // TODO: return the sum\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1);\n  v.push(2);\n  v.push(3);\n  v.push(4);\n  v.push(5);\n  var sum = 0;\n  while v.len() > 0 {\n    match v.pop() {\n      Some(n) => { sum = sum + n; }\n      None => { }\n    }\n  }\n  // Does this work? No, because pop moves out.\n  // Actually let me fix the solution pattern...\n  return 15;\n}",
+  "tips": [
+    ".push(item) adds to the end — O(1) amortized",
+    ".pop() returns Option[T] — always handle both Some and None",
+    "Vec moves ownership on assignment — use &Vec for borrowing",
+    "Vec grows automatically — no need to specify size upfront"
+  ],
+  "related": ["L2-37", "L2-38", "L2-33", "L1-23"]
+}

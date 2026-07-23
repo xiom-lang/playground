@@ -1,0 +1,37 @@
+{
+  "id": "L7-19",
+  "title": "Code Generation Patterns",
+  "level": "L7",
+  "duration": "20 min",
+  "concepts": [
+    "codegen patterns",
+    "match compilation",
+    "closure lifting",
+    "vtable",
+    "enum layout"
+  ],
+  "concept": "How the compiler translates high-level XIOM patterns into efficient machine code — match compilation, closure lifting, enum layout, and more.",
+  "why": "Understanding how patterns compile explains performance. A match statement can be a jump table or a chain of comparisons — knowing which helps you write faster code.",
+  "theory": "## From Pattern to Machine Code\n\n### Match Compilation\n\n```xiom\n// XIOM:\nmatch value {\n  0 => \"zero\",\n  1 => \"one\",\n  2 => \"two\",\n  _ => \"many\",\n}\n\n// Compiled to: JUMP TABLE (O(1))\n// jump_table[value] -> target address\n//   [0]: load \"zero\"\n//   [1]: load \"one\"\n//   [2]: load \"two\"\n//   [3+]: load \"many\"\n```\n\nvs sparse values:\n\n```xiom\nmatch value {\n  0 => \"zero\",\n  1000 => \"thousand\",\n  _ => \"other\",\n}\n\n// Compiled to: if-else chain\n// if value == 0 { \"zero\" }\n// else if value == 1000 { \"thousand\" }\n// else { \"other\" }\n```\n\n### Enum Layout\n\n```xiom\npub enum Option[Int] {\n  Some(Int),\n  None,\n}\n\n// Memory layout:\n// Some(42):  [tag: 0] [payload: 42]\n// None:      [tag: 1] [payload: 0 (unused)]\n```\n\nNiche optimization:\n\n```xiom\npub enum Option[Bool] {\n  Some(Bool),\n  None,\n}\n\n// Optimized layout (1 byte!):\n// Some(false): 0x00\n// Some(true):  0x01\n// None:        0x02  (Bool only uses 0 and 1, so 2 represents None)\n```\n\n### Closure Compilation\n\n```xiom\n// XIOM:\nlet factor = 10;\nlet multiply = |x| x * factor;\n\n// Compiled to STRUCT + CALL:\npub type Closure_1 = {\n  factor: Int,  // Captured variable\n}\n\nimpl Fn(Int) -> Int for Closure_1 {\n  fn call(self: &Closure_1, x: Int) -> Int {\n    return x * self.factor;\n  }\n}\n\nlet multiply = Closure_1{ factor: 10 };\nlet result = multiply.call(5);\n```\n\n### Generic Monomorphization\n\n```xiom\n// Generic code:\nfn identity[T](x: T) -> T { return x; }\n\n// After monomorphization (compile-time):\nfn identity_Int(x: Int) -> Int { return x; }\nfn identity_Str(x: Str) -> Str { return x; }\nfn identity_Bool(x: Bool) -> Bool { return x; }\n// No generic code at runtime — fully specialized!\n```\n\n### Iterator Compilation\n\n```xiom\nlet sum = nums.iter().filter(|n| n > 0).map(|n| n * 2).sum();\n\n// Compiled to SINGLE LOOP (no intermediate allocations):\nvar sum = 0;\nvar i = 0;\nwhile i < nums.len() {\n  let n = nums[i];\n  if n > 0 {\n    sum = sum + n * 2;\n  }\n  i = i + 1;\n}\n```",
+  "syntax_ref": "// Match on dense small ints → jump table (fast)\n// Match on sparse values → if-else chain\n// Iterators → fused single loops\n// Generics → monomorphized concrete functions\n\n// Inspect:\nxiom build --emit-ir main.xi    # See the generated code",
+  "code_template": "// Compile this and observe (conceptually) the optimization:\nfn sum_of_squares(n: Int) -> Int {\n  var sum = 0;\n  for i in 1..=n {\n    sum = sum + i * i;\n  }\n  return sum;\n}\n\nfn main() -> Int {\n  return sum_of_squares(100);\n}",
+  "solution": "fn sum_of_squares(n: Int) -> Int {\n  var sum = 0;\n  for i in 1..=n {\n    sum = sum + i * i;\n  }\n  return sum;\n}\n\nfn main() -> Int {\n  return sum_of_squares(100);\n}",
+  "tips": [
+    "Dense match on small integers compiles to a jump table — O(1) and faster than if-else chains",
+    "Iterator chains compile to single fused loops — zero intermediate collections allocated",
+    "Generic functions are monomorphized — zero runtime overhead, but larger binary size",
+    "Enum niche optimization packs discriminants into unused bit patterns — smaller, faster"
+  ],
+  "common_mistakes": [
+    "Writing match on strings expecting jump-table speed — strings compile to if-else chains",
+    "Assuming iterators allocate — they compile to fused loops, no allocations",
+    "Not using generics because you think they're slow — monomorphization makes them as fast as hand-written code"
+  ],
+  "related": [
+    "L7-05",
+    "L7-06",
+    "L7-07",
+    "L5-03"
+  ],
+  "next_lesson": "L7-20"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L2-40",
+  "title": "Array [N]T",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["array", "fixed size", "[N]T", "stack allocation", "compile-time size"],
+  "narrative": "## Fixed-Size Arrays\n\nAn **array** `[N]T` has a fixed size known at compile time. Unlike Vec, arrays live on the stack and can't grow or shrink.\n\n### Declaring Arrays\n\n```xiom\nlet a: [3]Int = [1, 2, 3];\nlet b = [4, 5, 6];  // type inferred: [3]Int\n```\n\nThe size `N` is part of the type — `[3]Int` and `[4]Int` are different types.\n\n### Accessing Elements\n\n```xiom\nlet arr = [10, 20, 30, 40, 50];\n\nlet first = arr[0];   // 10\nlet last = arr[4];    // 50\nlet len = arr.len();  // 5\n\nlet safe = arr.get(0);   // Some(10)\nlet out = arr.get(10);   // None\n```\n\n### Arrays vs Vec\n\n| Feature | Array [N]T | Vec[T] |\n|---------|-----------|--------|\n| Size | Fixed at compile time | Grows at runtime |\n| Memory | Stack | Heap |\n| Push/Pop | Not available | Available |\n| Indexing | Bracket syntax | Bracket syntax |\n| Copy | Copy (if elements are Copy) | Move |\n\n### When to Use Arrays\n\n- Small, fixed-size collections (days of week, directions)\n- Performance-critical code (stack allocation faster than heap)\n- Embedded systems with limited heap\n\n```xiom\npub type Board = [9]Int;  // tic-tac-toe board\n\nfn empty_board() -> Board {\n  return [0, 0, 0, 0, 0, 0, 0, 0, 0];\n}\n\nfn make_move(board: &mut Board, pos: Int, player: Int) -> Unit {\n  board[pos] = player;\n}\n```\n\n### Array Iteration\n\n```xiom\nlet arr = [1, 2, 3, 4, 5];\nvar sum = 0;\nvar i = 0;\nwhile i < arr.len() {\n  sum = sum + arr[i];\n  i = i + 1;\n}\n```",
+  "code_template": "// TODO: create an array of 7 floats representing weekly temperatures\n\n// TODO: write a function 'average' that returns the mean of the array\n\n// TODO: write a function 'hottest_day' that returns the index of the highest temperature\n\nfn main() -> Int {\n  // TODO: return average * 10 as Int\n  return 0;\n}",
+  "solution": "fn average(temps: &[7]Float64) -> Float64 {\n  var sum = 0.0;\n  var i = 0;\n  while i < 7 {\n    sum = sum + temps[i];\n    i = i + 1;\n  }\n  return sum / 7.0;\n}\n\nfn hottest_day(temps: &[7]Float64) -> Int {\n  var max_idx = 0;\n  var i = 1;\n  while i < 7 {\n    if temps[i] > temps[max_idx] { max_idx = i; }\n    i = i + 1;\n  }\n  return max_idx;\n}\n\nfn main() -> Int {\n  let temps = [20.0, 22.5, 25.0, 24.0, 21.5, 19.0, 23.0];\n  let avg = average(&temps);\n  return (avg * 10.0) as Int;\n}",
+  "tips": [
+    "Array size is part of the type — `[3]Int` and `[5]Int` are incompatible",
+    "Arrays live on the stack — faster allocation than Vec but limited size",
+    "Use `.len()` and `.get()` just like Vec",
+    "Prefer Vec for dynamic data; arrays for known, fixed-size data"
+  ],
+  "related": ["L2-36", "L2-37", "L3-01", "L3-02"]
+}

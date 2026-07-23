@@ -1,0 +1,17 @@
+{
+  "id": "L3-03",
+  "title": "Stack Allocation",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["stack", "allocation", "fixed size", "automatic", "local variable"],
+  "narrative": "## Variables on the Stack\n\nThe **stack** is a region of memory managed automatically by the compiler. Variables are allocated when they enter scope and freed when they leave.\n\n### What Goes on the Stack?\n\nTypes with known, fixed size at compile time:\n\n```xiom\nfn main() -> Int {\n  let x = 42;           // Int — fixed size, on stack\n  let y = 3.14;         // Float64 — fixed size, on stack\n  let flag = true;      // Bool — fixed size, on stack\n  let c = 'A';          // Char — fixed size, on stack\n  let arr = [1, 2, 3];  // [3]Int — fixed size array, on stack\n  return 0;\n}\n```\n\n### Stack Characteristics\n\n- **Fast**: allocation is just moving the stack pointer\n- **Automatic**: compiler inserts free code — no manual cleanup\n- **LIFO order**: last allocated is first freed\n- **Limited size**: typically a few MB per thread\n\n### Stack Frame\n\nEvery function call creates a **stack frame** containing its local variables:\n\n```xiom\nfn inner() -> Int {\n  let a = 10;    // a on stack (inner's frame)\n  return a;\n}\n\nfn outer() -> Int {\n  let b = 20;    // b on stack (outer's frame)\n  let result = inner();  // inner's frame created, then destroyed\n  return b + result;     // b is still valid\n}\n```\n\n### Structs on Stack\n\nStructs with only fixed-size fields are also stack-allocated:\n\n```xiom\npub type Point = { x: Float64; y: Float64; }\n\nfn main() -> Int {\n  let p = Point{ x: 1.0, y: 2.0 };  // Point is 16 bytes, stack-allocated\n  return 0;\n}\n```\n\n### Stack Overflow\n\nDeep recursion can exhaust the stack:\n\n```xiom\nfn recurse(n: Int) -> Int {\n  if n == 0 { return 0; }\n  return recurse(n - 1);  // each call adds a frame\n}\n```\n\nToo many nested calls = stack overflow = trap.",
+  "code_template": "// TODO: write a function 'sum_range' that sums numbers from 1 to n using a loop (not recursion)\n\n// TODO: explain why the loop version is better for large n than recursion\n\nfn main() -> Int {\n  // TODO: sum 1..100 using a loop and return the result\n  return 0;\n}",
+  "solution": "fn sum_range(n: Int) -> Int {\n  var total = 0;\n  var i = 1;\n  while i <= n {\n    total = total + i;\n    i = i + 1;\n  }\n  return total;\n}\n\nfn main() -> Int {\n  return sum_range(100);\n}",
+  "tips": [
+    "Stack variables are freed automatically when scope ends — no manual cleanup",
+    "Stack allocation is extremely fast — just a pointer move",
+    "Deep recursion can overflow the stack — prefer loops for large iteration counts",
+    "All fields of a stack-allocated struct must also be fixed-size"
+  ],
+  "related": ["L3-01", "L3-04", "L3-03", "L1-26"]
+}

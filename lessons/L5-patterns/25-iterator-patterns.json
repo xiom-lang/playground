@@ -1,0 +1,38 @@
+{
+  "id": "L5-25",
+  "title": "Iterator Patterns",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "iterator patterns",
+    "chain",
+    "zip",
+    "enumerate",
+    "flat_map",
+    "peekable"
+  ],
+  "concept": "Advanced iterator patterns — chain, zip, enumerate, flat_map, peekable — for complex data processing pipelines.",
+  "why": "Real-world data processing needs more than map and filter. These advanced patterns solve common iteration challenges elegantly.",
+  "theory": "## Advanced Iterator Techniques\n\n### chain — Concatenate Iterators\n```xiom\nlet a = [1, 2, 3].iter();\nlet b = [4, 5, 6].iter();\nlet combined = a.chain(b);\n// Produces: 1, 2, 3, 4, 5, 6\n```\n\n### zip — Pair Elements\n```xiom\nlet names = [\"Alice\", \"Bob\"].iter();\nlet scores = [85, 92].iter();\nlet paired = names.zip(scores);\n// Produces: (\"Alice\", 85), (\"Bob\", 92)\n```\n\n### enumerate — Add Index\n```xiom\nlet items = [\"a\", \"b\", \"c\"].iter();\nfor (i, item) in items.enumerate() {\n  io.println(i.to_str() + \": \" + item);\n}\n// 0: a, 1: b, 2: c\n```\n\n### flat_map — Flatten Nested Iterators\n```xiom\nlet words = [\"hello\", \"world\"].iter();\nlet chars = words.flat_map(|w| w.chars());\n// Produces: 'h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd'\n```\n\n### peekable — Look Ahead\n```xiom\nlet mut iter = [1, 2, 3].iter().peekable();\nlet next_val = iter.peek();  // Some(1) — doesn't advance\nlet actual = iter.next();     // Some(1) — now advances\n```\n\n### Pattern: Sliding Window\n```xiom\nfn window_sum(data: &Vec[Int], size: Int) -> Vec[Int] {\n  return data.windows(size).map(|w| w.sum()).collect();\n}\n```\n\n### Pattern: Group By\n```xiom\nfn group_by_first_char(words: &Vec[Str]) -> Map[Char, Vec[Str]] {\n  var groups = Map[Char, Vec[Str]]();\n  for word in words {\n    let first = word[0];\n    groups.entry(first).or_default().push(word);\n  }\n  return groups;\n}\n```",
+  "syntax_ref": "iter.chain(other_iter)     // Concatenate\niter.zip(other_iter)       // Pair elements\niter.enumerate()           // Add index\niter.flat_map(|x| inner)   // Flatten nested\niter.peekable()            // Look ahead",
+  "code_template": "// TODO: You have two Vec[Str]: first_names and last_names\n// Use zip to create full names \"FirstName LastName\"\n// Return the first full name\n\nfn main() -> Int {\n  // TODO: [\"Alice\", \"Bob\"] + [\"Smith\", \"Jones\"] → \"Alice Smith\" length\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let first_names = Vec[Str]();\n  first_names.push(\"Alice\"); first_names.push(\"Bob\");\n  let last_names = Vec[Str]();\n  last_names.push(\"Smith\"); last_names.push(\"Jones\");\n\n  var result = Str(\"\");\n  var i = 0;\n  while i < first_names.len() && i < last_names.len() {\n    if i == 0 {\n      result = first_names[i] + \" \" + last_names[i];\n    }\n    i = i + 1;\n  }\n  return result.len();\n}",
+  "tips": [
+    "chain is for sequential data, zip is for parallel data — know the difference",
+    "enumerate is cleaner than manual index tracking in a loop",
+    "flat_map turns one-to-many into one-to-one iteration",
+    "peekable lets you write parsers and state machines without consuming prematurely"
+  ],
+  "common_mistakes": [
+    "Using zip with iterators of unequal length — shorter one determines total length",
+    "Assuming chain modifies the original iterators — it just creates a new combined view",
+    "Using flat_map when a simpler solution (two loops) would be clearer"
+  ],
+  "related": [
+    "L5-20",
+    "L5-23",
+    "L5-24",
+    "L5-25"
+  ],
+  "next_lesson": "L5-26"
+}

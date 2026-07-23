@@ -1,0 +1,36 @@
+{
+  "id": "L5-32",
+  "title": "Default Interface",
+  "level": "L5",
+  "duration": "8 min",
+  "concepts": [
+    "Default",
+    "default value",
+    "zero value",
+    "initialization",
+    "factory"
+  ],
+  "concept": "The Default interface provides a sensible default value for a type — used by constructors, collections, and configuration patterns.",
+  "why": "Many patterns need a 'zero value' or 'empty state'. Default standardizes this across all types, enabling generic default construction.",
+  "theory": "## Sensible Starting Values\n\n```xiom\npub interface Default {\n  fn default() -> Self;\n}\n```\n\n### Implementing Default\n\n```xiom\npub type Config = {\n  host: Str;\n  port: Int;\n  retries: Int;\n}\n\nimpl Default for Config {\n  fn default() -> Config {\n    return Config{\n      host: \"localhost\",\n      port: 8080,\n      retries: 3,\n    };\n  }\n}\n\nfn main() {\n  let config = Config::default();\n  // Start with defaults, override what you need\n  let mut custom = Config::default();\n  custom.port = 3000;\n}\n```\n\n### Default with Collections\n\n```xiom\nlet nums = HashMap[Str, Vec[Int]]();\n// Vec::default() is called automatically for missing keys\nnums.entry(\"even\").or_default().push(2);\nnums.entry(\"even\").or_default().push(4);\n```\n\n### Zero Values\n\n```xiom\nimpl Default for Int { fn default() -> Int { return 0; } }\nimpl Default for Bool { fn default() -> Bool { return false; } }\nimpl Default for Str { fn default() -> Str { return \"\"; } }\nimpl Default for Vec[T] { fn default() -> Vec[T] { return Vec[T](); } }\nimpl Default for Option[T] { fn default() -> Option[T] { return None(); } }\n```\n\n### Builder Pattern with Default\n\n```xiom\nfn create_config() -> Config {\n  var c = Config::default();\n  c.host = get_env(\"HOST\").unwrap_or(\"0.0.0.0\");\n  c.port = get_env(\"PORT\").unwrap_or(8080);\n  return c;\n}\n```",
+  "syntax_ref": "impl Default for MyType {\n  fn default() -> Self {\n    return Self{ field: default_value, ... };\n  }\n}",
+  "code_template": "// TODO: Define a struct 'GameSettings' with fields:\n//   difficulty: Int (default 1)\n//   volume: Float64 (default 0.5)\n//   fullscreen: Bool (default false)\n// Implement Default, then create settings with default()\n\nfn main() -> Int {\n  // TODO: Return (difficulty * 100 + volume*100) as Int\n  return 0;\n}",
+  "solution": "pub type GameSettings = { difficulty: Int; volume: Float64; fullscreen: Bool; }\n\nimpl Default for GameSettings {\n  fn default() -> GameSettings {\n    return GameSettings{ difficulty: 1, volume: 0.5, fullscreen: false };\n  }\n}\n\nfn main() -> Int {\n  let s = GameSettings::default();\n  return s.difficulty * 100 + (s.volume * 100.0) as Int;\n}",
+  "tips": [
+    "Default should be a SENSIBLE starting point — not just a zeroed struct",
+    "Use Default for configuration structs — callers override only what they need",
+    "Map::entry().or_default() relies on Default — implement it for values",
+    "Default differs per domain: default port is 80 for HTTP but 22 for SSH"
+  ],
+  "common_mistakes": [
+    "Using zero-valued defaults that violate type invariants — e.g., PositiveInt::default() == 0",
+    "Not implementing Default when the type clearly has a sensible default state",
+    "Making Default do I/O or allocation — it should be lightweight and infallible"
+  ],
+  "related": [
+    "L5-33",
+    "L5-26",
+    "L2-01"
+  ],
+  "next_lesson": "L5-33"
+}

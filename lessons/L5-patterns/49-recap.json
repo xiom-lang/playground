@@ -1,0 +1,37 @@
+{
+  "id": "L5-49",
+  "title": "Generics & Patterns Recap",
+  "level": "L5",
+  "duration": "15 min",
+  "concepts": [
+    "generics",
+    "interfaces",
+    "design patterns",
+    "review",
+    "summary"
+  ],
+  "concept": "A comprehensive recap of generics, interfaces, standard interfaces, and design patterns — connecting all L5 concepts into a unified mental model.",
+  "why": "Individual concepts are useful. Understanding how they compose — generics + interfaces + patterns — is what separates junior from senior XIOM developers.",
+  "theory": "## The L5 Architecture\n\n### Generics: The Foundation\n\n```xiom\nfn first[T](items: &Vec[T]) -> T           // Type parameter\nfn max[T: Ord](a: T, b: T) -> T           // Constrained generic\npub type Pair[K, V] = { key: K; val: V; }  // Generic type\n```\n\nGenerics eliminate code duplication. One implementation works for ALL types.\n\n### Interfaces: The Contract\n\n```xiom\npub interface Clone { fn clone(&self) -> Self; }\npub interface Display { fn fmt(&self, f: &mut Formatter) -> Result; }\n```\n\nInterfaces define WHAT a type can do. Generics define what types code ACCEPTS.\n\n### Derive: The Automation\n\n```xiom\n#[derive(Clone, Eq, Hash, Debug, Display)]\npub type User = { id: Int; name: Str; }\n```\n\nDerive macros eliminate boilerplate. Write your type, the compiler writes the interfaces.\n\n### Comptime: The Meta-Layer\n\n```xiom\nconst TABLE = comptime generate_lookup(256);\ncomptime assert_eq(BUFFER_SIZE % 64, 0);\n```\n\nComptime moves computation from runtime to compile time — zero overhead.\n\n### Design Patterns: Composition\n\n| Pattern | Uses | Solves |\n|---------|------|--------|\n| Newtype | Type alias | Type safety |\n| Builder | Generics + Default | Complex construction |\n| Type State | Phantom generics | Invalid state prevention |\n| Strategy | Interfaces + Box | Algorithm selection |\n| Visitor | Interfaces + enums | Operation separation |\n| Observer | Interfaces + Vec | Event handling |\n\n### The Composition Matrix\n\n```\nGeneric<T> + Interface = Constrained Generic (T: Ord)\nInterface + Box = Runtime Polymorphism (Box[dyn Display])\nGeneric + Comptime = Zero-Cost Abstraction\nNewtype + Invariant = Safe Domain Type\nType State + Invariant = Provably Safe State Machine\n```\n\n### When to Use What\n\n```\nNeed code for multiple types?         → Generics\nNeed to define behavior contracts?    → Interfaces\nNeed runtime behavior selection?      → Box[dyn Interface]\nNeed compile-time guarantees?         → Comptime\nNeed to prevent type confusion?       → Newtype\nNeed safe construction?               → Builder\nNeed safe state transitions?          → Type State\nNeed swappable algorithms?            → Strategy\nNeed to add operations to types?      → Visitor\nNeed event propagation?               → Observer\n```",
+  "syntax_ref": "// The XIOM power combo:\n#[derive(Clone, Eq, Hash, Debug)]\npub type DomainType[T: Display] = {\n  id: UserId;            // Newtype\n  state: PhantomData[T];  // Type State\n};\n\nimpl DomainType[T] {\n  fn builder() -> Builder { /* ... */ }\n}",
+  "code_template": "// TODO: Design a small system using at least 3 concepts from L5:\n// - A newtype for Email (with validation)\n// - A generic Repository[T: Clone + Eq] for CRUD operations\n// - An Observer pattern for email notifications\n// Describe the design in comments (no full implementation needed)\n\nfn main() -> Int {\n  return 50;  // Acknowledged!\n}",
+  "solution": "// System: User Management with Email Notifications\n//\n// Newtype: Email (Str with invariant: contains \"@\")\n// Generic: Repository[T: Clone + Eq] with insert, find, delete\n// Observer: EmailNotifier implements Observer[UserCreated] for welcome emails\n// Builder: UserBuilder for creating users with validation\n\nfn main() -> Int {\n  return 50;\n}",
+  "tips": [
+    "The power of XIOM is composing these concepts — generics + interfaces + patterns",
+    "Master the standard interfaces (Clone, Eq, Ord, Hash, Debug, Display, Default) first",
+    "Use derive for standard interfaces, implement manually only when needed",
+    "Design patterns solve problems — don't force them where simpler code works"
+  ],
+  "common_mistakes": [
+    "Over-engineering: applying all patterns when 3 lines of code would suffice",
+    "Under-engineering: not using generics when you have 3 copies of the same function with different types",
+    "Pattern obsession: seeing every problem as a nail for your favorite pattern hammer"
+  ],
+  "related": [
+    "L5-01",
+    "L5-50",
+    "L4-01",
+    "L6-01"
+  ],
+  "next_lesson": "L5-50"
+}

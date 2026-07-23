@@ -1,0 +1,36 @@
+{
+  "id": "L4-16",
+  "title": "Option.unwrap",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "Option",
+    "unwrap",
+    "requires: is_some",
+    "None",
+    "Some"
+  ],
+  "concept": "Protect Option.unwrap() calls with requires: self.is_some() to ensure the caller has verified the value exists before extracting it.",
+  "why": "Unwrapping a None value panics at runtime. A requires contract catches this at the call site with a meaningful error.",
+  "theory": "## The Danger of Blind Unwrap\n\n```xiom\nfn get_name(user_id: Int) -> Str {\n  let user = find_user(user_id);  // Returns Option[User]\n  return user.unwrap().name;      // CRASH if user is None!\n}\n```\n\n### Contract-Guarded Unwrap\n```xiom\nfn safe_unwrap[T](opt: Option[T]) -> T\n  requires: opt.is_some();\n  ensures: result == opt.unwrap();\n{ return opt.unwrap(); }\n```\n\n### Better: Match Instead of Unwrap\n```xiom\nfn get_name(user_id: Int) -> Str {\n  let user = find_user(user_id);\n  return match user {\n    Some(u) => u.name,\n    None => \"Unknown User\",\n  };\n}\n```\n\n### When Unwrap IS Safe\n```xiom\nfn process(items: &Vec[Int]) -> Int\n  requires: items.len() > 0;\n{\n  let first = items.first();  // Returns Option[Int]\n  return first.unwrap();       // Safe: we know items is non-empty\n}\n```\n\n### Contract Chaining\n```xiom\nfn lookup_then_unwrap[K: Eq, V](map: &Map[K, V], key: K) -> V\n  requires: map.contains(key);\n  ensures: result == map.get(key).unwrap();\n{ return map.get(key).unwrap(); }\n```\n\n### The Pattern\nDon't unwrap unless you can PROVE the value exists — either through a contract or a preceding check.",
+  "syntax_ref": "fn safe_unwrap[T](opt: Option[T]) -> T\n  requires: opt.is_some();\n{ return opt.unwrap(); }",
+  "code_template": "// TODO: Write a function 'get_or_default' that takes Option[Int] and Int default\n// If option is Some, return the value; if None, return default\n// NO requires needed — this function is always safe\n\n// TODO: Write 'get_or_panic' that takes Option[Int]\n// requires: opt.is_some()\n// Returns the unwrapped value\n\nfn main() -> Int {\n  // TODO: Test both functions, return some value\n  return 0;\n}",
+  "solution": "fn get_or_default(opt: Option[Int], default: Int) -> Int {\n  return match opt {\n    Some(v) => v,\n    None => default,\n  };\n}\n\nfn get_or_panic(opt: Option[Int]) -> Int\n  requires: opt.is_some();\n{\n  return opt.unwrap();\n}\n\nfn main() -> Int {\n  let a: Option[Int] = Some(42);\n  let b: Option[Int] = None();\n  let x = get_or_panic(a);\n  let y = get_or_default(b, 0);\n  return x + y;\n}",
+  "tips": [
+    "Prefer match over unwrap — it handles both cases explicitly",
+    "If you MUST unwrap, add a requires: self.is_some() to move the check to the caller",
+    "Use Option.map() and Option.and_then() for safe chaining without unwrapping"
+  ],
+  "common_mistakes": [
+    "Unwrapping without checking first — the single most common XIOM crash",
+    "Using unwrap in library code that might be called by unknown callers",
+    "Chaining .unwrap().unwrap().unwrap() — one None crashes everything"
+  ],
+  "related": [
+    "L4-17",
+    "L2-03",
+    "L1-28",
+    "L3-03"
+  ],
+  "next_lesson": "L4-17"
+}

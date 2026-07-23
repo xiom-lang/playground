@@ -1,0 +1,17 @@
+{
+  "id": "L2-08",
+  "title": "Struct Derive: Hash + Ord",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["derive", "Hash", "Ord", "ordering", "hash map key", "sorting"],
+  "narrative": "## Hashing and Ordering Structs\n\nTo use a struct as a **map key** or **set element**, it needs `Hash`. To **sort** structs or use them in ordered collections, it needs `Ord`.\n\n### Hash — For Map Keys\n\n`Hash` computes a numeric fingerprint of the struct. Equal values always produce the same hash:\n\n```xiom\npub type Player = { name: Str; score: Int; } derive[Hash, Eq]\n\nlet scores = Map[Player, Int]();\nlet p = Player{ name: \"Alice\", score: 0 };\nscores.insert(p, 100);\n```\n\n**Rule**: `Hash` requires `Eq` — if two values are equal, they must have the same hash.\n\n### Ord — For Ordering\n\n`Ord` enables `<`, `>`, `<=`, `>=` and sorting. It compares structs **field by field**, in order:\n\n```xiom\npub type Score = { value: Int; name: Str; } derive[Ord, Eq]\n\nlet a = Score{ value: 10, name: \"Alpha\" };\nlet b = Score{ value: 20, name: \"Beta\" };\nlet x = Score{ value: 10, name: \"X-ray\" };\n\na < b;    // true — compares value first: 10 < 20\na < x;    // true — values equal, compares name: \"Alpha\" < \"X-ray\"\n```\n\n### Combined Derives\n\nYou can derive multiple traits at once:\n\n```xiom\npub type Record = {\n  id: Int;\n  name: Str;\n} derive[Eq, Hash, Ord, Clone, Debug]\n```\n\n### Field Order in Ord\n\n`derive[Ord]` compares fields in declaration order. Place the most significant field first:\n\n```xiom\n// Compare by last name first, then first name:\npub type FullName = {\n  last: Str;   // primary sort key\n  first: Str;  // secondary sort key\n} derive[Ord]\n```",
+  "code_template": "// TODO: define a Product struct with id (Int), name (Str), price (Float64) derive Eq, Hash, Ord, Clone\n\n// TODO: create a Map[Product, Int] mapping products to stock quantity\n\nfn main() -> Int {\n  // TODO: insert 3 products, return total stock\n  return 0;\n}",
+  "solution": "pub type Product = {\n  id: Int;\n  name: Str;\n  price: Float64;\n} derive[Eq, Hash, Ord, Clone]\n\nfn main() -> Int {\n  let inventory = Map[Product, Int]();\n  let p1 = Product{ id: 1, name: \"Widget\", price: 9.99 };\n  let p2 = Product{ id: 2, name: \"Gadget\", price: 19.99 };\n  let p3 = Product{ id: 3, name: \"Doohickey\", price: 4.99 };\n  inventory.insert(p1, 50);\n  inventory.insert(p2, 25);\n  inventory.insert(p3, 100);\n  return inventory.get(&p1) + inventory.get(&p2) + inventory.get(&p3);\n}",
+  "tips": [
+    "Always combine `Hash` with `Eq` — the compiler requires it",
+    "`Ord` compares fields in the order they're declared — design your struct with this in mind",
+    "Add `Clone` to make struct copies for map operations easier",
+    "If you need custom ordering, implement Ord manually instead of deriving it"
+  ],
+  "related": ["L2-08", "L2-09", "L2-10", "L2-41"]
+}

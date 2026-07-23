@@ -1,0 +1,17 @@
+{
+  "id": "L3-25",
+  "title": "Arc Clone and Drop",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["Arc", "clone", "drop", "ref_count", "cleanup", "atomic"],
+  "narrative": "## Managing Arc Lifecycles\n\nUnderstanding how cloning and dropping affect Arc's reference count is key to avoiding memory leaks and use-after-free.\n\n### Arc::clone — Increment\n\n```xiom\nlet original = Arc.new(42);\n// ref_count = 1\n\nlet copy1 = original.clone();\n// ref_count = 2\n\nlet copy2 = original.clone();\n// ref_count = 3\n```\n\n### Drop — Decrement\n\n```xiom\nlet arc = Arc.new(Vec[Int]());\narc.push(1);\n// ref_count = 1\n\n{\n  let clone = arc.clone();\n  // ref_count = 2\n}  // clone dropped — ref_count = 1\n\n// arc still valid, ref_count = 1\nmem.drop(arc);  // ref_count = 0 — Vec is freed\n```\n\n### The Last Handle\n\nWhen ref_count hits 0, the inner value is dropped:\n\n```xiom\nfn create_and_drop() -> Int {\n  let a = Arc.new(42);     // ref_count = 1\n  let b = a.clone();       // ref_count = 2\n  mem.drop(a);             // ref_count = 1 — value still alive\n  mem.drop(b);             // ref_count = 0 — value dropped\n  return 0;\n}\n```\n\n### Preventing Leaks\n\n```xiom\n// Cycle = leak (Rc/Arc can't detect cycles)\n// Let a = Arc.new(...);  // points to b\n// Let b = Arc.new(...);  // points to a\n// Both ref_counts never reach 0 — memory leak!\n// Use Weak references to break cycles\n```\n\n### Monitoring\n\n```xiom\nlet arc = Arc.new(0);\nlet before = arc.ref_count();\n// do work...\nlet after = arc.ref_count();\n// after == before means no leaks in that section\n```",
+  "code_template": "// TODO: create Arc, clone in a block, show ref_count inside and outside block\n\n// TODO: drop original, show that clone keeps value alive\n\nfn main() -> Int {\n  // TODO: create Arc.new(5), clone, drop original, return value from clone\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let arc = Arc.new(5);\n  let clone = arc.clone();\n  mem.drop(arc);\n  return *clone;\n}",
+  "tips": [
+    "Arc::clone() increments ref_count — O(1), no deep copy",
+    "When ref_count reaches 0, the inner value is dropped",
+    "Beware reference cycles — use Weak to break them",
+    "Check ref_count for debugging but don't rely on it for logic"
+  ],
+  "related": ["L3-24", "L3-23", "L3-26", "L3-20"]
+}

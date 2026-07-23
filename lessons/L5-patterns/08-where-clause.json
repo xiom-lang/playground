@@ -1,0 +1,35 @@
+{
+  "id": "L5-08",
+  "title": "where Clause",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "where clause",
+    "clean bounds",
+    "readability",
+    "complex constraints"
+  ],
+  "concept": "The where clause moves type constraints after the function signature — keeping complex signatures readable and organized.",
+  "why": "When you have 3+ type parameters each with multiple constraints, the function signature becomes unreadable. where clauses restore clarity.",
+  "theory": "## From Cluttered to Clean\n\n### Without where (Cluttered)\n```xiom\nfn complex[K: Eq + Hash + Display, V: Clone + Display + Default, C: Ord + Clone](\n  map: &Map[K, V], comparator: C\n) -> Vec[(K, V)] {\n  // ...\n}\n```\n\n### With where (Clean)\n```xiom\nfn complex[K, V, C](map: &Map[K, V], comparator: C) -> Vec[(K, V)]\n  where K: Eq + Hash + Display,\n        V: Clone + Display + Default,\n        C: Ord + Clone,\n{\n  // Same function, much more readable\n}\n```\n\n### where with Associated Types\n```xiom\nfn collect_results[I](iter: I) -> Vec[I::Item]\n  where I: Iterator,\n        I::Item: Display,\n{\n  var result = Vec[I::Item]();\n  for item in iter {\n    io.println(item.to_str());\n    result.push(item);\n  }\n  return result;\n}\n```\n\n### Complex where Constraints\n```xiom\nfn generic_algorithm[T, U, F](input: &Vec[T], transform: F) -> Vec[U]\n  where T: Clone + Display,\n        U: Default + Display,\n        F: Fn(&T) -> U,\n        Vec[U]: Default,\n{\n  // Complex algorithm with clean signature\n}\n```\n\n### When to Use where\n- 3+ type parameters\n- Parameters with 2+ constraints each\n- Constraints involving associated types\n- When the inline syntax exceeds ~80 characters",
+  "syntax_ref": "fn name[T, U](params) -> ReturnType\n  where T: Constraint1 + Constraint2,\n        U: Constraint3,\n{ /* body */ }",
+  "code_template": "// TODO: Rewrite this cluttered function using where:\n// fn stats[T: Ord + Clone + Display + Default](data: &Vec[T]) -> (T, T, T)\n// Returns (min, max, sum)\n// Use where clause to make it readable\n\nfn main() -> Int {\n  // TODO: Call stats on [1,5,3,7,2], return min\n  return 0;\n}",
+  "solution": "fn stats[T](data: &Vec[T]) -> (T, T, T)\n  where T: Ord + Clone + Display + Default,\n{\n  var min = data[0].clone();\n  var max = data[0].clone();\n  for item in data {\n    if item < min { min = item.clone(); }\n    if item > max { max = item.clone(); }\n  }\n  return (min, max, T::default());\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1); v.push(5); v.push(3); v.push(7); v.push(2);\n  let (min, _, _) = stats[Int](&v);\n  return min;\n}",
+  "tips": [
+    "Use where when the inline syntax becomes hard to read — about 3+ constraints total",
+    "Each where line should be one logical group of constraints",
+    "Place where after the return type but before the opening brace",
+    "where clauses work with both functions and impl blocks"
+  ],
+  "common_mistakes": [
+    "Using where for simple signatures with one constraint — unnecessary ceremony",
+    "Forgetting the comma between where clauses",
+    "Putting where before the return type — it goes after"
+  ],
+  "related": [
+    "L5-06",
+    "L5-07",
+    "L5-68"
+  ],
+  "next_lesson": "L5-09"
+}

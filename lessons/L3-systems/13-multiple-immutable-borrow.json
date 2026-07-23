@@ -1,0 +1,17 @@
+{
+  "id": "L3-13",
+  "title": "Immutable Borrow Details",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["immutable borrow", "multiple &T", "read-only", "non-lexical lifetimes"],
+  "narrative": "## Working with Multiple Shared Borrows\n\nShared borrows (`&T`) are the foundation of safe concurrent read access. Multiple `&T` references can coexist freely.\n\n### Multiple &T in Practice\n\n```xiom\nfn analyze(a: &Vec[Int], b: &Vec[Int]) -> Int {\n  return a.len() + b.len();\n}\n\nfn main() -> Int {\n  let data = Vec[Int]();\n  data.push(1); data.push(2);\n\n  let r1 = &data;\n  let r2 = &data;\n  let r3 = &data;\n  // All three borrows are valid simultaneously\n  return r1.len() + r2.len() + r3.len();\n}\n```\n\n### &T Through Method Calls\n\n```xiom\npub type Counter = { value: Int; }\n\nfn Counter.value(self: &Counter) -> Int {\n  return self.value;\n}\n\nfn Counter.compare(self: &Counter, other: &Counter) -> Bool {\n  return self.value == other.value;  // can read both\n}\n\nlet c1 = Counter{ value: 5 };\nlet c2 = Counter{ value: 5 };\nlet same = c1.compare(&c2);  // two shared borrows\n```\n\n### &T and Mutability\n\n```xiom\nvar data = Vec[Int]();\ndata.push(1);\n\n// You can shared-borrow a var variable\nlet r = &data;\nlet len = r.len();\n// But you can't mutable-borrow while shared borrow exists\n// let m = &mut data;  // ERROR\n\n// After r's last use, mutable borrow is OK\nlet m = &mut data;\nm.push(2);\n```\n\n### &T is Read-Only\n\n```xiom\nlet data = Vec[Int]();\ndata.push(42);\nlet r = &data;\n// r.push(99);  // ERROR: cannot modify through &T\n```\n\n### &T Common Use Cases\n\n- Function parameters that only read: `fn len(v: &Vec[Int]) -> Int`\n- Comparing values: `fn eq(a: &Point, b: &Point) -> Bool`\n- Calculating derived values: `fn area(r: &Rect) -> Float64`",
+  "code_template": "// TODO: write 'intersection_size' that takes two &Set[Int] and returns count of common elements\n\n// TODO: write 'all_positive' that takes &Vec[Int] and returns true if all elements > 0\n\nfn main() -> Int {\n  // TODO: create set {1,2,3} and {2,3,4}, find intersection size\n  return 0;\n}",
+  "solution": "fn intersection_size(a: &Set[Int], b: &Set[Int]) -> Int {\n  let common = a.intersection(b);\n  return common.len();\n}\n\nfn all_positive(v: &Vec[Int]) -> Bool {\n  var i = 0;\n  while i < v.len() {\n    if v[i] <= 0 { return false; }\n    i = i + 1;\n  }\n  return true;\n}\n\nfn main() -> Int {\n  let a = Set[Int]();\n  a.insert(1); a.insert(2); a.insert(3);\n  let b = Set[Int]();\n  b.insert(2); b.insert(3); b.insert(4);\n  return intersection_size(&a, &b);\n}",
+  "tips": [
+    "Any number of `&T` references can exist simultaneously",
+    "&T is always read-only — no modifications through shared borrows",
+    "Use `&T` as the default parameter type when you only need to read",
+    "Shared borrows on `var` variables still prevent mutation while they exist"
+  ],
+  "related": ["L3-10", "L3-11", "L3-12", "L3-02"]
+}

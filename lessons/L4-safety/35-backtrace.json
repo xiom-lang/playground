@@ -1,0 +1,36 @@
+{
+  "id": "L4-35",
+  "title": "Backtrace",
+  "level": "L4",
+  "duration": "8 min",
+  "concepts": [
+    "backtrace",
+    "stack trace",
+    "debugging",
+    "crash analysis",
+    "--backtrace"
+  ],
+  "concept": "Backtraces show the full call stack at the point of a crash — revealing the chain of function calls that led to the error.",
+  "why": "A contract violation tells you WHAT failed. A backtrace tells you HOW you got there — showing the chain of calls leading to the violation.",
+  "theory": "## Understanding Backtraces\n\n### Enabling Backtraces\n```sh\n# Set environment variable\nexport XIOM_BACKTRACE=1\n\n# Or use compiler flag\nxiom build --backtrace app.xi\n\n# Or runtime flag\n./app --backtrace\n```\n\n### Reading a Backtrace\n```\nCONTRACT VIOLATION: withdraw\n  requires: balance >= amount\n  at bank.xi:42\n\nStack backtrace:\n   0: withdraw at bank.xi:42\n   1: transfer at bank.xi:67\n   2: process_payment at payment.xi:23\n   3: handle_request at server.xi:108\n   4: main at main.xi:5\n```\n\n### The Story It Tells\n1. `main` called `handle_request`\n2. `handle_request` called `process_payment`\n3. `process_payment` called `transfer`\n4. `transfer` called `withdraw` — where the violation occurred\n\n### Filtered Backtraces\n```sh\n# Show only user code (skip library frames)\nxiom run --backtrace=user app.xi\n\n# Full backtrace including library code\nxiom run --backtrace=full app.xi\n```\n\n### Backtraces in Release\nRelease builds strip debug symbols. For release backtraces:\n```sh\nxiom build --release --backtrace --debug-symbols app.xi\n```",
+  "syntax_ref": "# Enable backtraces:\nexport XIOM_BACKTRACE=1\nxiom run app.xi\n\n# Output shows:\n# Stack backtrace:\n#   0: func_name at file.xi:line\n#   1: caller_name at file.xi:line",
+  "code_template": "// TODO: Write three nested functions a() -> b() -> c()\n// c() has requires: false (always triggers)\n// Observe the backtrace when you run\n\nfn main() -> Int {\n  // TODO: Call a()\n  return 0;\n}",
+  "solution": "fn c(value: Int) -> Int\n  requires: value > 100;\n{\n  return value;\n}\n\nfn b(x: Int) -> Int {\n  return c(x);\n}\n\nfn a() -> Int {\n  return b(50);\n}\n\nfn main() -> Int {\n  return a();  // Backtrace: main → a → b → c (violation)\n}",
+  "tips": [
+    "Read backtraces from BOTTOM to TOP — that's the chronological call order",
+    "The top frame is where the error occurred — the bottom is where it started",
+    "Enable backtraces in development and testing — the overhead is minimal",
+    "For CI, always run tests with XIOM_BACKTRACE=1 for better failure diagnostics"
+  ],
+  "common_mistakes": [
+    "Reading backtraces top-to-bottom — the chronological order is bottom-to-top",
+    "Assuming frame #0 is the root cause — it's where the error manifested, not necessarily where the bug is",
+    "Not enabling backtraces in CI — the one time a test fails, you'll wish you had the backtrace"
+  ],
+  "related": [
+    "L4-07",
+    "L4-30",
+    "L1-48"
+  ],
+  "next_lesson": "L4-36"
+}

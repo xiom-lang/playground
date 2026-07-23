@@ -1,0 +1,17 @@
+{
+  "id": "L3-04",
+  "title": "Heap Allocation",
+  "level": "L3",
+  "duration": "12 min",
+  "concepts": ["heap", "allocation", "Box", "Vec", "dynamic memory", "runtime size"],
+  "narrative": "## Dynamic Memory on the Heap\n\nThe **heap** stores data whose size isn't known at compile time, or data that needs to outlive the scope that created it.\n\n### What Goes on the Heap?\n\n- `Vec[T]` — elements are on the heap\n- `Str` — string data is on the heap\n- `Map[K, V]`, `Set[T]` — internal storage on the heap\n- `Box[T]` — explicit heap allocation\n\n### Heap Characteristics\n\n- **Dynamic size**: grows and shrinks at runtime\n- **Slower than stack**: allocation requires finding free memory\n- **Manual management via ownership**: no GC, compiler enforces rules\n- **Larger capacity**: limited only by system memory\n\n### Vec on the Heap\n\n```xiom\nfn main() -> Int {\n  let v = Vec[Int]();    // v (the handle) on stack, elements on heap\n  v.push(1);             // heap allocation grows as needed\n  v.push(2);\n  v.push(3);\n  // When v goes out of scope, heap memory is automatically freed\n  return v.len();\n}\n```\n\n### Str on the Heap\n\n```xiom\nfn main() -> Int {\n  let s = \"Hello, World!\";  // s (pointer + length) on stack, actual bytes on heap\n  return s.len();\n}\n```\n\n### Box — Explicit Heap Allocation\n\n`Box[T]` puts any value on the heap:\n\n```xiom\nfn main() -> Int {\n  let b = Box.new(42);  // 42 is now on the heap\n  let value = *b;        // dereference to access the value\n  return value;\n}\n\npub type BigStruct = { data: [1000]Int; }\n// Too large for stack — use Box\nlet big = Box.new(BigStruct{ data: [1000; 0] });\n```\n\n### Stack Handle, Heap Data\n\nFor heap types, the **handle** (pointer + metadata) lives on the stack, but the **actual data** lives on the heap:\n\n```xiom\n// Vec handle: { pointer, length, capacity } — fixed size, on stack\n// Vec elements: [1, 2, 3] — variable size, on heap\nlet v = Vec[Int]();\n```",
+  "code_template": "// TODO: create a Vec[Int] and push 1000 elements, return the last element\n\n// TODO: explain why Vec elements are on the heap, not the stack\n\nfn main() -> Int {\n  // TODO: create, push 1000 elements, return index 999\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let v = Vec[Int]();\n  var i = 0;\n  while i < 1000 {\n    v.push(i);\n    i = i + 1;\n  }\n  return v[999];\n}",
+  "tips": [
+    "The stack holds the Vec handle (pointer+len+cap); the heap holds the elements",
+    "Heap allocation is automatic — no `malloc` or `free` calls needed",
+    "Use `Box[T]` to explicitly heap-allocate a single value",
+    "Large structs on the stack can cause overflow — move them to heap with Box"
+  ],
+  "related": ["L3-01", "L3-03", "L3-05", "L2-36"]
+}

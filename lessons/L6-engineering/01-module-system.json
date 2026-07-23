@@ -1,0 +1,17 @@
+{
+  "id": "L6-01",
+  "title": "Module System",
+  "level": 6,
+  "duration": "12 min",
+  "concepts": ["module", "mod", "namespace"],
+  "concept": "Module declaration organizes code into named namespaces",
+  "why": "As programs grow beyond a single file, organizing code into logical groups becomes essential. Modules provide namespace isolation, preventing name collisions and making code discoverable. Without modules, all symbols would live in a flat global namespace — unmaintainable at scale.",
+  "theory": "A module in XIOM is declared with the `mod` keyword followed by the module name and a block of code. Modules create a hierarchy: code inside a module uses its local namespace, and symbols are accessed from outside using the `::` path separator. Module files map to the filesystem — a module `mod math` expects either `math.xi` alongside the parent or `math/mod.xi` for nested modules. XIOM's module system is inspired by Rust but simpler: no `mod.rs` convention; every module is either inline or a single file.",
+  "syntax_ref": "mod <name> { /* items */ }",
+  "code_template": "// file: main.xi\nmod math {\n    pub fn add(a: Int, b: Int) -> Int {\n        return a + b\n    }\n}\n\nfn main() {\n    let result = math::add(3, 4)\n    io.println(\"3 + 4 = {result}\")\n}",
+  "solution": "// file: main.xi\nmod math {\n    pub fn add(a: Int, b: Int) -> Int {\n        return a + b\n    }\n\n    pub fn multiply(a: Int, b: Int) -> Int {\n        return a * b\n    }\n}\n\nfn main() {\n    io.println(\"add: {math::add(5, 7)}\")\n    io.println(\"multiply: {math::multiply(6, 8)}\")\n}",
+  "tips": ["Use `mod` blocks at the top of your file before function definitions", "Module names follow snake_case convention", "Think of `::` like a slash in a file path — it drills into the module tree"],
+  "common_mistakes": ["Forgetting `pub` on items meant to be used outside the module", "Using `.` instead of `::` to access module members", "Declaring modules after they are used in the file"],
+  "related": ["L6-02-use-statement", "L6-03-pub-visibility", "L6-05-module-hierarchy"],
+  "next_lesson": "L6-02"
+}

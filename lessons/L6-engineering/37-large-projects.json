@@ -1,0 +1,38 @@
+{
+  "id": "L6-37",
+  "title": "Large Projects",
+  "level": "L6",
+  "duration": "12 min",
+  "concepts": [
+    "workspace",
+    "monorepo",
+    "crate",
+    "large project",
+    "organization"
+  ],
+  "concept": "Managing large XIOM projects with workspaces — structuring code across multiple packages, sharing dependencies, and coordinating builds.",
+  "why": "As projects grow beyond 10K lines, a single package becomes unwieldy. Workspaces split code into focused packages with shared dependencies and coordinated builds.",
+  "theory": "## Multi-Package Projects\n\n### Workspace Structure\n\n```\nmyproject/\n├── package.xi          # Workspace root\n├── packages/\n│   ├── core/           # Core library\n│   │   └── package.xi\n│   ├── api/            # API server\n│   │   └── package.xi\n│   ├── cli/            # CLI tool\n│   │   └── package.xi\n│   └── shared/         # Shared types\n│       └── package.xi\n└── target/             # Shared build output\n```\n\n### Root package.xi (Workspace)\n\n```xiom\nworkspace myproject\n  members [\n    \"packages/core\",\n    \"packages/api\",\n    \"packages/cli\",\n    \"packages/shared\",\n  ]\n```\n\n### Package Dependencies\n\n```xiom\n// packages/api/package.xi\npackage api\n  version \"0.1.0\"\n\n  deps [\n    { name: \"core\", path: \"../core\" },\n    { name: \"shared\", path: \"../shared\" },\n    { name: \"xiom.http\", version: \"^0.3.0\" },\n  ]\n```\n\n### Workspace Commands\n\n```sh\n# Build all packages\nxiom build --workspace\n\n# Build specific package\nxiom build -p api\n\n# Test all packages\nxiom test --workspace\n\n# Run a specific binary\nxiom run -p cli -- --help\n```\n\n### Shared Dependency Resolution\n\nWorkspaces share a lockfile and dependency cache. All packages use the same version of shared dependencies, avoiding version conflicts.\n\n### Build Coordination\n\n```\nshared (no deps)          → built first\ncore (depends: shared)    → built second\napi (depends: core)       → built third\ncli (depends: core)       → built in parallel with api!\n```\n\n### Best Practices for Large Projects\n\n1. **Small packages**: Each package does ONE thing well\n2. **Clear dependency direction**: core → api, not api → core → api\n3. **Shared build output**: One target/ directory, faster incremental builds\n4. **Consistent versioning**: All packages versioned together for releases\n5. **Test isolation**: Each package has its own tests, easily run independently",
+  "syntax_ref": "// workspace.xi:\nworkspace name\n  members [\"pkg1\", \"pkg2\", ...]\n\n// Commands:\nxiom build --workspace      # Build all\nxiom test -p package_name   # Test one\nxiom run -p package_name    # Run one binary",
+  "code_template": "fn main() -> Int {\n  // Design a workspace for a full-stack app:\n  // - shared: types used by all packages\n  // - backend: API server (depends: shared, xiom.http)\n  // - frontend: WASM app (depends: shared)\n  // - cli: admin tool (depends: shared, backend client)\n  // Return 4 (number of packages)\n  return 4;\n}",
+  "solution": "fn main() -> Int {\n  return 4;\n}",
+  "tips": [
+    "Workspaces are the default for any project with 2+ packages — even small ones",
+    "Shared build output means faster incremental builds across the whole workspace",
+    "Keep packages small and focused — a package with 100 files should be split",
+    "Workspace-level commands (build --workspace, test --workspace) save time in CI"
+  ],
+  "common_mistakes": [
+    "Circular dependencies: api depends on core, core depends on api",
+    "Putting everything in one package because 'workspaces are complex' — one 1000-file package is more complex",
+    "Not sharing the lockfile — leads to version mismatches between packages"
+  ],
+  "related": [
+    "L6-30",
+    "L6-29",
+    "L6-05",
+    "L6-06",
+    "L6-07"
+  ],
+  "next_lesson": "L6-38"
+}

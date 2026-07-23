@@ -1,0 +1,37 @@
+{
+  "id": "L5-36",
+  "title": "Deref Interface",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "Deref",
+    "dereference",
+    "*",
+    "smart pointer",
+    "transparent wrapper"
+  ],
+  "concept": "The Deref interface lets you use `*` on custom types — making wrappers and smart pointers behave like references to the inner type.",
+  "why": "Without Deref, every wrapper type would require manual method forwarding. Deref makes wrappers transparent — you call inner methods directly.",
+  "theory": "## Smart Pointer Behavior\n\n```xiom\npub interface Deref {\n  type Target;\n  fn deref(self: &Self) -> &Self::Target;\n}\n```\n\n### Implementing Deref\n\n```xiom\npub type MyBox[T] = { data: *T; }\n\nimpl Deref for MyBox[T] {\n  type Target = T;\n\n  fn deref(self: &MyBox[T]) -> &T {\n    return self.data;  // Return reference to inner value\n  }\n}\n\nfn main() {\n  let b = MyBox{ data: &42 };\n  let value: Int = *b;  // Deref: get the inner Int\n  io.println(value.to_str());\n}\n```\n\n### Method Forwarding\n\n```xiom\npub type Password = Str;\n\nimpl Deref for Password {\n  type Target = Str;\n\n  fn deref(self: &Password) -> &Str {\n    // Return reference to the underlying Str\n    // allow access to Str methods directly\n  }\n}\n\nlet pwd: Password = \"secret123\".into();\nlet len = pwd.len();  // Calls Str::len() through Deref!\n```\n\n### Deref Coercion\n\n```xiom\nfn print_str(s: &Str) { io.println(s); }\n\nlet pwd: Password = \"hello\".into();\nprint_str(&pwd);  // &Password auto-coerces to &Str via Deref!\n```\n\n### Guarded Wrapper\n\n```xiom\npub type Sensitive[T] = T;\n\nimpl Deref for Sensitive[T] {\n  type Target = T;\n  fn deref(self: &Sensitive[T]) -> &T { /* access logged */ }\n}\n```",
+  "syntax_ref": "impl Deref for MyType {\n  type Target = InnerType;\n\n  fn deref(self: &Self) -> &Self::Target {\n    return &self.inner;\n  }\n}",
+  "code_template": "// TODO: Define a wrapper type 'Named[T]' with fields: name: Str, value: T\n// Implement Deref so *Named[T] gives access to T\n// Create a Named[Int] with name=\"score\" and value=100, deref to get 100\n\nfn main() -> Int {\n  // TODO: Create Named[Int], deref to get the value, return it\n  return 0;\n}",
+  "solution": "pub type Named[T] = { name: Str; value: T; }\n\nimpl Deref for Named[T] {\n  type Target = T;\n\n  fn deref(self: &Named[T]) -> &T {\n    return &self.value;\n  }\n}\n\nfn main() -> Int {\n  let score = Named[Int]{ name: \"score\", value: 100 };\n  return *score;\n}",
+  "tips": [
+    "Only implement Deref when your type IS-A inner type semantically — not just for convenience",
+    "Deref coercion happens automatically for function arguments — &Wrapper → &Inner",
+    "Use Deref for newtype wrappers that should be transparent — callers see the inner API",
+    "Don't implement Deref if it would expose internal invariants to mutation"
+  ],
+  "common_mistakes": [
+    "Overusing Deref — every wrapper shouldn't Deref, only semantically meaningful ones",
+    "Implementing Deref on a type that breaks the inner type's invariants through mutation",
+    "Using Deref for 'has-a' relationships — use regular method access instead"
+  ],
+  "related": [
+    "L5-37",
+    "L5-34",
+    "L2-01",
+    "L4-21"
+  ],
+  "next_lesson": "L5-37"
+}

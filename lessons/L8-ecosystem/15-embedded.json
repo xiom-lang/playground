@@ -1,0 +1,37 @@
+{
+  "id": "L8-15",
+  "title": "Embedded Systems",
+  "level": "L8",
+  "duration": "15 min",
+  "concepts": [
+    "embedded",
+    "no_std",
+    "bare metal",
+    "microcontroller",
+    "RTOS",
+    "IoT"
+  ],
+  "concept": "XIOM for embedded systems — bare metal programming, no_std environments, hardware registers, and microcontroller development.",
+  "why": "Embedded systems are everywhere — IoT, automotive, medical, industrial. XIOM's zero-cost abstractions and memory safety make it ideal for resource-constrained devices.",
+  "theory": "## Programming Without an OS\n\n### no_std Environment\n\n```xiom\n// No standard library — just the core language\n#![no_std]\n\n// Entry point (no main, no runtime)\n#[no_mangle]\npub fn _start() -> ! {\n  // Initialize hardware\n  init_clock();\n  init_uart();\n\n  // Your program\n  uart_write(\"Hello from bare metal!\");\n\n  // Embedded programs never return\n  loop {\n    // Main loop\n    process_sensors();\n    update_actuators();\n  }\n}\n\n// Define panic handler (required for no_std)\n#[panic_handler]\nfn panic(info: &PanicInfo) -> ! {\n  // Blink LED, write to debug port, or reset\n  loop {}\n}\n```\n\n### Hardware Registers\n\n```xiom\n// Memory-mapped I/O for GPIO\nconst GPIO_BASE: usize = 0x40020000;\nconst GPIO_MODER: *mut u32 = (GPIO_BASE + 0x00) as *mut u32;\nconst GPIO_ODR: *mut u32 = (GPIO_BASE + 0x14) as *mut u32;\n\nfn set_pin_output(pin: u32) {\n  unsafe {\n    let moder = GPIO_MODER.read_volatile();\n    GPIO_MODER.write_volatile(moder | (1 << (pin * 2)));\n  }\n}\n\nfn set_pin_high(pin: u32) {\n  unsafe {\n    let odr = GPIO_ODR.read_volatile();\n    GPIO_ODR.write_volatile(odr | (1 << pin));\n  }\n}\n\nfn delay(cycles: u32) {\n  for _ in 0..cycles {\n    unsafe { asm!(\"nop\") };  // One CPU cycle\n  }\n}\n\nfn blink_led() {\n  set_pin_output(13);  // Onboard LED pin\n  loop {\n    set_pin_high(13);\n    delay(1_000_000);\n    set_pin_low(13);\n    delay(1_000_000);\n  }\n}\n```\n\n### Interrupts\n\n```xiom\n// Timer interrupt handler\n#[interrupt]\nfn TIM2_IRQHandler() {\n  // Clear interrupt flag\n  TIM2_SR.write_volatile(0);\n\n  // Toggle LED\n  toggle_led();\n\n  // Increment counter\n  static mut COUNTER: u32 = 0;\n  COUNTER = COUNTER + 1;\n}\n\n// UART receive interrupt\n#[interrupt]\nfn USART1_IRQHandler() {\n  let byte = USART1_DR.read_volatile();\n  rx_buffer.push(byte);\n}\n```\n\n### RTOS Integration\n\n```xiom\n// FreeRTOS-style tasks\nfn sensor_task() {\n  loop {\n    let temperature = read_temperature();\n    if temperature > THRESHOLD {\n      activate_fan();\n    }\n    os_delay(1000);  // 1 second\n  }\n}\n\nfn communication_task() {\n  loop {\n    if let Some(msg) = rx_queue.receive(100) {\n      process_message(msg);\n    }\n  }\n}\n\nfn main() {\n  rtos::create_task(sensor_task, priority: 2, stack: 1024);\n  rtos::create_task(communication_task, priority: 1, stack: 2048);\n  rtos::start_scheduler();\n}\n```\n\n### Constraints\n\n| Constraint | Desktop | Embedded |\n|-----------|---------|----------|\n| RAM | GBs | KBs |\n| Storage | TBs | MBs |\n| CPU | GHz | MHz |\n| OS | Full | None/RTOS |\n| Heap | Yes | Often no |\n| Stack | MBs | KBs |",
+  "syntax_ref": "#![no_std]                    // No standard library\n\n#[no_mangle] pub fn _start()  // Entry point\n#[panic_handler] fn panic(...) // Required\n\n// Hardware access:\nunsafe {\n  REGISTER.write_volatile(value);\n  let val = REGISTER.read_volatile();\n}\n\n// Assemble targeting microcontroller:\nxiom build --target thumbv7em-none-eabi --no-default-libs",
+  "code_template": "// Write a conceptual embedded program that:\n// 1. Initializes a temperature sensor\n// 2. Reads temperature every second\n// 3. If > 30°C, turns on fan; if < 20°C, turns off fan\n// 4. Blinks LED at 1Hz\n\nfn main() -> Int {\n  return 4;  // 4 steps\n}",
+  "solution": "fn main() -> Int {\n  return 4;\n}",
+  "tips": [
+    "no_std programs have no heap by default — use static allocation or arena allocators",
+    "volatile reads/writes are essential for hardware registers — the compiler won't optimize them away",
+    "Interrupt handlers must be FAST — defer work to the main loop or a task",
+    "Test embedded code on QEMU before deploying to hardware — faster iteration cycle"
+  ],
+  "common_mistakes": [
+    "Using standard library features in no_std — they depend on an OS",
+    "Forgetting volatile on register access — the compiler 'optimizes away' IO",
+    "Stack overflow in embedded — your stack might be only 1KB, recursive functions are dangerous"
+  ],
+  "related": [
+    "L8-17",
+    "L6-34",
+    "L6-35"
+  ],
+  "next_lesson": "L8-16"
+}

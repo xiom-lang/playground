@@ -1,0 +1,37 @@
+{
+  "id": "L4-49",
+  "title": "Formal Methods Intro",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "formal methods",
+    "model checking",
+    "theorem proving",
+    "TLA+",
+    "Coq"
+  ],
+  "concept": "Formal methods use mathematics to specify and verify software — going beyond contracts to prove functional correctness.",
+  "why": "Contracts and Z3 catch many bugs, but formal methods can prove your ENTIRE system design is correct before you write a single line of code.",
+  "theory": "## Beyond Contracts: Formal Methods\n\n### The Verification Spectrum\n\n```\nTesting → Contracts → Static Verification → Model Checking → Theorem Proving\n  ↑                           ↑                    ↑                 ↑\nFinds bugs              Catches violations   Proves properties   Proves full correctness\n(for tested inputs)     (for all runtime)    (for finite state)  (for infinite state)\n```\n\n### Model Checking (TLA+)\nDesign your system as a state machine and check ALL possible states:\n\n```tla\n(* TLA+ specification of a counter *)\nInit ≜ count = 0\nIncrement ≜ count' = count + 1\nDecrement ≜ count' = count - 1\nInvariant ≜ count ≥ 0\n```\n\nThe model checker verifies the invariant holds in ALL reachable states.\n\n### Theorem Proving (Coq, Lean)\nWrite mathematical proofs that your code is correct:\n\n```coq\nTheorem add_comm: ∀ a b, add a b = add b a.\nProof.\n  induction a; simpl; auto.\nQed.\n```\n\n### When to Use Each\n\n| Method | Use When |\n|--------|----------|\n| Testing | Everyday development |\n| Contracts | All public APIs |\n| xiom verify | Pure functions with arithmetic |\n| Model Checking | Distributed systems, protocols |\n| Theorem Proving | Cryptographic algorithms, safety-critical |\n\n### Starting with Formal Methods\n1. **Begin with contracts** — they're formal specifications in code\n2. **Run xiom verify** — automatic theorem proving for simple properties\n3. **Model check designs** — before coding complex systems\n4. **Theorem prove critical code** — when failure is not an option",
+  "syntax_ref": "// Formal methods hierarchy:\n// Level 1: fn contracts (requires/ensures)\n// Level 2: xiom verify (automatic)\n// Level 3: Model checking (TLA+, Alloy)\n// Level 4: Theorem proving (Coq, Lean, Isabelle)",
+  "code_template": "// TODO: Write a function 'binary_search' with COMPLETE contracts\n// requires: array is sorted\n// ensures: if found, result index has target\n// ensures: if not found, result is None\n// These contracts ARE a formal specification\n\nfn main() -> Int {\n  return 0;\n}",
+  "solution": "fn is_sorted(arr: &Vec[Int]) -> Bool {\n  for i in 0..arr.len()-1 {\n    if arr[i] > arr[i+1] { return false; }\n  }\n  return true;\n}\n\nfn binary_search(arr: &Vec[Int], target: Int) -> Option[Int]\n  requires: is_sorted(arr);\n  ensures: match result {\n    Some(idx) => idx < arr.len() && arr[idx] == target,\n    None => true,\n  };\n{\n  var lo = 0;\n  var hi = arr.len();\n  while lo < hi {\n    let mid = (lo + hi) / 2;\n    if arr[mid] == target { return Some(mid); }\n    if arr[mid] < target { lo = mid + 1; }\n    else { hi = mid; }\n  }\n  return None();\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1); v.push(3); v.push(5); v.push(7);\n  match binary_search(&v, 5) {\n    Some(idx) => return idx,\n    None => return 0,\n  }\n}",
+  "tips": [
+    "Contracts ARE formal methods — they're machine-checked specifications in code",
+    "Start with contracts before exploring heavier formal methods",
+    "Model checking is especially valuable for concurrent and distributed systems",
+    "You don't need to prove everything — focus formal methods on the highest-risk code"
+  ],
+  "common_mistakes": [
+    "Thinking formal methods are all-or-nothing — contracts are formal methods you already use",
+    "Jumping to theorem proving before mastering contracts and Z3",
+    "Applying formal methods to code that's still changing rapidly — stabilize the design first"
+  ],
+  "related": [
+    "L4-26",
+    "L4-48",
+    "L4-50",
+    "L7-02"
+  ],
+  "next_lesson": "L4-50"
+}

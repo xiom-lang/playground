@@ -1,0 +1,17 @@
+{
+  "id": "L3-12",
+  "title": "Borrow Rules",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["borrow rules", "no aliasing", "exclusive", "shared XOR mutable", "compile-time"],
+  "narrative": "## The Borrow Checker's Rules\n\nThe borrow checker enforces three core rules at compile time. Understanding these rules eliminates whole classes of memory bugs.\n\n### The Three Rules\n\n1. **Many shared borrows** (`&T`) or **one mutable borrow** (`&mut T`), never both\n2. **Borrows must not outlive** the owner\n3. **References must always be valid** — no dangling pointers\n\n### Rule 1: Shared XOR Mutable\n\n```xiom\nvar data = Vec[Int]();\ndata.push(1);\n\n// VALID: multiple shared borrows\nlet r1 = &data;\nlet r2 = &data;\nio.println(r1.len());\nio.println(r2.len());\n\n// VALID: single mutable borrow\nlet m = &mut data;\nm.push(2);\n\n// INVALID: shared borrow while mutable exists\n// let r = &data;  // if m is still alive\n\n// INVALID: two mutable borrows\n// let m1 = &mut data;\n// let m2 = &mut data;\n```\n\n### Rule 2: Lifetime — Borrow Must Not Outlive Owner\n\n```xiom\n// INVALID: returning reference to local variable\n// fn dangle() -> &Vec[Int] {\n//   let v = Vec[Int]();\n//   return &v;  // v destroyed at end of function!\n// }\n```\n\n### Rule 3: References Always Valid\n\n```xiom\n// INVALID: reference to moved value\n// let v = Vec[Int]();\n// v.push(1);\n// let r = &v;\n// let v2 = v;  // MOVE — invalidates r\n// io.println(r.len());  // ERROR: r references moved value\n```\n\n### Working With the Rules\n\n```xiom\n// Narrow borrow scopes with blocks\nvar data = Vec[Int]();\ndata.push(1);\n{\n  let m = &mut data;\n  m.push(2);\n}  // borrow ends here\nlet r = &data;  // now we can shared-borrow\nlet len = r.len();\n\n// Clone to break borrow conflicts\nlet copy = data.clone();  // independent copy\n// data and copy can be borrowed independently\n```\n\n### Why These Rules?\n\nThey prevent data races, use-after-free, double-free, and iterator invalidation — all at compile time, with zero runtime cost.",
+  "code_template": "// TODO: write code that demonstrates the shared XOR mutable rule\n\n// TODO: use a block to limit a mutable borrow scope, then shared-borrow\n\nfn main() -> Int {\n  // TODO: create vec, mutable borrow in block, then shared borrow outside\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var data = Vec[Int]();\n  data.push(10);\n  data.push(20);\n  // mutable borrow in a block\n  {\n    let m = &mut data;\n    m.push(30);\n  }\n  // mutable borrow ended — shared borrow now OK\n  let r = &data;\n  return r.len();\n}",
+  "tips": [
+    "Think: 'shared XOR mutable' — you can have many readers OR one writer, never both",
+    "Use blocks `{ }` to limit borrow scopes and satisfy the borrow checker",
+    "Clone data if you need independent access without borrow conflicts",
+    "The borrow checker is your friend — it finds bugs at compile time, not runtime"
+  ],
+  "related": ["L3-10", "L3-11", "L3-13", "L3-14"]
+}

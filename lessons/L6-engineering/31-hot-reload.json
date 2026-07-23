@@ -1,0 +1,36 @@
+{
+  "id": "L6-31",
+  "title": "Hot Reload",
+  "level": "L6",
+  "duration": "12 min",
+  "concepts": [
+    "hot reload",
+    "live update",
+    "DLL",
+    "dynamic linking",
+    "rapid iteration"
+  ],
+  "concept": "Hot reload updates running code without restarting — recompile on save, reload in place. Essential for game engines, UI development, and live systems.",
+  "why": "The edit-compile-run-restart cycle kills productivity. Hot reload compiles and patches running code in milliseconds — see changes instantly.",
+  "theory": "## Code That Updates While Running\n\n```sh\n# Enable hot reload mode\nxiom hot-reload main.xi\n\n# Watching for changes... Ctrl+C to stop\n# [12:34:56] main.xi changed — recompiling...\n# [12:34:57] Hot reload applied (342ms)\n```\n\n### How Hot Reload Works\n\n1. **Initial build**: Compile to a shared library (DLL/SO/DYLIB)\n2. **Watch files**: Monitor source for changes\n3. **On change**: Recompile changed modules\n4. **Reload**: Unload old library, load new library\n5. **State preservation**: Global state survives the reload\n\n### State Preservation\n\n```xiom\n// This state survives hot reload\nstatic var COUNTER: Int = 0;\n\nfn main() {\n  COUNTER = COUNTER + 1;\n  io.println(\"Count: \" + COUNTER.to_str());\n  // Edit this function, save — COUNTER is preserved!\n}\n```\n\n### Reload Boundaries\n\n```xiom\n// Functions that CAN be hot-reloaded:\nfn render_frame() { /* Redefinable — UI code */ }\nfn process_input(key: Int) { /* Redefinable — input handling */ }\n\n// Functions that CANNOT be hot-reloaded:\nstatic fn allocate_buffer() -> *Byte { /* Static memory layout */ }\n```\n\n### Game Development Loop\n\n```xiom\n// This is the hot reload development loop:\nwhile running {\n  process_input();     // ← Edit and save — updates instantly\n  update_world();      // ← Tweak game rules live\n  render_frame();      // ← Adjust shaders and colors\n  // 150ms cycle: edit → compile → reload → see results\n}\n```\n\n### Production\n\nHot reload is a development tool. Production deployments should use standard compiled binaries for reliability and performance.\n\n```sh\n# Development: hot reload\nxiom hot-reload main.xi\n\n# Production: static binary\nxiom build --release main.xi\n```",
+  "syntax_ref": "xiom hot-reload <file>        # Enable hot reloading\nxiom hot-reload --no-state    # Don't preserve global state\nxiom hot-reload --port 9000   # WebSocket port for editor integration",
+  "code_template": "static var FRAME: Int = 0;\n\nfn main() -> Int {\n  FRAME = FRAME + 1;\n  io.println(\"Frame: \" + FRAME.to_str());\n  // If hot reload were active, FRAME would persist across reloads\n  return 0;\n}",
+  "solution": "static var FRAME: Int = 0;\n\nfn main() -> Int {\n  FRAME = FRAME + 1;\n  return FRAME;\n}",
+  "tips": [
+    "Keep hot-reloadable code in separate modules — makes reload faster and safer",
+    "Global state persists across reloads — use it for counters, configs, and live data",
+    "Not all code can be hot-reloaded — static memory layouts and type definitions are fixed",
+    "Hot reload is a development tool, not a deployment strategy — use regular builds for production"
+  ],
+  "common_mistakes": [
+    "Changing type definitions during hot reload — requires full rebuild, not hot reload",
+    "Assuming hot reload works for all code — static functions and type layouts can't be patched",
+    "Using hot reload in production — performance overhead and stability risks"
+  ],
+  "related": [
+    "L6-29",
+    "L6-32",
+    "L6-27"
+  ],
+  "next_lesson": "L6-32"
+}

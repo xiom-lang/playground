@@ -1,0 +1,17 @@
+{
+  "id": "L3-31",
+  "title": "Atomics",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["AtomicInt", "AtomicBool", "atomic operations", "lock-free", "CAS"],
+  "narrative": "## Lock-Free Synchronization with Atomics\n\nAtomic types (`AtomicInt`, `AtomicBool`) provide lock-free, thread-safe operations on primitive values. They're the fastest way to share data between threads.\n\n### AtomicInt\n\n```xiom\nlet counter = AtomicInt.new(0);\n\ncounter.add(1);              // atomic increment\nlet val = counter.load();    // atomic read — val = 1\ncounter.store(42);           // atomic write\n```\n\n### Common Atomic Operations\n\n```xiom\nlet a = AtomicInt.new(0);\n\n// Basic operations\na.store(10);                  // set value\na.add(5);                     // add (returns new value)\na.sub(1);                     // subtract\nlet v = a.load();             // get value\n\n// Compare-And-Swap (CAS)\nlet old = a.compare_exchange(15, 20);\n// if a == 15, set to 20; returns old value\n```\n\n### AtomicBool\n\n```xiom\nlet flag = AtomicBool.new(false);\nflag.store(true);              // set flag\nlet is_set = flag.load();      // read flag\n\n// Compare and swap\nlet swapped = flag.compare_exchange(false, true);\n// Atomically: if flag == false, set to true, return true\n// if flag != false, return false\n```\n\n### Atomics vs Mutex\n\n| Feature | Atomics | Mutex |\n|---------|---------|-------|\n| Types | Primitive only | Any type |\n| Operations | Single operations | Complex logic |\n| Blocking | Never (lock-free) | Yes |\n| Speed | Fastest | Slower |\n| Complexity | Harder to use correctly | Easier |\n\n### Use Cases\n\n- Simple counters\n- Flags and state machines\n- Lock-free data structures\n- Performance-critical paths",
+  "code_template": "// TODO: create AtomicInt, perform add and load operations\n\n// TODO: create AtomicBool, use compare_exchange to toggle\n\nfn main() -> Int {\n  // TODO: create AtomicInt.new(0), add 5, add 3, return value\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let counter = AtomicInt.new(0);\n  counter.add(5);\n  counter.add(3);\n  return counter.load();\n}",
+  "tips": [
+    "Atomics are lock-free — no blocking, fastest thread-safe operations",
+    "Use for simple counters and flags — not complex data structures",
+    "Compare-And-Swap (CAS) is the building block for lock-free algorithms",
+    "For complex shared state, use Mutex or RwLock instead"
+  ],
+  "related": ["L3-29", "L3-30", "L3-24", "L3-27"]
+}

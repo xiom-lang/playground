@@ -1,0 +1,17 @@
+{
+  "id": "L3-33",
+  "title": "Pointer Arithmetic",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["pointer arithmetic", "offset", "add", "raw pointer", "memory layout"],
+  "narrative": "## Navigating Memory with Pointer Math\n\nRaw pointers support arithmetic operations to navigate through contiguous memory. Essential for low-level data structure implementation.\n\n### Pointer Offset\n\n```xiom\nlet arr = [10, 20, 30, 40, 50];\nlet ptr: *const Int = &arr[0] as *const Int;\n\nunsafe {\n  let first = *ptr;                  // 10\n  let second = *(ptr.offset(1));     // 20 — next element\n  let third = *(ptr.offset(2));      // 30\n}\n```\n\n`.offset(n)` moves the pointer by `n` elements (not bytes).\n\n### Pointer Addition\n\n```xiom\nlet arr = [1, 2, 3];\nlet base = &arr[0] as *const Int;\n\nunsafe {\n  let p1 = base.add(0);  // same as base\n  let p2 = base.add(1);  // points to arr[1]\n  let p3 = base.add(2);  // points to arr[2]\n}\n```\n\n### Iterating with Pointers\n\n```xiom\nlet arr = [10, 20, 30, 40, 50];\nlet start = &arr[0] as *const Int;\nlet end = start.add(5);  // one past the end\n\nvar sum = 0;\nvar current = start;\nunsafe {\n  while current < end {\n    sum = sum + *current;\n    current = current.add(1);\n  }\n}\n```\n\n### Safety Rules\n\n- Only offset within the same allocated object\n- Don't go before the start or past the end\n- Pointer arithmetic on null pointers is undefined\n- Use `.offset(n)` carefully — it doesn't bounds-check\n\n### Pointer Subtraction\n\n```xiom\nlet p1 = base.add(3);\nlet p2 = base.add(1);\nlet diff = p1.sub_ptr(p2);  // 2 elements apart\n```",
+  "code_template": "// TODO: create an array, get a raw pointer to the first element\n\n// TODO: use offset to read the 3rd element\n\nfn main() -> Int {\n  // TODO: array [5, 10, 15, 20], read via pointer + offset, return 3rd element * 2\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let arr = [5, 10, 15, 20];\n  let ptr = &arr[0] as *const Int;\n  unsafe {\n    return *(ptr.offset(2)) * 2;\n  }\n}",
+  "tips": [
+    "`.offset(n)` moves by elements, not bytes — accounts for type size",
+    "Pointer arithmetic must stay within the same allocated object",
+    "Use `.add(n)` and `.sub(n)` for readable pointer math",
+    "Always use `unsafe` blocks — pointer arithmetic is unchecked"
+  ],
+  "related": ["L3-32", "L3-34", "L3-35", "L3-37"]
+}

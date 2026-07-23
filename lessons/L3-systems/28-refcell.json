@@ -1,0 +1,17 @@
+{
+  "id": "L3-28",
+  "title": "RefCell",
+  "level": "L3",
+  "duration": "12 min",
+  "concepts": ["RefCell", "interior mutability", "borrow", "borrow_mut", "runtime check"],
+  "narrative": "## Runtime Borrow Checking with RefCell\n\n`RefCell[T]` enables interior mutability for non-Copy types. Unlike Cell, it enforces borrow rules at **runtime** instead of compile time.\n\n### Creating and Using RefCell\n\n```xiom\nlet cell = RefCell.new(Vec[Int]());\n\n// Borrow mutably\n{\n  let mut_ref = cell.borrow_mut();\n  mut_ref.push(1);\n  mut_ref.push(2);\n}  // borrow ends\n\n// Borrow immutably\nlet ref = cell.borrow();\nlet len = ref.len();  // 2\n```\n\n### borrow vs borrow_mut\n\n- `.borrow()` returns a shared reference (`&T`) — multiple allowed\n- `.borrow_mut()` returns a mutable reference (`&mut T`) — exclusive\n\n### Runtime Enforcement\n\nRefCell checks borrow rules at runtime — if violated, it **traps** (panics):\n\n```xiom\nlet cell = RefCell.new(42);\n\nlet r1 = cell.borrow();\nlet r2 = cell.borrow();  // OK — multiple shared\n// let m = cell.borrow_mut();  // TRAP: already borrowed!\n```\n\n### RefCell with Rc\n\n```xiom\nlet shared = Rc.new(RefCell.new(Vec[Int]()));\n\nlet clone = shared.clone();\nshared.borrow_mut().push(1);\nclone.borrow_mut().push(2);\n// Both see the same Vec with [1, 2]\n```\n\n### RefCell vs Cell\n\n| Feature | Cell | RefCell |\n|---------|------|---------|\n| Type constraint | Copy types only | Any type |\n| Access method | get/set (copy) | borrow/borrow_mut (ref) |\n| Borrow checking | Not needed | Runtime |\n| Overhead | None | Reference counting |\n\n### When to Use RefCell\n\n- Shared mutable non-Copy data (Vec, Map, custom structs)\n- Implementing complex data structures (graphs, doubly-linked lists)\n- When compile-time borrow checking is too restrictive",
+  "code_template": "// TODO: create a RefCell[Vec[Int]], borrow_mut to push values, borrow to read len\n\n// TODO: wrap RefCell in Rc, clone, mutate from both handles\n\nfn main() -> Int {\n  // TODO: create RefCell.new(Vec[Int]()), push 1,2,3, return len\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let cell = RefCell.new(Vec[Int]());\n  {\n    let mut v = cell.borrow_mut();\n    v.push(1);\n    v.push(2);\n    v.push(3);\n  }\n  let r = cell.borrow();\n  return r.len();\n}",
+  "tips": [
+    "RefCell moves borrow checks from compile time to runtime — panics on violation",
+    "Use `.borrow()` for shared read, `.borrow_mut()` for exclusive write",
+    "Keep borrow scopes short to avoid runtime panics",
+    "Combine with Rc for shared mutable state: `Rc.new(RefCell.new(data))`"
+  ],
+  "related": ["L3-27", "L3-23", "L3-11", "L3-12"]
+}

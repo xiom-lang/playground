@@ -1,0 +1,36 @@
+{
+  "id": "L6-21",
+  "title": "xiom doctor",
+  "level": "L6",
+  "duration": "8 min",
+  "concepts": [
+    "doctor",
+    "diagnostics",
+    "troubleshooting",
+    "environment",
+    "setup check"
+  ],
+  "concept": "`xiom doctor` diagnoses your development environment — checking toolchain, dependencies, and configuration for common problems.",
+  "why": "When nothing compiles and you don't know why, `xiom doctor` systematically checks everything and tells you exactly what's wrong.",
+  "theory": "## Environment Diagnostics\n\n```sh\n$ xiom doctor\n\n=== XIOM Doctor Report ===\n\n[✓] xiom version: 0.4.0 (latest: 0.4.0)\n[✓] LLVM installation: LLVM 17.0.6 at /usr/lib/llvm-17\n[✓] System linker: ld (GNU Binutils) 2.38\n[✓] Git: version 2.39.0\n[✓] Disk space: 12.3 GB free\n[✓] Memory: 8.00 GB available\n[✓] Project config: package.xi found\n[✗] Z3 (optional): not found on PATH\n      → Run: brew install z3\n      → Verification features will be disabled\n\nSummary: 8 passed, 0 warnings, 1 optional missing\n```\n\n### What xiom doctor Checks\n\n1. **XIOM installation**: version, updates available\n2. **LLVM toolchain**: installed version, compatibility\n3. **System tools**: linker, make, git, curl\n4. **Platform**: OS, architecture, available memory/disk\n5. **Project health**: package.xi, dependency integrity\n6. **Optional tools**: Z3 (verification), Valgrind (profiling), lldb (debugging)\n\n### Common Issues Detected\n\n```sh\n$ xiom doctor\n[✗] LLVM not found!\n      XIOM requires LLVM 15+ for code generation.\n      Install: brew install llvm@17\n\n[✗] Disk space critical: 120 MB free\n      XIOM needs at least 500 MB for compilation artifacts.\n```\n\n### Doctor in CI\n\n```sh\nxiom doctor --json > env-report.json\n```\n\nGenerates a machine-readable report for CI diagnostics.\n\n### Quick Fix Mode\n\n```sh\nxiom doctor --fix\n# Attempts to auto-fix common issues (update PATH, install missing tools)\n```",
+  "syntax_ref": "xiom doctor                  # Full diagnostic report\nxiom doctor --json           # Machine-readable JSON output\nxiom doctor --fix            # Attempt auto-fixes\nxiom doctor --check <tool>   # Check specific tool",
+  "code_template": "fn main() -> Int {\n  // Run `xiom doctor` in your terminal to verify your environment\n  // Fix any issues it reports before proceeding with development\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  return 0;\n}",
+  "tips": [
+    "Run `xiom doctor` when setting up a new machine or after OS updates",
+    "The JSON output is perfect for automated environment validation in CI",
+    "Optional tools (Z3, profilers) are flagged but not required — you can ignore those",
+    "Doctor reports can be shared — paste the output when asking for help"
+  ],
+  "common_mistakes": [
+    "Ignoring doctor warnings — they often explain mysterious build failures",
+    "Not running doctor after OS upgrades — toolchain paths can break",
+    "Assuming the error is in your code when doctor shows a broken LLVM installation"
+  ],
+  "related": [
+    "L6-22",
+    "L6-27",
+    "L4-27"
+  ],
+  "next_lesson": "L6-22"
+}

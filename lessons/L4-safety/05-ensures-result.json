@@ -1,0 +1,35 @@
+{
+  "id": "L4-05",
+  "title": "ensures with result",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "ensures",
+    "result",
+    "postcondition",
+    "return value check"
+  ],
+  "concept": "The result keyword in ensures clauses lets you verify properties of the return value — correctness baked into the function signature.",
+  "why": "Without result-checking ensures, you'd need separate tests for every return value property. With ensures, the check runs on every call.",
+  "theory": "## Using result in Postconditions\n\n`result` represents the value that the function returns.\n\n### Simple Return Value Checks\n```xiom\nfn double(n: Int) -> Int\n  ensures: result == n * 2;\n  ensures: result % 2 == 0;\n{ return n * 2; }\n```\n\n### Range Guarantees\n```xiom\nfn clamp(value: Int, min: Int, max: Int) -> Int\n  requires: min <= max;\n  ensures: result >= min;\n  ensures: result <= max;\n{ if value < min { return min; } if value > max { return max; } return value; }\n```\n\n### Relating result to Parameters\n```xiom\nfn max_of_three(a: Int, b: Int, c: Int) -> Int\n  ensures: result >= a && result >= b && result >= c;\n  ensures: result == a || result == b || result == c;\n{ var m = a; if b > m { m = b; } if c > m { m = c; } return m; }\n```\n\n### result with Generic Types\n```xiom\nfn clone[T: Clone](value: &T) -> T\n  ensures: result == value;\n{ return value.clone(); }\n```\n\n### Mathematical Functions\n```xiom\nfn factorial(n: Int) -> Int\n  requires: n >= 0;\n  ensures: result > 0;\n{ if n <= 1 { return 1; } return n * factorial(n - 1); }\n```",
+  "syntax_ref": "fn name(params) -> ReturnType\n  ensures: result > 0;\n  ensures: result == some_computation;\n{ return value; }",
+  "code_template": "// TODO: Write a function 'sign' that takes Int and returns Int\n// ensures: result is -1, 0, or 1\n// ensures: result * x >= 0 (sign matches magnitude sign)\n\nfn main() -> Int {\n  // TODO: Call sign(-42) and return result\n  return 0;\n}",
+  "solution": "fn sign(x: Int) -> Int\n  ensures: result == -1 || result == 0 || result == 1;\n  ensures: result * x >= 0;\n{\n  if x < 0 { return -1; }\n  if x > 0 { return 1; }\n  return 0;\n}\n\nfn main() -> Int {\n  return sign(-42);\n}",
+  "tips": [
+    "Think of ensures: result >= min as \"I promise the return value is at least min\"",
+    "Use result liberally — it turns your function into a self-documenting specification",
+    "Combine result checks with @pre to verify state transitions",
+    "If your ensures uses result and fails, the bug is in your implementation"
+  ],
+  "common_mistakes": [
+    "Writing circular ensures like ensures: result == f(result) — must be verifiable",
+    "Forgetting to add ensures when refactoring a function",
+    "Over-specifying with tautological conditions"
+  ],
+  "related": [
+    "L4-04",
+    "L4-06",
+    "L4-08"
+  ],
+  "next_lesson": "L4-06"
+}

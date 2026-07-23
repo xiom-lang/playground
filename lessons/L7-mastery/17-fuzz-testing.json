@@ -1,0 +1,36 @@
+{
+  "id": "L7-17",
+  "title": "Fuzz Testing",
+  "level": "L7",
+  "duration": "15 min",
+  "concepts": [
+    "fuzz testing",
+    "random input",
+    "grammar fuzzing",
+    "differential testing",
+    "crash detection"
+  ],
+  "concept": "Fuzz testing feeds random, valid, or near-valid input to the compiler to find crashes, hangs, and unexpected behaviors.",
+  "why": "Humans write predictable tests. Fuzzers explore the unexpected — finding bugs in edge cases that no human tester would think to try.",
+  "theory": "## Automated Bug Discovery\n\n### Fuzzing Strategies\n\n1. **Grammar-based fuzzing**: Generate syntactically valid XIOM programs\n2. **Mutation fuzzing**: Take valid programs and randomly modify them\n3. **Differential fuzzing**: Compile same code with different options, compare results\n4. **Coverage-guided fuzzing**: Track code coverage, focus on unexplored paths\n\n### Grammar-Based Fuzzer\n\n```xiom\npub type Fuzzer = {\n  rng: Random,\n  depth: Int,\n}\n\nimpl Fuzzer {\n  fn gen_expression(self: &mut Fuzzer) -> Str {\n    let kind = self.rng.int_range(0, 8);\n    return match kind {\n      0 => self.gen_int_literal(),\n      1 => self.gen_str_literal(),\n      2 => self.gen_variable(),\n      3 => self.gen_binary_op(),\n      4 => self.gen_function_call(),\n      5 => self.gen_if_expr(),\n      6 => self.gen_match_expr(),\n      _ => self.gen_block(),\n    };\n  }\n\n  fn gen_function(self: &mut Fuzzer) -> Str {\n    let name = self.gen_random_name();\n    let params = self.gen_parameters();\n    let ret = self.gen_return_type();\n    let body = self.gen_expression();\n    return \"fn \" + name + \"(\" + params + \") -> \" + ret + \" { \" + body + \" }\";\n  }\n}\n```\n\n### Example Fuzzer Output\n\n```xiom\n// Generated program #84721:\nfn a(b: Int, c: Str) -> Bool {\n  if b > 0 { return c.len() == b; }\n  match Some(b) {\n    Some(x) => return x > 0,\n    None => return false,\n  }\n}\n```\n\n### What Fuzzers Find\n\n- **Crashes**: Compiler panics on valid input\n- **Hangs**: Infinite loops or exponential behavior\n- **Wrong code**: Generated code produces incorrect results\n- **Assertion failures**: Internal compiler invariants violated\n- **ICE (Internal Compiler Error)**: Any unexpected compiler failure\n\n### Fuzzing Infrastructure\n\n```sh\n# Run the fuzzer\nxiom fuzz --time 3600  # Fuzz for 1 hour\n\n# Reproduce a crash from saved input\nxiom fuzz --reproduce crash-001.xi\n\n# Differential fuzzing: compare debug vs release\nxiom fuzz --differential --profiles debug,release\n```\n\n### CI Fuzzing\n\nFuzzing runs nightly in CI (too slow for every PR):\n\n```yaml\n# .github/workflows/nightly-fuzz.yml\n- name: Fuzz compiler\n  run: xiom fuzz --time 3600 --report fuzz-results/\n- name: Upload findings\n  uses: actions/upload-artifact@v3\n  with:\n    name: fuzz-results\n    path: fuzz-results/\n```",
+  "syntax_ref": "# Fuzzing commands:\nxiom fuzz --time 3600           # Fuzz for 1 hour\nxiom fuzz --reproduce crash.xi  # Re-run a found crash\nxiom fuzz --grammar             # Grammar-based fuzzing\nxiom fuzz --coverage            # Coverage-guided fuzzing",
+  "code_template": "fn main() -> Int {\n  // The fuzzer would generate code like:\n  // fn f(a: Int) -> Int { return a + a; }\n  // fn g(b: Str) -> Bool { return b.len() > 0; }\n  // And compile/run them to find crashes\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Fuzzers find bugs humans miss — every compiler release should be fuzzed",
+    "Grammar-based fuzzing produces VALID programs — catches compiler bugs, not parser bugs",
+    "Mutation fuzzing catches parser bugs — slightly invalid programs shouldn't crash the parser",
+    "Save ALL crashing inputs — they become regression tests to prevent recurrence"
+  ],
+  "common_mistakes": [
+    "Not fuzzing long enough — some bugs only appear after millions of iterations",
+    "Ignoring fuzzer findings — every crash is a real bug, fix it",
+    "Fuzzing without coverage feedback — random input without coverage guidance is inefficient"
+  ],
+  "related": [
+    "L7-16",
+    "L4-44",
+    "L4-45"
+  ],
+  "next_lesson": "L7-18"
+}

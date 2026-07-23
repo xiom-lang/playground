@@ -1,0 +1,37 @@
+{
+  "id": "L6-36",
+  "title": "Compiler Architecture",
+  "level": "L6",
+  "duration": "15 min",
+  "concepts": [
+    "compiler architecture",
+    "pipeline",
+    "phases",
+    "frontend",
+    "backend",
+    "LLVM"
+  ],
+  "concept": "The XIOM compiler architecture — frontend (lexer, parser, checker) and backend (codegen, LLVM, optimization) pipeline overview.",
+  "why": "Understanding the compiler's architecture helps you debug build issues, interpret error messages, and know which phase is responsible for what.",
+  "theory": "## The XIOM Compiler\n\n### Architecture Overview\n\n```\nSource Code (.xi)\n    │\n    ▼\n┌─────────────┐\n│   LEXER     │  Tokenize source into tokens\n└──────┬──────┘\n       ▼\n┌─────────────┐\n│   PARSER    │  Build AST from tokens\n└──────┬──────┘\n       ▼\n┌─────────────┐\n│ NAMERESOLVE │  Resolve names, imports\n└──────┬──────┘\n       ▼\n┌─────────────┐\n│ TYPE CHECK  │  Type checking, type inference\n└──────┬──────┘\n       ▼\n┌─────────────┐\n│BORROW CHECK │  Ownership, borrows, lifetimes\n└──────┬──────┘\n       ▼\n┌─────────────┐\n│ CONTRACT    │  Verify contracts, invariants\n└──────┬──────┘\n       ▼\n┌─────────────┐\n│   CODEGEN   │  Generate LLVM IR\n└──────┬──────┘\n       ▼\n┌─────────────┐\n│    LLVM     │  Optimize, codegen to machine code\n└──────┬──────┘\n       ▼\n   Binary\n```\n\n### Phase Responsibilities\n\n| Phase | Input | Output | Errors Caught |\n|-------|-------|--------|---------------|\n| Lexer | Source text | Token stream | Invalid characters |\n| Parser | Token stream | AST | Syntax errors |\n| NameResolve | AST | Resolved AST | Undefined names |\n| Type Check | Resolved AST | Typed AST | Type mismatch |\n| Borrow Check | Typed AST | Borrow-validated AST | Use-after-move |\n| Contract | Borrow AST | Verified AST | Contract violation |\n| Codegen | Verified AST | LLVM IR | N/A (rare) |\n| LLVM | LLVM IR | Machine code | N/A |\n\n### Compilation Modes\n\n```sh\n# Full compilation (all phases)\nxiom build\n\n# Check only (stop after type checking)\nxiom check\n\n# Parse only (rapid syntax checking)\nxiom check --parse-only\n```\n\n### Compiler as Library\n\n```xiom\n// Use the XIOM compiler API programmatically\nuse xiom_compiler;\n\nfn main() {\n  let source = \"fn add(a: Int, b: Int) -> Int { return a + b; }\";\n  let compiler = xiom_compiler::Session::new();\n  let result = compiler.compile_str(source);\n\n  match result {\n    Ok(binary) => io.println(\"Compiled successfully\"),\n    Err(errors) => {\n      for error in errors {\n        io.println(error.to_str());\n      }\n    },\n  }\n}\n```",
+  "syntax_ref": "# Compilation modes:\nxiom build                # Full build\nxiom check                # Type check only (no binary)\nxiom check --parse-only   # Parse only\n\n# Programmatic:\nuse xiom_compiler;\nlet compiler = Session::new();\ncompiler.compile_str(source);",
+  "code_template": "fn main() -> Int {\n  // Run: xiom check --parse-only main.xi\n  // Run: xiom check main.xi\n  // Run: xiom build main.xi\n  // Compare the output of each stage\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Use `xiom check` instead of `xiom build` in your editor for faster error feedback",
+    "The lexer and parser are the fastest phases — syntax errors are caught in <1ms",
+    "Understanding which phase catches your error helps you write better bug reports",
+    "The compiler is a library — you can embed XIOM compilation in your own tools"
+  ],
+  "common_mistakes": [
+    "Confusing parse errors (lexer/parser) with type errors (type checker)",
+    "Not using xiom check for editor integration — it's much faster than full builds",
+    "Assuming all errors come from the same phase — knowing the phase helps debugging"
+  ],
+  "related": [
+    "L7-01",
+    "L6-37",
+    "L6-28"
+  ],
+  "next_lesson": "L6-37"
+}

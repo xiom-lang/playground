@@ -1,0 +1,36 @@
+{
+  "id": "L7-18",
+  "title": "Performance Profiling",
+  "level": "L7",
+  "duration": "15 min",
+  "concepts": [
+    "profiling",
+    "perf",
+    "flame graph",
+    "benchmarking",
+    "hot path"
+  ],
+  "concept": "Profile XIOM programs and the compiler itself — find hot paths, measure performance, and identify optimization opportunities.",
+  "why": "You can't optimize what you can't measure. Profiling reveals WHERE time is spent, transforming guesses into data-driven optimization decisions.",
+  "theory": "## Measuring What Matters\n\n### Profiling Tools\n\n| Tool | Platform | Use |\n|------|----------|-----|\n| `perf` | Linux | CPU sampling, cache misses |\n| `Instruments` | macOS | Time profiler, allocations |\n| `VTune` | Win/Linux | Advanced CPU analysis |\n| `Valgrind/Callgrind` | Linux | Instruction counting, call graphs |\n| `xiom profile` | All | Built-in profiling |\n\n### Built-in Profiling\n\n```sh\n# Profile a program\nxiom profile ./target/release/myapp\n\n# Profile specific function\nxiom profile --fn compute ./target/release/myapp\n\n# Generate flame graph\nxiom profile --flamegraph ./target/release/myapp\n```\n\n### Reading a Flame Graph\n\n```\nmain()                           ████████████████████████████\n├── parse_config()               ████\n├── process_data()               ████████████████\n│   ├── validate()               ████\n│   └── compute()                ██████████           ← HOT!\n│       └── heavy_math()         ██████████\n└── write_output()               ████\n```\n\nThe wider the bar, the more time spent in that function.\n\n### Benchmarking\n\n```xiom\n#[bench]\nfn bench_sorting(b: &mut Bencher) {\n  let data = generate_random_vec(10000);\n  b.iter(|| {\n    let mut copy = data.clone();\n    copy.sort();\n  });\n}\n```\n\n```sh\nxiom bench\n# sorting                  time:   [2.1 ms 2.3 ms 2.5 ms]\n```\n\n### Profiling the Compiler\n\n```sh\n# Profile compiler compilation time\nxiom profile --compiler src/\n\n# Results show which compiler phase is slowest:\n# Lexer:        0.2s  ██\n# Parser:       0.5s  █████\n# Type Check:   2.1s  █████████████████████\n# Borrow Check: 0.8s  ████████\n# Codegen:      1.4s  ██████████████\n# LLVM:         4.2s  ██████████████████████████████████████\n```\n\n### Optimization Loop\n\n```\n1. Profile → 2. Identify hot function → 3. Optimize →\n4. Benchmark → 5. Profile again → 6. Verify improvement\n```",
+  "syntax_ref": "# Profiling:\nxiom profile ./binary\nxiom profile --flamegraph ./binary\nxiom profile --compiler src/      # Profile compilation itself\n\n# Benchmarking:\nxiom bench\nxiom bench --filter \"sort\"        # Specific benchmark",
+  "code_template": "// A function that could benefit from profiling:\nfn heavy_computation(n: Int) -> Int {\n  var result = 0;\n  for i in 0..n {\n    for j in 0..n {\n      result = result + i * j;\n    }\n  }\n  return result;\n}\n\nfn main() -> Int {\n  return heavy_computation(100);\n}",
+  "solution": "fn heavy_computation(n: Int) -> Int {\n  var result = 0;\n  for i in 0..n {\n    for j in 0..n {\n      result = result + i * j;\n    }\n  }\n  return result;\n}\n\nfn main() -> Int {\n  return heavy_computation(100);\n}",
+  "tips": [
+    "Always profile before optimizing — your 'slow function' might not be the bottleneck",
+    "Flame graphs visualize the call stack — wider bars = more time, taller stacks = deeper calls",
+    "Cache misses often matter more than instruction count — use `perf stat` to measure",
+    "Profile with realistic data — small test datasets hide performance problems"
+  ],
+  "common_mistakes": [
+    "Optimizing without profiling — you'll micro-optimize code that runs 1% of the time",
+    "Profiling debug builds — debug code has different performance characteristics than release",
+    "Ignoring memory allocation overhead — profiling CPU time misses memory pressure issues"
+  ],
+  "related": [
+    "L7-07",
+    "L6-15",
+    "L6-27"
+  ],
+  "next_lesson": "L7-19"
+}

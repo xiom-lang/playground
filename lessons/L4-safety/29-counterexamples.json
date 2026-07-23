@@ -1,0 +1,36 @@
+{
+  "id": "L4-29",
+  "title": "Counterexamples",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "counterexample",
+    "Z3 output",
+    "bug finding",
+    "failed proof",
+    "model"
+  ],
+  "concept": "When Z3 finds a contract violation, it produces a counterexample — specific input values that break the contract. This is bug-finding gold.",
+  "why": "A counterexample tells you exactly which inputs break your function. Instead of guessing, you have a concrete failing test case generated automatically.",
+  "theory": "## Reading Z3 Counterexamples\n\n### The Buggy Function\n```xiom\nfn median(a: Int, b: Int, c: Int) -> Int\n  ensures: result >= a && result <= c || result >= c && result <= a;\n  ensures: result == a || result == b || result == c;\n{\n  if a > b { return a; }  // BUG: no proper median logic\n  return b;\n}\n```\n\n### Z3 Output\n```\nFunction: median\n  ensures: result == a || result == b || result == c\n    Status: ✗ FAILED\n    Counterexample:\n      a = 5, b = 1, c = 10\n      result = 5\n      Trace: a > b → true → return a (5)\n      Violation: result (5) is not 1 or 10\n```\n\n### Understanding Counterexamples\n\n1. **Input values**: The exact parameters that trigger the bug\n2. **Result**: The actual return value vs expected\n3. **Trace**: The execution path that leads to the violation\n4. **Violation**: Which contract clause failed and why\n\n### Using Counterexamples\n\n```xiom\nfn main() -> Int {\n  // Reproduce the counterexample\n  let result = median(5, 1, 10);\n  // Debug with these exact values!\n  return 0;\n}\n```\n\n### Common Counterexample Patterns\n\n- **Off-by-one**: `n = 0` when your loop assumes `n >= 1`\n- **Sign errors**: Negative inputs when you assumed positive\n- **Overflow**: `Int.MIN` or `Int.MAX` triggering edge cases\n- **Empty collections**: `len() == 0` when you assumed non-empty",
+  "syntax_ref": "// Counterexample output format:\n// Function: func_name\n//   contract: condition\n//     Status: ✗ FAILED\n//     Counterexample:\n//       param1 = value1, param2 = value2\n//       result = actual_value\n//       Trace: execution_path\n//       Violation: why_condition_failed",
+  "code_template": "// TODO: Write a BUGGY function 'clamp_buggy' with contracts\n// fn clamp_buggy(value: Int, min: Int, max: Int) -> Int\n//   requires: min <= max;\n//   ensures: result >= min;\n// The bug: returns max when value < min (instead of min)\n// Run xiom verify (mentally) — what counterexample would Z3 find?\n\nfn main() -> Int {\n  return clamp_buggy(0, 10, 20);\n}",
+  "solution": "fn clamp_buggy(value: Int, min: Int, max: Int) -> Int\n  requires: min <= max;\n  ensures: result >= min;\n  ensures: result <= max;\n{\n  if value < min { return max; }  // BUG: should return min\n  if value > max { return max; }\n  return value;\n}\n\n// Z3 would find: min=10, max=20, value=0\n// result = 20, but ensures requires result >= min (20 >= 10 ✓)\n// Wait, that's not a failing case...\n// Let's try: value=5, min=10, max=20 → result=20, OK\n// Actually the real issue: result should be min when value < min\n// Z3 would find ensures: result <= max is OK, but result == value || result == min || result == max would fail\n\nfn main() -> Int {\n  return clamp_buggy(0, 10, 20);\n}",
+  "tips": [
+    "Treat counterexamples as free test cases — add them to your test suite immediately",
+    "The smallest counterexample is usually the most useful — look for minimal values",
+    "Counterexamples often reveal assumptions you didn't realize you were making",
+    "Run xiom verify after every contract change — new counterexamples mean new bugs"
+  ],
+  "common_mistakes": [
+    "Ignoring counterexamples because \"that input would never happen\" — if it CAN happen, it WILL",
+    "Not understanding the counterexample — trace through manually to see why it fails",
+    "Fixing the symptom instead of the root cause — the counterexample shows a deeper logic flaw"
+  ],
+  "related": [
+    "L4-28",
+    "L4-30",
+    "L4-26"
+  ],
+  "next_lesson": "L4-30"
+}

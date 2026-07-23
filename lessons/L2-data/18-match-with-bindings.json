@@ -1,0 +1,17 @@
+{
+  "id": "L2-15",
+  "title": "Match with Bindings",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["match binding", "@ pattern", "as pattern", "subpattern", "capture"],
+  "narrative": "## Capturing Values with @ Bindings\n\nThe `@` (at) pattern binds a value to a name while also matching a subpattern. It lets you access the whole value and its destructured parts at the same time.\n\n### Basic @ Pattern\n\n```xiom\npub type Shape = enum {\n  Circle(radius: Float64),\n  Rect(w: Float64, h: Float64),\n}\n\nfn describe(s: &Shape) -> Str {\n  match s {\n    Circle(radius) if radius > 100.0 => {\n      // Need radius in the message but also used in guard\n      return \"Large circle r=\" + radius;\n    }\n    _ => { return \"Other shape\"; }\n  }\n}\n```\n\n### Binding Example with Range Check\n\n```xiom\npub type Reading = enum {\n  Temperature(value: Float64),\n  Error,\n}\n\nfn classify(r: &Reading) -> Str {\n  match r {\n    Temperature(value) if value < 0.0 => { return \"Freezing\"; }\n    Temperature(value) if value < 20.0 => { return \"Cold\"; }\n    Temperature(value) if value < 30.0 => { return \"Warm\"; }\n    Temperature(value) => { return \"Hot\"; }\n    Error => { return \"Error\"; }\n  }\n}\n```\n\n### Binding in Variable Patterns\n\nYou can bind and match in let statements:\n\n```xiom\npub type Pair = enum {\n  Numbers(a: Int, b: Int),\n}\n\nlet p = Pair.Numbers(10, 20);\nmatch p {\n  Numbers(a, b) => {\n    // use both a and b\n    io.println(\"a=\" + a + \", b=\" + b);\n  }\n}\n```\n\n### When to Use Bindings\n\n- When you need both a captured value AND to match against it\n- When destructuring a variant with multiple fields you need individually\n- When nesting match patterns deep within data structures",
+  "code_template": "// TODO: define a Range enum with Between(lo: Int, hi: Int)\n\n// TODO: write 'contains' that checks if a number falls within the range (inclusive)\n\n// TODO: write 'width' that returns range width (hi - lo)\n\nfn main() -> Int {\n  // TODO: create a range 10..20 and return its width if 15 is contained, else 0\n  return 0;\n}",
+  "solution": "pub type Range = enum {\n  Between(lo: Int, hi: Int),\n}\n\nfn contains(r: &Range, n: Int) -> Bool {\n  match r {\n    Between(lo, hi) if n >= lo && n <= hi => { return true; }\n    Between(_, _) => { return false; }\n  }\n}\n\nfn width(r: &Range) -> Int {\n  match r {\n    Between(lo, hi) => { return hi - lo; }\n  }\n}\n\nfn main() -> Int {\n  let r = Range.Between(10, 20);\n  if contains(&r, 15) {\n    return width(&r);\n  }\n  return 0;\n}",
+  "tips": [
+    "Bindings let you capture values from patterns and use them in the arm body",
+    "Combine bindings with guards for powerful conditional logic in match arms",
+    "Variable names in patterns shadow outer variables — be careful with names",
+    "All destructured fields are available as separate variables in the match arm"
+  ],
+  "related": ["L2-16", "L2-17", "L2-48", "L1-28"]
+}

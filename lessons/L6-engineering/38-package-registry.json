@@ -1,0 +1,37 @@
+{
+  "id": "L6-38",
+  "title": "Package Registry",
+  "level": "L6",
+  "duration": "10 min",
+  "concepts": [
+    "registry",
+    "publish",
+    "package index",
+    "discovery",
+    "distribution"
+  ],
+  "concept": "The XIOM package registry — publish your packages for others to use, discover community packages, and manage dependencies at scale.",
+  "why": "A language's ecosystem is its packages. The registry connects package authors with users, enabling code reuse, discovery, and versioned distribution.",
+  "theory": "## The XIOM Package Ecosystem\n\n### Registry Architecture\n\n```\n┌──────────────────────────────────┐\n│       XIOM Package Registry      │\n│  registry.xiom-lang.org          │\n├──────────────────────────────────┤\n│  Package Index (searchable)      │\n│  Version History                 │\n│  Documentation (auto-generated)  │\n│  Dependencies Graph              │\n│  Download Statistics             │\n└──────────────────────────────────┘\n```\n\n### Publishing a Package\n\n```sh\n# Login to the registry\nxiom pkg login\n\n# Publish your package\nxiom pkg publish\n\n# Publishing checklist:\n# ✓ package.xi has name, version, description\n# ✓ All tests pass\n# ✓ Documentation is written\n# ✓ CHANGELOG is updated\n# ✓ License is specified\n# ✓ Repository URL is correct\n```\n\n### Package Metadata\n\n```xiom\npackage mylibrary\n  version \"1.0.0\"\n  description \"A library for processing images\"\n  author \"Team XIOM <team@example.com>\"\n  license \"MIT\"\n  repository \"https://github.com/user/mylibrary\"\n  keywords [\"image\", \"processing\", \"graphics\"]\n  categories [\"multimedia\", \"image-processing\"]\n\n  deps [\n    { name: \"xiom.math\", version: \"^0.5.0\" },\n  ]\n```\n\n### Discovering Packages\n\n```sh\n# Search the registry\nxiom pkg search image processing\n\n# View package details\nxiom pkg info mylibrary\n\n# Show package versions\nxiom pkg versions mylibrary\n\n# View documentation\nxiom doc mylibrary\n```\n\n### Private Registries\n\n```sh\n# Configure private registry\nxiom config set registry.url https://packages.mycompany.com\nxiom config set registry.token $REGISTRY_TOKEN\n```\n\n### Package Lifecycle\n\n```\n1. Create → 2. Develop → 3. Test → 4. Document →\n5. Publish (v0.1.0) → 6. Iterate → 7. Stabilize (v1.0.0) →\n8. Maintain → 9. Deprecate → 10. Archive\n```",
+  "syntax_ref": "# Publish:\nxiom pkg login\nxiom pkg publish\n\n# Discover:\nxiom pkg search <query>\nxiom pkg info <package>\n\n# Use:\nxiom pkg install\nxiom doc <package>",
+  "code_template": "fn main() -> Int {\n  // Search for packages: xiom pkg search json\n  // Get package info: xiom pkg info xiom.json\n  // View docs: xiom doc xiom.json\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Fill in all package metadata — description, keywords, categories — for discoverability",
+    "Publish early (v0.1.0) and often — get feedback before stabilizing at v1.0",
+    "Auto-generated docs from xiom doc are published alongside your package — write good doc comments",
+    "A well-maintained package has: passing CI badge, updated docs, responsive issues, recent commits"
+  ],
+  "common_mistakes": [
+    "Publishing without proper version — v0.1.0 is for experimentation, v1.0.0 for stability",
+    "Yanking a version that others depend on — deprecate instead, with a migration path",
+    "Not updating docs when publishing a new version — out-of-date docs are worse than no docs"
+  ],
+  "related": [
+    "L6-25",
+    "L6-37",
+    "L8-01",
+    "L6-06"
+  ],
+  "next_lesson": "L6-39"
+}

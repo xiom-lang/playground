@@ -1,0 +1,17 @@
+{
+  "id": "L2-09",
+  "title": "Struct Derive: Clone",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["derive", "Clone", "deep copy", ".clone()", "ownership"],
+  "narrative": "## Duplicating Structs with Clone\n\nWhen you need an independent copy of a struct, use `derive[Clone]` to enable the `.clone()` method.\n\n### Why Clone?\n\nWithout Clone, assigning a struct with heap-allocated fields **moves** ownership — the original becomes unusable:\n\n```xiom\npub type Data = { name: Str; numbers: Vec[Int]; }\n\nlet a = Data{ name: \"original\", numbers: Vec[Int]() };\nlet b = a;  // a is MOVED — a.name is no longer valid!\n```\n\nWith `derive[Clone]`, you can create a true copy:\n\n```xiom\npub type Data = { name: Str; numbers: Vec[Int]; } derive[Clone]\n\nlet a = Data{ name: \"original\", numbers: Vec[Int]() };\nlet b = a.clone();  // deep copy — both a and b are valid\nb.numbers.push(42);  // only affects b\n```\n\n### Clone with Modify\n\nA common pattern: clone, then tweak:\n\n```xiom\npub type Config = {\n  host: Str;\n  port: Int;\n} derive[Clone]\n\nlet default = Config{ host: \"localhost\", port: 8080 };\nvar staging = default.clone();\nstaging.port = 9090;  // override just the port\n```\n\n### Clone vs Copy\n\n`derive[Clone]` is different from copy semantics (Int, Bool, Float64). Clone is **explicit** — you must call `.clone()`. Copy types are **implicit** — they copy automatically on assignment.\n\n```xiom\nlet x = 5;     // Int is a Copy type\nlet y = x;     // implicit copy — x is still valid\n\nlet s = Data{ name: \"hello\", numbers: Vec[Int]() }.clone();\nlet t = s.clone();  // explicit clone required\n```\n\n### When to Use Clone\n\nUse `.clone()` when you need an independent copy and both the original and the copy must remain usable.",
+  "code_template": "// TODO: define a Document struct with title (Str) and content (Vec[Str]) derive Clone\n\n// TODO: write a function 'duplicate_and_append' that clones a doc and appends a line\n\nfn main() -> Int {\n  // TODO: create a doc with one line, clone it, append to the clone, return total lines in clone\n  return 0;\n}",
+  "solution": "pub type Document = {\n  title: Str;\n  content: Vec[Str];\n} derive[Clone]\n\nfn duplicate_and_append(original: &Document, line: Str) -> Document {\n  var copy = original.clone();\n  copy.content.push(line);\n  return copy;\n}\n\nfn main() -> Int {\n  let original = Document{ title: \"Draft\", content: Vec[Str]() };\n  original.content.push(\"Line 1\");\n  let copy = duplicate_and_append(&original, \"Line 2\");\n  return copy.content.len();\n}",
+  "tips": [
+    "`.clone()` creates a deep copy — fields like Vec and Str get their own heap allocation",
+    "Clone is explicit and potentially expensive — use it deliberately",
+    "All field types must implement Clone for `derive[Clone]` to work",
+    "Prefer borrowing (`&T`) over cloning when you only need to read data"
+  ],
+  "related": ["L2-01", "L2-08", "L3-01", "L3-06"]
+}

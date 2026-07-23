@@ -1,0 +1,17 @@
+{
+  "id": "L3-09",
+  "title": "Copy Types",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["Copy", "implicit copy", "Int", "Bool", "Float64", "stack-only"],
+  "narrative": "## Types That Copy Automatically\n\n**Copy types** are automatically duplicated on assignment — no move occurs, and the original remains valid. They're always small, fixed-size, stack-only types.\n\n### Which Types are Copy?\n\n```xiom\n// All these are Copy types:\nlet a: Int = 42;\nlet b: Bool = true;\nlet c: Float64 = 3.14;\nlet d: Char = 'A';\n\n// Fixed-size arrays of Copy types are Copy:\nlet arr = [1, 2, 3];  // [3]Int is Copy\n```\n\n### Copy in Action\n\n```xiom\nlet x = 42;\nlet y = x;   // x is COPIED — not moved\nlet z = x;   // x is COPIED again — still valid\n// x, y, z are all 42\n```\n\n### Non-Copy Types\n\nHeap-allocated types are NOT Copy:\n\n```xiom\nlet v = Vec[Int]();\nv.push(1);\nlet w = v;  // MOVE — v invalidated\n// let u = v;  // ERROR: v was moved\n\nlet s = \"hello\";\nlet t = s;  // MOVE — s invalidated\n```\n\n### Copy Requirements\n\nA type is Copy if:\n1. All fields are Copy types\n2. It's small enough to fit in registers\n3. Simple enough that bitwise copy is sufficient\n\n```xiom\n// This struct is Copy (all fields are Copy)\npub type Point = { x: Float64; y: Float64; }\n\n// This struct is NOT Copy (contains Str — heap-allocated)\npub type Person = { name: Str; age: Int; }\n```\n\n### Why Copy Types Exist\n\nCopy types make code ergonomic — you don't need `.clone()` for every integer or boolean operation. The compiler handles it automatically because copying a few bytes is trivially cheap.",
+  "code_template": "// TODO: demonstrate that Int is Copy by assigning one variable to two others\n\n// TODO: demonstrate that Vec is NOT Copy — show what happens\n\n// TODO: define a struct with only Copy fields — it's also Copy\n\nfn main() -> Int {\n  // TODO: create Int, assign three times, sum all three\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let x = 10;\n  let y = x;   // copy\n  let z = x;   // copy again\n  return x + y + z;\n}",
+  "tips": [
+    "Int, Bool, Float64, Char are Copy — assignment copies, not moves",
+    "Vec, Str, Map, Set are NOT Copy — assignment moves ownership",
+    "A struct is Copy only if ALL its fields are Copy",
+    "Copy = bitwise duplicate, Clone = potentially custom deep copy"
+  ],
+  "related": ["L3-01", "L3-06", "L3-08", "L2-09"]
+}

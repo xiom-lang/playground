@@ -1,0 +1,36 @@
+{
+  "id": "L4-40",
+  "title": "Fuzz Testing Intro",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "fuzz testing",
+    "fuzzing",
+    "random input",
+    "coverage-guided",
+    "bug finding"
+  ],
+  "concept": "Fuzz testing feeds random, unexpected inputs to your program to find crashes, hangs, and contract violations that normal testing misses.",
+  "why": "Humans test the 'happy path.' Fuzzers test the UNHAPPY path — millions of random inputs that exercise edge cases you never thought to test.",
+  "theory": "## What is Fuzz Testing?\n\n```\nTraditional Testing:  You write specific inputs (5, 10, -1, 0)\nFuzz Testing:         The fuzzer generates millions of random inputs\n                      and watches for crashes, hangs, or contract violations\n```\n\n### Simple Fuzz Target\n\n```xiom\nfn fuzz_target(data: &[Byte]) -> Unit {\n  // Convert raw bytes to string\n  let input = Str.from_utf8(data);\n  if input.is_err() { return; }  // Skip invalid UTF-8\n\n  let s = input.unwrap();\n\n  // The function we're testing\n  let result = parse_config(s);\n\n  // Contract checks catch bugs automatically\n}\n```\n\n### What Fuzzing Finds\n\n1. **Crashes**: Null dereference, division by zero, array out of bounds\n2. **Hangs**: Infinite loops, excessive recursion\n3. **Contract violations**: requires/ensures failures on unexpected inputs\n4. **Memory errors**: Use-after-free, double-free (with sanitizers)\n\n### The Fuzzing Loop\n```\n1. Generate random input\n2. Feed to target function\n3. Observe: normal return? crash? hang?\n4. If crash: save input as reproducer\n5. Mutate promising inputs, repeat\n```\n\n### Coverage-Guided Fuzzing\nThe fuzzer instruments your code to track which branches are taken. It prioritizes inputs that explore NEW code paths — rapidly increasing coverage.",
+  "syntax_ref": "// Fuzz target signature:\nfn fuzz_target(data: &[Byte]) -> Unit {\n  // Parse bytes into your function's input\n  // Call the function under test\n  // Contract violations = bugs found\n}",
+  "code_template": "// TODO: Write a simple fuzz-like test function\n// Takes an Int, calls your 'safe_divide' function from Lesson 14\n// Returns true if no contract violation, false if contract traps\n\nfn main() -> Int {\n  // TODO: Test safe_divide with various inputs in a loop\n  return 0;\n}",
+  "solution": "fn safe_divide(a: Int, b: Int) -> Option[Int] {\n  if b == 0 { return None(); }\n  return Some(a / b);\n}\n\nfn fuzz_divide() -> Int {\n  // Simulate fuzzing by testing edge cases\n  let test_cases = [\n    (10, 2), (0, 5), (5, 0), (-10, 3), (Int.MAX, 1), (Int.MIN, -1),\n    (100, 3), (-100, -3), (1, 1), (0, 1)\n  ];\n  var crashes = 0;\n  for (a, b) in test_cases {\n    match safe_divide(a, b) {\n      Some(_) => {},\n      None => { crashes = crashes + 1; },\n    }\n  }\n  return crashes;\n}\n\nfn main() -> Int {\n  return fuzz_divide();\n}",
+  "tips": [
+    "Fuzzing combined with contracts is EXTREMELY effective — any contract violation is a found bug",
+    "Start fuzzing with small, pure functions — they're easiest to fuzz effectively",
+    "Save crashing inputs as regression tests — never let the same bug happen twice",
+    "Run fuzzers continuously in CI — new code, new fuzz targets"
+  ],
+  "common_mistakes": [
+    "Only fuzzing the happy path — the whole point is to find BAD inputs",
+    "Not saving crash reproducers — a found bug is worthless if you can't reproduce it",
+    "Giving up after the first crash — fix it and keep fuzzing, there may be more"
+  ],
+  "related": [
+    "L4-41",
+    "L4-42",
+    "L4-43"
+  ],
+  "next_lesson": "L4-41"
+}

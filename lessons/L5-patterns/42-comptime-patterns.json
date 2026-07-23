@@ -1,0 +1,36 @@
+{
+  "id": "L5-42",
+  "title": "Comptime Patterns",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "comptime patterns",
+    "static reflection",
+    "code gen",
+    "type-level",
+    "const generics"
+  ],
+  "concept": "Advanced comptime patterns: static reflection, type-level programming, lookup tables, and compile-time code generation for zero-overhead abstractions.",
+  "why": "Generic code has bounds. Comptime code has none. Anything you can express algorithmically at comptime becomes a zero-cost abstraction at runtime.",
+  "theory": "## Advanced Compile-Time Techniques\n\n### Pattern 1: Pre-Computed Lookup Tables\n\n```xiom\ncomptime fn generate_sine_table(steps: Int) -> Vec[Float64] {\n  var table = Vec[Float64]();\n  for i in 0..steps {\n    let angle = 2.0 * 3.14159 * (i as Float64) / (steps as Float64);\n    table.push(angle.sin());\n  }\n  return table;\n}\n\nconst SINE_TABLE: Vec[Float64] = comptime generate_sine_table(256);\n\nfn fast_sine(index: Int) -> Float64 {\n  return SINE_TABLE[index];  // O(1) table lookup, no trig computation\n}\n```\n\n### Pattern 2: Type-Level State Machines\n\n```xiom\ncomptime fn generate_states(states: Vec[Str]) -> Type {\n  var variants = Vec[EnumVariant]();\n  for state in states {\n    variants.push(EnumVariant{ name: state, payload: None });\n  }\n  return make_enum_type(\"State\", variants);\n}\n\nconst MyStates: Type = comptime generate_states(Vec[Str](\"Idle\", \"Running\", \"Paused\", \"Stopped\"));\nconst TrafficLight: Type = comptime generate_states(Vec[Str](\"Red\", \"Yellow\", \"Green\"));\n```\n\n### Pattern 3: Compile-Time Assertions\n\n```xiom\ncomptime fn assert_eq(a: Int, b: Int) {\n  if a != b {\n    @comptime_error(format!(\"Assertion failed: {} != {}\", a, b));\n  }\n}\n\nconst SIZE: Int = 64;\ncomptime assert_eq(SIZE % 8, 0);  // Must be multiple of 8 for alignment\n```\n\n### Pattern 4: Static Reflection\n\n```xiom\ncomptime fn field_names[T: Type]() -> Vec[Str] {\n  let type_info = @type_info(T);\n  var names = Vec[Str]();\n  for field in type_info.fields {\n    names.push(field.name);\n  }\n  return names;\n}\n\nconst POINT_FIELDS: Vec[Str] = comptime field_names[Point]();\n// [\"x\", \"y\"] — extracted at compile time\n```\n\n### Pattern 5: Platform-Specific Constants\n\n```xiom\nconst PAGE_SIZE: Int = comptime {\n  if @target_os() == \"linux\" { return 4096; }\n  if @target_os() == \"macos\" { return 16384; }\n  @comptime_error(\"Unknown OS\");\n};\n```",
+  "syntax_ref": "// Pre-compute data:\nconst DATA = comptime generate_data(params);\n\n// Compile-time check:\ncomptime assert_condition();\n\n// Static reflection:\nconst INFO = comptime @type_info(MyType);",
+  "code_template": "// TODO: Write a comptime function 'is_compiled_on_tuesday' that returns Bool\n// Use @compile_time() to get the build timestamp (conceptually)\n// In main, return 42 if compiled on Tuesday, else return 0\n\nfn main() -> Int {\n  // For this exercise, just return 42 as a placeholder\n  return 42;\n}",
+  "solution": "comptime fn day_of_week() -> Int {\n  // In real XIOM: parse @compile_time() or @build_date()\n  // For this exercise, we return a hardcoded value\n  return 2;  // Tuesday (0=Sun, 1=Mon, 2=Tue)\n}\n\nconst IS_TUESDAY: Bool = comptime day_of_week() == 2;\n\nfn main() -> Int {\n  if IS_TUESDAY { return 42; }\n  return 0;\n}",
+  "tips": [
+    "Comptime lookup tables eliminate runtime computation — ideal for embedded and real-time systems",
+    "Static reflection enables automatic serialization, validation, and documentation generation",
+    "Compile-time assertions catch configuration errors before the binary is built",
+    "Platform-specific comptime code enables single-source cross-platform builds"
+  ],
+  "common_mistakes": [
+    "Bloat: generating huge lookup tables that increase binary size significantly",
+    "Over-engineering: using comptime for trivial computations that are already fast at runtime",
+    "Forgetting that comptime has limited I/O — can't read arbitrary files or make network calls"
+  ],
+  "related": [
+    "L5-41",
+    "L5-39",
+    "L5-43"
+  ],
+  "next_lesson": "L5-43"
+}

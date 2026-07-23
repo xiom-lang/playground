@@ -1,0 +1,17 @@
+{
+  "id": "L2-12",
+  "title": "Enum with Data",
+  "level": "L2",
+  "duration": "12 min",
+  "concepts": ["enum", "variant data", "payload", "associated data", "tagged union"],
+  "narrative": "## Enums That Carry Data\n\nEnum variants can hold associated data — each variant can have its own set of values. This creates a **tagged union**: a type that is one of several shapes, each with different data.\n\n### Variants with Fields\n\n```xiom\npub type Shape = enum {\n  Circle(radius: Float64),\n  Rectangle(width: Float64, height: Float64),\n  Triangle(base: Float64, height: Float64),\n}\n```\n\nEach variant has its own set of named fields.\n\n### Creating Data-Carrying Variants\n\n```xiom\nlet c = Shape.Circle(5.0);\nlet r = Shape.Rectangle(4.0, 6.0);\nlet t = Shape.Triangle(3.0, 4.0);\n```\n\n### Positional Variant Fields\n\nYou can also use positional (tuple-like) fields:\n\n```xiom\npub type Event = enum {\n  Click(x: Int, y: Int),\n  KeyPress(key: Str),\n  Resize(width: Int, height: Int),\n}\n\nlet click = Event.Click(100, 200);\nlet key = Event.KeyPress(\"Enter\");\n```\n\n### Extracting Data with Match\n\n```xiom\nfn area(shape: &Shape) -> Float64 {\n  match shape {\n    Circle(radius) => { return 3.14159 * radius * radius; }\n    Rectangle(width, height) => { return width * height; }\n    Triangle(base, height) => { return 0.5 * base * height; }\n  }\n}\n```\n\n### Real-World Example: API Response\n\n```xiom\npub type ApiResponse = enum {\n  Success(data: Str),\n  Error(code: Int, message: Str),\n  Loading,\n}\n```\n\n### Mixing Data and No-Data Variants\n\n```xiom\npub type UserAction = enum {\n  Login(username: Str),\n  Logout,\n  UpdateProfile(field: Str, value: Str),\n}\n```",
+  "code_template": "// TODO: define a Message enum with variants: Text(content: Str), Image(url: Str), File(name: Str, size: Int)\n\n// TODO: write a function 'describe' that returns a description string for each variant\n\nfn main() -> Int {\n  // TODO: create one of each variant and return total number of characters in all descriptions\n  return 0;\n}",
+  "solution": "pub type Message = enum {\n  Text(content: Str),\n  Image(url: Str),\n  File(name: Str, size: Int),\n}\n\nfn describe(msg: &Message) -> Str {\n  match msg {\n    Text(content) => { return \"Text: \" + content; }\n    Image(url) => { return \"Image from: \" + url; }\n    File(name, size) => { return \"File: \" + name + \" (\" + size + \" bytes)\"; }\n  }\n}\n\nfn main() -> Int {\n  let m1 = Message.Text(\"Hello\");\n  let m2 = Message.Image(\"photo.png\");\n  let m3 = Message.File(\"doc.txt\", 1024);\n  return m1.describe().len() + m2.describe().len() + m3.describe().len();\n}",
+  "tips": [
+    "Use named variant fields for clarity: `Login(username: Str)` > `Login(Str)`",
+    "Each variant has its own scope — field names can repeat across variants",
+    "Variants can mix named and positional fields within the same enum",
+    "Think of enums with data as a closed set of structs sharing one type name"
+  ],
+  "related": ["L2-14", "L2-16", "L2-20", "L2-27"]
+}

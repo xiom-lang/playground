@@ -1,0 +1,35 @@
+{
+  "id": "L4-43",
+  "title": "Test Coverage",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "test coverage",
+    "code coverage",
+    "branch coverage",
+    "what to test"
+  ],
+  "concept": "Test coverage measures which parts of your code are exercised by tests — guiding you to untested edge cases and contract paths.",
+  "why": "You can't improve what you don't measure. Coverage reports reveal blind spots: functions never called, branches never taken, contracts never checked.",
+  "theory": "## Understanding Coverage\n\n### Types of Coverage\n\n| Type | What it measures |\n|------|-----------------|\n| Line coverage | Which lines executed |\n| Branch coverage | Which if/else branches taken |\n| Contract coverage | Which requires/ensures checked |\n| Function coverage | Which functions called |\n\n### Running Coverage\n```sh\n# Run tests with coverage\nxiom test --coverage\n\n# Generate coverage report\nxiom coverage report\n\n# Open HTML report\nxiom coverage open\n```\n\n### Coverage Output\n```\n=== Coverage Summary ===\nLines:      85.2% (231/271)\nBranches:   72.1% (62/86)\nContracts:  90.0% (18/20)\nFunctions:  95.5% (21/22)\n\nUncovered:\n  src/parser.xi:45   fn parse_error_recovery\n  src/parser.xi:89   if branch: EOF handling\n  src/math.xi:23     requires: n >= 0 (unchecked)\n```\n\n### What to Test\n\n1. **Every function** — at minimum, one test per function\n2. **Every contract path** — test requires violations AND satisfactions\n3. **Every error variant** — test each way a function can fail\n4. **Edge cases** — empty, max, min, zero, negative\n5. **Boundaries** — values just inside and just outside valid ranges\n\n### Contract Coverage Specifically\n```xiom\nfn divide(a: Int, b: Int) -> Int\n  requires: b != 0;\n\n// Test 1: satisfies contract (b != 0)\nassert_eq(divide(10, 2), 5);\n\n// Test 2: violates contract (ensure caller handles it)\n// This tests the CALLER's error handling, not the function\n```",
+  "syntax_ref": "# Run coverage:\nxiom test --coverage\nxiom coverage report\n\n# Target: 80%+ line coverage\n# Critical: 100% contract coverage",
+  "code_template": "// TODO: Write tests for 'safe_sqrt' function\n// fn safe_sqrt(n: Float64) -> Float64\n//   requires: n >= 0.0\n//   ensures: result >= 0.0\n// Test: positive, zero, and think about how to test contract violation\n\nfn main() -> Int {\n  return 0;\n}",
+  "solution": "fn safe_sqrt(n: Float64) -> Float64\n  requires: n >= 0.0;\n  ensures: result >= 0.0;\n{\n  if n == 0.0 { return 0.0; }\n  var guess = n;\n  for _ in 0..50 {\n    guess = (guess + n / guess) / 2.0;\n  }\n  return guess;\n}\n\nfn test_sqrt_positive() -> Bool { return safe_sqrt(25.0) == 5.0; }\nfn test_sqrt_zero() -> Bool { return safe_sqrt(0.0) == 0.0; }\nfn test_sqrt_one() -> Bool { return safe_sqrt(1.0) == 1.0; }\nfn test_sqrt_large() -> Bool { return safe_sqrt(10000.0) == 100.0; }\n\nfn main() -> Int {\n  if test_sqrt_positive() && test_sqrt_zero() && test_sqrt_one() && test_sqrt_large() {\n    return 1;\n  }\n  return 0;\n}",
+  "tips": [
+    "Aim for 80%+ line coverage and 100% contract coverage",
+    "Uncovered code IS a risk — either test it or document why it's unreachable",
+    "Coverage is necessary but not sufficient — 100% coverage doesn't mean 100% correct",
+    "Focus on branch coverage — it catches untested logic paths that line coverage misses"
+  ],
+  "common_mistakes": [
+    "Chasing 100% line coverage at the expense of meaningful tests",
+    "Writing tests that execute code but don't assert anything useful",
+    "Ignoring uncovered contract branches — a contract you never test is a contract you don't trust"
+  ],
+  "related": [
+    "L4-42",
+    "L4-40",
+    "L4-44"
+  ],
+  "next_lesson": "L4-44"
+}

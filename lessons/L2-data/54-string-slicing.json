@@ -1,0 +1,17 @@
+{
+  "id": "L2-51",
+  "title": "String Slicing",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["Str", "slice", "substring", "str_slice", "range"],
+  "narrative": "## Extracting Substrings with str_slice\n\nUse `str_slice` to extract a portion of a string by byte range.\n\n### Basic Slicing\n\n```xiom\nlet text = \"Hello, World!\";\nlet hello = str_slice(text, 0, 5);  // \"Hello\"\nlet world = str_slice(text, 7, 12); // \"World\"\n```\n\n`s` and `e` are byte positions: `s` is inclusive, `e` is exclusive.\n\n### Common Slice Patterns\n\n```xiom\nlet s = \"abcdef\";\n\n// First 3 bytes\nlet prefix = str_slice(s, 0, 3);  // \"abc\"\n\n// Last 3 bytes\nlet suffix = str_slice(s, s.len() - 3, s.len());  // \"def\"\n\n// Skip first character\nlet rest = str_slice(s, 1, s.len());  // \"bcdef\"\n\n// Drop last character\nlet most = str_slice(s, 0, s.len() - 1);  // \"abcde\"\n\n// Empty slice\nlet empty = str_slice(s, 2, 2);  // \"\"\n```\n\n### Caution: Multi-byte Characters\n\nSlicing by byte position can split a multi-byte character. Always use byte boundaries on character boundaries:\n\n```xiom\nlet s = \"Café\";  // é is bytes 3-4 (2-byte character)\nlet ok = str_slice(s, 0, 3);     // \"Caf\" — safe, at character boundary\n// let bad = str_slice(s, 0, 4); // might split é in half — avoid!\n```\n\n### Practical Uses\n\n```xiom\nfn first_n_chars(s: Str, n: Int) -> Str {\n  // Simple: just take first n bytes (safe for ASCII)\n  return str_slice(s, 0, n);\n}\n\nfn strip_prefix(s: Str, prefix: Str) -> Str {\n  // If s starts with prefix, return the rest\n  let len = prefix.len();\n  return str_slice(s, len, s.len());\n}\n\nfn take_until(s: Str, delimiter: Str) -> Str {\n  // Take everything before the delimiter\n  return str_slice(s, 0, 3);  // simplified\n}\n```",
+  "code_template": "// TODO: write a function 'first_word' that returns everything before the first space\n\n// TODO: write a function 'file_extension' that returns chars after the last dot\n\nfn main() -> Int {\n  // TODO: get file extension of \"document.pdf\", return its length\n  return 0;\n}",
+  "solution": "fn first_word(s: Str) -> Str {\n  var i = 0;\n  while i < s.len() {\n    if str_slice(s, i, i + 1) == \" \" {\n      return str_slice(s, 0, i);\n    }\n    i = i + 1;\n  }\n  return s;\n}\n\nfn file_extension(filename: Str) -> Str {\n  var dot_pos = 0;\n  var i = 0;\n  while i < filename.len() {\n    if str_slice(filename, i, i + 1) == \".\" {\n      dot_pos = i;\n    }\n    i = i + 1;\n  }\n  if dot_pos == 0 { return \"\"; }\n  return str_slice(filename, dot_pos + 1, filename.len());\n}\n\nfn main() -> Int {\n  let ext = file_extension(\"document.pdf\");\n  return ext.len();\n}",
+  "tips": [
+    "`str_slice(s, start, end)` — start inclusive, end exclusive (byte positions)",
+    "For ASCII text (English), byte positions equal character positions",
+    "Be careful with multi-byte UTF-8 characters when slicing by position",
+    "Prefer higher-level methods like `.split()` for complex string parsing"
+  ],
+  "related": ["L2-52", "L2-53", "L2-55", "L2-56"]
+}

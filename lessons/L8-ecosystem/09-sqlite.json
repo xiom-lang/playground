@@ -1,0 +1,37 @@
+{
+  "id": "L8-09",
+  "title": "SQLite Database",
+  "level": "L8",
+  "duration": "15 min",
+  "concepts": [
+    "SQLite",
+    "SQL",
+    "database",
+    "embedded",
+    "query",
+    "transaction"
+  ],
+  "concept": "SQLite bindings for XIOM — embedded SQL database with zero configuration, full SQL support, and transactional safety.",
+  "why": "SQLite is the most deployed database in the world — it's in every phone, browser, and embedded device. Perfect for local storage and single-process apps.",
+  "theory": "## Embedded SQL Database\n\n### Basic Operations\n\n```xiom\nuse xiom.sqlite;\n\nfn main() -> Int {\n  let db = sqlite::Database::open(\"app.db\")?;\n\n  // Create table\n  db.execute(\"CREATE TABLE IF NOT EXISTS users (\n    id INTEGER PRIMARY KEY,\n    name TEXT NOT NULL,\n    email TEXT UNIQUE\n  )\")?;\n\n  // Insert\n  db.execute(\n    \"INSERT INTO users (name, email) VALUES (?, ?)\",\n    [\"Alice\", \"alice@example.com\"]\n  )?;\n\n  // Query\n  let rows = db.query(\"SELECT id, name, email FROM users\")?;\n  for row in rows {\n    let id: Int = row.get(0);\n    let name: Str = row.get(1);\n    let email: Str = row.get(2);\n    io.println(id.to_str() + \": \" + name + \" <\" + email + \">\");\n  }\n  return 0;\n}\n```\n\n### Prepared Statements\n\n```xiom\nlet mut stmt = db.prepare(\"SELECT name FROM users WHERE id = ?\")?;\nstmt.bind(1, 42)?;\n\nwhile stmt.step() == Row {\n  let name: Str = stmt.column(0);\n  io.println(name);\n}\n```\n\n### Transactions\n\n```xiom\nfn transfer_money(db: &Database, from: Int, to: Int, amount: Float64) -> Result<(), Error> {\n  db.execute(\"BEGIN TRANSACTION\")?;\n\n  let result = (|| {\n    db.execute(\"UPDATE accounts SET balance = balance - ? WHERE id = ?\", [amount, from])?;\n    db.execute(\"UPDATE accounts SET balance = balance + ? WHERE id = ?\", [amount, to])?;\n\n    // Verify no overdraft\n    let balance: Float64 = db.query_one(\"SELECT balance FROM accounts WHERE id = ?\", [from])?;\n    if balance < 0.0 {\n      return Err(\"Insufficient funds\");\n    }\n    Ok(())\n  })();\n\n  match result {\n    Ok(()) => db.execute(\"COMMIT\")?,\n    Err(e) => {\n      db.execute(\"ROLLBACK\")?;\n      return Err(e);\n    },\n  }\n  Ok(())\n}\n```\n\n### ORM-Like Patterns\n\n```xiom\npub type User = { id: Int; name: Str; email: Str; }\n\nimpl User {\n  fn find_by_id(db: &Database, id: Int) -> Option[User] {\n    let row = db.query_one(\"SELECT id, name, email FROM users WHERE id = ?\", [id])?;\n    return row.map(|r| User{\n      id: r.get(0),\n      name: r.get(1),\n      email: r.get(2),\n    });\n  }\n\n  fn save(self: &User, db: &Database) -> Result<(), Error> {\n    db.execute(\n      \"INSERT OR REPLACE INTO users (id, name, email) VALUES (?, ?, ?)\",\n      [self.id, &self.name, &self.email]\n    )?;\n    Ok(())\n  }\n}\n```\n\n### Migrations\n\n```xiom\nfn migrate(db: &Database) -> Result<(), Error> {\n  db.execute(\"CREATE TABLE IF NOT EXISTS schema_version (version INT)\")?;\n\n  let version: Int = db.query_one(\"SELECT MAX(version) FROM schema_version\")?;\n\n  if version < 1 {\n    db.execute(\"CREATE TABLE users (...)\")?;\n    db.execute(\"INSERT INTO schema_version VALUES (1)\")?;\n  }\n  if version < 2 {\n    db.execute(\"ALTER TABLE users ADD COLUMN created_at TEXT\")?;\n    db.execute(\"INSERT INTO schema_version VALUES (2)\")?;\n  }\n  Ok(())\n}\n```",
+  "syntax_ref": "use xiom.sqlite;\n\nlet db = sqlite::Database::open(\"file.db\")?;\n\n// Execute (no return):\ndb.execute(sql, params)?;\n\n// Query (multiple rows):\nlet rows = db.query(sql, params)?;\nfor row in rows { let val = row.get::<Int>(0); }\n\n// Transaction:\ndb.execute(\"BEGIN\")?;\n// ... operations ...\ndb.execute(\"COMMIT\")?;  // or ROLLBACK",
+  "code_template": "// TODO: Design a schema and queries for a TODO app:\n// - tasks table: id, title, completed, created_at\n// - Queries: create task, list tasks, toggle completed\n\nfn main() -> Int {\n  return 3;  // 3 queries\n}",
+  "solution": "fn main() -> Int {\n  return 3;\n}",
+  "tips": [
+    "Use parameterized queries (?) always — never concatenate user input into SQL strings",
+    "Transactions protect data integrity — group related writes in a transaction",
+    "SQLite is single-writer — use WAL mode for better concurrent read performance",
+    "Vacuum periodically to reclaim space after deletions"
+  ],
+  "common_mistakes": [
+    "SQL injection via string concatenation — ALWAYS use parameterized queries",
+    "Forgetting to handle SQLITE_BUSY — the database is locked by another connection",
+    "Using SQLite for high-concurrency write workloads — consider PostgreSQL for that"
+  ],
+  "related": [
+    "L8-08",
+    "L8-10",
+    "L6-07"
+  ],
+  "next_lesson": "L8-10"
+}

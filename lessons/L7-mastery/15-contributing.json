@@ -1,0 +1,36 @@
+{
+  "id": "L7-15",
+  "title": "Contributing to XIOM",
+  "level": "L7",
+  "duration": "15 min",
+  "concepts": [
+    "contribution",
+    "open source",
+    "PR",
+    "RFC",
+    "community"
+  ],
+  "concept": "How to contribute to the XIOM language and ecosystem — from bug reports to compiler patches to language design proposals.",
+  "why": "Open source languages are built by their communities. Contributing improves the language for everyone and deepens your understanding of language design.",
+  "theory": "## Becoming a Contributor\n\n### Contribution Ladder\n\n```\nLevel 1: Bug reports       — File issues with reproduction steps\nLevel 2: Documentation      — Improve docs, write examples\nLevel 3: Bug fixes          — Submit PRs fixing known issues\nLevel 4: Features           — Implement small features and compiler improvements\nLevel 5: RFCs               — Propose language changes\nLevel 6: Working groups     — Lead initiatives (e.g., async, embedded)\nLevel 7: Core team          — Steward the language's direction\n```\n\n### Your First Contribution\n\n```sh\n# 1. Find an issue labeled 'good first issue'\n#    https://github.com/xiom-lang/xiom/issues?q=label:good-first-issue\n\n# 2. Fork and clone\ngit clone https://github.com/YOUR_USER/xiom.git\n\n# 3. Create a branch\ngit checkout -b fix-issue-1234\n\n# 4. Make changes and test\nxiom test\n\n# 5. Submit PR with:\n#    - Description of the change\n#    - Reference to the issue\n#    - Test results\n```\n\n### Writing an RFC\n\n```markdown\n# RFC: Add Pattern Matching in Function Parameters\n\n## Summary\nAllow destructuring patterns directly in function parameter lists.\n\n## Motivation\nCurrently, you need a match block inside the function body.\n\n## Detailed Design\nfn draw(Point(x, y): Point) { ... }\nfn process(Some(value): Option[Int]) { ... }\n\n## Drawbacks\nIncreased parser complexity.\n\n## Alternatives\nContinue using match blocks in function bodies.\n```\n\n### Code Review Process\n\n1. **Author** submits PR with tests\n2. **CI** runs automatically (format, lint, test)\n3. **Reviewer** checks for correctness, style, edge cases\n4. **Discussion** in PR comments\n5. **Merged** when approved and CI passes\n\n### Community Guidelines\n\n- Be respectful and constructive\n- Include tests with every code change\n- Update documentation when changing behavior\n- Discuss large changes via RFC before coding\n- Review others' PRs — contribution isn't just writing code",
+  "syntax_ref": "# Contribution workflow:\ngit clone && git branch feat/my-change\nxiom test                     # Ensure tests pass pre-change\n# ... make changes ...\nxiom test                     # All tests pass?\ngit commit -m \"feat: description\"\ngit push && gh pr create\n\n# RFC process:\n# Create a markdown file with the RFC template\n# Submit PR to the rfcs/ directory\n# Discuss and iterate",
+  "code_template": "fn main() -> Int {\n  // Your task: Find the XIOM repository on GitHub\n  // Look for issues labeled 'good first issue'\n  // Read CONTRIBUTING.md\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Start with documentation contributions — they're always needed and help you learn the codebase",
+    "Read CONTRIBUTING.md before submitting any PR — it has project-specific rules",
+    "Include tests with your changes — untested code is unlikely to be merged",
+    "Be patient with review — maintainers are volunteers and review takes time"
+  ],
+  "common_mistakes": [
+    "Submitting large PRs without prior discussion — discuss via issue or RFC first",
+    "Not running the test suite before submitting — CI will catch it, but you'll look careless",
+    "Getting defensive in code review — reviewers are helping, not attacking"
+  ],
+  "related": [
+    "L7-13",
+    "L7-14",
+    "L7-16"
+  ],
+  "next_lesson": "L7-16"
+}

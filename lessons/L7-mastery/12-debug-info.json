@@ -1,0 +1,36 @@
+{
+  "id": "L7-12",
+  "title": "Debug Info Generation",
+  "level": "L7",
+  "duration": "15 min",
+  "concepts": [
+    "debug info",
+    "DWARF",
+    "PDB",
+    "source mapping",
+    "debugger support"
+  ],
+  "concept": "Debug info embeds source-level information in binaries — enabling debuggers to show source code, variables, and stack traces instead of assembly.",
+  "why": "Without debug info, debugging means reading assembly. With debug info, you see your source code, variable names, and values — the difference is productivity vs frustration.",
+  "theory": "## From Binary to Source Code\n\n### Debug Info Formats\n\n| Platform | Format | Tools |\n|----------|--------|-------|\n| Linux | DWARF | GDB, LLDB, Valgrind |\n| macOS | DWARF (dSYM) | LLDB, Instruments |\n| Windows | PDB | WinDbg, Visual Studio |\n\n### What Debug Info Contains\n\n```\nBinary without debug info:\n  0x401000: 48 89 e5 48 83 ec 10 c7 45 fc 2a 00 00 00\n\nBinary with debug info:\n  0x401000: 48 89 e5 48 83 ec 10 c7 45 fc 2a 00 00 00\n  → source: main.xi:5\n  → variable: x at [rbp-4], type: Int, value: 42\n```\n\n### Debug Info Contents\n\n- **Source file mapping**: Which binary instruction came from which source line\n- **Variable locations**: Where each variable lives (register, stack offset)\n- **Type information**: Complete type definitions for all types\n- **Function names**: Demangled names for all functions\n- **Scope information**: When variables are alive/dead\n- **Inline information**: In which function an inlined instruction originated\n\n### Generating Debug Info\n\n```sh\n# Build with debug info\nxiom build -g\n\n# Full debug info (larger binary)\nxiom build -g3\n\n# No debug info (release builds)\nxiom build --release  # Strips debug info by default\n```\n\n### Debugging Experience\n\n```sh\n# Launch debugger\nlldb ./target/debug/myapp\n\n(lldb) breakpoint set --name main\n(lldb) run\n(lldb) frame variable\n(Int) x = 42\n(Str) name = \"Kilo\"\n\n(lldb) source list\n  3    fn main() -> Int {\n  4      let x = 42;\n→ 5      let name = \"Kilo\";\n  6      io.println(name);\n  7      return x;\n```\n\n### Split Debug Info\n\n```sh\n# Linux: separate debug file\nxiom build -g --split-debuginfo=packed\n# Creates: myapp + myapp.dwp (debug info)\n\n# macOS: dSYM bundle\nxiom build -g\n# Creates: myapp + myapp.dSYM/\n\n# Windows: PDB file\nxiom build -g --target x86_64-pc-windows-msvc\n# Creates: myapp.exe + myapp.pdb\n```",
+  "syntax_ref": "xiom build -g                 # Include debug info\nxiom build -g3                # Maximum debug info\nxiom build --release           # No debug info (default)\n\n# Debug:\nlldb ./target/debug/myapp     # macOS\n gdb ./target/debug/myapp      # Linux",
+  "code_template": "fn main() -> Int {\n  let x = 42;\n  let y = x * 2;\n  let message = \"Debug me!\";\n  return y;  // Set breakpoint here, inspect x, y, message\n}",
+  "solution": "fn main() -> Int {\n  let x = 42;\n  let y = x * 2;\n  return y;\n}",
+  "tips": [
+    "Always build with -g during development — debug info is invaluable when things go wrong",
+    "Split debug info reduces binary size for deployment while keeping debugging capability",
+    "DWARF debug info can be very large — use -g1 for line info only, -g3 for full type info",
+    "lldb (macOS) and gdb (Linux) are your friends — learn basic breakpoint and inspection commands"
+  ],
+  "common_mistakes": [
+    "Building release without debug info and then trying to debug — you see assembly, not source",
+    "Not realizing debug info increases binary size 2-10x — split debug info for deployment",
+    "Assuming debug info captures everything — optimized code (-O2 with -g) may have variables optimized out"
+  ],
+  "related": [
+    "L7-05",
+    "L6-27",
+    "L6-28"
+  ],
+  "next_lesson": "L7-13"
+}

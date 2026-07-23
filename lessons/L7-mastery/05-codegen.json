@@ -1,0 +1,37 @@
+{
+  "id": "L7-05",
+  "title": "Codegen Internals",
+  "level": "L7",
+  "duration": "20 min",
+  "concepts": [
+    "codegen",
+    "LLVM IR",
+    "instruction selection",
+    "register allocation",
+    "lowering"
+  ],
+  "concept": "Codegen translates the typed AST into LLVM Intermediate Representation — the bridge between XIOM semantics and machine code generation.",
+  "why": "Understanding codegen reveals how your high-level XIOM code becomes low-level machine instructions. It explains performance characteristics and optimizations.",
+  "theory": "## From AST to LLVM IR\n\n### Code Generation Pipeline\n\n```\nTyped AST → IR Generator → LLVM IR → LLVM Optimizer → Optimized IR → Machine Code\n```\n\n### XIOM to LLVM IR Examples\n\n```xiom\n// XIOM:\nfn add(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\n// Generated LLVM IR:\ndefine i64 @add(i64 %a, i64 %b) {\nentry:\n  %sum = add i64 %a, %b\n  ret i64 %sum\n}\n```\n\n```xiom\n// XIOM:\nfn factorial(n: Int) -> Int {\n  if n <= 1 { return 1; }\n  return n * factorial(n - 1);\n}\n\n// Generated LLVM IR:\ndefine i64 @factorial(i64 %n) {\nentry:\n  %cmp = icmp sle i64 %n, 1\n  br i1 %cmp, label %base_case, label %recurse\n\nbase_case:\n  ret i64 1\n\nrecurse:\n  %n_minus_1 = sub i64 %n, 1\n  %rec_result = call i64 @factorial(i64 %n_minus_1)\n  %result = mul i64 %n, %rec_result\n  ret i64 %result\n}\n```\n\n### Codegen for Control Flow\n\n```xiom\n// XIOM:\nif x > 0 { return 1; } else { return 0; }\n\n// LLVM IR:\n%cond = icmp sgt i64 %x, 0\nbr i1 %cond, label %then, label %else\nthen:\n  ret i64 1\nelse:\n  ret i64 0\n```\n\n### Codegen for Structs\n\n```xiom\n// XIOM:\npub type Point = { x: Float64; y: Float64; }\nfn get_x(p: &Point) -> Float64 { return p.x; }\n\n// LLVM IR:\n%struct.Point = type { double, double }\n\ndefine double @get_x(%struct.Point* %p) {\nentry:\n  %x_ptr = getelementptr %struct.Point, %struct.Point* %p, i32 0, i32 0\n  %x = load double, double* %x_ptr\n  ret double %x\n}\n```\n\n### Codegen Strategy\n\n1. **Function prologue**: Set up stack frame, save registers\n2. **Statement-by-statement**: Each XIOM statement → LLVM IR block\n3. **Expression lowering**: Complex XIOM expressions → simple LLVM operations\n4. **Function epilogue**: Restore registers, return\n\n### LLVM IR Properties\n\n- **SSA form**: Each variable assigned exactly once\n- **Typed**: Every value has an explicit type\n- **Low-level**: Close to machine code, but platform-independent\n- **Optimizable**: LLVM applies dozens of optimization passes",
+  "syntax_ref": "# View generated LLVM IR:\nxiom build --emit-ir main.xi\n\n# LLVM IR basics:\n# %name = operation type operand1, operand2\n# br i1 %cond, label %true_branch, label %false_branch\n# ret type %value",
+  "code_template": "fn main() -> Int {\n  // Run: xiom build --emit-ir main.xi\n  // Read the generated LLVM IR\n  // Identify: the main function, the return instruction\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Use --emit-ir to understand how your code compiles — invaluable for optimization",
+    "SSA form means every variable is assigned once — the codegen inserts phi nodes for control flow merges",
+    "Struct field access becomes GEP (GetElementPtr) instructions — pointer arithmetic by the LLVM",
+    "Tail-recursive functions often compile to loops — check the IR to verify"
+  ],
+  "common_mistakes": [
+    "Assuming direct mapping: one XIOM line ≠ one LLVM IR line",
+    "Forgetting that debug builds include extra code for contract checks and overflow detection",
+    "Reading LLVM IR without understanding SSA — phi nodes look confusing without context"
+  ],
+  "related": [
+    "L7-01",
+    "L7-04",
+    "L7-06",
+    "L7-07"
+  ],
+  "next_lesson": "L7-06"
+}

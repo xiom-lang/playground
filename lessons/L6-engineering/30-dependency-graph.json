@@ -1,0 +1,36 @@
+{
+  "id": "L6-30",
+  "title": "Dependency Graph",
+  "level": "L6",
+  "duration": "10 min",
+  "concepts": [
+    "dependency graph",
+    "modules",
+    "topological sort",
+    "import tree",
+    "build order"
+  ],
+  "concept": "The dependency graph maps module relationships — enabling parallel compilation, cycle detection, and build optimization.",
+  "why": "Understanding the dependency graph explains why some changes trigger massive recompilation while others are instant — and how to structure your code for fast builds.",
+  "theory": "## Module Relationships\n\n### Visualizing Dependencies\n\n```sh\n# Generate dependency graph\nxiom graph --output deps.dot\n\n# Render to image (requires Graphviz)\ndot -Tpng deps.dot -o deps.png\n```\n\n### Graph Structure\n\n```\nmain.xi\n├── module auth\n│   ├── module crypto\n│   │   └── module math (stdlib)\n│   └── module database\n│       └── module sql (external package)\n├── module api\n│   ├── module auth\n│   ├── module json (stdlib)\n│   └── module http (external package)\n└── module config\n```\n\n### Critical Path\n\nThe longest chain in the dependency graph determines minimum build time:\n\n```\nmath → crypto → auth → api → main\n```\n\nChanges to `math` cascade through the entire graph. Changes to `config` only rebuild `config` and `main`.\n\n### Cycle Detection\n\n```\nERROR: circular dependency detected\n  src/auth.xi → src/database.xi → src/auth.xi\n  \n  Fix: extract shared types into a separate module\n  that both auth and database import.\n```\n\n### Optimizing the Graph\n\n```xiom\n// BAD: tight coupling, deep chains\nmodule app;\nuse app.auth.database.sql;  // 4 levels deep\n\n// GOOD: shallow, focused dependencies\nmodule app;\nuse shared.types;\nuse auth.session;\nuse db.pool;\n```\n\n### Dependency Analysis\n\n```sh\nxiom graph --stats\n```\n\nOutput:\n```\nModules: 47\nEdges (dependencies): 89\nMax depth: 5\nCritical path: math → crypto → auth → api → main\nParallelizable: 12 modules (can build simultaneously)\nCycles: 0 (healthy)\n```\n\n### Build Order\n\nThe compiler topologically sorts modules and builds dependencies before dependents. Independent modules (no shared edges) are built in parallel.",
+  "syntax_ref": "xiom graph              # Generate dependency graph\nxiom graph --stats      # Show graph statistics\nxiom graph --cycles     # Check for circular deps",
+  "code_template": "fn main() -> Int {\n  // Run `xiom graph` on this project (if available)\n  // Observe which modules depend on which\n  // Identify the critical path\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  return 0;\n}",
+  "tips": [
+    "Keep the dependency graph SHALLOW — deep chains mean slow rebuilds when base modules change",
+    "Extract shared types to a leaf module — everything depends on it, so it should be stable and small",
+    "Use `xiom graph --cycles` to catch circular dependencies before they cause build failures",
+    "Parallelizable modules are those with no dependencies between them — maximize these"
+  ],
+  "common_mistakes": [
+    "Creating circular dependencies — split shared code into a separate module",
+    "Making a core module depend on leaf modules — inverts the dependency direction",
+    "Not checking the graph regularly — dependency creep makes builds progressively slower"
+  ],
+  "related": [
+    "L6-29",
+    "L6-31",
+    "L6-05"
+  ],
+  "next_lesson": "L6-31"
+}

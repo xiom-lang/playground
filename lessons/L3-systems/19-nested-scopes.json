@@ -1,0 +1,17 @@
+{
+  "id": "L3-19",
+  "title": "Nested Scopes",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["nested scope", "inner block", "variable shadowing", "borrow control"],
+  "narrative": "## Inner Blocks and Borrow Control\n\nNested scopes (blocks within blocks) give you fine-grained control over variable lifetimes and borrow durations.\n\n### Creating Inner Scopes\n\n```xiom\nfn main() -> Int {\n  let x = 1;\n  {  // inner scope 1\n    let y = 2;\n    {  // inner scope 2\n      let z = 3;\n      // can access x, y, z\n    }  // z dropped\n    // can access x, y\n  }  // y dropped\n  // can access x only\n  return x;\n}\n```\n\n### Borrow Control with Nested Scopes\n\n```xiom\nvar data = Vec[Int]();\ndata.push(1);\n\n// First modification\n{\n  let m = &mut data;\n  m.push(2);\n}\n\n// Read\nlet len = data.len();\n\n// Second modification\n{\n  let m = &mut data;\n  m.push(3);\n}\n\nreturn data.len();  // 3\n```\n\n### Pattern: Scope for Temporary Mutations\n\n```xiom\nfn process_in_batches(v: &mut Vec[Int]) -> Unit {\n  {\n    // batch 1\n    v.push(1); v.push(2); v.push(3);\n  }\n  let count = v.len();  // read\n  {\n    // batch 2\n    v.push(4); v.push(5);\n  }\n}\n```\n\n### Variable Shadowing\n\nInner scopes can shadow (redeclare) outer variables:\n\n```xiom\nlet x = 5;\n{\n  let x = x * 2;  // inner x = 10, outer x unchanged\n  io.println(x);   // prints 10\n}\nio.println(x);     // prints 5 — outer x unchanged\n```",
+  "code_template": "// TODO: use nested blocks to perform three modifications and two reads on a Vec\n\n// TODO: show how inner scope borrows allow outer scope to work with data\n\nfn main() -> Int {\n  // TODO: create vec, 3 blocks of push, 2 reads between, return final length\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var data = Vec[Int]();\n  {\n    let m = &mut data;\n    m.push(1); m.push(2);\n  }\n  let after_first = data.len();\n  {\n    let m = &mut data;\n    m.push(3); m.push(4);\n  }\n  let after_second = data.len();\n  {\n    let m = &mut data;\n    m.push(5);\n  }\n  return data.len();\n}",
+  "tips": [
+    "Use nested blocks `{ }` to shorten borrow scopes without restructuring code",
+    "Variables are dropped at the end of their enclosing block",
+    "Inner scopes can access outer variables but not vice versa",
+    "Variable shadowing lets you reuse names with different types or values"
+  ],
+  "related": ["L3-18", "L3-12", "L3-14", "L1-27"]
+}

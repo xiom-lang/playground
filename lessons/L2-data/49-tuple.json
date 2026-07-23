@@ -1,0 +1,17 @@
+{
+  "id": "L2-46",
+  "title": "Tuple",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["tuple", "pair", "anonymous struct", "composite", "(T, U)"],
+  "narrative": "## Grouping Values with Tuples\n\nA **tuple** groups multiple values of possibly different types into a single compound value. Unlike structs, tuple fields are positional (not named).\n\n### Tuple Syntax\n\n```xiom\nlet pair: (Str, Int) = (\"Alice\", 30);\nlet triple: (Int, Float64, Bool) = (42, 3.14, true);\n```\n\n### Accessing Tuple Elements\n\n```xiom\nlet pair = (\"Alice\", 30);\nlet name = pair.0;   // \"Alice\"\nlet age = pair.1;     // 30\n\nlet triple = (42, 3.14, true);\nlet a = triple.0;  // 42\nlet b = triple.1;  // 3.14\nlet c = triple.2;  // true\n```\n\nFields are accessed by position: `.0`, `.1`, `.2`, etc.\n\n### Returning Multiple Values\n\nTuples are the standard way to return multiple values from a function:\n\n```xiom\nfn min_max(v: &Vec[Int]) -> (Int, Int) {\n  if v.len() == 0 { return (0, 0); }\n  var min = v[0];\n  var max = v[0];\n  var i = 1;\n  while i < v.len() {\n    if v[i] < min { min = v[i]; }\n    if v[i] > max { max = v[i]; }\n    i = i + 1;\n  }\n  return (min, max);\n}\n\nlet (lo, hi) = min_max(&numbers);\n```\n\n### Tuple Destructuring\n\n```xiom\nlet point = (3.0, 4.0);\nlet (x, y) = point;  // x = 3.0, y = 4.0\n\nlet info = (\"Alice\", 30, true);\nlet (name, age, active) = info;\n```\n\n### Tuples as Map Values\n\n```xiom\nlet inventory = Map[Str, (Int, Float64)]();\ninventory.insert(\"widget\", (50, 9.99));\n// 50 in stock at $9.99 each\n\nlet (qty, price) = inventory.get(&\"widget\").unwrap_or((0, 0.0));\n```",
+  "code_template": "// TODO: write a function 'stats' that returns (min, max, avg) as (Int, Int, Float64)\n\n// TODO: write a function 'divide_rem' that returns (quotient, remainder)\n\nfn main() -> Int {\n  // TODO: call divide_rem(10, 3), return quotient + remainder\n  return 0;\n}",
+  "solution": "fn stats(v: &Vec[Int]) -> (Int, Int, Float64) {\n  if v.len() == 0 { return (0, 0, 0.0); }\n  var min = v[0];\n  var max = v[0];\n  var sum = 0;\n  var i = 0;\n  while i < v.len() {\n    if v[i] < min { min = v[i]; }\n    if v[i] > max { max = v[i]; }\n    sum = sum + v[i];\n    i = i + 1;\n  }\n  let avg = (sum as Float64) / (v.len() as Float64);\n  return (min, max, avg);\n}\n\nfn divide_rem(a: Int, b: Int) -> (Int, Int) {\n  return (a / b, a % b);\n}\n\nfn main() -> Int {\n  let (q, r) = divide_rem(10, 3);\n  return q + r;\n}",
+  "tips": [
+    "Use tuples for lightweight grouping when field names aren't needed",
+    "Return tuples from functions to return multiple values",
+    "Destructure with `let (a, b) = tuple` for readable code",
+    "For 3+ elements, consider a named struct for clarity"
+  ],
+  "related": ["L2-13", "L2-50", "L2-51", "L1-03"]
+}

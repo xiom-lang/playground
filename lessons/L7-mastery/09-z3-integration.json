@@ -1,0 +1,37 @@
+{
+  "id": "L7-09",
+  "title": "Z3 Integration",
+  "level": "L7",
+  "duration": "20 min",
+  "concepts": [
+    "Z3",
+    "SMT solver",
+    "contract verification",
+    "constraint solving",
+    "formal verification"
+  ],
+  "concept": "How XIOM integrates Z3 for static contract verification — translating XIOM contracts into SMT formulas and proving or disproving them.",
+  "why": "Runtime contracts catch bugs in execution. Z3 proves they can NEVER happen — static verification is the highest level of correctness assurance.",
+  "theory": "## Static Contract Verification\n\n### Architecture\n\n```\nXIOM Contract → SMT Formula → Z3 Solver → Proof / Counterexample\n```\n\n### Translation: Contract to SMT\n\n```xiom\n// XIOM:\nfn divide(a: Int, b: Int) -> Int\n  requires: b != 0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\n// SMT-LIB2 (logical formula):\n(declare-const a Int)\n(declare-const b Int)\n(assert (not (= b 0)))\n(declare-const result Int)\n(assert (= result (div a b)))\n;; Verification condition: does ensures hold?\n(assert (not (= (* result b) a)))\n(check-sat)\n;; Returns: unsat (ensures always holds) / sat + model (counterexample)\n```\n\n### Verification Process\n\n1. **Extract contract** from XIOM function\n2. **Symbolically execute** the function body\n3. **Generate verification conditions** (VCs)\n4. **Negate the postcondition** (to find counterexamples)\n5. **Feed to Z3**: if UNSAT → proved, if SAT → counterexample found\n\n### What Z3 Can Verify\n\n```xiom\n// Arithmetic: a + b == b + a\nfn add(a: Int, b: Int) -> Int\n  ensures: result == a + b;\n  ensures: result == b + a;\n{ return a + b; }\n\n// Array indexing (bounded):\nfn get(arr: &Vec[Int], idx: Int) -> Int\n  requires: idx >= 0 && idx < arr.len();\n  ensures: result == arr[idx];\n{ return arr[idx]; }\n\n// Bitwise operations:\nfn is_power_of_two(n: Int) -> Bool\n  requires: n > 0;\n  ensures: result == (n & (n - 1) == 0);\n{ return (n & (n - 1)) == 0; }\n```\n\n### Limitations\n\nZ3 can't verify:\n- **Loops** without invariants\n- **Recursive functions** without induction hypotheses\n- **Heap-allocated structures** without separation logic\n- **I/O** or side effects\n\n### Providing Loop Invariants\n\n```xiom\nfn sum(arr: &Vec[Int]) -> Int\n  ensures: result == foldl(+, 0, arr);\n{\n  var total = 0;\n  for item in arr\n    invariant: total == foldl(+, 0, arr[0..current_index]);\n  {\n    total = total + item;\n  }\n  return total;\n}\n```",
+  "syntax_ref": "# Run verification:\nxiom verify src/\n\n# With Z3 options:\nxiom verify --timeout 30 --solver z3 src/\n\n# Verification result:\n# ✓ PROVED / ✗ COUNTEREXAMPLE / ? UNKNOWN",
+  "code_template": "// Write a function with contracts suitable for Z3 verification:\n// fn is_sorted(arr: &Vec[Int]) -> Bool\n//   ensures: result == (forall i in 0..len-1 => arr[i] <= arr[i+1])\n// Try: xiom verify main.xi (if Z3 installed)\n\nfn is_sorted(arr: &Vec[Int]) -> Bool {\n  for i in 1..arr.len() {\n    if arr[i-1] > arr[i] { return false; }\n  }\n  return true;\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1); v.push(2); v.push(3);\n  if is_sorted(&v) { return 1; }\n  return 0;\n}",
+  "solution": "fn is_sorted(arr: &Vec[Int]) -> Bool {\n  for i in 1..arr.len() {\n    if arr[i-1] > arr[i] { return false; }\n  }\n  return true;\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1); v.push(2); v.push(3);\n  if is_sorted(&v) { return 1; }\n  return 0;\n}",
+  "tips": [
+    "Z3 works best on pure functions with integer/boolean logic — keep verification targets focused",
+    "A PROVED result is a mathematical guarantee — stronger than any amount of testing",
+    "Provide loop invariants for functions Z3 can't prove automatically",
+    "Verification covers ALL inputs satisfying requires — it's exhaustive, unlike testing"
+  ],
+  "common_mistakes": [
+    "Expecting Z3 to prove everything — it has limits, especially with complex data structures",
+    "Not providing enough constraints — Z3 needs complete specifications to prove anything",
+    "Using Z3-unsupported features (I/O, allocation) in verified functions"
+  ],
+  "related": [
+    "L7-10",
+    "L4-26",
+    "L4-28",
+    "L4-29"
+  ],
+  "next_lesson": "L7-10"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L6-06",
+  "title": "package.xi",
+  "level": 6,
+  "duration": "10 min",
+  "concepts": ["package.xi", "manifest", "project", "metadata"],
+  "concept": "package.xi is the project manifest defining metadata, dependencies, and build configuration",
+  "why": "A project is more than source code — it has a name, version, authors, dependencies, and build settings. `package.xi` centralizes this metadata so tools (xiom CLI, IDEs, CI/CD) can understand the project structure without parsing every source file. It's the entry point that makes a directory a XIOM project.",
+  "theory": "`package.xi` is a declarative file at the root of every XIOM project. It specifies: package identity (`name`, `version`), build target (`binary` or `library`), compiler settings (`edition`, `optimization`), and dependency declarations. The file is parsed before compilation begins and drives the compiler's resolution strategy. XIOM's manifest format is a custom key-value syntax — more structured than TOML, less verbose than JSON, designed for humans to write.",
+  "syntax_ref": "package <name>\n  version: \"<semver>\"\n  target: <binary|library>\n\ndependencies:\n  <crate>: \"<version>\"",
+  "code_template": "package calculator\n  version: \"0.1.0\"\n  target: binary\n  edition: \"2025\"\n\ndependencies:\n  math_utils: \"^1.2\"\n\n# Source files are automatically discovered from src/",
+  "solution": "package axiom_engine\n  version: \"0.2.0\"\n  target: library\n  edition: \"2025\"\n  authors: [\"XIOM Team <team@axiom.dev>\"]\n  description: \"A lightweight game engine for XIOM\"\n\ndependencies:\n  vulkan_bindings: \"^0.9\"\n  glfw_windowing: \"^1.0\"\n\n# Library exports are defined in src/lib.xi",
+  "tips": ["Always pin major versions in dependencies to avoid breakage", "Set `target: library` for reusable crates, `binary` for executables", "Run `xiom pkg verify` to check manifest validity"],
+  "common_mistakes": ["Forgetting to update version before publishing", "Missing `target` field — compiler won't know what to build", "Incorrect semver format causing parse errors"],
+  "related": ["L6-07-dependencies", "L6-08-pkg-install", "L6-09-build"],
+  "next_lesson": "L6-07"
+}

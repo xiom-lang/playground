@@ -1,0 +1,36 @@
+{
+  "id": "L5-27",
+  "title": "Eq Interface",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "Eq",
+    "equality",
+    "==",
+    "PartialEq",
+    "value equality"
+  ],
+  "concept": "The Eq and PartialEq interfaces define equality comparison — `==` and `!=` operators work on any type that implements Eq.",
+  "why": "Without Eq, you can't compare values with ==. Implementing Eq is essential for using types in collections, tests, and business logic.",
+  "theory": "## Defining Equality\n\n```xiom\npub interface PartialEq {\n  fn eq(self: &Self, other: &Self) -> Bool;\n  fn ne(self: &Self, other: &Self) -> Bool {\n    return !self.eq(other);  // Default: opposite of eq\n  }\n}\n\npub interface Eq: PartialEq {\n  // No new methods — just a marker that equality is reflexive\n}\n```\n\n### Implementing Eq\n\n```xiom\npub type Point = { x: Int; y: Int; }\n\nimpl PartialEq for Point {\n  fn eq(self: &Point, other: &Point) -> Bool {\n    return self.x == other.x && self.y == other.y;\n  }\n}\n\nimpl Eq for Point {}  // Marker: equality is total\n\nfn main() {\n  let a = Point{ x: 1, y: 2 };\n  let b = Point{ x: 1, y: 2 };\n  let c = Point{ x: 3, y: 4 };\n  io.println((a == b).to_str());  // true\n  io.println((a != c).to_str());  // true\n}\n```\n\n### PartialEq vs Eq\n\nPartialEq allows partial equivalence (e.g., Float64 NaN != NaN). Eq requires FULL equivalence (reflexive, symmetric, transitive).\n\n### Eq in Practice\n\n```xiom\nfn find_user(users: &Vec[User], target: &User) -> Option[Int] {\n  for i in 0..users.len() {\n    if users[i] == target { return Some(i); }  // Only works if User: Eq\n  }\n  return None();\n}\n```",
+  "syntax_ref": "impl PartialEq for MyType {\n  fn eq(self: &Self, other: &Self) -> Bool {\n    return self.field1 == other.field1 && ...;\n  }\n}\nimpl Eq for MyType {}\n\n// Or derive both:\n#[derive(Eq)]\npub type MyType = { ... };",
+  "code_template": "// TODO: Define a struct 'Color' with r: Int, g: Int, b: Int\n// Implement PartialEq and Eq — two colors equal if all components match\n// Test with two different colors\n\nfn main() -> Int {\n  // TODO: Return 1 if (255,0,0) equals (255,0,0), else 0\n  return 0;\n}",
+  "solution": "pub type Color = { r: Int; g: Int; b: Int; }\n\nimpl PartialEq for Color {\n  fn eq(self: &Color, other: &Color) -> Bool {\n    return self.r == other.r && self.g == other.g && self.b == other.b;\n  }\n}\nimpl Eq for Color {}\n\nfn main() -> Int {\n  let a = Color{ r: 255, g: 0, b: 0 };\n  let b = Color{ r: 255, g: 0, b: 0 };\n  if a == b { return 1; }\n  return 0;\n}",
+  "tips": [
+    "Always implement both PartialEq AND Eq for total equality — Eq is a marker interface",
+    "Use #[derive(Eq)] whenever possible — it auto-implements both PartialEq and Eq",
+    "Eq is required for Map keys — equality determines uniqueness",
+    "The != operator is auto-generated from eq — you only need to implement eq"
+  ],
+  "common_mistakes": [
+    "Implementing PartialEq but forgetting Eq — Map and Set won't accept the type",
+    "Comparing floats with == in eq — NaN != NaN violates Eq's reflexivity",
+    "Accidentally comparing object identity (memory address) instead of value equality"
+  ],
+  "related": [
+    "L5-28",
+    "L5-26",
+    "L2-01"
+  ],
+  "next_lesson": "L5-28"
+}

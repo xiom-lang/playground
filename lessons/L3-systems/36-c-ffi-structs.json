@@ -1,0 +1,17 @@
+{
+  "id": "L3-36",
+  "title": "C FFI Structs",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["FFI", "struct", "C layout", "repr", "foreign struct"],
+  "narrative": "## Passing Structs Across the FFI Boundary\n\nTo pass structs to C functions, they must use C-compatible memory layout.\n\n### C-Compatible Structs\n\n```xiom\n#[repr(C)]\npub type CPoint = {\n  x: Float64;\n  y: Float64;\n}\n\nextern \"C\" {\n  fn distance(p1: CPoint, p2: CPoint) -> Float64;\n}\n```\n\n`#[repr(C)]` ensures the struct has the same layout as C would use.\n\n### Passing Struct Pointers\n\n```xiom\n#[repr(C)]\npub type CRect = {\n  x: Float64;\n  y: Float64;\n  w: Float64;\n  h: Float64;\n}\n\nextern \"C\" {\n  fn rect_area(rect: *const CRect) -> Float64;\n  fn rect_move(rect: *mut CRect, dx: Float64, dy: Float64) -> Unit;\n}\n\nfn compute_area(rect: &CRect) -> Float64 {\n  unsafe { return rect_area(rect as *const CRect); }\n}\n```\n\n### Nested C Structs\n\n```xiom\n#[repr(C)]\npub type CAddress = { street: *const Char; city: *const Char; }\n\n#[repr(C)]\npub type CPerson = {\n  name: *const Char;\n  age: Int;\n  addr: CAddress;\n}\n\nextern \"C\" {\n  fn print_person(p: *const CPerson) -> Unit;\n}\n```\n\n### FFI Struct Safety\n\n- Always use `#[repr(C)]` for FFI structs\n- Don't use XIOM-specific types (Option, Vec, Str) in C structs\n- Use raw pointers for strings: `*const Char` instead of `Str`\n- Manual memory management for C allocations\n\n### Boxing FFI Structs\n\n```xiom\n#[repr(C)]\npub type COpaque = { _private: [0]Int; }\n\nextern \"C\" {\n  fn create_handle() -> *mut COpaque;\n  fn destroy_handle(handle: *mut COpaque) -> Unit;\n}\n```",
+  "code_template": "// TODO: define a #[repr(C)] Point struct with x, y (Float64)\n\n// TODO: declare extern C function that takes *const CPoint and returns Float64\n\nfn main() -> Int {\n  // TODO: create a CPoint, get raw pointer, simulate calling extern fn, return 0\n  return 0;\n}",
+  "solution": "#[repr(C)]\npub type CPoint = {\n  x: Float64;\n  y: Float64;\n}\n\nextern \"C\" {\n  fn origin_distance(p: *const CPoint) -> Float64;\n}\n\nfn main() -> Int {\n  let pt = CPoint{ x: 3.0, y: 4.0 };\n  // In real code: origin_distance(&pt as *const CPoint)\n  return 0;\n}",
+  "tips": [
+    "Always use `#[repr(C)]` for structs passed to C — ensures compatible layout",
+    "Use `*const Char` for C strings, not `Str`",
+    "Don't include heap-allocated XIOM types in FFI structs",
+    "Pass structs by pointer (`*const T` or `*mut T`) to C functions"
+  ],
+  "related": ["L3-35", "L3-37", "L3-38", "L3-32"]
+}

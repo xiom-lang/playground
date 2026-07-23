@@ -1,0 +1,36 @@
+{
+  "id": "L4-09",
+  "title": "--no-contracts",
+  "level": "L4",
+  "duration": "8 min",
+  "concepts": [
+    "--no-contracts",
+    "release mode",
+    "contract stripping",
+    "zero-cost",
+    "compiler flag"
+  ],
+  "concept": "The --no-contracts compiler flag strips all contract checks from the binary, delivering zero-overhead safety for release builds.",
+  "why": "Contracts add runtime overhead. For production, you want the safety guarantees at compile time but zero cost at runtime.",
+  "theory": "## Stripping Contracts for Release\n\n```sh\n# Development build — contracts checked\nxiom build app.xi\n\n# Release build — contracts stripped\nxiom build --no-contracts app.xi\n```\n\n### What Gets Stripped\n- requires clauses — not checked at runtime\n- ensures clauses — not checked at runtime\n- Type invariant checks — not checked at runtime\n- Contract violation reporting code\n\n### What REMAINS\n- The code itself (business logic)\n- Explicit @llvm.trap() calls\n- Explicit panic() calls\n- Explicit assert() calls (unless also stripped)\n\n### Performance Impact\n```xiom\nfn divide(a: Int, b: Int) -> Int\n  requires: b != 0;  // With --no-contracts: this check is REMOVED\n{ return a / b; }\n```\n\nIn debug: b != 0 is checked on every call.\nIn release: the check is gone — raw hardware division.\n\n### The Trade-off\n```\nDevelopment: Safety + Diagnostics (contracts active)\nProduction:  Speed + Size      (contracts stripped)\n```",
+  "syntax_ref": "# Compile without contract checks:\nxiom build --no-contracts main.xi\n\n# The requires and ensures are removed from binary",
+  "code_template": "// TODO: Write a function 'fast_index' with a requires contract\n// Think about: would you feel safe stripping this check in release?\n\nfn main() -> Int {\n  // TODO: Call fast_index\n  return 0;\n}",
+  "solution": "fn fast_index(arr: &Vec[Int], idx: Int) -> Int\n  requires: idx >= 0;\n  requires: idx < arr.len();\n{\n  return arr[idx];\n}\n\nfn main() -> Int {\n  // In release with --no-contracts, these checks are removed.\n  // Safe IF all callers are trusted.\n  let v = Vec[Int]();\n  v.push(42);\n  return fast_index(&v, 0);\n}",
+  "tips": [
+    "Use --no-contracts only when you trust your callers",
+    "Contracts are still valuable documentation even when stripped",
+    "Benchmark before and after --no-contracts to measure actual overhead",
+    "Consider --runtime-contracts for external-facing API functions"
+  ],
+  "common_mistakes": [
+    "Assuming --no-contracts means the program is unsafe — the type system still prevents many bugs",
+    "Forgetting that struct invariants are also stripped",
+    "Using --no-contracts without testing in debug mode first"
+  ],
+  "related": [
+    "L4-07",
+    "L4-10",
+    "L4-08"
+  ],
+  "next_lesson": "L4-10"
+}

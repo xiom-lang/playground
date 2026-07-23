@@ -1,0 +1,36 @@
+{
+  "id": "L7-04",
+  "title": "Type Checker Internals",
+  "level": "L7",
+  "duration": "20 min",
+  "concepts": [
+    "type checker",
+    "type inference",
+    "unification",
+    "Hindley-Milner",
+    "subtyping"
+  ],
+  "concept": "The type checker validates type correctness and infers types — ensuring Int doesn't flow into Str, and resolving generic types at compile time.",
+  "why": "Type errors are the most common compiler errors. Understanding the type checker helps you write code that compiles on first try and debug type mismatches quickly.",
+  "theory": "## Ensuring Type Safety\n\n### Type Checking Pipeline\n\n```\nAST → Type Checker → Typed AST\n  │\n  ├── Type inference (deduce types from usage)\n  ├── Type checking (verify declared types match)\n  ├── Unification (solve type equations)\n  ├── Constraint solving (resolve T: Ord constraints)\n  └── Monomorphization (generate concrete code)\n```\n\n### Type Inference\n\n```xiom\n// Without type inference (explicit):\nlet x: Int = 42;\nlet y: Int = x + 1;\n\n// With type inference:\nlet x = 42;       // Inferred: Int\nlet y = x + 1;    // Inferred: Int (from x: Int, + returns Int)\n```\n\n### Unification Algorithm\n\n```xiom\n// Type checker sees:\nfn add[T](a: T, b: T) -> T { return a + b; }\n\n// Call: add(1, 2)\n// Unification:\n//   T = Int   (from first argument)\n//   T = Int   (from second argument, consistent!)\n//   Returns: Int\n\n// Call: add(1, \"hello\")\n// Unification:\n//   T = Int   (from first argument)\n//   T = Str   (from second argument)\n//   ERROR: type mismatch — cannot unify Int with Str\n```\n\n### Type Environment\n\n```xiom\npub type TypeEnv = {\n  variables: HashMap[Str, Type];\n  functions: HashMap[Str, FunctionType];\n  types: HashMap[Str, TypeDefinition];\n  generics: Vec[GenericParam];\n}\n\nimpl TypeEnv {\n  fn lookup(self: &TypeEnv, name: &Str) -> Option[Type] {\n    return self.variables.get(name);\n  }\n\n  fn unify(self: &mut TypeEnv, t1: Type, t2: Type) -> Result[(), TypeError] {\n    return match (t1, t2) {\n      (Type::Var(id1), Type::Var(id2)) if id1 == id2 => Ok(()),\n      (Type::Var(id), other) if !occurs(id, other) => {\n        self.substitutions.insert(id, other);\n        Ok(())\n      },\n      (Type::Int, Type::Int) => Ok(()),\n      (Type::Fn(args1, ret1), Type::Fn(args2, ret2)) => {\n        self.unify_fn(args1, ret1, args2, ret2)\n      },\n      _ => Err(TypeError::Mismatch(t1, t2)),\n    };\n  }\n}\n```\n\n### Common Type Errors\n\n| Error | Cause | Fix |\n|-------|-------|-----|\n| Type mismatch | Int where Str expected | Check variable types |\n| Cannot infer type | No type annotation, no usage | Add `:Type` annotation |\n| Trait not satisfied | T doesn't implement required interface | Add constraint or impl |\n| Recursive type | Type references itself without indirection | Add Box or reference |",
+  "syntax_ref": "// Type checker API (internal):\nlet env = TypeEnv::new();\nlet typed_ast = type_checker.check(ast, &mut env);\n\n// Type inference in action:\nlet x = 42;            // T::Var(a) → unify with Int\nlet y: Str = \"hello\";  // T::Var(b) → unify with Str",
+  "code_template": "// The type checker would reject this:\n// fn bad(a: Int, b: Str) -> Int { return a + b; }  // ERROR: can't add Int + Str\n// Fix it: ensure types match\n\nfn add_ints(a: Int, b: Int) -> Int { return a + b; }\n\nfn main() -> Int {\n  return add_ints(40, 2);\n}",
+  "solution": "fn add_ints(a: Int, b: Int) -> Int { return a + b; }\n\nfn main() -> Int {\n  return add_ints(40, 2);\n}",
+  "tips": [
+    "Type inference reduces boilerplate — let the compiler figure out types when obvious",
+    "Unification is the core algorithm — it works like solving equations: T1 = T2, T2 = Int, therefore T1 = Int",
+    "The type checker works ONE module at a time — cross-module types are resolved via interface files",
+    "Read type errors from the first mention — it's usually the root cause"
+  ],
+  "common_mistakes": [
+    "Assuming type inference works for all cases — complex generic code may need annotations",
+    "Ignoring 'type annotations needed' errors — adding types improves both compilation and readability",
+    "Creating type checking cycles — TypeA has field TypeB, TypeB has field TypeA (use Box or reference)"
+  ],
+  "related": [
+    "L7-01",
+    "L7-03",
+    "L7-05"
+  ],
+  "next_lesson": "L7-05"
+}

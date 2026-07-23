@@ -1,0 +1,17 @@
+{
+  "id": "L3-32",
+  "title": "Raw Pointers",
+  "level": "L3",
+  "duration": "12 min",
+  "concepts": ["raw pointer", "*T", "*const T", "*mut T", "unsafe"],
+  "narrative": "## Unchecked Memory Access\n\nRaw pointers (`*T`) bypass XIOM's safety guarantees. They're needed for FFI and low-level systems programming but require `unsafe` blocks.\n\n### Raw Pointer Types\n\n- `*const T` — read-only pointer (can't mutate through it)\n- `*mut T` — read-write pointer\n\n### Creating Raw Pointers\n\n```xiom\nlet x = 42;\nlet ptr: *const Int = &x as *const Int;  // reference to raw pointer\n\nvar y = 0;\nlet mut_ptr: *mut Int = &mut y as *mut Int;  // mutable raw pointer\n```\n\n### Dereferencing (Unsafe)\n\n```xiom\nlet x = 42;\nlet ptr = &x as *const Int;\n\nunsafe {\n  let value = *ptr;  // dereference — UNSAFE\n  io.println(value);  // 42\n}\n```\n\n### Raw Pointers vs References\n\n| Feature | &T / &mut T | *const T / *mut T |\n|---------|------------|-------------------|\n| Safety | Compiler-checked | No guarantees |\n| Null | Can't be null | Can be null |\n| Aliasing | Enforced | Ignored |\n| Lifetime | Tracked | Untracked |\n| Dereference | Safe | Requires unsafe |\n\n### When to Use\n\n- **FFI**: Interfacing with C libraries\n- **Hardware access**: Memory-mapped I/O\n- **Data structure internals**: Implementing Vec, Box, etc.\n- **Performance**: When borrow checker overhead is unacceptable\n\n### Creating from References\n\n```xiom\nfn to_ptr[T](value: &T) -> *const T {\n  return value as *const T;\n}\n\nfn to_mut_ptr[T](value: &mut T) -> *mut T {\n  return value as *mut T;\n}\n```",
+  "code_template": "// TODO: create a raw pointer from an Int reference\n\n// TODO: use unsafe block to dereference and read the value\n\nfn main() -> Int {\n  // TODO: create x = 10, get raw ptr, dereference in unsafe, return value\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let x = 10;\n  let ptr: *const Int = &x as *const Int;\n  unsafe {\n    return *ptr;\n  }\n}",
+  "tips": [
+    "Raw pointers (*const T, *mut T) bypass all safety guarantees",
+    "Dereferencing requires `unsafe { }` blocks",
+    "Raw pointers can be null — check before dereferencing",
+    "Prefer references (&T) unless you specifically need raw pointers for FFI"
+  ],
+  "related": ["L3-33", "L3-34", "L3-35", "L3-02"]
+}

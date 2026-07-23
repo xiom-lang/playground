@@ -1,0 +1,17 @@
+{
+  "id": "L2-17",
+  "title": "Enum Derive: Debug",
+  "level": "L2",
+  "duration": "7 min",
+  "concepts": ["enum", "derive", "Debug", "debug print", "formatting"],
+  "narrative": "## Debug Printing Enums\n\n`derive[Debug]` lets you inspect enum values during development. It prints the variant name and any data it carries.\n\n### Basic Debug Output\n\n```xiom\npub type Status = enum {\n  Idle,\n  Running,\n  Stopped,\n} derive[Debug]\n\nlet s = Status.Running;\nio.debug(s);  // Status.Running\n```\n\n### Debug with Data\n\n```xiom\npub type Shape = enum {\n  Circle(radius: Float64),\n  Rect(w: Float64, h: Float64),\n} derive[Debug]\n\nlet c = Shape.Circle(5.0);\nlet r = Shape.Rect(10.0, 3.0);\nio.debug(c);  // Shape.Circle(5.0)\nio.debug(r);  // Shape.Rect(10.0, 3.0)\n```\n\n### Debug with Named Fields\n\n```xiom\npub type Event = enum {\n  Click(x: Int, y: Int),\n  KeyPress(key: Str),\n} derive[Debug]\n\nlet ev = Event.Click(100, 200);\nio.debug(ev);  // Event.Click(x: 100, y: 200)\n```\n\n### Debugging in Practice\n\n```xiom\npub type ApiResponse = enum {\n  Success(data: Str),\n  Error(code: Int),\n} derive[Debug]\n\nfn handle_response(resp: &ApiResponse) -> Unit {\n  io.debug(resp);  // print what we got before processing\n  // ... handle response\n}\n```\n\n### Requirement Chain\n\nAll variant data types must also implement Debug:\n\n```xiom\n// Str and Int already implement Debug, so this works\npub type Msg = enum { Text(Str), Count(Int); } derive[Debug]\n```",
+  "code_template": "// TODO: define a TrafficLight enum: Red, Yellow(duration: Int), Green derive Debug\n\n// TODO: create all three variants and use io.debug to print each\n\nfn main() -> Int {\n  // TODO: return the duration of Yellow if it exists, else 0\n  return 0;\n}",
+  "solution": "pub type TrafficLight = enum {\n  Red,\n  Yellow(duration: Int),\n  Green,\n} derive[Debug]\n\nfn main() -> Int {\n  let r = TrafficLight.Red;\n  let y = TrafficLight.Yellow(5);\n  let g = TrafficLight.Green;\n  io.debug(r);\n  io.debug(y);\n  io.debug(g);\n  match y {\n    Yellow(duration) => { return duration; }\n    _ => { return 0; }\n  }\n}",
+  "tips": [
+    "Add `derive[Debug]` to every enum during development for easy inspection",
+    "Debug output uses the format `VariantName(data)` matching construction syntax",
+    "Named variant fields are shown with their names in debug output",
+    "All variant inner types must implement Debug for the enum to derive it"
+  ],
+  "related": ["L2-14", "L2-10", "L2-21", "L0-08"]
+}

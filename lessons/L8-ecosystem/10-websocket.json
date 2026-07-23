@@ -1,0 +1,36 @@
+{
+  "id": "L8-10",
+  "title": "WebSocket",
+  "level": "L8",
+  "duration": "15 min",
+  "concepts": [
+    "WebSocket",
+    "real-time",
+    "bidirectional",
+    "streaming",
+    "push"
+  ],
+  "concept": "WebSocket client and server in XIOM — persistent bidirectional connections for real-time communication, live updates, and streaming data.",
+  "why": "HTTP is request-response. WebSocket is continuous. For chat, live feeds, games, and collaboration tools, WebSocket provides the real-time connection HTTP can't.",
+  "theory": "## Real-Time Bidirectional Communication\n\n### WebSocket Server\n\n```xiom\nuse xiom.websocket;\n\nfn main() -> Int {\n  let mut server = websocket::Server::new();\n\n  server.on_connect(|client| {\n    io.println(\"Client connected: \" + client.id.to_str());\n\n    // Send welcome message\n    client.send(\"Welcome to the server!\");\n\n    // Handle messages\n    client.on_message(|msg| {\n      io.println(\"Received: \" + msg);\n      // Echo back\n      client.send(\"Echo: \" + msg);\n    });\n\n    client.on_close(|| {\n      io.println(\"Client disconnected\");\n    });\n  });\n\n  server.listen(8080)?;\n  return 0;\n}\n```\n\n### WebSocket Client\n\n```xiom\nfn main() -> Int {\n  let mut client = websocket::Client::connect(\"ws://localhost:8080\")?;\n\n  client.on_message(|msg| {\n    io.println(\"Server: \" + msg);\n  });\n\n  client.send(\"Hello from client!\");\n\n  // Keep connection alive\n  os.sleep(30_000);\n  return 0;\n}\n```\n\n### Broadcasting\n\n```xiom\npub type ChatServer = {\n  clients: Vec[WebSocketClient];\n}\n\nimpl ChatServer {\n  fn broadcast(self: &ChatServer, message: Str) {\n    for client in &self.clients {\n      client.send(message);\n    }\n  }\n\n  fn broadcast_except(self: &ChatServer, sender: &WebSocketClient, message: Str) {\n    for client in &self.clients {\n      if client.id != sender.id {\n        client.send(message);\n      }\n    }\n  }\n}\n```\n\n### JSON over WebSocket\n\n```xiom\npub type Message = enum {\n  Chat(text: Str, user: Str),\n  SystemNotification(text: Str),\n  UserJoined(user: Str),\n}\n\nclient.on_message(|raw| {\n  let msg: Message = json::from_str(&raw)?;\n  match msg {\n    Message::Chat(text, user) => display_chat(user, text),\n    Message::SystemNotification(text) => display_notification(text),\n    Message::UserJoined(user) => display_join(user),\n  }\n});\n```\n\n### Reconnection\n\n```xiom\nfn connect_with_retry(url: &Str, max_retries: Int) -> Result<WebSocketClient, Error> {\n  for attempt in 0..max_retries {\n    match websocket::Client::connect(url) {\n      Ok(client) => return Ok(client),\n      Err(e) => {\n        io.eprintln(\"Connection failed (attempt \" + attempt.to_str() + \"): \" + e.to_str());\n        os.sleep(2u64.pow(attempt) * 1000);  // Exponential backoff\n      },\n    }\n  }\n  return Err(\"Max reconnection attempts reached\");\n}\n```",
+  "syntax_ref": "use xiom.websocket;\n\n// Server:\nlet server = websocket::Server::new();\nserver.on_connect(|client| { /* setup */ });\nserver.listen(port)?;\n\n// Client:\nlet client = websocket::Client::connect(url)?;\nclient.on_message(|msg| { /* handle */ });\nclient.send(data);\nclient.close();",
+  "code_template": "// TODO: Design a simple echo server + client:\n// Server: receive message, send \"Echo: <message>\" back\n// Client: send \"Hello\", receive response, verify it matches\n// Describe the message flow\n\nfn main() -> Int {\n  return 2;  // 2 messages (send + receive)\n}",
+  "solution": "fn main() -> Int {\n  return 2;\n}",
+  "tips": [
+    "WebSocket URLs use ws:// (unencrypted) or wss:// (TLS encrypted) — prefer wss:// in production",
+    "Handle disconnections gracefully — network connections drop, implement reconnection logic",
+    "Use JSON for structured messages — raw strings don't scale for complex protocols",
+    "Ping/pong frames keep idle connections alive — most clients handle this automatically"
+  ],
+  "common_mistakes": [
+    "Not handling client disconnection — stale connections accumulate and leak memory",
+    "Assuming message delivery order — WebSocket is ordered, but network issues can cause reordering in reconnect scenarios",
+    "Sending large messages without considering frame size limits — fragment large payloads"
+  ],
+  "related": [
+    "L8-06",
+    "L8-07",
+    "L8-11"
+  ],
+  "next_lesson": "L8-11"
+}

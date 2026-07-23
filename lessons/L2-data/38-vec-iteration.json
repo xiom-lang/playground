@@ -1,0 +1,17 @@
+{
+  "id": "L2-35",
+  "title": "Vec Iteration",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["Vec", "for", "iteration", "loop", "collection traversal"],
+  "narrative": "## Iterating Over Vec Elements\n\nThe `for` loop is the idiomatic way to iterate over Vec elements. It's clean, readable, and handles bounds internally.\n\n### Basic For Loop\n\n```xiom\nlet fruits = Vec[Str]();\nfruits.push(\"apple\");\nfruits.push(\"banana\");\nfruits.push(\"cherry\");\n\nfor fruit in fruits {\n  io.println(fruit);\n}\n// Prints: apple, banana, cherry\n```\n\n### For with Index (While Loop)\n\nSince `for` doesn't directly give an index, use a `while` loop when you need positions:\n\n```xiom\nfor item in vec {\n  // item is the element — no index here\n}\n\n// With index:\nvar i = 0;\nwhile i < vec.len() {\n  io.println(i + \": \" + vec[i]);\n  i = i + 1;\n}\n```\n\n### Processing Elements\n\n```xiom\nlet numbers = Vec[Int]();\nnumbers.push(1); numbers.push(2); numbers.push(3);\n\nvar sum = 0;\nfor n in numbers {\n  sum = sum + n;\n}\n// sum is 6\n```\n\n### for with Conditionals\n\n```xiom\nfn count_positive(v: &Vec[Int]) -> Int {\n  var count = 0;\n  for val in v {\n    if val > 0 {\n      count = count + 1;\n    }\n  }\n  return count;\n}\n```\n\n### for with Mutable Accumulation\n\n```xiom\nfn join(v: &Vec[Str], separator: Str) -> Str {\n  var result = \"\";\n  var first = true;\n  for item in v {\n    if first {\n      result = item;\n      first = false;\n    } else {\n      result = result + separator + item;\n    }\n  }\n  return result;\n}\n```\n\n### Ownership Note\n\nThe `for` loop borrows elements — the original Vec remains valid after iteration:\n\n```xiom\nlet v = Vec[Int]();\nv.push(1);\nfor n in v { io.println(n); }\n// v is still valid here\n```",
+  "code_template": "// TODO: create a Vec[Int] with 3, 1, 4, 1, 5, 9\n\n// TODO: write a function 'sum_evens' that sums only even numbers\n\n// TODO: write a function 'max_value' that finds the largest element\n\nfn main() -> Int {\n  // TODO: return max_value of the vector\n  return 0;\n}",
+  "solution": "fn sum_evens(v: &Vec[Int]) -> Int {\n  var total = 0;\n  for n in v {\n    if n % 2 == 0 {\n      total = total + n;\n    }\n  }\n  return total;\n}\n\nfn max_value(v: &Vec[Int]) -> Int {\n  if v.len() == 0 { return 0; }\n  var max = v[0];\n  var i = 0;\n  while i < v.len() {\n    if v[i] > max { max = v[i]; }\n    i = i + 1;\n  }\n  return max;\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(3); v.push(1); v.push(4); v.push(1); v.push(5); v.push(9);\n  return max_value(&v);\n}",
+  "tips": [
+    "Use `for item in vec` for clean iteration when you don't need the index",
+    "Use `while i < len()` when you need both the index and the value",
+    "`for` borrows elements — the Vec remains valid after the loop",
+    "Don't modify the Vec while iterating with `for` — use a separate pass"
+  ],
+  "related": ["L2-36", "L2-37", "L1-22", "L1-23"]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L3-07",
+  "title": "Move in Functions",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["move", "function", "ownership transfer", "parameter", "return"],
+  "narrative": "## Passing Ownership to and from Functions\n\nWhen you pass a value to a function (without `&`), ownership moves into the function. The function can then use, modify, or destroy it.\n\n### Move Into Function\n\n```xiom\nfn consume(v: Vec[Int]) -> Unit {\n  io.println(\"Vector length: \" + v.len());\n  // v goes out of scope — Vec is freed\n}\n\nfn main() -> Int {\n  let data = Vec[Int]();\n  data.push(1);\n  consume(data);  // data MOVED into consume\n  // data is no longer valid here\n  return 0;\n}\n```\n\n### Move Out of Function (Return)\n\n```xiom\nfn create(count: Int) -> Vec[Int] {\n  let v = Vec[Int]();\n  var i = 0;\n  while i < count {\n    v.push(i);\n    i = i + 1;\n  }\n  return v;  // ownership moves to caller\n}\n\nfn main() -> Int {\n  let numbers = create(5);  // numbers now owns the Vec\n  return numbers.len();\n}\n```\n\n### Move Through Chain\n\n```xiom\nfn step1() -> Vec[Int] {\n  let v = Vec[Int]();\n  v.push(1);\n  return v;\n}\n\nfn step2(v: Vec[Int]) -> Vec[Int] {\n  v.push(2);  // v is mutable in this scope\n  return v;\n}\n\nfn main() -> Int {\n  let v = step1();      // ownership from step1\n  let v = step2(v);     // passes ownership, gets it back\n  return v.len();       // 2\n}\n```\n\n### Ownership Pattern: Builder\n\n```xiom\npub type Builder = { items: Vec[Str]; }\n\nfn Builder.new() -> Builder {\n  return Builder{ items: Vec[Str]() };\n}\n\nfn Builder.add(self: Builder, item: Str) -> Builder {\n  self.items.push(item);\n  return self;  // return ownership for chaining\n}\n\nfn Builder.build(self: Builder) -> Vec[Str] {\n  return self.items;\n}\n```",
+  "code_template": "// TODO: write a function 'append' that takes a Vec, pushes a value, and returns it\n\n// TODO: write a function 'double_and_return' that doubles each element and returns\n\nfn main() -> Int {\n  // TODO: create vec [1,2], append 3, double elements, return sum\n  return 0;\n}",
+  "solution": "fn append(v: Vec[Int], value: Int) -> Vec[Int] {\n  v.push(value);\n  return v;\n}\n\nfn double_and_return(v: Vec[Int]) -> Vec[Int] {\n  var i = 0;\n  while i < v.len() {\n    v[i] = v[i] * 2;\n    i = i + 1;\n  }\n  return v;\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1);\n  v.push(2);\n  let v = append(v, 3);\n  let v = double_and_return(v);\n  var sum = 0;\n  var i = 0;\n  while i < v.len() {\n    sum = sum + v[i];\n    i = i + 1;\n  }\n  return sum;\n}",
+  "tips": [
+    "Passing a value to a function moves ownership unless you use &",
+    "Return the value back if the caller needs it after the function",
+    "The 'take and return' pattern is common for builder-style APIs",
+    "Use borrowing (&T) instead of move when you don't need ownership"
+  ],
+  "related": ["L3-05", "L3-06", "L3-08", "L3-02"]
+}

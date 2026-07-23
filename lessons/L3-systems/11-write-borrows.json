@@ -1,0 +1,17 @@
+{
+  "id": "L3-11",
+  "title": "Write Borrows",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["&mut T", "mutable borrow", "write access", "exclusive borrow", "modify"],
+  "narrative": "## Exclusive Write Access with &mut T\n\nA **mutable borrow** (`&mut T`) gives read-write access to a value without taking ownership. Only ONE mutable borrow can exist at a time.\n\n### Creating Mutable Borrows\n\n```xiom\nvar data = Vec[Int]();\ndata.push(1);\ndata.push(2);\n\nlet ref = &mut data;  // mutable borrow\nref.push(3);           // modify through borrow\n// ref goes out of scope — borrow ends\n\ndata.push(4);  // OK — borrow ended\n```\n\n### &mut T in Function Parameters\n\n```xiom\nfn add_one(v: &mut Vec[Int]) -> Unit {\n  v.push(v.len());\n}\n\nfn double_all(v: &mut Vec[Int]) -> Unit {\n  var i = 0;\n  while i < v.len() {\n    v[i] = v[i] * 2;\n    i = i + 1;\n  }\n}\n\nfn main() -> Int {\n  var data = Vec[Int]();\n  data.push(1);\n  double_all(&mut data);  // data now [2]\n  add_one(&mut data);     // data now [2, 2]\n  return data[0];\n}\n```\n\n### Mutable Borrow Rules\n\n1. **Exactly one**: only one `&mut T` at a time\n2. **No shared borrows**: no `&T` while `&mut T` exists\n3. **Original frozen**: cannot use original while mutably borrowed\n4. **Exclusive access**: the borrower has exclusive read-write access\n\n### &mut T vs &T\n\n```xiom\nvar v = Vec[Int]();\nv.push(1);\n\n// Shared borrow: read only\nlet r1 = &v;\nlet r2 = &v;  // OK — multiple shared borrows\n\n// Mutable borrow: exclusive\nlet m = &mut v;\nm.push(2);\n// let r = &v;  // ERROR: cannot shared-borrow while mutably borrowed\n```\n\n### Mutable Borrow Scope\n\n```xiom\nvar data = Vec[Int]();\ndata.push(1);\n\n{\n  let m = &mut data;\n  m.push(2);\n  // m goes out of scope here\n}\n\ndata.push(3);  // OK — mutable borrow ended\n```",
+  "code_template": "// TODO: write a function 'clear_and_fill' that clears a Vec and pushes values 1..n\n\n// TODO: write a function 'reverse_in_place' that reverses a Vec (no new allocation)\n\nfn main() -> Int {\n  // TODO: create vec [1,2,3], reverse, return first element\n  return 0;\n}",
+  "solution": "fn clear_and_fill(v: &mut Vec[Int], n: Int) -> Unit {\n  v.clear();\n  var i = 1;\n  while i <= n {\n    v.push(i);\n    i = i + 1;\n  }\n}\n\nfn reverse_in_place(v: &mut Vec[Int]) -> Unit {\n  var left = 0;\n  var right = v.len() - 1;\n  while left < right {\n    let temp = v[left];\n    v[left] = v[right];\n    v[right] = temp;\n    left = left + 1;\n    right = right - 1;\n  }\n}\n\nfn main() -> Int {\n  var v = Vec[Int]();\n  v.push(1);\n  v.push(2);\n  v.push(3);\n  reverse_in_place(&mut v);\n  return v[0];\n}",
+  "tips": [
+    "Only ONE `&mut T` at a time — the compiler enforces this",
+    "Cannot have `&T` while `&mut T` exists — prevents data races",
+    "Keep mutable borrows as short as possible — use blocks to limit scope",
+    "Use `&mut T` when you need to modify, `&T` when you only need to read"
+  ],
+  "related": ["L3-02", "L3-10", "L3-12", "L3-13"]
+}

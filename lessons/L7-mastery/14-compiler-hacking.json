@@ -1,0 +1,37 @@
+{
+  "id": "L7-14",
+  "title": "Compiler Hacking",
+  "level": "L7",
+  "duration": "25 min",
+  "concepts": [
+    "compiler hacking",
+    "contribution",
+    "plugin",
+    "pass",
+    "extension"
+  ],
+  "concept": "How to hack on the XIOM compiler — adding custom passes, contributing bug fixes, extending the type system, and building custom tooling.",
+  "why": "The compiler isn't a black box. You can extend it, fix it, and customize it. Compiler hacking is the deepest form of systems programming.",
+  "theory": "## Extending the Compiler\n\n### Setting Up Development\n\n```sh\n# Clone the compiler repository\ngit clone https://github.com/xiom-lang/xiom.git\ncd xiom\n\n# Build the compiler\nxiom build\n\n# Run the test suite\nxiom test\n\n# Make a change and test\nxiom build && xiom test\n```\n\n### Adding a Compiler Pass\n\n```xiom\n// src/compiler/passes/my_pass.xi\nuse xiom_compiler::{Ast, CompilerContext, Pass};\n\npub type MyOptimization = {};\n\nimpl Pass for MyOptimization {\n  fn name(self: &MyOptimization) -> Str {\n    return \"my-optimization\";\n  }\n\n  fn run(self: &MyOptimization, ast: &mut Ast, ctx: &mut CompilerContext) {\n    // Walk the AST and apply your transformation\n    for func in ast.functions() {\n      self.optimize_function(func);\n    }\n  }\n}\n\nfn optimize_function(self: &MyOptimization, func: &mut Function) {\n  // Example: Replace x * 1 with x\n  for stmt in func.body.stmts() {\n    match stmt {\n      BinaryOp(Mul, _, IntLiteral(1)) => {\n        self.replace_with_left_operand(stmt);\n      },\n      _ => {},\n    }\n  }\n}\n```\n\n### Registering a Pass\n\n```xiom\n// Register in the compiler driver\ncompiler.add_pass(MyOptimization{});\n```\n\n### Building Custom Tooling\n\n```xiom\n// Example: custom linter rule\nuse xiom_compiler;\n\nfn main() -> Int {\n  let compiler = xiom_compiler::Session::new();\n  let ast = compiler.parse_file(\"src/main.xi\").unwrap();\n\n  // Walk all function calls\n  for node in ast.walk() {\n    match node {\n      CallExpr{ func: Identifier(\"panic\"), .. } => {\n        io.println(\"Found panic!() call at \" + node.location.to_str());\n      },\n      _ => {},\n    }\n  }\n  return 0;\n}\n```\n\n### Compiler Plugin System\n\n```xiom\n// Plugins are compiled separately and loaded at runtime\n#[plugin]\nfn my_lint_rule(node: &AstNode) -> Vec[Diagnostic] {\n  var diagnostics = Vec[Diagnostic]();\n  // Run custom analysis\n  return diagnostics;\n}\n```\n\n```sh\n# Use a plugin:\nxiom build --plugin my_lint.so src/\n```",
+  "syntax_ref": "# Compiler development workflow:\ngit clone xiom-lang/xiom && cd xiom\nxiom build\nxiom test\n# Make changes\nxiom build && xiom test  # Verify\n\n# Custom tool:\nuse xiom_compiler;\nlet ast = Session::new().parse_file(\"src/main.xi\");",
+  "code_template": "fn main() -> Int {\n  // Task: Write a simple script that reads a .xi file and counts\n  // the number of function definitions in it\n  // (Use string search, not actual compiler API)\n  return 42;\n}",
+  "solution": "fn count_functions(source: Str) -> Int {\n  var count = 0;\n  var pos = 0;\n  while pos < source.len() {\n    if source[pos..].starts_with(\"fn \") {\n      count = count + 1;\n    }\n    pos = pos + 1;\n  }\n  return count;\n}\n\nfn main() -> Int {\n  let code = \"fn a() {} fn b() {} fn c() {}\";\n  return count_functions(code);\n}",
+  "tips": [
+    "Start with simple compiler changes — a new lint rule or minor optimization — before tackling the type checker",
+    "The compiler test suite is your safety net — run `xiom test` after every change",
+    "Read existing passes before writing your own — they're the best documentation",
+    "Compiler hacking teaches you more about XIOM than any amount of application programming"
+  ],
+  "common_mistakes": [
+    "Changing the compiler without running the test suite — you'll break things silently",
+    "Adding optimizations without measuring performance — 'optimizations' can make code slower",
+    "Not considering edge cases — the compiler must handle ALL valid code, not just the happy path"
+  ],
+  "related": [
+    "L7-01",
+    "L7-13",
+    "L7-15",
+    "L7-16"
+  ],
+  "next_lesson": "L7-15"
+}

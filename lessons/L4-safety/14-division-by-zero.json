@@ -1,0 +1,34 @@
+{
+  "id": "L4-14",
+  "title": "Division by Zero",
+  "level": "L4",
+  "duration": "8 min",
+  "concepts": [
+    "division by zero",
+    "requires",
+    "precondition",
+    "arithmetic safety"
+  ],
+  "concept": "Prevent division by zero with requires: divisor != 0 — the canonical example of why contracts exist.",
+  "why": "Division by zero crashes programs or produces NaN. Contracts catch the bad input BEFORE the division happens, with a clear error message.",
+  "theory": "## The Problem\n\n```xiom\nfn average(total: Int, count: Int) -> Int {\n  return total / count;  // CRASH if count == 0\n}\n```\n\n### The Solution\n```xiom\nfn average(total: Int, count: Int) -> Int\n  requires: count != 0;\n{ return total / count; }\n```\n\n### For Float64 Division\n```xiom\nfn safe_ratio(a: Float64, b: Float64) -> Float64\n  requires: b != 0.0;\n  ensures: result == a / b;\n{ return a / b; }\n```\n\nFloat division by zero produces ±Infinity or NaN — not a crash, but still a logic error.\n\n### Modulo Zero\n```xiom\nfn safe_modulo(a: Int, b: Int) -> Int\n  requires: b != 0;\n  ensures: result >= 0;\n  ensures: result < b.abs();\n{ return a % b; }\n```\n\nModulo by zero is division by zero — same protection applies.\n\n### The Bigger Lesson\nThis pattern extends to ANY operation that fails on certain inputs. If an input can make your function fail, add a requires clause.",
+  "syntax_ref": "fn divide(a: Int, b: Int) -> Int\n  requires: b != 0;\n{ return a / b; }",
+  "code_template": "// TODO: Write a function 'percentage' that takes Int value, Int total -> Int\n// requires: total != 0\n// returns (value * 100) / total\n\nfn main() -> Int {\n  // TODO: Calculate 75 as percentage of 200, return result\n  return 0;\n}",
+  "solution": "fn percentage(value: Int, total: Int) -> Int\n  requires: total != 0;\n{\n  return (value * 100) / total;\n}\n\nfn main() -> Int {\n  return percentage(75, 200);\n}",
+  "tips": [
+    "Don't just check for zero in the body — put it in requires so callers see the requirement",
+    "For Float64, consider requires: b.abs() > 0.0001 to also catch near-zero values",
+    "Modulo (%) also needs the zero check — it's the same hardware division operation"
+  ],
+  "common_mistakes": [
+    "Checking b != 0 in the body but not in requires — callers can't see the requirement",
+    "Forgetting to check for zero in recursive functions where the divisor is computed",
+    "Using || when you mean &&: requires: a != 0 || b != 0 allows ONE zero, not both"
+  ],
+  "related": [
+    "L4-02",
+    "L4-06",
+    "L0-17"
+  ],
+  "next_lesson": "L4-15"
+}

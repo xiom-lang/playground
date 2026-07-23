@@ -1,0 +1,37 @@
+{
+  "id": "L4-48",
+  "title": "Design by Contract",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "design by contract",
+    "methodology",
+    "DbC",
+    "Bertrand Meyer",
+    "Eiffel"
+  ],
+  "concept": "Design by Contract is a software methodology where every function declares formal preconditions, postconditions, and invariants — making specifications executable.",
+  "why": "DbC transforms software from 'it seems to work' to 'it provably works within these bounds.' It's the foundation of reliable systems programming.",
+  "theory": "## The Three Questions\n\nBefore writing any function, ask:\n\n1. **What does this function REQUIRE?** (preconditions / requires)\n2. **What does this function GUARANTEE?** (postconditions / ensures)\n3. **What must ALWAYS be true?** (invariants)\n\n### The DbC Philosophy\n\n```\n                    requires (caller's obligation)\n                          ↓\n    CALLER ─────────────────→ FUNCTION\n                          ↑\n                    ensures (function's benefit to caller)\n```\n\n- The caller MUST satisfy `requires`\n- If the caller satisfies `requires`, the function MUST satisfy `ensures`\n- The function doesn't check `requires` — it ASSUMES them\n\n### Obligations and Benefits\n\n| | Obligation | Benefit |\n|------|-----------|---------|\n| Caller | Satisfy requires | Trust ensures |\n| Function | Satisfy ensures | Assume requires |\n\n### A Complete DbC Example\n\n```xiom\npub type BankAccount = {\n  balance: Int;\n}\n  invariant: self.balance >= 0;\n\nimpl BankAccount {\n  fn deposit(self: &mut Self, amount: Int)\n    requires: amount > 0;\n    ensures: self.balance == self@pre.balance + amount;\n  { self.balance = self.balance + amount; }\n\n  fn withdraw(self: &mut Self, amount: Int)\n    requires: amount > 0;\n    requires: amount <= self.balance;\n    ensures: self.balance == self@pre.balance - amount;\n  { self.balance = self.balance - amount; }\n}\n```\n\n### The DbC Development Process\n1. Write the contract FIRST (requires + ensures)\n2. Write tests that violate the contract\n3. Implement the function\n4. Verify with xiom verify\n5. Refactor — contracts protect against regressions",
+  "syntax_ref": "// Design by Contract template:\nfn function_name(params) -> ReturnType\n  requires: what_caller_must_ensure;\n  ensures: what_function_guarantees;\n{ /* implementation */ }\n\n// With invariants:\npub type TypeName = { fields }\n  invariant: always_true_condition;",
+  "code_template": "// TODO: Design a 'Thermostat' type using DbC\n// Fields: current_temp: Float64, target_temp: Float64\n// Invariant: current_temp is between -50 and 150\n// Methods: set_target, get_current\n// Write contracts BEFORE implementation\n\nfn main() -> Int {\n  // TODO: Create thermostat, set target, return something\n  return 0;\n}",
+  "solution": "pub type Thermostat = {\n  current_temp: Float64;\n  target_temp: Float64;\n}\n  invariant: self.current_temp >= -50.0;\n  invariant: self.current_temp <= 150.0;\n\nimpl Thermostat {\n  fn set_target(self: &mut Self, temp: Float64)\n    requires: temp >= -50.0;\n    requires: temp <= 150.0;\n    ensures: self.target_temp == temp;\n  { self.target_temp = temp; }\n\n  fn get_current(self: &Self) -> Float64 {\n    return self.current_temp;\n  }\n\n  fn needs_heating(self: &Self) -> Bool {\n    return self.current_temp < self.target_temp;\n  }\n}\n\nfn main() -> Int {\n  var t = Thermostat{ current_temp: 20.0, target_temp: 20.0 };\n  t.set_target(22.0);\n  if t.needs_heating() { return 1; }\n  return 0;\n}",
+  "tips": [
+    "Write contracts FIRST — they clarify your thinking before you write implementation",
+    "A function without a contract is under-specified — you can't tell if it's working correctly",
+    "Contracts are the bridge between 'what the code does' and 'what the code SHOULD do'",
+    "DbC works at ALL levels: individual functions, type methods, FFI boundaries, system APIs"
+  ],
+  "common_mistakes": [
+    "Writing contracts AFTER the implementation — you just encode existing behavior, bugs and all",
+    "Treating contracts as optional — in DbC, they're as important as the implementation",
+    "Making contracts too weak to be useful — 'ensures: true' is technically correct but pointless"
+  ],
+  "related": [
+    "L4-01",
+    "L4-06",
+    "L4-49",
+    "L4-50"
+  ],
+  "next_lesson": "L4-49"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L3-40",
+  "title": "Use-After-Move",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["use-after-move", "compiler error", "move", "invalidation", "safety"],
+  "narrative": "## The Compiler Catches Use-After-Move\n\n**Use-after-move** is when you try to use a variable after its ownership has been transferred. XIOM's compiler catches this at compile time.\n\n### The Error\n\n```xiom\nlet v = Vec[Int]();\nv.push(1);\nlet v2 = v;       // ownership MOVES to v2\n// v.push(2);     // COMPILER ERROR: use of moved value\n```\n\nIn C/C++, this would be a runtime bug or silent corruption. In XIOM, it's a compile error.\n\n### Common Move Scenarios\n\n```xiom\n// 1. Direct assignment\nlet a = Vec[Int]();\na.push(1);\nlet b = a;  // a moved\n\n// 2. Passing to function\nfn consume(v: Vec[Int]) -> Unit { }\nlet data = Vec[Int]();\nconsume(data);  // data moved — gone\n\n// 3. Returning from block\nlet result = {\n  let temp = Vec[Int]();\n  temp  // moved out of block\n};\n```\n\n### Fixing Use-After-Move\n\n1. **Clone**: `let v2 = v.clone();` — both valid after\n2. **Borrow**: `process(&v);` — ownership stays with v\n3. **Return ownership**: `fn transform(v: Vec[Int]) -> Vec[Int]` — takes and returns\n4. **Reorder**: Use variable before the move, not after\n\n### Why This Matters\n\nUse-after-move in other languages leads to:\n- Double-free (if both try to free)\n- Use-after-free (using freed memory)\n- Dangling pointers\n\nXIOM eliminates all of these at compile time.",
+  "code_template": "// TODO: write code that demonstrates a use-after-move error (in comments)\n\n// TODO: fix it using clone\n\nfn main() -> Int {\n  // TODO: create Vec, clone before move, use both\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let v = Vec[Int]();\n  v.push(10);\n  let copy = v.clone();  // clone before move\n  let v2 = v;             // now v can move\n  // Both copy and v2 are usable\n  return copy.len() + v2.len();\n}",
+  "tips": [
+    "Use-after-move is a COMPILE-TIME error — not a runtime bug",
+    "Clone before move if you need both variables",
+    "Borrow (&T) instead of moving if you only need read access",
+    "The compiler error message tells you exactly where the move happened"
+  ],
+  "related": ["L3-06", "L3-07", "L3-41", "L3-42"]
+}

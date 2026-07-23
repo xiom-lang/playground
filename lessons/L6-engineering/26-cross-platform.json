@@ -1,0 +1,37 @@
+{
+  "id": "L6-26",
+  "title": "Cross-Platform",
+  "level": "L6",
+  "duration": "12 min",
+  "concepts": [
+    "cross-platform",
+    "Windows",
+    "macOS",
+    "Linux",
+    "conditional compilation"
+  ],
+  "concept": "Build XIOM projects for Windows, macOS, and Linux from a single codebase — using conditional compilation and platform-specific APIs.",
+  "why": "Your users are on different platforms. XIOM's LLVM backend compiles to all major OSes from the same source — with conditional compilation for platform differences.",
+  "theory": "## One Codebase, Three Platforms\n\n```xiom\n// Conditional compilation\n#[cfg(target_os = \"linux\")]\nfn get_home_dir() -> Str { return os.get_env(\"HOME\"); }\n\n#[cfg(target_os = \"macos\")]\nfn get_home_dir() -> Str { return os.get_env(\"HOME\"); }\n\n#[cfg(target_os = \"windows\")]\nfn get_home_dir() -> Str { return os.get_env(\"USERPROFILE\"); }\n\nfn main() {\n  let home = get_home_dir();\n  io.println(\"Home: \" + home);\n}\n```\n\n### Platform Conditional Compilation\n\n```xiom\n#[cfg(target_os = \"linux\")]\nconst LINE_ENDING: Str = \"\\n\";\n\n#[cfg(target_os = \"windows\")]\nconst LINE_ENDING: Str = \"\\r\\n\";\n\n#[cfg(any(target_os = \"linux\", target_os = \"macos\"))]\nfn use_unix_api() { /* POSIX-specific code */ }\n```\n\n### Cross-Compilation\n\n```sh\n# Build for Linux from macOS\nxiom build --target x86_64-unknown-linux-gnu\n\n# Build for Windows from Linux\nxiom build --target x86_64-pc-windows-msvc\n\n# Build for macOS from Linux\nxiom build --target x86_64-apple-darwin\n```\n\n### Platform Abstraction Layer\n\n```xiom\npub interface FileSystem {\n  fn read(path: &Str) -> Result[Str, Error];\n  fn write(path: &Str, data: &Str) -> Result[(), Error];\n  fn exists(path: &Str) -> Bool;\n  fn home_dir() -> Str;\n}\n\n// Each platform implements FileSystem\n#[cfg(target_os = \"linux\")]\npub type NativeFS = LinuxFS;\n\n#[cfg(target_os = \"windows\")]\npub type NativeFS = WindowsFS;\n```\n\n### Platform Matrix Testing\n\n```yaml\n# Test on all platforms\nstrategy:\n  matrix:\n    os: [ubuntu-latest, macos-latest, windows-latest]\n```\n\n### Common Cross-Platform Issues\n\n- **Path separators**: `/` on Unix, `\\` on Windows\n- **Line endings**: `\\n` on Unix, `\\r\\n` on Windows\n- **Case sensitivity**: Unix filesystem is case-sensitive, Windows is not\n- **API differences**: POSIX on Unix, Win32 on Windows\n- **Available tools**: curl on Unix, Invoke-WebRequest on Windows",
+  "syntax_ref": "#[cfg(target_os = \"linux\")]\nfn platform_specific() { /* Linux code */ }\n\n#[cfg(not(target_os = \"linux\"))]\nfn platform_specific() { /* Other platforms */ }\n\n// Build for specific target:\nxiom build --target x86_64-pc-windows-msvc",
+  "code_template": "// TODO: Use cfg to define a function 'platform_name'\n// that returns \"linux\", \"macos\", or \"windows\" based on compilation target\n// Return 1 for linux, 2 for macos, 3 for windows\n\nfn main() -> Int {\n  // For this exercise, just return 1 (assuming Linux)\n  return 1;\n}",
+  "solution": "#[cfg(target_os = \"linux\")]\nfn platform_code() -> Int { return 1; }\n\n#[cfg(target_os = \"macos\")]\nfn platform_code() -> Int { return 2; }\n\n#[cfg(target_os = \"windows\")]\nfn platform_code() -> Int { return 3; }\n\nfn main() -> Int {\n  return platform_code();\n}",
+  "tips": [
+    "Use #[cfg] for platform-specific code — don't check the OS at runtime",
+    "Abstract platform differences behind interfaces — keep business logic platform-agnostic",
+    "Test on ALL platforms in CI — one platform working doesn't mean all work",
+    "Use `xiom doctor` on each platform to verify toolchain setup before building"
+  ],
+  "common_mistakes": [
+    "Using platform-specific APIs without #[cfg] — code doesn't compile on other platforms",
+    "Hardcoding paths with `/` or `\\` — use `os.path_separator()`",
+    "Assuming case-insensitive filesystem — your code might work on Windows but fail on Linux"
+  ],
+  "related": [
+    "L6-27",
+    "L6-31",
+    "L6-32",
+    "L6-33"
+  ],
+  "next_lesson": "L6-27"
+}

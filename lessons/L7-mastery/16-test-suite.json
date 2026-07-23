@@ -1,0 +1,36 @@
+{
+  "id": "L7-16",
+  "title": "Test Suite Architecture",
+  "level": "L7",
+  "duration": "15 min",
+  "concepts": [
+    "test suite",
+    "regression test",
+    "integration test",
+    "test harness",
+    "expect test"
+  ],
+  "concept": "The XIOM compiler test suite — thousands of tests ensuring every compiler feature works correctly, from parsing to code generation.",
+  "why": "A compiler without a test suite is a bug generator. The XIOM test suite contains tens of thousands of tests — each one preventing a regression.",
+  "theory": "## Testing the Compiler\n\n### Test Categories\n\n| Category | Count | Description |\n|----------|-------|-------------|\n| Unit tests | 5000+ | Test individual compiler functions |\n| Parse tests | 2000+ | Test lexer/parser with valid and invalid input |\n| Type tests | 3000+ | Test type checker with valid and invalid types |\n| Borrow tests | 2000+ | Test borrow checker rules |\n| Codegen tests | 1500+ | Verify generated LLVM IR |\n| Runtime tests | 1000+ | Compile and run programs, check output |\n| Regression tests | 3000+ | Tests for fixed bugs (never break again) |\n| Contract tests | 500+ | Test contract verification |\n\n### Test Structure\n\n```\ntests/\n├── unit/              # Unit tests for compiler internals\n│   ├── lexer/\n│   ├── parser/\n│   └── checker/\n├── parse/             # Parse → check AST\n├── typeck/            # Type check → check errors\n├── borrowck/          # Borrow check → check errors\n├── codegen/           # Compile → check IR output\n├── run-pass/          # Compile + run → expect exit 0\n├── run-fail/          # Compile + run → expect exit != 0\n├── compile-fail/      # Compile should fail with specific error\n└── fixed/             # Regression tests for fixed bugs\n```\n\n### Expect Tests\n\n```xiom\n// compile-fail/E101_type_mismatch.xi\nfn main() -> Int {\n  let x: Int = \"hello\";  //~ ERROR: type mismatch\n  return 0;\n}\n```\n\nThe `//~ ERROR:` comment specifies what error is expected. The test framework compiles the file, captures errors, and verifies they match the annotations.\n\n### Snapshot Testing\n\n```\n// run-pass/hello_world.xi\nfn main() -> Int {\n  io.println(\"Hello, XIOM!\");\n  return 0;\n}\n\n// hello_world.stdout (expected output):\nHello, XIOM!\n```\n\n### Running the Test Suite\n\n```sh\n# Run all tests\nxiom test --compiler\n\n# Run specific category\nxiom test --compiler --tests parse\n\n# Run tests matching pattern\nxiom test --compiler --filter \"borrow\"\n\n# Update snapshots\nxiom test --compiler --bless\n```",
+  "syntax_ref": "# Run compiler tests:\nxiom test --compiler\nxiom test --compiler --filter \"type_mismatch\"\n\n# Update test expectations:\nxiom test --compiler --bless\n\n# Test file annotation:\n//~ ERROR: type mismatch    (expect this error)\n//~| HELP: consider using    (continuation of diagnostic)",
+  "code_template": "fn main() -> Int {\n  // This is how compiler developers test:\n  // They write code that SHOULD fail in a specific way,\n  // then annotate the expected error\n  let x: Int = \"hello\";  //~ ERROR: type mismatch\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  return 0;\n}",
+  "tips": [
+    "Write regression tests for EVERY bug you fix — prevent it from returning",
+    "Expect tests are self-documenting — they show what error should occur and why",
+    "The test suite is the specification — if tests pass, the compiler is correct",
+    "Run the full suite before submitting PRs — partial test runs miss regressions"
+  ],
+  "common_mistakes": [
+    "Writing tests that pass for the wrong reason — ensure the test FAILS before your fix",
+    "Not updating tests when changing compiler behavior — use --bless to update snapshots",
+    "Focusing only on happy-path tests — negative tests (compile-fail) are equally important"
+  ],
+  "related": [
+    "L7-14",
+    "L7-15",
+    "L7-17"
+  ],
+  "next_lesson": "L7-17"
+}

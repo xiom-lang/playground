@@ -1,0 +1,34 @@
+{
+  "id": "L4-10",
+  "title": "--runtime-contracts",
+  "level": "L4",
+  "duration": "8 min",
+  "concepts": [
+    "--runtime-contracts",
+    "runtime check",
+    "contract forcing",
+    "hybrid mode"
+  ],
+  "concept": "The --runtime-contracts flag forces contract checking even in optimized builds — middle ground between debug and stripped release.",
+  "why": "Sometimes you need both speed AND safety. --runtime-contracts keeps your requires/ensures active while still applying optimizations.",
+  "theory": "## Forcing Contracts in Release\n\n```sh\n# Optimized build WITH contract checks\nxiom build --release --runtime-contracts app.xi\n```\n\n### When to Use --runtime-contracts\n1. **External-facing API**: validate untrusted input everywhere\n2. **Safety-critical systems**: medical, aerospace, financial — never strip\n3. **Post-deployment debugging**: keep checks in canary deployments\n4. **Hybrid approach**: strip internal contracts, keep boundary contracts\n\n### Combining Flags\n```sh\n# Compile with optimizations BUT keep all contracts\nxiom build -O3 --runtime-contracts server.xi\n\n# Compile for size BUT keep contracts\nxiom build -Os --runtime-contracts embedded.xi\n```\n\n### Performance vs Safety Spectrum\n```\nMost Safety:    debug build (no -O, contracts ON)\nBalanced:       --release --runtime-contracts\nMost Speed:     --release --no-contracts\n```",
+  "syntax_ref": "# Force contract checks in release mode:\nxiom build --release --runtime-contracts main.xi\n\n# Combine with optimization level:\nxiom build -O2 --runtime-contracts main.xi",
+  "code_template": "// TODO: Write a function 'validate_user_input' that takes Str username, Int age\n// requires: username.len() > 0 && username.len() <= 50\n// requires: age >= 0 && age <= 150\n// Think: should this be --runtime-contracts or --no-contracts? Why?\n\nfn main() -> Int {\n  // TODO: Call validate_user_input, return age\n  return 0;\n}",
+  "solution": "fn validate_user_input(username: Str, age: Int) -> Int\n  requires: username.len() > 0;\n  requires: username.len() <= 50;\n  requires: age >= 0;\n  requires: age <= 150;\n{\n  io.println(\"User: \" + username + \", Age: \" + age.to_str());\n  return age;\n}\n\nfn main() -> Int {\n  // Input validation should always be runtime-checked — attackers don't respect contracts.\n  return validate_user_input(\"Alice\", 30);\n}",
+  "tips": [
+    "Use --runtime-contracts for ALL functions that touch user input, network data, or file contents",
+    "The overhead of --runtime-contracts is usually <5% — measure before assuming it's expensive",
+    "Think of --runtime-contracts as \"trust but verify\""
+  ],
+  "common_mistakes": [
+    "Assuming --runtime-contracts is as slow as debug mode",
+    "Using --no-contracts for security-critical validation",
+    "Not documenting which compilation mode the production binary was built with"
+  ],
+  "related": [
+    "L4-09",
+    "L4-07",
+    "L4-45"
+  ],
+  "next_lesson": "L4-11"
+}

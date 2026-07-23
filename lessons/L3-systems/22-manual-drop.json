@@ -1,0 +1,17 @@
+{
+  "id": "L3-22",
+  "title": "Manual Drop",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["mem.drop", "manual drop", "early cleanup", "explicit free", "resource"],
+  "narrative": "## Explicit Early Cleanup with mem.drop\n\n`mem.drop(value)` explicitly drops a value before the end of its scope. This is useful for releasing resources early.\n\n### Basic mem.drop\n\n```xiom\nfn main() -> Int {\n  let data = Vec[Int]();\n  data.push(1);\n  data.push(2);\n\n  // Use data...\n  let len = data.len();\n\n  mem.drop(data);  // explicitly drop data NOW\n  // data is dead — cannot use it anymore\n  // let x = data.len();  // ERROR: data was dropped\n\n  return len;\n}\n```\n\n### Why Use mem.drop?\n\n- Release large memory allocations early\n- Close file handles or network connections promptly\n- Enforce that a value cannot be used after a certain point\n- Satisfy borrow checker requirements\n\n### mem.drop vs Scope End\n\n```xiom\nfn without_drop() -> Int {\n  let big = Vec[Int]();\n  // push lots of data...\n  // compute something quick\n  // big holds memory until end of function\n  return 0;\n}\n\nfn with_drop() -> Int {\n  let big = Vec[Int]();\n  // push lots of data...\n  let result = big.len();\n  mem.drop(big);  // release memory NOW\n  // rest of function runs without big's memory\n  // ... more work ...\n  return result;\n}\n```\n\n### mem.drop and Ownership\n\n`mem.drop` takes ownership and destroys the value:\n\n```xiom\nlet v = Vec[Int]();\nv.push(42);\nmem.drop(v);  // v's ownership moves into drop — destroyed\n// v is invalid after this point\n```\n\n### When NOT to Use\n\nIn most cases, let the compiler handle drop. Only use `mem.drop` when you need explicit control.",
+  "code_template": "// TODO: create a large Vec, compute a result, then drop it early\n\n// TODO: show that the Vec is unusable after mem.drop\n\nfn main() -> Int {\n  // TODO: create vec [1,2,3], get len, drop, return len\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let data = Vec[Int]();\n  data.push(1);\n  data.push(2);\n  data.push(3);\n  let result = data.len();\n  mem.drop(data);\n  // data is dead — can't use it\n  return result;\n}",
+  "tips": [
+    "`mem.drop(value)` destroys the value immediately — it's dead after the call",
+    "Use to release large resources early, before scope end",
+    "The compiler prevents use after `mem.drop` — same as after a move",
+    "In most cases, let automatic drop handle cleanup — only use mem.drop when necessary"
+  ],
+  "related": ["L3-20", "L3-21", "L3-05", "L3-06"]
+}

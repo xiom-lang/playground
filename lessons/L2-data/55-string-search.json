@@ -1,0 +1,17 @@
+{
+  "id": "L2-52",
+  "title": "String Search",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["Str", "contains", "index_of", "search", "find"],
+  "narrative": "## Finding Text Within Strings\n\nUse `.contains()` to check for a substring, and `.index_of()` to find its position.\n\n### contains — Check for Substring\n\n```xiom\nlet text = \"Hello, World!\";\nlet has_hello = text.contains(\"Hello\");   // true\nlet has_x = text.contains(\"X\");            // false\nlet has_world = text.contains(\"World\");    // true\n```\n\n### index_of — Find Position\n\n```xiom\nlet text = \"Hello, World!\";\nlet pos = text.index_of(\"World\");  // Some(7)\nlet nope = text.index_of(\"xyz\");   // None\n```\n\n`.index_of()` returns `Option[Int]` — the byte position where the substring starts, or `None`.\n\n### Search Patterns\n\n```xiom\nfn has_protocol(url: Str) -> Bool {\n  return url.contains(\"https://\") || url.contains(\"http://\");\n}\n\nfn find_domain(email: Str) -> Option[Str] {\n  let at_pos = email.index_of(\"@\");\n  match at_pos {\n    Some(pos) => {\n      return Some(str_slice(email, pos + 1, email.len()));\n    }\n    None => { return None; }\n  }\n}\n\nfn count_occurrences(text: Str, pattern: Str) -> Int {\n  var count = 0;\n  var pos = text.index_of(pattern);\n  while pos.is_some() {\n    count = count + 1;\n    let start = pos.unwrap_or(0) + pattern.len();\n    let rest = str_slice(text, start, text.len());\n    pos = rest.index_of(pattern);\n  }\n  return count;\n}\n```\n\n### Starts With / Ends With\n\n```xiom\nfn starts_with(s: Str, prefix: Str) -> Bool {\n  if prefix.len() > s.len() { return false; }\n  return str_slice(s, 0, prefix.len()) == prefix;\n}\n\nfn ends_with(s: Str, suffix: Str) -> Bool {\n  if suffix.len() > s.len() { return false; }\n  return str_slice(s, s.len() - suffix.len(), s.len()) == suffix;\n}\n```",
+  "code_template": "// TODO: write a function 'is_html_file' that returns true if filename ends with \".html\"\n\n// TODO: write a function 'extract_username' that gets the part before '@' in an email\n\nfn main() -> Int {\n  // TODO: extract username from \"alice@example.com\", return its length\n  return 0;\n}",
+  "solution": "fn is_html_file(filename: Str) -> Bool {\n  return filename.contains(\".html\");\n}\n\nfn extract_username(email: Str) -> Str {\n  let at_pos = email.index_of(\"@\");\n  match at_pos {\n    Some(pos) => { return str_slice(email, 0, pos); }\n    None => { return \"\"; }\n  }\n}\n\nfn main() -> Int {\n  let username = extract_username(\"alice@example.com\");\n  return username.len();\n}",
+  "tips": [
+    "`.contains(sub)` returns Bool — use it for simple existence checks",
+    "`.index_of(sub)` returns Option[Int] — always handle the None case",
+    "Both methods are case-sensitive: \"Hello\" != \"hello\"",
+    "Search positions are byte offsets for efficient UTF-8 processing"
+  ],
+  "related": ["L2-52", "L2-53", "L2-54", "L2-56"]
+}

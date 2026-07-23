@@ -1,0 +1,17 @@
+{
+  "id": "L3-34",
+  "title": "Unsafe Blocks",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["unsafe", "raw operations", "dereference", "FFI", "safety contract"],
+  "narrative": "## Explicitly Opting Out of Safety\n\n`unsafe { }` blocks mark code that performs operations the compiler cannot verify. They're a contract: \"I, the programmer, guarantee this is safe.\"\n\n### Unsafe Operations\n\n```xiom\nlet x = 42;\nlet ptr = &x as *const Int;\n\nunsafe {\n  // 1. Dereference raw pointers\n  let value = *ptr;\n\n  // 2. Call unsafe functions\n  // some_ffi_function();\n\n  // 3. Access mutable statics\n  // GLOBAL_COUNTER = 10;\n\n  // 4. Implement unsafe traits\n}\n```\n\n### Why unsafe Exists\n\nSome operations are inherently uncheckable:\n- FFI calls to C libraries\n- Direct hardware access\n- Custom memory allocators\n- Performance-critical data structures\n\n### The Safety Contract\n\nWhen you write `unsafe`, you promise:\n- No dangling pointers\n- No data races\n- No buffer overflows\n- No null pointer dereferences\n\n### Minimizing unsafe\n\n```xiom\n// BAD: large unsafe block\nunsafe {\n  // 100 lines of code...\n}\n\n// GOOD: minimal unsafe, safe wrapper\nfn safe_read(ptr: *const Int) -> Option[Int] {\n  if ptr.is_null() { return None; }\n  unsafe { return Some(*ptr); }\n}\n```\n\n### Document unsafe\n\nAlways document WHY the code is unsafe and what invariants must hold:\n\n```xiom\n// SAFETY: ptr is valid because it came from &x which is alive\nunsafe {\n  let value = *ptr;\n}\n```",
+  "code_template": "// TODO: create a raw pointer from a valid reference, dereference in unsafe, return value\n\n// TODO: explain why this unsafe is safe (ptr came from a live variable)\n\nfn main() -> Int {\n  // TODO: create Int = 7, raw ptr, unsafe deref, return\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let x = 7;\n  let ptr = &x as *const Int;\n  // SAFETY: ptr is valid because x is alive in this scope\n  unsafe {\n    return *ptr;\n  }\n}",
+  "tips": [
+    "`unsafe` doesn't disable the borrow checker — only enables 5 specific operations",
+    "Keep unsafe blocks as small as possible — wrap them in safe functions",
+    "Document why each unsafe block is actually safe",
+    "Unsafe code can cause UB — test thoroughly and review carefully"
+  ],
+  "related": ["L3-32", "L3-33", "L3-35", "L4-01"]
+}

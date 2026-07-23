@@ -1,0 +1,36 @@
+{
+  "id": "L6-24",
+  "title": "GitHub Actions",
+  "level": "L6",
+  "duration": "15 min",
+  "concepts": [
+    "GitHub Actions",
+    "workflow",
+    "YAML",
+    "automation",
+    "matrix build"
+  ],
+  "concept": "Set up GitHub Actions workflows for XIOM projects — automated testing, multi-platform builds, and deployment on every push.",
+  "why": "GitHub Actions is the most-used CI platform. Setting it up correctly gives you free, automated quality checks on every commit — no server maintenance needed.",
+  "theory": "## Complete XIOM CI Workflow\n\n### Basic CI Workflow\n\n```yaml\n# .github/workflows/ci.yml\nname: XIOM CI\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  quality:\n    name: Code Quality\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n\n      - name: Setup XIOM\n        uses: xiom-lang/setup-xiom@v1\n        with:\n          xiom-version: stable\n\n      - name: Cache dependencies\n        uses: actions/cache@v3\n        with:\n          path: ~/.xiom/cache\n          key: ${{ runner.os }}-xiom-${{ hashFiles('**/package.xi') }}\n\n      - name: Check formatting\n        run: xiom fmt --check src/\n\n      - name: Lint\n        run: xiom lint --deny-warnings src/\n\n      - name: Run tests\n        run: xiom test --verbose\n\n      - name: Build release\n        run: xiom build --release\n```\n\n### Multi-Platform Matrix Build\n\n```yaml\njobs:\n  build:\n    name: Build (${{ matrix.os }})\n    runs-on: ${{ matrix.os }}\n    strategy:\n      matrix:\n        os: [ubuntu-latest, macos-latest, windows-latest]\n    steps:\n      - uses: actions/checkout@v4\n      - uses: xiom-lang/setup-xiom@v1\n      - run: xiom build --release\n      - uses: actions/upload-artifact@v3\n        with:\n          name: binary-${{ matrix.os }}\n          path: target/release/myapp\n```\n\n### Contract Verification\n\n```yaml\n      - name: Setup Z3\n        run: sudo apt-get install -y z3\n\n      - name: Verify contracts\n        run: xiom verify src/\n```\n\n### Release Workflow\n\n```yaml\non:\n  push:\n    tags: ['v*']\n\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: xiom-lang/setup-xiom@v1\n      - run: xiom build --release\n      - name: Create Release\n        uses: softprops/action-gh-release@v1\n        with:\n          files: target/release/*\n```\n\n### Badge in README\n\n```markdown\n[![CI](https://github.com/user/repo/actions/workflows/ci.yml/badge.svg)](https://github.com/user/repo/actions/workflows/ci.yml)\n```",
+  "syntax_ref": "# .github/workflows/ci.yml\nname: CI\non: [push, pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: xiom-lang/setup-xiom@v1\n      - run: xiom test",
+  "code_template": "fn main() -> Int {\n  // Your task: Set up GitHub Actions for this project with:\n  // 1. Code formatting check (xiom fmt --check)\n  // 2. Linting (xiom lint)\n  // 3. Testing (xiom test)\n  // 4. Build (xiom build --release)\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Use `actions/cache` for XIOM dependencies — dramatically speeds up CI",
+    "Matrix builds catch platform-specific bugs early — test on all target OSes",
+    "Use `xiom-lang/setup-xiom` action — it handles toolchain installation automatically",
+    "Add contract verification to CI if you use contracts — catches regressions before merge"
+  ],
+  "common_mistakes": [
+    "Not caching dependencies — slow CI discourages frequent commits",
+    "Using `ubuntu-latest` for everything — test on your actual target platform",
+    "Forgetting to add contract verification to CI — contracts aren't checked at runtime in release"
+  ],
+  "related": [
+    "L6-23",
+    "L6-25",
+    "L6-22"
+  ],
+  "next_lesson": "L6-25"
+}

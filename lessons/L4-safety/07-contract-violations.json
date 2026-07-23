@@ -1,0 +1,37 @@
+{
+  "id": "L4-07",
+  "title": "Contract Violations",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "contract violation",
+    "trap",
+    "debug",
+    "error message",
+    "backtrace"
+  ],
+  "concept": "When a contract is violated, XIOM traps with a detailed error message showing which contract failed, where, and the values involved.",
+  "why": "Understanding what happens on violation helps you debug quickly. The trap gives you the exact function, line, and condition that failed.",
+  "theory": "## What Happens When a Contract Breaks\n\n### requires Violation\n```xiom\nfn withdraw(balance: &mut Int, amount: Int)\n  requires: amount > 0;\n  requires: balance >= amount;\n{ balance = balance - amount; }\n\nfn main() -> Int {\n  var b = 50;\n  withdraw(&mut b, 100);  // VIOLATION!\n  return 0;\n}\n```\n\nOutput:\n```\nCONTRACT VIOLATION: withdraw\n  requires: balance >= amount\n  at lesson.xi:11 (called from main at lesson.xi:17)\n  values: balance = 50, amount = 100\n```\n\n### ensures Violation\n```xiom\nfn absolute(x: Int) -> Int\n  ensures: result >= 0;\n{\n  if x < 0 { return x; }  // BUG: should return -x\n  return x;\n}\n```\nOutput:\n```\nCONTRACT VIOLATION: absolute\n  ensures: result >= 0\n  at lesson.xi:5\n  values: result = -5\n```\n\n### The Trap Mechanism\nThe program calls @llvm.trap which prints diagnostics and terminates. This is intentional — failing fast prevents corrupted state from propagating.",
+  "syntax_ref": "// Violation output format:\n// CONTRACT VIOLATION: function_name\n//   requires|ensures: condition\n//   at file.xi:line (called from caller at file.xi:line)\n//   values: var1 = val1, var2 = val2",
+  "code_template": "// TODO: Write a function 'is_even' with contract that will demonstrate a violation\n// ensures: result == (n % 2 == 0)\n// Deliberately write a BUGGY implementation that returns wrong answer for n=3\n// In main, call is_even(3) and return 0\n\nfn main() -> Int {\n  // TODO: call is_even(3)\n  return 0;\n}",
+  "solution": "fn is_even(n: Int) -> Bool\n  ensures: result == (n % 2 == 0);\n{\n  if n == 2 { return true; }\n  if n == 4 { return true; }\n  return true;  // BUG: should return n % 2 == 0\n}\n\nfn main() -> Int {\n  let r = is_even(3);  // Returns true but 3 % 2 == 0 is false — VIOLATION\n  return 0;\n}",
+  "tips": [
+    "Read violation messages bottom-up — the 'called from' chain shows the call stack",
+    "The values: section shows the state at violation time — invaluable for debugging",
+    "Contract violations are deterministic: same inputs always produce the same violation",
+    "Use --backtrace flag to get a full stack trace"
+  ],
+  "common_mistakes": [
+    "Catching contract violations with try/catch — contracts are NOT exceptions, they trap",
+    "Assuming contracts are checked in release mode",
+    "Ignoring the 'called from' chain — the root cause is often higher up the stack"
+  ],
+  "related": [
+    "L4-01",
+    "L4-06",
+    "L4-08",
+    "L4-30"
+  ],
+  "next_lesson": "L4-08"
+}

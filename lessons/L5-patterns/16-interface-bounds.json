@@ -1,0 +1,36 @@
+{
+  "id": "L5-16",
+  "title": "Interface as Bounds",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "interface bound",
+    "trait bound",
+    "T: Interface",
+    "generic constraint"
+  ],
+  "concept": "Interfaces serve as bounds on type parameters — T: Eq means 'T must implement the Eq interface', restricting what types can be used.",
+  "why": "Interface bounds are how the compiler knows what operations are available on generic types. Without bounds, you can't call any methods on T.",
+  "theory": "## Interfaces as Type Filters\n\n```xiom\nfn print_hash[T: Hash](value: &T) {\n  let h = value.hash();  // OK: T: Hash guarantees hash() exists\n  io.println(\"hash: \" + h.to_str());\n}\n```\n\nWithout `T: Hash`, calling `value.hash()` would be a compile error.\n\n### Bounds Enable Method Access\n```xiom\n// Each bound unlocks methods:\nfn demo[T: Clone + Display + Ord](value: &T) {\n  let copy = value.clone();     // T: Clone\n  io.println(copy.to_str());    // T: Display\n  let cmp = value > &copy;      // T: Ord\n}\n```\n\n### Bounds as Documentation\n```xiom\n// Without reading the body, you know what T needs:\nfn store[T: Eq + Hash](value: T) { /* ... */ }\n// T must support equality and hashing — probably a HashMap key\n\nfn sort_items[T: Ord](items: &Vec[T]) { /* ... */ }\n// T must support ordering — clearly sorting\n```\n\n### Composing Bounds\n```xiom\n// Multiple bounds on the same param:\nfn complex[T: Clone + Display + Default + Eq](value: T) { /* ... */ }\n\n// Different bounds on different params:\nfn transform[I: Display, O: Display + Default](input: I) -> O { /* ... */ }\n```\n\n### The Error Message\nWhen you try to use a type that doesn't satisfy a bound:\n```\nError: type 'MyType' does not implement interface 'Ord'\n  required by bound 'T: Ord' in 'sort_items'\n```",
+  "syntax_ref": "fn name[T: Interface](param: T) {\n  // Can call any method defined in Interface on param\n}\n\n// Multiple:\nfn name[T: A + B + C](param: T) {\n  // Can call methods from A, B, and C\n}",
+  "code_template": "// TODO: Write a function 'largest' that takes &Vec[T] and returns T\n// T must be Ord (for comparison) + Clone (to return a value)\n// Ensure: result is >= all elements\n\nfn main() -> Int {\n  // TODO: Find largest in [3, 7, 2, 9, 1], return it\n  return 0;\n}",
+  "solution": "fn largest[T: Ord + Clone](items: &Vec[T]) -> T\n  requires: items.len() > 0;\n  ensures: result == items[0] || result > items[0];\n{\n  var max = items[0].clone();\n  for item in items {\n    if item > max { max = item.clone(); }\n  }\n  return max;\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(3); v.push(7); v.push(2); v.push(9); v.push(1);\n  return largest[Int](&v);\n}",
+  "tips": [
+    "Interface bounds ARE your function's requirements — they document what the type must support",
+    "Start with minimal bounds and add more as the compiler tells you what's missing",
+    "Read bounds as: 'This function works with any T that is Clone AND Display'",
+    "The compiler is your ally — it tells you exactly which interface you forgot to require"
+  ],
+  "common_mistakes": [
+    "Adding bounds you don't use (e.g., T: Display but never calling to_str)",
+    "Forgetting bounds until the compiler complains — think ahead about what operations you need",
+    "Using overly restrictive bounds (T: Clone + Copy + Display + Debug + Ord + Hash) when T: Ord suffices"
+  ],
+  "related": [
+    "L5-06",
+    "L5-07",
+    "L5-08",
+    "L5-12"
+  ],
+  "next_lesson": "L5-17"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L2-53",
+  "title": "String Split and Join",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["Str", "split", "join", "delimiter", "tokenize"],
+  "narrative": "## Breaking and Building Strings\n\nSplit a string into parts by a delimiter, and join a collection back into a single string.\n\n### str_split — Break Apart\n\n```xiom\nlet csv = \"apple,banana,cherry\";\nlet parts = str_split(csv, \",\");  // [\"apple\", \"banana\", \"cherry\"]\n\nlet sentence = \"Hello World XIOM\";\nlet words = str_split(sentence, \" \");  // [\"Hello\", \"World\", \"XIOM\"]\n```\n\n### Processing Split Results\n\n```xiom\nlet line = \"Alice:95:active\";\nlet fields = str_split(line, \":\");\n// fields: [\"Alice\", \"95\", \"active\"]\n\nlet name = fields[0];\nlet score = fields[1];\nlet status = fields[2];\n```\n\n### join — Combine Back\n\n```xiom\nlet words = Vec[Str]();\nwords.push(\"Hello\");\nwords.push(\"World\");\nwords.push(\"XIOM\");\n\nlet sentence = join(words, \" \");  // \"Hello World XIOM\"\nlet csv = join(words, \",\");        // \"Hello,World,XIOM\"\n```\n\n### Practical Patterns\n\n```xiom\n// Parse key-value pairs\nfn parse_config(line: Str) -> (Str, Str) {\n  let parts = str_split(line, \"=\");\n  if parts.len() >= 2 {\n    return (parts[0], parts[1]);\n  }\n  return (line, \"\");\n}\n\n// Count words\nfn word_count(text: Str) -> Int {\n  let words = str_split(text, \" \");\n  return words.len();\n}\n\n// Build path from segments\nfn build_path(segments: Vec[Str]) -> Str {\n  return join(segments, \"/\");\n}\n```\n\n### Split on Multiple Lines\n\n```xiom\nlet text = \"line1\nline2\nline3\";\nlet lines = str_split(text, \"\n\");\n```",
+  "code_template": "// TODO: write a function 'csv_to_vec' that splits a comma-separated string into Vec[Str]\n\n// TODO: write a function 'vec_to_csv' that joins a Vec[Str] with commas\n\n// TODO: write a function 'parse_tags' that splits \"rust,systems,language\" and returns count\n\nfn main() -> Int {\n  // TODO: parse_tags(\"rust,systems,language\") -> return count\n  return 0;\n}",
+  "solution": "fn csv_to_vec(csv: Str) -> Vec[Str] {\n  return str_split(csv, \",\");\n}\n\nfn vec_to_csv(items: Vec[Str]) -> Str {\n  return join(items, \",\");\n}\n\nfn parse_tags(tag_str: Str) -> Int {\n  let tags = str_split(tag_str, \",\");\n  return tags.len();\n}\n\nfn main() -> Int {\n  return parse_tags(\"rust,systems,language\");\n}",
+  "tips": [
+    "`str_split(s, delimiter)` returns Vec[Str] — each part is a new string",
+    "Empty parts are included: `\"a,,b\"` split by `,` gives `[\"a\", \"\", \"b\"]`",
+    "`join(vec, delimiter)` concatenates all elements with the delimiter between",
+    "Split + join is a common pattern for string transformation pipelines"
+  ],
+  "related": ["L2-52", "L2-53", "L2-54", "L2-55"]
+}

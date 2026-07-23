@@ -1,0 +1,37 @@
+{
+  "id": "L8-02",
+  "title": "Vulkan Basics",
+  "level": "L8",
+  "duration": "20 min",
+  "concepts": [
+    "Vulkan",
+    "GPU",
+    "graphics",
+    "compute",
+    "low-level",
+    "rendering"
+  ],
+  "concept": "Vulkan bindings for XIOM — low-level GPU programming for graphics and compute, with full control over memory, synchronization, and pipeline state.",
+  "why": "Vulkan is the industry standard for high-performance graphics. XIOM's safety guarantees combined with Vulkan's explicit control create a powerful GPU programming platform.",
+  "theory": "## GPU Programming with XIOM\n\n### The Vulkan Pipeline\n\n```\nApplication\n  ↓\nVertex Shader   → Transforms vertices\n  ↓\nRasterizer      → Converts to fragments\n  ↓\nFragment Shader → Colors each pixel\n  ↓\nFramebuffer     → Display on screen\n```\n\n### XIOM Vulkan Setup\n\n```xiom\nuse xiom.vulkan;\n\nfn main() -> Int {\n  // Initialize Vulkan\n  let instance = vulkan::Instance::new()?;\n  let surface = vulkan::Surface::new(&instance, window)?;\n\n  // Select GPU\n  let physical_device = instance.select_gpu(surface)?;\n  let device = vulkan::Device::new(&physical_device)?;\n\n  // Create swapchain for double/triple buffering\n  let swapchain = vulkan::Swapchain::new(&device, &surface)?;\n\n  // Main render loop\n  while !window.should_close() {\n    let frame = swapchain.acquire_next_image()?;\n    render_frame(&device, &frame);\n    swapchain.present(&frame);\n  }\n  return 0;\n}\n```\n\n### Memory Management\n\n```xiom\n// Allocate GPU buffer\nlet buffer = vulkan::Buffer::new(\n  &device,\n  size: 1024,\n  usage: BufferUsage::Vertex | BufferUsage::TransferDst,\n  memory: MemoryProperty::DeviceLocal,\n);\n\n// Map and write data\nbuffer.map(|ptr| {\n  ptr.write(vertex_data);\n});\n```\n\n### Pipeline Creation\n\n```xiom\n// Graphics pipeline configuration\nlet pipeline = vulkan::GraphicsPipeline::new()\n  .vertex_shader(compile_glsl(\"shader.vert\"))\n  .fragment_shader(compile_glsl(\"shader.frag\"))\n  .input_assembly(Topology::TriangleList)\n  .viewport(0, 0, 800, 600)\n  .rasterizer(CullMode::Back, FrontFace::Clockwise)\n  .build(&device)?;\n```\n\n### Use Cases\n\n- Real-time 3D rendering (games)\n- GPU compute (machine learning, physics)\n- Video processing\n- Scientific visualization\n- CAD and 3D modeling",
+  "syntax_ref": "use xiom.vulkan;\n\nlet instance = vulkan::Instance::new()?;\nlet device = vulkan::Device::new(&gpu)?;\nlet pipeline = vulkan::GraphicsPipeline::new().build(&device)?;\nlet buffer = vulkan::Buffer::new(&device, 1024);",
+  "code_template": "fn main() -> Int {\n  // Vulkan code requires a window system and GPU.\n  // Conceptual exercise: outline the steps to draw a triangle\n  // 1. Create instance 2. Select GPU 3. Create device\n  // 4. Create swapchain 5. Create pipeline 6. Render loop\n  return 6;  // 6 steps\n}",
+  "solution": "fn main() -> Int {\n  return 6;\n}",
+  "tips": [
+    "Vulkan is verbose — consider a higher-level wrapper for rapid prototyping",
+    "Validate API usage with validation layers during development (VK_LAYER_KHRONOS_validation)",
+    "Double-buffering with fences prevents GPU/CPU synchronization stalls",
+    "Memory types matter — DEVICE_LOCAL is fast for GPU, HOST_VISIBLE for CPU upload"
+  ],
+  "common_mistakes": [
+    "Forgetting to destroy Vulkan objects — use RAII or explicit cleanup",
+    "Not synchronizing GPU operations — results in race conditions and flickering",
+    "Assuming the first GPU is the best — enumerate physical devices and pick by capability"
+  ],
+  "related": [
+    "L8-03",
+    "L8-04",
+    "L8-14"
+  ],
+  "next_lesson": "L8-03"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L3-46",
+  "title": "ManuallyDrop",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["ManuallyDrop", "drop control", "manual cleanup", "wrapper", "advanced"],
+  "narrative": "## Taking Control of Drop\n\n`ManuallyDrop[T]` prevents automatic dropping, giving you manual control over when (or if) a value is freed.\n\n### Creating ManuallyDrop\n\n```xiom\nlet v = Vec[Int]();\nv.push(1); v.push(2);\n\nlet wrapper = ManuallyDrop.new(v);\n// v is now inside wrapper — won't be dropped automatically\n// You must handle cleanup manually\n```\n\n### Why ManuallyDrop?\n\n- **FFI**: C code expects to manage memory\n- **Unsafe optimizations**: reusing memory\n- **Custom allocators**: bypass default drop\n- **Double-buffer patterns**: manually control deallocation\n\n### Taking Value Out\n\n```xiom\nlet wrapper = ManuallyDrop.new(Vec[Int]());\n\n// Take ownership back\nlet v = ManuallyDrop.into_inner(wrapper);\n// Now v will be dropped normally at end of scope\n```\n\n### Dropping Manually\n\n```xiom\nlet wrapper = ManuallyDrop.new(Vec[Int]());\n\nunsafe {\n  ManuallyDrop.drop(wrapper);  // manual drop\n}\n// wrapper is invalid after manual drop\n```\n\n### Safety Contract\n\nWhen using `ManuallyDrop`, you MUST ensure:\n- The value is eventually dropped (or validly moved out)\n- No use after manual drop\n- No double drop\n\n### Common Pattern: FFI Memory\n\n```xiom\nextern \"C\" {\n  fn c_allocate() -> *mut Unit;\n  fn c_free(ptr: *mut Unit) -> Unit;\n}\n\nfn allocate_wrapper() -> ManuallyDrop[Vec[Int]] {\n  let v = Vec[Int]();\n  // C code will free this — don't drop it normally\n  return ManuallyDrop.new(v);\n}\n```",
+  "code_template": "// TODO: create a ManuallyDrop[Vec[Int]], push values, then manually drop it\n\n// TODO: show that without manual drop, the Vec would never be freed\n\nfn main() -> Int {\n  // TODO: create ManuallyDrop, push 1,2,3, into_inner, return len\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let wrapper = ManuallyDrop.new(Vec[Int]());\n  let mut v = ManuallyDrop.into_inner(wrapper);\n  v.push(1);\n  v.push(2);\n  v.push(3);\n  return v.len();\n}",
+  "tips": [
+    "ManuallyDrop prevents automatic drop — you're responsible for cleanup",
+    "Use `.into_inner()` to take the value back and restore normal drop",
+    "Always ensure manually dropped values are eventually freed",
+    "Mainly needed for FFI and custom allocator patterns"
+  ],
+  "related": ["L3-22", "L3-20", "L3-47", "L3-35"]
+}

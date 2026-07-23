@@ -1,0 +1,17 @@
+{
+  "id": "L3-49",
+  "title": "Zeroed Memory",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["mem.zeroed", "zero-initialized", "all-zeroes", "pod", "initialization"],
+  "narrative": "## All-Zero Memory Initialization\n\n`mem.zeroed()` creates a value where all bytes are zero. This is only valid for types where all-zeroes is a valid representation.\n\n### Creating Zeroed Values\n\n```xiom\nlet x: Int = mem.zeroed();      // 0\nlet y: Float64 = mem.zeroed();  // 0.0\nlet flag: Bool = mem.zeroed();  // false\n```\n\n### Zeroed Structs\n\n```xiom\npub type Point = { x: Float64; y: Float64; }\n\nlet origin: Point = mem.zeroed();  // Point{ x: 0.0, y: 0.0 }\n```\n\nAll fields are set to their zero-equivalent.\n\n### When to Use\n\n```xiom\n// 1. Large arrays initialized to zero\nlet buffer: [1024]Int = mem.zeroed();\n\n// 2. Default-initialize a struct\nlet default_config = mem.zeroed[Config]();\n\n// 3. FFI: C expects zero-initialized memory\nextern \"C\" {\n  fn process(data: *mut Unit, size: Int) -> Unit;\n}\n```\n\n### Safety Concerns\n\n`mem.zeroed()` is safe only for types where all-zeroes is valid:\n\n```xiom\n// SAFE: Int(0), Float64(0.0), Bool(false) are all valid\nlet x: Int = mem.zeroed();  // OK\n\n// UNSAFE: not all types allow all-zeroes representation\n// let s: Str = mem.zeroed();  // Could be invalid!\n// let opt: Option[Int] = mem.zeroed();  // Might not be valid None!\n```\n\n### Zeroed vs Default\n\n```xiom\n// Zeroed: all bytes = 0\nlet z: Int = mem.zeroed();  // guaranteed 0\n\n// In XIOM, for primitive types they're equivalent\nlet d: Float64 = mem.zeroed();  // 0.0\n```",
+  "code_template": "// TODO: create a zeroed array of 10 Ints, fill it with values, return sum\n\n// TODO: create a zeroed struct and verify its fields are 0/false/0.0\n\nfn main() -> Int {\n  // TODO: create zeroed [5]Int, set values, return sum\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var arr: [5]Int = mem.zeroed();\n  arr[0] = 1;\n  arr[1] = 2;\n  arr[2] = 3;\n  arr[3] = 4;\n  arr[4] = 5;\n  return arr[0] + arr[1] + arr[2] + arr[3] + arr[4];\n}",
+  "tips": [
+    "`mem.zeroed()` sets all bytes to zero — valid for Int(0), Float64(0.0), Bool(false)",
+    "Not safe for all types — don't use on Str, Option, or types with invariants",
+    "Use for large arrays and FFI buffers where zero-init is required",
+    "Only works with fixed-size types known at compile time"
+  ],
+  "related": ["L3-48", "L3-49", "L3-45", "L3-50"]
+}

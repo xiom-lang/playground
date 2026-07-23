@@ -1,0 +1,36 @@
+{
+  "id": "L5-06",
+  "title": "Type Constraints",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "type constraint",
+    "T: Interface",
+    "bounded generics",
+    "trait bound"
+  ],
+  "concept": "Type constraints (T: Interface) restrict type parameters to types that implement specific interfaces — ensuring generic code can use needed operations.",
+  "why": "Without constraints, you can't call methods or use operators on generic types. Constraints tell the compiler what operations are available.",
+  "theory": "## Bounding Type Parameters\n\n### Why Constraints?\n```xiom\nfn print[T](value: T) {\n  io.println(value.to_str());  // ERROR: T might not have to_str()\n}\n```\n\n### With Constraints\n```xiom\nfn print[T: Display](value: T) {\n  io.println(value.to_str());  // OK: T: Display guarantees to_str()\n}\n```\n\n### Common Constraints\n| Constraint | Enables |\n|-----------|---------|\n| T: Eq | ==, != |\n| T: Ord | <, >, <=, >= |\n| T: Display | .to_str() |\n| T: Clone | .clone() |\n| T: Hash | .hash() |\n| T: Default | Default::default() |\n| T: Copy | Bitwise copy |\n\n### Multiple Constraints on One Param\n```xiom\nfn sort_and_format[T: Ord + Display](items: &Vec[T]) -> Str {\n  var sorted = items.clone();\n  sorted.sort();  // T: Ord\n  return sorted[0].to_str();  // T: Display\n}\n```\n\n### Different Constraints per Param\n```xiom\nfn print_map[K: Display, V: Display](map: &Map[K, V]) {\n  for (k, v) in map {\n    io.println(k.to_str() + \" -> \" + v.to_str());  // Both K and V need Display\n  }\n}\n```",
+  "syntax_ref": "fn name[T: Interface](param: T) { /* can use Interface methods on T */ }\nfn name[T: Interface1 + Interface2](param: T) { /* T must satisfy both */ }",
+  "code_template": "// TODO: Write a function 'are_equal' that takes two T values and returns Bool\n// T must support equality comparison (T: Eq)\n// TODO: Write 'is_greater' that takes two T values and returns Bool\n// T must support ordering (T: Ord)\n\nfn main() -> Int {\n  // TODO: Test with Int values, return 1 if all tests pass\n  return 0;\n}",
+  "solution": "fn are_equal[T: Eq](a: T, b: T) -> Bool {\n  return a == b;\n}\n\nfn is_greater[T: Ord](a: T, b: T) -> Bool {\n  return a > b;\n}\n\nfn main() -> Int {\n  if are_equal[Int](42, 42) && is_greater[Int](10, 5) {\n    return 1;\n  }\n  return 0;\n}",
+  "tips": [
+    "Start with minimal constraints — only add what your function actually needs",
+    "Remember: T: Ord implies T: Eq (ordering requires equality)",
+    "The compiler tells you EXACTLY which constraint you're missing — read the error message",
+    "Prefer interface constraints over concrete types — T: Display, not T: Str"
+  ],
+  "common_mistakes": [
+    "Forgetting to add constraints — the compiler will help you, but it's good to think ahead",
+    "Adding unnecessary constraints — T: Ord when you only use == (use T: Eq instead)",
+    "Using concrete types as constraints — that defeats the purpose of generics"
+  ],
+  "related": [
+    "L5-07",
+    "L5-08",
+    "L5-62",
+    "L5-63"
+  ],
+  "next_lesson": "L5-07"
+}

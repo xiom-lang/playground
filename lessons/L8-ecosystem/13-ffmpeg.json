@@ -1,0 +1,37 @@
+{
+  "id": "L8-13",
+  "title": "FFmpeg Media",
+  "level": "L8",
+  "duration": "15 min",
+  "concepts": [
+    "FFmpeg",
+    "video",
+    "audio",
+    "codec",
+    "media processing",
+    "transcoding"
+  ],
+  "concept": "FFmpeg bindings for XIOM — process video and audio: decode, encode, transcode, filter, and stream media files in any format.",
+  "why": "FFmpeg is the universal media toolkit — it powers VLC, YouTube, and OBS. From video editing to streaming, FFmpeg handles all media processing needs.",
+  "theory": "## Media Processing Pipeline\n\n### Basic Transcoding\n\n```xiom\nuse xiom.ffmpeg;\n\nfn main() -> Int {\n  // Open input file\n  let input = ffmpeg::Input::open(\"input.mp4\")?;\n\n  // Set up output\n  let mut output = ffmpeg::Output::new(\"output.webm\")\n    .video_codec(\"libvpx-vp9\")\n    .audio_codec(\"libopus\")\n    .video_bitrate(1_000_000)  // 1 Mbps\n    .audio_bitrate(128_000)    // 128 kbps\n    .resolution(1920, 1080)\n    .framerate(30);\n\n  // Transcode\n  let progress = input.transcode(&mut output)?;\n  io.println(\"Transcoded: \" + progress.frames.to_str() + \" frames\");\n  return 0;\n}\n```\n\n### Video Information\n\n```xiom\nlet info = ffmpeg::probe(\"video.mp4\")?;\nio.println(\"Duration: \" + info.duration.to_str() + \"s\");\nio.println(\"Resolution: \" + info.width.to_str() + \"x\" + info.height.to_str());\nio.println(\"Codec: \" + info.video_codec);\nio.println(\"Bitrate: \" + info.bitrate.to_str() + \" bps\");\n\nfor stream in info.streams {\n  io.println(stream.codec_type.to_str() + \": \" + stream.codec_name);\n}\n```\n\n### Extracting Frames\n\n```xiom\nfn extract_thumbnail(input: &Str, output: &Str, time: Float64) -> Result<(), Error> {\n  let frame = ffmpeg::Input::open(input)?\n    .seek(time)?\n    .read_frame()?;\n\n  ffmpeg::Image::encode(frame, output, ImageFormat::Jpeg)?;\n  Ok(())\n}\n```\n\n### Video Filters\n\n```xiom\n// Apply filters\noutput.video_filter(\"scale=1280:720\");        // Resize\noutput.video_filter(\"crop=640:480:100:50\");    // Crop\noutput.video_filter(\"fps=24\");                 // Change framerate\noutput.video_filter(\"hflip\");                  // Horizontal flip\noutput.video_filter(\"drawtext=text='XIOM':x=10:y=10:fontsize=24:fontcolor=white\");\n\n// Complex filter graph\nlet filter_graph = ffmpeg::FilterGraph::new()\n  .input(\"0:v\")   // Video stream\n  .input(\"1:v\")   // Overlay\n  .filter(\"[0:v][1:v]overlay=10:10[out]\")\n  .output(\"[out]\");\n```\n\n### Audio Processing\n\n```xiom\n// Extract audio\nffmpeg::Input::open(\"video.mp4\")?\n  .output(ffmpeg::Output::new(\"audio.mp3\")\n    .audio_codec(\"libmp3lame\")\n    .no_video())\n  .transcode()?;\n\n// Normalize volume\noutput.audio_filter(\"volume=0.5\");          // Half volume\noutput.audio_filter(\"loudnorm\");            // EBU R128 normalization\n```\n\n### Streaming\n\n```xiom\n// RTMP stream to platform\nffmpeg::Input::open(\"screen_capture\")?    // Or: \"camera\", \"microphone\"\n  .output(ffmpeg::Output::new(\"rtmp://live.twitch.tv/app/stream_key\")\n    .format(\"flv\")\n    .video_codec(\"libx264\")\n    .preset(\"veryfast\"))\n  .stream()?;\n```",
+  "syntax_ref": "use xiom.ffmpeg;\n\n// Input/Output:\nlet input = ffmpeg::Input::open(\"file.mp4\")?;\nlet output = ffmpeg::Output::new(\"out.webm\");\n\n// Transcode:\ninput.transcode(&mut output)?;\n\n// Probe:\nlet info = ffmpeg::probe(\"file.mp4\")?;\n\n// Filters:\noutput.video_filter(\"scale=1280:720\");\noutput.audio_filter(\"volume=0.5\");",
+  "code_template": "// TODO: Design a media processing workflow:\n// 1. Open input.mp4\n// 2. Resize to 1280x720\n// 3. Add watermark text\n// 4. Convert to 30fps\n// 5. Output as output.mp4\n// Return the number of steps\n\nfn main() -> Int {\n  return 5;\n}",
+  "solution": "fn main() -> Int {\n  return 5;\n}",
+  "tips": [
+    "FFmpeg is CPU-intensive — use hardware acceleration when available (h264_amf, h264_nvenc)",
+    "Probing is fast and doesn't decode — use it to check file metadata before full processing",
+    "Filter order matters — scale before adding text ensures consistent text size",
+    "Always check input codec support before transcoding — some codecs require separate installation"
+  ],
+  "common_mistakes": [
+    "Not specifying output format — FFmpeg guesses from extension, sometimes incorrectly",
+    "Forgetting audio when creating video output — explicitly add .no_audio() or .audio_codec()",
+    "Setting bitrate without considering codec efficiency — VP9 needs less bitrate than H264 for same quality"
+  ],
+  "related": [
+    "L8-14",
+    "L8-17",
+    "L8-02"
+  ],
+  "next_lesson": "L8-14"
+}

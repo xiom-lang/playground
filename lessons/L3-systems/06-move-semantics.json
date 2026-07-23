@@ -1,0 +1,17 @@
+{
+  "id": "L3-06",
+  "title": "Move Semantics",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["move", "ownership transfer", "assignment", "invalidation"],
+  "narrative": "## Assignment Moves Ownership\n\nIn XIOM, assignment (`=`) **moves** ownership for non-Copy types. After a move, the original variable is invalidated and cannot be used.\n\n### Basic Move\n\n```xiom\nlet a = Vec[Int]();\na.push(1);\nlet b = a;  // MOVE: a's ownership transfers to b\n// io.println(a.len());  // COMPILER ERROR: a was moved\nio.println(b.len());     // 1 — b is the owner\n```\n\n### Move in Let Bindings\n\n```xiom\nfn create_data() -> Vec[Int] {\n  let v = Vec[Int]();\n  v.push(42);\n  return v;  // ownership moves to caller\n}\n\nlet data = create_data();  // ownership moves to data\n```\n\n### Move Through Variables\n\n```xiom\nlet x = Vec[Int]();\nx.push(1);\nlet y = x;   // x -> y\nlet z = y;   // y -> z\n// Only z is valid now\n```\n\n### Move vs Copy\n\n```xiom\n// Copy types: assignment copies\nlet a = 42;\nlet b = a;  // COPY — a is still valid\nlet c = a;  // COPY — a still valid\n\n// Non-Copy types: assignment moves\nlet v1 = Vec[Int]();\nv1.push(1);\nlet v2 = v1;  // MOVE — v1 invalid\n// let v3 = v1;  // ERROR: v1 was moved\n```\n\n### Reassignment of var\n\n```xiom\nvar x = Vec[Int]();\nx.push(1);\nx = Vec[Int]();  // old Vec dropped, x now owns new Vec\nx.push(2);\n// x owns the Vec with [2]\n```\n\n### Why Moves?\n\nMoves are cheap — only the handle (pointer, length, capacity) is copied, not the data. For Vec, that's 3 words vs potentially millions of elements.",
+  "code_template": "// TODO: demonstrate move semantics by creating a Vec, moving it twice, and using the final owner\n\n// TODO: write a function 'transfer' that takes a Vec and returns it (pass-through ownership)\n\nfn main() -> Int {\n  // TODO: create vec [10, 20, 30], move through transfer function, return sum\n  return 0;\n}",
+  "solution": "fn transfer(v: Vec[Int]) -> Vec[Int] {\n  return v;\n}\n\nfn main() -> Int {\n  let v1 = Vec[Int]();\n  v1.push(10);\n  v1.push(20);\n  v1.push(30);\n  let v2 = transfer(v1);\n  var sum = 0;\n  var i = 0;\n  while i < v2.len() {\n    sum = sum + v2[i];\n    i = i + 1;\n  }\n  return sum;\n}",
+  "tips": [
+    "After a move, the original variable is dead — the compiler rejects any use",
+    "Moves are cheap O(1): only the handle is copied (pointer, len, cap)",
+    "Returning a value from a function is also a move",
+    "Use `.clone()` if you need both the original and the copy"
+  ],
+  "related": ["L3-01", "L3-05", "L3-07", "L3-08"]
+}

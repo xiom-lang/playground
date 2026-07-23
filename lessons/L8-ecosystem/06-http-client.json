@@ -1,0 +1,37 @@
+{
+  "id": "L8-06",
+  "title": "HTTP Client",
+  "level": "L8",
+  "duration": "15 min",
+  "concepts": [
+    "HTTP",
+    "client",
+    "REST API",
+    "request",
+    "response",
+    "networking"
+  ],
+  "concept": "HTTP client with xiom.http — make GET/POST requests, handle headers, parse responses, and build API clients in XIOM.",
+  "why": "Almost every application communicates over HTTP. Whether calling REST APIs, fetching data, or posting metrics, HTTP is the backbone of modern networked software.",
+  "theory": "## Making HTTP Requests\n\n### Basic GET Request\n\n```xiom\nuse xiom.http;\n\nfn main() -> Int {\n  let response = http::get(\"https://api.example.com/users/1\")?;\n\n  io.println(\"Status: \" + response.status.to_str());\n  io.println(\"Body: \" + response.body);\n\n  if response.is_success() {\n    let user: User = json::from_str(&response.body)?;\n    process_user(&user);\n  }\n  return 0;\n}\n```\n\n### POST Request with JSON\n\n```xiom\nfn create_user(name: Str, email: Str) -> Result<User, Error> {\n  let payload = json::to_string(&{\n    name: name,\n    email: email,\n  });\n\n  let response = http::post(\"https://api.example.com/users\")\n    .header(\"Content-Type\", \"application/json\")\n    .header(\"Authorization\", \"Bearer \" + api_token)\n    .body(payload)\n    .send()?;\n\n  if !response.is_success() {\n    return Err(\"Failed to create user: \" + response.status.to_str());\n  }\n\n  return json::from_str(&response.body);\n}\n```\n\n### Request Builder\n\n```xiom\nlet client = http::Client::new()\n  .timeout(30_000)  // 30 seconds\n  .user_agent(\"MyApp/1.0\")\n  .max_redirects(5);\n\nlet response = client\n  .get(\"https://api.example.com/data\")\n  .query(\"page\", \"1\")\n  .query(\"limit\", \"50\")\n  .send()?;\n```\n\n### Error Handling\n\n```xiom\nfn fetch_with_retry(url: &Str, max_retries: Int) -> Result[Str, Error] {\n  for attempt in 0..max_retries {\n    match http::get(url) {\n      Ok(response) if response.is_success() => return Ok(response.body),\n      Ok(response) => io.eprintln(\"Server error: \" + response.status.to_str()),\n      Err(e) => io.eprintln(\"Network error: \" + e.to_str()),\n    }\n    os.sleep(2u64.pow(attempt));  // Exponential backoff\n  }\n  return Err(\"All retries failed\");\n}\n```\n\n### Async HTTP\n\n```xiom\nasync fn fetch_all(urls: &Vec[Str]) -> Vec[Str] {\n  let mut futures = Vec[Future[Str]]();\n  for url in urls {\n    futures.push(async {\n      let response = http::get(url).await?;\n      return response.body;\n    });\n  }\n  return futures::join_all(futures).await;\n}\n```",
+  "syntax_ref": "use xiom.http;\n\n// Simple:\nlet response = http::get(url)?;\nlet response = http::post(url).body(data).send()?;\n\n// Builder:\nlet client = http::Client::new().timeout(5000);\nlet response = client.get(url).header(\"Key\", \"Val\").send()?;\n\n// Inspect:\nresponse.status      // Int (200, 404, etc.)\nresponse.headers     // Map[Str, Str]\nresponse.body        // Str\nresponse.is_success() // Bool (2xx)",
+  "code_template": "// TODO: Write a function 'fetch_title' that simulates an HTTP GET\n// to a URL and returns the body if status is 200, else an error message\n// (Simulate — don't make actual HTTP calls)\n\nfn fetch_title(url: Str) -> Str {\n  // TODO: simulate HTTP status and body\n  return \"\";\n}\n\nfn main() -> Int {\n  return fetch_title(\"https://example.com\").len();\n}",
+  "solution": "fn fetch_title(url: Str) -> Str {\n  // Simulated: for known URL, return mock data\n  if url == \"https://api.example.com/title\" {\n    return \"XIOM Programming Language\";\n  }\n  return \"Unknown\";\n}\n\nfn main() -> Int {\n  return fetch_title(\"https://api.example.com/title\").len();\n}",
+  "tips": [
+    "Always check response status — 2xx is success, 4xx is client error, 5xx is server error",
+    "Use the Client builder for shared configuration (timeout, headers, auth) — reuse it across requests",
+    "Set timeouts — network requests without timeouts can hang forever",
+    "Use async HTTP for concurrent requests — sequential requests waste time"
+  ],
+  "common_mistakes": [
+    "Not checking response status — assuming 200 when server returns 500",
+    "Forgetting to set Content-Type header on POST requests — servers may reject the body",
+    "Hardcoding API tokens in source code — use environment variables or config files"
+  ],
+  "related": [
+    "L8-07",
+    "L8-05",
+    "L8-10"
+  ],
+  "next_lesson": "L8-07"
+}

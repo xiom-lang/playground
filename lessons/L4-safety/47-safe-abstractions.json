@@ -1,0 +1,36 @@
+{
+  "id": "L4-47",
+  "title": "Safe Abstractions",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "safe abstraction",
+    "unsafe wrapper",
+    "encapsulation",
+    "safe API"
+  ],
+  "concept": "Wrap unsafe code in safe abstractions with contracts — exposing only a safe API while handling all the danger internally.",
+  "why": "Unsafe code is inevitable (hardware access, FFI, performance). The art is containing it behind safe interfaces so callers can't misuse it.",
+  "theory": "## The Safe Wrapper Pattern\n\n### Unsafe Internals, Safe API\n\n```xiom\n// Internal: raw pointer with unsafe operations\npub type Buffer = {\n  ptr: *Byte;    // unsafe: raw pointer\n  len: Int;      // unsafe: must track manually\n  cap: Int;\n}\n  invariant: self.ptr != null;\n  invariant: self.len <= self.cap;\n\n// Safe API — all contracts checked, no UB possible for callers\nimpl Buffer {\n  fn new(size: Int) -> Buffer\n    requires: size > 0;\n    ensures: result.ptr != null;\n    ensures: result.len == 0;\n    ensures: result.cap == size;\n  {\n    let ptr = alloc(size);  // unsafe call\n    return Buffer{ ptr: ptr, len: 0, cap: size };\n  }\n\n  fn write(self: &mut Self, data: *Byte, n: Int)\n    requires: data != null;\n    requires: self.len + n <= self.cap;\n  {\n    // unsafe copy — but safe because contracts guarantee bounds\n    copy(self.ptr + self.len, data, n);\n    self.len = self.len + n;\n  }\n\n  fn read(self: &Self, index: Int) -> Byte\n    requires: index >= 0;\n    requires: index < self.len;\n    ensures: result == self.ptr[index];\n  {\n    return self.ptr[index];\n  }\n}\n```\n\n### The Pattern\n1. The type holds unsafe data (raw pointers)\n2. An invariant guarantees core safety\n3. Every method has contracts preventing UB\n4. Callers never see or touch the unsafe internals\n\n### Layered Safety\n```\nCaller → Safe API (contracts) → Unsafe Implementation → Hardware/FFI\n```\n\nIf a contract violation occurs, it traps at the Safe API layer — never reaching the unsafe code.",
+  "syntax_ref": "// Pattern: Safe wrapper around unsafe code\npub type SafeType = {\n  unsafe_data: *T;  // Private: callers can't access\n}\n  invariant: safety_condition;\n\nimpl SafeType {\n  // Every public method has contracts\n  fn safe_method(self: &Self, params) -> ReturnType\n    requires: safety_preconditions;\n  { /* unsafe operations, guaranteed safe by contracts */ }\n}",
+  "code_template": "// TODO: Define a safe wrapper type 'OwnedPtr' around *Int\n// invariant: ptr != null\n// Methods: new(value: Int), get(), set(value: Int)\n// All methods have contracts\n\nfn main() -> Int {\n  // TODO: Create OwnedPtr(42), get value, return it\n  return 0;\n}",
+  "solution": "pub type OwnedPtr = {\n  ptr: *Int;\n}\n  invariant: self.ptr != null;\n\nimpl OwnedPtr {\n  fn new(value: Int) -> OwnedPtr\n    ensures: result.ptr != null;\n  {\n    let p = alloc_int(value);\n    return OwnedPtr{ ptr: p };\n  }\n\n  fn get(self: &Self) -> Int\n    ensures: result == self.ptr;\n  {\n    return self.ptr;\n  }\n\n  fn set(self: &mut Self, value: Int) {\n    self.ptr = value;\n  }\n}\n\nfn alloc_int(value: Int) -> *Int {\n  let p = raw_alloc(8);  // Simplified\n  p = value;\n  return p;\n}\n\nfn main() -> Int {\n  let op = OwnedPtr::new(42);\n  return op.get();\n}",
+  "tips": [
+    "Keep unsafe blocks as SMALL as possible — the less unsafe code, the easier to audit",
+    "Every public method on a type containing unsafe data MUST have contracts",
+    "Never expose raw pointers in public APIs — wrap them",
+    "Test unsafe wrappers with fuzzing and sanitizers — trust but verify"
+  ],
+  "common_mistakes": [
+    "Exposing raw pointers in the public API — callers can bypass your safety checks",
+    "Forgetting that invariants protect the WRAPPER but not the underlying unsafe operation — both need checking",
+    "Writing too much unsafe code in one block — split into small, auditable pieces"
+  ],
+  "related": [
+    "L4-46",
+    "L4-45",
+    "L4-13",
+    "L3-01"
+  ],
+  "next_lesson": "L4-48"
+}

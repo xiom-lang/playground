@@ -1,0 +1,17 @@
+{
+  "id": "L2-25",
+  "title": "if let with Option",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["if let", "Option", "pattern matching", "concise", "some"],
+  "narrative": "## Concise Matching with if let\n\n`if let` is a shorthand for matching a single pattern. When you only care about one variant (usually `Some`), `if let` is cleaner than a full `match`.\n\n### Basic if let\n\n```xiom\nlet value: Option[Int] = Some(42);\n\nif let Some(x) = value {\n  io.println(\"Got: \" + x);\n}\n// Only executes if value is Some — and x is bound to the inner value\n```\n\n### if let vs match\n\nMatch (verbose):\n```xiom\nmatch value {\n  Some(x) => { io.println(\"Got: \" + x); }\n  None => { /* do nothing */ }\n}\n```\n\nif let (concise):\n```xiom\nif let Some(x) = value {\n  io.println(\"Got: \" + x);\n}\n```\n\n### if let with else\n\n```xiom\nfn describe(opt: Option[Int]) -> Str {\n  if let Some(n) = opt {\n    return \"Value: \" + n;\n  } else {\n    return \"Nothing\";\n  }\n}\n```\n\n### Early Returns\n\n```xiom\nfn process(maybe_data: Option[Str]) -> Int {\n  if let Some(data) = maybe_data {\n    return data.len();\n  }\n  return 0;  // None case\n}\n```\n\n### if let with Multiple Operations\n\n```xiom\nif let Some(user) = lookup_user(42) {\n  io.println(\"Welcome, \" + user.name);\n  io.println(\"ID: \" + user.id);\n}\n```",
+  "code_template": "// TODO: write a function 'greet' that takes Option[Str] and returns a greeting\n// use if let: Some(name) -> \"Hello, name!\", else -> \"Hello, Guest!\"\n\n// TODO: write a function 'double_if_positive' — takes Option[Int], doubles it if Some and > 0\n\nfn main() -> Int {\n  // TODO: call greet with Some(\"Alice\") and return text length\n  return 0;\n}",
+  "solution": "fn greet(name: Option[Str]) -> Str {\n  if let Some(n) = name {\n    return \"Hello, \" + n + \"!\";\n  } else {\n    return \"Hello, Guest!\";\n  }\n}\n\nfn double_if_positive(num: Option[Int]) -> Option[Int] {\n  if let Some(n) = num {\n    if n > 0 {\n      return Some(n * 2);\n    }\n  }\n  return None;\n}\n\nfn main() -> Int {\n  let msg = greet(Some(\"Alice\"));\n  return msg.len();\n}",
+  "tips": [
+    "Use `if let` when you only need to handle one variant — it's cleaner than match",
+    "`if let Some(x) = value` binds x to the inner value for the block's scope",
+    "Add `else` to also handle the unmatched case",
+    "`if let` works with any pattern, not just Option variants"
+  ],
+  "related": ["L2-16", "L2-23", "L2-29", "L2-31"]
+}

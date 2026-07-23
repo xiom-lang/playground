@@ -1,0 +1,17 @@
+{
+  "id": "L3-41",
+  "title": "Double Free",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["double free", "prevention", "ownership", "drop once", "safety"],
+  "narrative": "## The Compiler Prevents Double Free\n\nA **double free** occurs when the same memory is freed twice — a critical bug in C/C++. XIOM's ownership system makes double-free impossible.\n\n### Why Double Free is Dangerous\n\n```c\n// C code (dangerous)\n// void* ptr = malloc(100);\n// free(ptr);\n// free(ptr);  // DOUBLE FREE — undefined behavior, crash, or security hole\n```\n\n### How XIOM Prevents It\n\n```xiom\nlet v = Vec[Int]();\nv.push(42);\n// v owns the Vec\n// v is dropped exactly once — when it goes out of scope\n// No manual free — no possibility of double free\n```\n\n### Move Prevents Double Free\n\n```xiom\nlet a = Vec[Int]();\na.push(1);\nlet b = a;  // ownership MOVES\n// a is dead — won't be dropped\n// b will be dropped — only one drop\n// No double free possible\n```\n\n### mem.drop vs Automatic Drop\n\n```xiom\nlet v = Vec[Int]();\nv.push(1);\nmem.drop(v);  // manual drop — v is dead\n// v won't be dropped again at end of scope\n// Double free impossible\n```\n\n### Clone Creates Independent Values\n\n```xiom\nlet a = Vec[Int]();\na.push(1);\nlet b = a.clone();  // new allocation\n// a and b are independent — each dropped once\n// No double free\n```\n\n### The Guarantee\n\nEvery value in XIOM is dropped **exactly once**. The compiler tracks ownership and ensures no value is:\n- Dropped twice (double free)\n- Not dropped at all (memory leak)\n- Used after being dropped (use-after-free)",
+  "code_template": "// TODO: demonstrate that move prevents double free — write explanatory code\n\n// TODO: show that clone creates independent allocations (each dropped once)\n\nfn main() -> Int {\n  // TODO: create Vec, move it, verify only one drop occurs\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let original = Vec[Int]();\n  original.push(1);\n  let moved = original;\n  // original is dead — won't be dropped\n  // only moved is dropped — exactly one drop\n  return moved.len();\n}",
+  "tips": [
+    "Double free is impossible in safe XIOM — the compiler prevents it",
+    "Move semantics ensure exactly one owner, therefore exactly one drop",
+    "No need for manual `free` or `delete` — drop is automatic",
+    "Even `mem.drop` is safe — the value is dead after and won't drop again"
+  ],
+  "related": ["L3-40", "L3-42", "L3-20", "L3-06"]
+}

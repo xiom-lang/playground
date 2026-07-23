@@ -1,0 +1,35 @@
+{
+  "id": "L4-12",
+  "title": "Contract on Generic Functions",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": [
+    "generic contract",
+    "type parameter",
+    "constrained generic",
+    "T: Interface"
+  ],
+  "concept": "Contracts on generic functions express pre/postconditions that are checked for every concrete type instantiation.",
+  "why": "Generic code without contracts is a black box. With contracts, the compiler verifies your generic function behaves correctly for ALL types.",
+  "theory": "## Contracts with Type Parameters\n\n```xiom\nfn max[T: Ord](a: T, b: T) -> T\n  ensures: result == a || result == b;\n  ensures: result >= a && result >= b;\n{ if a > b { return a; } return b; }\n```\n\nThe contract applies regardless of whether T is Int, Float64, or a custom type.\n\n### Contracts with Multiple Type Params\n```xiom\nfn zip_first[T, U](a: &Vec[T], b: &Vec[U]) -> (T, U)\n  requires: a.len() > 0;\n  requires: b.len() > 0;\n{ return (a[0], b[0]); }\n```\n\n### Generic Constraints in Contracts\n```xiom\nfn find[T: Eq](items: &Vec[T], target: T) -> Option[Int]\n  ensures: match result {\n    Some(idx) => idx >= 0 && idx < items.len() && items[idx] == target,\n    None => true,\n  };\n{\n  for i in 0..items.len() {\n    if items[i] == target { return Some(i); }\n  }\n  return None();\n}\n```\n\n### Where Contracts Shine\nWithout contracts, generic functions are hard to trust. With contracts, they're verified for every instantiation.",
+  "syntax_ref": "fn name[T: Constraint](params) -> ReturnType\n  requires: condition;\n  ensures: condition_about_result;\n{ /* body works for any T satisfying Constraint */ }",
+  "code_template": "// TODO: Write a generic function 'count_greater' that takes &Vec[T] and T threshold\n// T must support Ord (comparison)\n// ensures: result >= 0 (count is non-negative)\n// Counts how many elements are greater than threshold\n\nfn main() -> Int {\n  // TODO: Test with Vec[Int] = [1,5,3,7,2], threshold 3, return count\n  return 0;\n}",
+  "solution": "fn count_greater[T: Ord](items: &Vec[T], threshold: T) -> Int\n  ensures: result >= 0;\n  ensures: result <= items.len();\n{\n  var count = 0;\n  for item in items {\n    if item > threshold { count = count + 1; }\n  }\n  return count;\n}\n\nfn main() -> Int {\n  let v = Vec[Int]();\n  v.push(1); v.push(5); v.push(3); v.push(7); v.push(2);\n  return count_greater[Int](&v, 3);\n}",
+  "tips": [
+    "Contracts on generic functions are type-checked against the constraints",
+    "Use multiple simple ensures rather than complex expressions",
+    "The contract is monomorphized along with the function — zero cost for each concrete type"
+  ],
+  "common_mistakes": [
+    "Using operations in contracts that aren't guaranteed by the type constraint",
+    "Forgetting that generic contracts must work for ALL types satisfying the constraint",
+    "Writing contracts that reference concrete type details"
+  ],
+  "related": [
+    "L4-06",
+    "L5-01",
+    "L5-06",
+    "L5-61"
+  ],
+  "next_lesson": "L4-13"
+}

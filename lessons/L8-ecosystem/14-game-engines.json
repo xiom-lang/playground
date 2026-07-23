@@ -1,0 +1,37 @@
+{
+  "id": "L8-14",
+  "title": "Game Engines",
+  "level": "L8",
+  "duration": "20 min",
+  "concepts": [
+    "game engine",
+    "ECS",
+    "rendering",
+    "physics",
+    "game loop",
+    "asset pipeline"
+  ],
+  "concept": "Building game engines with XIOM — entity-component systems, rendering pipelines, physics integration, and the game loop pattern.",
+  "why": "Game development pushes systems programming to its limits. XIOM's performance, safety, and low-level control make it ideal for game engines and real-time applications.",
+  "theory": "## Building a Game from Scratch\n\n### The Game Loop\n\n```xiom\npub type Game = {\n  running: Bool;\n  window: Window;\n  world: World;\n  renderer: Renderer;\n  delta_time: Float64;\n}\n\nimpl Game {\n  fn run(self: &mut Game) {\n    while self.running && !self.window.should_close() {\n      let frame_start = time::now();\n\n      self.handle_input();\n      self.update(self.delta_time);\n      self.render();\n\n      self.window.swap_buffers();\n      glfw::poll_events();\n\n      self.delta_time = time::now() - frame_start;\n    }\n  }\n}\n```\n\n### Entity Component System (ECS)\n\n```xiom\n// Components are plain data\npub type Position = { x: Float64; y: Float64; }\npub type Velocity = { dx: Float64; dy: Float64; }\npub type Sprite = { texture_id: Int; width: Float64; height: Float64; }\npub type Health = { current: Int; max: Int; }\n\n// Systems process components\nfn movement_system(world: &mut World) {\n  for (pos, vel) in world.query::<(&mut Position, &Velocity)>() {\n    pos.x = pos.x + vel.dx * delta_time;\n    pos.y = pos.y + vel.dy * delta_time;\n  }\n}\n\nfn render_system(world: &World, renderer: &Renderer) {\n  for (pos, sprite) in world.query::<(&Position, &Sprite)>() {\n    renderer.draw_sprite(sprite.texture_id, pos.x, pos.y, sprite.width, sprite.height);\n  }\n}\n\nfn health_system(world: &mut World) {\n  for (_, health) in world.query::<(&(), &Health)>() {\n    if health.current <= 0 {\n      // Entity dies — remove it from world\n    }\n  }\n}\n\n// Spawn entities\nfn spawn_player(world: &mut World, x: Float64, y: Float64) {\n  world.spawn()\n    .with(Position{ x: x, y: y })\n    .with(Velocity{ dx: 0.0, dy: 0.0 })\n    .with(Sprite{ texture_id: 0, width: 32.0, height: 32.0 })\n    .with(Health{ current: 100, max: 100 });\n}\n```\n\n### Input Handling\n\n```xiom\nfn input_system(world: &mut World, input: &Input) {\n  let player = world.get_entity(\"player\")?;\n  let mut vel = world.get_mut::<Velocity>(player)?;\n\n  vel.dx = 0.0;\n  vel.dy = 0.0;\n\n  if input.is_key_held(Key::A) { vel.dx = vel.dx - 300.0; }\n  if input.is_key_held(Key::D) { vel.dx = vel.dx + 300.0; }\n  if input.is_key_held(Key::W) { vel.dy = vel.dy - 300.0; }\n  if input.is_key_held(Key::S) { vel.dy = vel.dy + 300.0; }\n\n  // Normalize diagonal movement\n  if vel.dx != 0.0 && vel.dy != 0.0 {\n    let mag = (vel.dx * vel.dx + vel.dy * vel.dy).sqrt();\n    vel.dx = vel.dx / mag * 300.0;\n    vel.dy = vel.dy / mag * 300.0;\n  }\n}\n```\n\n### Asset Pipeline\n\n```xiom\npub type AssetManager = {\n  textures: HashMap[Str, Texture];\n  sounds: HashMap[Str, Sound];\n  shaders: HashMap[Str, Shader];\n}\n\nimpl AssetManager {\n  fn load_texture(self: &mut AssetManager, name: &Str, path: &Str) {\n    let data = fs::read_bytes(path)?;\n    let texture = Texture::from_png(&data)?;\n    self.textures.insert(name, texture);\n  }\n\n  fn get_texture(self: &AssetManager, name: &Str) -> &Texture {\n    return self.textures.get(name).unwrap();\n  }\n}\n```\n\n### Physics (Simple)\n\n```xiom\nfn collision_system(world: &mut World) {\n  let entities = world.query::<(&Position, &Collider)>().collect();\n  for i in 0..entities.len() {\n    for j in (i + 1)..entities.len() {\n      if check_collision(entities[i], entities[j]) {\n        resolve_collision(world, entities[i].id, entities[j].id);\n      }\n    }\n  }\n}\n```",
+  "syntax_ref": "// Game loop:\nwhile running {\n  handle_input();\n  update(delta_time);\n  render();\n}\n\n// ECS:\nworld.spawn().with(Position{...}).with(Velocity{...});\nfor (pos, vel) in world.query::<(&mut Position, &Velocity)>() { /* ... */ }",
+  "code_template": "// Design a simple game with ECS:\n// Components: Position, Velocity, Health, Enemy\n// Systems: movement, collision, health_check\n// How many components and systems?\n\nfn main() -> Int {\n  return 4 + 3;  // 4 components + 3 systems = 7\n}",
+  "solution": "fn main() -> Int {\n  return 7;\n}",
+  "tips": [
+    "ECS separates data (components) from behavior (systems) — clean, cache-friendly, composable",
+    "Fixed timestep for physics, variable timestep for rendering — prevents physics glitches at different frame rates",
+    "Object pooling reduces allocation — pre-allocate bullets, particles, enemies",
+    "Profile early — games hit performance limits quickly, know where your frame time goes"
+  ],
+  "common_mistakes": [
+    "Physics at variable timestep — causes inconsistent behavior and tunneling",
+    "Not capping delta_time — a lag spike shouldn't teleport entities",
+    "Putting logic in components — components are DATA, systems are LOGIC"
+  ],
+  "related": [
+    "L8-02",
+    "L8-03",
+    "L8-04"
+  ],
+  "next_lesson": "L8-15"
+}

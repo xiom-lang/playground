@@ -1,0 +1,36 @@
+{
+  "id": "L5-14",
+  "title": "Implementing Interfaces",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "interface implementation",
+    "impl",
+    "method satisfaction",
+    "conformance"
+  ],
+  "concept": "Implement interfaces for your types by providing method bodies that satisfy the interface's signatures — making your types usable with generic code.",
+  "why": "Implementation is where interfaces come alive. Without implementations, interfaces are just signatures. With them, your types gain capabilities.",
+  "theory": "## Implementing an Interface\n\n### Step-by-Step\n\n1. Define the interface\n2. Define your type\n3. Write the impl block\n4. Provide all required methods\n\n```xiom\npub interface Greet {\n  fn greeting(self: &Self) -> Str;\n}\n\npub type User = { name: Str; }\n\nimpl Greet for User {\n  fn greeting(self: &User) -> Str {\n    return \"Hello, \" + self.name + \"!\";\n  }\n}\n```\n\n### Implementing Multiple Interfaces\n```xiom\npub type Counter = { value: Int; }\n\nimpl Display for Counter {\n  fn to_str(self: &Counter) -> Str {\n    return \"Counter(\" + self.value.to_str() + \")\";\n  }\n}\n\nimpl Eq for Counter {\n  fn equals(self: &Counter, other: &Counter) -> Bool {\n    return self.value == other.value;\n  }\n}\n\nimpl Default for Counter {\n  fn default() -> Counter {\n    return Counter{ value: 0 };\n  }\n}\n```\n\n### Generic Implementations\n```xiom\nimpl Display for Vec[T]\n  where T: Display;\n{\n  fn to_str(self: &Vec[T]) -> Str {\n    var s = \"[\";\n    for i in 0..self.len() {\n      if i > 0 { s = s + \", \"; }\n      s = s + self[i].to_str();\n    }\n    s = s + \"]\";\n    return s;\n  }\n}\n```\n\n### The Compiler Checks\n- ALL required methods are implemented\n- Method signatures match exactly\n- No missing methods",
+  "syntax_ref": "impl InterfaceName for MyType {\n  fn method(self: &MyType, params) -> ReturnType {\n    // implementation\n  }\n}\n\n// With constraints:\nimpl InterfaceName for MyType[T]\n  where T: SomeConstraint;\n{ /* ... */ }",
+  "code_template": "// TODO: Implement Display for a 'Temperature' type (value: Float64, unit: Str)\n// to_str returns: \"value°unit\" like \"25.0°C\"\n// Also implement Eq — two temperatures equal if same value AND same unit\n\nfn main() -> Int {\n  // TODO: Create two temperatures, compare, return 1 if equal\n  return 0;\n}",
+  "solution": "pub type Temperature = { value: Float64; unit: Str; }\n\nimpl Display for Temperature {\n  fn to_str(self: &Temperature) -> Str {\n    return self.value.to_str() + \"°\" + self.unit;\n  }\n}\n\nimpl Eq for Temperature {\n  fn equals(self: &Temperature, other: &Temperature) -> Bool {\n    return self.value == other.value && self.unit == other.unit;\n  }\n}\n\nfn main() -> Int {\n  let t1 = Temperature{ value: 25.0, unit: \"C\" };\n  let t2 = Temperature{ value: 25.0, unit: \"C\" };\n  if t1 == t2 { return 1; }\n  return 0;\n}",
+  "tips": [
+    "Use impl blocks to organize related implementations — one block per interface",
+    "The compiler error for missing methods tells you EXACTLY what's needed",
+    "Implement interfaces close to either the type definition or the interface definition",
+    "Generic impl blocks let you implement an interface for infinite types at once"
+  ],
+  "common_mistakes": [
+    "Forgetting the 'for TypeName' part: `impl Display { ... }` is wrong",
+    "Method signature mismatch — the compiler is strict about exact matching",
+    "Implementing interface methods that don't follow the interface's intended semantics"
+  ],
+  "related": [
+    "L5-12",
+    "L5-13",
+    "L5-15",
+    "L5-06"
+  ],
+  "next_lesson": "L5-15"
+}

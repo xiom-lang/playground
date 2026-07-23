@@ -1,0 +1,36 @@
+{
+  "id": "L5-15",
+  "title": "Interface Composition",
+  "level": "L5",
+  "duration": "10 min",
+  "concepts": [
+    "interface composition",
+    "multiple interfaces",
+    "composability",
+    "capability stacking"
+  ],
+  "concept": "Types can implement many interfaces simultaneously — composing capabilities like Eq + Display + Clone without any hierarchy.",
+  "why": "Interface composition gives you the power of multiple inheritance without the complexity. A type can be Eq AND Display AND Clone — independent capabilities.",
+  "theory": "## Building Complex Types from Simple Interfaces\n\n```xiom\npub type User = {\n  id: Int;\n  name: Str;\n  email: Str;\n}\n\nimpl Eq for User { /* ... */ }\nimpl Display for User { /* ... */ }\nimpl Clone for User { /* ... */ }\nimpl Hash for User { /* ... */ }\nimpl Ord for User { /* ... */ }\n```\n\nNow User can be used wherever any of these interfaces are required:\n\n```xiom\n// As a HashMap key (needs Eq + Hash)\nlet map: Map[User, Str] = Map();\n\n// In sorted collections (needs Ord)\nlet sorted_users: Set[User] = Set();\n\n// Displayed (needs Display)\nio.println(user.to_str());\n\n// Cloned (needs Clone)\nlet copy = user.clone();\n```\n\n### Composition vs Inheritance\n```\nInterfaces (XIOM):  Type can implement Eq, Display, Clone — pick and choose\nInheritance (OOP):   Type IS a subclass of ONE parent — forced hierarchy\n```\n\n### Checking Interface Conformance\n```xiom\nfn needs_eq[T: Eq](a: &T, b: &T) -> Bool { return a == b; }\nfn needs_display[T: Display](value: &T) { io.println(value.to_str()); }\nfn needs_both[T: Eq + Display](a: &T, b: &T) {\n  if a == b { io.println(\"equal: \" + a.to_str()); }\n  else { io.println(\"not equal\"); }\n}\n```",
+  "syntax_ref": "// A type can implement many interfaces:\nimpl InterfaceA for MyType { /* ... */ }\nimpl InterfaceB for MyType { /* ... */ }\nimpl InterfaceC for MyType { /* ... */ }\n\n// Functions can require multiple:\nfn func[T: InterfaceA + InterfaceB](param: T) { /* ... */ }",
+  "code_template": "// TODO: Define a 'Student' type with name: Str, grade: Int\n// Implement Eq (by name), Display, and Ord (by grade)\n// Write a function that takes Vec[Student] and returns the highest grade\n\nfn main() -> Int {\n  // TODO: Create 3 students, find highest grade, return it\n  return 0;\n}",
+  "solution": "pub type Student = {\n  name: Str;\n  grade: Int;\n}\n\nimpl Eq for Student {\n  fn equals(self: &Student, other: &Student) -> Bool { return self.name == other.name; }\n}\n\nimpl Display for Student {\n  fn to_str(self: &Student) -> Str { return self.name + \" (\" + self.grade.to_str() + \")\"; }\n}\n\nimpl Ord for Student {\n  fn compare(self: &Student, other: &Student) -> Ordering {\n    if self.grade < other.grade { return Ordering::Less; }\n    if self.grade > other.grade { return Ordering::Greater; }\n    return Ordering::Equal;\n  }\n}\n\nfn main() -> Int {\n  let s1 = Student{ name: \"Alice\", grade: 85 };\n  let s2 = Student{ name: \"Bob\", grade: 92 };\n  let s3 = Student{ name: \"Carol\", grade: 78 };\n  if s2 > s1 && s2 > s3 { return s2.grade; }\n  return 0;\n}",
+  "tips": [
+    "Compose interfaces freely — there's no limit to how many a type can implement",
+    "Think of interfaces as 'tags' describing what a type CAN DO",
+    "Interface composition is the XIOM way to achieve polymorphism without inheritance",
+    "A type's capabilities are the sum of ALL interfaces it implements"
+  ],
+  "common_mistakes": [
+    "Trying to create interface hierarchies — composition is preferred",
+    "Forgetting to implement ALL methods of an interface",
+    "Implementing conflicting semantics across interfaces (e.g., Eq says equal, Ord says different)"
+  ],
+  "related": [
+    "L5-07",
+    "L5-12",
+    "L5-14",
+    "L5-66"
+  ],
+  "next_lesson": "L5-16"
+}

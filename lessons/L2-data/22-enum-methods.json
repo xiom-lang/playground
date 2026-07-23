@@ -1,0 +1,17 @@
+{
+  "id": "L2-19",
+  "title": "Enum Methods",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["enum", "method", "self", "fn TypeName.Variant.method", "behavior"],
+  "narrative": "## Methods on Enums\n\nYou can define methods on enums just like structs. Self-receiving methods work on any variant, making enums as powerful as structs for organizing behavior.\n\n### Defining Enum Methods\n\n```xiom\npub type Shape = enum {\n  Circle(radius: Float64),\n  Rect(w: Float64, h: Float64),\n}\n\nfn Shape.area(self: &Shape) -> Float64 {\n  match self {\n    Circle(radius) => { return 3.14159 * radius * radius; }\n    Rect(w, h) => { return w * h; }\n  }\n}\n```\n\n### Calling Enum Methods\n\n```xiom\nlet c = Shape.Circle(5.0);\nlet r = Shape.Rect(4.0, 6.0);\nlet a1 = c.area();  // 78.53...\nlet a2 = r.area();  // 24.0\n```\n\n### Method on Simple Enums\n\n```xiom\npub type TrafficLight = enum {\n  Red, Yellow, Green,\n}\n\nfn TrafficLight.next(self: &TrafficLight) -> TrafficLight {\n  match self {\n    Red => { return TrafficLight.Green; }\n    Yellow => { return TrafficLight.Red; }\n    Green => { return TrafficLight.Yellow; }\n  }\n}\n\nfn TrafficLight.duration(self: &TrafficLight) -> Int {\n  match self {\n    Red => { return 30; }\n    Yellow => { return 5; }\n    Green => { return 25; }\n  }\n}\n```\n\n### Mutable Methods\n\n```xiom\npub type Counter = enum {\n  Active(count: Int),\n  Paused(count: Int),\n}\n\nfn Counter.increment(self: &mut Counter) -> Unit {\n  match self {\n    Active(count) => { *count = *count + 1; }\n    Paused(count) => { /* paused: ignore increment */ }\n  }\n}\n```\n\n### Method Chaining\n\n```xiom\nlet result = Shape.Circle(5.0).area();\n```",
+  "code_template": "// TODO: define a Payment enum: Cash, Card(provider: Str), Crypto(coin: Str)\n\n// TODO: add method 'fee' that returns: Cash -> 0.0, Card -> 0.03, Crypto -> 0.01\n\n// TODO: add method 'description' that returns a human-readable string\n\nfn main() -> Int {\n  // TODO: create all three, return total fees * 100 as Int\n  return 0;\n}",
+  "solution": "pub type Payment = enum {\n  Cash,\n  Card(provider: Str),\n  Crypto(coin: Str),\n}\n\nfn Payment.fee(self: &Payment) -> Float64 {\n  match self {\n    Cash => { return 0.0; }\n    Card(_) => { return 0.03; }\n    Crypto(_) => { return 0.01; }\n  }\n}\n\nfn Payment.description(self: &Payment) -> Str {\n  match self {\n    Cash => { return \"Cash payment\"; }\n    Card(provider) => { return \"Card: \" + provider; }\n    Crypto(coin) => { return \"Crypto: \" + coin; }\n  }\n}\n\nfn main() -> Int {\n  let p1 = Payment.Cash;\n  let p2 = Payment.Card(\"Visa\");\n  let p3 = Payment.Crypto(\"BTC\");\n  let total = p1.fee() + p2.fee() + p3.fee();\n  return (total * 100.0) as Int;\n}",
+  "tips": [
+    "Enum methods work on all variants — use match to handle each case",
+    "Method names are global per type — reuse the same method name across types",
+    "Use `&self` for read-only, `&mut self` for mutation, `self` for ownership consumption",
+    "Enum methods keep behavior close to the data, just like struct methods"
+  ],
+  "related": ["L2-07", "L2-14", "L2-16", "L1-03"]
+}

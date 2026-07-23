@@ -1,0 +1,17 @@
+{
+  "id": "L2-07",
+  "title": "Struct Derive: Debug",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["derive", "Debug", "debug print", "formatting", "display"],
+  "narrative": "## Debug Printing Structs\n\nWhen debugging, you need to inspect struct values. Without a display implementation, printing a struct directly doesn't work. Use `derive[Debug]` to get automatic debug formatting.\n\n### Without Debug\n\n```xiom\npub type Point = { x: Int; y: Int; }\n\nlet p = Point{ x: 1, y: 2 };\n// io.println(p);  // ERROR: cannot print Point\n```\n\n### With Debug\n\n```xiom\npub type Point = { x: Int; y: Int; } derive[Debug]\n\nlet p = Point{ x: 1, y: 2 };\nio.debug(p);  // prints: Point{ x: 1, y: 2 }\n```\n\n`io.debug()` outputs the struct name and all field names with their values.\n\n### Debug Format\n\nThe output format is `TypeName{ field: value, ... }` — matching the syntax you'd use to create the struct. This makes it easy to copy-paste values during debugging.\n\n```xiom\npub type User = {\n  name: Str;\n  email: Str;\n  active: Bool;\n} derive[Debug]\n\nlet u = User{ name: \"Alice\", email: \"alice@example.com\", active: true };\nio.debug(u);\n// User{ name: \"Alice\", email: \"alice@example.com\", active: true }\n```\n\n### Nested Structs\n\nInner structs must also implement Debug:\n\n```xiom\npub type Address = { city: Str; zip: Int; } derive[Debug]\npub type Person = { name: Str; address: Address; } derive[Debug]\n\nlet p = Person{\n  name: \"Bob\",\n  address: Address{ city: \"Rome\", zip: 100 }\n};\nio.debug(p);\n// Person{ name: \"Bob\", address: Address{ city: \"Rome\", zip: 100 } }\n```\n\n### Debug vs Display\n\n- **Debug**: for developers, shows internal structure — `io.debug(value)`\n- **Display**: for users, shows formatted output — needs manual implementation",
+  "code_template": "// TODO: define a Task struct with title (Str), done (Bool), priority (Int) derive Debug\n\n// TODO: create three tasks with different priorities\n\n// TODO: use io.debug to print the highest priority task\n\nfn main() -> Int {\n  // TODO: return the priority of the task with the highest priority\n  return 0;\n}",
+  "solution": "pub type Task = {\n  title: Str;\n  done: Bool;\n  priority: Int;\n} derive[Debug]\n\nfn main() -> Int {\n  let t1 = Task{ title: \"Write report\", done: false, priority: 2 };\n  let t2 = Task{ title: \"Fix bug\", done: false, priority: 5 };\n  let t3 = Task{ title: \"Refactor\", done: true, priority: 1 };\n  io.debug(t2);\n  return t2.priority;\n}",
+  "tips": [
+    "Add `derive[Debug]` to every struct during development — it's invaluable for debugging",
+    "Use `io.debug(value)` for developer-facing output, not `io.println()`",
+    "All nested types in the struct must also implement Debug",
+    "Debug output matches the struct literal syntax for easy copy-paste"
+  ],
+  "related": ["L2-01", "L2-08", "L2-09", "L0-08"]
+}

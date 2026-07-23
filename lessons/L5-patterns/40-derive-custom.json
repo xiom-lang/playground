@@ -1,0 +1,36 @@
+{
+  "id": "L5-40",
+  "title": "Custom Derive Macros",
+  "level": "L5",
+  "duration": "15 min",
+  "concepts": [
+    "custom derive",
+    "proc macro",
+    "code generation",
+    "meta-programming",
+    "AST"
+  ],
+  "concept": "Custom derive macros let you write your own code generators — write once, apply to hundreds of types with a single #[derive(MyTrait)] annotation.",
+  "why": "When standard derives don't cover your use case, custom derives let you encode your project's patterns as reusable macros — DRY at the type-system level.",
+  "theory": "## Writing Your Own Derive\n\n```xiom\n// Define a custom interface\npub interface Validate {\n  fn validate(self: &Self) -> Vec[Str];  // Returns validation errors\n}\n\n// Write a derive macro for it\n#[derive_macro(Validate)]\npub fn derive_validate(input: TypeDefinition) -> Code {\n  let fields = input.fields();\n  var code = Code::new();\n\n  code.add(\"impl Validate for ${input.name} {\");\n  code.add(\"  fn validate(self: &Self) -> Vec[Str] {\");\n  code.add(\"    var errors = Vec[Str]();\");\n\n  for field in fields {\n    if field.has_attribute(\"validate\") {\n      let check = field.get_attribute(\"validate\");\n      code.add(\"    if !(${check}) { errors.push(\\\"field ${field.name} failed validation\\\"); }\");\n    }\n  }\n\n  code.add(\"    return errors;\");\n  code.add(\"  }\");\n  code.add(\"}\");\n\n  return code.build();\n}\n```\n\n### Using the Custom Derive\n\n```xiom\n#[derive(Validate)]\npub type User = {\n  #[validate(self.len() >= 3)]\n  name: Str;\n\n  #[validate(self > 0 && self < 150)]\n  age: Int;\n\n  email: Str;  // No validation\n}\n```\n\n### When to Write Custom Derives\n\n1. **Project-wide patterns**: serialize, deserialize, validate, log\n2. **Domain interfaces**: every type needs EntityId, Timestamped, Auditable\n3. **Code generation**: boilerplate that appears in many impl blocks\n4. **Meta-programming**: type-level computations, compile-time reflection\n\n### Derive vs Regular Macro\n\n```xiom\n// Derive macro: applied to type definition\nderive!(MyType, MyInterface);  // Or #[derive(MyInterface)]\n\n// Regular macro: applied to code\nmacro_rules! validate {\n  ($struct:ident { $($field:ident: $type:ty),* }) => { /* ... */ };\n}\n```\n\nDerive macros have access to the type's AST (field names, types, attributes). Regular macros have access to token streams only.",
+  "syntax_ref": "// Defining:\n#[derive_macro(MyInterface)]\npub fn my_derive(input: TypeDefinition) -> Code {\n  // Generate implementation\n  return code;\n}\n\n// Using:\n#[derive(MyInterface)]\npub type MyType = { ... };",
+  "code_template": "// TODO: Define an interface 'Describe' with fn describe() -> Str\n// Write a simple description of how a custom derive for it would work\n// (No actual macro code needed — describe the concept in comments)\n\nfn main() -> Int {\n  // Return a constant representing understanding\n  return 42;\n}",
+  "solution": "// The Describe interface provides a human-readable type description\npub interface Describe {\n  fn describe() -> Str;\n}\n\n// A custom derive for Describe would:\n// 1. Read the struct definition from the AST\n// 2. For each field, generate a description like \"field_name: field_type\"\n// 3. Combine all field descriptions into a single string\n// 4. Generate the impl Describe block\n\nimpl Describe for Int {\n  fn describe() -> Str { return \"a whole number\"; }\n}\n\nfn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Custom derives are for PROJECT-LEVEL patterns — not one-off implementations",
+    "Derive macros operate on type definitions — they have access to field names and types",
+    "Test your derive with multiple types — empty struct, single field, many fields, generics",
+    "Attribute annotations (#[validate(...)]) let callers customize derive behavior per field"
+  ],
+  "common_mistakes": [
+    "Writing a custom derive for something that can be a generic function — derives are for type-level code gen",
+    "Not handling generic types in the derive — #[derive(MyTrait)] on MyType[T] should work",
+    "Forgetting to handle edge cases: zero-field structs, unit enums, tuple structs"
+  ],
+  "related": [
+    "L5-39",
+    "L5-41",
+    "L2-01"
+  ],
+  "next_lesson": "L5-41"
+}

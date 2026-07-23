@@ -1,0 +1,17 @@
+{
+  "id": "L6-04",
+  "title": "Private by Default",
+  "level": 6,
+  "duration": "8 min",
+  "concepts": ["private", "encapsulation", "default visibility", "information hiding"],
+  "concept": "All items in XIOM are private unless explicitly marked `pub`",
+  "why": "Private-by-default is a deliberate design choice that enforces encapsulation at the language level. It means you must consciously decide what to expose, rather than accidentally leaking implementation details. This principle has been validated by decades of software engineering: tight interfaces with hidden internals produce more maintainable, evolvable systems.",
+  "theory": "In XIOM, every function, struct field, enum variant, constant, and type alias is private to its declaring module by default. This applies recursively: a public function in a private module is inaccessible; a public struct with private fields can be instantiated but not destructured. The compiler enforces these rules at the module boundary. Unlike some languages where 'private' means 'file-private', XIOM's privacy is module-scoped — child modules cannot access parent private items, but parent modules can access child `pub` items.",
+  "syntax_ref": "fn helper() { }           // private (default)\npub fn api_function() { }  // public\n\nstruct Inner {\n    data: Int,              // private field (default)\n    pub label: Str,         // public field\n}",
+  "code_template": "mod internal {\n    // This is private — only visible inside `internal`\n    fn secret_formula() -> Int {\n        return 42\n    }\n\n    // This is public — accessible from outside\n    pub fn get_answer() -> Int {\n        return secret_formula()\n    }\n}\n\nfn main() {\n    let answer = internal::get_answer()\n    io.println(\"Answer: {answer}\")\n}",
+  "solution": "mod bank {\n    var balance: Int = 0\n\n    pub fn deposit(amount: Int) {\n        balance = balance + amount\n    }\n\n    pub fn withdraw(amount: Int) -> Bool {\n        if balance >= amount {\n            balance = balance - amount\n            return true\n        }\n        return false\n    }\n\n    pub fn get_balance() -> Int {\n        return balance\n    }\n}\n\nfn main() {\n    bank::deposit(100)\n    bank::withdraw(30)\n    io.println(\"Balance: {bank::get_balance()}\")\n}",
+  "tips": ["Treat privacy as a design tool, not a restriction", "Private helpers make refactoring safe — change them freely", "Use `pub` as documentation: it signals 'this is the contract'"],
+  "common_mistakes": ["Trying to access private fields from outside the module", "Making everything public just to make code compile", "Assuming child modules inherit parent visibility"],
+  "related": ["L6-03-pub-visibility", "L6-01-module-system", "L4-safety"],
+  "next_lesson": "L6-05"
+}

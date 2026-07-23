@@ -1,0 +1,17 @@
+{
+  "id": "L2-16",
+  "title": "Enum Derive: Eq/Clone",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["enum", "derive", "Eq", "Clone", "comparison", "copy"],
+  "narrative": "## Comparing and Copying Enums\n\nEnums support the same `derive` attributes as structs. `Eq` enables comparison, and `Clone` enables deep copying.\n\n### Deriving Eq\n\n```xiom\npub type Direction = enum {\n  North, South, East, West,\n} derive[Eq]\n\nlet a = Direction.North;\nlet b = Direction.North;\nlet c = Direction.South;\n\na == b;  // true\na == c;  // false\n```\n\n### Eq with Data Variants\n\n```xiom\npub type Shape = enum {\n  Circle(radius: Float64),\n  Rect(w: Float64, h: Float64),\n} derive[Eq]\n\nlet c1 = Shape.Circle(5.0);\nlet c2 = Shape.Circle(5.0);\nlet c3 = Shape.Circle(3.0);\n\nc1 == c2;  // true — same variant, same data\nc1 == c3;  // false — same variant, different data\n```\n\nEquality requires both the same **variant** AND the same **data**.\n\n### Deriving Clone\n\n```xiom\npub type Status = enum {\n  Active(name: Str),\n  Inactive,\n} derive[Clone]\n\nlet s1 = Status.Active(\"Alice\");\nlet s2 = s1.clone();  // deep copy\n// Both s1 and s2 are usable\n```\n\n### Combining Derives\n\n```xiom\npub type Color = enum {\n  RGB(r: Int, g: Int, b: Int),\n  HSL(h: Float64, s: Float64, l: Float64),\n} derive[Eq, Clone, Debug, Hash, Ord]\n```\n\n### Eq for Control Flow\n\n```xiom\nfn is_weekend(day: &Day) -> Bool {\n  return day == &Day.Saturday || day == &Day.Sunday;\n}\n```",
+  "code_template": "// TODO: define a Move enum: Up, Down, Left, Right with derive Eq, Clone\n\n// TODO: write a function 'opposite' that returns the opposite direction\n\n// TODO: write a function 'is_vertical' that returns true for Up/Down\n\nfn main() -> Int {\n  // TODO: create all four moves, clone Up, check if clone equals original, return 1 if so\n  return 0;\n}",
+  "solution": "pub type Move = enum {\n  Up,\n  Down,\n  Left,\n  Right,\n} derive[Eq, Clone]\n\nfn opposite(m: &Move) -> Move {\n  match m {\n    Up => { return Move.Down; }\n    Down => { return Move.Up; }\n    Left => { return Move.Right; }\n    Right => { return Move.Left; }\n  }\n}\n\nfn is_vertical(m: &Move) -> Bool {\n  return m == &Move.Up || m == &Move.Down;\n}\n\nfn main() -> Int {\n  let up = Move.Up;\n  let cloned = up.clone();\n  if up == cloned {\n    return 1;\n  }\n  return 0;\n}",
+  "tips": [
+    "`derive[Eq]` requires all variant data types to also implement Eq",
+    "Two enum values are equal only if both the variant and all data match",
+    "`derive[Clone]` is needed to copy enums with heap-allocated data (Str, Vec)",
+    "Add Eq and Clone to most enums — they're almost always useful"
+  ],
+  "related": ["L2-14", "L2-08", "L2-09", "L2-16"]
+}

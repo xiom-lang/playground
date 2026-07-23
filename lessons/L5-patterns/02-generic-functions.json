@@ -1,0 +1,34 @@
+{
+  "id": "L5-02",
+  "title": "Generic Functions",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "generic function",
+    "fn foo[T]",
+    "type parameter",
+    "square brackets"
+  ],
+  "concept": "Generic functions use type parameters to work with multiple types — write once, use with any type that satisfies the constraints.",
+  "why": "The most common form of generics. Every time you find yourself copying a function to change the type, a generic function is the answer.",
+  "theory": "## Writing Generic Functions\n\n### Basic Syntax\n```xiom\nfn identity[T](x: T) -> T {\n  return x;\n}\n```\n\n### With Type Constraints\n```xiom\nfn smaller[T: Ord](a: T, b: T) -> T {\n  if a < b { return a; }\n  return b;\n}\n```\n\n### Generic Functions with Multiple Params\n```xiom\nfn swap[T](pair: (T, T)) -> (T, T) {\n  return (pair.1, pair.0);\n}\n\nfn zip_with[A, B, C](a: &Vec[A], b: &Vec[B], f: fn(A, B) -> C) -> Vec[C]\n  requires: a.len() == b.len();\n{\n  var result = Vec[C]();\n  for i in 0..a.len() {\n    result.push(f(a[i], b[i]));\n  }\n  return result;\n}\n```\n\n### Type Inference at Call Sites\n```xiom\nlet a = identity(42);       // T inferred as Int\nlet b = identity(\"hello\");  // T inferred as Str\nlet c = identity[Bool](true); // T explicitly Bool\n```\n\n### Generic Functions with Methods\n```xiom\nfn describe[T: Display](value: &T) -> Str {\n  return \"Value: \" + value.to_str();\n}\n```",
+  "syntax_ref": "fn name[T](param: T) -> T { /* body */ }\nfn name[T: Constraint](param: T) -> ReturnType { /* body */ }",
+  "code_template": "// TODO: Write a generic function 'wrap_in_vec' that takes T and returns Vec[T]\n// containing that single element\n// TODO: Write 'unwrap_first' that takes &Vec[T] and returns T\n// requires: vec is non-empty\n\nfn main() -> Int {\n  // TODO: Wrap 42, unwrap it, return the value\n  return 0;\n}",
+  "solution": "fn wrap_in_vec[T](value: T) -> Vec[T] {\n  var v = Vec[T]();\n  v.push(value);\n  return v;\n}\n\nfn unwrap_first[T](v: &Vec[T]) -> T\n  requires: v.len() > 0;\n{\n  return v[0];\n}\n\nfn main() -> Int {\n  let wrapped = wrap_in_vec[Int](42);\n  return unwrap_first[Int](&wrapped);\n}",
+  "tips": [
+    "Let type inference work — you rarely need to write first[Int] explicitly",
+    "Generic functions should be truly generic — avoid assuming anything about T without a constraint",
+    "Test generic functions with at least 2-3 different types to ensure they're truly type-agnostic"
+  ],
+  "common_mistakes": [
+    "Using type-specific operations (like + or ==) without adding the corresponding constraint",
+    "Forgetting that [] creates an empty Vec, not a type parameter — use fn f[T] for generics",
+    "Putting type parameters on non-generic functions — only add [T] if you actually use T"
+  ],
+  "related": [
+    "L5-01",
+    "L5-03",
+    "L5-06"
+  ],
+  "next_lesson": "L5-03"
+}

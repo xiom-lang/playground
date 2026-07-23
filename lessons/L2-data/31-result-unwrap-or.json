@@ -1,0 +1,17 @@
+{
+  "id": "L2-28",
+  "title": "Result.unwrap_or",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["Result", "unwrap_or", "default", "fallback", "error recovery"],
+  "narrative": "## Providing Default Values for Result\n\n`.unwrap_or()` extracts the `Ok` value from a `Result`, returning a default if it's `Err`. This mirrors the `Option.unwrap_or()` pattern.\n\n### Basic Usage\n\n```xiom\nlet ok: Result[Int, Str] = Ok(42);\nlet value = ok.unwrap_or(0);  // 42\n\nlet err: Result[Int, Str] = Err(\"failed\");\nlet fallback = err.unwrap_or(0);  // 0 (default)\n```\n\n### Default on Failure\n\n```xiom\nfn load_config() -> Result[Str, Str] {\n  // try to load config file\n  return Err(\"File not found\");\n}\n\nlet config = load_config().unwrap_or(\"localhost:8080\");\n// Uses \"localhost:8080\" when loading fails\n```\n\n### Chaining with Default\n\n```xiom\nfn parse_int(s: Str) -> Result[Int, Str] {\n  return Err(\"not a number\");\n}\n\nlet num = parse_int(\"hello\").unwrap_or(0);\n```\n\n### unwrap_or vs unwrap\n\n- `.unwrap()`: panics on `Err` — only use when failure is unrecoverable\n- `.unwrap_or()`: safe fallback — use in production code\n\n```xiom\n// DANGEROUS: panics if file is missing\n// let text = read_file(\"config.txt\").unwrap();\n\n// SAFE: provides default\nlet text = read_file(\"config.txt\").unwrap_or(\"default config\");\n```\n\n### With Different Types\n\n```xiom\nfn count_users() -> Result[Int, Str] {\n  return Err(\"DB offline\");\n}\n\nlet count = count_users().unwrap_or(0);     // Int default\n\nfn get_name() -> Result[Str, Str] {\n  return Ok(\"Alice\");\n}\n\nlet name = get_name().unwrap_or(\"Unknown\");  // Str default\n```",
+  "code_template": "// TODO: write a function 'read_setting' that returns Result[Int, Str]\n\n// TODO: write a function 'get_port' that uses read_setting and unwrap_or(8080)\n\n// TODO: write a function 'get_host' that uses read_setting and unwrap_or(\"localhost\")\n\nfn main() -> Int {\n  // TODO: return get_port()\n  return 0;\n}",
+  "solution": "fn read_setting(key: Str) -> Result[Int, Str] {\n  if key == \"port\" { return Ok(3000); }\n  return Err(\"Not found\");\n}\n\nfn get_port() -> Int {\n  return read_setting(\"port\").unwrap_or(8080);\n}\n\nfn get_host() -> Str {\n  return \"localhost\";\n}\n\nfn main() -> Int {\n  return get_port();\n}",
+  "tips": [
+    ".unwrap_or() is safe — it never panics, even on Err",
+    "The default value type must match the Ok variant's inner type",
+    "Use .unwrap_or() to provide sensible fallbacks for missing configuration",
+    "Consider logging the error before using the fallback for debugging"
+  ],
+  "related": ["L2-24", "L2-30", "L2-32", "L2-35"]
+}

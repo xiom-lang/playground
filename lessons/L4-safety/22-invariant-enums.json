@@ -1,0 +1,36 @@
+{
+  "id": "L4-22",
+  "title": "invariant on Enums",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "invariant",
+    "enum",
+    "variant validity",
+    "discriminated union",
+    "type safety"
+  ],
+  "concept": "Invariants can be applied to enum types to validate that each variant's data satisfies constraints — keeping discriminated unions safe.",
+  "why": "Enums with data are powerful but dangerous without validation. Invariants ensure every variant's payload is valid, regardless of which variant is active.",
+  "theory": "## Invariants on Enum Types\n\n```xiom\npub type PaymentMethod = enum {\n  CreditCard(number: Str, expiry: Str, cvv: Int),\n  BankAccount(iban: Str, bic: Str),\n  Cash,\n}\n  invariant: match this {\n    PaymentMethod::CreditCard(n, e, c) => n.len() == 16 && c >= 100 && c <= 999,\n    PaymentMethod::BankAccount(i, b) => i.len() >= 15 && b.len() >= 8,\n    PaymentMethod::Cash => true,\n  };\n```\n\n### Validating Optional Fields\n```xiom\npub type UserProfile = enum {\n  Anonymous,\n  Registered(name: Str, email: Str, age: Int),\n}\n  invariant: match this {\n    UserProfile::Registered(n, e, a) => n.len() > 0 && e.contains(\"@\") && a >= 13,\n    UserProfile::Anonymous => true,\n  };\n```\n\n### Nested Invariants with Structs\n```xiom\npub type Point = {\n  x: Float64;\n  y: Float64;\n}\n\npub type Shape = enum {\n  Circle(center: Point, radius: Float64),\n  Rectangle(top_left: Point, bottom_right: Point),\n}\n  invariant: match this {\n    Shape::Circle(_, r) => r > 0.0,\n    Shape::Rectangle(tl, br) => tl.x <= br.x && tl.y <= br.y,\n  };\n```\n\n### Invariant vs Constructor Validation\nAn invariant on an enum is checked EVERY time the value is created or modified — including through pattern matching reassignment. A constructor only checks at build time.",
+  "syntax_ref": "pub type Name = enum {\n  VariantA(data: Type),\n  VariantB(data: Type),\n} invariant: match this {\n  Name::VariantA(d) => condition_on_d,\n  Name::VariantB(d) => condition_on_d,\n};",
+  "code_template": "// TODO: Define enum 'DivisionResult'\n// Variants: Success(quotient: Int), Error(message: Str)\n// invariant: for Error, message is non-empty\n// Write function 'safe_divide' returning DivisionResult\n\nfn main() -> Int {\n  // TODO: Call safe_divide(10, 2), return the quotient\n  return 0;\n}",
+  "solution": "pub type DivisionResult = enum {\n  Success(quotient: Int),\n  Error(message: Str),\n}\n  invariant: match this {\n    DivisionResult::Error(m) => m.len() > 0,\n    DivisionResult::Success(_) => true,\n  };\n\nfn safe_divide(a: Int, b: Int) -> DivisionResult {\n  if b == 0 { return DivisionResult::Error(\"division by zero\"); }\n  return DivisionResult::Success(a / b);\n}\n\nfn main() -> Int {\n  match safe_divide(10, 2) {\n    DivisionResult::Success(q) => return q,\n    DivisionResult::Error(_) => return 0,\n  }\n}",
+  "tips": [
+    "Match on the enum in the invariant to validate each variant's data",
+    "Use guards in the match to express complex per-variant constraints",
+    "Enum invariants protect against invalid payloads set via pattern matching reassignment"
+  ],
+  "common_mistakes": [
+    "Forgetting to handle all variants in the invariant match — must be exhaustive",
+    "Writing per-variant checks that reference fields accessible only in other variants",
+    "Assuming enum variants are always valid — without invariants, any variant can hold garbage"
+  ],
+  "related": [
+    "L4-20",
+    "L4-21",
+    "L2-02",
+    "L1-28"
+  ],
+  "next_lesson": "L4-23"
+}

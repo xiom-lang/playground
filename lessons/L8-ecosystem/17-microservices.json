@@ -1,0 +1,37 @@
+{
+  "id": "L8-17",
+  "title": "Microservices",
+  "level": "L8",
+  "duration": "15 min",
+  "concepts": [
+    "microservices",
+    "distributed",
+    "service mesh",
+    "observability",
+    "resilience"
+  ],
+  "concept": "Building microservices with XIOM — small, focused services communicating over HTTP/gRPC with observability, resilience, and deployment patterns.",
+  "why": "Monoliths don't scale organizationally. Microservices decompose problems into independent, deployable units — each written in the best language for the job.",
+  "theory": "## Distributed Systems in XIOM\n\n### Service Architecture\n\n```\n┌─────────┐   ┌─────────┐   ┌─────────┐\n│Gateway  │→  │Auth     │   │Logger   │\n└────┬────┘   └─────────┘   └─────────┘\n     │\n     ├→ ┌─────────┐   ┌─────────┐\n     │  │Users    │→  │Database │\n     │  └─────────┘   └─────────┘\n     │\n     └→ ┌─────────┐   ┌─────────┐\n        │Orders   │→  │Queue    │\n        └─────────┘   └─────────┘\n```\n\n### Service Template\n\n```xiom\nuse xiom.micro::{Service, HealthCheck, Config};\n\npub type UserService = {\n  db: Database,\n  config: Config,\n  metrics: Metrics,\n}\n\nimpl Service for UserService {\n  fn name(self: &UserService) -> Str { return \"user-service\"; }\n\n  fn init(config: Config) -> Result<UserService, Error> {\n    let db = Database::connect(&config.database_url)?;\n    let metrics = Metrics::new(\"user-service\")?;\n    return Ok(UserService{ db: db, config: config, metrics: metrics });\n  }\n\n  fn serve(self: &UserService) -> Result<(), Error> {\n    let server = http::Server::new();\n\n    // Service discovery registration\n    discovery::register(self.name(), self.config.port)?;\n\n    // Health check\n    server.get(\"/health\", |_| HealthCheck::ok());\n\n    // API routes\n    server.get(\"/users/{id}\", |req| self.get_user(req));\n    server.post(\"/users\", |req| self.create_user(req));\n\n    // Metrics endpoint\n    server.get(\"/metrics\", |_| self.metrics.to_prometheus());\n\n    server.listen(self.config.port)\n  }\n}\n```\n\n### Resilience Patterns\n\n```xiom\n// Circuit Breaker\npub type CircuitBreaker = {\n  failure_count: Int;\n  threshold: Int;\n  state: CircuitState,  // Closed, Open, HalfOpen\n  last_failure: Timestamp,\n}\n\nimpl CircuitBreaker {\n  fn call[T](self: &mut CircuitBreaker, f: fn() -> Result[T, Error]) -> Result[T, Error] {\n    match self.state {\n      CircuitState::Open => {\n        if time::now() - self.last_failure > self.timeout {\n          self.state = CircuitState::HalfOpen;\n        } else {\n          return Err(Error::CircuitOpen);\n        }\n      },\n      _ => {},\n    }\n\n    match f() {\n      Ok(value) => {\n        self.state = CircuitState::Closed;\n        self.failure_count = 0;\n        Ok(value)\n      },\n      Err(e) => {\n        self.failure_count = self.failure_count + 1;\n        if self.failure_count >= self.threshold {\n          self.state = CircuitState::Open;\n          self.last_failure = time::now();\n        }\n        Err(e)\n      },\n    }\n  }\n}\n\n// Retry with backoff\nfn call_with_retry[T](f: fn() -> Result[T, Error], max: Int) -> Result[T, Error] {\n  for attempt in 0..max {\n    match f() {\n      Ok(v) => return Ok(v),\n      Err(e) => {\n        os.sleep(2u64.pow(attempt) * 100);  // Exponential backoff\n      },\n    }\n  }\n  Err(Error::MaxRetries)\n}\n```\n\n### Observability\n\n```xiom\n// Structured logging\nlog::info(\"user_created\", {\n  user_id: user.id,\n  email: user.email,\n  timestamp: time::now(),\n});\n\n// Metrics\nmetrics.counter(\"http_requests_total\").increment();\nmetrics.histogram(\"http_request_duration_ms\").observe(duration_ms);\n\n// Distributed tracing\nlet span = trace::start_span(\"create_user\");\nspan.set_attribute(\"user_id\", user_id);\n// ... work ...\nspan.end();\n```\n\n### Service Communication\n\n```xiom\n// Sync (HTTP/gRPC): request-response\nlet user = user_service_client.get_user(id)?;\n\n// Async (message queue): fire-and-forget\nqueue.publish(\"order.created\", OrderCreatedEvent{ order_id: id })?;\n\n// Event-driven: subscribe and react\nqueue.subscribe(\"order.created\", |event| {\n  send_confirmation_email(event.user_id, event.order_id);\n  update_inventory(event.items);\n});\n```",
+  "syntax_ref": "// Service:\npub type MyService = { ... }\nimpl Service for MyService { /* ... */ }\n\n// HTTP/gRPC communication\n// Message queue for async\n// Circuit breaker + retry for resilience\n// Metrics + tracing for observability",
+  "code_template": "// Design a microservice system:\n// - Gateway: routes requests\n// - Auth service: handles authentication\n// - User service: user CRUD\n// - Notification service: sends emails\n// How many services?\n\nfn main() -> Int {\n  return 4;\n}",
+  "solution": "fn main() -> Int {\n  return 4;\n}",
+  "tips": [
+    "Each microservice should own its data — no shared databases between services",
+    "Circuit breakers prevent cascading failures — a slow downstream shouldn't take down upstream",
+    "Observability is NOT optional in microservices — you can't debug what you can't see",
+    "Start with a monolith, extract microservices when the pain of the monolith exceeds the cost of distribution"
+  ],
+  "common_mistakes": [
+    "Microservices before product-market fit — premature distribution adds complexity, not value",
+    "Shared databases between services — creates tight coupling that defeats the purpose",
+    "No health checks or monitoring — distributed systems fail in unpredictable ways"
+  ],
+  "related": [
+    "L8-06",
+    "L8-07",
+    "L8-11",
+    "L8-08"
+  ],
+  "next_lesson": "L8-18"
+}

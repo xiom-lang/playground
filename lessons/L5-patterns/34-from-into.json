@@ -1,0 +1,37 @@
+{
+  "id": "L5-34",
+  "title": "From/Into Interface",
+  "level": "L5",
+  "duration": "12 min",
+  "concepts": [
+    "From",
+    "Into",
+    "type conversion",
+    "implicit conversion",
+    "wrapping"
+  ],
+  "concept": "From and Into define type conversions. From is for explicit construction, Into is the reverse — `let x: Target = source.into()`.",
+  "why": "Type conversions are everywhere. From/Into standardizes conversions, making your types interoperable with the ecosystem and eliminating boilerplate.",
+  "theory": "## Safe Type Conversions\n\n```xiom\npub interface From[Src] {\n  fn from(value: Src) -> Self;\n}\n\npub interface Into[Tgt] {\n  fn into(self) -> Tgt;\n}\n```\n\n### Implementing From\n\n```xiom\npub type UserId = Int;\n\nimpl From[Int] for UserId {\n  fn from(id: Int) -> UserId {\n    // Could add validation:\n    // requires: id > 0;\n    return id;\n  }\n}\n\nfn main() {\n  let uid: UserId = UserId::from(42);  // Explicit\n  let uid2: UserId = 42.into();        // Implicit via Into\n}\n```\n\n### From Str to Custom Type\n\n```xiom\npub type Email = Str;\n\nimpl From[Str] for Email {\n  fn from(s: Str) -> Email {\n    // Validation could go here\n    return s;\n  }\n}\n\nfn subscribe(email: &Email) { /* ... */ }\n\nsubscribe(&\"user@example.com\".into());  // Str → Email conversion\n```\n\n### Auto-Into from From\n\nImplementing `From` automatically gives you `Into` — you never need to implement both. The standard library provides a blanket impl.\n\n### Chaining Conversions\n\n```xiom\nlet path: PathBuf = \"data/config.toml\".into();  // Str → PathBuf\nlet file = File::open(&path)?;  // PathBuf accepted\n```\n\n### Multiple From Impls\n\n```xiom\nimpl From[Int] for UserId { fn from(id: Int) -> UserId { return id; } }\nimpl From[Str] for UserId { fn from(s: Str) -> UserId { return s.parse_int().unwrap(); } }\n```",
+  "syntax_ref": "impl From[SourceType] for TargetType {\n  fn from(value: SourceType) -> Self {\n    return /* converted value */;\n  }\n}\n\n// Usage:\nlet x: Target = Target::from(source);\nlet y: Target = source.into();  // Into auto-derived from From",
+  "code_template": "// TODO: Define type 'Meters' wrapping Float64\n// Implement From[Float64] for Meters (no validation)\n// Implement From[Int] for Meters (convert Int to Float64 first)\n// Create a Meter from 100 (Int) and return the value\n\nfn main() -> Int {\n  // TODO: Create Meters from Int 100, return value as Int\n  return 0;\n}",
+  "solution": "pub type Meters = Float64;\n\nimpl From[Float64] for Meters {\n  fn from(v: Float64) -> Meters { return v; }\n}\n\nimpl From[Int] for Meters {\n  fn from(v: Int) -> Meters { return v as Float64; }\n}\n\nfn main() -> Int {\n  let distance: Meters = 100.into();\n  return distance as Int;\n}",
+  "tips": [
+    "Always implement From, never Into — Into is auto-derived from From",
+    "Use From for infallible conversions, TryFrom for fallible ones",
+    "From on newtypes makes your types feel native — `let email: Email = s.into()`",
+    "Implement From for common types that convert to yours — increase interoperability"
+  ],
+  "common_mistakes": [
+    "Implementing Into instead of From — the standard library provides blanket Into for any From",
+    "Using .into() without type annotation — the compiler needs to know the target type",
+    "Making From do validation that can fail — use TryFrom for fallible conversions"
+  ],
+  "related": [
+    "L5-35",
+    "L5-36",
+    "L2-01",
+    "L4-21"
+  ],
+  "next_lesson": "L5-35"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L2-29",
+  "title": "Result.map and map_err",
+  "level": "L2",
+  "duration": "10 min",
+  "concepts": ["Result", "map", "map_err", "transform", "success", "error"],
+  "narrative": "## Transforming Result Values\n\nResult has two mapping methods: `.map()` transforms the `Ok` value, and `.map_err()` transforms the `Err` value.\n\n### map — Transform Success\n\n```xiom\nlet ok: Result[Int, Str] = Ok(5);\nlet doubled = ok.map(|x| x * 2);  // Ok(10)\n\nlet err: Result[Int, Str] = Err(\"failed\");\nlet still_err = err.map(|x| x * 2);  // Err(\"failed\")\n```\n\n`.map()` only applies to `Ok` values. `Err` passes through unchanged.\n\n### map_err — Transform Errors\n\n```xiom\nfn parse(s: Str) -> Result[Int, Str] {\n  return Err(\"invalid syntax at position 5\");\n}\n\nlet result = parse(\"abc\")\n  .map_err(|msg| \"Parse error: \" + msg);\n// Err(\"Parse error: invalid syntax at position 5\")\n```\n\n`.map_err()` only applies to `Err` values. `Ok` passes through unchanged.\n\n### Chaining Both\n\n```xiom\nfn fetch_data(id: Int) -> Result[Str, Int] {\n  if id == 0 { return Err(404); }\n  return Ok(\"data\");\n}\n\nlet result = fetch_data(1)\n  .map(|data| \"Processed: \" + data)       // transform success\n  .map_err(|code| \"HTTP \" + code);        // transform error\n```\n\n### Converting Error Types\n\n```xiom\nfn read_file() -> Result[Str, Int] {\n  return Err(2);  // raw error code\n}\n\nlet friendly = read_file()\n  .map_err(|code| match code {\n    1 => \"File not found\",\n    2 => \"Permission denied\",\n    _ => \"Unknown error\",\n  });\n// Err(\"Permission denied\")\n```\n\n### Practical Pipeline\n\n```xiom\nlet score = validate_input(raw)\n  .map(|input| compute_score(input))\n  .map_err(|e| \"Score error: \" + e);\n```",
+  "code_template": "// TODO: write a function 'validate' that returns Result[Int, Str]\n\n// TODO: chain .map to square the value and .map_err to prefix errors with \"Validation: \"\n\n// TODO: write a function 'process' that validates, squares, and returns unwrap_or(0)\n\nfn main() -> Int {\n  // TODO: process a valid input, return the result\n  return 0;\n}",
+  "solution": "fn validate(n: Int) -> Result[Int, Str] {\n  if n < 0 { return Err(\"negative number\"); }\n  if n > 100 { return Err(\"too large\"); }\n  return Ok(n);\n}\n\nfn process(n: Int) -> Int {\n  return validate(n)\n    .map(|x| x * x)\n    .map_err(|e| \"Validation: \" + e)\n    .unwrap_or(0);\n}\n\nfn main() -> Int {\n  return process(10);\n}",
+  "tips": [
+    ".map() transforms the success value — won't execute on Err",
+    ".map_err() transforms the error — won't execute on Ok",
+    "Chain .map() and .map_err() together for clean data processing pipelines",
+    "Use .map_err() to convert low-level errors into user-friendly messages"
+  ],
+  "related": ["L2-25", "L2-30", "L2-31", "L2-33"]
+}

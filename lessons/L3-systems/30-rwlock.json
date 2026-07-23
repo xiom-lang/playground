@@ -1,0 +1,17 @@
+{
+  "id": "L3-30",
+  "title": "RwLock",
+  "level": "L3",
+  "duration": "10 min",
+  "concepts": ["RwLock", "read lock", "write lock", "multiple readers", "concurrent read"],
+  "narrative": "## Multiple Readers, Exclusive Writer\n\n`RwLock[T]` (Read-Write Lock) allows many readers OR one writer, similar to XIOM's borrow rules but enforced at runtime across threads.\n\n### Read and Write Locks\n\n```xiom\nlet lock = RwLock.new(42);\n\n// Read lock — multiple allowed\nlet r1 = lock.read();\nlet r2 = lock.read();  // OK — multiple readers\nlet v1 = *r1;  // 42\nlet v2 = *r2;  // 42\n\n// Write lock — exclusive\n// let w = lock.write();  // would block while readers exist\n```\n\n### RwLock vs Mutex\n\n| Feature | Mutex | RwLock |\n|---------|-------|--------|\n| Readers | 1 (exclusive) | Many (shared) |\n| Writers | 1 (exclusive) | 1 (exclusive) |\n| Use case | Always exclusive | Read-heavy workloads |\n| Cost | Lower | Higher |\n\n### When to Use RwLock\n\n```xiom\n// Read-heavy cache\nlet cache = Arc.new(RwLock.new(Map[Int, Str]()));\n\n// Many threads can read simultaneously:\nfn lookup(cache: &RwLock[Map[Int, Str]], key: Int) -> Option[Str] {\n  let map = cache.read();  // shared read — doesn't block other readers\n  return map.get(&key);\n}\n\n// Writers are exclusive:\nfn update(cache: &RwLock[Map[Int, Str]], key: Int, value: Str) -> Unit {\n  let mut map = cache.write();  // exclusive write — blocks all others\n  map.insert(key, value);\n}\n```\n\n### Preventing Writer Starvation\n\nRwLock may prioritize writers to prevent starvation:\n\n```xiom\n// If readers keep coming, writer might wait forever\n// Implementation may queue writers ahead of new readers\n```",
+  "code_template": "// TODO: create an RwLock[Int], acquire read lock twice, then drop and acquire write lock\n\n// TODO: demonstrate that read locks don't block each other\n\nfn main() -> Int {\n  // TODO: create RwLock.new(100), read the value, return it\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let lock = RwLock.new(100);\n  let r = lock.read();\n  let value = *r;\n  // r dropped after use\n  return value;\n}",
+  "tips": [
+    "RwLock allows many readers OR one writer (like &T and &mut T at runtime)",
+    "Use RwLock for read-heavy workloads for better concurrency",
+    "Use Mutex for always-exclusive access (simpler, lower overhead)",
+    "`.read()` blocks only if a writer holds the lock; `.write()` blocks if anyone holds"
+  ],
+  "related": ["L3-29", "L3-28", "L3-24", "L3-12"]
+}

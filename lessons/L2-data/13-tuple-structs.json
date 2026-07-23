@@ -1,0 +1,17 @@
+{
+  "id": "L2-10",
+  "title": "Tuple Structs",
+  "level": "L2",
+  "duration": "8 min",
+  "concepts": ["tuple struct", "named tuple", "positional fields", "struct variant"],
+  "narrative": "## Lightweight Structs with Tuple Syntax\n\n**Tuple structs** (or tuple-like structs) use positional fields instead of named ones. They're useful for simple wrappers where field names add no clarity.\n\n### Defining Tuple Structs\n\n```xiom\npub type Point = (Float64, Float64);\npub type Color = (Int, Int, Int);\npub type Pair = (Str, Int);\n```\n\n### Creating Instances\n\n```xiom\nlet origin = Point(0.0, 0.0);\nlet red = Color(255, 0, 0);\nlet entry = Pair(\"Alice\", 42);\n```\n\nNotice: no field names in the constructor — just values in order.\n\n### Accessing Fields\n\nFields are accessed by position with `.0`, `.1`, `.2`, etc.:\n\n```xiom\nlet pt = Point(3.0, 4.0);\nlet x = pt.0;   // 3.0\nlet y = pt.1;   // 4.0\n\nlet col = Color(128, 64, 32);\nlet r = col.0;  // 128\nlet g = col.1;  // 64\nlet b = col.2;  // 32\n```\n\n### Destructuring\n\n```xiom\nlet Pair(name, score) = entry;\n// name is \"Alice\", score is 42\n```\n\n### When to Use Tuple Structs\n\n- Wrapping a single value with a type name: `pub type Meters = (Float64);`\n- Simple coordinate pairs: `pub type Point = (Float64, Float64);`\n- Return multiple values from a function: `fn parse(s: Str) -> (Bool, Int)`\n\n### Named vs Tuple Structs\n\n| Named Struct | Tuple Struct |\n|-------------|-------------|\n| `{ x: Float64; y: Float64; }` | `(Float64, Float64)` |\n| Access: `p.x` | Access: `p.0` |\n| Self-documenting | Compact |",
+  "code_template": "// TODO: define a tuple struct Vector3D as (Float64, Float64, Float64)\n\n// TODO: write a function 'magnitude' that calculates sqrt(x^2 + y^2 + z^2)\n\nfn main() -> Int {\n  // TODO: create a Vector3D(3.0, 4.0, 0.0), compute magnitude, return as Int\n  return 0;\n}",
+  "solution": "pub type Vector3D = (Float64, Float64, Float64);\n\nfn magnitude(v: &Vector3D) -> Float64 {\n  return math.sqrt(v.0 * v.0 + v.1 * v.1 + v.2 * v.2);\n}\n\nfn main() -> Int {\n  let v = Vector3D(3.0, 4.0, 0.0);\n  let m = magnitude(&v);\n  return m as Int;\n}",
+  "tips": [
+    "Use named structs when fields have semantic meaning — `person.name` is clearer than `person.0`",
+    "Use tuple structs for simple wrappers or coordinates where positions are obvious",
+    "Access fields with `.0`, `.1`, `.2` — no dot notation for field names",
+    "Tuple structs can `derive[Eq, Clone, Debug]` just like named structs"
+  ],
+  "related": ["L2-01", "L2-46", "L2-47", "L2-48"]
+}

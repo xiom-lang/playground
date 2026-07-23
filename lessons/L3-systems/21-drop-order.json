@@ -1,0 +1,17 @@
+{
+  "id": "L3-21",
+  "title": "Drop Order",
+  "level": "L3",
+  "duration": "8 min",
+  "concepts": ["drop order", "reverse", "LIFO", "destruction order", "cleanup sequence"],
+  "narrative": "## Reverse Order of Creation\n\nVariables are dropped in reverse order of their creation within a scope — a LIFO (Last In, First Out) order.\n\n### Basic Drop Order\n\n```xiom\nfn main() -> Int {\n  let a = 1;  // 1st created\n  let b = 2;  // 2nd created\n  let c = 3;  // 3rd created\n  return 0;\n  // Drop order: c, then b, then a\n}\n```\n\n### Why Reverse Order?\n\nReverse drop order ensures that values that depend on each other are dropped safely:\n\n```xiom\n// A common pattern: b might reference a\n// If a were dropped first, b's reference would be invalid\n// Reverse order ensures b is dropped before a\n```\n\n### Drop Order and Struct Fields\n\nStruct fields are dropped in declaration order (not reverse):\n\n```xiom\npub type Record = {\n  id: Int;      // dropped first\n  name: Str;    // dropped second\n  data: Vec[Int]; // dropped third\n}\n```\n\n### Drop Order in Blocks\n\n```xiom\nfn main() -> Int {\n  let outer = Vec[Int]();\n  outer.push(1);\n  {\n    let inner = Vec[Int]();\n    inner.push(2);\n    // inner dropped when this block ends\n  }\n  // outer dropped when function ends\n  return 0;\n}\n```\n\n### Implications\n\n- Don't create dependencies on drop order in your logic\n- The compiler handles it automatically\n- For manual control, see `ManuallyDrop` or `mem.drop`\n- Drop order is predictable and deterministic",
+  "code_template": "// TODO: demonstrate drop order by creating 3 Vecs and noting they'll be dropped in reverse\n\n// TODO: show that inner block variables drop before outer block variables\n\nfn main() -> Int {\n  // TODO: create two Vecs, return sum of lengths\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let a = Vec[Int]();\n  a.push(1); a.push(2);\n  var total = 0;\n  {\n    let b = Vec[Int]();\n    b.push(3); b.push(4); b.push(5);\n    total = a.len() + b.len();\n    // b dropped here\n  }\n  // a dropped here\n  return total;\n}",
+  "tips": [
+    "Local variables are dropped in reverse declaration order (LIFO)",
+    "Struct fields are dropped in declaration order (not reverse)",
+    "Inner block variables drop before outer block variables",
+    "Don't write code that depends on drop order — treat it as an implementation detail"
+  ],
+  "related": ["L3-20", "L3-18", "L3-19", "L3-22"]
+}

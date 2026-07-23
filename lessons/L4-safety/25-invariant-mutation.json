@@ -1,0 +1,37 @@
+{
+  "id": "L4-25",
+  "title": "Invariant after Mutation",
+  "level": "L4",
+  "duration": "10 min",
+  "concepts": [
+    "invariant",
+    "mutation",
+    "auto-check",
+    "state change",
+    "type safety"
+  ],
+  "concept": "Invariants are automatically re-checked after every mutation to the type's value — ensuring no operation leaves the object in an invalid state.",
+  "why": "The most dangerous moment for any object is right after a mutation. Auto-checked invariants ensure you can never accidentally create an invalid value.",
+  "theory": "## Automatic Invariant Verification\n\nEvery time a value is mutated, all invariants are re-checked:\n\n```xiom\npub type PositiveInt = Int\n  invariant: this > 0;\n\nfn main() -> Int {\n  var x: PositiveInt = 5;    // Invariant checked ✓\n  x = 10;                     // Invariant checked ✓\n  x = x - 5;                  // Invariant checked ✓ (5 > 0)\n  // x = x - 10;              // Would VIOLATE: -5 > 0 is false\n  return x;\n}\n```\n\n### Mutation Through Methods\n\n```xiom\npub type SafeStack = {\n  data: Vec[Int];\n} invariant: self.data.len() <= 1000;\n\nimpl SafeStack {\n  fn push(self: &mut Self, item: Int)\n    requires: self.data.len() < 1000;\n  {\n    self.data.push(item);  // Invariant re-checked after push ✓\n  }\n\n  fn pop(self: &mut Self) -> Int\n    requires: self.data.len() > 0;\n  {\n    return self.data.pop();  // Invariant re-checked ✓\n  }\n}\n```\n\n### Partial Update Safety\n\n```xiom\npub type Rectangle = {\n  width: Float64;\n  height: Float64;\n} invariant: this.width > 0.0 && this.height > 0.0;\n\nfn main() {\n  var rect = Rectangle{ width: 10.0, height: 5.0 };\n  rect.width = 20.0;   // Invariant re-checked ✓\n  rect.width = -1.0;   // VIOLATION! width must be > 0\n}\n```\n\n### The Timing\nInvariant checks happen:\n1. After construction (let x: Type = ...)\n2. After each field assignment\n3. After each method call that takes &mut self\n4. After pattern match reassignment\n\nThis means you literally CANNOT create or hold an invalid value of an invariant-protected type.",
+  "syntax_ref": "var x: InvariantType = valid_value;  // Checked\nx = new_value;                          // Re-checked\nx.field = value;                        // Re-checked\nmethod(&mut x);                          // Re-checked after method",
+  "code_template": "// TODO: Define type 'BoundedCounter' with field 'value: Int'\n// invariant: value >= 0 && value <= 100\n// Write method 'increment' on &mut Self\n// requires: value < 100\n// ensures: value == old value + 1\n\nfn main() -> Int {\n  // TODO: Create counter at 50, increment to 51, return value\n  return 0;\n}",
+  "solution": "pub type BoundedCounter = {\n  value: Int;\n} invariant: this.value >= 0 && this.value <= 100;\n\nimpl BoundedCounter {\n  fn increment(self: &mut Self)\n    requires: self.value < 100;\n    ensures: self.value == self@pre.value + 1;\n  {\n    self.value = self.value + 1;\n  }\n}\n\nfn main() -> Int {\n  var c = BoundedCounter{ value: 50 };\n  c.increment();\n  return c.value;\n}",
+  "tips": [
+    "After any mutation, ALL invariants are re-checked — you can't sneak an invalid state in",
+    "Use requires on mutable methods to bound the operation BEFORE the invariant check",
+    "The invariant check is the last line of defense — requires is the first",
+    "Don't rely on invariants alone for method preconditions — use requires for per-call validation"
+  ],
+  "common_mistakes": [
+    "Assuming invariants are only checked at construction — they're checked on EVERY mutation",
+    "Mutating an invariant type in a loop — invariant is re-checked each iteration",
+    "Not adding requires to mutable methods — the invariant catches the error, but later than ideal"
+  ],
+  "related": [
+    "L4-20",
+    "L4-24",
+    "L4-11",
+    "L2-01"
+  ],
+  "next_lesson": "L4-26"
+}
