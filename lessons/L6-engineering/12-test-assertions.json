@@ -1,7 +1,7 @@
 {
   "id": "L6-12",
   "title": "Test Assertions",
-  "level": 6,
+  "level": "L6",
   "duration": "10 min",
   "concepts": ["assert_eq", "assert_ne", "assert", "assert_approx", "assert_err"],
   "concept": "Assertion macros verify expected outcomes and produce clear failure messages",

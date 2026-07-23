@@ -1,7 +1,7 @@
 {
   "id": "L6-07",
   "title": "Dependencies",
-  "level": 6,
+  "level": "L6",
   "duration": "10 min",
   "concepts": ["dependencies", "crate", "external", "package registry"],
   "concept": "Dependencies declare external crates your project requires",

@@ -1,7 +1,7 @@
 {
   "id": "L6-03",
   "title": "pub Visibility",
-  "level": 6,
+  "level": "L6",
   "duration": "10 min",
   "concepts": ["pub", "visibility", "public", "API"],
   "concept": "The `pub` keyword marks items as part of a module's public API",

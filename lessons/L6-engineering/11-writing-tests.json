@@ -1,7 +1,7 @@
 {
   "id": "L6-11",
   "title": "Writing Tests",
-  "level": 6,
+  "level": "L6",
   "duration": "12 min",
   "concepts": ["@test", "test function", "test harness", "unit test"],
   "concept": "Test functions annotated with `@test` are discovered and executed by the test runner",

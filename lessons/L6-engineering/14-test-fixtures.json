@@ -1,7 +1,7 @@
 {
   "id": "L6-14",
   "title": "Test Fixtures",
-  "level": 6,
+  "level": "L6",
   "duration": "12 min",
   "concepts": ["fixture", "setup", "teardown", "before_each", "test context"],
   "concept": "Test fixtures provide reusable setup and teardown for test environments",

@@ -1,7 +1,7 @@
 {
   "id": "L6-13",
   "title": "Test Organization",
-  "level": 6,
+  "level": "L6",
   "duration": "10 min",
   "concepts": ["test modules", "#[cfg(test)]", "unit tests", "integration tests"],
   "concept": "Test modules organize tests alongside or separate from source code",

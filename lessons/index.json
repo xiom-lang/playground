@@ -1,8 +1,4821 @@
 {
   "version": "0.49.9",
-  "total_lessons": 370,
+  "total_lessons": 372,
   "levels": [
-    {"id":"L0","name":"First Steps","icon":"🌱","description":"Welcome to programming. No experience needed.","lessons":[{"id":"L0-01","title":"Your First Program","file":"L0-first-steps/01-first-program.json","duration":"5 min","concepts":["fn","return","Int","main"]},{"id":"L0-02","title":"Hello, XIOM!","file":"L0-first-steps/02-hello.json","duration":"5 min","concepts":["io.println","Str"]},{"id":"L0-03","title":"What is a Variable?","file":"L0-first-steps/03-variables.json","duration":"8 min","concepts":["let","type annotation"]},{"id":"L0-04","title":"Mutable Variables","file":"L0-first-steps/04-var.json","duration":"7 min","concepts":["var","reassignment"]},{"id":"L0-05","title":"Numbers","file":"L0-first-steps/05-numbers.json","duration":"10 min","concepts":["Int","+","-","*","/"]},{"id":"L0-06","title":"Decimal Numbers","file":"L0-first-steps/06-floats.json","duration":"8 min","concepts":["Float64"]},{"id":"L0-07","title":"True or False","file":"L0-first-steps/07-bool.json","duration":"7 min","concepts":["Bool","true","false"]},{"id":"L0-08","title":"Text","file":"L0-first-steps/08-str.json","duration":"8 min","concepts":["Str","string literal"]},{"id":"L0-09","title":"Characters","file":"L0-first-steps/09-char.json","duration":"5 min","concepts":["Char"]},{"id":"L0-10","title":"Comments","file":"L0-first-steps/10-comments.json","duration":"5 min","concepts":["//","/*"]},{"id":"L0-11","title":"Printing Values","file":"L0-first-steps/11-printing.json","duration":"7 min","concepts":["io.println"]},{"id":"L0-12","title":"Multiple Variables","file":"L0-first-steps/12-multi-var.json","duration":"5 min","concepts":["declaration"]},{"id":"L0-13","title":"Type Inference","file":"L0-first-steps/13-inference.json","duration":"7 min","concepts":["inference","let x = 42"]},{"id":"L0-14","title":"Constants","file":"L0-first-steps/14-const.json","duration":"5 min","concepts":["const"]},{"id":"L0-15","title":"Basic Math","file":"L0-first-steps/15-math.json","duration":"10 min","concepts":["arithmetic","precedence"]},{"id":"L0-16","title":"Integer Division","file":"L0-first-steps/16-int-div.json","duration":"7 min","concepts":["/","truncation"]},{"id":"L0-17","title":"Remainder","file":"L0-first-steps/17-remainder.json","duration":"7 min","concepts":["%"]},{"id":"L0-18","title":"Negation","file":"L0-first-steps/18-negation.json","duration":"5 min","concepts":["-","unary"]},{"id":"L0-19","title":"Comparison","file":"L0-first-steps/19-comparison.json","duration":"8 min","concepts":["==","!=","<",">","<=",">="]},{"id":"L0-20","title":"Boolean AND","file":"L0-first-steps/20-and.json","duration":"7 min","concepts":["&&","and"]},{"id":"L0-21","title":"Boolean OR","file":"L0-first-steps/21-or.json","duration":"7 min","concepts":["||","or"]},{"id":"L0-22","title":"Boolean NOT","file":"L0-first-steps/22-not.json","duration":"5 min","concepts":["!","not"]},{"id":"L0-23","title":"String Concatenation","file":"L0-first-steps/23-concat.json","duration":"7 min","concepts":["+","str_concat"]},{"id":"L0-24","title":"Int to Float","file":"L0-first-steps/24-int-to-float.json","duration":"7 min","concepts":["to_float","conversion"]},{"id":"L0-25","title":"Float to Int","file":"L0-first-steps/25-float-to-int.json","duration":"7 min","concepts":["to_int","truncation"]},{"id":"L0-26","title":"Integer Sizes","file":"L0-first-steps/26-int-sizes.json","duration":"8 min","concepts":["Int8","Int16","Int32","Int64"]},{"id":"L0-27","title":"Unsigned Integers","file":"L0-first-steps/27-unsigned.json","duration":"7 min","concepts":["UInt","UInt8"]},{"id":"L0-28","title":"Min and Max","file":"L0-first-steps/28-min-max.json","duration":"7 min","concepts":["math.min_int","math.max_int"]},{"id":"L0-29","title":"Review: Data Types","file":"L0-first-steps/29-review-types.json","duration":"10 min","concepts":["review"]},{"id":"L0-30","title":"Mini-Project: Calculator","file":"L0-first-steps/30-project.json","duration":"15 min","concepts":["project"]}]},
-    {"id":"L1","name":"Foundations","icon":"🏗️","description":"Functions, control flow, and program structure.","lessons":[{"id":"L1-01","title":"Functions","file":"L1-foundations/01-functions.json","duration":"10 min","concepts":["fn","parameters"]},{"id":"L1-02","title":"Multiple Parameters","file":"L1-foundations/02-params.json","duration":"8 min","concepts":["parameters"]},{"id":"L1-03","title":"Return Values","file":"L1-foundations/03-return.json","duration":"10 min","concepts":["return","return type"]},{"id":"L1-04","title":"Void Functions","file":"L1-foundations/04-void.json","duration":"7 min","concepts":["void","no return"]},{"id":"L1-05","title":"Function Calls","file":"L1-foundations/05-calls.json","duration":"7 min","concepts":["call","argument"]}]}
+    {
+      "id": "L0",
+      "name": "First Steps",
+      "icon": "🌱",
+      "description": "Welcome to programming. No experience needed.",
+      "lessons": [
+        {
+          "id": "L0-01",
+          "title": "Hello, World!",
+          "file": "L0-first-steps/01-hello.json",
+          "duration": "5 min",
+          "concepts": [
+            "fn",
+            "main",
+            "io.println"
+          ]
+        },
+        {
+          "id": "L0-02",
+          "title": "Hello, XIOM!",
+          "file": "L0-first-steps/02-hello-xiom.json",
+          "duration": "7 min",
+          "concepts": [
+            "io.println",
+            "Str",
+            "string literal"
+          ]
+        },
+        {
+          "id": "L0-03",
+          "title": "What is a Variable?",
+          "file": "L0-first-steps/03-variables.json",
+          "duration": "8 min",
+          "concepts": [
+            "let",
+            "type annotation",
+            "Int"
+          ]
+        },
+        {
+          "id": "L0-04",
+          "title": "Mutable Variables",
+          "file": "L0-first-steps/04-mutable.json",
+          "duration": "8 min",
+          "concepts": [
+            "var",
+            "reassignment",
+            "mutable"
+          ]
+        },
+        {
+          "id": "L0-05",
+          "title": "Numbers",
+          "file": "L0-first-steps/05-numbers.json",
+          "duration": "8 min",
+          "concepts": [
+            "Int",
+            "arithmetic",
+            "+",
+            "-",
+            "*",
+            "/"
+          ]
+        },
+        {
+          "id": "L0-06",
+          "title": "Decimal Numbers",
+          "file": "L0-first-steps/06-floats.json",
+          "duration": "8 min",
+          "concepts": [
+            "Float64",
+            "decimal",
+            "floating-point"
+          ]
+        },
+        {
+          "id": "L0-07",
+          "title": "True or False",
+          "file": "L0-first-steps/07-bools.json",
+          "duration": "6 min",
+          "concepts": [
+            "Bool",
+            "true",
+            "false"
+          ]
+        },
+        {
+          "id": "L0-08",
+          "title": "Text",
+          "file": "L0-first-steps/08-strings.json",
+          "duration": "8 min",
+          "concepts": [
+            "Str",
+            "string literal",
+            "text"
+          ]
+        },
+        {
+          "id": "L0-09",
+          "title": "Characters",
+          "file": "L0-first-steps/09-chars.json",
+          "duration": "6 min",
+          "concepts": [
+            "Char",
+            "character literal",
+            "single quote"
+          ]
+        },
+        {
+          "id": "L0-10",
+          "title": "Comments",
+          "file": "L0-first-steps/10-comments.json",
+          "duration": "5 min",
+          "concepts": [
+            "//",
+            "/* */",
+            "comment"
+          ]
+        },
+        {
+          "id": "L0-11",
+          "title": "Printing Values",
+          "file": "L0-first-steps/11-printing-values.json",
+          "duration": "8 min",
+          "concepts": [
+            "io.println",
+            "string.format1",
+            "Str interpolation"
+          ]
+        },
+        {
+          "id": "L0-12",
+          "title": "Multiple Variables",
+          "file": "L0-first-steps/12-multiple-vars.json",
+          "duration": "7 min",
+          "concepts": [
+            "let",
+            "multiple declarations",
+            "code organization"
+          ]
+        },
+        {
+          "id": "L0-13",
+          "title": "Type Inference",
+          "file": "L0-first-steps/13-type-inference.json",
+          "duration": "7 min",
+          "concepts": [
+            "type inference",
+            "let",
+            "compiler"
+          ]
+        },
+        {
+          "id": "L0-14",
+          "title": "Constants",
+          "file": "L0-first-steps/14-constants.json",
+          "duration": "6 min",
+          "concepts": [
+            "let",
+            "immutable",
+            "constant",
+            "naming convention"
+          ]
+        },
+        {
+          "id": "L0-15",
+          "title": "Basic Math Operations",
+          "file": "L0-first-steps/15-math-operations.json",
+          "duration": "10 min",
+          "concepts": [
+            "+",
+            "-",
+            "*",
+            "/",
+            "parentheses",
+            "precedence"
+          ]
+        },
+        {
+          "id": "L0-16",
+          "title": "Integer Division",
+          "file": "L0-first-steps/16-integer-division.json",
+          "duration": "7 min",
+          "concepts": [
+            "/",
+            "integer division",
+            "truncation"
+          ]
+        },
+        {
+          "id": "L0-17",
+          "title": "Remainder",
+          "file": "L0-first-steps/17-remainder.json",
+          "duration": "7 min",
+          "concepts": [
+            "%",
+            "remainder",
+            "modulo"
+          ]
+        },
+        {
+          "id": "L0-18",
+          "title": "Negation",
+          "file": "L0-first-steps/18-negation.json",
+          "duration": "5 min",
+          "concepts": [
+            "-",
+            "unary",
+            "negation",
+            "negative numbers"
+          ]
+        },
+        {
+          "id": "L0-19",
+          "title": "Comparison Operators",
+          "file": "L0-first-steps/19-comparison.json",
+          "duration": "10 min",
+          "concepts": [
+            "==",
+            "!=",
+            "<",
+            ">",
+            "<=",
+            ">=",
+            "Bool"
+          ]
+        },
+        {
+          "id": "L0-20",
+          "title": "Boolean Logic - AND",
+          "file": "L0-first-steps/20-and.json",
+          "duration": "7 min",
+          "concepts": [
+            "&&",
+            "AND",
+            "logical operator",
+            "Bool"
+          ]
+        },
+        {
+          "id": "L0-21",
+          "title": "Boolean Logic - OR",
+          "file": "L0-first-steps/21-or.json",
+          "duration": "7 min",
+          "concepts": [
+            "||",
+            "OR",
+            "logical operator",
+            "Bool"
+          ]
+        },
+        {
+          "id": "L0-22",
+          "title": "Boolean Logic - NOT",
+          "file": "L0-first-steps/22-not.json",
+          "duration": "6 min",
+          "concepts": [
+            "!",
+            "NOT",
+            "negation",
+            "Bool"
+          ]
+        },
+        {
+          "id": "L0-23",
+          "title": "String Concatenation",
+          "file": "L0-first-steps/23-concatenation.json",
+          "duration": "8 min",
+          "concepts": [
+            "+",
+            "string.str_concat",
+            "Str",
+            "concatenation"
+          ]
+        },
+        {
+          "id": "L0-24",
+          "title": "Type Conversion - Int to Float",
+          "file": "L0-first-steps/24-int-to-float.json",
+          "duration": "7 min",
+          "concepts": [
+            "as",
+            "Float64",
+            "Int to Float64",
+            "type conversion"
+          ]
+        },
+        {
+          "id": "L0-25",
+          "title": "Type Conversion - Float to Int",
+          "file": "L0-first-steps/25-float-to-int.json",
+          "duration": "7 min",
+          "concepts": [
+            "as",
+            "Int",
+            "Float64 to Int",
+            "truncation"
+          ]
+        },
+        {
+          "id": "L0-26",
+          "title": "Integer Sizes",
+          "file": "L0-first-steps/26-integer-sizes.json",
+          "duration": "8 min",
+          "concepts": [
+            "Int8",
+            "Int16",
+            "Int32",
+            "Int64",
+            "Int"
+          ]
+        },
+        {
+          "id": "L0-27",
+          "title": "Unsigned Integers",
+          "file": "L0-first-steps/27-unsigned.json",
+          "duration": "8 min",
+          "concepts": [
+            "UInt",
+            "UInt8",
+            "UInt16",
+            "UInt32",
+            "UInt64",
+            "unsigned"
+          ]
+        },
+        {
+          "id": "L0-28",
+          "title": "Min and Max",
+          "file": "L0-first-steps/28-min-max.json",
+          "duration": "7 min",
+          "concepts": [
+            "math.min_int",
+            "math.max_int",
+            "math.min_float",
+            "math.max_float"
+          ]
+        },
+        {
+          "id": "L0-29",
+          "title": "Review: Data Types",
+          "file": "L0-first-steps/29-review-types.json",
+          "duration": "10 min",
+          "concepts": [
+            "Int",
+            "Float64",
+            "Bool",
+            "Char",
+            "Str",
+            "type review"
+          ]
+        },
+        {
+          "id": "L0-30",
+          "title": "Your First Mini-Project",
+          "file": "L0-first-steps/30-mini-project.json",
+          "duration": "15 min",
+          "concepts": [
+            "all L0 concepts",
+            "mini-project",
+            "practice"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L1",
+      "name": "Foundations",
+      "icon": "🏗",
+      "description": "Functions, control flow, and program structure.",
+      "lessons": [
+        {
+          "id": "L1-01",
+          "title": "Introduction to Functions",
+          "file": "L1-foundations/01-functions-intro.json",
+          "duration": "10 min",
+          "concepts": [
+            "fn",
+            "parameters",
+            "return type",
+            "function definition"
+          ]
+        },
+        {
+          "id": "L1-02",
+          "title": "Function Parameters",
+          "file": "L1-foundations/02-params.json",
+          "duration": "10 min",
+          "concepts": [
+            "parameters",
+            "multiple params",
+            "argument",
+            "fn"
+          ]
+        },
+        {
+          "id": "L1-03",
+          "title": "Return Values",
+          "file": "L1-foundations/03-return-values.json",
+          "duration": "10 min",
+          "concepts": [
+            "return",
+            "return type",
+            "expression",
+            "early return"
+          ]
+        },
+        {
+          "id": "L1-04",
+          "title": "Void Functions",
+          "file": "L1-foundations/04-void.json",
+          "duration": "8 min",
+          "concepts": [
+            "Unit",
+            "void",
+            "no return",
+            "side effect"
+          ]
+        },
+        {
+          "id": "L1-05",
+          "title": "Function Calls",
+          "file": "L1-foundations/05-calls.json",
+          "duration": "8 min",
+          "concepts": [
+            "function call",
+            "argument",
+            "invocation",
+            "call site"
+          ]
+        },
+        {
+          "id": "L1-06",
+          "title": "Nested Function Calls",
+          "file": "L1-foundations/06-nested-calls.json",
+          "duration": "8 min",
+          "concepts": [
+            "nested call",
+            "composition",
+            "f(g(x))",
+            "expression"
+          ]
+        },
+        {
+          "id": "L1-07",
+          "title": "Early Return",
+          "file": "L1-foundations/07-early-return.json",
+          "duration": "8 min",
+          "concepts": [
+            "return",
+            "early return",
+            "if",
+            "guard clause"
+          ]
+        },
+        {
+          "id": "L1-08",
+          "title": "Function Design Patterns",
+          "file": "L1-foundations/08-defaults.json",
+          "duration": "8 min",
+          "concepts": [
+            "function design",
+            "required parameters",
+            "wrapper pattern"
+          ]
+        },
+        {
+          "id": "L1-09",
+          "title": "Unique Function Names",
+          "file": "L1-foundations/09-overloading.json",
+          "duration": "7 min",
+          "concepts": [
+            "function naming",
+            "no overloading",
+            "descriptive names"
+          ]
+        },
+        {
+          "id": "L1-10",
+          "title": "If Statement",
+          "file": "L1-foundations/10-if.json",
+          "duration": "10 min",
+          "concepts": [
+            "if",
+            "condition",
+            "branch",
+            "control flow"
+          ]
+        },
+        {
+          "id": "L1-11",
+          "title": "If-Else",
+          "file": "L1-foundations/11-if-else.json",
+          "duration": "10 min",
+          "concepts": [
+            "if",
+            "else",
+            "branch",
+            "two-way decision"
+          ]
+        },
+        {
+          "id": "L1-12",
+          "title": "Multiple Branches with elif",
+          "file": "L1-foundations/12-elif.json",
+          "duration": "10 min",
+          "concepts": [
+            "elif",
+            "else if",
+            "multiple branches",
+            "multi-way"
+          ]
+        },
+        {
+          "id": "L1-13",
+          "title": "Nested If",
+          "file": "L1-foundations/13-nested-if.json",
+          "duration": "8 min",
+          "concepts": [
+            "nested if",
+            "inner if",
+            "indentation",
+            "hierarchy"
+          ]
+        },
+        {
+          "id": "L1-14",
+          "title": "If as Expression",
+          "file": "L1-foundations/14-if-expression.json",
+          "duration": "10 min",
+          "concepts": [
+            "if expression",
+            "ternary",
+            "value-producing if"
+          ]
+        },
+        {
+          "id": "L1-15",
+          "title": "Comparison in If",
+          "file": "L1-foundations/15-comparison-if.json",
+          "duration": "8 min",
+          "concepts": [
+            "==",
+            "comparison",
+            "if condition",
+            "equality"
+          ]
+        },
+        {
+          "id": "L1-16",
+          "title": "Boolean Conditions",
+          "file": "L1-foundations/16-boolean-conditions.json",
+          "duration": "10 min",
+          "concepts": [
+            "&&",
+            "||",
+            "!",
+            "boolean condition",
+            "compound"
+          ]
+        },
+        {
+          "id": "L1-17",
+          "title": "While Loop",
+          "file": "L1-foundations/17-while.json",
+          "duration": "10 min",
+          "concepts": [
+            "while",
+            "loop",
+            "iteration",
+            "condition"
+          ]
+        },
+        {
+          "id": "L1-18",
+          "title": "While with Counter",
+          "file": "L1-foundations/18-while-counter.json",
+          "duration": "8 min",
+          "concepts": [
+            "while",
+            "counter",
+            "accumulator",
+            "sum pattern"
+          ]
+        },
+        {
+          "id": "L1-19",
+          "title": "Infinite Loops",
+          "file": "L1-foundations/19-infinite-loop.json",
+          "duration": "7 min",
+          "concepts": [
+            "while true",
+            "infinite loop",
+            "forever loop"
+          ]
+        },
+        {
+          "id": "L1-20",
+          "title": "Break Statement",
+          "file": "L1-foundations/20-break.json",
+          "duration": "8 min",
+          "concepts": [
+            "break",
+            "loop exit",
+            "early termination"
+          ]
+        },
+        {
+          "id": "L1-21",
+          "title": "Continue Statement",
+          "file": "L1-foundations/21-continue.json",
+          "duration": "8 min",
+          "concepts": [
+            "continue",
+            "skip iteration",
+            "loop control"
+          ]
+        },
+        {
+          "id": "L1-22",
+          "title": "For Loop with Range",
+          "file": "L1-foundations/22-for-range.json",
+          "duration": "10 min",
+          "concepts": [
+            "for",
+            "range",
+            "0..10",
+            "iteration"
+          ]
+        },
+        {
+          "id": "L1-23",
+          "title": "For Loop over Collection",
+          "file": "L1-foundations/23-for-vec.json",
+          "duration": "10 min",
+          "concepts": [
+            "for",
+            "Vec",
+            "iteration",
+            "collection"
+          ]
+        },
+        {
+          "id": "L1-24",
+          "title": "Nested Loops",
+          "file": "L1-foundations/24-nested-loops.json",
+          "duration": "10 min",
+          "concepts": [
+            "nested loop",
+            "inner loop",
+            "outer loop",
+            "grid"
+          ]
+        },
+        {
+          "id": "L1-25",
+          "title": "Loop Patterns",
+          "file": "L1-foundations/25-loop-patterns.json",
+          "duration": "12 min",
+          "concepts": [
+            "sum",
+            "count",
+            "find",
+            "accumulate",
+            "loop patterns"
+          ]
+        },
+        {
+          "id": "L1-26",
+          "title": "Scope",
+          "file": "L1-foundations/26-scope.json",
+          "duration": "10 min",
+          "concepts": [
+            "scope",
+            "block",
+            "visibility",
+            "{}"
+          ]
+        },
+        {
+          "id": "L1-27",
+          "title": "Shadowing",
+          "file": "L1-foundations/27-shadowing.json",
+          "duration": "8 min",
+          "concepts": [
+            "shadowing",
+            "let",
+            "variable reuse",
+            "scope"
+          ]
+        },
+        {
+          "id": "L1-28",
+          "title": "Match Expression",
+          "file": "L1-foundations/28-match.json",
+          "duration": "12 min",
+          "concepts": [
+            "match",
+            "pattern",
+            "arm",
+            "pattern matching"
+          ]
+        },
+        {
+          "id": "L1-29",
+          "title": "Match with Multiple Arms",
+          "file": "L1-foundations/29-match-multiple.json",
+          "duration": "10 min",
+          "concepts": [
+            "match",
+            "multiple patterns",
+            "|",
+            "alternation"
+          ]
+        },
+        {
+          "id": "L1-30",
+          "title": "Wildcard in Match",
+          "file": "L1-foundations/30-wildcard.json",
+          "duration": "8 min",
+          "concepts": [
+            "_",
+            "wildcard",
+            "catch-all",
+            "default"
+          ]
+        },
+        {
+          "id": "L1-31",
+          "title": "Match with Guards",
+          "file": "L1-foundations/31-match-guards.json",
+          "duration": "10 min",
+          "concepts": [
+            "match",
+            "guard",
+            "if",
+            "conditional pattern"
+          ]
+        },
+        {
+          "id": "L1-32",
+          "title": "Match with Ranges",
+          "file": "L1-foundations/32-match-ranges.json",
+          "duration": "8 min",
+          "concepts": [
+            "match",
+            "range pattern",
+            "..",
+            "inclusive-exclusive"
+          ]
+        },
+        {
+          "id": "L1-33",
+          "title": "Expression vs Statement",
+          "file": "L1-foundations/33-expression-statement.json",
+          "duration": "10 min",
+          "concepts": [
+            "expression",
+            "statement",
+            "value",
+            "side effect"
+          ]
+        },
+        {
+          "id": "L1-34",
+          "title": "Tail Expressions",
+          "file": "L1-foundations/34-tail-expressions.json",
+          "duration": "10 min",
+          "concepts": [
+            "tail expression",
+            "implicit return",
+            "block value",
+            "semicolon"
+          ]
+        },
+        {
+          "id": "L1-35",
+          "title": "Semicolons",
+          "file": "L1-foundations/35-semicolons.json",
+          "duration": "8 min",
+          "concepts": [
+            ";",
+            "semicolon",
+            "statement terminator",
+            "expression separator"
+          ]
+        },
+        {
+          "id": "L1-36",
+          "title": "Compound Assignment: +=",
+          "file": "L1-foundations/36-plus-equals.json",
+          "duration": "7 min",
+          "concepts": [
+            "+=",
+            "compound assignment",
+            "shorthand",
+            "increment"
+          ]
+        },
+        {
+          "id": "L1-37",
+          "title": "Compound Assignment: -= *= /=",
+          "file": "L1-foundations/37-compound-assign.json",
+          "duration": "8 min",
+          "concepts": [
+            "-=",
+            "*=",
+            "/=",
+            "compound assignment"
+          ]
+        },
+        {
+          "id": "L1-38",
+          "title": "Compound Assignment: %=",
+          "file": "L1-foundations/38-percent-equals.json",
+          "duration": "6 min",
+          "concepts": [
+            "%=",
+            "remainder assign",
+            "modulo assign"
+          ]
+        },
+        {
+          "id": "L1-39",
+          "title": "Increment Patterns",
+          "file": "L1-foundations/39-increment-patterns.json",
+          "duration": "7 min",
+          "concepts": [
+            "increment",
+            "decrement",
+            "x += 1",
+            "x -= 1",
+            "x = x + 1"
+          ]
+        },
+        {
+          "id": "L1-40",
+          "title": "Swap Pattern",
+          "file": "L1-foundations/40-swap.json",
+          "duration": "8 min",
+          "concepts": [
+            "mem.swap",
+            "swap",
+            "&mut",
+            "reference"
+          ]
+        },
+        {
+          "id": "L1-41",
+          "title": "Unit Type",
+          "file": "L1-foundations/41-unit.json",
+          "duration": "7 min",
+          "concepts": [
+            "Unit",
+            "()",
+            "void",
+            "no value"
+          ]
+        },
+        {
+          "id": "L1-42",
+          "title": "Type Aliases",
+          "file": "L1-foundations/42-type-aliases.json",
+          "duration": "8 min",
+          "concepts": [
+            "type",
+            "alias",
+            "type keyword",
+            "naming"
+          ]
+        },
+        {
+          "id": "L1-43",
+          "title": "Self-Documenting Types",
+          "file": "L1-foundations/43-self-documenting.json",
+          "duration": "7 min",
+          "concepts": [
+            "naming",
+            "type alias",
+            "documentation",
+            "clarity"
+          ]
+        },
+        {
+          "id": "L1-44",
+          "title": "Review: Variables",
+          "file": "L1-foundations/44-review-variables.json",
+          "duration": "10 min",
+          "concepts": [
+            "let",
+            "var",
+            "shadowing",
+            "scope",
+            "mutable"
+          ]
+        },
+        {
+          "id": "L1-45",
+          "title": "Review: Functions",
+          "file": "L1-foundations/45-review-functions.json",
+          "duration": "10 min",
+          "concepts": [
+            "fn",
+            "return",
+            "parameters",
+            "void",
+            "tail expression",
+            "best practices"
+          ]
+        },
+        {
+          "id": "L1-46",
+          "title": "Review: Control Flow",
+          "file": "L1-foundations/46-review-control-flow.json",
+          "duration": "12 min",
+          "concepts": [
+            "if",
+            "elif",
+            "else",
+            "while",
+            "for",
+            "match",
+            "control flow"
+          ]
+        },
+        {
+          "id": "L1-47",
+          "title": "Common Pitfalls",
+          "file": "L1-foundations/47-common-pitfalls.json",
+          "duration": "10 min",
+          "concepts": [
+            "semicolons",
+            "types",
+            "returns",
+            "bugs",
+            "common errors"
+          ]
+        },
+        {
+          "id": "L1-48",
+          "title": "Debugging Basics",
+          "file": "L1-foundations/48-debugging.json",
+          "duration": "10 min",
+          "concepts": [
+            "debugging",
+            "io.println",
+            "print debugging",
+            "trace"
+          ]
+        },
+        {
+          "id": "L1-49",
+          "title": "Reading Error Messages",
+          "file": "L1-foundations/49-error-messages.json",
+          "duration": "10 min",
+          "concepts": [
+            "compiler error",
+            "error message",
+            "type error",
+            "syntax error"
+          ]
+        },
+        {
+          "id": "L1-50",
+          "title": "Mini-Project: Calculator",
+          "file": "L1-foundations/50-calculator-project.json",
+          "duration": "20 min",
+          "concepts": [
+            "all L0-L1 concepts",
+            "project",
+            "integration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L2",
+      "name": "Data",
+      "icon": "📦",
+      "description": "Structs, enums, collections, and data modeling.",
+      "lessons": [
+        {
+          "id": "L2-01",
+          "title": "Structs Basics",
+          "file": "L2-data/01-structs.json",
+          "duration": "12 min",
+          "concepts": [
+            "type",
+            "struct",
+            "field",
+            "semicolons",
+            "pub type"
+          ]
+        },
+        {
+          "id": "L2-02",
+          "title": "Struct Instantiation",
+          "file": "L2-data/02-struct-instantiation.json",
+          "duration": "10 min",
+          "concepts": [
+            "struct",
+            "instantiation",
+            "TypeName{ field: value }",
+            "constructor"
+          ]
+        },
+        {
+          "id": "L2-03",
+          "title": "Struct Field Access",
+          "file": "L2-data/03-struct-field-access.json",
+          "duration": "8 min",
+          "concepts": [
+            "dot notation",
+            "field access",
+            "read field",
+            "modify field",
+            "mutable"
+          ]
+        },
+        {
+          "id": "L2-04",
+          "title": "Struct Methods",
+          "file": "L2-data/04-struct-methods.json",
+          "duration": "12 min",
+          "concepts": [
+            "method",
+            "self",
+            "fn TypeName.method",
+            "receiver",
+            "behavior"
+          ]
+        },
+        {
+          "id": "L2-08",
+          "title": "Struct Derive: Eq",
+          "file": "L2-data/08-struct-derive-eq.json",
+          "duration": "8 min",
+          "concepts": [
+            "derive",
+            "Eq",
+            "comparison",
+            "==",
+            "!="
+          ]
+        },
+        {
+          "id": "L2-09",
+          "title": "Struct Derive: Clone",
+          "file": "L2-data/09-struct-derive-clone.json",
+          "duration": "10 min",
+          "concepts": [
+            "derive",
+            "Clone",
+            "deep copy",
+            ".clone()",
+            "ownership"
+          ]
+        },
+        {
+          "id": "L2-10",
+          "title": "Struct Derive: Debug",
+          "file": "L2-data/10-struct-derive-debug.json",
+          "duration": "8 min",
+          "concepts": [
+            "derive",
+            "Debug",
+            "debug print",
+            "formatting",
+            "display"
+          ]
+        },
+        {
+          "id": "L2-11",
+          "title": "Struct Derive: Hash + Ord",
+          "file": "L2-data/11-struct-derive-hash-ord.json",
+          "duration": "10 min",
+          "concepts": [
+            "derive",
+            "Hash",
+            "Ord",
+            "ordering",
+            "hash map key",
+            "sorting"
+          ]
+        },
+        {
+          "id": "L2-12",
+          "title": "Struct with Invariants",
+          "file": "L2-data/12-struct-invariants.json",
+          "duration": "12 min",
+          "concepts": [
+            "invariant",
+            "validation",
+            "constructor",
+            "encapsulation",
+            "safe state"
+          ]
+        },
+        {
+          "id": "L2-13",
+          "title": "Tuple Structs",
+          "file": "L2-data/13-tuple-structs.json",
+          "duration": "8 min",
+          "concepts": [
+            "tuple struct",
+            "named tuple",
+            "positional fields",
+            "struct variant"
+          ]
+        },
+        {
+          "id": "L2-14",
+          "title": "Enum Basics",
+          "file": "L2-data/14-enum-basics.json",
+          "duration": "10 min",
+          "concepts": [
+            "enum",
+            "variant",
+            "enumeration",
+            "type definition"
+          ]
+        },
+        {
+          "id": "L2-15",
+          "title": "Enum with Data",
+          "file": "L2-data/15-enum-with-data.json",
+          "duration": "12 min",
+          "concepts": [
+            "enum",
+            "variant data",
+            "payload",
+            "associated data",
+            "tagged union"
+          ]
+        },
+        {
+          "id": "L2-16",
+          "title": "Match on Enum",
+          "file": "L2-data/16-match-on-enum.json",
+          "duration": "12 min",
+          "concepts": [
+            "match",
+            "pattern matching",
+            "exhaustive",
+            "destructuring",
+            "branch"
+          ]
+        },
+        {
+          "id": "L2-17",
+          "title": "Match with Guards",
+          "file": "L2-data/17-match-with-guards.json",
+          "duration": "10 min",
+          "concepts": [
+            "match guard",
+            "if guard",
+            "condition",
+            "filtered match",
+            "when"
+          ]
+        },
+        {
+          "id": "L2-18",
+          "title": "Match with Bindings",
+          "file": "L2-data/18-match-with-bindings.json",
+          "duration": "10 min",
+          "concepts": [
+            "match binding",
+            "@ pattern",
+            "as pattern",
+            "subpattern",
+            "capture"
+          ]
+        },
+        {
+          "id": "L2-19",
+          "title": "Enum Derive: Eq/Clone",
+          "file": "L2-data/19-enum-derive-eq-clone.json",
+          "duration": "8 min",
+          "concepts": [
+            "enum",
+            "derive",
+            "Eq",
+            "Clone",
+            "comparison",
+            "copy"
+          ]
+        },
+        {
+          "id": "L2-20",
+          "title": "Enum Derive: Debug",
+          "file": "L2-data/20-enum-derive-debug.json",
+          "duration": "7 min",
+          "concepts": [
+            "enum",
+            "derive",
+            "Debug",
+            "debug print",
+            "formatting"
+          ]
+        },
+        {
+          "id": "L2-21",
+          "title": "Enum Derive: Hash/Ord",
+          "file": "L2-data/21-enum-derive-hash-ord.json",
+          "duration": "10 min",
+          "concepts": [
+            "enum",
+            "derive",
+            "Hash",
+            "Ord",
+            "ordering",
+            "map key"
+          ]
+        },
+        {
+          "id": "L2-22",
+          "title": "Enum Methods",
+          "file": "L2-data/22-enum-methods.json",
+          "duration": "10 min",
+          "concepts": [
+            "enum",
+            "method",
+            "self",
+            "fn TypeName.Variant.method",
+            "behavior"
+          ]
+        },
+        {
+          "id": "L2-23",
+          "title": "Option: Some and None",
+          "file": "L2-data/23-option-type.json",
+          "duration": "10 min",
+          "concepts": [
+            "Option",
+            "Some",
+            "None",
+            "optional",
+            "null safety"
+          ]
+        },
+        {
+          "id": "L2-24",
+          "title": "Option.unwrap_or",
+          "file": "L2-data/24-option-unwrap-or.json",
+          "duration": "8 min",
+          "concepts": [
+            "Option",
+            "unwrap_or",
+            "default value",
+            "fallback",
+            "safe unwrap"
+          ]
+        },
+        {
+          "id": "L2-25",
+          "title": "Option.map",
+          "file": "L2-data/25-option-map.json",
+          "duration": "10 min",
+          "concepts": [
+            "Option",
+            "map",
+            "transform",
+            "function",
+            "pipeline"
+          ]
+        },
+        {
+          "id": "L2-26",
+          "title": "Option.and_then",
+          "file": "L2-data/26-option-and-then.json",
+          "duration": "10 min",
+          "concepts": [
+            "Option",
+            "and_then",
+            "chain",
+            "flatmap",
+            "monadic",
+            "composition"
+          ]
+        },
+        {
+          "id": "L2-27",
+          "title": "Option.filter",
+          "file": "L2-data/27-option-filter.json",
+          "duration": "8 min",
+          "concepts": [
+            "Option",
+            "filter",
+            "condition",
+            "predicate",
+            "narrowing"
+          ]
+        },
+        {
+          "id": "L2-28",
+          "title": "if let with Option",
+          "file": "L2-data/28-if-let-option.json",
+          "duration": "8 min",
+          "concepts": [
+            "if let",
+            "Option",
+            "pattern matching",
+            "concise",
+            "some"
+          ]
+        },
+        {
+          "id": "L2-29",
+          "title": "while let with Option",
+          "file": "L2-data/29-while-let-option.json",
+          "duration": "8 min",
+          "concepts": [
+            "while let",
+            "Option",
+            "loop",
+            "pattern matching",
+            "iteration"
+          ]
+        },
+        {
+          "id": "L2-30",
+          "title": "Result: Ok and Err",
+          "file": "L2-data/30-result-type.json",
+          "duration": "12 min",
+          "concepts": [
+            "Result",
+            "Ok",
+            "Err",
+            "error handling",
+            "fallible"
+          ]
+        },
+        {
+          "id": "L2-31",
+          "title": "Result.unwrap_or",
+          "file": "L2-data/31-result-unwrap-or.json",
+          "duration": "8 min",
+          "concepts": [
+            "Result",
+            "unwrap_or",
+            "default",
+            "fallback",
+            "error recovery"
+          ]
+        },
+        {
+          "id": "L2-32",
+          "title": "Result.map and map_err",
+          "file": "L2-data/32-result-map.json",
+          "duration": "10 min",
+          "concepts": [
+            "Result",
+            "map",
+            "map_err",
+            "transform",
+            "success",
+            "error"
+          ]
+        },
+        {
+          "id": "L2-33",
+          "title": "Result.and_then",
+          "file": "L2-data/33-result-and-then.json",
+          "duration": "10 min",
+          "concepts": [
+            "Result",
+            "and_then",
+            "chain",
+            "flatmap",
+            "composition"
+          ]
+        },
+        {
+          "id": "L2-34",
+          "title": "Error Propagation with ?",
+          "file": "L2-data/34-error-propagation.json",
+          "duration": "10 min",
+          "concepts": [
+            "?",
+            "error propagation",
+            "try operator",
+            "early return",
+            "short-circuit"
+          ]
+        },
+        {
+          "id": "L2-35",
+          "title": "Custom Error Types",
+          "file": "L2-data/35-custom-error-types.json",
+          "duration": "12 min",
+          "concepts": [
+            "custom error",
+            "enum error",
+            "error type",
+            "Result",
+            "Error"
+          ]
+        },
+        {
+          "id": "L2-36",
+          "title": "Vec Basics",
+          "file": "L2-data/36-vec-basics.json",
+          "duration": "12 min",
+          "concepts": [
+            "Vec",
+            "push",
+            "pop",
+            "dynamic array",
+            "collection"
+          ]
+        },
+        {
+          "id": "L2-37",
+          "title": "Vec Access",
+          "file": "L2-data/37-vec-access.json",
+          "duration": "8 min",
+          "concepts": [
+            "Vec",
+            "indexing",
+            ".get()",
+            "bracket access",
+            "bounds"
+          ]
+        },
+        {
+          "id": "L2-38",
+          "title": "Vec Iteration",
+          "file": "L2-data/38-vec-iteration.json",
+          "duration": "8 min",
+          "concepts": [
+            "Vec",
+            "for",
+            "iteration",
+            "loop",
+            "collection traversal"
+          ]
+        },
+        {
+          "id": "L2-39",
+          "title": "Vec Methods",
+          "file": "L2-data/39-vec-methods.json",
+          "duration": "10 min",
+          "concepts": [
+            "Vec",
+            "len",
+            "is_empty",
+            "clear",
+            "methods",
+            "utility"
+          ]
+        },
+        {
+          "id": "L2-40",
+          "title": "Vec with Capacity",
+          "file": "L2-data/40-vec-capacity.json",
+          "duration": "8 min",
+          "concepts": [
+            "Vec",
+            "with_capacity",
+            "capacity",
+            "allocation",
+            "performance"
+          ]
+        },
+        {
+          "id": "L2-41",
+          "title": "Vec Insert and Remove",
+          "file": "L2-data/41-vec-insert-remove.json",
+          "duration": "10 min",
+          "concepts": [
+            "Vec",
+            "insert",
+            "remove",
+            "middle operations",
+            "shift"
+          ]
+        },
+        {
+          "id": "L2-42",
+          "title": "Vec Slice",
+          "file": "L2-data/42-vec-slice.json",
+          "duration": "8 min",
+          "concepts": [
+            "Vec",
+            "slice",
+            "range",
+            "subarray",
+            "view"
+          ]
+        },
+        {
+          "id": "L2-43",
+          "title": "Array [N]T",
+          "file": "L2-data/43-array.json",
+          "duration": "10 min",
+          "concepts": [
+            "array",
+            "fixed size",
+            "[N]T",
+            "stack allocation",
+            "compile-time size"
+          ]
+        },
+        {
+          "id": "L2-44",
+          "title": "Map Basics",
+          "file": "L2-data/44-map-basics.json",
+          "duration": "12 min",
+          "concepts": [
+            "Map",
+            "insert",
+            "get",
+            "key-value",
+            "dictionary",
+            "hash map"
+          ]
+        },
+        {
+          "id": "L2-45",
+          "title": "Map Iteration",
+          "file": "L2-data/45-map-iteration.json",
+          "duration": "8 min",
+          "concepts": [
+            "Map",
+            "keys",
+            "values",
+            "iteration",
+            "collection"
+          ]
+        },
+        {
+          "id": "L2-46",
+          "title": "Map Methods",
+          "file": "L2-data/46-map-methods.json",
+          "duration": "10 min",
+          "concepts": [
+            "Map",
+            "contains",
+            "remove",
+            "len",
+            "utility methods"
+          ]
+        },
+        {
+          "id": "L2-47",
+          "title": "Set Basics",
+          "file": "L2-data/47-set-basics.json",
+          "duration": "10 min",
+          "concepts": [
+            "Set",
+            "insert",
+            "contains",
+            "unique",
+            "collection"
+          ]
+        },
+        {
+          "id": "L2-48",
+          "title": "Set Operations",
+          "file": "L2-data/48-set-operations.json",
+          "duration": "12 min",
+          "concepts": [
+            "Set",
+            "union",
+            "intersection",
+            "difference",
+            "set theory"
+          ]
+        },
+        {
+          "id": "L2-49",
+          "title": "Tuple",
+          "file": "L2-data/49-tuple.json",
+          "duration": "8 min",
+          "concepts": [
+            "tuple",
+            "pair",
+            "anonymous struct",
+            "composite",
+            "(T, U)"
+          ]
+        },
+        {
+          "id": "L2-50",
+          "title": "Tuple Access",
+          "file": "L2-data/50-tuple-access.json",
+          "duration": "6 min",
+          "concepts": [
+            "tuple",
+            ".0",
+            ".1",
+            "positional access",
+            "field index"
+          ]
+        },
+        {
+          "id": "L2-51",
+          "title": "Tuple Destructuring",
+          "file": "L2-data/51-tuple-destructuring.json",
+          "duration": "8 min",
+          "concepts": [
+            "tuple",
+            "destructuring",
+            "let pattern",
+            "unpack",
+            "decomposition"
+          ]
+        },
+        {
+          "id": "L2-52",
+          "title": "String Basics",
+          "file": "L2-data/52-string-basics.json",
+          "duration": "10 min",
+          "concepts": [
+            "Str",
+            "string",
+            "text",
+            "create",
+            "concatenate"
+          ]
+        },
+        {
+          "id": "L2-53",
+          "title": "String Length",
+          "file": "L2-data/53-string-length.json",
+          "duration": "8 min",
+          "concepts": [
+            "Str",
+            "len",
+            "char_count",
+            "byte_count",
+            "length"
+          ]
+        },
+        {
+          "id": "L2-54",
+          "title": "String Slicing",
+          "file": "L2-data/54-string-slicing.json",
+          "duration": "8 min",
+          "concepts": [
+            "Str",
+            "slice",
+            "substring",
+            "str_slice",
+            "range"
+          ]
+        },
+        {
+          "id": "L2-55",
+          "title": "String Search",
+          "file": "L2-data/55-string-search.json",
+          "duration": "8 min",
+          "concepts": [
+            "Str",
+            "contains",
+            "index_of",
+            "search",
+            "find"
+          ]
+        },
+        {
+          "id": "L2-56",
+          "title": "Format Strings",
+          "file": "L2-data/56-format-strings.json",
+          "duration": "10 min",
+          "concepts": [
+            "format",
+            "format1",
+            "format2",
+            "string interpolation",
+            "template"
+          ]
+        },
+        {
+          "id": "L2-57",
+          "title": "String Replace and Trim",
+          "file": "L2-data/57-string-replace-trim.json",
+          "duration": "8 min",
+          "concepts": [
+            "Str",
+            "replace",
+            "trim",
+            "whitespace",
+            "sanitize"
+          ]
+        },
+        {
+          "id": "L2-58",
+          "title": "Stack",
+          "file": "L2-data/58-stack.json",
+          "duration": "10 min",
+          "concepts": [
+            "Stack",
+            "push",
+            "pop",
+            "peek",
+            "LIFO",
+            "last-in-first-out"
+          ]
+        },
+        {
+          "id": "L2-59",
+          "title": "Queue",
+          "file": "L2-data/59-queue.json",
+          "duration": "10 min",
+          "concepts": [
+            "Queue",
+            "enqueue",
+            "dequeue",
+            "FIFO",
+            "first-in-first-out"
+          ]
+        },
+        {
+          "id": "L2-60",
+          "title": "LinkedList",
+          "file": "L2-data/60-linked-list.json",
+          "duration": "12 min",
+          "concepts": [
+            "LinkedList",
+            "push_front",
+            "push_back",
+            "pop_front",
+            "node",
+            "doubly-linked"
+          ]
+        },
+        {
+          "id": "L2-61",
+          "title": "String Split and Join",
+          "file": "L2-data/61-string-split-join.json",
+          "duration": "10 min",
+          "concepts": [
+            "Str",
+            "split",
+            "join",
+            "delimiter",
+            "tokenize"
+          ]
+        },
+        {
+          "id": "L2-62",
+          "title": "String Case",
+          "file": "L2-data/62-string-case.json",
+          "duration": "6 min",
+          "concepts": [
+            "Str",
+            "str_upper",
+            "str_lower",
+            "case",
+            "transform"
+          ]
+        },
+        {
+          "id": "L2-63",
+          "title": "Data Processing App",
+          "file": "L2-data/63-collections-project.json",
+          "duration": "25 min",
+          "concepts": [
+            "project",
+            "Vec",
+            "Map",
+            "Set",
+            "data processing",
+            "integration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L3",
+      "name": "Systems",
+      "icon": "⚙",
+      "description": "Memory, ownership, borrowing, and FFI.",
+      "lessons": [
+        {
+          "id": "L3-01",
+          "title": "Memory Model",
+          "file": "L3-systems/01-memory.json",
+          "duration": "15 min",
+          "concepts": [
+            "stack",
+            "heap",
+            "ownership",
+            "move",
+            "clone",
+            "copy semantics"
+          ]
+        },
+        {
+          "id": "L3-02",
+          "title": "Borrowing",
+          "file": "L3-systems/02-borrowing.json",
+          "duration": "15 min",
+          "concepts": [
+            "&",
+            "&mut",
+            "reference",
+            "borrow",
+            "shared borrow",
+            "exclusive borrow"
+          ]
+        },
+        {
+          "id": "L3-03",
+          "title": "Stack Allocation",
+          "file": "L3-systems/03-stack-allocation.json",
+          "duration": "10 min",
+          "concepts": [
+            "stack",
+            "allocation",
+            "fixed size",
+            "automatic",
+            "local variable"
+          ]
+        },
+        {
+          "id": "L3-04",
+          "title": "Heap Allocation",
+          "file": "L3-systems/04-heap-allocation.json",
+          "duration": "12 min",
+          "concepts": [
+            "heap",
+            "allocation",
+            "Box",
+            "Vec",
+            "dynamic memory",
+            "runtime size"
+          ]
+        },
+        {
+          "id": "L3-05",
+          "title": "Ownership",
+          "file": "L3-systems/05-ownership.json",
+          "duration": "12 min",
+          "concepts": [
+            "ownership",
+            "owner",
+            "scope",
+            "drop",
+            "resource management"
+          ]
+        },
+        {
+          "id": "L3-06",
+          "title": "Move Semantics",
+          "file": "L3-systems/06-move-semantics.json",
+          "duration": "10 min",
+          "concepts": [
+            "move",
+            "ownership transfer",
+            "assignment",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "L3-07",
+          "title": "Move in Functions",
+          "file": "L3-systems/07-move-in-functions.json",
+          "duration": "10 min",
+          "concepts": [
+            "move",
+            "function",
+            "ownership transfer",
+            "parameter",
+            "return"
+          ]
+        },
+        {
+          "id": "L3-08",
+          "title": "Clone",
+          "file": "L3-systems/08-clone.json",
+          "duration": "8 min",
+          "concepts": [
+            "clone",
+            "deep copy",
+            "duplicate",
+            "allocation",
+            ".clone()"
+          ]
+        },
+        {
+          "id": "L3-09",
+          "title": "Copy Types",
+          "file": "L3-systems/09-copy-types.json",
+          "duration": "8 min",
+          "concepts": [
+            "Copy",
+            "implicit copy",
+            "Int",
+            "Bool",
+            "Float64",
+            "stack-only"
+          ]
+        },
+        {
+          "id": "L3-10",
+          "title": "Read Borrows",
+          "file": "L3-systems/10-read-borrows.json",
+          "duration": "10 min",
+          "concepts": [
+            "&T",
+            "shared borrow",
+            "read-only",
+            "reference",
+            "immutable borrow"
+          ]
+        },
+        {
+          "id": "L3-11",
+          "title": "Write Borrows",
+          "file": "L3-systems/11-write-borrows.json",
+          "duration": "10 min",
+          "concepts": [
+            "&mut T",
+            "mutable borrow",
+            "write access",
+            "exclusive borrow",
+            "modify"
+          ]
+        },
+        {
+          "id": "L3-12",
+          "title": "Borrow Rules",
+          "file": "L3-systems/12-borrow-rules.json",
+          "duration": "10 min",
+          "concepts": [
+            "borrow rules",
+            "no aliasing",
+            "exclusive",
+            "shared XOR mutable",
+            "compile-time"
+          ]
+        },
+        {
+          "id": "L3-13",
+          "title": "Immutable Borrow Details",
+          "file": "L3-systems/13-multiple-immutable-borrow.json",
+          "duration": "8 min",
+          "concepts": [
+            "immutable borrow",
+            "multiple &T",
+            "read-only",
+            "non-lexical lifetimes"
+          ]
+        },
+        {
+          "id": "L3-14",
+          "title": "Mutable Borrow Details",
+          "file": "L3-systems/14-mutable-borrow.json",
+          "duration": "10 min",
+          "concepts": [
+            "mutable borrow",
+            "&mut T",
+            "exclusive access",
+            "modify",
+            "single owner"
+          ]
+        },
+        {
+          "id": "L3-15",
+          "title": "Borrow in Functions",
+          "file": "L3-systems/15-borrow-in-functions.json",
+          "duration": "10 min",
+          "concepts": [
+            "borrow",
+            "function",
+            "&T parameter",
+            "&mut T parameter",
+            "pass by reference"
+          ]
+        },
+        {
+          "id": "L3-16",
+          "title": "Return and Borrow",
+          "file": "L3-systems/16-return-and-borrow.json",
+          "duration": "10 min",
+          "concepts": [
+            "return reference",
+            "lifetime",
+            "dangling",
+            "return &T",
+            "borrow safety"
+          ]
+        },
+        {
+          "id": "L3-17",
+          "title": "Borrow Checker Errors",
+          "file": "L3-systems/17-borrow-checker-errors.json",
+          "duration": "10 min",
+          "concepts": [
+            "borrow checker",
+            "error messages",
+            "compiler errors",
+            "troubleshooting"
+          ]
+        },
+        {
+          "id": "L3-18",
+          "title": "Scope and Lifetime",
+          "file": "L3-systems/18-scope-lifetime.json",
+          "duration": "10 min",
+          "concepts": [
+            "scope",
+            "lifetime",
+            "braces",
+            "drop",
+            "variable lifetime"
+          ]
+        },
+        {
+          "id": "L3-19",
+          "title": "Nested Scopes",
+          "file": "L3-systems/19-nested-scopes.json",
+          "duration": "8 min",
+          "concepts": [
+            "nested scope",
+            "inner block",
+            "variable shadowing",
+            "borrow control"
+          ]
+        },
+        {
+          "id": "L3-20",
+          "title": "Drop",
+          "file": "L3-systems/20-drop.json",
+          "duration": "8 min",
+          "concepts": [
+            "drop",
+            "destructor",
+            "cleanup",
+            "automatic",
+            "RAII"
+          ]
+        },
+        {
+          "id": "L3-21",
+          "title": "Drop Order",
+          "file": "L3-systems/21-drop-order.json",
+          "duration": "8 min",
+          "concepts": [
+            "drop order",
+            "reverse",
+            "LIFO",
+            "destruction order",
+            "cleanup sequence"
+          ]
+        },
+        {
+          "id": "L3-22",
+          "title": "Manual Drop",
+          "file": "L3-systems/22-manual-drop.json",
+          "duration": "8 min",
+          "concepts": [
+            "mem.drop",
+            "manual drop",
+            "early cleanup",
+            "explicit free",
+            "resource"
+          ]
+        },
+        {
+          "id": "L3-23",
+          "title": "Rc — Reference Counting",
+          "file": "L3-systems/23-rc.json",
+          "duration": "12 min",
+          "concepts": [
+            "Rc",
+            "reference counting",
+            "shared ownership",
+            "clone",
+            "single-threaded"
+          ]
+        },
+        {
+          "id": "L3-24",
+          "title": "Arc — Atomic Rc",
+          "file": "L3-systems/24-arc.json",
+          "duration": "10 min",
+          "concepts": [
+            "Arc",
+            "atomic",
+            "thread-safe",
+            "concurrent",
+            "shared ownership"
+          ]
+        },
+        {
+          "id": "L3-25",
+          "title": "Arc Clone and Drop",
+          "file": "L3-systems/25-arc-clone-drop.json",
+          "duration": "8 min",
+          "concepts": [
+            "Arc",
+            "clone",
+            "drop",
+            "ref_count",
+            "cleanup",
+            "atomic"
+          ]
+        },
+        {
+          "id": "L3-26",
+          "title": "Arc vs Rc",
+          "file": "L3-systems/26-arc-vs-rc.json",
+          "duration": "8 min",
+          "concepts": [
+            "Arc",
+            "Rc",
+            "thread safety",
+            "atomic vs non-atomic",
+            "comparison"
+          ]
+        },
+        {
+          "id": "L3-27",
+          "title": "Cell",
+          "file": "L3-systems/27-cell.json",
+          "duration": "10 min",
+          "concepts": [
+            "Cell",
+            "interior mutability",
+            "get",
+            "set",
+            "immutable container"
+          ]
+        },
+        {
+          "id": "L3-28",
+          "title": "RefCell",
+          "file": "L3-systems/28-refcell.json",
+          "duration": "12 min",
+          "concepts": [
+            "RefCell",
+            "interior mutability",
+            "borrow",
+            "borrow_mut",
+            "runtime check"
+          ]
+        },
+        {
+          "id": "L3-29",
+          "title": "Mutex",
+          "file": "L3-systems/29-mutex.json",
+          "duration": "12 min",
+          "concepts": [
+            "Mutex",
+            "lock",
+            "mutual exclusion",
+            "thread safety",
+            "critical section"
+          ]
+        },
+        {
+          "id": "L3-30",
+          "title": "RwLock",
+          "file": "L3-systems/30-rwlock.json",
+          "duration": "10 min",
+          "concepts": [
+            "RwLock",
+            "read lock",
+            "write lock",
+            "multiple readers",
+            "concurrent read"
+          ]
+        },
+        {
+          "id": "L3-31",
+          "title": "Atomics",
+          "file": "L3-systems/31-atomics.json",
+          "duration": "10 min",
+          "concepts": [
+            "AtomicInt",
+            "AtomicBool",
+            "atomic operations",
+            "lock-free",
+            "CAS"
+          ]
+        },
+        {
+          "id": "L3-32",
+          "title": "Raw Pointers",
+          "file": "L3-systems/32-raw-pointers.json",
+          "duration": "12 min",
+          "concepts": [
+            "raw pointer",
+            "*T",
+            "*const T",
+            "*mut T",
+            "unsafe"
+          ]
+        },
+        {
+          "id": "L3-33",
+          "title": "Pointer Arithmetic",
+          "file": "L3-systems/33-pointer-arithmetic.json",
+          "duration": "10 min",
+          "concepts": [
+            "pointer arithmetic",
+            "offset",
+            "add",
+            "raw pointer",
+            "memory layout"
+          ]
+        },
+        {
+          "id": "L3-34",
+          "title": "Unsafe Blocks",
+          "file": "L3-systems/34-unsafe-blocks.json",
+          "duration": "10 min",
+          "concepts": [
+            "unsafe",
+            "raw operations",
+            "dereference",
+            "FFI",
+            "safety contract"
+          ]
+        },
+        {
+          "id": "L3-35",
+          "title": "C FFI Basics",
+          "file": "L3-systems/35-c-ffi-basics.json",
+          "duration": "12 min",
+          "concepts": [
+            "FFI",
+            "extern C",
+            "foreign function",
+            "C ABI",
+            "interop"
+          ]
+        },
+        {
+          "id": "L3-36",
+          "title": "C FFI Structs",
+          "file": "L3-systems/36-c-ffi-structs.json",
+          "duration": "10 min",
+          "concepts": [
+            "FFI",
+            "struct",
+            "C layout",
+            "repr",
+            "foreign struct"
+          ]
+        },
+        {
+          "id": "L3-37",
+          "title": "C FFI Callbacks",
+          "file": "L3-systems/37-c-ffi-callbacks.json",
+          "duration": "12 min",
+          "concepts": [
+            "FFI",
+            "callback",
+            "function pointer",
+            "extern",
+            "C calling convention"
+          ]
+        },
+        {
+          "id": "L3-38",
+          "title": "C FFI Error Handling",
+          "file": "L3-systems/38-c-ffi-error-handling.json",
+          "duration": "10 min",
+          "concepts": [
+            "FFI",
+            "error handling",
+            "return code",
+            "errno",
+            "safe wrapper"
+          ]
+        },
+        {
+          "id": "L3-39",
+          "title": "Memory Leaks",
+          "file": "L3-systems/39-memory-leaks.json",
+          "duration": "10 min",
+          "concepts": [
+            "memory leak",
+            "reference cycle",
+            "Rc cycle",
+            "prevention",
+            "weak"
+          ]
+        },
+        {
+          "id": "L3-40",
+          "title": "Use-After-Move",
+          "file": "L3-systems/40-use-after-move.json",
+          "duration": "8 min",
+          "concepts": [
+            "use-after-move",
+            "compiler error",
+            "move",
+            "invalidation",
+            "safety"
+          ]
+        },
+        {
+          "id": "L3-41",
+          "title": "Double Free",
+          "file": "L3-systems/41-double-free.json",
+          "duration": "8 min",
+          "concepts": [
+            "double free",
+            "prevention",
+            "ownership",
+            "drop once",
+            "safety"
+          ]
+        },
+        {
+          "id": "L3-42",
+          "title": "Dangling References",
+          "file": "L3-systems/42-dangling-references.json",
+          "duration": "10 min",
+          "concepts": [
+            "dangling reference",
+            "lifetime",
+            "borrow checker",
+            "prevention",
+            "safety"
+          ]
+        },
+        {
+          "id": "L3-43",
+          "title": "Stack Overflow",
+          "file": "L3-systems/43-stack-overflow.json",
+          "duration": "8 min",
+          "concepts": [
+            "stack overflow",
+            "recursion",
+            "depth limit",
+            "stack size",
+            "prevention"
+          ]
+        },
+        {
+          "id": "L3-44",
+          "title": "Alignment",
+          "file": "L3-systems/44-alignment.json",
+          "duration": "10 min",
+          "concepts": [
+            "alignment",
+            "size_of",
+            "align_of",
+            "padding",
+            "memory layout"
+          ]
+        },
+        {
+          "id": "L3-45",
+          "title": "Memory Layout",
+          "file": "L3-systems/45-memory-layout.json",
+          "duration": "10 min",
+          "concepts": [
+            "layout",
+            "memory organization",
+            "repr",
+            "packed",
+            "field ordering"
+          ]
+        },
+        {
+          "id": "L3-46",
+          "title": "ManuallyDrop",
+          "file": "L3-systems/46-manually-drop.json",
+          "duration": "10 min",
+          "concepts": [
+            "ManuallyDrop",
+            "drop control",
+            "manual cleanup",
+            "wrapper",
+            "advanced"
+          ]
+        },
+        {
+          "id": "L3-47",
+          "title": "PhantomData",
+          "file": "L3-systems/47-phantom-data.json",
+          "duration": "10 min",
+          "concepts": [
+            "PhantomData",
+            "type marker",
+            "phantom type",
+            "ownership",
+            "generic"
+          ]
+        },
+        {
+          "id": "L3-48",
+          "title": "MaybeUninit",
+          "file": "L3-systems/48-maybe-uninit.json",
+          "duration": "10 min",
+          "concepts": [
+            "MaybeUninit",
+            "uninitialized memory",
+            "deferred init",
+            "unsafe",
+            "optimization"
+          ]
+        },
+        {
+          "id": "L3-49",
+          "title": "Zeroed Memory",
+          "file": "L3-systems/49-zeroed-memory.json",
+          "duration": "8 min",
+          "concepts": [
+            "mem.zeroed",
+            "zero-initialized",
+            "all-zeroes",
+            "pod",
+            "initialization"
+          ]
+        },
+        {
+          "id": "L3-50",
+          "title": "Safe C Library Wrapper",
+          "file": "L3-systems/50-systems-project.json",
+          "duration": "25 min",
+          "concepts": [
+            "project",
+            "FFI",
+            "safe wrapper",
+            "C library",
+            "extern",
+            "ownership"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L4",
+      "name": "Safety",
+      "icon": "🛡",
+      "description": "Contracts, verification, and error handling.",
+      "lessons": [
+        {
+          "id": "L4-01",
+          "title": "Why Contracts?",
+          "file": "L4-safety/01-why-contracts.json",
+          "duration": "12 min",
+          "concepts": [
+            "contract",
+            "design by contract",
+            "precondition",
+            "postcondition",
+            "safety"
+          ]
+        },
+        {
+          "id": "L4-02",
+          "title": "requires Basics",
+          "file": "L4-safety/02-requires-basics.json",
+          "duration": "10 min",
+          "concepts": [
+            "requires",
+            "precondition",
+            "contract clause",
+            "defensive programming"
+          ]
+        },
+        {
+          "id": "L4-03",
+          "title": "requires Examples",
+          "file": "L4-safety/03-requires-examples.json",
+          "duration": "12 min",
+          "concepts": [
+            "requires",
+            "precondition patterns",
+            "validation",
+            "bounds checking",
+            "non-null"
+          ]
+        },
+        {
+          "id": "L4-04",
+          "title": "ensures Basics",
+          "file": "L4-safety/04-ensures-basics.json",
+          "duration": "10 min",
+          "concepts": [
+            "ensures",
+            "postcondition",
+            "contract clause",
+            "return guarantee"
+          ]
+        },
+        {
+          "id": "L4-05",
+          "title": "ensures with result",
+          "file": "L4-safety/05-ensures-result.json",
+          "duration": "10 min",
+          "concepts": [
+            "ensures",
+            "result",
+            "postcondition",
+            "return value check"
+          ]
+        },
+        {
+          "id": "L4-06",
+          "title": "requires + ensures",
+          "file": "L4-safety/06-requires-ensures.json",
+          "duration": "12 min",
+          "concepts": [
+            "requires",
+            "ensures",
+            "full contract",
+            "precondition",
+            "postcondition"
+          ]
+        },
+        {
+          "id": "L4-07",
+          "title": "Contract Violations",
+          "file": "L4-safety/07-contract-violations.json",
+          "duration": "12 min",
+          "concepts": [
+            "contract violation",
+            "trap",
+            "debug",
+            "error message",
+            "backtrace"
+          ]
+        },
+        {
+          "id": "L4-08",
+          "title": "Contracts",
+          "file": "L4-safety/08-contracts.json",
+          "duration": "15 min",
+          "concepts": [
+            "requires",
+            "ensures",
+            "contract",
+            "design by contract",
+            "precondition",
+            "postcondition"
+          ]
+        },
+        {
+          "id": "L4-09",
+          "title": "--no-contracts",
+          "file": "L4-safety/09-no-contracts.json",
+          "duration": "8 min",
+          "concepts": [
+            "--no-contracts",
+            "release mode",
+            "contract stripping",
+            "zero-cost",
+            "compiler flag"
+          ]
+        },
+        {
+          "id": "L4-10",
+          "title": "--runtime-contracts",
+          "file": "L4-safety/10-runtime-contracts.json",
+          "duration": "8 min",
+          "concepts": [
+            "--runtime-contracts",
+            "runtime check",
+            "contract forcing",
+            "hybrid mode"
+          ]
+        },
+        {
+          "id": "L4-11",
+          "title": "Contract on Methods",
+          "file": "L4-safety/11-contract-methods.json",
+          "duration": "12 min",
+          "concepts": [
+            "method contract",
+            "self preconditions",
+            "self postconditions",
+            "invariant"
+          ]
+        },
+        {
+          "id": "L4-12",
+          "title": "Contract on Generic Functions",
+          "file": "L4-safety/12-contract-generic.json",
+          "duration": "12 min",
+          "concepts": [
+            "generic contract",
+            "type parameter",
+            "constrained generic",
+            "T: Interface"
+          ]
+        },
+        {
+          "id": "L4-13",
+          "title": "Contract on FFI Functions",
+          "file": "L4-safety/13-contract-ffi.json",
+          "duration": "12 min",
+          "concepts": [
+            "FFI",
+            "foreign function",
+            "unsafe",
+            "C interop",
+            "contract guard"
+          ]
+        },
+        {
+          "id": "L4-14",
+          "title": "Division by Zero",
+          "file": "L4-safety/14-division-by-zero.json",
+          "duration": "8 min",
+          "concepts": [
+            "division by zero",
+            "requires",
+            "precondition",
+            "arithmetic safety"
+          ]
+        },
+        {
+          "id": "L4-15",
+          "title": "Array Bounds",
+          "file": "L4-safety/15-array-bounds.json",
+          "duration": "10 min",
+          "concepts": [
+            "array bounds",
+            "index",
+            "out of bounds",
+            "bounds checking",
+            "requires"
+          ]
+        },
+        {
+          "id": "L4-16",
+          "title": "Option.unwrap",
+          "file": "L4-safety/16-option-unwrap.json",
+          "duration": "10 min",
+          "concepts": [
+            "Option",
+            "unwrap",
+            "requires: is_some",
+            "None",
+            "Some"
+          ]
+        },
+        {
+          "id": "L4-17",
+          "title": "Null Pointer",
+          "file": "L4-safety/17-null-pointer.json",
+          "duration": "10 min",
+          "concepts": [
+            "null pointer",
+            "nil",
+            "null check",
+            "requires: ptr != null",
+            "dereference"
+          ]
+        },
+        {
+          "id": "L4-18",
+          "title": "Integer Overflow",
+          "file": "L4-safety/18-integer-overflow.json",
+          "duration": "10 min",
+          "concepts": [
+            "integer overflow",
+            "checked operations",
+            "wrapping",
+            "saturation",
+            "overflow safety"
+          ]
+        },
+        {
+          "id": "L4-19",
+          "title": "Stack Overflow",
+          "file": "L4-safety/19-stack-overflow.json",
+          "duration": "10 min",
+          "concepts": [
+            "stack overflow",
+            "recursion",
+            "depth limit",
+            "tail recursion",
+            "guard"
+          ]
+        },
+        {
+          "id": "L4-20",
+          "title": "invariant on Types",
+          "file": "L4-safety/20-invariant-types.json",
+          "duration": "12 min",
+          "concepts": [
+            "invariant",
+            "type invariant",
+            "struct validation",
+            "always-true",
+            "type safety"
+          ]
+        },
+        {
+          "id": "L4-21",
+          "title": "invariant Examples",
+          "file": "L4-safety/21-invariant-examples.json",
+          "duration": "12 min",
+          "concepts": [
+            "invariant",
+            "range check",
+            "domain type",
+            "validation",
+            "newtype"
+          ]
+        },
+        {
+          "id": "L4-22",
+          "title": "invariant on Enums",
+          "file": "L4-safety/22-invariant-enums.json",
+          "duration": "10 min",
+          "concepts": [
+            "invariant",
+            "enum",
+            "variant validity",
+            "discriminated union",
+            "type safety"
+          ]
+        },
+        {
+          "id": "L4-23",
+          "title": "invariant vs requires",
+          "file": "L4-safety/23-invariant-vs-requires.json",
+          "duration": "10 min",
+          "concepts": [
+            "invariant",
+            "requires",
+            "type-level",
+            "function-level",
+            "design choice"
+          ]
+        },
+        {
+          "id": "L4-24",
+          "title": "Multiple invariants",
+          "file": "L4-safety/24-multiple-invariants.json",
+          "duration": "8 min",
+          "concepts": [
+            "multiple invariants",
+            "composing checks",
+            "independent validation",
+            "invariant stacking"
+          ]
+        },
+        {
+          "id": "L4-25",
+          "title": "Invariant after Mutation",
+          "file": "L4-safety/25-invariant-mutation.json",
+          "duration": "10 min",
+          "concepts": [
+            "invariant",
+            "mutation",
+            "auto-check",
+            "state change",
+            "type safety"
+          ]
+        },
+        {
+          "id": "L4-26",
+          "title": "Z3 Verification Intro",
+          "file": "L4-safety/26-z3-intro.json",
+          "duration": "15 min",
+          "concepts": [
+            "Z3",
+            "SMT solver",
+            "static verification",
+            "formal proof",
+            "theorem prover"
+          ]
+        },
+        {
+          "id": "L4-27",
+          "title": "Z3 Setup",
+          "file": "L4-safety/27-z3-setup.json",
+          "duration": "8 min",
+          "concepts": [
+            "Z3",
+            "installation",
+            "PATH",
+            "z3 binary",
+            "setup"
+          ]
+        },
+        {
+          "id": "L4-28",
+          "title": "xiom verify",
+          "file": "L4-safety/28-xiom-verify.json",
+          "duration": "12 min",
+          "concepts": [
+            "xiom verify",
+            "static verification",
+            "contract proof",
+            "SMT",
+            "formal methods"
+          ]
+        },
+        {
+          "id": "L4-29",
+          "title": "Counterexamples",
+          "file": "L4-safety/29-counterexamples.json",
+          "duration": "12 min",
+          "concepts": [
+            "counterexample",
+            "Z3 output",
+            "bug finding",
+            "failed proof",
+            "model"
+          ]
+        },
+        {
+          "id": "L4-30",
+          "title": "Contract Debugging",
+          "file": "L4-safety/30-contract-debugging.json",
+          "duration": "12 min",
+          "concepts": [
+            "debugging",
+            "contract violation",
+            "fix strategy",
+            "root cause",
+            "iterative fix"
+          ]
+        },
+        {
+          "id": "L4-31",
+          "title": "Error Handling",
+          "file": "L4-safety/31-result.json",
+          "duration": "15 min",
+          "concepts": [
+            "Result",
+            "Ok",
+            "Err",
+            "?",
+            "is_ok",
+            "is_err",
+            "unwrap"
+          ]
+        },
+        {
+          "id": "L4-32",
+          "title": "Custom Error Types",
+          "file": "L4-safety/32-custom-errors.json",
+          "duration": "10 min",
+          "concepts": [
+            "error type",
+            "domain error",
+            "enum error",
+            "typed errors"
+          ]
+        },
+        {
+          "id": "L4-33",
+          "title": "Error Messages",
+          "file": "L4-safety/33-error-messages.json",
+          "duration": "8 min",
+          "concepts": [
+            "error messages",
+            "diagnostic",
+            "helpful context",
+            "user-facing errors"
+          ]
+        },
+        {
+          "id": "L4-34",
+          "title": "Error Chains",
+          "file": "L4-safety/34-error-chains.json",
+          "duration": "10 min",
+          "concepts": [
+            "error chain",
+            "error wrapping",
+            "context propagation",
+            "causal chain"
+          ]
+        },
+        {
+          "id": "L4-35",
+          "title": "Backtrace",
+          "file": "L4-safety/35-backtrace.json",
+          "duration": "8 min",
+          "concepts": [
+            "backtrace",
+            "stack trace",
+            "debugging",
+            "crash analysis",
+            "--backtrace"
+          ]
+        },
+        {
+          "id": "L4-36",
+          "title": "assert",
+          "file": "L4-safety/36-assert.json",
+          "duration": "8 min",
+          "concepts": [
+            "assert",
+            "runtime assertion",
+            "debug check",
+            "invariant check"
+          ]
+        },
+        {
+          "id": "L4-37",
+          "title": "panic",
+          "file": "L4-safety/37-panic.json",
+          "duration": "8 min",
+          "concepts": [
+            "panic",
+            "unrecoverable error",
+            "abort",
+            "crash",
+            "fail-stop"
+          ]
+        },
+        {
+          "id": "L4-38",
+          "title": "panic_if",
+          "file": "L4-safety/38-panic-if.json",
+          "duration": "6 min",
+          "concepts": [
+            "panic_if",
+            "conditional panic",
+            "guard",
+            "early abort"
+          ]
+        },
+        {
+          "id": "L4-39",
+          "title": "Defensive Programming",
+          "file": "L4-safety/39-defensive-programming.json",
+          "duration": "10 min",
+          "concepts": [
+            "defensive programming",
+            "guard clauses",
+            "early return",
+            "fail fast",
+            "input validation"
+          ]
+        },
+        {
+          "id": "L4-40",
+          "title": "Fuzz Testing Intro",
+          "file": "L4-safety/40-fuzz-intro.json",
+          "duration": "12 min",
+          "concepts": [
+            "fuzz testing",
+            "fuzzing",
+            "random input",
+            "coverage-guided",
+            "bug finding"
+          ]
+        },
+        {
+          "id": "L4-41",
+          "title": "Fuzz Testing Setup",
+          "file": "L4-safety/41-fuzz-setup.json",
+          "duration": "10 min",
+          "concepts": [
+            "cargo-fuzz",
+            "libfuzzer",
+            "fuzz target",
+            "corpus",
+            "sanitizer"
+          ]
+        },
+        {
+          "id": "L4-42",
+          "title": "Property-Based Testing",
+          "file": "L4-safety/42-property-testing.json",
+          "duration": "12 min",
+          "concepts": [
+            "property-based testing",
+            "invariant",
+            "quickcheck",
+            "random test",
+            "for all"
+          ]
+        },
+        {
+          "id": "L4-43",
+          "title": "Test Coverage",
+          "file": "L4-safety/43-test-coverage.json",
+          "duration": "10 min",
+          "concepts": [
+            "test coverage",
+            "code coverage",
+            "branch coverage",
+            "what to test"
+          ]
+        },
+        {
+          "id": "L4-44",
+          "title": "Benchmarking",
+          "file": "L4-safety/44-benchmarking.json",
+          "duration": "10 min",
+          "concepts": [
+            "benchmark",
+            "performance",
+            "contract overhead",
+            "measure",
+            "perf"
+          ]
+        },
+        {
+          "id": "L4-45",
+          "title": "Security Considerations",
+          "file": "L4-safety/45-security.json",
+          "duration": "12 min",
+          "concepts": [
+            "security",
+            "unsafe audit",
+            "attack surface",
+            "trust boundary",
+            "vulnerability"
+          ]
+        },
+        {
+          "id": "L4-46",
+          "title": "Undefined Behavior",
+          "file": "L4-safety/46-undefined-behavior.json",
+          "duration": "12 min",
+          "concepts": [
+            "undefined behavior",
+            "UB",
+            "nasal demons",
+            "what XIOM prevents",
+            "C pitfalls"
+          ]
+        },
+        {
+          "id": "L4-47",
+          "title": "Safe Abstractions",
+          "file": "L4-safety/47-safe-abstractions.json",
+          "duration": "12 min",
+          "concepts": [
+            "safe abstraction",
+            "unsafe wrapper",
+            "encapsulation",
+            "safe API"
+          ]
+        },
+        {
+          "id": "L4-48",
+          "title": "Design by Contract",
+          "file": "L4-safety/48-design-by-contract.json",
+          "duration": "12 min",
+          "concepts": [
+            "design by contract",
+            "methodology",
+            "DbC",
+            "Bertrand Meyer",
+            "Eiffel"
+          ]
+        },
+        {
+          "id": "L4-49",
+          "title": "Formal Methods Intro",
+          "file": "L4-safety/49-formal-methods.json",
+          "duration": "12 min",
+          "concepts": [
+            "formal methods",
+            "model checking",
+            "theorem proving",
+            "TLA+",
+            "Coq"
+          ]
+        },
+        {
+          "id": "L4-50",
+          "title": "Safety Project",
+          "file": "L4-safety/50-safety-project.json",
+          "duration": "45 min",
+          "concepts": [
+            "project",
+            "contract-heavy library",
+            "safety",
+            "review",
+            "integration"
+          ]
+        },
+        {
+          "id": "L4-51",
+          "title": "Runtime Guards",
+          "file": "L4-safety/51-runtime-guards.json",
+          "duration": "10 min",
+          "concepts": [
+            "runtime guard",
+            "@llvm.trap",
+            "trap",
+            "unreachable",
+            "safe abort"
+          ]
+        },
+        {
+          "id": "L4-52",
+          "title": "Error Handling Philosophy",
+          "file": "L4-safety/52-error-philosophy.json",
+          "duration": "10 min",
+          "concepts": [
+            "fail fast",
+            "error handling",
+            "defensive programming",
+            "crash early"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L5",
+      "name": "Patterns",
+      "icon": "🧩",
+      "description": "Generics, interfaces, iterators, and design patterns.",
+      "lessons": [
+        {
+          "id": "L5-01",
+          "title": "Generics",
+          "file": "L5-patterns/01-generics.json",
+          "duration": "15 min",
+          "concepts": [
+            "T",
+            "generic",
+            "type parameter",
+            "square brackets",
+            "constrained generics"
+          ]
+        },
+        {
+          "id": "L5-02",
+          "title": "Generic Functions",
+          "file": "L5-patterns/02-generic-functions.json",
+          "duration": "12 min",
+          "concepts": [
+            "generic function",
+            "fn foo[T]",
+            "type parameter",
+            "square brackets"
+          ]
+        },
+        {
+          "id": "L5-03",
+          "title": "Generic Structs",
+          "file": "L5-patterns/03-generic-structs.json",
+          "duration": "12 min",
+          "concepts": [
+            "generic struct",
+            "type Container[T]",
+            "parameterized type",
+            "data structure"
+          ]
+        },
+        {
+          "id": "L5-04",
+          "title": "Generic Enums",
+          "file": "L5-patterns/04-generic-enums.json",
+          "duration": "10 min",
+          "concepts": [
+            "generic enum",
+            "enum Option[T]",
+            "enum Result[T, E]",
+            "parameterized variant"
+          ]
+        },
+        {
+          "id": "L5-05",
+          "title": "Multiple Type Params",
+          "file": "L5-patterns/05-multiple-type-params.json",
+          "duration": "10 min",
+          "concepts": [
+            "multiple type params",
+            "T, U",
+            "K, V",
+            "parameter count"
+          ]
+        },
+        {
+          "id": "L5-06",
+          "title": "Type Constraints",
+          "file": "L5-patterns/06-type-constraints.json",
+          "duration": "12 min",
+          "concepts": [
+            "type constraint",
+            "T: Interface",
+            "bounded generics",
+            "trait bound"
+          ]
+        },
+        {
+          "id": "L5-07",
+          "title": "Multiple Constraints",
+          "file": "L5-patterns/07-multiple-constraints.json",
+          "duration": "10 min",
+          "concepts": [
+            "multiple constraints",
+            "T: Eq + Hash",
+            "compound bounds",
+            "+ operator"
+          ]
+        },
+        {
+          "id": "L5-08",
+          "title": "where Clause",
+          "file": "L5-patterns/08-where-clause.json",
+          "duration": "10 min",
+          "concepts": [
+            "where clause",
+            "clean bounds",
+            "readability",
+            "complex constraints"
+          ]
+        },
+        {
+          "id": "L5-09",
+          "title": "Generic Methods",
+          "file": "L5-patterns/09-generic-methods.json",
+          "duration": "12 min",
+          "concepts": [
+            "generic method",
+            "fn Type.method[T]",
+            "method type param",
+            "impl generics"
+          ]
+        },
+        {
+          "id": "L5-10",
+          "title": "Generic Type Inference",
+          "file": "L5-patterns/10-generic-inference.json",
+          "duration": "8 min",
+          "concepts": [
+            "type inference",
+            "auto-deduced",
+            "generic inference",
+            "implicit type"
+          ]
+        },
+        {
+          "id": "L5-11",
+          "title": "Monomorphisation",
+          "file": "L5-patterns/11-monomorphisation.json",
+          "duration": "10 min",
+          "concepts": [
+            "monomorphisation",
+            "zero-cost",
+            "code generation",
+            "static dispatch",
+            "compilation"
+          ]
+        },
+        {
+          "id": "L5-12",
+          "title": "Interfaces Intro",
+          "file": "L5-patterns/12-interfaces-intro.json",
+          "duration": "12 min",
+          "concepts": [
+            "interface",
+            "trait system",
+            "behavior",
+            "capability",
+            "abstraction"
+          ]
+        },
+        {
+          "id": "L5-13",
+          "title": "Interfaces",
+          "file": "L5-patterns/13-interfaces.json",
+          "duration": "15 min",
+          "concepts": [
+            "interface",
+            "impl",
+            "trait",
+            "typeclass",
+            "polymorphism"
+          ]
+        },
+        {
+          "id": "L5-14",
+          "title": "Implementing Interfaces",
+          "file": "L5-patterns/14-implementing-interfaces.json",
+          "duration": "12 min",
+          "concepts": [
+            "interface implementation",
+            "impl",
+            "method satisfaction",
+            "conformance"
+          ]
+        },
+        {
+          "id": "L5-15",
+          "title": "Interface Composition",
+          "file": "L5-patterns/15-interface-composition.json",
+          "duration": "10 min",
+          "concepts": [
+            "interface composition",
+            "multiple interfaces",
+            "composability",
+            "capability stacking"
+          ]
+        },
+        {
+          "id": "L5-16",
+          "title": "Interface as Bounds",
+          "file": "L5-patterns/16-interface-bounds.json",
+          "duration": "10 min",
+          "concepts": [
+            "interface bound",
+            "trait bound",
+            "T: Interface",
+            "generic constraint"
+          ]
+        },
+        {
+          "id": "L5-17",
+          "title": "Interface Default Methods",
+          "file": "L5-patterns/17-interface-defaults.json",
+          "duration": "10 min",
+          "concepts": [
+            "default method",
+            "shared impl",
+            "interface body",
+            "provided method"
+          ]
+        },
+        {
+          "id": "L5-18",
+          "title": "Associated Types",
+          "file": "L5-patterns/18-associated-types.json",
+          "duration": "12 min",
+          "concepts": [
+            "associated type",
+            "type Output",
+            "type Item",
+            "interface type alias"
+          ]
+        },
+        {
+          "id": "L5-19",
+          "title": "Interface Inheritance",
+          "file": "L5-patterns/19-interface-inheritance.json",
+          "duration": "10 min",
+          "concepts": [
+            "interface inheritance",
+            "extends",
+            "supertrait",
+            "subinterface"
+          ]
+        },
+        {
+          "id": "L5-20",
+          "title": "Iterator Interface",
+          "file": "L5-patterns/20-iterator-interface.json",
+          "duration": "12 min",
+          "concepts": [
+            "Iterator",
+            "next",
+            "size_hint",
+            "iteration",
+            "lazy"
+          ]
+        },
+        {
+          "id": "L5-21",
+          "title": "IntoIterator",
+          "file": "L5-patterns/21-into-iterator.json",
+          "duration": "10 min",
+          "concepts": [
+            "IntoIterator",
+            "for loop",
+            "into_iter",
+            "consuming iteration"
+          ]
+        },
+        {
+          "id": "L5-22",
+          "title": "Custom Iterator",
+          "file": "L5-patterns/22-custom-iterator.json",
+          "duration": "12 min",
+          "concepts": [
+            "custom iterator",
+            "Iterator implementation",
+            "state machine",
+            "lazy generation"
+          ]
+        },
+        {
+          "id": "L5-23",
+          "title": "Iterator Adapters",
+          "file": "L5-patterns/23-iterator-adapters.json",
+          "duration": "12 min",
+          "concepts": [
+            "iterator adapter",
+            "map",
+            "filter",
+            "take",
+            "skip",
+            "chain"
+          ]
+        },
+        {
+          "id": "L5-24",
+          "title": "Iterator Consumers",
+          "file": "L5-patterns/24-iterator-consumers.json",
+          "duration": "12 min",
+          "concepts": [
+            "iterator consumer",
+            "collect",
+            "fold",
+            "sum",
+            "count",
+            "for_each"
+          ]
+        },
+        {
+          "id": "L5-25",
+          "title": "Iterator Patterns",
+          "file": "L5-patterns/25-iterator-patterns.json",
+          "duration": "12 min",
+          "concepts": [
+            "iterator patterns",
+            "chain",
+            "zip",
+            "enumerate",
+            "flat_map",
+            "peekable"
+          ]
+        },
+        {
+          "id": "L5-26",
+          "title": "Clone Interface",
+          "file": "L5-patterns/26-clone.json",
+          "duration": "12 min",
+          "concepts": [
+            "Clone",
+            "deep copy",
+            "clone method",
+            "duplicate"
+          ]
+        },
+        {
+          "id": "L5-27",
+          "title": "Eq Interface",
+          "file": "L5-patterns/27-eq.json",
+          "duration": "10 min",
+          "concepts": [
+            "Eq",
+            "equality",
+            "==",
+            "PartialEq",
+            "value equality"
+          ]
+        },
+        {
+          "id": "L5-28",
+          "title": "Ord Interface",
+          "file": "L5-patterns/28-ord.json",
+          "duration": "12 min",
+          "concepts": [
+            "Ord",
+            "ordering",
+            "<",
+            ">",
+            "<=, >=",
+            "comparison",
+            "sorting"
+          ]
+        },
+        {
+          "id": "L5-29",
+          "title": "Hash Interface",
+          "file": "L5-patterns/29-hash.json",
+          "duration": "12 min",
+          "concepts": [
+            "Hash",
+            "hashing",
+            "HashMap",
+            "hash function",
+            "bucket"
+          ]
+        },
+        {
+          "id": "L5-30",
+          "title": "Display Interface",
+          "file": "L5-patterns/30-display.json",
+          "duration": "10 min",
+          "concepts": [
+            "Display",
+            "to_str",
+            "human-readable",
+            "string formatting",
+            "user-facing"
+          ]
+        },
+        {
+          "id": "L5-31",
+          "title": "Debug Interface",
+          "file": "L5-patterns/31-debug.json",
+          "duration": "10 min",
+          "concepts": [
+            "Debug",
+            "debug output",
+            "developer-facing",
+            "inspect",
+            "troubleshoot"
+          ]
+        },
+        {
+          "id": "L5-32",
+          "title": "Default Interface",
+          "file": "L5-patterns/32-default.json",
+          "duration": "8 min",
+          "concepts": [
+            "Default",
+            "default value",
+            "zero value",
+            "initialization",
+            "factory"
+          ]
+        },
+        {
+          "id": "L5-33",
+          "title": "Drop Interface",
+          "file": "L5-patterns/33-drop.json",
+          "duration": "12 min",
+          "concepts": [
+            "Drop",
+            "destructor",
+            "cleanup",
+            "RAII",
+            "resource management"
+          ]
+        },
+        {
+          "id": "L5-34",
+          "title": "From/Into Interface",
+          "file": "L5-patterns/34-from-into.json",
+          "duration": "12 min",
+          "concepts": [
+            "From",
+            "Into",
+            "type conversion",
+            "implicit conversion",
+            "wrapping"
+          ]
+        },
+        {
+          "id": "L5-35",
+          "title": "TryFrom Interface",
+          "file": "L5-patterns/35-tryfrom.json",
+          "duration": "10 min",
+          "concepts": [
+            "TryFrom",
+            "fallible conversion",
+            "Result",
+            "error handling",
+            "validation"
+          ]
+        },
+        {
+          "id": "L5-36",
+          "title": "Deref Interface",
+          "file": "L5-patterns/36-deref.json",
+          "duration": "10 min",
+          "concepts": [
+            "Deref",
+            "dereference",
+            "*",
+            "smart pointer",
+            "transparent wrapper"
+          ]
+        },
+        {
+          "id": "L5-37",
+          "title": "AsRef Interface",
+          "file": "L5-patterns/37-asref.json",
+          "duration": "10 min",
+          "concepts": [
+            "AsRef",
+            "reference conversion",
+            "borrow as",
+            "flexible API"
+          ]
+        },
+        {
+          "id": "L5-38",
+          "title": "FromStr Interface",
+          "file": "L5-patterns/38-fromstr.json",
+          "duration": "10 min",
+          "concepts": [
+            "FromStr",
+            "parse",
+            "string parsing",
+            "deserialization",
+            "text input"
+          ]
+        },
+        {
+          "id": "L5-39",
+          "title": "Derive Macros Deep",
+          "file": "L5-patterns/39-derive-deep.json",
+          "duration": "15 min",
+          "concepts": [
+            "derive",
+            "macro",
+            "code generation",
+            "auto-implement",
+            "metadata"
+          ]
+        },
+        {
+          "id": "L5-40",
+          "title": "Custom Derive Macros",
+          "file": "L5-patterns/40-derive-custom.json",
+          "duration": "15 min",
+          "concepts": [
+            "custom derive",
+            "proc macro",
+            "code generation",
+            "meta-programming",
+            "AST"
+          ]
+        },
+        {
+          "id": "L5-41",
+          "title": "Comptime Intro",
+          "file": "L5-patterns/41-comptime-intro.json",
+          "duration": "15 min",
+          "concepts": [
+            "comptime",
+            "compile-time",
+            "const",
+            "evaluation",
+            "meta-programming"
+          ]
+        },
+        {
+          "id": "L5-42",
+          "title": "Comptime Patterns",
+          "file": "L5-patterns/42-comptime-patterns.json",
+          "duration": "12 min",
+          "concepts": [
+            "comptime patterns",
+            "static reflection",
+            "code gen",
+            "type-level",
+            "const generics"
+          ]
+        },
+        {
+          "id": "L5-43",
+          "title": "Newtype Pattern",
+          "file": "L5-patterns/43-newtype.json",
+          "duration": "12 min",
+          "concepts": [
+            "newtype",
+            "wrapper",
+            "type safety",
+            "zero-cost abstraction",
+            "domain modeling"
+          ]
+        },
+        {
+          "id": "L5-44",
+          "title": "Builder Pattern",
+          "file": "L5-patterns/44-builder.json",
+          "duration": "12 min",
+          "concepts": [
+            "builder",
+            "fluent API",
+            "construction",
+            "optional fields",
+            "chaining"
+          ]
+        },
+        {
+          "id": "L5-45",
+          "title": "Type State Pattern",
+          "file": "L5-patterns/45-type-state.json",
+          "duration": "15 min",
+          "concepts": [
+            "type state",
+            "phantom type",
+            "compile-time state",
+            "state machine",
+            "API safety"
+          ]
+        },
+        {
+          "id": "L5-46",
+          "title": "Strategy Pattern",
+          "file": "L5-patterns/46-strategy.json",
+          "duration": "12 min",
+          "concepts": [
+            "strategy",
+            "interface",
+            "dependency injection",
+            "algorithm swap",
+            "behavior"
+          ]
+        },
+        {
+          "id": "L5-47",
+          "title": "Visitor Pattern",
+          "file": "L5-patterns/47-visitor.json",
+          "duration": "15 min",
+          "concepts": [
+            "visitor",
+            "double dispatch",
+            "AST",
+            "tree traversal",
+            "operation separation"
+          ]
+        },
+        {
+          "id": "L5-48",
+          "title": "Observer Pattern",
+          "file": "L5-patterns/48-observer.json",
+          "duration": "12 min",
+          "concepts": [
+            "observer",
+            "pub-sub",
+            "event",
+            "callback",
+            "notification"
+          ]
+        },
+        {
+          "id": "L5-49",
+          "title": "Generics & Patterns Recap",
+          "file": "L5-patterns/49-recap.json",
+          "duration": "15 min",
+          "concepts": [
+            "generics",
+            "interfaces",
+            "design patterns",
+            "review",
+            "summary"
+          ]
+        },
+        {
+          "id": "L5-50",
+          "title": "Final Project: Data Pipeline",
+          "file": "L5-patterns/50-final-project.json",
+          "duration": "45 min",
+          "concepts": [
+            "final project",
+            "pipeline",
+            "generics",
+            "interfaces",
+            "integration"
+          ]
+        },
+        {
+          "id": "L5-53",
+          "title": "Writing Interfaces",
+          "file": "L5-patterns/53-writing-interfaces.json",
+          "duration": "12 min",
+          "concepts": [
+            "interface definition",
+            "method signature",
+            "contract",
+            "API design"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L6",
+      "name": "Engineering",
+      "icon": "🔧",
+      "description": "Modules, packages, testing, and deployment.",
+      "lessons": [
+        {
+          "id": "L6-01",
+          "title": "Modules",
+          "file": "L6-engineering/01-modules.json",
+          "duration": "15 min",
+          "concepts": [
+            "module",
+            "use",
+            "pub",
+            "visibility",
+            "package.xi"
+          ]
+        },
+        {
+          "id": "L6-02",
+          "title": "use Statement",
+          "file": "L6-engineering/02-use-statement.json",
+          "duration": "10 min",
+          "concepts": [
+            "use",
+            "import",
+            "path",
+            "alias"
+          ]
+        },
+        {
+          "id": "L6-03",
+          "title": "pub Visibility",
+          "file": "L6-engineering/03-pub-visibility.json",
+          "duration": "10 min",
+          "concepts": [
+            "pub",
+            "visibility",
+            "public",
+            "API"
+          ]
+        },
+        {
+          "id": "L6-04",
+          "title": "Private by Default",
+          "file": "L6-engineering/04-private-default.json",
+          "duration": "8 min",
+          "concepts": [
+            "private",
+            "encapsulation",
+            "default visibility",
+            "information hiding"
+          ]
+        },
+        {
+          "id": "L6-05",
+          "title": "Module Hierarchy",
+          "file": "L6-engineering/05-module-hierarchy.json",
+          "duration": "12 min",
+          "concepts": [
+            "nested modules",
+            "module tree",
+            "submodules",
+            "hierarchy"
+          ]
+        },
+        {
+          "id": "L6-06",
+          "title": "package.xi",
+          "file": "L6-engineering/06-package-manifest.json",
+          "duration": "10 min",
+          "concepts": [
+            "package.xi",
+            "manifest",
+            "project",
+            "metadata"
+          ]
+        },
+        {
+          "id": "L6-07",
+          "title": "Dependencies",
+          "file": "L6-engineering/07-dependencies.json",
+          "duration": "10 min",
+          "concepts": [
+            "dependencies",
+            "crate",
+            "external",
+            "package registry"
+          ]
+        },
+        {
+          "id": "L6-08",
+          "title": "xiom pkg install",
+          "file": "L6-engineering/08-pkg-install.json",
+          "duration": "10 min",
+          "concepts": [
+            "pkg",
+            "install",
+            "package manager",
+            "fetch",
+            "resolve"
+          ]
+        },
+        {
+          "id": "L6-09",
+          "title": "xiom build",
+          "file": "L6-engineering/09-build.json",
+          "duration": "12 min",
+          "concepts": [
+            "build",
+            "compilation",
+            "binary",
+            "output",
+            "artifact"
+          ]
+        },
+        {
+          "id": "L6-10",
+          "title": "xiom test",
+          "file": "L6-engineering/10-test.json",
+          "duration": "10 min",
+          "concepts": [
+            "test",
+            "test runner",
+            "xiom test",
+            "test output"
+          ]
+        },
+        {
+          "id": "L6-11",
+          "title": "Writing Tests",
+          "file": "L6-engineering/11-writing-tests.json",
+          "duration": "12 min",
+          "concepts": [
+            "@test",
+            "test function",
+            "test harness",
+            "unit test"
+          ]
+        },
+        {
+          "id": "L6-12",
+          "title": "Test Assertions",
+          "file": "L6-engineering/12-test-assertions.json",
+          "duration": "10 min",
+          "concepts": [
+            "assert_eq",
+            "assert_ne",
+            "assert",
+            "assert_approx",
+            "assert_err"
+          ]
+        },
+        {
+          "id": "L6-13",
+          "title": "Test Organization",
+          "file": "L6-engineering/13-test-organization.json",
+          "duration": "10 min",
+          "concepts": [
+            "test modules",
+            "#[cfg(test)]",
+            "unit tests",
+            "integration tests"
+          ]
+        },
+        {
+          "id": "L6-14",
+          "title": "Test Fixtures",
+          "file": "L6-engineering/14-test-fixtures.json",
+          "duration": "12 min",
+          "concepts": [
+            "fixture",
+            "setup",
+            "teardown",
+            "before_each",
+            "test context"
+          ]
+        },
+        {
+          "id": "L6-15",
+          "title": "Benchmarking",
+          "file": "L6-engineering/15-benchmarking.json",
+          "duration": "12 min",
+          "concepts": [
+            "benchmark",
+            "performance",
+            "bench module",
+            "measurement"
+          ]
+        },
+        {
+          "id": "L6-16",
+          "title": "Documentation",
+          "file": "L6-engineering/16-documentation.json",
+          "duration": "10 min",
+          "concepts": [
+            "documentation",
+            "xiom doc",
+            "generated docs",
+            "docs"
+          ]
+        },
+        {
+          "id": "L6-18",
+          "title": "xiom fmt",
+          "file": "L6-engineering/18-xiom-fmt.json",
+          "duration": "8 min",
+          "concepts": [
+            "formatter",
+            "code style",
+            "xiom fmt",
+            "auto-format",
+            "consistency"
+          ]
+        },
+        {
+          "id": "L6-19",
+          "title": "xiom lint",
+          "file": "L6-engineering/19-xiom-lint.json",
+          "duration": "10 min",
+          "concepts": [
+            "lint",
+            "static analysis",
+            "warnings",
+            "code quality",
+            "best practices"
+          ]
+        },
+        {
+          "id": "L6-20",
+          "title": "Error Codes",
+          "file": "L6-engineering/20-error-codes.json",
+          "duration": "10 min",
+          "concepts": [
+            "error codes",
+            "diagnostics",
+            "E001",
+            "compiler errors",
+            "troubleshooting"
+          ]
+        },
+        {
+          "id": "L6-21",
+          "title": "xiom doctor",
+          "file": "L6-engineering/21-xiom-doctor.json",
+          "duration": "8 min",
+          "concepts": [
+            "doctor",
+            "diagnostics",
+            "troubleshooting",
+            "environment",
+            "setup check"
+          ]
+        },
+        {
+          "id": "L6-22",
+          "title": "Version Management",
+          "file": "L6-engineering/22-version-management.json",
+          "duration": "10 min",
+          "concepts": [
+            "xiom version",
+            "toolchain",
+            "update",
+            "channel",
+            "semver"
+          ]
+        },
+        {
+          "id": "L6-23",
+          "title": "Git & CI/CD",
+          "file": "L6-engineering/23-git-cicd.json",
+          "duration": "12 min",
+          "concepts": [
+            "git",
+            "CI/CD",
+            "continuous integration",
+            "automation",
+            "pipeline"
+          ]
+        },
+        {
+          "id": "L6-24",
+          "title": "GitHub Actions",
+          "file": "L6-engineering/24-github-actions.json",
+          "duration": "15 min",
+          "concepts": [
+            "GitHub Actions",
+            "workflow",
+            "YAML",
+            "automation",
+            "matrix build"
+          ]
+        },
+        {
+          "id": "L6-25",
+          "title": "Release Process",
+          "file": "L6-engineering/25-release-process.json",
+          "duration": "12 min",
+          "concepts": [
+            "release",
+            "versioning",
+            "changelog",
+            "semver",
+            "publishing"
+          ]
+        },
+        {
+          "id": "L6-26",
+          "title": "Cross-Platform",
+          "file": "L6-engineering/26-cross-platform.json",
+          "duration": "12 min",
+          "concepts": [
+            "cross-platform",
+            "Windows",
+            "macOS",
+            "Linux",
+            "conditional compilation"
+          ]
+        },
+        {
+          "id": "L6-27",
+          "title": "Build Profiles",
+          "file": "L6-engineering/27-build-profiles.json",
+          "duration": "10 min",
+          "concepts": [
+            "build profiles",
+            "debug",
+            "release",
+            "optimization",
+            "profile config"
+          ]
+        },
+        {
+          "id": "L6-28",
+          "title": "Compiler Flags",
+          "file": "L6-engineering/28-compiler-flags.json",
+          "duration": "12 min",
+          "concepts": [
+            "compiler flags",
+            "-O",
+            "--emit",
+            "--target",
+            "verbose",
+            "options"
+          ]
+        },
+        {
+          "id": "L6-29",
+          "title": "Incremental Compilation",
+          "file": "L6-engineering/29-incremental.json",
+          "duration": "10 min",
+          "concepts": [
+            "incremental compilation",
+            "caching",
+            "rebuild",
+            "change detection",
+            "speed"
+          ]
+        },
+        {
+          "id": "L6-30",
+          "title": "Dependency Graph",
+          "file": "L6-engineering/30-dependency-graph.json",
+          "duration": "10 min",
+          "concepts": [
+            "dependency graph",
+            "modules",
+            "topological sort",
+            "import tree",
+            "build order"
+          ]
+        },
+        {
+          "id": "L6-31",
+          "title": "Hot Reload",
+          "file": "L6-engineering/31-hot-reload.json",
+          "duration": "12 min",
+          "concepts": [
+            "hot reload",
+            "live update",
+            "DLL",
+            "dynamic linking",
+            "rapid iteration"
+          ]
+        },
+        {
+          "id": "L6-32",
+          "title": "Parallel Compilation",
+          "file": "L6-engineering/32-parallel.json",
+          "duration": "10 min",
+          "concepts": [
+            "parallel compilation",
+            "multi-core",
+            "build speed",
+            "job server",
+            "throughput"
+          ]
+        },
+        {
+          "id": "L6-33",
+          "title": "WASM Target",
+          "file": "L6-engineering/33-wasm-target.json",
+          "duration": "15 min",
+          "concepts": [
+            "WebAssembly",
+            "WASM",
+            "browser",
+            "wasm-bindgen",
+            "web"
+          ]
+        },
+        {
+          "id": "L6-34",
+          "title": "ARM Target",
+          "file": "L6-engineering/34-arm-target.json",
+          "duration": "12 min",
+          "concepts": [
+            "ARM",
+            "aarch64",
+            "cross-compile",
+            "embedded",
+            "mobile",
+            "Apple Silicon"
+          ]
+        },
+        {
+          "id": "L6-35",
+          "title": "RISC-V Target",
+          "file": "L6-engineering/35-riscv-target.json",
+          "duration": "12 min",
+          "concepts": [
+            "RISC-V",
+            "open ISA",
+            "RV64GC",
+            "embedded",
+            "cross-compile"
+          ]
+        },
+        {
+          "id": "L6-36",
+          "title": "Compiler Architecture",
+          "file": "L6-engineering/36-compiler-arch.json",
+          "duration": "15 min",
+          "concepts": [
+            "compiler architecture",
+            "pipeline",
+            "phases",
+            "frontend",
+            "backend",
+            "LLVM"
+          ]
+        },
+        {
+          "id": "L6-37",
+          "title": "Large Projects",
+          "file": "L6-engineering/37-large-projects.json",
+          "duration": "12 min",
+          "concepts": [
+            "workspace",
+            "monorepo",
+            "crate",
+            "large project",
+            "organization"
+          ]
+        },
+        {
+          "id": "L6-38",
+          "title": "Package Registry",
+          "file": "L6-engineering/38-package-registry.json",
+          "duration": "10 min",
+          "concepts": [
+            "registry",
+            "publish",
+            "package index",
+            "discovery",
+            "distribution"
+          ]
+        },
+        {
+          "id": "L6-39",
+          "title": "Project Templates",
+          "file": "L6-engineering/39-project-templates.json",
+          "duration": "10 min",
+          "concepts": [
+            "scaffold",
+            "template",
+            "xiom init",
+            "project generation",
+            "boilerplate"
+          ]
+        },
+        {
+          "id": "L6-40",
+          "title": "Final Project: Full Pipeline",
+          "file": "L6-engineering/40-final-project.json",
+          "duration": "45 min",
+          "concepts": [
+            "final project",
+            "build pipeline",
+            "CI/CD",
+            "multi-target",
+            "release"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L7",
+      "name": "Mastery",
+      "icon": "🎓",
+      "description": "Compiler internals: lexer, parser, checker, codegen.",
+      "lessons": [
+        {
+          "id": "L7-01",
+          "title": "Compiler Pipeline",
+          "file": "L7-mastery/01-pipeline.json",
+          "duration": "20 min",
+          "concepts": [
+            "lexer",
+            "parser",
+            "checker",
+            "codegen",
+            "LLVM",
+            "IR",
+            "AST"
+          ]
+        },
+        {
+          "id": "L7-02",
+          "title": "Lexer Internals",
+          "file": "L7-mastery/02-lexer.json",
+          "duration": "20 min",
+          "concepts": [
+            "lexer",
+            "tokenizer",
+            "token",
+            "lexeme",
+            "DFA",
+            "finite automaton"
+          ]
+        },
+        {
+          "id": "L7-03",
+          "title": "Parser Internals",
+          "file": "L7-mastery/03-parser.json",
+          "duration": "20 min",
+          "concepts": [
+            "parser",
+            "AST",
+            "recursive descent",
+            "grammar",
+            "syntax tree"
+          ]
+        },
+        {
+          "id": "L7-04",
+          "title": "Type Checker Internals",
+          "file": "L7-mastery/04-type-checker.json",
+          "duration": "20 min",
+          "concepts": [
+            "type checker",
+            "type inference",
+            "unification",
+            "Hindley-Milner",
+            "subtyping"
+          ]
+        },
+        {
+          "id": "L7-05",
+          "title": "Codegen Internals",
+          "file": "L7-mastery/05-codegen.json",
+          "duration": "20 min",
+          "concepts": [
+            "codegen",
+            "LLVM IR",
+            "instruction selection",
+            "register allocation",
+            "lowering"
+          ]
+        },
+        {
+          "id": "L7-06",
+          "title": "LLVM IR Deep Dive",
+          "file": "L7-mastery/06-llvm-ir.json",
+          "duration": "25 min",
+          "concepts": [
+            "LLVM IR",
+            "SSA",
+            "phi node",
+            "basic block",
+            "control flow graph"
+          ]
+        },
+        {
+          "id": "L7-07",
+          "title": "LLVM Optimizations",
+          "file": "L7-mastery/07-llvm-optimizations.json",
+          "duration": "20 min",
+          "concepts": [
+            "LLVM",
+            "optimization",
+            "pass",
+            "inlining",
+            "DCE",
+            "constant folding"
+          ]
+        },
+        {
+          "id": "L7-08",
+          "title": "Borrow Checker Internals",
+          "file": "L7-mastery/08-borrow-checker.json",
+          "duration": "25 min",
+          "concepts": [
+            "borrow checker",
+            "lifetimes",
+            "regions",
+            "NLL",
+            "polonius",
+            "aliasing"
+          ]
+        },
+        {
+          "id": "L7-09",
+          "title": "Z3 Integration",
+          "file": "L7-mastery/09-z3-integration.json",
+          "duration": "20 min",
+          "concepts": [
+            "Z3",
+            "SMT solver",
+            "contract verification",
+            "constraint solving",
+            "formal verification"
+          ]
+        },
+        {
+          "id": "L7-10",
+          "title": "Contract Verification Pipeline",
+          "file": "L7-mastery/10-contract-pipeline.json",
+          "duration": "15 min",
+          "concepts": [
+            "verification pipeline",
+            "xiom-verify",
+            "proof",
+            "counterexample",
+            "CI integration"
+          ]
+        },
+        {
+          "id": "L7-11",
+          "title": "Error Recovery",
+          "file": "L7-mastery/11-error-recovery.json",
+          "duration": "15 min",
+          "concepts": [
+            "error recovery",
+            "parse resilience",
+            "multiple errors",
+            "IDE support",
+            "diagnostics"
+          ]
+        },
+        {
+          "id": "L7-12",
+          "title": "Debug Info Generation",
+          "file": "L7-mastery/12-debug-info.json",
+          "duration": "15 min",
+          "concepts": [
+            "debug info",
+            "DWARF",
+            "PDB",
+            "source mapping",
+            "debugger support"
+          ]
+        },
+        {
+          "id": "L7-13",
+          "title": "Self-Hosting",
+          "file": "L7-mastery/13-self-hosting.json",
+          "duration": "15 min",
+          "concepts": [
+            "self-hosting",
+            "bootstrapping",
+            "compiler",
+            "dogfooding",
+            "language design"
+          ]
+        },
+        {
+          "id": "L7-14",
+          "title": "Compiler Hacking",
+          "file": "L7-mastery/14-compiler-hacking.json",
+          "duration": "25 min",
+          "concepts": [
+            "compiler hacking",
+            "contribution",
+            "plugin",
+            "pass",
+            "extension"
+          ]
+        },
+        {
+          "id": "L7-15",
+          "title": "Contributing to XIOM",
+          "file": "L7-mastery/15-contributing.json",
+          "duration": "15 min",
+          "concepts": [
+            "contribution",
+            "open source",
+            "PR",
+            "RFC",
+            "community"
+          ]
+        },
+        {
+          "id": "L7-16",
+          "title": "Test Suite Architecture",
+          "file": "L7-mastery/16-test-suite.json",
+          "duration": "15 min",
+          "concepts": [
+            "test suite",
+            "regression test",
+            "integration test",
+            "test harness",
+            "expect test"
+          ]
+        },
+        {
+          "id": "L7-17",
+          "title": "Fuzz Testing",
+          "file": "L7-mastery/17-fuzz-testing.json",
+          "duration": "15 min",
+          "concepts": [
+            "fuzz testing",
+            "random input",
+            "grammar fuzzing",
+            "differential testing",
+            "crash detection"
+          ]
+        },
+        {
+          "id": "L7-18",
+          "title": "Performance Profiling",
+          "file": "L7-mastery/18-performance-profiling.json",
+          "duration": "15 min",
+          "concepts": [
+            "profiling",
+            "perf",
+            "flame graph",
+            "benchmarking",
+            "hot path"
+          ]
+        },
+        {
+          "id": "L7-19",
+          "title": "Code Generation Patterns",
+          "file": "L7-mastery/19-codegen-patterns.json",
+          "duration": "20 min",
+          "concepts": [
+            "codegen patterns",
+            "match compilation",
+            "closure lifting",
+            "vtable",
+            "enum layout"
+          ]
+        },
+        {
+          "id": "L7-20",
+          "title": "Final Project: Mini Compiler",
+          "file": "L7-mastery/20-final-project.json",
+          "duration": "60 min",
+          "concepts": [
+            "final project",
+            "mini compiler",
+            "codegen",
+            "end-to-end",
+            "integration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L8",
+      "name": "Ecosystem",
+      "icon": "🌐",
+      "description": "Real-world: HTTP, JSON, Vulkan, SQLite, WASM.",
+      "lessons": [
+        {
+          "id": "L8-01",
+          "title": "Package Manager",
+          "file": "L8-ecosystem/01-pkg.json",
+          "duration": "10 min",
+          "concepts": [
+            "xiom pkg",
+            "install",
+            "packages",
+            "dependencies",
+            "package.xi"
+          ]
+        },
+        {
+          "id": "L8-02",
+          "title": "Vulkan Basics",
+          "file": "L8-ecosystem/02-vulkan.json",
+          "duration": "20 min",
+          "concepts": [
+            "Vulkan",
+            "GPU",
+            "graphics",
+            "compute",
+            "low-level",
+            "rendering"
+          ]
+        },
+        {
+          "id": "L8-03",
+          "title": "GLFW Windowing",
+          "file": "L8-ecosystem/03-glfw.json",
+          "duration": "12 min",
+          "concepts": [
+            "GLFW",
+            "window",
+            "input",
+            "OpenGL",
+            "Vulkan",
+            "context"
+          ]
+        },
+        {
+          "id": "L8-04",
+          "title": "Dear ImGui",
+          "file": "L8-ecosystem/04-imgui.json",
+          "duration": "15 min",
+          "concepts": [
+            "ImGui",
+            "immediate mode",
+            "GUI",
+            "debug UI",
+            "tool windows"
+          ]
+        },
+        {
+          "id": "L8-05",
+          "title": "JSON Processing",
+          "file": "L8-ecosystem/05-json.json",
+          "duration": "12 min",
+          "concepts": [
+            "JSON",
+            "serialize",
+            "deserialize",
+            "data exchange",
+            "API"
+          ]
+        },
+        {
+          "id": "L8-06",
+          "title": "HTTP Client",
+          "file": "L8-ecosystem/06-http-client.json",
+          "duration": "15 min",
+          "concepts": [
+            "HTTP",
+            "client",
+            "REST API",
+            "request",
+            "response",
+            "networking"
+          ]
+        },
+        {
+          "id": "L8-07",
+          "title": "HTTP Server",
+          "file": "L8-ecosystem/07-http-server.json",
+          "duration": "20 min",
+          "concepts": [
+            "HTTP",
+            "server",
+            "routing",
+            "middleware",
+            "REST API"
+          ]
+        },
+        {
+          "id": "L8-08",
+          "title": "Redis Client",
+          "file": "L8-ecosystem/08-redis.json",
+          "duration": "12 min",
+          "concepts": [
+            "Redis",
+            "cache",
+            "key-value",
+            "pub-sub",
+            "data structures"
+          ]
+        },
+        {
+          "id": "L8-09",
+          "title": "SQLite Database",
+          "file": "L8-ecosystem/09-sqlite.json",
+          "duration": "15 min",
+          "concepts": [
+            "SQLite",
+            "SQL",
+            "database",
+            "embedded",
+            "query",
+            "transaction"
+          ]
+        },
+        {
+          "id": "L8-10",
+          "title": "WebSocket",
+          "file": "L8-ecosystem/10-websocket.json",
+          "duration": "15 min",
+          "concepts": [
+            "WebSocket",
+            "real-time",
+            "bidirectional",
+            "streaming",
+            "push"
+          ]
+        },
+        {
+          "id": "L8-11",
+          "title": "gRPC Services",
+          "file": "L8-ecosystem/11-grpc.json",
+          "duration": "15 min",
+          "concepts": [
+            "gRPC",
+            "RPC",
+            "protobuf",
+            "service",
+            "streaming",
+            "microservices"
+          ]
+        },
+        {
+          "id": "L8-12",
+          "title": "Protobuf Serialization",
+          "file": "L8-ecosystem/12-protobuf.json",
+          "duration": "12 min",
+          "concepts": [
+            "Protobuf",
+            "serialization",
+            "binary format",
+            "schema",
+            "compact encoding"
+          ]
+        },
+        {
+          "id": "L8-13",
+          "title": "FFmpeg Media",
+          "file": "L8-ecosystem/13-ffmpeg.json",
+          "duration": "15 min",
+          "concepts": [
+            "FFmpeg",
+            "video",
+            "audio",
+            "codec",
+            "media processing",
+            "transcoding"
+          ]
+        },
+        {
+          "id": "L8-14",
+          "title": "Game Engines",
+          "file": "L8-ecosystem/14-game-engines.json",
+          "duration": "20 min",
+          "concepts": [
+            "game engine",
+            "ECS",
+            "rendering",
+            "physics",
+            "game loop",
+            "asset pipeline"
+          ]
+        },
+        {
+          "id": "L8-15",
+          "title": "Embedded Systems",
+          "file": "L8-ecosystem/15-embedded.json",
+          "duration": "15 min",
+          "concepts": [
+            "embedded",
+            "no_std",
+            "bare metal",
+            "microcontroller",
+            "RTOS",
+            "IoT"
+          ]
+        },
+        {
+          "id": "L8-16",
+          "title": "WASM in Depth",
+          "file": "L8-ecosystem/16-wasm-deep.json",
+          "duration": "20 min",
+          "concepts": [
+            "WASM",
+            "WebAssembly",
+            "browser",
+            "wasm-bindgen",
+            "JS interop",
+            "wasm-pack"
+          ]
+        },
+        {
+          "id": "L8-17",
+          "title": "Microservices",
+          "file": "L8-ecosystem/17-microservices.json",
+          "duration": "15 min",
+          "concepts": [
+            "microservices",
+            "distributed",
+            "service mesh",
+            "observability",
+            "resilience"
+          ]
+        },
+        {
+          "id": "L8-18",
+          "title": "CLI Tools",
+          "file": "L8-ecosystem/18-cli-tools.json",
+          "duration": "12 min",
+          "concepts": [
+            "CLI",
+            "command-line",
+            "argparse",
+            "terminal",
+            "cross-platform"
+          ]
+        },
+        {
+          "id": "L8-19",
+          "title": "Community & Ecosystem",
+          "file": "L8-ecosystem/19-community.json",
+          "duration": "10 min",
+          "concepts": [
+            "community",
+            "open source",
+            "ecosystem",
+            "discord",
+            "forum",
+            "contribution"
+          ]
+        },
+        {
+          "id": "L8-20",
+          "title": "Final Project: Full-Stack App",
+          "file": "L8-ecosystem/20-final-project.json",
+          "duration": "60 min",
+          "concepts": [
+            "final project",
+            "full-stack",
+            "integration",
+            "production",
+            "deployment"
+          ]
+        }
+      ]
+    }
   ]
 }

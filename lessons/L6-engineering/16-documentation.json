@@ -1,7 +1,7 @@
 {
   "id": "L6-16",
   "title": "Documentation",
-  "level": 6,
+  "level": "L6",
   "duration": "10 min",
   "concepts": ["documentation", "xiom doc", "generated docs", "docs"],
   "concept": "`xiom doc` generates HTML documentation from doc comments in source code",

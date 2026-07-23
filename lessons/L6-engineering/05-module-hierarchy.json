@@ -1,7 +1,7 @@
 {
   "id": "L6-05",
   "title": "Module Hierarchy",
-  "level": 6,
+  "level": "L6",
   "duration": "12 min",
   "concepts": ["nested modules", "module tree", "submodules", "hierarchy"],
   "concept": "Modules can be nested to create hierarchical namespace trees",

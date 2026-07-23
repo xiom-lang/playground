@@ -1,7 +1,7 @@
 {
   "id": "L6-10",
   "title": "xiom test",
-  "level": 6,
+  "level": "L6",
   "duration": "10 min",
   "concepts": ["test", "test runner", "xiom test", "test output"],
   "concept": "`xiom test` discovers and runs all test functions in a project",
