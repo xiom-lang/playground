@@ -1,7 +1,6 @@
 """
 XIOM Playground Dev Server v0.49.9
-Serves static files + compile API endpoint.
-For production, the playground uses the WASM compiler directly in the browser.
+Serves static files + compile API endpoint with full diagnostics.
 """
 import http.server
 import json
@@ -12,7 +11,8 @@ import tempfile
 
 HOST = "localhost"
 PORT = 3000
-XIOM_BIN = os.environ.get("XIOM_BIN", os.path.join(os.path.dirname(__file__), "..", "target", "debug", "xiom.exe"))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+XIOM_BIN = os.environ.get("XIOM_BIN", os.path.join(SCRIPT_DIR, "..", "target", "debug", "xiom.exe"))
 
 class PlaygroundHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
@@ -21,44 +21,37 @@ class PlaygroundHandler(http.server.SimpleHTTPRequestHandler):
             body = self.rfile.read(content_length)
             data = json.loads(body)
             source = data.get("source", "")
+            stages = data.get("stages", "all")  # tokens, ast, checked, ir, contracts, all
 
             # Write source to temp file
             tmp = tempfile.NamedTemporaryFile(suffix=".xi", delete=False, mode="w", encoding="utf-8")
             tmp.write(source)
             tmp.close()
 
-            try:
-                # Try xiom binary first, fall back to cargo
-                result = None
-                for cmd in [
-                    [XIOM_BIN, "--emit-ir", tmp.name],
-                    ["cargo", "run", "-p", "xiom", "--", "--emit-ir", tmp.name],
-                ]:
-                    try:
-                        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=10, cwd=os.path.dirname(os.path.abspath(__file__)))
-                        if proc.returncode == 0 or proc.stderr:
-                            result = {
-                                "success": proc.returncode == 0,
-                                "ir": proc.stdout if proc.returncode == 0 else None,
-                                "diagnostics": parse_errors(proc.stderr) if proc.returncode != 0 else [],
-                                "raw_stdout": proc.stdout,
-                                "raw_stderr": proc.stderr,
-                            }
-                            break
-                    except (FileNotFoundError, subprocess.TimeoutExpired):
-                        continue
+            result = {
+                "success": False,
+                "stages": {},
+                "diagnostics": [],
+                "ir": None,
+            }
 
-                if result is None:
-                    result = {"success": False, "diagnostics": [{"code":"S001","kind":"server_error","message":"xiom binary not found. Install xiom or build with cargo.","line":0,"col":0}],"ir":None}
+            try:
+                # Try to get full diagnostics JSON
+                proc = self._run_xiom([XIOM_BIN, "--emit-ir", "--diagnostics-json", tmp.name])
+                if proc is None:
+                    proc = self._run_xiom(["cargo", "run", "-p", "xiom", "--", "--emit-ir", "--diagnostics-json", tmp.name])
+                
+                if proc is None:
+                    result["diagnostics"] = [{"code":"S001","kind":"server_error","message":"xiom binary not found. Install with: xiom install","line":0,"col":0}]
+                else:
+                    result["success"] = proc.returncode == 0
+                    result["ir"] = proc.stdout.strip() if proc.returncode == 0 else None
+                    result["diagnostics"] = self._parse_diagnostics(proc.stderr)
 
             finally:
                 os.unlink(tmp.name)
 
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(json.dumps(result).encode())
+            self._send_json(result)
         else:
             self.send_response(404)
             self.end_headers()
@@ -70,26 +63,43 @@ class PlaygroundHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
-def parse_errors(stderr):
-    diagnostics = []
-    for line in stderr.split("\n"):
-        line = line.strip()
-        if not line:
-            continue
-        # Parse error: <kind> at line <N>:<M>: <message>
-        parts = line.split(":", 3)
-        if len(parts) >= 3:
-            code = "E001"
-            msg = line
-            line_num = 0
-            col = 0
-            diagnostics.append({"code": code, "kind": "error", "message": msg, "line": line_num, "col": col})
-    return diagnostics
+    def _run_xiom(self, cmd):
+        try:
+            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=15, cwd=SCRIPT_DIR)
+            return proc
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            return None
+
+    def _parse_diagnostics(self, stderr):
+        diagnostics = []
+        for line in stderr.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            # Parse error patterns:
+            # error[T001]: line:col: message
+            # error: line:col: message
+            import re
+            m = re.match(r'.*?\[(\w+)\]\s*(\d+):(\d+):\s*(.+)', line)
+            if m:
+                diagnostics.append({"code": m.group(1), "kind": "error", "line": int(m.group(2)), "col": int(m.group(3)), "message": m.group(4)})
+                continue
+            # Fallback: capture any error-like line
+            if "error" in line.lower() or "warning" in line.lower():
+                diagnostics.append({"code": "E001", "kind": "error", "line": 0, "col": 0, "message": line})
+        return diagnostics
+
+    def _send_json(self, data):
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(json.dumps(data, indent=2).encode())
 
 if __name__ == "__main__":
     print(f"XIOM Playground v0.49.9")
-    print(f"Server running at http://{HOST}:{PORT}")
-    print(f"Open http://{HOST}:{PORT} in your browser")
+    print(f"Server: http://{HOST}:{PORT}")
+    print(f"Compiler: {XIOM_BIN} ({'found' if os.path.exists(XIOM_BIN) else 'not found - falls back to cargo'})")
     print(f"Press Ctrl+C to stop")
 
     server = http.server.HTTPServer((HOST, PORT), PlaygroundHandler)
