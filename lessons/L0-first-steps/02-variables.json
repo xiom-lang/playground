@@ -1,0 +1,16 @@
+{
+  "id": "L0-02",
+  "title": "What is a Variable?",
+  "level": "L0",
+  "duration": "8 min",
+  "concepts": ["let", "var", "Int", "Str"],
+  "narrative": "## Variables\n\nA variable is a named container that holds a value. XIOM has two kinds:\n\n- `let` creates an **immutable** variable — you can't change it after creating it\n- `var` creates a **mutable** variable — you can change it with `=`\n\n### Types\nEvery variable has a type. XIOM is **statically typed** — the type is fixed once declared.\n\n```xiom\nlet name: Str = \"XIOM\";    // String\nlet count: Int = 42;        // Integer\nlet price: Float64 = 9.99;  // Decimal\nlet done: Bool = true;      // True/False\n```",
+  "code_template": "fn main() -> Int {\n  let message: Str = \"Hello\";\n  var counter: Int = 0;\n  counter = counter + 1;\n  return counter;\n}",
+  "solution": "fn main() -> Int {\n  let message: Str = \"Hello\";\n  var counter: Int = 0;\n  counter = counter + 1;\n  return counter;\n}",
+  "tips": [
+    "Use `let` when the value won't change",
+    "Use `var` when you need to update the value later",
+    "Type annotations like `: Int` are optional when the compiler can infer"
+  ],
+  "related": ["L0-01", "L0-04"]
+}

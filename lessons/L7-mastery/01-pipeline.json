@@ -1,0 +1,17 @@
+{
+  "id": "L7-01",
+  "title": "Compiler Pipeline",
+  "level": "L7",
+  "duration": "20 min",
+  "concepts": ["lexer", "parser", "checker", "codegen", "LLVM", "IR", "AST"],
+  "narrative": "## How the XIOM Compiler Works\n\nUnderstanding the compiler's inner workings makes you a better XIOM programmer. The compiler transforms your `.xi` source code into native machine code through four major stages.\n\n### Stage 1: Lexer (Tokenization)\n\nThe lexer reads raw source text and produces a stream of **tokens** — the smallest meaningful units of the language.\n\n```xiom\nlet x = 42;\n// Token stream: [LET, IDENT(\"x\"), EQUALS, INT(42), SEMICOLON]\n```\n\nEach token has a type (keyword, identifier, literal, operator) and a source location for error reporting.\n\n### Stage 2: Parser (Syntax Analysis)\n\nThe parser takes the token stream and builds an **Abstract Syntax Tree (AST)** — a tree structure representing the program's structure.\n\n```\n         LetStmt\n       /    |    \\\n   \"x\"   Equals   IntLiteral(42)\n```\n\nThe parser catches syntax errors: missing semicolons, mismatched braces, malformed expressions.\n\n### Stage 3: Checker (Semantic Analysis)\n\nThe checker (type checker + borrow checker) validates the AST:\n- **Type checking**: Does `add(\"hello\", 5)` pass a Str where an Int is expected? Error!\n- **Borrow checking**: Are you using a moved value? Is a mutable borrow valid?\n- **Contract checking**: Are invariants satisfied? Can contracts be proven?\n- **Name resolution**: Does every identifier refer to something that exists?\n\n### Stage 4: Codegen (Code Generation)\n\nThe final stage translates the validated AST into **LLVM IR** (Intermediate Representation), which LLVM then compiles to native machine code:\n\n```llvm\ndefine i64 @main() {\nentry:\n  ret i64 0\n}\n```\n\nLLVM handles target-specific optimizations: register allocation, instruction selection, loop unrolling, and more. XIOM compiles to the same LLVM backend that powers Rust, Swift, and Clang.\n\n### Compiler Flags\n\n```bash\nxiom main.xi                        # compile to native executable\nxiom --emit-ir main.xi              # output LLVM IR\nxiom --emit-ast main.xi             # output parsed AST\nxiom --no-contracts main.xi         # strip runtime contract checks\nxiom --sandbox main.xi              # audit unsafe blocks\n```\n\n### The XIOM Compiler is Self-Hosted\n\nXIOM's compiler is written in XIOM itself. This \"bootstrapping\" means every language improvement directly benefits the compiler that builds your code.",
+  "code_template": "fn main() -> Int {\n  // There is no code template for this lesson — it's a conceptual deep dive.\n  // Your task: read through the compiler flags above and try --emit-ir\n  // on a simple program to see the LLVM IR output.\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "tips": [
+    "Use `xiom --emit-ir` to inspect the LLVM IR — great for understanding low-level compilation",
+    "The checker stage is where borrow errors and type mismatches are caught — before any code runs",
+    "XIOM's self-hosted compiler means improvements to the language also improve the compiler",
+    "All four stages run sequentially for each file in a multi-file build"
+  ],
+  "related": ["L6-01", "L7-02", "L8-02"]
+}

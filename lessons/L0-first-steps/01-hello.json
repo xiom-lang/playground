@@ -1,0 +1,18 @@
+{
+  "id": "L0-01",
+  "title": "Hello, World!",
+  "level": "L0",
+  "duration": "5 min",
+  "concepts": ["fn", "return", "Int"],
+  "narrative": "## Hello, World!\n\nEvery programming journey starts here. In XIOM, you write a `fn main()` function that returns a number. The compiler runs this function when you execute your program.\n\nLet's write our first program that returns the number 42.\n\n### How it works\n- `fn main()` declares the main function — the entry point of your program\n- `-> Int` means it returns an integer\n- `return 42;` sends the value 42 back\n- Every statement ends with `;`",
+  "code_template": "fn main() -> Int {\n  // Your code here\n  return 42;\n}",
+  "solution": "fn main() -> Int {\n  return 42;\n}",
+  "test_input": "",
+  "test_expected": "42",
+  "tips": [
+    "The `main` function is where your program starts",
+    "`-> Int` after the function name declares what type it returns",
+    "Every statement in XIOM ends with a semicolon"
+  ],
+  "related": ["L0-02", "L1-03"]
+}

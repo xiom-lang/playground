@@ -108,6 +108,130 @@ body {
   color: var(--accent);
 }
 
+.lesson-level-header {
+  color: var(--text-secondary);
+}
+
+.level-name {
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.level-progress {
+  color: var(--text-secondary);
+}
+
+.level-progress.all-done {
+  color: var(--success);
+}
+
+.lesson-check {
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+.lesson-check.completed {
+  color: var(--success);
+  border-color: var(--success);
+  background: rgba(78, 204, 163, 0.1);
+}
+
+.concept-tag {
+  background: var(--bg-elevated);
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+
+.narrative-panel {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.narrative-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.narrative-duration {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.narrative-body {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.narrative-body h3 {
+  color: var(--text-primary);
+  font-size: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.narrative-body h4 {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.narrative-body pre {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+}
+
+.narrative-body code {
+  background: var(--bg-elevated);
+  color: var(--accent);
+}
+
+.narrative-tips {
+  background: rgba(255, 215, 0, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+}
+
+.narrative-tips h3 {
+  color: var(--warning);
+}
+
+.narrative-tips li {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.narrative-actions {
+  border-top: 1px solid var(--border);
+}
+
+.btn-complete {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-complete:hover {
+  background: #ff6b81;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn-complete.done {
+  background: rgba(78, 204, 163, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(78, 204, 163, 0.3);
+}
+
+.narrative-loading,
+.narrative-error,
+.lesson-error {
+  color: var(--text-secondary);
+}
+
+.narrative-error {
+  color: var(--error);
+}
+
 .output-panel {
   border-top: 1px solid var(--border);
 }

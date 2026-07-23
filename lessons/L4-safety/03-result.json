@@ -1,0 +1,17 @@
+{
+  "id": "L4-03",
+  "title": "Error Handling",
+  "level": "L4",
+  "duration": "15 min",
+  "concepts": ["Result", "Ok", "Err", "?", "is_ok", "is_err", "unwrap"],
+  "narrative": "## Handling Errors with Result\n\nNot all operations succeed. Files might not exist, network connections can fail, and inputs may be invalid. XIOM uses the `Result` type for **recoverable errors** — unlike contracts, which trap on violation.\n\n### The Result Type\n\n`Result[T, E]` is an enum with two variants:\n- `Ok(value)` — the operation succeeded, containing the result\n- `Err(error)` — the operation failed, containing the error\n\n```xiom\nfn parse_number(s: Str) -> Result[Int, Str] {\n  if s.len() == 0 {\n    return Err(\"empty string\");\n  }\n  return Ok(string.str_to_int(s));  // simplified\n}\n```\n\n### Handling Results with Match\n\n```xiom\nlet outcome = parse_number(\"42\");\nmatch outcome {\n  Ok(n) => { io.println(\"Parsed: \" + n); }\n  Err(msg) => { io.println(\"Error: \" + msg); }\n}\n```\n\n### The ? Operator\n\nInside a function that returns `Result`, use `?` to unwrap an `Ok` or return the `Err` early:\n\n```xiom\nfn process_input(raw: Str) -> Result[Int, Str] {\n  let parsed = parse_number(raw)?;  // if Err, returns immediately\n  if parsed < 0 {\n    return Err(\"negative numbers not allowed\");\n  }\n  return Ok(parsed * 2);\n}\n```\n\n`?` is syntactic sugar — it's equivalent to:\n\n```xiom\nlet parsed = match parse_number(raw) {\n  Ok(val) => val,\n  Err(e) => { return Err(e); }\n};\n```\n\n### Utility Methods\n\n```xiom\nlet r = Ok(42);\nr.is_ok();       // true\nr.is_err();      // false\nr.unwrap();      // 42 (traps on Err)\nr.unwrap_or(0);  // 42 (returns default on Err)\nlet err = Err(\"fail\");\nerr.unwrap_err(); // \"fail\" (traps on Ok)\n```\n\n### When to Use Result vs Contract\n\n- **Result**: Recoverable errors the caller should handle (bad input, file not found)\n- **Contracts**: Programming errors that should never happen (index out of bounds, division by zero)",
+  "code_template": "// TODO: write a function 'safe_divide' that returns Result[Float64, Str]\n// returns Err if b == 0.0, Ok with the result otherwise\n\n// TODO: write a function 'compute' that calls safe_divide twice using ?\n// and returns Result[Float64, Str] — (a/b) + (c/d)\n\nfn main() -> Int {\n  // TODO: call compute, match on the result, return 0 on Ok or 1 on Err\n  return 0;\n}",
+  "solution": "fn safe_divide(a: Float64, b: Float64) -> Result[Float64, Str] {\n  if b == 0.0 {\n    return Err(\"division by zero\");\n  }\n  return Ok(a / b);\n}\n\nfn compute(a: Float64, b: Float64, c: Float64, d: Float64) -> Result[Float64, Str] {\n  let first = safe_divide(a, b)?;\n  let second = safe_divide(c, d)?;\n  return Ok(first + second);\n}\n\nfn main() -> Int {\n  let result = compute(10.0, 2.0, 6.0, 3.0);\n  match result {\n    Ok(val) => { return val as Int; }\n    Err(msg) => { return 1; }\n  }\n}",
+  "tips": [
+    "Use `?` to propagate errors upward — it keeps error-handling code concise",
+    "Match on Result for full control over both success and failure paths",
+    "`Ok` and `Err` are bare constructors — never `Result::Ok` or `Result::Err`",
+    "Prefer Result for expected failures; use contracts for logic bugs that should never occur"
+  ],
+  "related": ["L2-02", "L2-03", "L4-01", "L6-02"]
+}

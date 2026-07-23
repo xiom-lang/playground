@@ -1,0 +1,17 @@
+{
+  "id": "L4-02",
+  "title": "Invariants",
+  "level": "L4",
+  "duration": "12 min",
+  "concepts": ["invariant", "type invariant", "validation", "newtype pattern"],
+  "narrative": "## Type Invariants: Always-True Properties\n\nWhile contracts guard functions, **invariants** guard types. A type invariant is a condition that must hold true for every value of that type, at all times.\n\n### Defining a Type Invariant\n\n```xiom\npub type PositiveInt = Int\n  invariant: this > 0;\n```\n\nEvery `PositiveInt` must be greater than zero. The invariant is checked every time a value of this type is created or modified.\n\n### Why Invariants?\n\nWithout invariants, you'd need to check `x > 0` everywhere you use `x`. With invariants, the check happens once (at creation/modification), and the compiler guarantees it holds everywhere else.\n\n### Complex Invariants\n\n```xiom\npub type NonEmptyStr = Str\n  invariant: this.len() > 0;\n\npub type Email = Str\n  invariant: this.contains(\"@\");\n  invariant: this.contains(\".\");\n\npub type EvenInt = Int\n  invariant: this % 2 == 0;\n```\n\n### Invariants with Structs\n\n```xiom\npub type Rectangle = {\n  width: Float64;\n  height: Float64;\n} invariant: this.width > 0.0 && this.height > 0.0;\n```\n\n### The Power of Invariant + Contract\n\nCombining invariants and contracts makes functions simpler:\n\n```xiom\nfn area(rect: &Rectangle) -> Float64\n  ensures: result > 0.0;\n{\n  // No need to check width > 0 or height > 0 —\n  // the invariant guarantees it!\n  return rect.width * rect.height;\n}\n```\n\n### Debug vs Release\n\nLike contracts, invariants are checked in debug builds. In release (`--no-contracts`), they're stripped for zero-cost safety.",
+  "code_template": "// TODO: define a type NonEmpty that wraps Str with invariant: this.len() > 0\n\n// TODO: write a function 'greet' that takes &NonEmpty and prints a greeting\n\nfn main() -> Int {\n  // TODO: create a NonEmpty from \"Kilo\" and call greet\n  return 0;\n}",
+  "solution": "pub type NonEmpty = Str\n  invariant: this.len() > 0;\n\nfn greet(name: &NonEmpty) -> Unit {\n  io.println(\"Hello, \" + name + \"!\");\n}\n\nfn main() -> Int {\n  let username: NonEmpty = \"Kilo\";\n  greet(&username);\n  return 0;\n}",
+  "tips": [
+    "Invariants eliminate defensive checks scattered across your codebase — check once, trust everywhere",
+    "Use invariants for domain validation: `Email`, `PositiveInt`, `NonEmptyStr`",
+    "Combine invariants with contracts for layered safety: invariants guard the type, contracts guard the function",
+    "Two invariants on one type are checked independently — order doesn't matter"
+  ],
+  "related": ["L4-01", "L4-03", "L2-01"]
+}

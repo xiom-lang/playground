@@ -1,0 +1,17 @@
+{
+  "id": "L8-01",
+  "title": "Package Manager",
+  "level": "L8",
+  "duration": "10 min",
+  "concepts": ["xiom pkg", "install", "packages", "dependencies", "package.xi"],
+  "narrative": "## Managing Dependencies with xiom pkg\n\nXIOM's package manager (`xiom pkg`) lets you install, manage, and publish reusable libraries. Instead of reinventing the wheel, you can leverage community packages for common tasks.\n\n### Installing Packages\n\n```bash\nxiom pkg install xiom.json\nxiom pkg install xiom.http\nxiom pkg install xiom.redis\n```\n\nThis downloads the package and its dependencies into a local cache. Available packages include:\n\n| Package | Purpose |\n|---------|--------|\n| `xiom.json` | JSON parsing and serialization |\n| `xiom.http` | HTTP client and server |\n| `xiom.redis` | Redis client |\n| `xiom.vulkan` | Vulkan graphics bindings |\n| `xiom.gl` | OpenGL bindings |\n| `xiom.glfw` | Window creation and input |\n\n### Declaring Dependencies\n\nIn your `package.xi`:\n\n```xiom\npackage myapp\n  version \"1.0.0\"\n  author \"You\"\n  entry \"myapp.main\"\n  deps [\n    { name: \"xiom.json\", version: \"0.2.0\" },\n    { name: \"xiom.http\", version: \"0.3.0\" },\n  ]\n```\n\n### Using Installed Packages\n\n```xiom\nmodule myapp.main;\n\nuse xiom.json;\n\nfn main() -> Int {\n  let data = \"{\\\"name\\\": \\\"Kilo\\\", \\\"age\\\": 2}\";\n  let parsed = json.parse(data);\n  return 0;\n}\n```\n\n### Version Resolution\n\n`xiom pkg` uses semantic versioning (SemVer):\n- `\"0.2.0\"` — exact version\n- `\"^0.2.0\"` — compatible with 0.2.x\n- `\">=0.2.0\"` — minimum version\n\nThe resolver finds the newest compatible version of each dependency and its transitive dependencies.\n\n### Creating a Package\n\n```bash\nxiom pkg init mylib       # scaffold a new package\nxiom pkg publish .        # publish to the registry\n```\n\n### The Ecosystem\n\nXIOM's growing package ecosystem covers graphics (Vulkan, OpenGL, GLFW), networking (HTTP, Redis, WebSocket), data formats (JSON, BSON, XML), and cryptography (AES, Ed25519, SHA).",
+  "code_template": "fn main() -> Int {\n  // There is no code template for this lesson.\n  // Your task: create a package.xi file for a project called \"hello-app\"\n  // that depends on xiom.json version 0.2.0\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  return 0;\n}",
+  "tips": [
+    "Always declare dependencies in `package.xi` — never manually copy source files from other projects",
+    "Use exact versions initially, then relax to `^x.y.z` once you've tested compatibility",
+    "`xiom pkg install` fetches packages into a shared cache — you only download each package once",
+    "Publish your own packages to contribute to the XIOM ecosystem"
+  ],
+  "related": ["L6-01", "L8-02", "L7-01"]
+}

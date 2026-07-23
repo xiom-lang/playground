@@ -1,0 +1,17 @@
+{
+  "id": "L6-01",
+  "title": "Modules",
+  "level": "L6",
+  "duration": "15 min",
+  "concepts": ["module", "use", "pub", "visibility", "package.xi"],
+  "narrative": "## Organizing Code with Modules\n\nAs programs grow, you need to organize code into manageable pieces. XIOM's **module system** lets you split code across files and control visibility with `pub` and `use`.\n\n### Declaring a Module\n\nEvery `.xi` file starts with a module declaration:\n\n```xiom\nmodule myapp.math;\n\npub fn add(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn helper(x: Int) -> Int {\n  return x * 2;\n}\n```\n\n### Public vs Private\n\n- `pub fn` / `pub type` — accessible from other modules\n- No `pub` — private to the module (only usable within the same file or module)\n\n### Importing with `use`\n\n```xiom\nmodule myapp.main;\n\nuse myapp.math;\n\nfn main() -> Int {\n  let result = math.add(5, 3);  // access via module name\n  return result;\n}\n```\n\n### File Layout\n\n```\nmyapp/\n  main.xi          → module myapp.main;\n  math.xi          → module myapp.math;\n  models/\n    user.xi        → module myapp.models.user;\n```\n\nModule names mirror the directory structure.\n\n### Compilation\n\nPass all files to the compiler:\n\n```bash\nxiom -o app.exe main.xi math.xi models/user.xi\n```\n\nThe compiler resolves cross-file types and functions automatically.\n\n### The `package.xi` Manifest\n\nFor larger projects, create a `package.xi` in the project root:\n\n```xiom\npackage myapp\n  version \"0.1.0\"\n  author \"Your Name\"\n  entry \"myapp.main\"\n```\n\nThis lets the compiler discover all source files automatically.\n\n### Best Practices\n\n- One type or concept per module\n- Keep modules small (200–400 lines)\n- Use descriptive module names: `myapp.auth`, `myapp.database`, `myapp.models.user`",
+  "code_template": "// TODO: declare this module as 'myapp.strings'\n\n// TODO: export a pub fn 'greet' that takes &Str and returns a greeting Str\n\n// TODO: export a pub fn 'shout' that takes &Str and returns an uppercase-like Str\n// (just add \"!!!\" for this exercise)\n\nfn main() -> Int {\n  return 0;\n}",
+  "solution": "module myapp.strings;\n\npub fn greet(name: &Str) -> Str {\n  return \"Hello, \" + name + \"!\";\n}\n\npub fn shout(msg: &Str) -> Str {\n  return msg + \"!!!\";\n}\n\nfn main() -> Int {\n  return 0;\n}",
+  "tips": [
+    "Always start each .xi file with a `module` declaration as the first line",
+    "Mark types and functions as `pub` when they're part of your module's API",
+    "Keep utility functions private — expose only what other modules need",
+    "Module names use dots: `myapp.models.user` mirrors `myapp/models/user.xi`"
+  ],
+  "related": ["L1-03", "L8-01", "L6-02"]
+}

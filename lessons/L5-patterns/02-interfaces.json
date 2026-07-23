@@ -1,0 +1,17 @@
+{
+  "id": "L5-02",
+  "title": "Interfaces",
+  "level": "L5",
+  "duration": "15 min",
+  "concepts": ["interface", "impl", "trait", "typeclass", "polymorphism"],
+  "narrative": "## Interfaces: Defining Shared Behavior\n\nAn **interface** (also called a trait in some languages) defines a set of functions that types can implement. It's a contract for behavior, not data.\n\n### Defining an Interface\n\n```xiom\npub interface Printable {\n  fn format(self) -> Str;\n}\n```\n\nAny type that implements `Printable` must provide a `format` function that returns a `Str`.\n\n### Implementing an Interface\n\n```xiom\npub type Point = {\n  x: Float64;\n  y: Float64;\n}\n\nimpl Printable for Point {\n  fn format(self) -> Str {\n    return \"Point(\" + self.x + \", \" + self.y + \")\";\n  }\n}\n```\n\n### Using Interfaces as Constraints\n\n```xiom\nfn print_twice[T: Printable](item: &T) -> Unit {\n  io.println(item.format());\n  io.println(item.format());\n}\n```\n\n`T: Printable` means \"T must implement the Printable interface.\"\n\n### Built-in Interfaces\n\nXIOM provides these derive-able interfaces:\n\n| Interface | Purpose |\n|-----------|--------|\n| `Clone` | Deep copy |\n| `Eq` | Equality comparison (`==`) |\n| `Ord` | Ordering (`<`, `>`) |\n| `Display` | Format for display |\n| `Hash` | Hash for maps/sets |\n\nUse `derive` for automatic implementation:\n\n```xiom\npub type User = {\n  name: Str;\n  id: Int;\n} derive[Clone, Eq]\n```\n\n### Interfaces vs Inheritance\n\nUnlike class-based inheritance (Java, C#), interfaces don't define data — only behavior. A type can implement many interfaces, and you can implement an interface for any type, including types you didn't define.\n\n### Practical Example\n\n```xiom\npub interface Describable {\n  fn description(self) -> Str;\n}\n\npub type Book = { title: Str; pages: Int; }\n\nimpl Describable for Book {\n  fn description(self) -> Str {\n    return self.title + \" (\" + self.pages + \" pages)\";\n  }\n}\n```",
+  "code_template": "// TODO: define an interface 'Area' with fn compute(self) -> Float64\n\n// TODO: define a struct Circle with field radius: Float64\n// TODO: implement Area for Circle (area = pi * r^2, use 3.14159 for pi)\n\nfn main() -> Int {\n  // TODO: create a Circle, call compute, return area as Int\n  return 0;\n}",
+  "solution": "pub interface Area {\n  fn compute(self) -> Float64;\n}\n\npub type Circle = {\n  radius: Float64;\n}\n\nimpl Area for Circle {\n  fn compute(self) -> Float64 {\n    return 3.14159 * self.radius * self.radius;\n  }\n}\n\nfn main() -> Int {\n  let c = Circle{ radius: 5.0 };\n  let a = c.compute();\n  return a as Int;\n}",
+  "tips": [
+    "Name interfaces with adjectives or -able suffixes: `Printable`, `Comparable`, `Describable`",
+    "Use `derive[Clone, Eq]` for automatic implementations of common interfaces",
+    "Interfaces are zero-cost abstractions — the compiler generates concrete code for each implementation",
+    "You can implement an interface for any type, including types from other modules"
+  ],
+  "related": ["L2-01", "L5-01", "L5-03"]
+}

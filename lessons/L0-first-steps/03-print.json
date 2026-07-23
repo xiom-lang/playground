@@ -1,0 +1,17 @@
+{
+  "id": "L0-03",
+  "title": "Printing Messages",
+  "level": "L0",
+  "duration": "7 min",
+  "concepts": ["io.println", "Str", "string literal"],
+  "narrative": "## Printing to the Console\n\nNow that you know what a variable is, let's learn how to make your program talk! In XIOM, you use `io.println` to display messages on the screen.\n\n### Your First Print\n\n```xiom\nio.println(\"Hello from XIOM!\");\n```\n\nThat's it! The text inside the double quotes is called a **string literal** (type `Str`). When your program runs, XIOM prints that message and moves the cursor to the next line.\n\n### Printing Multiple Things\n\nYou can call `io.println` as many times as you want:\n\n```xiom\nio.println(\"Line one\");\nio.println(\"Line two\");\n```\n\nEach call prints on its own line. This is what makes `println` different from just `println` prints and adds a newline.\n\n### Printing Variables\n\nYou can combine strings with other values using `xiom.string` functions:\n\n```xiom\nlet name = \"Kilo\";\nio.println(string.format1(\"Hello, {}!\", name));\n```\n\n### What's Happening?\n\nWhen you call `io.println`, you're telling XIOM to send text to **standard output** — the console or terminal where your program runs. This is the simplest form of I/O (input/output) and every programming language has it.",
+  "code_template": "fn main() -> Int {\n  // TODO: print \"Learning XIOM is fun!\"\n  // TODO: print \"I can print messages!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  io.println(\"Learning XIOM is fun!\");\n  io.println(\"I can print messages!\");\n  return 0;\n}",
+  "tips": [
+    "String literals always use double quotes `\"like this\"` in XIOM",
+    "You can print as many messages as you want — each `io.println` goes on a new line",
+    "Remember to add the semicolon `;` after each statement",
+    "Use `use xiom.string;` and `string.format1(...)` if you need to print variables inside strings"
+  ],
+  "related": ["L0-01", "L0-02", "L0-04"]
+}

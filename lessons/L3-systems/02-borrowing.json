@@ -1,0 +1,17 @@
+{
+  "id": "L3-02",
+  "title": "Borrowing",
+  "level": "L3",
+  "duration": "15 min",
+  "concepts": ["&", "&mut", "reference", "borrow", "shared borrow", "exclusive borrow"],
+  "narrative": "## Borrowing: Access Without Ownership\n\nMoving ownership is expensive — what if you just need to **look** at a value without taking it? That's where **borrowing** comes in.\n\n### Shared Borrows (`&T`)\n\nA shared borrow gives **read-only** access. Multiple shared borrows can exist at the same time:\n\n```xiom\nfn print_vec(v: &Vec[Int]) -> Unit {\n  io.println(\"Length: \" + v.len());  // can read, cannot modify\n}\n\nfn main() -> Int {\n  let data = Vec[Int]();\n  data.push(1);\n  data.push(2);\n  print_vec(&data);   // borrow, don't move\n  print_vec(&data);   // can borrow again!\n  return 0;\n}\n```\n\n### Mutable Borrows (`&mut T`)\n\nA mutable borrow gives **read-write** access. Only **one** mutable borrow can exist at a time, and no shared borrows while a mutable borrow is active:\n\n```xiom\nfn add_one(v: &mut Vec[Int]) -> Unit {\n  v.push(v.len());  // can read and write\n}\n\nfn main() -> Int {\n  var data = Vec[Int]();\n  add_one(&mut data);  // mutable borrow\n  let len = data.len(); // borrow ended, normal access restored\n  return len;\n}\n```\n\n### Borrow Rules (Enforced at Compile Time)\n\n1. **Shared borrows** (`&T`): many at the same time, read-only\n2. **Mutable borrows** (`&mut T`): exactly one at a time, read-write\n3. **Cannot mix**: no shared borrows while a mutable borrow exists\n4. **Borrows end**: when the borrowed reference goes out of scope\n\n### Struct Parameters — Always Borrow\n\nWhen a function takes a struct, borrow it instead of moving:\n\n```xiom\npub type Point = { x: Float64; y: Float64; }\n\nfn length(p: &Point) -> Float64 {\n  return math.sqrt(p.x * p.x + p.y * p.y);\n}\n\nfn main() -> Int {\n  let pt = Point{ x: 3.0, y: 4.0 };\n  let l = length(&pt);  // borrow — pt still usable\n  return l as Int;\n}\n```\n\n### Why Borrowing Matters\n\nBorrowing eliminates entire classes of bugs at compile time: no use-after-free, no double-free, no data races, and no dangling pointers — all without a garbage collector.",
+  "code_template": "// TODO: write a function 'double_all' that takes &mut Vec[Int] and doubles every element\n\n// TODO: write a function 'summarize' that takes &Vec[Int] and returns a Str like \"sum: X, len: Y\"\n\nfn main() -> Int {\n  // TODO: create a Vec[Int] with [1, 2, 3]\n  // TODO: call summarize (shared borrow), then double_all (mutable borrow)\n  // TODO: call summarize again and return the first element\n  return 0;\n}",
+  "solution": "fn double_all(v: &mut Vec[Int]) -> Unit {\n  var i = 0;\n  while i < v.len() {\n    v[i] = v[i] * 2;\n    i = i + 1;\n  }\n}\n\nfn summarize(v: &Vec[Int]) -> Str {\n  var total = 0;\n  var i = 0;\n  while i < v.len() {\n    total = total + v[i];\n    i = i + 1;\n  }\n  return \"sum: \" + total + \", len: \" + v.len();\n}\n\nfn main() -> Int {\n  var data = Vec[Int]();\n  data.push(1);\n  data.push(2);\n  data.push(3);\n  let s1 = summarize(&data);\n  double_all(&mut data);\n  let s2 = summarize(&data);\n  return data[0];\n}",
+  "tips": [
+    "Use `&` when you only need to read — it's cheaper than moving ownership",
+    "Use `&mut` only when you need to modify — keep mutable borrows as short as possible",
+    "The borrow checker catches errors at compile time, not runtime — no performance cost",
+    "If the compiler rejects a borrow, try narrowing scopes or cloning the data"
+  ],
+  "related": ["L3-01", "L3-03", "L4-01"]
+}

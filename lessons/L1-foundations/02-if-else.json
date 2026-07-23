@@ -1,0 +1,17 @@
+{
+  "id": "L1-02",
+  "title": "If and Else",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["if", "elif", "else", "comparison", "Bool"],
+  "narrative": "## Making Decisions with If/Else\n\nPrograms need to make decisions. That's where `if`, `elif`, and `else` come in. These keywords let your code branch based on conditions.\n\n### Basic If Statement\n\n```xiom\nlet temperature = 30;\nif temperature > 25 {\n  io.println(\"It's warm outside!\");\n}\n```\n\nThe code inside the curly braces `{ }` only runs if the condition (`temperature > 25`) is `true`.\n\n### Comparison Operators\n\n| Operator | Meaning | Example |\n|----------|---------|--------|\n| `==` | Equal to | `x == 5` |\n| `!=` | Not equal | `x != 0` |\n| `<` | Less than | `x < 10` |\n| `>` | Greater than | `x > 0` |\n| `<=` | Less than or equal | `x <= 100` |\n| `>=` | Greater than or equal | `x >= 18` |\n\n### Else and Elif\n\n```xiom\nlet score = 85;\n\nif score >= 90 {\n  io.println(\"Grade: A\");\n} elif score >= 80 {\n  io.println(\"Grade: B\");\n} elif score >= 70 {\n  io.println(\"Grade: C\");\n} else {\n  io.println(\"Grade: Needs improvement\");\n}\n```\n\nOnly **one** branch executes. XIOM checks conditions from top to bottom and runs the first matching branch.\n\n### Combining Conditions\n\nUse `&&` (and) and `||` (or) to combine checks:\n\n```xiom\nif age >= 18 && has_license {\n  io.println(\"You can drive.\");\n}\n\nif day == \"Saturday\" || day == \"Sunday\" {\n  io.println(\"It's the weekend!\");\n}\n```",
+  "code_template": "fn main() -> Int {\n  let number = 15;\n  // TODO: if number is greater than 10, print \"Big\"\n  // TODO: elif number is equal to 10, print \"Exactly ten\"\n  // TODO: else, print \"Small\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let number = 15;\n  if number > 10 {\n    io.println(\"Big\");\n  } elif number == 10 {\n    io.println(\"Exactly ten\");\n  } else {\n    io.println(\"Small\");\n  }\n  return 0;\n}",
+  "tips": [
+    "Use `==` for comparison, NOT `=` — `=` doesn't exist in XIOM, but it's a common pitfall in other languages",
+    "`elif` is XIOM's way to chain conditions (other languages use `else if`)",
+    "You can nest if/else inside other if/else blocks for complex logic",
+    "Always wrap the condition in parentheses for clarity in complex expressions"
+  ],
+  "related": ["L1-01", "L1-03", "L1-04"]
+}

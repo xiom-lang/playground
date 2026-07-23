@@ -1,0 +1,17 @@
+{
+  "id": "L3-01",
+  "title": "Memory Model",
+  "level": "L3",
+  "duration": "15 min",
+  "concepts": ["stack", "heap", "ownership", "move", "clone", "copy semantics"],
+  "narrative": "## How XIOM Manages Memory\n\nXIOM gives you precise control over memory without a garbage collector. Understanding XIOM's memory model is key to writing efficient, correct programs.\n\n### Two Memory Regions\n\n**The Stack**: Fast, automatically managed. Holds fixed-size values like `Int`, `Bool`, `Float64`, and structs. Variables on the stack are automatically freed when they go out of scope.\n\n**The Heap**: For data whose size isn't known at compile time, like `Vec[T]` and `Str`. Heap memory is managed through **ownership** — no garbage collector, no `free()` calls.\n\n```xiom\nlet x = 42;          // x lives on the stack (Int has fixed size)\nlet y = 3.14;        // y lives on the stack (Float64 has fixed size)\nlet s = \"hello\";     // the string data is on the heap, s (a handle) is on the stack\nlet v = Vec[Int]();   // the elements are on the heap, v (a handle) is on the stack\n```\n\n### Ownership Rules\n\n1. **Every value has exactly one owner** — the variable that holds it\n2. **Assignment transfers ownership** (move semantics)\n3. **When the owner goes out of scope, the value is freed**\n\n### Move Semantics\n\n```xiom\nlet a = Vec[Int]();\na.push(1);\nlet b = a;     // OWNERSHIP MOVES from a to b\n// a.len();    // ERROR: a is no longer valid!\nb.push(2);     // b is the valid owner now\n```\n\nAssignment **moves** ownership for heap-allocated types. After the move, the original variable is unusable.\n\n### Clone — Explicit Copying\n\nTo make a true duplicate, use `.clone()`:\n\n```xiom\nlet original = Vec[Int]();\noriginal.push(42);\nlet copy = original.clone();  // deep copy — both remain valid\n```\n\n### Copy Types\n\nSmall, fixed-size types like `Int`, `Bool`, `Float64`, and `Char` are **copy types**. They're automatically copied on assignment — no move occurs:\n\n```xiom\nlet x = 5;\nlet y = x;   // x is COPIED (Int is a copy type)\nlet z = x;   // x is still valid\n```",
+  "code_template": "fn main() -> Int {\n  // TODO: create a Vec[Int], push values 1, 2, 3\n  // TODO: move it to a new variable, then clone it\n  // TODO: push to the cloned version and return its length\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let original = Vec[Int]();\n  original.push(1);\n  original.push(2);\n  original.push(3);\n  let moved = original;\n  let cloned = moved.clone();\n  cloned.push(4);\n  return cloned.len();\n}",
+  "tips": [
+    "Copy types (Int, Bool, Float64, Char) are automatically copied — no move, no clone needed",
+    "Heap types (Vec, Str, custom structs with heap fields) use move semantics on assignment",
+    "Calling a function with a value argument moves it — use `&` to borrow instead (see L3-02)",
+    "`.clone()` creates a deep copy of heap data — use it sparingly as it allocates new memory"
+  ],
+  "related": ["L2-01", "L2-04", "L3-02", "L3-03"]
+}

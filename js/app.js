@@ -18,3 +18,7 @@ function loadDefault() {
     window.editor.setValue('fn main() -> Int {\n  return 42;\n}');
   }
 }
+
+window.addEventListener('load', function () {
+  if (window.loadLessonCatalog) window.loadLessonCatalog();
+});

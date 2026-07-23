@@ -1,0 +1,17 @@
+{
+  "id": "L2-02",
+  "title": "Enums",
+  "level": "L2",
+  "duration": "12 min",
+  "concepts": ["enum", "variant", "match", "pattern matching"],
+  "narrative": "## Enums: Types with Multiple Forms\n\nAn **enum** (enumeration) is a type that can be one of several **variants**. Enums are one of XIOM's most powerful features — they let you model data that has different shapes.\n\n### Simple Enums\n\n```xiom\npub type Direction = enum {\n  North,\n  South,\n  East,\n  West,\n}\n\nlet heading = Direction.North;\n```\n\n### Enums with Data\n\nEach variant can carry data:\n\n```xiom\npub type Shape = enum {\n  Circle(radius: Float64),\n  Rectangle(width: Float64, height: Float64),\n  Triangle(base: Float64, height: Float64),\n}\n\nlet c = Shape.Circle(5.0);\nlet r = Shape.Rectangle(4.0, 6.0);\n```\n\n### Match — Pattern Matching\n\nThe `match` expression lets you handle each variant differently:\n\n```xiom\nfn area(shape: &Shape) -> Float64 {\n  match shape {\n    Circle(radius) => { return 3.14159 * radius * radius; }\n    Rectangle(width, height) => { return width * height; }\n    Triangle(base, height) => { return 0.5 * base * height; }\n  }\n}\n```\n\n**Important**: A `match` must be **exhaustive** — you must handle every variant (or use a wildcard).\n\n### Why Enums?\n\nEnums make **impossible states impossible**. Instead of using a `String` to represent shape types (where you could accidentally type `\"Cricle\"`), the compiler guarantees correctness.",
+  "code_template": "// TODO: define an enum TrafficLight with variants Red, Yellow, Green\n\n// TODO: write a function 'action' that takes a &TrafficLight and returns a Str\n// Red -> \"Stop\", Yellow -> \"Slow Down\", Green -> \"Go\"\n\nfn main() -> Int {\n  // TODO: call action with TrafficLight.Red\n  return 0;\n}",
+  "solution": "pub type TrafficLight = enum {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn action(light: &TrafficLight) -> Str {\n  match light {\n    Red => { return \"Stop\"; }\n    Yellow => { return \"Slow Down\"; }\n    Green => { return \"Go\"; }\n  }\n}\n\nfn main() -> Int {\n  let result = action(&TrafficLight.Red);\n  return 0;\n}",
+  "tips": [
+    "Construct enum variants with dot syntax: `TypeName.Variant(data)`",
+    "Match patterns use the bare variant name, not `TypeName.Variant`",
+    "The compiler will error if you forget a variant in a match block — this is a feature, not a bug!",
+    "Use `derive[Clone, Eq]` on enums to enable copying and comparison"
+  ],
+  "related": ["L2-01", "L2-03", "L5-02"]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "L2-01",
+  "title": "Structs",
+  "level": "L2",
+  "duration": "12 min",
+  "concepts": ["type", "struct", "field", "derive", "dot notation"],
+  "narrative": "## Grouping Data with Structs\n\nA **struct** (short for \"structure\") lets you group related data together into a single, named type. Think of it as creating your own custom data type.\n\n### Defining a Struct\n\n```xiom\npub type Point = {\n  x: Float64;\n  y: Float64;\n}\n```\n\nThis creates a new type called `Point` with two **fields**: `x` and `y`, both `Float64`.\n\n### Creating Instances\n\n```xiom\nlet origin = Point{ x: 0.0, y: 0.0 };\nlet corner = Point{ x: 10.0, y: 5.0 };\n```\n\nUse `TypeName{ field: value, ... }` to create a struct instance.\n\n### Accessing Fields\n\nUse **dot notation** to read or modify fields:\n\n```xiom\nlet px = origin.x;       // read field\nio.println(origin.y);     // print field\n// For mutable access, use var:\nvar p = Point{ x: 1.0, y: 2.0 };\np.x = 3.0;               // modify field\n```\n\n### Structs in Functions\n\n```xiom\nfn distance(a: &Point, b: &Point) -> Float64 {\n  let dx = a.x - b.x;\n  let dy = a.y - b.y;\n  return math.sqrt(dx * dx + dy * dy);\n}\n```\n\n### The derive Attribute\n\nUse `derive` to automatically implement common behaviors:\n\n```xiom\npub type Person = {\n  name: Str;\n  age: Int;\n} derive[Clone]\n```\n\nAvailable derives: `Clone`, `Eq`, `Display`, `Hash`, `Ord`.",
+  "code_template": "// TODO: define a Rectangle struct with width (Float64) and height (Float64)\n\n// TODO: write a function area(rect: &Rectangle) -> Float64 that returns width * height\n\nfn main() -> Int {\n  // TODO: create a rectangle with width 5.0 and height 3.0\n  // TODO: compute and return area as Int (truncate)\n  return 0;\n}",
+  "solution": "pub type Rectangle = {\n  width: Float64;\n  height: Float64;\n}\n\nfn area(rect: &Rectangle) -> Float64 {\n  return rect.width * rect.height;\n}\n\nfn main() -> Int {\n  let r = Rectangle{ width: 5.0, height: 3.0 };\n  let a = area(&r);\n  return a as Int;\n}",
+  "tips": [
+    "Use `pub type` to make structs visible outside the current module",
+    "Pass structs by reference (`&T`) to avoid moving ownership — see L3 for details",
+    "Name your structs with PascalCase (e.g., `UserProfile`, not `user_profile`)",
+    "Use `derive[Clone]` when you need to copy struct values and keep the original usable"
+  ],
+  "related": ["L1-03", "L2-02", "L3-01", "L5-01"]
+}

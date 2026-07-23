@@ -1,0 +1,105 @@
+{
+  "version": "0.49.9",
+  "levels": [
+    {
+      "id": "L0",
+      "name": "First Steps",
+      "description": "Welcome to programming. No experience needed.",
+      "icon": "🌱",
+      "lessons": [
+        {"id":"L0-01","title":"Hello, World!","file":"L0-first-steps/01-hello.json","duration":"5 min","concepts":["fn","return","Int"]},
+        {"id":"L0-02","title":"What is a Variable?","file":"L0-first-steps/02-variables.json","duration":"8 min","concepts":["let","var","Int","Str"]},
+        {"id":"L0-03","title":"Printing Messages","file":"L0-first-steps/03-print.json","duration":"7 min","concepts":["io.println","Str"]},
+        {"id":"L0-04","title":"Basic Math","file":"L0-first-steps/04-math.json","duration":"10 min","concepts":["+","-","*","/","arithmetic"]}
+      ]
+    },
+    {
+      "id": "L1",
+      "name": "Foundations",
+      "description": "Types, operators, control flow, functions.",
+      "icon": "🏗️",
+      "lessons": [
+        {"id":"L1-01","title":"Types Overview","file":"L1-foundations/01-types.json","duration":"10 min","concepts":["Bool","Float64","Char","Str","Int"]},
+        {"id":"L1-02","title":"If and Else","file":"L1-foundations/02-if-else.json","duration":"10 min","concepts":["if","elif","else","comparison"]},
+        {"id":"L1-03","title":"Functions","file":"L1-foundations/03-functions.json","duration":"12 min","concepts":["fn","return","parameters"]},
+        {"id":"L1-04","title":"While Loops","file":"L1-foundations/04-while.json","duration":"10 min","concepts":["while","loop","break","continue"]}
+      ]
+    },
+    {
+      "id": "L2",
+      "name": "Data Structures",
+      "description": "Structs, enums, Option, Result, Vec.",
+      "icon": "📦",
+      "lessons": [
+        {"id":"L2-01","title":"Structs","file":"L2-data/01-structs.json","duration":"12 min","concepts":["type","struct","field","derive"]},
+        {"id":"L2-02","title":"Enums","file":"L2-data/02-enums.json","duration":"12 min","concepts":["enum","variant","match"]},
+        {"id":"L2-03","title":"Option Type","file":"L2-data/03-option.json","duration":"15 min","concepts":["Option","Some","None","unwrap","if let"]},
+        {"id":"L2-04","title":"Vec — Dynamic Arrays","file":"L2-data/04-vec.json","duration":"15 min","concepts":["Vec","push","pop","for"]}
+      ]
+    },
+    {
+      "id": "L3",
+      "name": "Systems Programming",
+      "description": "Memory model, ownership, borrowing.",
+      "icon": "⚙️",
+      "lessons": [
+        {"id":"L3-01","title":"Memory Model","file":"L3-systems/01-memory.json","duration":"15 min","concepts":["stack","heap","ownership","move"]},
+        {"id":"L3-02","title":"Borrowing","file":"L3-systems/02-borrowing.json","duration":"15 min","concepts":["&","borrow","reference","&mut"]},
+        {"id":"L3-03","title":"Ownership in Practice","file":"L3-systems/03-ownership.json","duration":"20 min","concepts":["move","clone","copy"]}
+      ]
+    },
+    {
+      "id": "L4",
+      "name": "Safety & Contracts",
+      "description": "Design-by-contract, invariants, error handling.",
+      "icon": "🛡️",
+      "lessons": [
+        {"id":"L4-01","title":"Contracts","file":"L4-safety/01-contracts.json","duration":"15 min","concepts":["requires","ensures","contract"]},
+        {"id":"L4-02","title":"Invariants","file":"L4-safety/02-invariants.json","duration":"12 min","concepts":["invariant","type","validation"]},
+        {"id":"L4-03","title":"Error Handling","file":"L4-safety/03-result.json","duration":"15 min","concepts":["Result","Ok","Err","?"]}
+      ]
+    },
+    {
+      "id": "L5",
+      "name": "Patterns & Generics",
+      "description": "Interfaces, traits, derive, iterators.",
+      "icon": "🎯",
+      "lessons": [
+        {"id":"L5-01","title":"Generics","file":"L5-patterns/01-generics.json","duration":"15 min","concepts":["T","generic","type parameter"]},
+        {"id":"L5-02","title":"Interfaces","file":"L5-patterns/02-interfaces.json","duration":"15 min","concepts":["interface","impl","trait"]},
+        {"id":"L5-03","title":"Derive Macros","file":"L5-patterns/03-derive.json","duration":"10 min","concepts":["derive","Eq","Clone","Debug","Hash","Ord"]}
+      ]
+    },
+    {
+      "id": "L6",
+      "name": "Engineering",
+      "description": "Modules, packages, testing, FFI.",
+      "icon": "🔧",
+      "lessons": [
+        {"id":"L6-01","title":"Modules","file":"L6-engineering/01-modules.json","duration":"15 min","concepts":["module","use","pub","package.xi"]},
+        {"id":"L6-02","title":"Testing","file":"L6-engineering/02-testing.json","duration":"12 min","concepts":["test","assert","benchmark"]}
+      ]
+    },
+    {
+      "id": "L7",
+      "name": "Mastery",
+      "description": "Compiler internals, Z3, self-hosting.",
+      "icon": "🧠",
+      "lessons": [
+        {"id":"L7-01","title":"Compiler Pipeline","file":"L7-mastery/01-pipeline.json","duration":"20 min","concepts":["lexer","parser","checker","codegen","LLVM"]},
+        {"id":"L7-02","title":"Z3 Verification","file":"L7-mastery/02-z3.json","duration":"20 min","concepts":["SMT","Z3","verify","contract","static proof"]}
+      ]
+    },
+    {
+      "id": "L8",
+      "name": "Ecosystem",
+      "description": "Real-world packages: Vulkan, GLFW, Redis, JSON.",
+      "icon": "🌐",
+      "lessons": [
+        {"id":"L8-01","title":"Package Manager","file":"L8-ecosystem/01-pkg.json","duration":"10 min","concepts":["xiom pkg","install","packages"]},
+        {"id":"L8-02","title":"FFI — Calling C","file":"L8-ecosystem/02-ffi.json","duration":"15 min","concepts":["extern","C","FFI","unsafe"]}
+      ]
+    }
+  ],
+  "total_lessons": 30
+}

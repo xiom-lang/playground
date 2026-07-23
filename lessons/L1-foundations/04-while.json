@@ -1,0 +1,17 @@
+{
+  "id": "L1-04",
+  "title": "While Loops",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["while", "loop", "break", "continue"],
+  "narrative": "## Repeating Code with While Loops\n\nSometimes you need to do something over and over. A **while loop** runs a block of code repeatedly as long as a condition remains `true`.\n\n### Basic While Loop\n\n```xiom\nvar count = 0;\nwhile count < 5 {\n  io.println(\"Count is: \" + count);\n  count = count + 1;\n}\n// Prints: 0, 1, 2, 3, 4\n```\n\nThe loop body executes repeatedly. Each time, it checks `count < 5`. When `count` reaches 5, the condition becomes `false` and the loop stops.\n\n### Countdown Pattern\n\n```xiom\nvar n = 10;\nwhile n > 0 {\n  io.println(n);\n  n = n - 1;\n}\nio.println(\"Liftoff!\");\n```\n\n### Break — Exit Early\n\nUse `break` to jump out of a loop immediately:\n\n```xiom\nvar i = 0;\nwhile true {\n  if i >= 10 { break; }\n  i = i + 1;\n}\n// The loop exits when i reaches 10\n```\n\n`while true` creates an infinite loop — dangerous without a `break`!\n\n### Continue — Skip an Iteration\n\nUse `continue` to jump to the next iteration:\n\n```xiom\nvar i = 0;\nwhile i < 10 {\n  i = i + 1;\n  if i % 2 == 0 { continue; }  // skip even numbers\n  io.println(i);                // only prints odds\n}\n```\n\n### Common Pattern: Summing\n\n```xiom\nvar i = 1;\nvar sum = 0;\nwhile i <= 100 {\n  sum = sum + i;\n  i = i + 1;\n}\n// sum is now 5050 (sum of 1 to 100)\n```",
+  "code_template": "fn main() -> Int {\n  // TODO: use a while loop to sum all even numbers from 1 to 10\n  // (2 + 4 + 6 + 8 + 10 = 30)\n  var i = 1;\n  var total = 0;\n\n  // Your loop here\n\n  return total;\n}",
+  "solution": "fn main() -> Int {\n  var i = 1;\n  var total = 0;\n  while i <= 10 {\n    if i % 2 == 0 {\n      total = total + i;\n    }\n    i = i + 1;\n  }\n  return total;\n}",
+  "tips": [
+    "Always make sure your loop condition eventually becomes `false`, or you'll get an infinite loop",
+    "Use `break` to exit a loop early when you've found what you're looking for",
+    "Use `continue` to skip the rest of the current iteration and go to the next check",
+    "XIOM also supports iterators and for loops over collections — see L2-04 for a cleaner approach"
+  ],
+  "related": ["L1-02", "L1-03", "L2-04"]
+}

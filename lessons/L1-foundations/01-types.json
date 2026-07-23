@@ -1,0 +1,17 @@
+{
+  "id": "L1-01",
+  "title": "Types Overview",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["Bool", "Float64", "Char", "Str", "Int", "type"],
+  "narrative": "## XIOM's Type System\n\nEvery value in XIOM has a **type** — a label that tells the compiler what kind of data it is. XIOM is **statically typed**, meaning types are checked before your program runs, catching mistakes early.\n\n### The Five Core Types\n\n| Type | What It Holds | Example |\n|------|---------------|--------|\n| `Int` | Whole numbers (64-bit) | `42`, `-7`, `0` |\n| `Float64` | Decimal numbers | `3.14`, `-0.5`, `2.0` |\n| `Bool` | True or false | `true`, `false` |\n| `Char` | A single character | `'a'`, `'7'`, `'\\n'` |\n| `Str` | Text (string of characters) | `\"hello\"`, `\"XIOM\"` |\n\n### Declaring Variables with Types\n\nYou can explicitly specify a type using `var`:\n\n```xiom\nvar age: Int = 25;\nvar price: Float64 = 19.99;\nvar is_ready: Bool = true;\nvar initial: Char = 'X';\nvar greeting: Str = \"Hello, world!\";\n```\n\nOr let XIOM **infer** the type with `let`:\n\n```xiom\nlet age = 25;           // XIOM knows this is Int\nlet price = 19.99;      // XIOM knows this is Float64\nlet greeting = \"Hi!\";   // XIOM knows this is Str\n```\n\n### Type Checking Prevents Bugs\n\nXIOM won't let you mix types accidentally:\n\n```xiom\nlet x: Int = 42;\n// let y: Str = x;  // ERROR: can't put an Int into a Str\n```\n\nThis catches mistakes at compile time instead of runtime!",
+  "code_template": "fn main() -> Int {\n  // TODO: declare a Bool variable set to true\n  // TODO: declare an Int variable with your age\n  // TODO: declare a Float64 variable with 3.14\n  // TODO: declare a Str variable with your name\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var is_learning: Bool = true;\n  var age: Int = 30;\n  var pi: Float64 = 3.14;\n  var name: Str = \"Kilo\";\n  return 0;\n}",
+  "tips": [
+    "Use `var` with an explicit type when you want to be clear about your intent",
+    "Use `let` for cleaner code — XIOM infers the type automatically",
+    "Char literals use single quotes `'X'`, Str literals use double quotes `\"X\"`",
+    "Bool has only two values: `true` and `false`"
+  ],
+  "related": ["L0-02", "L1-02", "L2-01"]
+}
