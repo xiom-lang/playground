@@ -14,34 +14,34 @@
 <div id="landing" class="landing-screen">
   <div class="landing-hero">
     <div class="hero-logo">XIOM</div>
-    <h1 class="hero-title">The Systems Language That <span class="gradient-text">Verifies Itself</span></h1>
-    <p class="hero-subtitle">Learn a language where contracts are compiler-enforced. Zero crashes. Zero nulls. Zero surprises.</p>
+    <h1 class="hero-title">Learn to Code.<br><span class="gradient-text">Build Real Things.</span></h1>
+    <p class="hero-subtitle">No experience needed. Interactive lessons. Instant feedback. Free forever.</p>
     <div class="hero-cta">
-      <button class="btn-primary" onclick="startLearning()">Start Learning — Free</button>
-      <button class="btn-secondary" onclick="openPlayground()">Open Playground</button>
+      <button class="btn-primary" onclick="startLearning()">Start Learning</button>
+      <button class="btn-secondary" onclick="openPlayground()">Try Playground</button>
     </div>
   </div>
 
   <div class="feature-grid">
     <div class="feature-card">
       <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
-      <h3>Safe by Design</h3>
-      <p>No null, no GC, ownership with compile-time borrow checking. Use-after-free is impossible.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">&#x2713;</div>
-      <h3>Verified Contracts</h3>
-      <p>Write <code>requires</code> and <code>ensures</code>. The compiler enforces them. Z3 proves them.</p>
+      <h3>Never Crash</h3>
+      <p>XIOM catches your mistakes before your program runs. No mysterious errors. No crashes.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">&#x26A1;</div>
-      <h3>Native Performance</h3>
-      <p>Compiles to native code via LLVM. Hot reload. Parallel compilation. Industrial-grade.</p>
+      <h3>Really Fast</h3>
+      <p>Your programs run at native speed — as fast as languages used by professionals.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">&#x1F4DA;</div>
-      <h3>370+ Lessons</h3>
-      <p>From zero coding experience to compiler internals. Progressive, interactive, free forever.</p>
+      <h3>Learn by Doing</h3>
+      <p>370+ interactive lessons. Write code, see results instantly. From zero to expert.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F393;</div>
+      <h3>Free Forever</h3>
+      <p>No signup. No payments. No ads. Just you and the code. Open source, always free.</p>
     </div>
   </div>
 
@@ -59,8 +59,14 @@
   <header class="header">
     <button class="back-btn" onclick="showLanding()">&#x2190; XIOM</button>
     <span id="lessonTitle" class="lesson-header-title">Lessons</span>
+    <select id="exampleSelect" class="example-select" onchange="loadQuickExample(this.value)">
+      <option value="">Quick Examples...</option>
+      <option value="hello">Hello World</option>
+      <option value="vars">Variables</option>
+      <option value="math">Simple Math</option>
+    </select>
     <div class="header-actions">
-      <button id="btnSyntax" class="nav-btn" onclick="toggleSyntax()">Syntax Ref</button>
+      <button id="btnSyntax" class="nav-btn" onclick="toggleSyntax()">Concepts</button>
       <button id="btnPlayground" class="nav-btn" onclick="openPlayground()">Playground</button>
       <button id="btnRun" class="nav-btn run-btn" onclick="compile()">Run &#x25B8;</button>
     </div>
@@ -119,7 +125,7 @@
   <!-- SYNTAX REFERENCE PANEL (slide-in from right) -->
   <div id="syntaxPanel" class="syntax-panel hidden">
     <div class="syntax-header">
-      <h3>Syntax Reference</h3>
+      <h3>Concepts</h3>
       <button onclick="toggleSyntax()">&#x2715;</button>
     </div>
     <div class="syntax-content">

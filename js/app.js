@@ -127,25 +127,21 @@ function getActiveEditorValue() {
   return ed ? ed.getValue() : '';
 }
 
-function getActiveOutputIds() {
-  if (currentMode === 'playground') {
-    return {
-      output: 'pgOutput',
-      ir: 'pgIR',
-      diag: 'pgDiag',
-      tokens: 'pgTokens',
-      contracts: 'pgContracts',
-      status: 'pgStatus'
-    };
-  }
-  return {
-    output: 'output',
-    ir: 'ir',
-    diag: 'diag',
-    tokens: 'tokens',
-    contracts: 'contracts',
-    status: 'status'
+function loadQuickExample(name) {
+  var examples = {
+    hello: '// Your first program!\nio.println("Hello, world!");',
+    vars: '// Variables are named boxes\nlet myName = "Alex";\nio.println(myName);',
+    math: '// Math is easy\nlet apples = 5;\nlet oranges = 3;\nio.println(apples + oranges);'
   };
+  var ed = window.editor || window.pgEditor;
+  if (ed && examples[name]) ed.setValue(examples[name]);
+  document.getElementById('exampleSelect').value = '';
+}
+
+function getActiveOutputIds() {
+  if (!document.getElementById('lessonsScreen').classList.contains('hidden'))
+    return { output:'output', ir:'ir', diag:'diag', tokens:'tokens', contracts:'contracts', status:'status' };
+  return { output:'pgOutput', ir:'pgIR', diag:'pgDiag', tokens:'pgTokens', contracts:'pgContracts', status:'pgStatus' };
 }
 
 // ========== TAB SWITCHING ==========
@@ -161,9 +157,9 @@ function setupTabs() {
       var tabName = tab.dataset.tab;
       var outputEl = parent.nextElementSibling;
       if (!outputEl) return;
-      var ids = currentMode === 'playground'
-        ? { output: 'pgOutput', ir: 'pgIR', diag: 'pgDiag', tokens: 'pgTokens', contracts: 'pgContracts' }
-        : { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts' };
+      var ids = !document.getElementById('lessonsScreen').classList.contains('hidden')
+        ? { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts' }
+        : { output: 'pgOutput', ir: 'pgIR', diag: 'pgDiag', tokens: 'pgTokens', contracts: 'pgContracts' };
 
       Object.keys(ids).forEach(function (key) {
         var el = document.getElementById(ids[key]);

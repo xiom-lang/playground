@@ -1,119 +1,194 @@
-var syntaxData = {
-  keywords: [
-    { kw: 'fn', desc: 'Define a function' },
-    { kw: 'return', desc: 'Return a value from a function' },
-    { kw: 'let', desc: 'Immutable variable binding' },
-    { kw: 'var', desc: 'Mutable variable declaration' },
-    { kw: 'const', desc: 'Compile-time constant' },
-    { kw: 'if', desc: 'Conditional branch' },
-    { kw: 'elif', desc: 'Else-if branch (XIOM specific)' },
-    { kw: 'else', desc: 'Fallback branch' },
-    { kw: 'match', desc: 'Pattern matching expression' },
-    { kw: 'while', desc: 'Conditional loop' },
-    { kw: 'for', desc: 'Iterator loop' },
-    { kw: 'in', desc: 'Membership / iteration target' },
-    { kw: 'type', desc: 'Type alias definition' },
-    { kw: 'enum', desc: 'Algebraic data type' },
-    { kw: 'interface', desc: 'Define a trait/interface' },
-    { kw: 'derive', desc: 'Auto-implement interface' },
-    { kw: 'module', desc: 'Define a module' },
-    { kw: 'use', desc: 'Import symbols' },
-    { kw: 'pub', desc: 'Make item public' },
-    { kw: 'as', desc: 'Type cast or alias' },
-    { kw: 'unsafe', desc: 'Enter unsafe block' },
-    { kw: 'extern', desc: 'FFI declaration' },
-    { kw: 'requires', desc: 'Precondition contract' },
-    { kw: 'ensures', desc: 'Postcondition contract' },
-    { kw: 'invariant', desc: 'Type invariant contract' },
-    { kw: 'spawn', desc: 'Spawn a task/coroutine' },
-    { kw: 'async', desc: 'Async function marker' },
-    { kw: 'await', desc: 'Await async result' },
-    { kw: 'comptime', desc: 'Compile-time evaluation' },
-    { kw: 'true', desc: 'Boolean true literal' },
-    { kw: 'false', desc: 'Boolean false literal' },
-    { kw: 'self', desc: 'Current instance reference' },
-    { kw: 'result', desc: 'Result type context' },
-    { kw: 'Some', desc: 'Option variant: has value' },
-    { kw: 'None', desc: 'Option variant: no value' },
-    { kw: 'Ok', desc: 'Result variant: success' },
-    { kw: 'Err', desc: 'Result variant: error' },
-    { kw: 'is', desc: 'Type check operator' },
-    { kw: 'and', desc: 'Logical AND' },
-    { kw: 'or', desc: 'Logical OR' },
-    { kw: 'not', desc: 'Logical NOT' },
-    { kw: 'where', desc: 'Generic constraint clause' }
-  ],
+var concepts = [
+  {
+    id: "program",
+    name: "What is a Program?",
+    icon: "📝",
+    section: "getting-started",
+    metaphor: "A program is like a recipe. You write steps, the computer follows them in order.",
+    example: '// A program runs from top to bottom\nio.println("Step 1: Hello!");\nio.println("Step 2: Goodbye!");',
+    keywords: ["io.println", "comments"]
+  },
+  {
+    id: "output",
+    name: "Showing Output",
+    icon: "💬",
+    section: "getting-started",
+    metaphor: "`io.println` is how your program talks to you. It prints text on the screen, like writing a note.",
+    example: 'io.println("I can print anything!");\nio.println("Numbers too:");\nio.println(42);',
+    keywords: ["io.println", "Str"]
+  },
+  {
+    id: "variables",
+    name: "Named Boxes",
+    icon: "📦",
+    section: "getting-started",
+    metaphor: "A variable is like a labeled box. `let` creates a box and puts something inside. The name helps you find it later.",
+    example: 'let myName = "Alex";\nlet myAge = 25;\nio.println(myName);\nio.println(myAge);',
+    keywords: ["let", "Str", "Int"]
+  },
+  {
+    id: "numbers",
+    name: "Working with Numbers",
+    icon: "🔢",
+    section: "getting-started",
+    metaphor: "Computers are number-crunching machines. You can add, subtract, multiply, and divide with ease.",
+    example: 'let price = 10;\nlet quantity = 3;\nlet total = price * quantity;\nio.println(total);',
+    keywords: ["Int", "+", "-", "*", "/"]
+  },
+  {
+    id: "text",
+    name: "Working with Text",
+    icon: "📝",
+    section: "making-decisions",
+    metaphor: "Text in programming is called a 'string' — like beads on a string of letters. Wrap text in double quotes.",
+    example: 'let greeting = "Hello";\nlet name = "World";\nio.println(greeting + " " + name + "!");',
+    keywords: ["Str", "+"]
+  },
+  {
+    id: "booleans",
+    name: "True or False",
+    icon: "💡",
+    section: "making-decisions",
+    metaphor: "Computers think in true and false — like a light switch that is either on or off. XIOM calls this a `Bool`.",
+    example: 'let isRaining = true;\nlet isSunny = false;\nio.println(isRaining);\nio.println(5 > 3);\nio.println(2 == 3);',
+    keywords: ["Bool", "true", "false", "==", ">"]
+  },
+  {
+    id: "decisions",
+    name: "Making Decisions",
+    icon: "🔀",
+    section: "making-decisions",
+    metaphor: "Your program can make choices. 'If it is raining, take an umbrella.' In code: `if` and `else`.",
+    example: 'let temperature = 30;\nif temperature > 25 {\n  io.println("It is hot!");\n} else {\n  io.println("It is cool.");\n}',
+    keywords: ["if", "else", "Bool", ">"]
+  },
+  {
+    id: "repetition",
+    name: "Doing Things Repeatedly",
+    icon: "🔁",
+    section: "making-decisions",
+    metaphor: "Need something done 10 times? Use a `while` loop. It is like saying 'while there is coffee, keep drinking.'",
+    example: 'var count = 1;\nwhile count <= 5 {\n  io.println(count);\n  count += 1;\n}',
+    keywords: ["while", "var", "+="]
+  },
+  {
+    id: "functions",
+    name: "Reusable Recipes",
+    icon: "📋",
+    section: "building-blocks",
+    metaphor: "A function is a named recipe. Write it once, use it many times. Feed it ingredients (parameters) and it does the work.",
+    example: 'fn greet(name: Str) {\n  io.println("Hello, " + name + "!");\n}\n\ngreet("Alice");\ngreet("Bob");',
+    keywords: ["fn", "parameters"]
+  },
+  {
+    id: "return-values",
+    name: "Functions That Return Values",
+    icon: "📤",
+    section: "building-blocks",
+    metaphor: "Functions can cook up a result and hand it back. The `return` keyword sends a value back to whoever called the function.",
+    example: 'fn double(x: Int) -> Int {\n  return x * 2;\n}\n\nlet result = double(5);\nio.println(result);',
+    keywords: ["fn", "return", "->"]
+  },
+  {
+    id: "type-annotations",
+    name: "Type Labels",
+    icon: "🏷️",
+    section: "building-blocks",
+    metaphor: "Every box has a label saying what kind of thing belongs inside. `let name: Str` means 'this box holds text'. The compiler double-checks you.",
+    example: 'let name: Str = "XIOM";\nlet year: Int = 2026;\nlet pi: Float64 = 3.14159;\nlet active: Bool = true;\nio.println(name);',
+    keywords: ["Str", "Int", "Bool", "Float64", "type"]
+  },
+  {
+    id: "lists",
+    name: "Lists of Things",
+    icon: "📋",
+    section: "building-blocks",
+    metaphor: "A `Vec` is like a shopping list. You can add items, remove them, and walk through them one by one.",
+    example: 'var fruits: Vec[Str] = Vec[Str].new();\nfruits.push("Apple");\nfruits.push("Banana");\nfor fruit in fruits {\n  io.println(fruit);\n}',
+    keywords: ["Vec", "push", "for", "in"]
+  },
+  {
+    id: "structs",
+    name: "Custom Blueprints",
+    icon: "🏗️",
+    section: "building-blocks",
+    metaphor: "A `struct` is a blueprint for a custom box. You decide what goes inside. A Point has an x and a y.",
+    example: 'struct Point {\n  x: Int,\n  y: Int,\n}\n\nlet p = Point { x: 10, y: 20 };\nio.println(p.x);',
+    keywords: ["struct", "let"]
+  },
+  {
+    id: "enums",
+    name: "This or That",
+    icon: "🎯",
+    section: "building-blocks",
+    metaphor: "An `enum` lets you pick from a fixed set of choices. A traffic light is Red, Yellow, or Green — nothing else.",
+    example: 'enum Color {\n  Red,\n  Green,\n  Blue,\n}\n\nlet favorite = Color.Blue;',
+    keywords: ["enum", "let"]
+  },
+  {
+    id: "errors",
+    name: "When Things Go Wrong",
+    icon: "⚠️",
+    section: "handling-complexity",
+    metaphor: "Sometimes things fail — a file is missing, a number cannot be parsed. XIOM's `Result` lets you handle failure gracefully instead of crashing.",
+    example: 'let result = string.str_to_int("abc");\nmatch result {\n  Ok(value) => io.println(value),\n  Err(msg) => io.println("Error: " + msg),\n}',
+    keywords: ["Result", "Ok", "Err", "match"]
+  },
+  {
+    id: "pattern-matching",
+    name: "Pattern Matching",
+    icon: "🔍",
+    section: "handling-complexity",
+    metaphor: "`match` is like a multi-way fork in the road. You describe each possible pattern and the code to run for it.",
+    example: 'let score = 85;\nmatch score {\n  s if s >= 90 => io.println("A"),\n  s if s >= 80 => io.println("B"),\n  _ => io.println("Keep trying!"),\n}',
+    keywords: ["match", "=>", "_"]
+  },
+  {
+    id: "option",
+    name: "Something or Nothing",
+    icon: "🎁",
+    section: "handling-complexity",
+    metaphor: "`Option` answers 'do you have one?' — `Some(value)` means 'yes, here it is', `None` means 'no, sorry'. No more null crashes.",
+    example: 'let found: Option[Int] = Some(42);\nmatch found {\n  Some(x) => io.println("Got: "),\n  None => io.println("Nothing there"),\n}',
+    keywords: ["Option", "Some", "None", "match"]
+  },
+  {
+    id: "modules",
+    name: "Organizing Code",
+    icon: "📁",
+    section: "handling-complexity",
+    metaphor: "As your program grows, split it into modules like chapters in a book. Each module has its own purpose.",
+    example: 'module math {\n  pub fn add(a: Int, b: Int) -> Int {\n    return a + b;\n  }\n}\n\nuse math;\nio.println(math.add(3, 4));',
+    keywords: ["module", "pub", "use"]
+  },
+  {
+    id: "references",
+    name: "Borrowing, Not Copying",
+    icon: "🔗",
+    section: "handling-complexity",
+    metaphor: "Instead of photocopying a whole book, just point to it. `&` creates a reference — you borrow access without making a copy.",
+    example: 'fn print_name(name: &Str) {\n  io.println(name);\n}\n\nlet myName = "XIOM";\nprint_name(&myName);',
+    keywords: ["&", "fn", "references"]
+  },
+  {
+    id: "contracts",
+    name: "Promises to the Compiler",
+    icon: "📜",
+    section: "handling-complexity",
+    metaphor: "`requires` and `ensures` are promises you make. 'I need b not to be zero' and 'I guarantee the result is correct.' The compiler holds you to them.",
+    example: 'fn divide(a: Int, b: Int) -> Int\n  requires: b != 0\n{\n  return a / b;\n}\n\nio.println(divide(10, 2));',
+    keywords: ["requires", "ensures", "fn"]
+  }
+];
 
-  operators: [
-    { op: '+', prec: 11, desc: 'Addition' },
-    { op: '-', prec: 11, desc: 'Subtraction' },
-    { op: '*', prec: 12, desc: 'Multiplication' },
-    { op: '/', prec: 12, desc: 'Division' },
-    { op: '%', prec: 12, desc: 'Remainder (modulo)' },
-    { op: '==', prec: 7, desc: 'Equality comparison' },
-    { op: '!=', prec: 7, desc: 'Inequality comparison' },
-    { op: '<', prec: 8, desc: 'Less than' },
-    { op: '>', prec: 8, desc: 'Greater than' },
-    { op: '<=', prec: 8, desc: 'Less than or equal' },
-    { op: '>=', prec: 8, desc: 'Greater than or equal' },
-    { op: '&&', prec: 5, desc: 'Logical AND (short-circuit)' },
-    { op: '||', prec: 4, desc: 'Logical OR (short-circuit)' },
-    { op: '!', prec: 14, desc: 'Logical NOT (unary)' },
-    { op: '&', prec: 9, desc: 'Bitwise AND / Reference' },
-    { op: '|', prec: 7, desc: 'Bitwise OR / Pipe' },
-    { op: '^', prec: 8, desc: 'Bitwise XOR' },
-    { op: '~', prec: 14, desc: 'Bitwise NOT (unary)' },
-    { op: '<<', prec: 10, desc: 'Left bit shift' },
-    { op: '>>', prec: 10, desc: 'Right bit shift' },
-    { op: '=', prec: 1, desc: 'Assignment' },
-    { op: '+=', prec: 1, desc: 'Add and assign' },
-    { op: '-=', prec: 1, desc: 'Subtract and assign' },
-    { op: '*=', prec: 1, desc: 'Multiply and assign' },
-    { op: '/=', prec: 1, desc: 'Divide and assign' },
-    { op: '->', prec: 15, desc: 'Return type / arrow' },
-    { op: '=>', prec: 15, desc: 'Fat arrow (match arm)' },
-    { op: '::', prec: 15, desc: 'Path separator (module access)' },
-    { op: '.', prec: 15, desc: 'Field access / method call' },
-    { op: '?', prec: 15, desc: 'Option/Result unwrap propagation' }
-  ],
+var conceptSections = [
+  { id: "getting-started", title: "Getting Started", icon: "🚀" },
+  { id: "making-decisions", title: "Making Decisions", icon: "🧠" },
+  { id: "building-blocks", title: "Building Blocks", icon: "🧱" },
+  { id: "handling-complexity", title: "Handling Complexity", icon: "🔧" }
+];
 
-  types: [
-    { name: 'Int', desc: 'Default signed integer (i32)' },
-    { name: 'Int8', desc: '8-bit signed integer' },
-    { name: 'Int16', desc: '16-bit signed integer' },
-    { name: 'Int32', desc: '32-bit signed integer' },
-    { name: 'Int64', desc: '64-bit signed integer' },
-    { name: 'U8', desc: '8-bit unsigned integer' },
-    { name: 'U16', desc: '16-bit unsigned integer' },
-    { name: 'U32', desc: '32-bit unsigned integer' },
-    { name: 'U64', desc: '64-bit unsigned integer' },
-    { name: 'Float32', desc: '32-bit IEEE 754 float' },
-    { name: 'Float64', desc: '64-bit IEEE 754 double' },
-    { name: 'Bool', desc: 'Boolean (true/false)' },
-    { name: 'Str', desc: 'Immutable UTF-8 string' },
-    { name: 'Char', desc: 'Unicode scalar value' },
-    { name: 'Void', desc: 'No value (unit type)' },
-    { name: 'Option&lt;T&gt;', desc: 'Maybe has value (Some/None)' },
-    { name: 'Result&lt;T,E&gt;', desc: 'Success or error (Ok/Err)' },
-    { name: 'Vec&lt;T&gt;', desc: 'Dynamic array' },
-    { name: 'Map&lt;K,V&gt;', desc: 'Hash map / dictionary' },
-    { name: 'Set&lt;T&gt;', desc: 'Hash set' },
-    { name: 'Range', desc: 'Iterator range (start..end)' }
-  ],
-
-  patterns: [
-    { name: 'Function', code: 'fn name(param: Type) -> ReturnType {\n  return value;\n}' },
-    { name: 'Variable', code: 'let x: Int = 42;\nvar y: Int = 0;' },
-    { name: 'If / Elif / Else', code: 'if condition {\n  // branch\n} elif other {\n  // branch\n} else {\n  // fallback\n}' },
-    { name: 'Match', code: 'match value {\n  Pattern1 => result1,\n  Pattern2 => result2,\n  _ => default,\n}' },
-    { name: 'While loop', code: 'while condition {\n  // body\n}' },
-    { name: 'For loop', code: 'for item in iterable {\n  // body\n}' },
-    { name: 'Enum', code: 'enum Color {\n  Red,\n  Green,\n  Blue(Int),\n}' },
-    { name: 'Contracts', code: 'fn divide(a: Int, b: Int) -> Int\n  requires: b != 0\n  ensures: result * b == a\n{\n  return a / b;\n}' },
-    { name: 'Interface', code: 'interface Display {\n  fn display(self) -> Str;\n}' },
-    { name: 'Compile-time', code: 'comptime {\n  // evaluated during compilation\n}' }
-  ]
-};
+var expandedCardId = null;
 
 function populateSyntaxPanel() {
   var container = document.querySelector('.syntax-content');
@@ -123,92 +198,184 @@ function populateSyntaxPanel() {
 
   var searchInput = document.createElement('input');
   searchInput.type = 'text';
-  searchInput.className = 'syntax-search';
-  searchInput.placeholder = 'Filter syntax...';
+  searchInput.className = 'concept-search';
+  searchInput.placeholder = 'Search concepts...';
   searchInput.addEventListener('input', function () {
-    filterSyntax(this.value);
+    filterConcepts(this.value);
   });
   container.appendChild(searchInput);
 
-  buildSection(container, 'Keywords', syntaxData.keywords, 'keyword');
-  buildSection(container, 'Operators', syntaxData.operators, 'operator');
-  buildSection(container, 'Primitive Types', syntaxData.types, 'type');
-  buildSection(container, 'Common Patterns', syntaxData.patterns, 'pattern');
+  var grid = document.createElement('div');
+  grid.className = 'concept-grid';
+  grid.id = 'conceptGrid';
+
+  conceptSections.forEach(function (section) {
+    var sectionConcepts = concepts.filter(function (c) { return c.section === section.id; });
+    if (sectionConcepts.length === 0) return;
+
+    var secTitle = document.createElement('div');
+    secTitle.className = 'concept-section-title';
+    secTitle.innerHTML = '<span class="section-icon">' + section.icon + '</span>' + section.title;
+    grid.appendChild(secTitle);
+
+    sectionConcepts.forEach(function (concept) {
+      var card = buildConceptCard(concept);
+      grid.appendChild(card);
+    });
+  });
+
+  container.appendChild(grid);
 }
 
-function buildSection(container, title, items, kind) {
-  var section = document.createElement('div');
-  section.className = 'syntax-section';
+function buildConceptCard(concept) {
+  var card = document.createElement('div');
+  card.className = 'concept-card';
+  card.id = 'concept-' + concept.id;
+  card.setAttribute('data-search', (concept.name + ' ' + concept.metaphor + ' ' + concept.keywords.join(' ')).toLowerCase());
 
   var header = document.createElement('div');
-  header.className = 'syntax-section-header';
-  header.innerHTML = title + ' <span class="arrow">&#x25BC;</span>';
+  header.className = 'concept-card-header';
   header.addEventListener('click', function () {
-    var body = this.nextElementSibling;
-    body.classList.toggle('hidden');
-    var arrow = this.querySelector('.arrow');
-    arrow.innerHTML = body.classList.contains('hidden') ? '&#x25B6;' : '&#x25BC;';
+    toggleCard(concept.id);
   });
+
+  var icon = document.createElement('span');
+  icon.className = 'concept-card-icon';
+  icon.textContent = concept.icon;
+
+  var textCol = document.createElement('div');
+  textCol.className = 'concept-card-text';
+
+  var name = document.createElement('div');
+  name.className = 'concept-card-name';
+  name.textContent = concept.name;
+
+  var metaphor = document.createElement('div');
+  metaphor.className = 'concept-card-metaphor-short';
+  metaphor.textContent = concept.metaphor;
+
+  textCol.appendChild(name);
+  textCol.appendChild(metaphor);
+
+  header.appendChild(icon);
+  header.appendChild(textCol);
 
   var body = document.createElement('div');
-  body.className = 'syntax-section-body';
+  body.className = 'concept-card-body';
 
-  if (kind === 'pattern') {
-    items.forEach(function (item) {
-      var div = document.createElement('div');
-      div.className = 'syntax-pattern syntax-item';
-      div.setAttribute('data-search', item.name.toLowerCase() + ' ' + item.code.toLowerCase());
-      div.innerHTML = '<span class="label">' + escapeHtml(item.name) + '</span><pre>' + escapeHtml(item.code) + '</pre>';
-      body.appendChild(div);
-    });
-  } else if (kind === 'operator') {
-    items.forEach(function (item) {
-      var div = document.createElement('div');
-      div.className = 'syntax-entry syntax-item';
-      div.setAttribute('data-search', item.op + ' ' + item.desc.toLowerCase());
-      div.innerHTML = '<span class="operator">' + escapeHtml(item.op) + '</span><span class="precedence">prec ' + item.prec + '</span><span class="desc">' + escapeHtml(item.desc) + '</span>';
-      body.appendChild(div);
-    });
-  } else if (kind === 'type') {
-    items.forEach(function (item) {
-      var div = document.createElement('div');
-      div.className = 'syntax-entry syntax-item';
-      div.setAttribute('data-search', item.name.toLowerCase() + ' ' + item.desc.toLowerCase());
-      div.innerHTML = '<span class="type-name">' + item.name + '</span><span class="desc">' + escapeHtml(item.desc) + '</span>';
-      body.appendChild(div);
-    });
-  } else {
-    items.forEach(function (item) {
-      var div = document.createElement('div');
-      div.className = 'syntax-entry syntax-item';
-      div.setAttribute('data-search', item.kw.toLowerCase() + ' ' + item.desc.toLowerCase());
-      div.innerHTML = '<span class="keyword">' + escapeHtml(item.kw) + '</span><span class="desc">' + escapeHtml(item.desc) + '</span>';
-      body.appendChild(div);
-    });
-  }
+  var fullMetaphor = document.createElement('p');
+  fullMetaphor.className = 'concept-card-metaphor-full';
+  fullMetaphor.textContent = concept.metaphor;
+  body.appendChild(fullMetaphor);
 
-  section.appendChild(header);
-  section.appendChild(body);
-  container.appendChild(section);
+  var codeBlock = document.createElement('pre');
+  codeBlock.className = 'concept-card-code';
+  codeBlock.innerHTML = highlightCode(concept.example);
+  body.appendChild(codeBlock);
+
+  var tags = document.createElement('div');
+  tags.className = 'concept-card-tags';
+  concept.keywords.forEach(function (kw) {
+    var tag = document.createElement('span');
+    tag.className = 'concept-tag';
+    tag.textContent = kw;
+    tags.appendChild(tag);
+  });
+  body.appendChild(tags);
+
+  var tryBtn = document.createElement('button');
+  tryBtn.className = 'concept-card-try';
+  tryBtn.textContent = 'Try It →';
+  tryBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    loadExample(concept);
+  });
+  body.appendChild(tryBtn);
+
+  card.appendChild(header);
+  card.appendChild(body);
+
+  return card;
 }
 
-function filterSyntax(query) {
-  var q = query.toLowerCase();
-  document.querySelectorAll('.syntax-item').forEach(function (item) {
-    var search = item.getAttribute('data-search') || '';
-    item.style.display = search.indexOf(q) >= 0 ? '' : 'none';
+function toggleCard(conceptId) {
+  var card = document.getElementById('concept-' + conceptId);
+  if (!card) return;
+
+  var isExpanding = !card.classList.contains('expanded');
+
+  var allCards = document.querySelectorAll('.concept-card.expanded');
+  allCards.forEach(function (c) {
+    c.classList.remove('expanded');
   });
 
-  document.querySelectorAll('.syntax-section').forEach(function (section) {
-    var body = section.querySelector('.syntax-section-body');
-    if (!body) return;
-    var visible = body.querySelectorAll('.syntax-item[style*="display: none"]').length;
-    var total = body.querySelectorAll('.syntax-item').length;
-    section.style.display = visible === total ? 'none' : '';
-    if (q) {
-      body.classList.remove('hidden');
+  if (isExpanding) {
+    card.classList.add('expanded');
+    expandedCardId = conceptId;
+  } else {
+    expandedCardId = null;
+  }
+}
+
+function loadExample(concept) {
+  var ed = getActiveEditor();
+  if (ed) {
+    ed.setValue(concept.example);
+  }
+  toggleSyntax();
+}
+
+function filterConcepts(query) {
+  var q = query.toLowerCase().trim();
+  var grid = document.getElementById('conceptGrid');
+  if (!grid) return;
+
+  var cards = grid.querySelectorAll('.concept-card');
+  var titles = grid.querySelectorAll('.concept-section-title');
+  var anyVisible = false;
+
+  cards.forEach(function (card) {
+    var search = card.getAttribute('data-search') || '';
+    if (q === '' || search.indexOf(q) >= 0) {
+      card.style.display = '';
+      anyVisible = true;
+    } else {
+      card.style.display = 'none';
     }
   });
+
+  titles.forEach(function (title) {
+    var next = title.nextElementSibling;
+    var hasVisible = false;
+    var sibling = next;
+    while (sibling && !sibling.classList.contains('concept-section-title')) {
+      if (sibling.classList.contains('concept-card') && sibling.style.display !== 'none') {
+        hasVisible = true;
+      }
+      sibling = sibling.nextElementSibling;
+    }
+    title.style.display = hasVisible ? '' : 'none';
+  });
+}
+
+function highlightCode(code) {
+  var escaped = String(code)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  escaped = escaped.replace(/(\/\/.*$)/gm, '<span class="code-comment">$1</span>');
+
+  escaped = escaped.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="code-string">$1</span>');
+
+  var keywords = /\b(fn|return|let|var|const|if|elif|else|match|while|for|in|type|enum|struct|interface|derive|module|use|pub|as|unsafe|extern|requires|ensures|invariant|spawn|async|await|comptime|true|false|self|Some|None|Ok|Err|is|and|or|not|where|Option|Result|Vec|Str|Int|Bool|Float64)\b/g;
+  escaped = escaped.replace(keywords, '<span class="code-keyword">$1</span>');
+
+  escaped = escaped.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="code-number">$1</span>');
+
+  escaped = escaped.replace(/(&&|[|]{2}|[+\-*/%=<>!]=?|->|=>|::|\.|\?|&|[|^~]|<<|>>)/g, '<span class="code-operator">$1</span>');
+
+  return escaped;
 }
 
 function escapeHtml(str) {

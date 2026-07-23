@@ -35,9 +35,14 @@ function registerXiomLanguage() {
   });
 }
 
+function disposeAllEditors() {
+  if (window.editor) { window.editor.dispose(); window.editor = null; }
+  if (window.pgEditor) { window.pgEditor.dispose(); window.pgEditor = null; }
+}
+
 function createEditor(containerId, initialValue) {
   return monaco.editor.create(document.getElementById(containerId), {
-    value: initialValue || 'fn main() -> Int {\n  return 42;\n}',
+    value: initialValue || 'fn main() {\n  io.println("Hello!");\n}',
     language: 'xiom',
     theme: 'xiom-dark',
     fontSize: 14,
@@ -74,7 +79,8 @@ require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0
 require(['vs/editor/editor.main'], function () {
   registerXiomLanguage();
 
-  window.editor = createEditor('editorContainer', 'fn main() -> Int {\n  return 42;\n}');
+  disposeAllEditors();
+  window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
   addCompileAction(window.editor);
   addLineColTracker(window.editor);
 
@@ -89,7 +95,8 @@ window.initPlaygroundEditor = function () {
   if (!window.monaco) {
     require(['vs/editor/editor.main'], function () {
       registerXiomLanguage();
-      window.pgEditor = createEditor('pgEditorContainer', 'fn main() -> Int {\n  return 42;\n}');
+      disposeAllEditors();
+      window.pgEditor = createEditor('pgEditorContainer', 'fn main() {\n  io.println("Hello!");\n}');
       addCompileAction(window.pgEditor);
       window.pgEditor.onDidChangeCursorPosition(function () {
         updateLineCount();
@@ -100,7 +107,8 @@ window.initPlaygroundEditor = function () {
   }
 
   registerXiomLanguage();
-  window.pgEditor = createEditor('pgEditorContainer', 'fn main() -> Int {\n  return 42;\n}');
+  disposeAllEditors();
+  window.pgEditor = createEditor('pgEditorContainer', 'fn main() {\n  io.println("Hello!");\n}');
   addCompileAction(window.pgEditor);
   window.pgEditor.onDidChangeCursorPosition(function () {
     updateLineCount();

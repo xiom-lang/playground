@@ -1,168 +1,142 @@
-# XIOM Playground — Honest Audit & Roadmap to 10/10
+# XIOM Playground — BEGINNER-FIRST AUDIT v3
 
 **Date:** 2026-07-23  
-**Current Rating:** **1.5/10** (unusable for learning)  
-**Target:** 10/10 (production-grade learning environment)
+**Auditor Perspective:** Complete beginner, never coded, just opened the page.  
+**Current Rating:** **3/10** (works technically, fails pedagogically)
 
 ---
 
-## 1. HONEST AUDIT — What's Wrong
+## 1. WHAT A BEGINNER SEES (The First 10 Seconds)
 
-### A. Lessons (1/10) — THE BIGGEST PROBLEM
+### Landing Page — Broken for Beginners
 
-| Issue | Detail |
-|-------|--------|
-| **Only 20 lessons** | Spec says 400+. 20 done = 5% complete. |
-| **No progressive difficulty** | Lessons jump from "Hello World" to "Memory Model" with no bridge |
-| **"Hello World" doesn't print** | `return 42;` is NOT Hello World. Beginners expect to SEE output. |
-| **"Variables" doesn't teach** | Shows code but no explanation of WHY `let` vs `var`, no interactive exercise |
-| **No theory sections** | Every lesson needs: Concept → Why → Show → Do → Test |
-| **No syntax reference** | Zero documentation of keywords, operators, types anywhere in the UI |
-| **No completion flow** | User finishes a lesson → nothing happens. No next lesson prompt, no achievement. |
+| Element | What I See | What I Should See |
+|---------|-----------|-------------------|
+| "The Systems Language That Verifies Itself" | What is a "systems language"? What does "verifies" mean? | "Learn to code by building real things." |
+| "Zero crashes. Zero nulls. Zero surprises." | What is a "null"? What is a "crash" in programming? I've never coded. | "Write your first program in 2 minutes." |
+| "compiler-enforced", "Z3 proves them" | Sounds like alien technology. Scary. | "The computer double-checks your work so you don't make mistakes." |
+| "ownership with compile-time borrow checking" | I have no idea what any of these words mean. | "XIOM catches your mistakes before they happen." |
+| "Start Learning — Free" | Does this mean there's a paid version? Am I using a trial? | "Start Learning" (no "Free" — it IS free, don't imply otherwise) |
+| Feature cards: "no GC", "LLVM", "hot reload" | Jargon. Jargon. Jargon. | "Never lose your work", "Programs run fast", "Learn by doing" |
 
-### B. Output Tabs (2/10) — DISPLAYING NOTHING
+### The "Start Learning" Click
 
-| Tab | What it shows | What it SHOULD show |
-|-----|--------------|---------------------|
-| **Output** | "Compilation successful!" or "Compilation failed." | Actually nothing useful — just a status message |
-| **LLVM IR** | Raw IR dump (sometimes) | Syntax-highlighted IR with comments explaining what each section does |
-| **Diagnostics** | Raw error list | Annotated errors with fix suggestions, links to relevant lessons |
-| **Tokens** | EMPTY — never populated | Full token stream with span info, color-coded by token type |
-| **Contracts** | EMPTY — never populated | Z3 verification results, counterexamples, contract status |
+I click "Start Learning". What happens:
+1. Landing fades out
+2. I see a sidebar with folders like "L0 First Steps"
+3. I click a lesson expecting to READ something
+4. Instead, a code editor appears with `fn main() -> Int { return 42; }`
+5. I have NO IDEA what this text means. What is `fn`? What is `Int`? What is `return`? WHAT IS HAPPENING?
 
-**Root cause:** The server.py/server.js only runs `xiom --emit-ir` which returns IR + stderr. The tokens, AST, contracts stages are never populated because they require running the compiler in stages (lex-only, parse-only, verify).
+**A beginner's first experience must be READING, not CODING.** They need to understand WHAT programming is before they write their first line.
 
-### C. UI/UX (3/10) — LOOKS LIKE A TOOL, NOT A LEARNING ENVIRONMENT
+### The Syntax Reference — Not for Beginners
 
-| Issue | Detail |
-|-------|--------|
-| **No landing page** | User lands directly in editor with no context |
-| **No "What is XIOM"** | Zero explanation of what makes XIOM special |
-| **No syntax guide** | No cheatsheet, no reference panel |
-| **Lessons hidden** | Sidebar hidden by default, user has to click "Lessons" to discover them |
-| **No mobile** | Completely broken on phones/tablets |
-| **No dark/light toggle** | Theme is hardcoded |
-| **No keyboard shortcuts help** | Ctrl+Enter works but user isn't told |
-
-### D. Editor (4/10) — MONACO IS GOOD, INTEGRATION IS WEAK
-
-| Issue | Detail |
-|-------|--------|
-| **Monaco CDN** | Loads from jsdelivr — fails offline |
-| **No autocomplete** | No stdlib function suggestions, no type completions |
-| **No hover info** | No type-on-hover, no documentation popups |
-| **No formatting** | No "Format Code" button (xiom-fmt exists in WASM) |
-| **Error underlines** | Works but doesn't link to lessons/docs |
+| Current (Cheatsheet) | Should Be (Stories) |
+|----------------------|---------------------|
+| `fn` — Declares a function | "A function is like a recipe. You give it a name and a list of steps. When you call it, it follows the steps." |
+| `let` — Immutable variable binding | "A variable is a box with a label. You put something in it and give it a name. 'let' means the box is sealed — you can't change what's inside." |
+| `Int` — 64-bit signed integer | "A number. Like 42, or -7, or 1000000. Computers store numbers as 'integers'." |
+| `Bool` — Boolean true/false | "A yes-or-no answer. Every question in programming has a yes or no answer — we call this 'true' or 'false'." |
 
 ---
 
-## 2. WHAT A 10/10 LOOKS LIKE
+## 2. BUGS FOUND
 
-### The User Journey
+| # | Bug | Severity |
+|---|-----|----------|
+| 1 | **Examples dropdown removed** — the old `<select id="examples">` was deleted in rewrite. No way to load examples. | CRITICAL |
+| 2 | **compiler.js uses `getActiveOutputIds()`** — this function may not exist or may fail in playground mode vs lessons mode. The DOM IDs changed (e.g., `#ir` in lessons vs `#pgIR` in playground). | CRITICAL |
+| 3 | **Landing says "Start Learning — Free"** — AI was asked to put that in CTA. Implies there's a paid version. Remove "Free". | HIGH |
+| 4 | **Landing uses developer jargon** — "no GC", "compile-time borrow checking", "LLVM", "Z3", "ownership". A beginner understands NONE of these. | HIGH |
+| 5 | **Lessons show code immediately** — L0-01 opens with a code editor, not with text explaining what programming is. | HIGH |
+| 6 | **Syntax reference is a cheatsheet** — 42 keywords with one-liners. Not educational. | HIGH |
+| 7 | **No "What is XIOM" for beginners** — the concepts are explained in engineer language. | MEDIUM |
+| 8 | **Mode switching may leak editors** — switching Landing→Lessons→Playground→Landing may create duplicate Monaco instances. | MEDIUM |
+| 9 | **No loading state** — when WASM or lesson catalog is loading, user sees nothing. | LOW |
+| 10 | **Keyboard shortcuts not discoverable** — Ctrl+Enter and Ctrl+K work but user isn't told. | LOW |
 
-```
-Landing Page
-  → "What is XIOM?" (60-sec feature tour)
-  → "Start Learning" button
-  → Lesson Browser (categorized, searchable)
-  → Select lesson → Read theory → See example → Edit code → Compile → See output → Mark complete → Next lesson
-  → OR: "Skip to Playground" (free experimentation)
-```
+---
 
-### Required Panels/Tabs
+## 3. THE BEGINNER'S JOURNEY (What Should Happen)
 
-| Panel | Content |
-|-------|---------|
-| **Lessons Browser** | Categorized, searchable, progress-tracked (370+ lessons) |
-| **Syntax Reference** | Every keyword, operator, type documented with examples |
-| **Concepts Guide** | "What makes XIOM special" — SAFE, VERIFIED, PRECISE |
-| **Editor** | Monaco with full XIOM support |
-| **Output** | Human-readable: "Your program returned 42" |
-| **LLVM IR** | Syntax-highlighted, annotated for learning |
-| **Diagnostics** | Error → Explanation → Fix suggestion → Link to lesson |
-| **Tokens** | Lexer output visualization (color-coded by token type) |
-| **Contracts** | Z3 verification results displayed clearly |
+### Step 1: "What is Programming?" (2 min read, NO code)
 
-### Lesson Structure (EVERY lesson)
+> *"A computer program is like a recipe. You write down steps, and the computer follows them. You can tell the computer to do math, show text, or make decisions."*
 
-```json
-{
-  "id": "L1-03",
-  "title": "Functions",
-  "concept": "Functions package code into reusable blocks",
-  "why": "Without functions, you'd rewrite the same code over and over. Functions let you name a block of code and call it whenever you need it.",
-  "theory": "## Functions in XIOM\n\nA function is declared with `fn`, has parameters in `()`, and returns a value after `->`...",
-  "syntax_ref": "fn name(param: Type) -> ReturnType { body }",
-  "example": "fn add(a: Int, b: Int) -> Int { return a + b; }",
-  "code_template": "fn multiply(a: Int, b: Int) -> Int {\n  // TODO: return a * b\n}",
-  "solution": "fn multiply(a: Int, b: Int) -> Int {\n  return a * b;\n}",
-  "test_input": "",
-  "test_expected": "",
-  "tips": ["Use `return` to send a value back", "Every parameter needs a type annotation"],
-  "common_mistakes": ["Forgetting `return`", "Forgetting the return type annotation"],
-  "related": ["L1-02", "L1-04"],
-  "next_lesson": "L1-04"
-}
+### Step 2: "Your First Program — Hello!" (3 min, SIMPLE code)
+
+```xiom
+// This prints a message
+io.println("Hello, I'm learning XIOM!");
 ```
 
----
+The user types `"Hello, I'm learning XIOM!"` (changing the message), clicks Run, and SEES the output. **They must see output on their first try.** Not `return 42` — they need to SEE something happen.
 
-## 3. ROADMAP TO 10/10
+### Step 3: "What is a Variable?" (5 min)
 
-### Phase A — Fix Critical Issues (2 days)
+```xiom
+// A variable is a named box
+let myName = "Alex";
+io.println("Hi, my name is:");
+io.println(myName);
+```
 
-| # | Task | Effort |
-|---|------|--------|
-| A1 | **Fix output tabs**: Make Tokens, IR, Diagnostics, Contracts show real data | 1d |
-| A2 | **Fix compiler server**: Run compiler in stages (lex-only, parse-only, codegen, verify) | 0.5d |
-| A3 | **Add syntax reference panel**: Keyboard-accessible cheatsheet of all keywords, operators, types | 0.5d |
+### Step 4: "Doing Math" (5 min)
 
-### Phase B — Lesson Content (5-7 days — 8 agents in parallel)
+```xiom
+let apples = 5;
+let oranges = 3;
+let total = apples + oranges;
+io.println(total); // Shows 8
+```
 
-| # | Level | Lessons | Agent |
-|---|-------|---------|-------|
-| B0 | **L0: First Steps** | 30 lessons (Hello World through basic functions) | Agent 1 |
-| B1 | **L1: Foundations** | 50 lessons (Types, operators, control flow, functions deep) | Agent 2 |
-| B2 | **L2: Data Structures** | 60 lessons (Structs, enums, Option, Result, Vec, Map, Set) | Agent 3 |
-| B3 | **L3: Systems** | 50 lessons (Memory, ownership, borrowing, lifetimes) | Agent 4 |
-| B4 | **L4: Safety** | 50 lessons (Contracts, invariants, error handling, unsafe) | Agent 5 |
-| B5 | **L5: Patterns** | 50 lessons (Generics, interfaces, traits, derive, iterators) | Agent 6 |
-| B6 | **L6: Engineering** | 40 lessons (Modules, packages, testing, FFI, build system) | Agent 7 |
-| B7 | **L7+L8: Mastery + Ecosystem** | 40 lessons (Compiler internals, Z3, Vulkan, Redis, etc.) | Agent 8 |
-| | **TOTAL** | **370 lessons** | |
-
-### Phase C — UI/UX Polish (2 days)
-
-| # | Task | Effort |
-|---|------|--------|
-| C1 | Landing page with feature tour animation | 0.5d |
-| C2 | "What is XIOM" concept panel | 0.5d |
-| C3 | Lesson completion flow (next lesson prompt, achievement) | 0.5d |
-| C4 | Mobile responsive layout | 0.5d |
-
-### Phase D — Editor Enhancements (1 day)
-
-| # | Task | Effort |
-|---|------|--------|
-| D1 | Autocomplete (stdlib functions, types, keywords) | 0.5d |
-| D2 | Format button (xiom-fmt via WASM) | 0.3d |
-| D3 | Help panel (Ctrl+Shift+H for keyboard shortcuts) | 0.2d |
+### Step 5+: Gradual introduction of ONE concept per lesson. Never more.
 
 ---
 
-## 4. TARGET STATE: 10/10
+## 4. FIX PLAN (in order of priority)
 
-| Category | Current | Target |
-|----------|---------|--------|
-| **Lessons** | 20 (5%, random quality) | 370+ (100%, every concept covered) |
-| **Output Tabs** | 2/5 work (broken) | 5/5 work (real data) |
-| **UI/UX** | Looks like a dev tool | Looks like Duolingo for systems programming |
-| **Editor** | Basic Monaco | Smart editor with autocomplete + formatting |
-| **Learning Flow** | No guidance | Progressive: Theory → Example → Practice → Test |
-| **Beginner Experience** | Impossible to use | "I've never coded before" → "I can write XIOM" |
+### FIX 1 — Landing Page (CRITICAL)
+- Remove "Free" from CTA
+- Rewrite hero text for beginners: "Learn to code by building real things. No experience needed."
+- Rewrite feature cards in plain English:
+  1. "Never crash — XIOM catches mistakes before you run your code"
+  2. "Fast programs — your code runs as fast as C or Rust"
+  3. "Learn by doing — interactive lessons with instant feedback"
+  4. "Free forever — 370+ lessons, no signup, no payments"
+
+### FIX 2 — Onboarding Flow (CRITICAL)
+- First screen after "Start Learning" is NOT a code editor
+- It's a welcome page with a "Begin" button
+- The first lesson (L0-01) starts with 2 minutes of READING about what programming is
+- Then shows a SIMPLE code example that PRINTS something
+- User types their name, clicks Run, sees it printed — DOPAMINE HIT
+
+### FIX 3 — Syntax Reference (HIGH)
+- Replace cheatsheet with "Concepts" — one concept per card
+- Each concept has: a metaphor, a simple example, and a "try it" button
+- Ordered by when the user encounters it (variables first, functions later)
+
+### FIX 4 — Examples (CRITICAL)
+- Restore the examples dropdown
+- Add 3 beginner examples: "Hello World", "Variables", "Simple Math"
+- Each example has a comment explaining what it does
+
+### FIX 5 — Bugs (CRITICAL)
+- Fix compiler.js output routing (lessons vs playground DOM IDs)
+- Fix mode switching (clean up Monaco instances)
+- Add loading states
 
 ---
 
-## 5. IMMEDIATE NEXT STEPS
+## 5. TARGET: 10/10
 
-**Start Phase A now** — fix the compiler server to emit tokens, IR, diagnostics, and contracts as real data. This makes the playground functional immediately while lessons are being written in parallel.
+| Category | Current | After Fixes |
+|----------|---------|-------------|
+| **First impression** | Jargon, scary | Welcoming, simple |
+| **First code run** | `return 42` (invisible) | `io.println("Hello!")` (visible!) |
+| **Onboarding** | Code editor immediately | 2 min reading → simple code → win |
+| **Syntax learning** | Keyword cheatsheet | Concept stories with metaphors |
+| **Bugs** | Examples broken, output broken | Everything works |
+| **Language** | Engineer-speak | Plain English |
