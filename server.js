@@ -56,12 +56,10 @@ function compileAllStages(source) {
   };
 
   try {
-    // Stage 1: Lex (tokens)
+    // Stage 1: Lex (tokens) — uses --emit-tokens
     const lexProc = runXiom(['--emit-tokens', tmp]);
     result.stages.lex = { success: lexProc.success, output: lexProc.stdout || 'Tokens not available' };
-    if (lexProc.stdout) {
-      result.tokens = lexProc.stdout.split('\n').filter(l => l.trim());
-    }
+    if (lexProc.stdout) result.tokens = lexProc.stdout.split('\n').filter(l => l.trim());
 
     // Stage 2: Parse (syntax check)
     const parseProc = runXiom(['--check', '--check-only', tmp]);
