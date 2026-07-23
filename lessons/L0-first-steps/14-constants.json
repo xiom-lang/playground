@@ -1,0 +1,17 @@
+{
+  "id": "L0-14",
+  "title": "Constants",
+  "level": "L0",
+  "duration": "6 min",
+  "concepts": ["let", "immutable", "constant", "naming convention"],
+  "concept": "In XIOM, let creates compile-time immutable bindings — values that never change, just like constants.",
+  "why": "Immutable values make programs safer and easier to reason about. You know a value won't change unexpectedly.",
+  "theory": "## Constants with `let`\n\nIn XIOM, `let` creates truly **immutable** bindings. Once set, they cannot be changed — they're constants.\n\n```xiom\nfn main() -> Int {\n  let pi = 3.14159;\n  let max_players = 4;\n  let app_name = \"XIOM Playground\";\n  return 0;\n}\n```\n\n### Why Immutability Matters\n\n```xiom\nlet tax_rate = 0.08;\n// ... 200 lines of code later ...\n// You know tax_rate is STILL 0.08 — nothing can change it!\n```\n\n### Naming Constants\n\nUse `SCREAMING_SNAKE_CASE` to signal that a value is a constant:\n\n```xiom\nlet PI = 3.14159;\nlet MAX_CONNECTIONS = 100;\nlet DEFAULT_TIMEOUT = 30;\nlet APP_VERSION = \"1.0.0\";\n```\n\n### let vs var — a summary\n\n```xiom\nlet x = 10;       // Immutable — can't change\nvar y = 10;       // Mutable — can change\n\n// x = 20;        // ERROR: can't reassign a let!\ny = 20;          // OK: var can be reassigned\n```\n\n### The Philosophy\n\nXIOM encourages **immutability by default**. Use `let` everywhere unless you specifically need to change a value. This prevents entire categories of bugs. When you read `let`, you know the value is fixed forever — no surprises.",
+  "syntax_ref": "let CONSTANT_NAME = value;  // Immutable, never changes",
+  "code_template": "fn main() -> Int {\n  // TODO: Create constants for: PI (3.14159), DAYS_IN_WEEK (7), APP_NAME (\"MyApp\")\n  // TODO: Print \"Constants defined!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let PI = 3.14159;\n  let DAYS_IN_WEEK = 7;\n  let APP_NAME = \"MyApp\";\n  io.println(\"Constants defined!\");\n  return 0;\n}",
+  "tips": ["Use UPPER_CASE for constant names to signal they never change", "`let` in XIOM is truly immutable — the compiler enforces it", "Prefer `let` over `var` whenever possible", "Constants make your code's intent clear: 'this value is fixed'"],
+  "common_mistakes": ["Trying to reassign a `let` — the compiler will reject it", "Using `var` for values that never change — use `let` instead", "Naming constants in lowercase — makes them hard to spot"],
+  "related": ["L0-03", "L0-04", "L0-13"],
+  "next_lesson": "L0-15"
+}

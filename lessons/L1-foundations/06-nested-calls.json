@@ -1,0 +1,17 @@
+{
+  "id": "L1-06",
+  "title": "Nested Function Calls",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["nested call", "composition", "f(g(x))", "expression"],
+  "concept": "You can use the result of one function call directly as the argument to another — this is called nesting or composition.",
+  "why": "Nesting eliminates temporary variables and expresses multi-step transformations concisely.",
+  "theory": "## Calling Functions Inside Functions\n\nInstead of storing every intermediate result, you can feed one function's output directly into another:\n\n```xiom\nfn double(n: Int) -> Int {\n  return n * 2;\n}\n\nfn add_ten(n: Int) -> Int {\n  return n + 10;\n}\n\nfn main() -> Int {\n  // Without nesting (uses intermediate variable)\n  let doubled = double(5);     // 10\n  let result1 = add_ten(doubled);  // 20\n\n  // With nesting (passes result directly)\n  let result2 = add_ten(double(5));  // 20 — same result!\n\n  return result2;\n}\n```\n\n### How Nesting Works\n\n```xiom\nlet answer = add_ten(double(5));\n//           ^^^^^^^^ ^^^^^^^^^^\n//           outer     inner call runs FIRST\n//\n// Step 1: double(5) → 10\n// Step 2: add_ten(10) → 20\n// Step 3: answer = 20\n```\n\nInner calls always execute first — just like parentheses in math.\n\n### Deep Nesting\n\nYou can nest arbitrarily deep (but don't go too far!):\n\n```xiom\nfn inc(x: Int) -> Int { return x + 1; }\nfn double(x: Int) -> Int { return x * 2; }\nfn square(x: Int) -> Int { return x * x; }\n\nfn main() -> Int {\n  // Read from inside out: inc(5)=6, double(6)=12, square(12)=144\n  let result = square(double(inc(5)));  // 144\n  return result;\n}\n```\n\n### When to Nest vs When to Use Variables\n\n| Nest when... | Use variables when... |\n|-------------|----------------------|\n| The chain is short (1-2 deep) | The chain is long (3+ deep) |\n| Each step is obvious | You need to debug intermediate values |\n| The expression is readable | The expression becomes confusing |\n\n```xiom\n// Nested — clean and clear\nlet is_valid = is_in_range(clamp(value, 0, 100));\n\n// With variables — easier to debug\nlet clamped = clamp(value, 0, 100);\nlet valid = is_in_range(clamped);\n```\n\nClarity wins. If nesting makes code harder to read, use variables.",
+  "syntax_ref": "outer_function(inner_function(args))\n// inner runs first, result feeds into outer",
+  "code_template": "fn triple(n: Int) -> Int {\n  return n * 3;\n}\n\nfn subtract_five(n: Int) -> Int {\n  return n - 5;\n}\n\nfn main() -> Int {\n  // TODO: Call triple on 4, then pass that result to subtract_five\n  // Do it as a nested call in one line\n  return 0;\n}",
+  "solution": "fn triple(n: Int) -> Int {\n  return n * 3;\n}\n\nfn subtract_five(n: Int) -> Int {\n  return n - 5;\n}\n\nfn main() -> Int {\n  let result = subtract_five(triple(4));\n  return result;\n}",
+  "tips": ["Inner function calls run FIRST, then outer — read from inside out", "Nesting works because functions return values that match parameter types", "Don't nest more than 2-3 levels deep — it becomes hard to read", "Nesting and composition mean the same thing in programming"],
+  "common_mistakes": ["Getting the order wrong: `f(g(x))` calls g first, then f", "Nesting functions that don't return values (Unit functions)", "Type mismatch: inner function returns Int but outer expects Str"],
+  "related": ["L1-01", "L1-05", "L1-07"],
+  "next_lesson": "L1-07"
+}

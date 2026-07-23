@@ -1,0 +1,17 @@
+{
+  "id": "L0-20",
+  "title": "Boolean Logic - AND",
+  "level": "L0",
+  "duration": "7 min",
+  "concepts": ["&&", "AND", "logical operator", "Bool"],
+  "concept": "The && operator returns true only when BOTH conditions are true.",
+  "why": "Real decisions often require multiple conditions: 'Is the user logged in AND has permission?' AND lets you combine checks.",
+  "theory": "## Both Must Be True: The AND Operator `&&`\n\nSometimes you need TWO things to be true at the same time. That's what `&&` (AND) does.\n\n```xiom\nfn main() -> Int {\n  let has_ticket = true;\n  let has_id = true;\n  let can_enter = has_ticket && has_id;  // true\n  return 0;\n}\n```\n\n### The Truth Table for AND\n\n| Left | Right | Result |\n|------|-------|--------|\n| `true` | `true` | `true` |\n| `true` | `false` | `false` |\n| `false` | `true` | `false` |\n| `false` | `false` | `false` |\n\nAND is strict: **both** must be `true` for the result to be `true`.\n\n### Real-World Examples\n\n```xiom\n// Can drive?\nlet has_license = true;\nlet is_sober = true;\nlet can_drive = has_license && is_sober;  // true\n\n// Is a valid score?\nlet score = 85;\nlet above_min = score >= 0;\nlet below_max = score <= 100;\nlet is_valid = above_min && below_max;  // true\n\n// Should show warning?\nlet battery_low = true;\nlet not_charging = true;\nlet show_warning = battery_low && not_charging;\n```\n\n### Chaining Multiple ANDs\n\nYou can chain as many `&&` as you need:\n\n```xiom\nlet warm = true;\nlet sunny = true;\nlet weekend = true;\nlet perfect_day = warm && sunny && weekend;  // true\n```\n\n### Short-Circuit Evaluation\n\nXIOM is smart: if the left side of `&&` is `false`, it doesn't even check the right side (because the result is already `false`).",
+  "syntax_ref": "condition1 && condition2  →  true if both are true",
+  "code_template": "fn main() -> Int {\n  let is_weekend = true;\n  let is_sunny = false;\n  // TODO: Create a variable 'go_to_park' that is true only if BOTH are true\n  // TODO: Create 'stay_home' that is the OPPOSITE result\n  // TODO: Print \"Decision made!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let is_weekend = true;\n  let is_sunny = false;\n  let go_to_park = is_weekend && is_sunny;\n  io.println(\"Decision made!\");\n  return 0;\n}",
+  "tips": ["`&&` means 'and also' — both conditions must be true", "Think of `&&` as a strict gatekeeper that demands both sides pass", "Use clear variable names: `is_valid && is_complete` is self-documenting", "Short-circuit: if the left side is false, the right side is never evaluated"],
+  "common_mistakes": ["Using a single `&` instead of `&&` — single `&` is the bitwise AND operator", "Writing `and` instead of `&&` — XIOM uses symbols, not words", "Expecting `true && false` to be `true` — AND needs BOTH"],
+  "related": ["L0-07", "L0-19", "L0-21"],
+  "next_lesson": "L0-21"
+}

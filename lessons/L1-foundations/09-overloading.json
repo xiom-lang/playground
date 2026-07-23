@@ -1,0 +1,17 @@
+{
+  "id": "L1-09",
+  "title": "Unique Function Names",
+  "level": "L1",
+  "duration": "7 min",
+  "concepts": ["function naming", "no overloading", "descriptive names"],
+  "concept": "XIOM does not support function overloading — each function must have a unique name. Use descriptive names instead.",
+  "why": "Unique names eliminate ambiguity. The compiler always knows exactly which function you mean.",
+  "theory": "## Every Function Needs a Unique Name\n\nIn some languages, you can have multiple functions with the same name but different parameters (called **overloading**). XIOM doesn't allow this — each function must have a unique name.\n\n### Not Allowed in XIOM\n\n```xiom\n// This does NOT work in XIOM:\n// fn print_value(x: Int) { ... }\n// fn print_value(x: Str) { ... }  // ERROR: duplicate name!\n```\n\n### What To Do Instead\n\nUse descriptive, distinct names:\n\n```xiom\nfn print_int(x: Int) {\n  io.println(\"Number calculation complete!\");\n}\n\nfn print_str(x: Str) {\n  io.println(x);\n}\n\nfn print_bool(x: Bool) {\n  if x {\n    io.println(\"true\");\n  } else {\n    io.println(\"false\");\n  }\n}\n\nfn main() -> Int {\n  print_int(42);\n  print_str(\"Hello\");\n  print_bool(true);\n  return 0;\n}\n```\n\n### Naming Conventions\n\nUse the type or purpose in the name to differentiate:\n\n```xiom\nfn add_ints(a: Int, b: Int) -> Int { return a + b; }\nfn add_floats(a: Float64, b: Float64) -> Float64 { return a + b; }\n\nfn area_of_square(side: Int) -> Int { return side * side; }\nfn area_of_rectangle(w: Int, h: Int) -> Int { return w * h; }\n```\n\n### Why No Overloading?\n\nXIOM values clarity. When you see `print_int(42)`, there's zero ambiguity about which function is called. This makes code easier to read, debug, and reason about.\n\n### The Bottom Line\n\nGive each function a name that describes exactly what it does. Longer, clearer names beat shorter, ambiguous ones.",
+  "syntax_ref": "// Each function must have a unique name\nfn do_thing_int(x: Int) { ... }\nfn do_thing_str(x: Str) { ... }\n// NOT: two fn do_thing with different params",
+  "code_template": "// TODO: Write 'double_int' that doubles an Int\n// TODO: Write 'double_float' that doubles a Float64\n\nfn main() -> Int {\n  // TODO: Call double_int(21) and return the result\n  return 0;\n}",
+  "solution": "fn double_int(n: Int) -> Int {\n  return n * 2;\n}\n\nfn double_float(n: Float64) -> Float64 {\n  return n * 2.0;\n}\n\nfn main() -> Int {\n  let result = double_int(21);\n  return result;\n}",
+  "tips": ["Include the type in the name to disambiguate: `print_int`, `print_str`", "Include the purpose: `area_of_square` vs `area_of_rectangle`", "Long, clear names > short, clever names", "XIOM's explicitness helps prevent accidental wrong-function calls"],
+  "common_mistakes": ["Trying to define two functions with the same name but different parameters", "Using overly generic names like `process` or `handle` for everything", "Creating dozens of nearly-identical functions — consider if they're truly different"],
+  "related": ["L1-01", "L1-02", "L1-08"],
+  "next_lesson": "L1-10"
+}

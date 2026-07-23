@@ -1,0 +1,17 @@
+{
+  "id": "L1-13",
+  "title": "Nested If",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["nested if", "inner if", "indentation", "hierarchy"],
+  "concept": "Put an if inside another if to check multiple conditions hierarchically — only check the second if the first passes.",
+  "why": "Some conditions only make sense after another is true. 'If it's raining AND you have no umbrella' needs hierarchy.",
+  "theory": "## If Inside If: Nesting\n\nYou can put an `if` statement inside another `if` block:\n\n```xiom\nfn main() -> Int {\n  let is_raining = true;\n  let has_umbrella = false;\n\n  if is_raining {\n    io.println(\"It's raining!\");\n    if has_umbrella {\n      io.println(\"You have an umbrella — you'll stay dry.\");\n    } else {\n      io.println(\"No umbrella — you'll get wet!\");\n    }\n  } else {\n    io.println(\"No rain today!\");\n  }\n\n  return 0;\n}\n```\n\n### When the Inner If Runs\n\nThe inner `if` is only even CONSIDERED when the outer `if` condition is true:\n\n```xiom\nif logged_in {\n  // We're inside the outer if — user IS logged in\n  if is_admin {\n    io.println(\"Welcome, admin!\");\n  } else {\n    io.println(\"Welcome, user!\");\n  }\n}\n// If not logged in, we skip everything above\n```\n\n### Nested vs Combined\n\nYou could write the same logic two ways:\n\n```xiom\n// Nested — shows hierarchy (\"only check admin if logged in\")\nif logged_in {\n  if is_admin {\n    io.println(\"Admin dashboard\");\n  }\n}\n\n// Combined — flat condition (\"check both at once\")\nif logged_in && is_admin {\n  io.println(\"Admin dashboard\");\n}\n```\n\nBoth work. Use nested when the inner condition logically depends on the outer one. Use `&&` when they're independent but both required.\n\n### Don't Go Too Deep\n\nNesting more than 2-3 levels deep makes code hard to follow:\n\n```xiom\n// Too deep — hard to read!\nif a {\n  if b {\n    if c {\n      if d {\n        // what was I checking again?\n      }\n    }\n  }\n}\n```\n\nIf you're nesting deeply, consider using `&&`, early returns, or restructuring your logic.",
+  "syntax_ref": "if outer_condition {\n  // outer code\n  if inner_condition {\n    // only runs if BOTH conditions are true\n  }\n}",
+  "code_template": "fn main() -> Int {\n  let has_ticket = true;\n  let is_vip = false;\n  // TODO: If has_ticket is true:\n  //   Print \"Ticket checked.\"\n  //   Inside that: if is_vip, print \"VIP entrance!\", else print \"General entrance.\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let has_ticket = true;\n  let is_vip = false;\n  if has_ticket {\n    io.println(\"Ticket checked.\");\n    if is_vip {\n      io.println(\"VIP entrance!\");\n    } else {\n      io.println(\"General entrance.\");\n    }\n  }\n  return 0;\n}",
+  "tips": ["Inner `if` only runs when the outer `if` condition is true", "Use indentation to make the nesting structure visible", "If nesting goes >3 levels deep, refactor — it's probably too complex", "Consider using `&&` instead of nested `if` when conditions are independent"],
+  "common_mistakes": ["Losing track of which `}` closes which block — match braces carefully", "Nesting when `&&` would be cleaner and more readable", "Forgetting that inner if-else only applies within the outer if"],
+  "related": ["L1-10", "L1-11", "L1-14"],
+  "next_lesson": "L1-14"
+}

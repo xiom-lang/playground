@@ -1,0 +1,17 @@
+{
+  "id": "L1-23",
+  "title": "For Loop over Collection",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["for", "Vec", "iteration", "collection"],
+  "concept": "A for loop can iterate directly over collections like Vec, processing each element one at a time.",
+  "why": "Most real data comes in collections — lists of users, scores, or items. For loops let you process them all elegantly.",
+  "theory": "## Looping Over Collections\n\nYou've seen `for` with ranges of numbers. But `for` can also iterate directly over collections like `Vec` (a list of values).\n\n```xiom\nfn main() -> Int {\n  let numbers = [1, 2, 3, 4, 5];\n  for n in numbers {\n    io.println(\"Processing number...\");\n  }\n  return 0;\n}\n```\n\n### What is a Vec?\n\n`Vec` (short for \"vector\") is a list that holds multiple values of the same type:\n\n```xiom\nlet names = [\"Alice\", \"Bob\", \"Charlie\"];  // Vec[Str]\nlet scores = [95, 87, 92, 78];            // Vec[Int]\nlet prices = [9.99, 14.50, 22.00];        // Vec[Float64]\n```\n\n### Iterating Over a Vec\n\n```xiom\nfn main() -> Int {\n  let fruits = [\"apple\", \"banana\", \"cherry\"];\n  for fruit in fruits {\n    io.println(\"Processing fruit...\");\n  }\n  return 0;\n}\n```\n\nEach iteration, `fruit` takes the next value from the list.\n\n### Common Vec Patterns\n\n```xiom\n// Sum all scores\nlet scores = [85, 92, 78, 95];\nvar total = 0;\nfor score in scores {\n  total = total + score;\n}\n// total is 350\n\n// Find the largest\nlet numbers = [3, 7, 2, 9, 4];\nvar max = numbers[0];\nfor n in numbers {\n  if n > max {\n    max = n;\n  }\n}\n// max is 9\n```\n\n### For Range vs For Vec\n\n```xiom\n// For with range: when you need the index\nfor i in 0..5 {\n  io.println(\"Processing index...\");\n}\n\n// For with Vec: when you need the values\nfor item in items {\n  io.println(\"Processing item...\");\n}\n```\n\nUse `for item in collection` when you just need the values. It's cleaner and eliminates index management.",
+  "syntax_ref": "for element in collection {\n  // element takes each value in turn\n}\n\n// Creating a Vec:\nlet items = [value1, value2, value3];",
+  "code_template": "fn main() -> Int {\n  let numbers = [10, 20, 30, 40, 50];\n  var sum = 0;\n  // TODO: Use a for loop to add up all numbers in the Vec\n  // Return the sum\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let numbers = [10, 20, 30, 40, 50];\n  var sum = 0;\n  for n in numbers {\n    sum = sum + n;\n  }\n  return sum;\n}",
+  "tips": ["`for item in collection` is the cleanest way to process every element", "The loop variable is immutable — you can't modify the collection through it", "Vecs hold elements of the SAME type: `[1, 2, 3]` not `[1, \"two\", 3.0]`", "You'll learn much more about Vec in Level 2!"],
+  "common_mistakes": ["Trying to mix types in a Vec: `[1, \"hello\"]` — all elements must be same type", "Thinking the loop variable is an index — it's the element value itself", "Modifying a Vec while iterating over it (advanced topic for later)"],
+  "related": ["L1-22", "L1-24", "L1-25"],
+  "next_lesson": "L1-24"
+}

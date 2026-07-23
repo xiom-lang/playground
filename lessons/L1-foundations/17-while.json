@@ -1,0 +1,17 @@
+{
+  "id": "L1-17",
+  "title": "While Loop",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["while", "loop", "iteration", "condition"],
+  "concept": "A while loop repeats a block of code as long as a condition remains true.",
+  "why": "Loops are one of programming's superpowers — they let you repeat actions without copying code, handling any number of repetitions.",
+  "theory": "## Repeating Code with `while`\n\n`if` runs code once (or not at all). `while` runs code over and over — as long as a condition holds.\n\n```xiom\nfn main() -> Int {\n  var count = 0;\n\n  while count < 5 {\n    io.println(\"Hello!\");\n    count = count + 1;\n  }\n\n  return 0;\n}\n```\n\nThis prints \"Hello!\" five times.\n\n### How while Works\n\n```\n1. Check condition (count < 5)\n2. If TRUE → run the body\n3. Go back to step 1\n4. If FALSE → exit the loop\n```\n\n### The Loop Variable Must Change\n\n```xiom\n// This loop runs exactly 10 times\nvar i = 0;\nwhile i < 10 {\n  io.println(\"Iteration running...\");\n  i = i + 1;  // CRITICAL: must change the condition variable!\n}\n```\n\nIf you forget to update `i`, the loop runs forever (infinite loop).\n\n### Counting Down\n\n```xiom\nvar fuel = 10;\nwhile fuel > 0 {\n  io.println(\"Fuel remaining...\");\n  fuel = fuel - 1;\n}\nio.println(\"Out of fuel!\");\n```\n\n### Using Loops for Accumulation\n\n```xiom\nvar sum = 0;\nvar n = 1;\nwhile n <= 5 {\n  sum = sum + n;  // 1+2+3+4+5 = 15\n  n = n + 1;\n}\n// sum is 15\n```\n\n### While vs If\n\n| If | While |\n|----|-------|\n| Runs 0 or 1 time | Runs 0 or MANY times |\n| One-and-done decision | Repeating decision |\n| `if hungry { eat(); }` | `while hungry { eat(); }` |",
+  "syntax_ref": "while condition {\n  // body runs repeatedly while condition is true\n}",
+  "code_template": "fn main() -> Int {\n  var count = 0;\n  // TODO: Write a while loop that prints \"Counting!\" three times\n  // Increment count each time; stop when count reaches 3\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var count = 0;\n  while count < 3 {\n    io.println(\"Counting!\");\n    count = count + 1;\n  }\n  return 0;\n}",
+  "tips": ["The loop body MUST change something that eventually makes the condition false", "If the condition is false at the start, the body never runs — that's OK!", "Use `var` for variables that need to change inside a loop", "Think of while as 'keep doing this while this is true'"],
+  "common_mistakes": ["Infinite loop: forgetting to update the counter variable", "Off-by-one: using `<` when you mean `<=` (or vice versa)", "Starting the counter at the wrong value", "Making the condition ALWAYS false so the loop never runs"],
+  "related": ["L1-10", "L1-18", "L1-19", "L1-20"],
+  "next_lesson": "L1-18"
+}

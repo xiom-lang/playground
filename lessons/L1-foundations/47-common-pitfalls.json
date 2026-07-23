@@ -1,0 +1,17 @@
+{
+  "id": "L1-47",
+  "title": "Common Pitfalls",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["semicolons", "types", "returns", "bugs", "common errors"],
+  "concept": "Learn the most common XIOM mistakes and how to avoid them — from semicolons to type mismatches.",
+  "why": "Knowing what breaks helps you avoid it. These pitfalls catch every beginner — learn them once, save hours of debugging.",
+  "theory": "## The Top 10 XIOM Pitfalls\n\n### 1. Semicolon on Tail Expression\n\n```xiom\n// WRONG — semicolon discards the value!\nfn add(a: Int, b: Int) -> Int {\n  a + b;  // Type error: expected Int, got Unit\n}\n\n// RIGHT — no semicolon\nfn add(a: Int, b: Int) -> Int {\n  a + b\n}\n```\n\n### 2. Using = Instead of ==\n\n```xiom\nlet x = 5;\n// if x = 5 { ... }  // WRONG: this is assignment, not comparison!\nif x == 5 { ... }    // RIGHT: comparison\n```\n\n### 3. Integer Division Surprise\n\n```xiom\nlet result = 5 / 2;        // 2, NOT 2.5!\nlet correct = 5.0 / 2.0;   // 2.5\nlet also_correct = 5 as Float64 / 2 as Float64;  // 2.5\n```\n\n### 4. Forgetting `use` for Modules\n\n```xiom\n// WRONG — string functions not found!\n// let s = string.str_concat(\"a\", \"b\");\n\n// RIGHT\nuse xiom.string;\nlet s = string.str_concat(\"a\", \"b\");\n```\n\n### 5. Mismatched Return Types\n\n```xiom\n// WRONG\nfn get_value(flag: Bool) -> Int {\n  if flag { return 42; }\n  // Missing return for when flag is false!\n}\n\n// RIGHT — every path returns an Int\nfn get_value(flag: Bool) -> Int {\n  if flag { 42 } else { 0 }\n}\n```\n\n### 6. Reassigning let\n\n```xiom\nlet x = 10;\n// x = 20;  // ERROR: let is immutable!\nvar y = 10;\ny = 20;     // OK\n```\n\n### 7. Off-by-One Errors\n\n```xiom\n// Range 0..5 gives 0,1,2,3,4 (NOT 5)\nvar count = 0;\nfor i in 0..5 { count += 1; }  // count is 5\ni\n// Use 0..6 to include 5 in counting to 5\n```\n\n### 8. Infinite Loop\n\n```xiom\n// WRONG — counter never changes!\nvar i = 0;\nwhile i < 10 {\n  io.println(\"Forever...\");\n  // Forgot i += 1!\n}\n\n// RIGHT\nvar i = 0;\nwhile i < 10 {\n  io.println(\"Looping...\");\n  i += 1;\n}\n```\n\n### 9. Uninitialized var Usage\n\n```xiom\n// Always initialize var when declaring\nvar score = 0;  // GOOD\n// var badge;   // Avoid — uninitialized\n```\n\n### 10. Confusing Str and Char Quotes\n\n```xiom\nlet s: Str = \"A\";  // Str — double quotes\nlet c: Char = 'A'; // Char — single quotes\n```",
+  "syntax_ref": "// Top fixes:\n// 1. No `;` on tail expressions\n// 2. `==` for comparison, `=` for assignment\n// 3. Float division: use Float64\n// 4. `use xiom.string;` for string functions\n// 5. Every path must return",
+  "code_template": "// This code has THREE bugs. Find and fix them.\nfn buggy_code(x: Int) -> Int {\n  if x = 0 {\n    return 0;\n  }\n  let result = x / 2;\n  result;  // intended to return result\n}\n\nfn main() -> Int {\n  return buggy_code(10);\n}",
+  "solution": "fn fixed_code(x: Int) -> Int {\n  if x == 0 {\n    return 0;\n  }\n  x / 2\n}\n\nfn main() -> Int {\n  let result = fixed_code(10);\n  return result;\n}",
+  "tips": ["No semicolons on tail expressions in value-returning functions", "`==` compares, `=` assigns — never confuse them", "Use Float64 when you need decimal division results", "Always initialize variables when declaring them", "Make sure every code path returns a value"],
+  "common_mistakes": ["See the entire lesson — these ARE the common mistakes!"],
+  "related": ["L1-35", "L0-16", "L1-15", "L1-48"],
+  "next_lesson": "L1-48"
+}

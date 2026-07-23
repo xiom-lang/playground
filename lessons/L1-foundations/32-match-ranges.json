@@ -1,0 +1,17 @@
+{
+  "id": "L1-32",
+  "title": "Match with Ranges",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["match", "range pattern", "..", "inclusive-exclusive"],
+  "concept": "Use range patterns (like 0..10) in match arms to match any value within a numeric range.",
+  "why": "Ranges in match eliminate chains of if/elif for bucketed values — grades, age groups, price tiers, and more.",
+  "theory": "## Matching Ranges of Values\n\nJust as `for` loops use ranges (`0..10`), `match` can use ranges as patterns:\n\n```xiom\nfn main() -> Int {\n  let score = 85;\n\n  let grade = match score {\n    90..101 => \"A\",\n    80..90 => \"B\",\n    70..80 => \"C\",\n    60..70 => \"D\",\n    _ => \"F\",\n  };\n\n  io.println(grade);  // prints: B\n  return 0;\n}\n```\n\n### Range Rules in Match\n\nRanges in match follow the same rules as `for` ranges: **inclusive start, exclusive end**:\n\n```xiom\nmatch value {\n  0..10 => \"0 through 9\",    // matches 0,1,2,...,9\n  10..20 => \"10 through 19\",  // matches 10,11,...,19\n  20..30 => \"20 through 29\",  // matches 20,21,...,29\n}\n```\n\n### Practical Range Matching\n\n```xiom\n// Price tiers\nmatch price {\n  0..10 => \"Budget\",\n  10..50 => \"Standard\",\n  50..200 => \"Premium\",\n  _ => \"Luxury\",\n}\n\n// Age categories\nmatch age {\n  0..2 => \"Baby\",\n  2..13 => \"Child\",\n  13..20 => \"Teenager\",\n  20..65 => \"Adult\",\n  _ => \"Senior\",\n}\n\n// Time of day\nmatch hour {\n  0..6 => \"Night\",\n  6..12 => \"Morning\",\n  12..18 => \"Afternoon\",\n  18..24 => \"Evening\",\n  _ => \"Invalid\",\n}\n```\n\n### Ranges vs Guards\n\n```xiom\n// Range pattern — cleaner for contiguous buckets\nmatch score {\n  90..101 => \"A\",\n  80..90 => \"B\",\n  _ => \"Other\",\n}\n\n// Guard — needed for non-contiguous or complex conditions\nmatch score {\n  s if s >= 90 && s < 95 => \"A-\",\n  s if s >= 95 => \"A\",\n  _ => \"Other\",\n}\n```\n\nUse ranges when values form contiguous groups. Use guards for everything else.",
+  "syntax_ref": "match value {\n  start..end => result,  // matches start (inclusive) to end (exclusive)\n  _ => default,\n}",
+  "code_template": "fn main() -> Int {\n  let percentage = 75;\n  // TODO: Use match with ranges to convert percentage to a letter:\n  // 90..101 => \"A\", 80..90 => \"B\", 70..80 => \"C\", 60..70 => \"D\", _ => \"F\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let percentage = 75;\n  let grade = match percentage {\n    90..101 => \"A\",\n    80..90 => \"B\",\n    70..80 => \"C\",\n    60..70 => \"D\",\n    _ => \"F\",\n  };\n  io.println(grade);\n  return 0;\n}",
+  "tips": ["Range `a..b` matches a (inclusive) through b-1 (exclusive)", "Make sure your ranges don't overlap (or be intentional about ordering)", "Use `_` after ranges to catch values outside all buckets", "Ranges work great for bucketed classifications — cleaner than if/elif"],
+  "common_mistakes": ["Overlapping ranges: `0..5` and `3..8` overlap — first one wins", "Forgetting that end is exclusive: `90..100` doesn't match 100!", "Using ranges for non-numeric types — ranges work with Int"],
+  "related": ["L1-28", "L1-29", "L1-31", "L1-22"],
+  "next_lesson": "L1-33"
+}

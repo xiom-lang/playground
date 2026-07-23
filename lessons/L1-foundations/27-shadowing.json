@@ -1,0 +1,17 @@
+{
+  "id": "L1-27",
+  "title": "Shadowing",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["shadowing", "let", "variable reuse", "scope"],
+  "concept": "Shadowing lets you declare a new variable with the same name as an existing one, hiding the original in the current scope.",
+  "why": "Shadowing is useful for transforming values without inventing awkward temporary names like 'x2' or 'result2'.",
+  "theory": "## Old Name, New Value: Shadowing\n\nIn XIOM, you can declare a new `let` variable with the same name as an existing one. The new variable **shadows** (hides) the old one:\n\n```xiom\nfn main() -> Int {\n  let x = 5;\n  let x = x + 10;  // New x shadows old x — x is now 15\n  let x = x * 2;   // New x shadows previous x — x is now 30\n  return x;  // 30\n}\n```\n\n### How Shadowing Works\n\nEach `let x = ...` creates a brand new variable. The old one still exists, but you can't access it because the new name blocks it:\n\n```xiom\nlet value = \"hello\";\nlet value = value + \" world\";  // New variable, uses value of old one\n// value is \"hello world\" — old \"hello\" is hidden\n```\n\n### Shadowing vs Reassignment\n\n```xiom\n// Shadowing (let) — creates NEW variable, can change type\nlet x = 5;        // x is Int\nlet x = \"hello\";  // x is now Str — this is a different x!\n\n// Reassignment (var) — same variable, must keep type\nvar y = 5;        // y is Int\n// y = \"hello\";  // ERROR: can't assign Str to Int variable\n```\n\n### Shadowing in Inner Scopes\n\n```xiom\nfn main() -> Int {\n  let name = \"Kilo\";\n  {\n    let name = \"XIOM\";  // Shadows outer name only within this block\n    io.println(name);  // Prints: XIOM\n  }\n  io.println(name);  // Prints: Kilo (outer name is visible again)\n  return 0;\n}\n```\n\n### When to Use Shadowing\n\n- **Transforming values**: `let data = fetch(); let data = parse(data); let data = validate(data);`\n- **Changing type**: `let x = \"42\"; let x = parse_int(x);`\n- **Narrowing scope**: Temporarily override a variable in a block\n\n### When to Avoid Shadowing\n\n- When the transformation isn't obvious\n- When it makes code harder to reason about\n- In long functions where you might lose track of what the variable holds",
+  "syntax_ref": "let x = initial_value;\nlet x = transform(x);  // New x shadows old x\n// Old x is hidden — new x takes its place",
+  "code_template": "fn main() -> Int {\n  let num = 5;\n  // TODO: Shadow 'num' by adding 10 to the old value\n  // TODO: Shadow 'num' again by multiplying by 2\n  // Return the final value\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let num = 5;\n  let num = num + 10;\n  let num = num * 2;\n  return num;\n}",
+  "tips": ["Each `let x = ...` creates a NEW variable with the same name", "Shadowing can change the type — `let x = 5; let x = \"five\";` works!", "Old variable still exists but is inaccessible while shadowed", "In a new block scope, shadowing ends when the block ends"],
+  "common_mistakes": ["Confusing shadowing (let) with reassignment (var =)", "Excessive shadowing that makes code confusing to follow", "Thinking shadowing modifies the old variable — it creates a new one"],
+  "related": ["L0-03", "L0-04", "L1-26"],
+  "next_lesson": "L1-28"
+}

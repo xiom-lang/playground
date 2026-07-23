@@ -1,0 +1,17 @@
+{
+  "id": "L0-04",
+  "title": "Mutable Variables",
+  "level": "L0",
+  "duration": "8 min",
+  "concepts": ["var", "reassignment", "mutable"],
+  "concept": "Use var instead of let when you need to change a variable's value.",
+  "why": "Some values need to change as your program runs — counters, scores, or user input. var gives you that flexibility.",
+  "theory": "## Mutable Variables\n\nIn the last lesson, we used `let` to create variables that can't be changed. But what if you need to update a value? That's where `var` comes in.\n\n```xiom\nfn main() -> Int {\n  var counter: Int = 0;\n  counter = 1;\n  counter = counter + 1;\n  return counter;\n}\n```\n\n### let vs var\n\n| Keyword | Meaning | Can change? |\n|---------|---------|-------------|\n| `let` | Immutable binding | No |\n| `var` | Mutable variable | Yes, with `=` |\n\n### How reassignment works\n\n```xiom\nvar score: Int = 10;\nscore = 20;       // score is now 20\nscore = score + 5; // score is now 25\n```\n\nThe `=` operator means **assignment**: \"take the value on the right and store it in the variable on the left.\"\n\n### When to use which?\n\n- Use `let` by default — it's safer because nothing can accidentally change it\n- Use `var` when you genuinely need to update a value (counters, accumulators, state)\n\n```xiom\nlet name: Str = \"XIOM\";     // won't change — use let\nvar count: Int = 1;          // will change — use var\n```",
+  "syntax_ref": "var name: Type = initial_value;\nname = new_value;",
+  "code_template": "fn main() -> Int {\n  // TODO: Create a mutable variable 'steps' starting at 0\n  // TODO: Add 10 to steps\n  // TODO: Add another 5 to steps\n  // TODO: Return the final value of steps\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var steps: Int = 0;\n  steps = steps + 10;\n  steps = steps + 5;\n  return steps;\n}",
+  "tips": ["Prefer `let` — only use `var` when you truly need to change the value", "Reassignment uses `=`, the same symbol as initialization", "You can reassign a `var` as many times as you want", "A `let` variable cannot appear on the left side of `=` after initialization"],
+  "common_mistakes": ["Trying to reassign a `let` variable — use `var` instead", "Forgetting `var` and using `let` when you need to change a value later", "Confusing `=` (assignment) with `==` (equality check)"],
+  "related": ["L0-03", "L0-05"],
+  "next_lesson": "L0-05"
+}

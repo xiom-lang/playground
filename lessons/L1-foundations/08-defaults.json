@@ -1,0 +1,17 @@
+{
+  "id": "L1-08",
+  "title": "Function Design Patterns",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["function design", "required parameters", "wrapper pattern"],
+  "concept": "XIOM requires all parameters to be provided — there are no default values. Use wrapper functions to provide common defaults.",
+  "why": "Understanding that every parameter is required helps you design clear, predictable function interfaces.",
+  "theory": "## All Parameters Are Required\n\nIn XIOM, every parameter you declare MUST be provided when calling the function. There are no optional parameters or default values.\n\n```xiom\nfn greet(name: Str, punctuation: Str) -> Str {\n  return \"Hello, \" + name + punctuation;\n}\n\nfn main() -> Int {\n  // Both arguments must be provided\n  let msg = greet(\"Kilo\", \"!\");  // \"Hello, Kilo!\"\n\n  // greet(\"Kilo\");  // ERROR: missing second argument!\n  return 0;\n}\n```\n\n### The Wrapper Pattern\n\nSince there are no defaults, create a wrapper function for common cases:\n\n```xiom\n// General function — caller provides everything\nfn greet_with(name: Str, greeting: Str, punctuation: Str) -> Str {\n  return greeting + \", \" + name + punctuation;\n}\n\n// Wrapper for the most common case\nfn greet(name: Str) -> Str {\n  return greet_with(name, \"Hello\", \"!\");\n}\n\nfn main() -> Int {\n  let msg1 = greet(\"Kilo\");                          // Hello, Kilo!\n  let msg2 = greet_with(\"Kilo\", \"Good morning\", \".\"); // Good morning, Kilo.\n  return 0;\n}\n```\n\n### Why No Defaults?\n\nXIOM's philosophy: be explicit. Every argument is intentional. This prevents bugs where a default value is used accidentally.\n\n### Design Tips\n\n```xiom\n// Instead of many parameters with 'defaults', use focused functions:\nfn create_window(title: Str, width: Int, height: Int) -> Int {\n  return width * height;  // simplified\n}\n\nfn create_small_window(title: Str) -> Int {\n  return create_window(title, 400, 300);\n}\n\nfn create_large_window(title: Str) -> Int {\n  return create_window(title, 1024, 768);\n}\n```\n\nClear names beat hidden defaults every time.",
+  "syntax_ref": "// ALL parameters are required in XIOM:\nfn name(p1: Type, p2: Type) -> ReturnType { ... }\n\n// Pattern: wrapper for common defaults\nfn common_case(x: Type) -> ReturnType {\n  return full_function(x, default_value);\n}",
+  "code_template": "// TODO: Write a 'greet_with_punctuation' function with params: name: Str, punct: Str\n// TODO: Write a wrapper 'greet_default' that calls it with \"!\" as the punctuation\n\nfn main() -> Int {\n  // TODO: Call greet_default(\"XIOM\") and print something\n  return 0;\n}",
+  "solution": "fn greet_with_punctuation(name: Str, punct: Str) -> Str {\n  return \"Hello, \" + name + punct;\n}\n\nfn greet_default(name: Str) -> Str {\n  return greet_with_punctuation(name, \"!\");\n}\n\nfn main() -> Int {\n  let msg = greet_default(\"XIOM\");\n  io.println(msg);\n  return 0;\n}",
+  "tips": ["Every parameter in XIOM must be provided — no exceptions", "Use wrapper functions to provide common defaults cleanly", "Explicit is better than implicit — XIOM's philosophy", "Good function names make the intent clear without needing defaults"],
+  "common_mistakes": ["Assuming parameters are optional — they never are in XIOM", "Creating functions with too many parameters (5+ is a code smell)", "Trying to overload function names (next lesson!)"],
+  "related": ["L1-01", "L1-02", "L1-09"],
+  "next_lesson": "L1-09"
+}

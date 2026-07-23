@@ -1,0 +1,17 @@
+{
+  "id": "L1-04",
+  "title": "Void Functions",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["Unit", "void", "no return", "side effect"],
+  "concept": "Functions that don't return a value use the Unit return type — they perform actions like printing or modifying state.",
+  "why": "Not every function needs to compute a result. Some just do things — print messages, update data, or trigger actions.",
+  "theory": "## Functions That Do, Not Return\n\nSome functions exist to perform an action, not compute a value. In XIOM, these have a return type of `Unit`.\n\n```xiom\nfn say_hello() -> Unit {\n  io.println(\"Hello, world!\");\n}\n\nfn main() -> Int {\n  say_hello();\n  return 0;\n}\n```\n\n### What is Unit?\n\n`Unit` is a type with exactly one value: `()`. It means \"nothing to see here\" — like an empty box.\n\n```xiom\n// Three equivalent ways to write a void function:\nfn greet1() -> Unit {\n  io.println(\"Hi!\");\n}\n\nfn greet2() {\n  io.println(\"Hi!\");\n}\n```\n\nIn XIOM, you can omit `-> Unit` — it's implied when no return type is written.\n\n### Void Functions with Parameters\n\n```xiom\nfn print_summary(name: Str, score: Int) {\n  io.println(\"Player: \" + name);\n  io.println(\"Calculation complete!\");\n}\n\nfn main() -> Int {\n  print_summary(\"Kilo\", 950);\n  return 0;\n}\n```\n\n### When to Use Void Functions\n\n- **Output**: Printing messages, logging\n- **Modification**: Changing state, updating variables\n- **Commands**: \"Save this,\" \"Send that\"\n- **Procedures**: Step-by-step operations\n\n### Void vs Value-Returning\n\n```xiom\n// Returns a value — you can use the result\nfn double(n: Int) -> Int {\n  return n * 2;\n}\nlet x = double(5);  // x is 10\n\n// Just does something — no result to use\nfn announce_winner(name: Str) {\n  io.println(name + \" wins!\");\n}\nannounce_winner(\"Kilo\");  // prints, but can't assign to variable\n```",
+  "syntax_ref": "fn name(params) {   // No return type = returns Unit\n  // do something\n}\n\nfn name(params) -> Unit {  // Explicit Unit return type\n  // do something\n}",
+  "code_template": "// TODO: Write a void function 'print_banner' that prints three lines:\n// \"============\", \"  WELCOME!\", \"============\"\n\nfn main() -> Int {\n  // TODO: Call print_banner()\n  return 0;\n}",
+  "solution": "fn print_banner() {\n  io.println(\"============\");\n  io.println(\"  WELCOME!\");\n  io.println(\"============\");\n}\n\nfn main() -> Int {\n  print_banner();\n  return 0;\n}",
+  "tips": ["`Unit` means 'this function returns nothing useful'", "You can omit `-> Unit` — it's the default", "`()` is the only value of type Unit", "Void functions are all about SIDE EFFECTS — things they do to the world"],
+  "common_mistakes": ["Trying to assign a void function's result to a variable: `let x = say_hello();`", "Writing `return;` in a void function — just let it end naturally", "Forgetting that void functions can still take parameters"],
+  "related": ["L1-01", "L1-03", "L1-05"],
+  "next_lesson": "L1-05"
+}

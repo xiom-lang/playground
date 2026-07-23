@@ -1,0 +1,17 @@
+{
+  "id": "L1-42",
+  "title": "Type Aliases",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["type", "alias", "type keyword", "naming"],
+  "concept": "Use type to create an alias — a new name for an existing type that adds meaning and clarity.",
+  "why": "Type aliases make code self-documenting. Age is clearer than Int; Meters is clearer than Float64.",
+  "theory": "## Giving Types Meaningful Names\n\nRaw types like `Int` and `Str` are generic. Type aliases give them domain-specific meaning:\n\n```xiom\ntype Age = Int;\ntype Name = Str;\ntype Score = Float64;\n\nfn main() -> Int {\n  let my_age: Age = 25;\n  let my_name: Name = \"Kilo\";\n  let my_score: Score = 99.5;\n  return 0;\n}\n```\n\n### How Type Aliases Work\n\nA type alias creates a new NAME for an existing type. It does NOT create a new type:\n\n```xiom\ntype Meters = Float64;\ntype Feet = Float64;\n\nlet length_m: Meters = 5.0;\nlet length_f: Feet = 16.4;\n\n// Both are really Float64 — you can add them!\nlet total = length_m + length_f;  // Works fine\n```\n\n### Why Use Aliases?\n\n```xiom\n// Without aliases — what do these mean?\nfn process(a: Int, b: Int, c: Int) -> Int { ... }\n\n// With aliases — self-documenting!\ntype UserId = Int;\ntype ProductId = Int;\ntype Quantity = Int;\nfn add_to_cart(user: UserId, product: ProductId, qty: Quantity) -> Int { ... }\n```\n\n### Common Uses\n\n```xiom\n// Domain concepts\ntype Celsius = Float64;\ntype Kilometers = Float64;\ntype Milliseconds = Int64;\n\n// Identifiers\ntype OrderId = Int;\ntype SessionId = Str;\n\n// Simplifying complex types (you'll appreciate this later)\ntype Point2D = { x: Float64; y: Float64 };\n\n// Self-documenting function signatures\nfn calculate_distance(from: Kilometers, to: Kilometers) -> Kilometers {\n  return to - from;  // simplified\n}\n```\n\n### Conventions\n\n- Type names use `PascalCase`: `UserId`, `Meters`, `GameState`\n- Alias names should add meaning: `Age` > `Int`, but `Number` doesn't add meaning over `Int`\n- Keep aliases simple — don't create an alias for every Int in your program",
+  "syntax_ref": "type NewName = ExistingType;\n\n// Examples:\ntype Age = Int;\ntype Name = Str;\ntype Price = Float64;",
+  "code_template": "// TODO: Create type aliases:\n// type Celsius = Float64\n// type Kilometers = Float64\n\nfn convert_to_fahrenheit(c: Celsius) -> Float64 {\n  return c * 9.0 / 5.0 + 32.0;\n}\n\nfn main() -> Int {\n  let temp: Celsius = 25.0;\n  let f = convert_to_fahrenheit(temp);\n  return 0;\n}",
+  "solution": "type Celsius = Float64;\n\nfn convert_to_fahrenheit(c: Celsius) -> Float64 {\n  c * 9.0 / 5.0 + 32.0\n}\n\nfn main() -> Int {\n  let temp: Celsius = 25.0;\n  let f = convert_to_fahrenheit(temp);\n  return 0;\n}",
+  "tips": ["Type aliases use `PascalCase`: `UserId`, not `user_id` or `USER_ID`", "Aliases add SEMANTIC meaning — they tell you WHAT the Int represents", "Aliases don't create new types — `Age` is still just an `Int` at runtime", "Use aliases for domain concepts: `Temperature`, `Distance`, `Duration`"],
+  "common_mistakes": ["Creating aliases that don't add meaning: `type Int2 = Int` is useless", "Thinking aliases prevent mixing: `Meters` and `Feet` can still be added", "Using `snake_case` for type names — types use `PascalCase` in XIOM"],
+  "related": ["L0-05", "L0-06", "L1-43"],
+  "next_lesson": "L1-43"
+}

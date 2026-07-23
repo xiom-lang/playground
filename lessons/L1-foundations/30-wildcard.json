@@ -1,0 +1,17 @@
+{
+  "id": "L1-30",
+  "title": "Wildcard in Match",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["_", "wildcard", "catch-all", "default"],
+  "concept": "The underscore _ in match acts as a catch-all — it matches any value not already matched by earlier arms.",
+  "why": "The wildcard ensures your match is exhaustive — every possible value is handled, preventing runtime errors from unhandled cases.",
+  "theory": "## The Catch-All: `_`\n\nThe underscore `_` in a `match` expression is the **wildcard pattern**. It matches ANYTHING.\n\n```xiom\nfn main() -> Int {\n  let number = 42;\n\n  let result = match number {\n    0 => \"zero\",\n    1 => \"one\",\n    _ => \"something else\",  // Catches everything except 0 and 1\n  };\n\n  io.println(result);  // prints: something else\n  return 0;\n}\n```\n\n### Why _ is Essential\n\n`match` must be **exhaustive** — every possible value must be handled. Without `_`, you'd need to list every possible Int value (all ~18 quintillion of them!).\n\n```xiom\n// This WON'T compile — not all Int values are covered!\n// match x {\n//   1 => \"one\",\n//   2 => \"two\",\n// }  // ERROR: non-exhaustive match!\n\n// This WILL compile — _ handles everything else\nmatch x {\n  1 => \"one\",\n  2 => \"two\",\n  _ => \"other\",  // All good!\n}\n```\n\n### _ Means \"I Don't Care\"\n\nUse `_` when you genuinely don't care about the value:\n\n```xiom\nmatch status_code {\n  200 => \"OK\",\n  404 => \"Not Found\",\n  _ => \"Other status\",  // I don't care about the specific code\n}\n```\n\n### _ Must Come Last\n\nThe wildcard catches everything, so it must be the LAST arm:\n\n```xiom\n// WRONG: _ first catches everything\nmatch x {\n  _ => \"other\",  // This matches EVERYTHING\n  1 => \"one\",    // DEAD CODE — never reached!\n}\n\n// CORRECT: _ is the fallback\nmatch x {\n  1 => \"one\",\n  2 => \"two\",\n  _ => \"other\",  // Only runs if x is not 1 or 2\n}\n```\n\n### Exhaustiveness for Specific Types\n\nSome types have a small number of values — the compiler knows this:\n\n```xiom\n// Bool has only two values — both must be covered\nmatch flag {\n  true => \"yes\",\n  false => \"no\",\n}\n// No _ needed — all possible Bool values are covered!\n```\n\nBut for `Int`, `Str`, `Float64` — types with infinite values — you almost always need `_`.",
+  "syntax_ref": "match value {\n  specific_pattern => result,\n  _ => fallback_result,  // Must be LAST arm\n}",
+  "code_template": "fn main() -> Int {\n  let dice_roll = 4;\n  // TODO: Use match with _ wildcard to classify a dice roll\n  // 1 => \"Critical fail\", 6 => \"Critical hit\", _ => \"Normal roll\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let dice_roll = 4;\n  let result = match dice_roll {\n    1 => \"Critical fail\",\n    6 => \"Critical hit\",\n    _ => \"Normal roll\",\n  };\n  io.println(result);\n  return 0;\n}",
+  "tips": ["`_` is the wildcard — it matches ANYTHING", "`_` must be the LAST arm — arms are checked in order", "`_` makes your match exhaustive, satisfying the compiler", "Use `_` when you don't need the actual value, just 'everything else'"],
+  "common_mistakes": ["Putting `_` before other arms — earlier arms become dead code", "Forgetting `_` entirely — match won't compile without it for unbounded types", "Using `_` when you should handle a specific case — be intentional"],
+  "related": ["L1-28", "L1-29", "L1-31"],
+  "next_lesson": "L1-31"
+}

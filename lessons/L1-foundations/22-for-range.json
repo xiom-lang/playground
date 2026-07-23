@@ -1,0 +1,17 @@
+{
+  "id": "L1-22",
+  "title": "For Loop with Range",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["for", "range", "0..10", "iteration"],
+  "concept": "A for loop with a range iterates over a sequence of numbers — cleaner than a while loop for counted iterations.",
+  "why": "For loops eliminate the boilerplate of managing a counter variable by hand. They're safer and more readable for counted loops.",
+  "theory": "## The Elegant For Loop\n\n`while` loops are great, but for counted iterations, `for` with a **range** is cleaner and safer:\n\n```xiom\nfn main() -> Int {\n  var sum = 0;\n  for i in 0..5 {\n    sum = sum + i;\n  }\n  return sum;  // 0+1+2+3+4 = 10\n}\n```\n\n### Range Syntax: `start..end`\n\nA range `0..5` represents the numbers `0, 1, 2, 3, 4`. It includes the start but **excludes** the end.\n\n```xiom\nfor i in 0..3 { ... }   // i = 0, 1, 2\nfor i in 1..4 { ... }   // i = 1, 2, 3\nfor i in 5..10 { ... }  // i = 5, 6, 7, 8, 9\n```\n\n### For vs While\n\n```xiom\n// While — manual counter management\nvar i = 0;\nwhile i < 5 {\n  io.println(\"Processing...\");\n  i = i + 1;\n}\n\n// For — counter is automatic!\nfor i in 0..5 {\n  io.println(\"Processing...\");\n}\n```\n\n### Using i Inside the Loop\n\nThe loop variable `i` takes on each value in the range, one at a time:\n\n```xiom\nfor i in 1..6 {\n  io.println(\"Processing...\");  // Prints 5 times (1,2,3,4,5)\n}\n\nfor n in 0..10 {\n  let square = n * n;\n  io.println(\"Calculating...\");\n}\n```\n\n### Common Patterns\n\n```xiom\n// Do something N times\nfor i in 0..10 {\n  io.println(\"Hello!\");  // Prints 10 times\n}\n\n// Accumulate\nvar total = 0;\nfor i in 1..6 {\n  total = total + i;  // total becomes 15\n}\n\n// Count down (using reverse math)\nfor i in 0..5 {\n  let countdown = 5 - i;\n  io.println(\"Counting down...\");\n}\n```\n\n### The Loop Variable is Immutable\n\nThe loop variable in a `for` loop is implicitly `let` — you can't reassign it:\n\n```xiom\nfor i in 0..5 {\n  // i = 10;  // ERROR: can't reassign loop variable!\n}\n```",
+  "syntax_ref": "for variable in start..end {\n  // variable takes each value from start (inclusive) to end (exclusive)\n}",
+  "code_template": "fn main() -> Int {\n  var result = 0;\n  // TODO: Use a for loop to add all numbers from 1 to 10\n  // (use range 1..11 to include 10)\n  // Return result\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var result = 0;\n  for i in 1..11 {\n    result = result + i;\n  }\n  return result;\n}",
+  "tips": ["Range `a..b` includes `a` but excludes `b`", "`for i in 0..5` is shorter and safer than a `while` with a counter", "The loop variable is immutable — you can't change `i` inside the loop", "Use `for` for counted loops; use `while` for condition-based loops"],
+  "common_mistakes": ["Thinking `0..5` includes 5 — it doesn't! Use `0..6` for 0 through 5", "Trying to reassign the loop variable: `i = i + 1` inside a for loop", "Using `for` when the number of iterations isn't known in advance (use `while`)"],
+  "related": ["L1-17", "L1-18", "L1-23"],
+  "next_lesson": "L1-23"
+}

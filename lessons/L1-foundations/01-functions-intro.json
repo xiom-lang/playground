@@ -1,0 +1,17 @@
+{
+  "id": "L1-01",
+  "title": "Introduction to Functions",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["fn", "parameters", "return type", "function definition"],
+  "concept": "Functions are reusable named blocks of code that take inputs (parameters) and produce outputs (return values).",
+  "why": "Functions are the primary way to organize and reuse code. They let you write logic once and call it many times.",
+  "theory": "## Writing Your Own Functions\n\nYou've been using `fn main()` since lesson 1. Now it's time to create your own functions!\n\n### Function Anatomy\n\n```xiom\nfn greet(name: Str) -> Str {\n  return \"Hello, \" + name + \"!\";\n}\n```\n\nLet's break it down:\n\n- **`fn`** — keyword that says \"here comes a function\"\n- **`greet`** — the function name (use `snake_case`)\n- **`(name: Str)`** — **parameters**: inputs the function receives\n- **`-> Str`** — **return type**: what kind of value the function produces\n- **`{ ... }`** — the function **body**: the code that runs\n\n### A Simple Example\n\n```xiom\nfn double(n: Int) -> Int {\n  return n * 2;\n}\n\nfn main() -> Int {\n  let result = double(21);  // result is 42\n  return result;\n}\n```\n\n### Functions vs main\n\n`main` is special (the entry point), but otherwise it's just like any other function:\n\n```xiom\nfn add(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn main() -> Int {\n  let sum = add(5, 3);  // 8\n  return sum;\n}\n```\n\n### Why Functions?\n\n1. **Reuse** — write once, call many times\n2. **Abstraction** — `calculate_tax(100)` hides the tax formula\n3. **Testing** — test small pieces independently\n4. **Organization** — break big problems into small functions",
+  "syntax_ref": "fn name(param: Type) -> ReturnType {\n  // body\n  return value;\n}",
+  "code_template": "// TODO: Write a function 'triple' that takes an Int and returns it multiplied by 3\n\nfn main() -> Int {\n  // TODO: Call triple(7) and return the result\n  return 0;\n}",
+  "solution": "fn triple(n: Int) -> Int {\n  return n * 3;\n}\n\nfn main() -> Int {\n  let result = triple(7);\n  return result;\n}",
+  "tips": ["Function names use snake_case: `calculate_total`, not `calculateTotal`", "Every parameter needs a type annotation: `(x: Int, y: Float64)`", "If you declare `-> Int`, the function MUST return an Int", "Define functions BEFORE you call them (or at the top of the file)"],
+  "common_mistakes": ["Forgetting the return type (`-> Int`) and then trying to return a value", "Writing `fn my_func { }` without parentheses — must have `()`", "Calling a function before defining it — define first, call later"],
+  "related": ["L0-01", "L1-02", "L1-03"],
+  "next_lesson": "L1-02"
+}

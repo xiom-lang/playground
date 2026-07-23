@@ -1,0 +1,17 @@
+{
+  "id": "L1-16",
+  "title": "Boolean Conditions",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["&&", "||", "!", "boolean condition", "compound"],
+  "concept": "Combine multiple comparisons with &&, ||, and ! to create sophisticated conditions.",
+  "why": "Real decisions involve multiple factors. Boolean logic lets you express 'if A AND B' or 'if C OR D' naturally.",
+  "theory": "## Compound Conditions\n\nReal decisions are rarely about one thing. Boolean operators let you combine multiple checks:\n\n```xiom\nfn main() -> Int {\n  let age = 25;\n  let has_license = true;\n\n  if age >= 18 && has_license {\n    io.println(\"You can drive!\");\n  }\n\n  return 0;\n}\n```\n\n### Building Complex Conditions\n\n```xiom\n// AND: all conditions must be true\nif score >= 60 && score <= 100 {\n  io.println(\"Valid score\");\n}\n\n// OR: any condition can be true\nif day == \"Saturday\" || day == \"Sunday\" {\n  io.println(\"It's the weekend!\");\n}\n\n// NOT: reverse a condition\nif !is_banned {\n  io.println(\"Welcome back!\");\n}\n\n// Combined: (A AND B) OR C\nif (is_admin && is_active) || is_owner {\n  io.println(\"Access granted\");\n}\n```\n\n### Parentheses Matter\n\n```xiom\n// Different meanings!\nif (a && b) || c { ... }  // (both a AND b) OR c\nif a && (b || c) { ... }  // a AND (either b OR c)\n```\n\nWhen in doubt, use parentheses to make your intent explicit.\n\n### Creating Self-Documenting Conditions\n\n```xiom\nlet is_valid_age = age >= 0 && age <= 150;\nlet is_valid_email = email == \"valid@example.com\";\nlet can_register = is_valid_age && is_valid_email;\n\nif can_register {\n  io.println(\"Registration complete!\");\n}\n```\n\n### Truth Tables Review\n\n| A | B | A && B | A \\|\\| B | !A |\n|---|---|--------|---------|-----|\n| T | T | T | T | F |\n| T | F | F | T | F |\n| F | T | F | T | T |\n| F | F | F | F | T |\n\n### Short-Circuit Still Applies\n\n```xiom\n// If is_admin is true, check_permission() is never called (OR short-circuits)\nif is_admin || check_permission() {\n  io.println(\"Access granted\");\n}\n```",
+  "syntax_ref": "if cond1 && cond2 { ... }      // both must be true\nif cond1 || cond2 { ... }      // at least one must be true\nif !condition { ... }          // condition must be false\nif (a && b) || c { ... }       // group with parentheses",
+  "code_template": "fn main() -> Int {\n  let temperature = 28;\n  let is_sunny = true;\n  let is_weekend = false;\n  // TODO: If temperature > 25 AND is_sunny, print \"Beach day!\"\n  // TODO: If is_weekend OR temperature > 30, print \"Go outside!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let temperature = 28;\n  let is_sunny = true;\n  let is_weekend = false;\n  if temperature > 25 && is_sunny {\n    io.println(\"Beach day!\");\n  }\n  if is_weekend || temperature > 30 {\n    io.println(\"Go outside!\");\n  }\n  return 0;\n}",
+  "tips": ["Use `&&` when ALL conditions must be true", "Use `||` when ANY condition being true is enough", "Use `!` to check the opposite: `if !is_full` instead of `if is_full == false`", "Extract complex conditions into named variables for readability"],
+  "common_mistakes": ["Writing `&` instead of `&&` — single `&` is bitwise AND", "Writing `|` instead of `||` — single `|` is bitwise OR", "Forgetting parentheses: `a && b || c` is ambiguous without parens", "Using `== true` or `== false` when `!` is cleaner"],
+  "related": ["L0-20", "L0-21", "L0-22", "L1-10"],
+  "next_lesson": "L1-17"
+}

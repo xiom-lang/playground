@@ -1,0 +1,17 @@
+{
+  "id": "L0-16",
+  "title": "Integer Division",
+  "level": "L0",
+  "duration": "7 min",
+  "concepts": ["/", "integer division", "truncation"],
+  "concept": "When you divide two Ints, XIOM performs integer division — it drops the decimal part.",
+  "why": "Integer division is a common source of bugs for beginners. Understanding it early prevents surprises.",
+  "theory": "## Integer Division\n\nHere's something that surprises many beginners:\n\n```xiom\nfn main() -> Int {\n  let result = 7 / 2;\n  return result;  // Returns 3, NOT 3.5!\n}\n```\n\n### Why does `7 / 2` equal `3`?\n\nWhen both numbers are `Int`, XIOM does **integer division** — it calculates how many whole times one number fits into the other and **truncates** (chops off) any remainder.\n\n```xiom\nlet a = 7 / 2;   // 3 (3 whole groups of 2, with 1 left over)\nlet b = 10 / 3;  // 3 (3 whole groups of 3, with 1 left over)\nlet c = 8 / 2;   // 4 (no remainder, so no difference)\nlet d = 1 / 2;   // 0 (2 doesn't fit into 1 at all)\n```\n\n### Getting Decimal Results\n\nFor decimal division, use `Float64`:\n\n```xiom\nlet result_float = 7.0 / 2.0;  // 3.5\n// or\nlet result_float2 = 7.0 / 2.0;\n```\n\n### Comparison\n\n| Expression | Type | Result |\n|-----------|------|--------|\n| `7 / 2` | Int / Int | `3` |\n| `7.0 / 2.0` | Float64 / Float64 | `3.5` |\n| `8 / 2` | Int / Int | `4` |\n| `-7 / 2` | Int / Int | `-3` |\n\n### When Integer Division is Useful\n\nInteger division is great for:\n- Figuring out how many full rows fit: `items / items_per_row`\n- Pagination: `total_items / page_size`\n- Splitting things evenly: `money / people` (each person gets this much)",
+  "syntax_ref": "Int / Int = Int (decimal part discarded)\nFloat64 / Float64 = Float64 (decimal preserved)",
+  "code_template": "fn main() -> Int {\n  let apples = 10;\n  let people = 3;\n  // TODO: Calculate how many whole apples each person gets\n  // TODO: Return that number\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let apples = 10;\n  let people = 3;\n  let per_person = apples / people;\n  return per_person;\n}",
+  "tips": ["Integer division always rounds toward zero", "Use Float64 when you need the decimal part", "If either operand is Float64, the result is Float64", "`1 / 2` is `0` — this is a very common beginner surprise"],
+  "common_mistakes": ["Expecting `5 / 2` to give `2.5` instead of `2`", "Using Int division when you need decimal precision", "Forgetting that negative integer division truncates toward zero: `-7 / 2` = `-3`"],
+  "related": ["L0-05", "L0-06", "L0-17"],
+  "next_lesson": "L0-17"
+}

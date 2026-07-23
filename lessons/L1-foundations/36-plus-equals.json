@@ -1,0 +1,17 @@
+{
+  "id": "L1-36",
+  "title": "Compound Assignment: +=",
+  "level": "L1",
+  "duration": "7 min",
+  "concepts": ["+=", "compound assignment", "shorthand", "increment"],
+  "concept": "x += 1 is shorthand for x = x + 1 — it adds a value to a variable and stores the result back.",
+  "why": "Compound assignment operators reduce repetition, prevent typos, and make the intent clearer.",
+  "theory": "## A Shortcut for Adding and Assigning\n\nYou've been writing `x = x + 1` to increment. XIOM provides a shorter way: `x += 1`.\n\n```xiom\nfn main() -> Int {\n  var score = 10;\n  score += 5;  // Same as: score = score + 5\n  // score is now 15\n  return score;\n}\n```\n\n### How += Works\n\n```xiom\nvar x = 10;\nx += 3;   // x = x + 3 → 13\nx += 7;   // x = x + 7 → 20\nx += x;   // x = x + x → 40\n```\n\n### Common Uses\n\n```xiom\n// Increment by 1 (most common)\nvar count = 0;\ncount += 1;  // count is 1\ncount += 1;  // count is 2\n\n// Add any amount\nvar total = 100;\ntotal += 25;  // total is 125\ntotal += 75;  // total is 200\n\n// In loops\nvar sum = 0;\nfor i in 0..10 {\n  sum += i;  // Much cleaner than sum = sum + i\n}\n```\n\n### += Only Works with var\n\n```xiom\nvar x = 10;\nx += 5;  // OK — var can be reassigned\n\nlet y = 10;\n// y += 5;  // ERROR — let is immutable!\n```\n\n### += vs Regular Assignment\n\n```xiom\nvar health = 100;\n\n// Long form — repetitive\nhealth = health + 20;\nhealth = health - 10;\nhealth = health + 50;\n\n// Short form — clean and clear\nhealth += 20;\nhealth -= 10;\nhealth += 50;\n```\n\nThe short form is not just shorter — it's clearer. `health += 20` reads as \"add 20 to health.\"",
+  "syntax_ref": "variable += amount;  // Same as: variable = variable + amount",
+  "code_template": "fn main() -> Int {\n  var result = 0;\n  // TODO: Use += to add 10 to result\n  // TODO: Use += to add 20 to result\n  // TODO: Use += to add 30 to result\n  // Return result (should be 60)\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var result = 0;\n  result += 10;\n  result += 20;\n  result += 30;\n  return result;\n}",
+  "tips": ["`x += y` is exactly the same as `x = x + y` — just shorter", "Works only with `var` — `let` is immutable", "`+=` reads as 'add and assign'", "Use in loops for accumulation: `sum += value;`"],
+  "common_mistakes": ["Writing `=+` instead of `+=` — `x =+ 5` assigns +5 (still 5), not x+5!", "Using += with `let` — compiler will reject it", "Thinking += is for Int only — it works with Float64 too: `price += 0.50`"],
+  "related": ["L0-04", "L0-05", "L1-37"],
+  "next_lesson": "L1-37"
+}

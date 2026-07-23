@@ -1,0 +1,17 @@
+{
+  "id": "L1-34",
+  "title": "Tail Expressions",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["tail expression", "implicit return", "block value", "semicolon"],
+  "concept": "The last expression in a block (without a semicolon) becomes the value of that block — an implicit return.",
+  "why": "Tail expressions let you write concise functions without explicit `return` — the last line IS the return value.",
+  "theory": "## The Last Line Returns\n\nIn XIOM, the last expression in a block — written WITHOUT a trailing semicolon — becomes the block's value:\n\n```xiom\nfn add(a: Int, b: Int) -> Int {\n  a + b  // No semicolon! This is the return value\n}\n\nfn main() -> Int {\n  let result = add(3, 4);  // 7\n  return result;\n}\n```\n\n### Tail Expression vs return\n\n```xiom\n// Explicit return\nfn square1(x: Int) -> Int {\n  return x * x;\n}\n\n// Tail expression — same result, cleaner\nfn square2(x: Int) -> Int {\n  x * x\n}\n\n// Both return the same value!\n```\n\n### The Semicolon Rule\n\n```xiom\nfn get_value() -> Int {\n  42    // No semicolon → returns 42 (tail expression)\n}\n\nfn get_nothing() {\n  42;   // Semicolon → discards the value, returns Unit\n}\n```\n\n- **No semicolon**: value is returned (tail expression)\n- **With semicolon**: value is discarded, block returns Unit\n\n### If-Expressions as Tail\n\n```xiom\nfn absolute(x: Int) -> Int {\n  if x >= 0 { x } else { -x }  // Tail expression\n}\n\nfn grade(score: Int) -> Str {\n  if score >= 90 { \"A\" }\n  elif score >= 80 { \"B\" }\n  elif score >= 70 { \"C\" }\n  else { \"F\" }\n}  // The if/elif/else chain is the tail expression\n```\n\n### Block Expressions\n\nAny block `{ }` can have a tail expression:\n\n```xiom\nlet result = {\n  let a = 10;\n  let b = 20;\n  a + b  // This is the block's value\n};\n// result is 30\n```\n\n### When to Use Which\n\n- **Tail expression**: Short functions where the last line is the natural result\n- **Explicit return**: When returning early from an if, or when the function is long and you want clarity\n\n```xiom\n// Tail expression — clean for simple functions\nfn double(x: Int) -> Int { x * 2 }\n\n// Explicit return — clear for early exits\nfn safe_divide(a: Int, b: Int) -> Int {\n  if b == 0 { return 0; }\n  a / b  // Tail expression for the normal case\n}\n```",
+  "syntax_ref": "fn name(params) -> Type {\n  // ... other statements ...\n  final_expression  // NO semicolon — this is the return value\n}\n\n// With semicolon = statement (returns Unit)\nfn name(params) {\n  something;  // semicolon — value is discarded\n}",
+  "code_template": "// TODO: Write a function 'multiply' using a tail expression (no return keyword)\n// It should take a: Int, b: Int and return a * b\n\nfn main() -> Int {\n  let result = multiply(6, 7);\n  return result;\n}",
+  "solution": "fn multiply(a: Int, b: Int) -> Int {\n  a * b\n}\n\nfn main() -> Int {\n  let result = multiply(6, 7);\n  return result;\n}",
+  "tips": ["No semicolon on the last line = it becomes the return value", "Semicolon on the last line = value discarded, returns Unit", "Tail expressions work in any block, not just functions", "Tail expressions make simple functions more readable and concise"],
+  "common_mistakes": ["Accidentally putting a semicolon on the tail expression — returns Unit instead!", "Using both `return` AND a tail expression — `return` wins", "Forgetting that the tail expression must match the declared return type"],
+  "related": ["L1-03", "L1-33", "L1-35"],
+  "next_lesson": "L1-35"
+}

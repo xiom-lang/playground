@@ -1,0 +1,17 @@
+{
+  "id": "L1-43",
+  "title": "Self-Documenting Types",
+  "level": "L1",
+  "duration": "7 min",
+  "concepts": ["naming", "type alias", "documentation", "clarity"],
+  "concept": "Well-named types (both aliases and variable names) make code explain itself without comments.",
+  "why": "Code is read 10x more than it's written. Clear type names communicate intent instantly to anyone reading your code.",
+  "theory": "## Let Types Tell the Story\n\nGreat code doesn't need many comments — the type and variable names tell you everything.\n\n### Before and After\n\n```xiom\n// Cryptic — what does this do?\nfn calc(a: Int, b: Int, c: Int) -> Int {\n  return a * b + c;\n}\n\n// Self-documenting — types tell the story!\ntype Quantity = Int;\ntype Price = Int;\ntype ShippingCost = Int;\ntype TotalCents = Int;\n\nfn calculate_total(qty: Quantity, unit_price: Price, shipping: ShippingCost) -> TotalCents {\n  return qty * unit_price + shipping;\n}\n```\n\n### Variable Names Complete the Picture\n\n```xiom\n// Combined with good variable names\ntype Hours = Float64;\ntype Rate = Float64;\ntype Salary = Float64;\n\nfn calculate_payroll(hours_worked: Hours, hourly_rate: Rate) -> Salary {\n  return hours_worked * hourly_rate;\n}\n\nfn main() -> Int {\n  let overtime_hours: Hours = 5.5;\n  let standard_rate: Rate = 25.0;\n  let total_pay: Salary = calculate_payroll(overtime_hours, standard_rate);\n  return 0;\n}\n```\n\n### Principles\n\n1. **Type aliases capture domain concepts**: `Temperature`, not `Float64`\n2. **Variable names describe instances**: `boiling_point`, not `b`\n3. **Function names describe actions**: `calculate_tax`, not `calc`\n4. **Together they form sentences**: `let boiling_point: Temperature = 100.0;`\n\n### When It's Too Much\n\nDon't go overboard. Not every `Int` needs an alias:\n\n```xiom\n// Overkill — these don't add meaning\ntype LoopCounter = Int;\ntype Temporary = Int;\ntype IndexVar = Int;\n\n// Just use Int when the meaning is obvious\nfor i in 0..10 { ... }  // i is clearly a loop counter\n```\n\n### The Goal\n\nSomeone reading your code should understand WHAT it does without comments. Types and names are your primary documentation tools.",
+  "syntax_ref": "// Good: types create a vocabulary\ntype Celsius = Float64;\nlet boiling: Celsius = 100.0;\n\n// Bad: raw types with cryptic names\nlet b: Float64 = 100.0;",
+  "code_template": "// TODO: Create type aliases and a function that are self-documenting\n// type Hours = Int\n// type Minutes = Int\n// Write a function that converts hours to minutes\n\nfn main() -> Int {\n  let workday: Hours = 8;\n  let result = hours_to_minutes(workday);\n  return result;\n}",
+  "solution": "type Hours = Int;\ntype Minutes = Int;\n\nfn hours_to_minutes(h: Hours) -> Minutes {\n  h * 60\n}\n\nfn main() -> Int {\n  let workday: Hours = 8;\n  let result = hours_to_minutes(workday);\n  return result;\n}",
+  "tips": ["Type aliases = domain vocabulary: `Temperature`, `Velocity`, `Duration`", "Variables = specific instances: `room_temp`, `car_speed`, `timeout`", "Functions = actions: `convert_to_celsius`, `validate_email`", "If you need a comment to explain what a parameter is, make its type clearer"],
+  "common_mistakes": ["Creating aliases for EVERYTHING — only alias when it adds meaning", "Using abbreviations in type names: `Qty` instead of `Quantity`", "Vague aliases: `Data`, `Info`, `Value` add no meaning"],
+  "related": ["L1-42", "L0-03", "L0-12"],
+  "next_lesson": "L1-44"
+}

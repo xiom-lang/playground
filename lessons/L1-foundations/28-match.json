@@ -1,0 +1,17 @@
+{
+  "id": "L1-28",
+  "title": "Match Expression",
+  "level": "L1",
+  "duration": "12 min",
+  "concepts": ["match", "pattern", "arm", "pattern matching"],
+  "concept": "match is like a super-powered if — it compares a value against multiple patterns and runs the first matching arm.",
+  "why": "match is cleaner and safer than chains of if/elif for multi-way branching. The compiler checks you've covered all cases.",
+  "theory": "## Pattern Matching with `match`\n\n`match` is XIOM's powerhouse for multi-way branching. Give it a value, and it finds the first matching pattern:\n\n```xiom\nfn main() -> Int {\n  let number = 3;\n\n  let description = match number {\n    1 => \"one\",\n    2 => \"two\",\n    3 => \"three\",\n    _ => \"other\",\n  };\n\n  io.println(description);  // prints: three\n  return 0;\n}\n```\n\n### Match Anatomy\n\n```xiom\nmatch value {\n  pattern1 => result1,\n  pattern2 => result2,\n  pattern3 => result3,\n  _ => fallback_result,  // catch-all\n}\n```\n\n- `match` evaluates the value\n- Checks each **arm** (pattern => result) from top to bottom\n- First match wins — the rest are ignored\n- `_` is the **wildcard** — matches anything (like `else`)\n\n### Match as Expression\n\n`match` produces a value! All arms must return the same type:\n\n```xiom\nlet grade = match score {\n  90..101 => \"A\",\n  80..90 => \"B\",\n  70..80 => \"C\",\n  60..70 => \"D\",\n  _ => \"F\",\n};\n```\n\n### Match vs If/Elif\n\n```xiom\n// Using if/elif\nlet result = if x == 1 { \"one\" }\n        elif x == 2 { \"two\" }\n        elif x == 3 { \"three\" }\n        else { \"other\" };\n\n// Using match — cleaner for value-based branching\nlet result = match x {\n  1 => \"one\",\n  2 => \"two\",\n  3 => \"three\",\n  _ => \"other\",\n};\n```\n\n### The Wildcard `_`\n\nThe underscore `_` catches anything not matched by previous arms:\n\n```xiom\nmatch day_of_week {\n  1 => \"Monday\",\n  7 => \"Sunday\",\n  _ => \"Midweek\",  // Catches 2,3,4,5,6\n}\n```\n\nWithout `_`, the compiler ensures ALL possible values are covered. If not, it's a compile error!",
+  "syntax_ref": "match value {\n  pattern1 => result1,\n  pattern2 => result2,\n  _ => default_result,\n}",
+  "code_template": "fn main() -> Int {\n  let month = 7;\n  // TODO: Use match to convert month number to season name\n  // 12,1,2 => \"Winter\", 3,4,5 => \"Spring\", 6,7,8 => \"Summer\", 9,10,11 => \"Fall\"\n  // Use ranges and wildcard _\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let month = 7;\n  let season = match month {\n    12 | 1 | 2 => \"Winter\",\n    3 | 4 | 5 => \"Spring\",\n    6 | 7 | 8 => \"Summer\",\n    9 | 10 | 11 => \"Fall\",\n    _ => \"Unknown\",\n  };\n  io.println(season);\n  return 0;\n}",
+  "tips": ["`match` is exhaustive — every possible value must be handled (or use `_`)", "Patterns are checked from top to bottom — order matters!", "All arms must return the same type — like if-expression", "Use `match` for value-based branching, `if` for condition-based branching"],
+  "common_mistakes": ["Forgetting the `_` wildcard — match must be exhaustive", "Using `match` for simple true/false checks where `if` is clearer", "Arms returning different types — they must all be the same type"],
+  "related": ["L1-10", "L1-12", "L1-14", "L1-29", "L1-30"],
+  "next_lesson": "L1-29"
+}

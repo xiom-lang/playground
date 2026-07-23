@@ -1,0 +1,17 @@
+{
+  "id": "L0-13",
+  "title": "Type Inference",
+  "level": "L0",
+  "duration": "7 min",
+  "concepts": ["type inference", "let", "compiler"],
+  "concept": "XIOM can figure out the type of a variable from its value, so you can often omit the type annotation.",
+  "why": "Less typing means cleaner code. The compiler is smart enough to know that 42 is an Int and \"hello\" is a Str.",
+  "theory": "## Let the Compiler Figure It Out\n\nSo far we've always written the type explicitly:\n\n```xiom\nlet age: Int = 25;\nlet name: Str = \"XIOM\";\n```\n\nBut XIOM's compiler is smart. It can **infer** (figure out) the type from the value:\n\n```xiom\nlet age = 25;        // XIOM knows this is Int\nlet name = \"XIOM\";   // XIOM knows this is Str\nlet pi = 3.14;       // XIOM knows this is Float64\nlet done = true;     // XIOM knows this is Bool\n```\n\n### When to annotate vs infer\n\n| Use type annotation `: Type` when... | Use inference when... |\n|--------------------------------------|-----------------------|\n| The type isn't obvious | The value makes the type clear |\n| You want to be explicit | The code is simple |\n| The compiler needs help | The type is unambiguous |\n\n```xiom\n// Inference is clear here — no need for : Int\nlet minutes_in_hour = 60;\n\n// Annotation helps here — makes intent explicit\nlet temperature: Float64 = 98.6;\n```\n\n### How inference works\n\nThe compiler looks at the value on the right side of `=` and says:\n- Whole number → `Int`\n- Decimal number → `Float64`\n- Double-quoted text → `Str`\n- Single-quoted character → `Char`\n- `true` or `false` → `Bool`",
+  "syntax_ref": "let name = value;  // Type is inferred automatically",
+  "code_template": "fn main() -> Int {\n  // TODO: Declare variables WITHOUT type annotations\n  // Use type inference for: your age, your name, pi, and whether you like coding\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let age = 30;\n  let name = \"Learner\";\n  let pi = 3.14159;\n  let likes_coding = true;\n  io.println(\"All variables inferred!\");\n  return 0;\n}",
+  "tips": ["You can still add `: Type` if you want — it's never wrong", "The compiler infers at compile time — there's no runtime cost", "When in doubt, add a type annotation for clarity", "Type inference works with `let` — `var` benefits from explicit types"],
+  "common_mistakes": ["Assuming `let x = 5` is Float64 — it's Int because there's no decimal point", "Thinking inference means 'no type' — every variable still has a fixed type", "Using inference for ambiguous situations where an annotation would help"],
+  "related": ["L0-03", "L0-05", "L0-08"],
+  "next_lesson": "L0-14"
+}

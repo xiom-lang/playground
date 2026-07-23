@@ -1,0 +1,17 @@
+{
+  "id": "L1-21",
+  "title": "Continue Statement",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["continue", "skip iteration", "loop control"],
+  "concept": "continue skips the rest of the current loop iteration and jumps to the next one.",
+  "why": "Sometimes you want to skip certain values in a loop — like processing only even numbers or ignoring invalid data.",
+  "theory": "## Skipping Ahead with `continue`\n\n`break` exits the loop entirely. `continue` just skips the rest of THIS iteration and moves to the next one.\n\n```xiom\nfn main() -> Int {\n  var i = 0;\n  while i < 5 {\n    i = i + 1;\n    if i == 3 {\n      continue;  // Skip printing when i is 3\n    }\n    io.println(\"Processing...\");\n  }\n  return 0;\n}\n```\n\nThis prints for i=1, 2, 4, 5 — but skips 3.\n\n### Break vs Continue\n\n```xiom\n// break: \"I'm done — exit the loop\"\nwhile condition {\n  if done {\n    break;    // Exit loop completely\n  }\n}\n\n// continue: \"Skip this one — next please\"\nwhile condition {\n  if skip_this {\n    continue; // Jump to next iteration\n  }\n}\n```\n\n### Practical Uses\n\n```xiom\n// Process only even numbers\nvar i = 0;\nwhile i < 20 {\n  i = i + 1;\n  if i % 2 != 0 {\n    continue;  // Skip odd numbers\n  }\n  io.println(\"Even number processed!\");\n}\n\n// Skip invalid data\nvar i = 0;\nwhile i < 10 {\n  i = i + 1;\n  if i < 0 {\n    continue;  // Skip negative values\n  }\n  io.println(\"Valid!\");\n}\n```\n\n### Continue is Like a Filter\n\nThink of `continue` as a filter that says \"not this one\" — the loop keeps going, just without processing the current value:\n\n```xiom\nwhile condition {\n  if not_interested {\n    continue;  // \"Nope, next!\"\n  }\n  // This only runs for values we ARE interested in\n  do_work();\n}\n```\n\n### Common Pattern: Guard at the Top\n\n```xiom\nwhile i < 100 {\n  if should_skip(i) {\n    i = i + 1;     // Don't forget to increment!\n    continue;\n  }\n  process(i);\n  i = i + 1;\n}\n```\n\nBe careful: if `continue` skips your increment statement, you get an infinite loop!",
+  "syntax_ref": "while condition {\n  if should_skip {\n    continue;  // jump to next iteration\n  }\n  // code here only runs when not skipping\n}",
+  "code_template": "fn main() -> Int {\n  var i = 0;\n  // TODO: Print numbers 1 through 10, but SKIP multiples of 3\n  // Use continue to skip when i % 3 == 0\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var i = 0;\n  while i < 10 {\n    i = i + 1;\n    if i % 3 == 0 {\n      continue;\n    }\n    io.println(\"Number processed!\");\n  }\n  return 0;\n}",
+  "tips": ["`continue` skips to the NEXT iteration, not out of the loop", "Use `continue` to filter out values you don't want to process", "Make sure your counter still increments before `continue`", "`continue` works in both `while` and `for` loops"],
+  "common_mistakes": ["Incrementing after `continue` — the increment is skipped too! Always update before `continue`", "Confusing `continue` with `break` — continue keeps looping, break stops", "Using `continue` when an `if/else` would be clearer"],
+  "related": ["L1-17", "L1-20", "L1-22"],
+  "next_lesson": "L1-22"
+}

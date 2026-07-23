@@ -1,0 +1,17 @@
+{
+  "id": "L0-03",
+  "title": "What is a Variable?",
+  "level": "L0",
+  "duration": "8 min",
+  "concepts": ["let", "type annotation", "Int"],
+  "concept": "A variable is a named container that stores a value for later use.",
+  "why": "Variables let you store and reuse values instead of repeating them. They make code readable and maintainable.",
+  "theory": "## What is a Variable?\n\nA **variable** is like a labeled box that holds a value. You give it a name, and then you can use that name to refer to the value inside.\n\n```xiom\nfn main() -> Int {\n  let age: Int = 25;\n  let year: Int = 2026;\n  io.println(\"I am learning XIOM!\");\n  return age;\n}\n```\n\n### Breaking it down\n\n- **`let`** — keyword that creates an **immutable** variable (you can't change it later)\n- **`age`** — the variable name (use `snake_case`: lowercase with underscores)\n- **`: Int`** — a **type annotation** telling XIOM this holds an integer\n- **`= 25`** — the value being stored\n\n### Why use variables?\n\n```xiom\n// Without variables — repetitive and hard to change\nio.println(\"The answer is 42\");\nio.println(\"42 is the answer\");\n\n// With variables — change once, use everywhere\nlet answer: Int = 42;\nio.println(\"The answer is 42\");\nio.println(\"42 is the answer\");\n```\n\nVariables make your code flexible and readable.",
+  "syntax_ref": "let name: Type = value;",
+  "code_template": "fn main() -> Int {\n  // TODO: Create a variable called \"favorite\" of type Int with your favorite number\n  // TODO: Create a variable called \"year\" of type Int with the current year\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let favorite: Int = 7;\n  let year: Int = 2026;\n  return favorite;\n}",
+  "tips": ["Use `let` for values that won't change", "Variable names use snake_case: `my_score`, not `myScore`", "The type annotation `: Int` is optional — XIOM can often figure it out", "Choose descriptive names: `age` is better than `a`"],
+  "common_mistakes": ["Using spaces in variable names — use underscores instead", "Forgetting the `=` between name and value", "Starting variable names with a number"],
+  "related": ["L0-01", "L0-04"],
+  "next_lesson": "L0-04"
+}

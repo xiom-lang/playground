@@ -1,18 +1,17 @@
 {
   "id": "L0-01",
-  "title": "Hello, World!",
+  "title": "Your First Program",
   "level": "L0",
   "duration": "5 min",
-  "concepts": ["fn", "return", "Int"],
-  "narrative": "## Hello, World!\n\nEvery programming journey starts here. In XIOM, you write a `fn main()` function that returns a number. The compiler runs this function when you execute your program.\n\nLet's write our first program that returns the number 42.\n\n### How it works\n- `fn main()` declares the main function — the entry point of your program\n- `-> Int` means it returns an integer\n- `return 42;` sends the value 42 back\n- Every statement ends with `;`",
-  "code_template": "fn main() -> Int {\n  // Your code here\n  return 42;\n}",
+  "concepts": ["fn", "return", "Int", "main"],
+  "concept": "Every XIOM program starts with a main function that returns a value.",
+  "why": "Programs need a starting point. The main function is where execution begins.",
+  "theory": "## Your First Program\n\nIn XIOM, every program starts with a `fn main()` function. This is the **entry point** — the first thing the computer runs when you execute your program.\n\n```xiom\nfn main() -> Int {\n  return 42;\n}\n```\n\nLet's break this down piece by piece:\n\n- **`fn`** — short for \"function\". It tells XIOM you're defining a new function.\n- **`main`** — the name of the function. XIOM always looks for `main` to start.\n- **`()`** — empty parentheses mean this function takes no inputs.\n- **`-> Int`** — the arrow and type name declare what this function **returns** (an integer).\n- **`{ ... }`** — curly braces wrap the function's body — the code it executes.\n- **`return 42;`** — sends the value `42` back to whoever called the function.\n- **`;`** — the semicolon ends every statement.\n\nWhen you run this program, the compiler executes `main()` and returns `42` to the operating system.",
+  "syntax_ref": "fn main() -> Int { return value; }",
+  "code_template": "fn main() -> Int {\n  // TODO: Return your favorite number\n  return 0;\n}",
   "solution": "fn main() -> Int {\n  return 42;\n}",
-  "test_input": "",
-  "test_expected": "42",
-  "tips": [
-    "The `main` function is where your program starts",
-    "`-> Int` after the function name declares what type it returns",
-    "Every statement in XIOM ends with a semicolon"
-  ],
-  "related": ["L0-02", "L1-03"]
+  "tips": ["The main function is required in every XIOM program", "Every statement ends with a semicolon `;`", "Use `-> Type` to declare what the function returns", "The function body goes inside curly braces `{ }`"],
+  "common_mistakes": ["Forgetting the semicolon after `return 42`", "Not declaring a return type with `-> Int`", "Using lowercase `int` instead of `Int`"],
+  "related": ["L0-02"],
+  "next_lesson": "L0-02"
 }

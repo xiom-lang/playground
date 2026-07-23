@@ -1,0 +1,17 @@
+{
+  "id": "L0-02",
+  "title": "Hello, XIOM!",
+  "level": "L0",
+  "duration": "7 min",
+  "concepts": ["io.println", "Str", "string literal"],
+  "concept": "Use io.println to display text on the screen.",
+  "why": "Programs need to communicate with the user. Printing text is the most basic form of output.",
+  "theory": "## Hello, XIOM!\n\nReturning a number is nice, but let's make the program actually say something! In XIOM, you use `io.println` to display messages on the screen.\n\n```xiom\nfn main() -> Int {\n  io.println(\"Hello, XIOM!\");\n  return 0;\n}\n```\n\n### What's happening?\n\n- **`io.println`** — a function that prints a message to the console\n- **`\"Hello, XIOM!\"`** — a **string literal** (type `Str`), text wrapped in double quotes\n- **`return 0;`** — returning `0` means \"everything ran successfully\"\n\n### Printing Multiple Lines\n\nYou can call `io.println` as many times as you want. Each call prints on its own line:\n\n```xiom\nio.println(\"Line one\");\nio.println(\"Line two\");\nio.println(\"Line three\");\n```\n\nThe `println` part stands for \"print line\" — it adds a newline after your text.",
+  "syntax_ref": "io.println(\"your message here\");",
+  "code_template": "fn main() -> Int {\n  // TODO: Print \"Hello, XIOM!\" to the screen\n  // TODO: Print \"I am learning to code!\" on a second line\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  io.println(\"Hello, XIOM!\");\n  io.println(\"I am learning to code!\");\n  return 0;\n}",
+  "tips": ["Strings always use double quotes, like `\"hello\"`", "Each `io.println` call prints on its own line", "Return 0 from main to signal success", "The text inside quotes is called a 'string literal'"],
+  "common_mistakes": ["Using single quotes instead of double quotes", "Forgetting to close the quote", "Forgetting the semicolon after io.println"],
+  "related": ["L0-01", "L0-03"],
+  "next_lesson": "L0-03"
+}

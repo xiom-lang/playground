@@ -1,0 +1,17 @@
+{
+  "id": "L1-20",
+  "title": "Break Statement",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["break", "loop exit", "early termination"],
+  "concept": "break immediately exits the innermost loop — use it to stop looping when you've found what you need.",
+  "why": "Sometimes you don't need to finish the loop. Break lets you exit early when your goal is accomplished.",
+  "theory": "## Exiting Loops Early with `break`\n\n`break` says \"I'm done here\" — it immediately exits the loop, no matter what the condition says.\n\n```xiom\nfn main() -> Int {\n  var i = 0;\n  while i < 100 {\n    io.println(\"Searching...\");\n    if i == 5 {\n      io.println(\"Found it!\");\n      break;  // Exit the loop now — don't check i < 100 again\n    }\n    i = i + 1;\n  }\n  return 0;\n}\n```\n\n### The Search Pattern\n\nThis is the most common use of `break`:\n\n```xiom\nvar found = false;\nvar i = 0;\nwhile i < 1000 {\n  if some_condition(i) {\n    found = true;\n    break;  // Found what we're looking for — stop!\n  }\n  i = i + 1;\n}\n```\n\n### Break vs Letting the Loop End\n\n```xiom\n// Without break — runs all 100 iterations\nvar i = 0;\nwhile i < 100 {\n  io.println(\"Processing...\");\n  i = i + 1;\n}\n\n// With break — stops at iteration 10\nvar j = 0;\nwhile j < 100 {\n  io.println(\"Processing...\");\n  if j == 9 {\n    break;  // Enough!\n  }\n  j = j + 1;\n}\n```\n\n### Break in Infinite Loops\n\n`break` is essential for infinite loops:\n\n```xiom\nwhile true {\n  io.println(\"Menu:\");\n  io.println(\"1. Continue\");\n  io.println(\"2. Quit\");\n  // In a real program, you'd read user input here\n  break;  // For now, just exit\n}\n```\n\n### Break Only Exits One Loop\n\nIf you have nested loops, `break` only exits the INNERMOST loop:\n\n```xiom\nvar i = 0;\nwhile i < 3 {\n  var j = 0;\n  while j < 3 {\n    if j == 1 {\n      break;  // Exits inner loop only — outer loop continues!\n    }\n    j = j + 1;\n  }\n  i = i + 1;\n}\n```",
+  "syntax_ref": "while condition {\n  if should_stop {\n    break;  // exit loop immediately\n  }\n}",
+  "code_template": "fn main() -> Int {\n  var sum = 0;\n  var i = 1;\n  // TODO: While i <= 100, add i to sum\n  // TODO: If sum exceeds 50, break out of the loop\n  // TODO: Return sum\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var sum = 0;\n  var i = 1;\n  while i <= 100 {\n    sum = sum + i;\n    if sum > 50 {\n      break;\n    }\n    i = i + 1;\n  }\n  return sum;\n}",
+  "tips": ["`break` exits the loop immediately — code after it in the loop body won't run", "Use `break` for early exit: 'found it, stop searching'", "`break` only exits the innermost loop in nested loops", "Combine `break` with `while true` for loops with complex exit conditions"],
+  "common_mistakes": ["Thinking `break` exits the entire program — it only exits the loop", "Using `break` outside a loop — it only works inside `while` or `for`", "Putting code after `break` in the same branch — it's dead code"],
+  "related": ["L1-17", "L1-19", "L1-21"],
+  "next_lesson": "L1-21"
+}

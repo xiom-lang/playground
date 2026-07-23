@@ -1,0 +1,17 @@
+{
+  "id": "L1-12",
+  "title": "Multiple Branches with elif",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["elif", "else if", "multiple branches", "multi-way"],
+  "concept": "Use elif ('else if') to chain multiple conditions — check one, then another, then another.",
+  "why": "Real decisions often have more than two outcomes. elif lets you handle grade levels, menu options, or any multi-way choice.",
+  "theory": "## More Than Two: elif\n\nWhen you have multiple conditions to check, chain them with `elif` (short for \"else if\"):\n\n```xiom\nfn main() -> Int {\n  let score = 85;\n\n  if score >= 90 {\n    io.println(\"Grade: A\");\n  } elif score >= 80 {\n    io.println(\"Grade: B\");\n  } elif score >= 70 {\n    io.println(\"Grade: C\");\n  } elif score >= 60 {\n    io.println(\"Grade: D\");\n  } else {\n    io.println(\"Grade: F\");\n  }\n\n  return 0;\n}\n```\n\n### How elif Works\n\nXIOM checks conditions from top to bottom. The FIRST matching condition wins:\n\n```xiom\nlet number = 15;\n\nif number > 20 {\n  io.println(\"Big\");\n} elif number > 10 {\n  io.println(\"Medium\");  // This runs! (15 > 10)\n} elif number > 0 {\n  io.println(\"Small\");   // Skipped — already matched above\n} else {\n  io.println(\"Zero or negative\");\n}\n```\n\n### elif vs Multiple ifs\n\n```xiom\n// Multiple ifs — ALL are checked independently\nif score >= 90 { io.println(\"A\"); }\nif score >= 80 { io.println(\"B\"); }  // Also runs for score=95! BAD!\n\n// if/elif/else — only FIRST match runs\nif score >= 90 { io.println(\"A\"); }\nelif score >= 80 { io.println(\"B\"); }  // Only for 80-89. GOOD!\n```\n\n### Order Matters\n\nAlways check from most specific to least specific:\n\n```xiom\n// WRONG order — \"A\" never runs because >= 80 catches it first!\nif score >= 80 { io.println(\"B\"); }\nelif score >= 90 { io.println(\"A\"); }\n\n// CORRECT order — most specific first\nif score >= 90 { io.println(\"A\"); }\nelif score >= 80 { io.println(\"B\"); }\n```\n\n### Structure\n\n```xiom\nif condition1 {\n  // first match\n} elif condition2 {\n  // second match\n} elif condition3 {\n  // third match\n} else {\n  // none matched\n}\n```\n\nYou can have as many `elif` branches as you need. The final `else` is optional.",
+  "syntax_ref": "if cond1 {\n  // ...\n} elif cond2 {\n  // ...\n} elif cond3 {\n  // ...\n} else {\n  // fallback\n}",
+  "code_template": "fn main() -> Int {\n  let hour = 14;\n  // TODO: If hour < 12, print \"Morning\"\n  // TODO: elif hour < 18, print \"Afternoon\"\n  // TODO: else, print \"Evening\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let hour = 14;\n  if hour < 12 {\n    io.println(\"Morning\");\n  } elif hour < 18 {\n    io.println(\"Afternoon\");\n  } else {\n    io.println(\"Evening\");\n  }\n  return 0;\n}",
+  "tips": ["`elif` is short for 'else if' — it's one word in XIOM", "Only the FIRST matching branch runs — order matters!", "Put the most specific conditions first, most general last", "The final `else` is optional but catches anything that didn't match"],
+  "common_mistakes": ["Writing `else if` instead of `elif` — XIOM uses `elif`", "Putting conditions in the wrong order (general before specific)", "Forgetting that only ONE branch runs per if/elif/else chain"],
+  "related": ["L1-10", "L1-11", "L1-13"],
+  "next_lesson": "L1-13"
+}

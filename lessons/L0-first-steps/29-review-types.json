@@ -1,0 +1,17 @@
+{
+  "id": "L0-29",
+  "title": "Review: Data Types",
+  "level": "L0",
+  "duration": "10 min",
+  "concepts": ["Int", "Float64", "Bool", "Char", "Str", "type review"],
+  "concept": "Review all the data types you've learned and solidify your understanding with a summary quiz.",
+  "why": "A strong foundation in types makes everything else in programming easier. These five types appear in every program.",
+  "theory": "## Data Types: The Complete Picture\n\nYou've learned all the fundamental building blocks. Let's review everything.\n\n### The Five Core Types\n\n| Type | Holds | Example | Use For |\n|------|-------|---------|---------|\n| `Int` | Whole numbers | `42`, `-7`, `0` | Counting, math |\n| `Float64` | Decimal numbers | `3.14`, `-0.5` | Measurements, money |\n| `Bool` | True/false | `true`, `false` | Logic, conditions |\n| `Char` | Single character | `'A'`, `'9'`, `'あ'` | Letters, symbols |\n| `Str` | Text | `\"Hello\"`, `\"XIOM\"` | Messages, names |\n\n### Integer Size Variants\n\n| Type | Bits | Range |\n|------|------|-------|\n| `Int8` | 8 | -128 to 127 |\n| `Int16` | 16 | -32,768 to 32,767 |\n| `Int32` | 32 | ~ -2B to 2B |\n| `Int64` / `Int` | 64 | Huge range |\n| `UInt8` | 8 | 0 to 255 |\n| `UInt16` | 16 | 0 to 65,535 |\n| `UInt32` | 32 | 0 to ~4B |\n| `UInt64` / `UInt` | 64 | Huge range |\n\n### Operators You Know\n\n| Category | Operators |\n|----------|-----------|\n| Arithmetic | `+`, `-`, `*`, `/`, `%`, `-` (negation) |\n| Comparison | `==`, `!=`, `<`, `>`, `<=`, `>=` |\n| Logic | `&&`, `||`, `!` |\n| String | `+` (concatenation) |\n| Conversion | `as Float64`, `as Int` |\n\n### Variable Keywords\n\n| Keyword | Meaning |\n|---------|---------|\n| `let` | Immutable (can't change) |\n| `var` | Mutable (can change) |\n\n### Quick Quiz\n\nTest yourself: what type would you use for...\n\n1. Your age → `Int` (or `UInt8`)\n2. Price of a coffee → `Float64`\n3. Whether it's raining → `Bool`\n4. First letter of your name → `Char`\n5. A greeting message → `Str`\n6. Number of stars in the sky → `Int64`\n7. Temperature with decimals → `Float64`\n8. \"Are you logged in?\" → `Bool`",
+  "syntax_ref": "// All types in one place:\nlet n: Int = 42;\nlet f: Float64 = 3.14;\nlet b: Bool = true;\nlet c: Char = 'X';\nlet s: Str = \"hello\";",
+  "code_template": "fn main() -> Int {\n  // TODO: Declare one variable of each core type (Int, Float64, Bool, Char, Str)\n  // TODO: Print \"Type review complete!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let number: Int = 42;\n  let decimal: Float64 = 3.14;\n  let flag: Bool = true;\n  let letter: Char = 'X';\n  let text: Str = \"hello\";\n  io.println(\"Type review complete!\");\n  return 0;\n}",
+  "tips": ["Every value in XIOM has a type — no exceptions", "Choose the type that best represents your data", "When in doubt, use `Int` for whole numbers and `Float64` for decimals", "Named types like UInt communicate intent: 'this is never negative'"],
+  "common_mistakes": ["Using the wrong type: `let price: Int = 9.99` — needs Float64", "Forgetting that Char uses single quotes and Str uses double quotes", "Assuming all numbers are Float64 — whole numbers default to Int"],
+  "related": ["L0-05", "L0-06", "L0-07", "L0-08", "L0-09", "L0-30"],
+  "next_lesson": "L0-30"
+}

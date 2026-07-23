@@ -1,0 +1,17 @@
+{
+  "id": "L1-03",
+  "title": "Return Values",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["return", "return type", "expression", "early return"],
+  "concept": "The return statement sends a value back from a function. A function's return type declares what kind of value it produces.",
+  "why": "Functions compute and give back results. Without return values, functions would be one-way — they couldn't produce output.",
+  "theory": "## The `return` Statement\n\nThe `return` keyword does two things:\n1. **Produces** a value to send back to the caller\n2. **Exits** the function immediately\n\n```xiom\nfn square(x: Int) -> Int {\n  return x * x;  // sends x*x back, then exits\n}\n\nfn main() -> Int {\n  let nine = square(3);  // 9\n  return nine;\n}\n```\n\n### Return Type Mismatch\n\nThe value you return must match the declared return type:\n\n```xiom\nfn get_score() -> Int {\n  return 100;  // OK: 100 is Int\n  // return \"great\";  // ERROR: \"great\" is Str, not Int!\n}\n```\n\n### Complex Return Expressions\n\nYou can return the result of any expression:\n\n```xiom\nfn max_of_three(a: Int, b: Int, c: Int) -> Int {\n  let max_ab = a;\n  if b > max_ab {\n    max_ab = b;  \n  }\n  // ... but let's keep it simple:\n  return a + b + c;\n}\n```\n\n### Returning a Variable\n\n```xiom\nfn make_greeting(name: Str) -> Str {\n  let result = \"Hello, \" + name + \"!\";\n  return result;\n}\n```\n\n### Using Return Values\n\nThe caller can use the returned value however they want:\n\n```xiom\nfn main() -> Int {\n  // Store it\n  let answer = square(6);\n\n  // Use it directly\n  io.println(\"Calculation complete!\");\n\n  // Pass it to another function\n  let total = square(2) + square(3);  // 4 + 9 = 13\n\n  return answer;\n}\n```\n\n### Functions That \"Do Things\"\n\nNot all functions need to compute a value. Some just perform an action — we'll cover those next.",
+  "syntax_ref": "return value;  // sends value back and exits function",
+  "code_template": "// TODO: Write a function 'cube' that takes an Int and returns n*n*n\n\nfn main() -> Int {\n  // TODO: Call cube(3) and return the result\n  return 0;\n}",
+  "solution": "fn cube(n: Int) -> Int {\n  return n * n * n;\n}\n\nfn main() -> Int {\n  let result = cube(3);\n  return result;\n}",
+  "tips": ["`return` both produces a value AND exits the function immediately", "The return type (`-> Int`) is a PROMISE — the function must deliver", "You can return any expression: `return a + b * c;`", "A function with `-> Int` must return an Int on EVERY code path"],
+  "common_mistakes": ["Forgetting `return` — just writing `x + y;` doesn't send the value back", "Return type mismatch: declaring `-> Int` but returning a Str", "Having code after `return` that never executes (dead code)"],
+  "related": ["L1-01", "L1-02", "L1-04"],
+  "next_lesson": "L1-04"
+}

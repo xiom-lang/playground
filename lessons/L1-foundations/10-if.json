@@ -1,0 +1,17 @@
+{
+  "id": "L1-10",
+  "title": "If Statement",
+  "level": "L1",
+  "duration": "10 min",
+  "concepts": ["if", "condition", "branch", "control flow"],
+  "concept": "The if statement lets your program make decisions — executing code only when a condition is true.",
+  "why": "Without if, every program would do the same thing every time. If brings intelligence and decision-making to your code.",
+  "theory": "## Making Decisions with `if`\n\nThis is where programming gets powerful. The `if` statement lets your code CHOOSE what to do based on conditions.\n\n```xiom\nfn main() -> Int {\n  let temperature = 30;\n\n  if temperature > 25 {\n    io.println(\"It's hot outside!\");\n  }\n\n  return 0;\n}\n```\n\n### How `if` Works\n\n```xiom\nif condition {\n  // This code runs ONLY if condition is true\n}\n// Code here ALWAYS runs\n```\n\n1. Evaluate the `condition` (must be a `Bool`)\n2. If `true` → run the code inside `{ }`\n3. If `false` → skip the code inside `{ }`\n4. Continue after the `}`\n\n### The Condition Must Be a Bool\n\n```xiom\nlet score = 85;\n\n// Correct: condition is a Bool\nif score >= 60 {\n  io.println(\"Passed!\");\n}\n\n// Wrong: condition is an Int\n// if score {  // ERROR! score is Int, not Bool\n//   io.println(\"Passed!\");\n// }\n```\n\n### Practical Examples\n\n```xiom\n// Check eligibility\nlet age = 18;\nif age >= 18 {\n  io.println(\"You can vote!\");\n}\n\n// Check for zero\nlet divisor = 0;\nif divisor == 0 {\n  io.println(\"Cannot divide by zero!\");\n}\n\n// Combined conditions\nlet logged_in = true;\nlet is_admin = false;\nif logged_in && is_admin {\n  io.println(\"Welcome, admin!\");\n}\n```\n\n### The Power of Branching\n\nWithout `if`, your program is a straight line. With `if`, it becomes a tree of possibilities — each condition creates a new path.",
+  "syntax_ref": "if condition {\n  // code runs when condition is true\n}",
+  "code_template": "fn main() -> Int {\n  let score = 85;\n  // TODO: If score is >= 60, print \"You passed!\"\n  // TODO: If score is == 100, print \"Perfect score!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let score = 85;\n  if score >= 60 {\n    io.println(\"You passed!\");\n  }\n  if score == 100 {\n    io.println(\"Perfect score!\");\n  }\n  return 0;\n}",
+  "tips": ["The condition inside `if` MUST be a Bool — `true` or `false`", "Indent the code inside `if` for readability (XIOM doesn't care, but humans do)", "You can have as many `if` statements as you want", "Each `if` is independent — multiple `if`s can all run"],
+  "common_mistakes": ["Using `=` instead of `==`: `if x = 5` is an assignment, not a comparison", "No Bool condition: `if 42` is invalid — write `if 42 != 0` instead", "Forgetting the braces `{ }` — the body must be inside curly braces"],
+  "related": ["L0-07", "L0-19", "L1-11"],
+  "next_lesson": "L1-11"
+}

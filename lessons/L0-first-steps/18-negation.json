@@ -1,0 +1,17 @@
+{
+  "id": "L0-18",
+  "title": "Negation",
+  "level": "L0",
+  "duration": "5 min",
+  "concepts": ["-", "unary", "negation", "negative numbers"],
+  "concept": "The minus sign - can negate a value, flipping its sign from positive to negative or vice versa.",
+  "why": "Negation lets you express opposites — loss instead of gain, below zero instead of above, reverse direction.",
+  "theory": "## Flipping the Sign: Negation\n\nYou've used `-` for subtraction. But `-` has another job: **negation** — flipping the sign of a single value.\n\n```xiom\nfn main() -> Int {\n  let positive = 42;\n  let negative = -positive;  // -42\n  let back_to_positive = -negative;  // 42\n  return back_to_positive;\n}\n```\n\n### When `-` is Negation vs Subtraction\n\n- **Negation** (unary): `-` is applied to ONE value — `-x`\n- **Subtraction** (binary): `-` is between TWO values — `a - b`\n\n```xiom\nlet a = 10;\nlet b = -a;       // negation: -10\nlet c = 5 - a;     // subtraction: -5\nlet d = -(a - 5);  // negation of (a-5): -5\n```\n\n### Using Negation in Expressions\n\n```xiom\nlet temperature = 25;\nlet below_zero = -temperature;  // -25\n\nlet profit = 1000;\nlet loss = -profit;  // -1000\n\nlet x = 5;\nlet y = -x * 3;      // -15 (negate x first, then multiply)\nlet z = -(x * 3);    // -15 (same result here)\n```\n\n### With Float64\n\nNegation works the same way with decimals:\n\n```xiom\nlet pi = 3.14;\nlet neg_pi = -pi;  // -3.14\n\nlet balance = -50.25;\nlet debt = -balance;  // 50.25 (negative of a negative = positive!)\n```\n\n### The Rule\n\n`-` before a single value negates it. `-` between two values subtracts. Same symbol, two jobs.",
+  "syntax_ref": "-value     → negation (unary minus)\na - b       → subtraction (binary minus)",
+  "code_template": "fn main() -> Int {\n  let score = 100;\n  // TODO: Create a variable 'penalty' that is the negation of score\n  // TODO: Return penalty\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let score = 100;\n  let penalty = -score;\n  return penalty;\n}",
+  "tips": ["`-` before a value negates it; `-` between values subtracts", "Negating a negative makes it positive: `-(-5)` = `5`", "Negation works on both Int and Float64", "Use parentheses to be clear: `-(a + b)` vs `-a + b`"],
+  "common_mistakes": ["Confusing `-x` (negation) with `0 - x` — they give the same result but mean different things", "Forgetting parentheses: `-a + b` means `(-a) + b`, not `-(a + b)`", "Thinking `--x` is valid XIOM — use `-(-x)` or just `x`"],
+  "related": ["L0-05", "L0-15"],
+  "next_lesson": "L0-19"
+}

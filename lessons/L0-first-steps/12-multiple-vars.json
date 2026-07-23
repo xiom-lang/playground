@@ -1,0 +1,17 @@
+{
+  "id": "L0-12",
+  "title": "Multiple Variables",
+  "level": "L0",
+  "duration": "7 min",
+  "concepts": ["let", "multiple declarations", "code organization"],
+  "concept": "You can declare many variables in a program, each holding different pieces of data.",
+  "why": "Real programs handle many values at once — user info, settings, calculations. Learning to manage multiple variables is essential.",
+  "theory": "## Declaring Multiple Variables\n\nReal programs don't use just one variable — they handle many pieces of data at once.\n\n```xiom\nfn main() -> Int {\n  let name: Str = \"Kilo\";\n  let age: Int = 2;\n  let score: Float64 = 99.5;\n  let active: Bool = true;\n  return 0;\n}\n```\n\n### Organizing Your Variables\n\nGroup related variables together and use clear names:\n\n```xiom\nfn main() -> Int {\n  // User information\n  let username: Str = \"learner42\";\n  let email: Str = \"learner@example.com\";\n  let is_verified: Bool = true;\n\n  // Game state\n  var health: Int = 100;\n  var coins: Int = 0;\n  var level: Int = 1;\n\n  io.println(\"Player ready!\");\n  return 0;\n}\n```\n\n### Rules for Variable Names\n\n1. Start with a letter or underscore\n2. Use only letters, numbers, and underscores\n3. Use `snake_case` (lowercase with underscores)\n4. Be descriptive — `player_score` not `ps`\n\n```xiom\n// Good names\nlet player_name: Str = \"Aria\";\nlet high_score: Int = 9999;\nlet items_collected: Int = 42;\n\n// Bad names (avoid these!)\nlet pn: Str = \"Aria\";   // too short\nlet hs: Int = 9999;      // cryptic\nlet ic: Int = 42;        // what does this mean?\n```",
+  "syntax_ref": "let name1: Type = value1;\nlet name2: Type = value2;\nlet name3: Type = value3;",
+  "code_template": "fn main() -> Int {\n  // TODO: Declare your name (Str), age (Int), and height (Float64)\n  // TODO: Declare whether you're learning (Bool)\n  // TODO: Print \"Profile created!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let name: Str = \"Alex\";\n  let age: Int = 25;\n  let height: Float64 = 1.75;\n  let is_learning: Bool = true;\n  io.println(\"Profile created!\");\n  return 0;\n}",
+  "tips": ["Group related variables together with a blank line between groups", "Use descriptive names: `days_in_week` is better than `d`", "Variable names can't start with a number: `1st_place` is invalid", "You can declare as many variables as you need"],
+  "common_mistakes": ["Using the same variable name twice in the same scope", "Using spaces in variable names — use underscores", "Naming variables so cryptically that you forget what they mean"],
+  "related": ["L0-03", "L0-04", "L0-08"],
+  "next_lesson": "L0-13"
+}

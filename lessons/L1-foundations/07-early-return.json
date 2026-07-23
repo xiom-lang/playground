@@ -1,0 +1,17 @@
+{
+  "id": "L1-07",
+  "title": "Early Return",
+  "level": "L1",
+  "duration": "8 min",
+  "concepts": ["return", "early return", "if", "guard clause"],
+  "concept": "You can use return inside an if to exit a function early when certain conditions are met.",
+  "why": "Early returns handle edge cases up front, keeping the main logic clean and avoiding deeply nested code.",
+  "theory": "## Return Early, Return Often\n\nSometimes you want to bail out of a function immediately if something is wrong. That's an **early return**.\n\n```xiom\nfn divide_safely(a: Int, b: Int) -> Int {\n  if b == 0 {\n    return 0;  // Exit early — can't divide by zero!\n  }\n  return a / b;\n}\n\nfn main() -> Int {\n  let result = divide_safely(10, 0);  // returns 0\n  return result;\n}\n```\n\n### The Guard Clause Pattern\n\nPut your error checks at the top and return early. The rest of your function stays clean:\n\n```xiom\nfn calculate_score(raw: Int, bonus: Int) -> Int {\n  // Guard: reject negative input\n  if raw < 0 {\n    return 0;\n  }\n\n  // Guard: cap bonus\n  if bonus > 100 {\n    return raw + 100;\n  }\n\n  // Main logic — no nesting needed!\n  return raw + bonus;\n}\n```\n\n### Without Early Return (Messy)\n\n```xiom\nfn calculate_score(raw: Int, bonus: Int) -> Int {\n  if raw < 0 {\n    return 0;\n  } else {\n    if bonus > 100 {\n      return raw + 100;\n    } else {\n      return raw + bonus;\n    }\n  }\n}\n```\n\nEarly returns flatten the pyramid of doom!\n\n### Multiple Early Returns\n\nYou can have as many early returns as you need:\n\n```xiom\nfn get_grade(score: Int) -> Str {\n  if score > 100 { return \"Invalid\"; }\n  if score >= 90  { return \"A\"; }\n  if score >= 80  { return \"B\"; }\n  if score >= 70  { return \"C\"; }\n  if score >= 60  { return \"D\"; }\n  return \"F\";\n}\n```\n\n### return Means Stop\n\nWhen you hit `return`, the function stops IMMEDIATELY. Nothing after it in that branch runs.",
+  "syntax_ref": "fn name(params) -> Type {\n  if condition {\n    return value;  // exits function immediately\n  }\n  // only reached if condition is false\n  return other_value;\n}",
+  "code_template": "// TODO: Write a function 'absolute' that takes an Int\n// If the number is negative, return its negation\n// Otherwise, return the number as-is\n\nfn main() -> Int {\n  // TODO: Call absolute(-42) and return the result\n  return 0;\n}",
+  "solution": "fn absolute(n: Int) -> Int {\n  if n < 0 {\n    return -n;\n  }\n  return n;\n}\n\nfn main() -> Int {\n  let result = absolute(-42);\n  return result;\n}",
+  "tips": ["Early returns handle 'edge cases' at the top — the happy path flows straight through", "Each `return` is an exit door — the function stops there", "Guard clauses check preconditions: 'is this valid?' before doing work", "Early returns reduce nesting and make code more readable"],
+  "common_mistakes": ["Having code after a return in the same branch — it's dead code", "Forgetting that every path must return a value of the right type", "Overusing early returns for minor checks — one or two guards is plenty"],
+  "related": ["L1-03", "L1-10", "L1-11"],
+  "next_lesson": "L1-08"
+}

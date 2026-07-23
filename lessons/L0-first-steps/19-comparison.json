@@ -1,0 +1,17 @@
+{
+  "id": "L0-19",
+  "title": "Comparison Operators",
+  "level": "L0",
+  "duration": "10 min",
+  "concepts": ["==", "!=", "<", ">", "<=", ">=", "Bool"],
+  "concept": "Comparison operators compare two values and produce a Bool (true or false).",
+  "why": "Programs make decisions by comparing values. Is the score high enough? Is the password correct? Comparisons answer these.",
+  "theory": "## Comparing Values\n\nPrograms constantly ask questions: \"Are these equal?\" \"Is this bigger?\" Comparison operators answer these questions, producing a `Bool`.\n\n### The Six Comparison Operators\n\n| Operator | Meaning | Example | Result |\n|----------|---------|---------|--------|\n| `==` | Equal to | `5 == 5` | `true` |\n| `!=` | Not equal to | `5 != 3` | `true` |\n| `<` | Less than | `3 < 7` | `true` |\n| `>` | Greater than | `10 > 4` | `true` |\n| `<=` | Less than or equal | `5 <= 5` | `true` |\n| `>=` | Greater than or equal | `8 >= 6` | `true` |\n\n### Using Comparisons\n\n```xiom\nfn main() -> Int {\n  let a = 10;\n  let b = 20;\n\n  let is_equal = a == b;       // false\n  let is_different = a != b;   // true\n  let is_less = a < b;         // true\n  let is_greater = a > b;      // false\n\n  return 0;\n}\n```\n\n### == vs =\n\nThis is THE most important distinction in programming:\n\n```xiom\nlet x = 5;     // = means ASSIGNMENT: \"put 5 into x\"\nlet y = 5;\nlet same = x == y;  // == means COMPARISON: \"is x equal to y?\" — true\n```\n\n- **`=`** — assignment: \"make this equal to that\"\n- **`==`** — comparison: \"is this equal to that?\"\n\n### Comparisons Produce Bools\n\nComparisons can be stored in variables:\n\n```xiom\nlet age = 18;\nlet can_vote = age >= 18;  // true\nlet needs_permit = age < 16;  // false\n```\n\n### Combining with Print\n\n```xiom\nlet score = 95;\nlet passed = score >= 60;\nio.println(\"Passed the test!\");\n// Later you'll learn to print the actual true/false value\n```",
+  "syntax_ref": "a == b   (equal)\na != b   (not equal)\na < b    (less than)\na > b    (greater than)\na <= b   (less than or equal)\na >= b   (greater than or equal)",
+  "code_template": "fn main() -> Int {\n  let score = 85;\n  let passing = 60;\n  // TODO: Check if score is greater than or equal to passing\n  // TODO: Check if score is 100 (perfect score)\n  // TODO: Print \"Comparisons complete!\"\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let score = 85;\n  let passing = 60;\n  let passed = score >= passing;\n  let perfect = score == 100;\n  io.println(\"Comparisons complete!\");\n  return 0;\n}",
+  "tips": ["`=` is assignment, `==` is comparison — never confuse them!", "Comparisons always produce a Bool: `true` or `false`", "You can compare Ints, Float64s, and Chars", "`<=` means 'less than OR equal' — one `=` sign, then the other"],
+  "common_mistakes": ["Using `=` when you mean `==`: `if x = 5` is an assignment, not a comparison", "Writing `=<` instead of `<=` — the equals sign comes second", "Comparing different types: `5 == \"5\"` is a type error in XIOM"],
+  "related": ["L0-07", "L0-20", "L1-02"],
+  "next_lesson": "L0-20"
+}

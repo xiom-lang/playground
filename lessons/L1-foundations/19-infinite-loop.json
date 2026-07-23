@@ -1,0 +1,17 @@
+{
+  "id": "L1-19",
+  "title": "Infinite Loops",
+  "level": "L1",
+  "duration": "7 min",
+  "concepts": ["while true", "infinite loop", "forever loop"],
+  "concept": "while true creates a loop that runs forever — useful for servers, games, and programs that need to run continuously.",
+  "why": "Some programs are meant to run indefinitely — game loops, server listeners, and interactive prompts. while true is the tool.",
+  "theory": "## Loops That Never Stop (On Purpose)\n\n`while true` creates a loop that runs forever — because `true` is always true!\n\n```xiom\nfn main() -> Int {\n  var count = 0;\n  while true {\n    io.println(\"Running...\");\n    count = count + 1;\n    if count >= 5 {\n      break;  // Emergency exit! (next lesson)\n    }\n  }\n  return 0;\n}\n```\n\n### Why Infinite Loops?\n\n1. **Game engines**: \"while game is running, process input, update, render\"\n2. **Servers**: \"while server is alive, listen for connections\"\n3. **Interactive programs**: \"while user hasn't quit, ask for input\"\n4. **Monitoring**: \"while system is up, check status\"\n\n### Controlling the Infinite\n\nAn infinite loop without an exit strategy will freeze your program. Common exits:\n\n- **`break`** — exit the loop immediately (next lesson)\n- **`return`** — exit the entire function\n- **External signal** — user closes the program\n\n```xiom\nfn main() -> Int {\n  var attempts = 0;\n  while true {\n    attempts = attempts + 1;\n    io.println(\"Attempting...\");\n    if attempts >= 3 {\n      io.println(\"Max attempts reached!\");\n      return 0;  // Exit the program\n    }\n  }\n}\n```\n\n### The Pattern\n\n```xiom\nwhile true {\n  // Do work\n  // Check if we should stop\n  if done {\n    break;\n  }\n}\n```\n\n### Be Careful!\n\nAn infinite loop with no exit will hang your program. Always have a way out:\n\n```xiom\n// DANGEROUS — will run forever with no exit!\n// while true {\n//   io.println(\"Forever...\");\n// }\n\n// SAFE — has a maximum number of iterations\nvar count = 0;\nwhile true {\n  io.println(\"Safe infinite loop...\");\n  count = count + 1;\n  if count >= 10 {\n    break;\n  }\n}\n```",
+  "syntax_ref": "while true {\n  // runs forever\n  if exit_condition {\n    break;\n  }\n}",
+  "code_template": "fn main() -> Int {\n  var count = 0;\n  // TODO: Write a while true loop\n  // Inside: print \"Running...\", increment count\n  // If count reaches 5, use return 0 to exit\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var count = 0;\n  while true {\n    io.println(\"Running...\");\n    count = count + 1;\n    if count >= 5 {\n      return 0;\n    }\n  }\n}",
+  "tips": ["`while true` is the idiomatic way to write 'loop forever' in XIOM", "Always have an exit strategy — break, return, or external signal", "Use infinite loops for programs that should run until explicitly stopped", "Test infinite loops with a small iteration limit first before letting them run free"],
+  "common_mistakes": ["Creating a truly infinite loop with no exit — program will hang", "Putting the exit condition where it can never be reached", "Using `while true` when a regular `while condition` would be clearer"],
+  "related": ["L1-17", "L1-20", "L1-21"],
+  "next_lesson": "L1-20"
+}

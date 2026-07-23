@@ -1,0 +1,17 @@
+{
+  "id": "L0-17",
+  "title": "Remainder",
+  "level": "L0",
+  "duration": "7 min",
+  "concepts": ["%", "remainder", "modulo"],
+  "concept": "The % operator gives you the remainder after dividing two integers.",
+  "why": "The remainder is incredibly useful — for checking even/odd, wrapping around, cycling through lists, and more.",
+  "theory": "## The Remainder Operator `%`\n\nWhile `/` gives you the quotient, `%` (called \"modulo\" or \"remainder\") gives you what's **left over**.\n\n```xiom\nfn main() -> Int {\n  let quotient = 10 / 3;   // 3\n  let remainder = 10 % 3;  // 1\n  return remainder;\n}\n```\n\n### Understanding Remainders\n\nThink of dividing cookies among friends:\n\n```xiom\nlet cookies = 10;\nlet friends = 3;\n\nlet each_gets = cookies / friends;  // 3 cookies each\nlet left_over = cookies % friends;  // 1 cookie left\n```\n\n### Common Uses of `%`\n\n**Check if a number is even:**\n```xiom\nlet is_even = number % 2 == 0;  // true if even\n```\n\n**Check if a number is odd:**\n```xiom\nlet is_odd = number % 2 == 1;  // true if odd\n```\n\n**Wrap around (like a clock):**\n```xiom\n// 12-hour clock: 14:00 → 2:00 PM\nlet hour = 14 % 12;  // 2\n```\n\n**Get the last digit:**\n```xiom\nlet last_digit = number % 10;  // 12345 % 10 = 5\n```\n\n### More Examples\n\n```xiom\nlet a = 17 % 5;   // 2 (17 = 3*5 + 2)\nlet b = 20 % 4;   // 0 (20 divides evenly by 4)\nlet c = 7 % 9;    // 7 (9 doesn't fit, so 7 is left)\nlet d = 0 % 5;    // 0 (zero divided by anything is zero)\n```",
+  "syntax_ref": "a % b  →  remainder when a is divided by b",
+  "code_template": "fn main() -> Int {\n  let number = 42;\n  // TODO: Check if number is even using %\n  // TODO: Get the last digit of number using %\n  // TODO: Return the last digit\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let number = 42;\n  let is_even = number % 2 == 0;\n  let last_digit = number % 10;\n  return last_digit;\n}",
+  "tips": ["`x % 2 == 0` is the standard way to check if x is even", "`x % 10` always gives you the last digit of x", "`x % n` always produces a result between `0` and `n-1`", "If `x % y == 0`, then y divides x evenly"],
+  "common_mistakes": ["Confusing `/` and `%`: `/` gives quotient, `%` gives remainder", "Forgetting that `%` only works with integer types", "Using `%` when you mean `/` (or vice versa)"],
+  "related": ["L0-16", "L0-05", "L1-02"],
+  "next_lesson": "L0-18"
+}
