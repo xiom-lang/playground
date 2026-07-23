@@ -5,86 +5,170 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XIOM Playground v0.49.9</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#11161D; color:#ECE8DE; font-family:'Fira Code','Cascadia Code','JetBrains Mono',monospace; padding:24px; max-width:960px; margin:0 auto; }
-  h1 { color:#FF8A3D; font-size:24px; margin-bottom:4px; }
-  .ver { color:#6B7280; font-size:14px; margin-bottom:20px; }
-  #status { font-size:12px; padding:2px 10px; border-radius:12px; display:inline-block; margin-bottom:16px; }
-  .ready { background:#065F46; color:#6EE7B7; }
-  .loading { background:#78350F; color:#FBBF24; }
-  textarea { width:100%; height:280px; padding:16px; font-size:14px; font-family:inherit; color:#ECE8DE; background:#1A1F2B; border:1px solid #2D3548; border-radius:8px; resize:vertical; outline:none; tab-size:2; }
-  button { padding:10px 28px; font-size:14px; font-weight:600; color:#11161D; background:#FF8A3D; border:none; border-radius:6px; cursor:pointer; margin:16px 0; }
-  button:disabled { opacity:0.5; cursor:not-allowed; }
-  pre { padding:16px; font-size:13px; line-height:1.6; white-space:pre-wrap; word-break:break-word; border-radius:8px; max-height:400px; overflow:auto; }
-  .out { background:#1A1F2B; border:1px solid #2D3548; }
-  .err { background:#2D1B1B; border:1px solid #7F1D1D; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; background: #1a1a2e; color: #e0e0e0; height: 100vh; display: flex; flex-direction: column; }
+.header { background: #16213e; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #0f3460; }
+.header h1 { font-size: 18px; color: #e94560; }
+.header span { font-size: 12px; color: #888; }
+.toolbar { background: #16213e; padding: 8px 20px; display: flex; gap: 10px; border-bottom: 1px solid #0f3460; }
+.toolbar button { background: #0f3460; color: #e0e0e0; border: 1px solid #1a1a5e; padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 13px; border-radius: 4px; }
+.toolbar button:hover { background: #1a1a6e; }
+.toolbar button.compile { background: #e94560; border-color: #e94560; font-weight: bold; }
+.toolbar button.compile:hover { background: #ff6b81; }
+.main { display: flex; flex: 1; overflow: hidden; }
+.editor-panel { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #0f3460; }
+.editor-panel label { padding: 6px 12px; background: #16213e; font-size: 11px; color: #888; text-transform: uppercase; }
+.editor-panel textarea { flex: 1; background: #0f0f23; color: #c0c0e0; border: none; padding: 16px; font-family: inherit; font-size: 14px; line-height: 1.6; resize: none; outline: none; tab-size: 2; }
+.output-panel { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+.output-panel label { padding: 6px 12px; background: #16213e; font-size: 11px; color: #888; text-transform: uppercase; }
+.output-panel pre { flex: 1; background: #0f0f23; padding: 16px; margin: 0; font-family: inherit; font-size: 13px; line-height: 1.5; overflow: auto; white-space: pre-wrap; }
+.output-panel .error { color: #e94560; }
+.output-panel .success { color: #4ecca3; }
+.output-panel .ir { color: #c0c0e0; }
+.status { padding: 6px 20px; background: #16213e; border-top: 1px solid #0f3460; font-size: 11px; }
+.status.ok { color: #4ecca3; }
+.status.err { color: #e94560; }
+.status.loading { color: #ffd700; }
 </style>
 </head>
 <body>
-<h1>XIOM Playground</h1>
-<div class="ver">v0.49.9</div>
-<div id="status" class="loading">Loading WASM...</div>
-<textarea id="editor" spellcheck="false">fn main() {
-    println("Hello from XIOM!");
+<div class="header">
+  <h1>XIOM Playground <span>v0.49.9</span></h1>
+  <span>Industrial systems programming language</span>
+</div>
+<div class="toolbar">
+  <button class="compile" onclick="compile()">Compile (Ctrl+Enter)</button>
+  <button onclick="clearOutput()">Clear</button>
+  <button onclick="loadExample('hello')">Hello World</button>
+  <button onclick="loadExample('fib')">Fibonacci</button>
+  <button onclick="loadExample('struct')">Structs</button>
+</div>
+<div class="main">
+  <div class="editor-panel">
+    <label>XIOM Source (.xi)</label>
+    <textarea id="editor" spellcheck="false">fn main() -> Int {
+  var msg = "Hello from XIOM!";
+  return 42;
 }</textarea>
-<button id="compileBtn" disabled>Compile</button>
-<pre id="output" style="display:none"></pre>
+  </div>
+  <div class="output-panel">
+    <label>Output</label>
+    <pre id="output">Click <b>Compile</b> or press Ctrl+Enter to compile.</pre>
+  </div>
+</div>
+<div class="status loading" id="status">Loading WASM compiler...</div>
 
 <script>
-let wasmModule = null;
+let wasmReady = false;
 
-async function init() {
+// Load WASM
+async function initWasm() {
   try {
-    const wasm = await WebAssembly.instantiateStreaming(fetch('xiom.wasm'));
-    wasmModule = wasm.instance;
-    const st = document.getElementById('status');
-    st.textContent = 'WASM Ready';
-    st.className = 'ready';
-    document.getElementById('compileBtn').disabled = false;
+    const wasm = await WebAssembly.instantiateStreaming(
+      fetch('xiom.wasm'),
+      { env: { memory: new WebAssembly.Memory({ initial: 256, maximum: 512 }) } }
+    );
+    wasmReady = true;
+    document.getElementById('status').textContent = 'Compiler ready. v0.49.9 — 930 tests';
+    document.getElementById('status').className = 'status ok';
   } catch(e) {
-    document.getElementById('status').textContent = 'WASM load failed: ' + e.message;
+    document.getElementById('status').textContent = 'WASM load failed. Run python server.py first.';
+    document.getElementById('status').className = 'status err';
   }
 }
 
+// Compile via server-side (Python bridge)
 async function compile() {
-  const code = document.getElementById('editor').value;
-  const out = document.getElementById('output');
-  if (!wasmModule) { out.textContent = 'WASM not loaded'; out.className='err'; out.style.display='block'; return; }
+  const source = document.getElementById('editor').value;
+  const output = document.getElementById('output');
+  const status = document.getElementById('status');
+  
+  output.textContent = 'Compiling...';
+  status.textContent = 'Building...';
+  status.className = 'status loading';
 
   try {
-    const { compile, malloc, memory, free } = wasmModule.exports;
-    const enc = new TextEncoder();
-    const bytes = enc.encode(code + '\0');
-    const ptr = malloc(bytes.length);
-    const view = new Uint8Array(memory.buffer, ptr, bytes.length);
-    view.set(bytes);
-
-    const rptr = compile(ptr, bytes.length - 1);
-    const rview = new Uint8Array(memory.buffer, rptr);
-    let end = 0;
-    while (end < rview.length && rview[end] !== 0) end++;
-    const result = new TextDecoder().decode(rview.slice(0, end));
-
-    free(ptr);
-    free(rptr);
-
-    if (result.startsWith('ERROR:')) {
-      out.textContent = result.substring(6);
-      out.className = 'err';
+    const resp = await fetch('/api/compile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: source })
+    });
+    const result = await resp.json();
+    
+    if (result.success) {
+      output.innerHTML = '<span class="success">Compilation successful!</span>\n\n';
+      if (result.ir) {
+        output.innerHTML += '<span class="ir">' + escapeHtml(result.ir.substring(0, 5000)) + '</span>';
+      }
+      status.textContent = 'Compiled successfully.';
+      status.className = 'status ok';
     } else {
-      out.textContent = result;
-      out.className = 'out';
+      let html = '<span class="error">Compilation failed:</span>\n\n';
+      for (const d of (result.diagnostics || [])) {
+        html += `<span class="error">[${d.code}] line ${d.line}: ${escapeHtml(d.message)}</span>\n`;
+      }
+      output.innerHTML = html;
+      status.textContent = 'Compilation failed.';
+      status.className = 'status err';
     }
-    out.style.display = 'block';
   } catch(e) {
-    out.textContent = 'Compilation error: ' + e.message;
-    out.className = 'err';
-    out.style.display = 'block';
+    output.innerHTML = '<span class="error">Error: ' + escapeHtml(e.message) + '</span>';
+    status.textContent = 'Error contacting compile server.';
+    status.className = 'status err';
   }
 }
 
-document.getElementById('compileBtn').addEventListener('click', compile);
-init();
+function clearOutput() {
+  document.getElementById('output').textContent = '';
+  document.getElementById('status').textContent = 'Ready.';
+  document.getElementById('status').className = 'status ok';
+}
+
+function loadExample(name) {
+  const examples = {
+    hello: `fn main() -> Int {
+  var msg = "Hello from XIOM!";
+  return 42;
+}`,
+    fib: `fn fib(n: Int) -> Int {
+  if n <= 1 { return n; }
+  return fib(n - 1) + fib(n - 2);
+}
+
+fn main() -> Int {
+  return fib(10);
+}`,
+    struct: `type Point = {
+  x: Float64;
+  y: Float64;
+} derive[Eq, Clone]
+
+pub fn Point.distance(other: Point) -> Float64 {
+  var dx = x - other.x;
+  var dy = y - other.y;
+  return math.sqrt(dx * dx + dy * dy);
+}
+
+fn main() -> Int {
+  var p1 = Point { x: 0.0; y: 0.0; };
+  var p2 = Point { x: 3.0; y: 4.0; };
+  return 0;
+}`
+  };
+  document.getElementById('editor').value = examples[name] || examples.hello;
+  clearOutput();
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Ctrl+Enter to compile
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') compile();
+});
+
+initWasm();
 </script>
 </body>
 </html>
