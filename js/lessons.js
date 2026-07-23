@@ -1,20 +1,25 @@
-var currentLessonId = null;
-var currentLessonFile = null;
-
 function loadLessonCatalog() {
-  fetch('lessons/index.json')
-    .then(function (resp) { return resp.json(); })
+  fetch('/api/lessons')
+    .then(function (resp) {
+      if (!resp.ok) throw new Error('Catalog not found');
+      return resp.json();
+    })
     .then(function (catalog) {
+      lessonCatalogCache = catalog;
       renderLessonList(catalog);
-      var progress = getProgress();
-      if (progress.length === 0 && catalog.levels.length > 0 && catalog.levels[0].lessons.length > 0) {
-        var first = catalog.levels[0].lessons[0];
-        selectLesson(first.id, first.file);
-      }
+      updateProgressSummary();
     })
     .catch(function (err) {
-      console.error('Failed to load lesson catalog:', err);
-      document.getElementById('lessonList').innerHTML = '<div class="lesson-error">Failed to load lessons.</div>';
+      fetch('lessons/index.json')
+        .then(function (resp) { return resp.json(); })
+        .then(function (catalog) {
+          lessonCatalogCache = catalog;
+          renderLessonList(catalog);
+          updateProgressSummary();
+        })
+        .catch(function () {
+          document.getElementById('lessonList').innerHTML = '<div class="lesson-error">Failed to load lessons. Is the server running?</div>';
+        });
     });
 }
 
@@ -50,7 +55,7 @@ function renderLessonList(catalog) {
 
       var done = progress.indexOf(lesson.id) !== -1;
       var checkHtml = done
-        ? '<span class="lesson-check completed">\u2713</span>'
+        ? '<span class="lesson-check completed">&#x2713;</span>'
         : '<span class="lesson-check"></span>';
 
       item.innerHTML =
@@ -75,8 +80,7 @@ function selectLesson(lessonId, lessonFile) {
   currentLessonId = lessonId;
   currentLessonFile = lessonFile;
 
-  var items = document.querySelectorAll('.lesson-item');
-  items.forEach(function (item) {
+  document.querySelectorAll('.lesson-item').forEach(function (item) {
     item.classList.toggle('active', item.dataset.lessonId === lessonId);
   });
 
@@ -95,14 +99,15 @@ function loadLessonContent(lessonFile) {
       return resp.json();
     })
     .then(function (lesson) {
+      currentLessonData = lesson;
       renderNarrative(lesson);
+      document.getElementById('lessonTitle').textContent = lesson.title;
       if (window.editor && lesson.code_template) {
         window.editor.setValue(lesson.code_template);
       }
+      updateProgressSummary();
     })
     .catch(function (err) {
-      console.error('Failed to load lesson:', err);
-      var panel = document.getElementById('narrativeContent');
       if (panel) {
         panel.innerHTML = '<div class="narrative-error">Failed to load lesson: ' + err.message + '</div>';
       }
@@ -131,20 +136,42 @@ function renderNarrative(lesson) {
     html += '</div>';
   }
 
-  html += '<div class="narrative-body">' + parseMarkdown(lesson.narrative) + '</div>';
+  if (lesson.concept) {
+    html += '<div class="narrative-body"><p><em>' + lesson.concept + '</em></p></div>';
+  }
+
+  if (lesson.theory) {
+    html += '<div class="narrative-body">' + parseMarkdown(lesson.theory) + '</div>';
+  }
+
+  if (lesson.syntax_ref) {
+    html += '<div class="narrative-tips">';
+    html += '<h3>&#x1F4DD; Syntax</h3>';
+    html += '<pre><code>' + escapeHtml(lesson.syntax_ref) + '</code></pre>';
+    html += '</div>';
+  }
 
   if (lesson.tips && lesson.tips.length) {
     html += '<div class="narrative-tips">';
-    html += '<h3>Tips</h3><ul>';
+    html += '<h3>&#x1F4A1; Tips</h3><ul>';
     lesson.tips.forEach(function (tip) {
       html += '<li>' + tip + '</li>';
     });
     html += '</ul></div>';
   }
 
+  if (lesson.common_mistakes && lesson.common_mistakes.length) {
+    html += '<div class="narrative-tips" style="background:rgba(233,69,96,0.06);border-color:rgba(233,69,96,0.15);">';
+    html += '<h3 style="color:var(--error)">&#x26A0; Common Mistakes</h3><ul>';
+    lesson.common_mistakes.forEach(function (m) {
+      html += '<li>' + m + '</li>';
+    });
+    html += '</ul></div>';
+  }
+
   html += '<div class="narrative-actions">';
   if (isCompleted) {
-    html += '<button class="btn-complete done" disabled>\u2713 Completed</button>';
+    html += '<button class="btn-complete done" disabled>&#x2713; Completed</button>';
   } else {
     html += '<button class="btn-complete" onclick="window.markComplete()">Mark Complete</button>';
   }
@@ -164,9 +191,12 @@ function parseMarkdown(md) {
       return '<pre><code>' + escapeHtml(code.trim()) + '</code></pre>';
     }
     return '<p>' + block
+      .replace(/#### (.+)/g, '<h5>$1</h5>')
       .replace(/### (.+)/g, '<h4>$1</h4>')
       .replace(/## (.+)/g, '<h3>$1</h3>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/^- (.+)/gm, '<li>$1</li>')
       .replace(/\n\n/g, '</p><p>')
       .replace(/\n/g, '<br>') + '</p>';
@@ -174,7 +204,7 @@ function parseMarkdown(md) {
 }
 
 function escapeHtml(str) {
-  return str
+  return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
@@ -199,10 +229,21 @@ function getProgress() {
 function markComplete() {
   if (!currentLessonId) return;
   saveProgress(currentLessonId);
-  loadLessonCatalog();
+  if (lessonCatalogCache) {
+    renderLessonList(lessonCatalogCache);
+  }
   if (currentLessonFile) {
     loadLessonContent(currentLessonFile);
   }
+  updateProgressSummary();
+  showCompletionBar();
+}
+
+function updateProgressSummary() {
+  var progress = getProgress();
+  var el = document.getElementById('progressSummary');
+  if (!el) return;
+  el.textContent = progress.length + '/378';
 }
 
 window.loadLessonCatalog = loadLessonCatalog;
@@ -212,3 +253,4 @@ window.loadLessonContent = loadLessonContent;
 window.saveProgress = saveProgress;
 window.getProgress = getProgress;
 window.markComplete = markComplete;
+window.escapeHtml = escapeHtml;

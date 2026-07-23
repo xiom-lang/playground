@@ -1,231 +1,24 @@
-.header {
+/* ========== LESSONS SCREEN LAYOUT ========== */
+.lessons-screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.lessons-screen .header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-btn {
-  padding: 6px 14px;
 }
 
 .main-layout {
   display: flex;
-  height: calc(100vh - 50px - 28px);
-}
-
-.sidebar {
-  width: 280px;
-  overflow-y: auto;
-  transition: transform var(--transition);
-}
-
-.sidebar.hidden {
-  transform: translateX(-280px);
-  width: 0;
-}
-
-.sidebar-header {
-  padding: 16px 20px;
-}
-
-.lesson-list {
-  padding: 8px;
-}
-
-.lesson-level-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 12px 6px 12px;
-}
-
-.lesson-level-header:first-child {
-  padding-top: 6px;
-}
-
-.level-icon {
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.level-name {
-  flex: 1;
-  font-weight: 600;
-  font-size: 12px;
-}
-
-.level-progress {
-  font-size: 11px;
-  flex-shrink: 0;
-}
-
-.lesson-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-}
-
-.lesson-check {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-}
-
-.lesson-title {
   flex: 1;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.lesson-duration {
-  font-size: 11px;
-  flex-shrink: 0;
-}
-
-.narrative-panel {
-  overflow-y: auto;
-  max-height: 40%;
-  min-height: 0;
-  flex-shrink: 0;
-}
-
-.narrative-panel.hidden {
-  display: none;
-}
-
-.narrative-content {
-  padding: 20px 24px;
-}
-
-.narrative-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.narrative-title {
-  flex: 1;
-  margin: 0;
-}
-
-.narrative-duration {
-  flex-shrink: 0;
-}
-
-.narrative-concepts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.concept-tag {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-}
-
-.narrative-body {
-  line-height: 1.7;
-}
-
-.narrative-body h3 {
-  margin: 20px 0 8px 0;
-}
-
-.narrative-body h4 {
-  margin: 16px 0 6px 0;
-}
-
-.narrative-body p {
-  margin: 8px 0;
-}
-
-.narrative-body pre {
-  padding: 12px 16px;
-  border-radius: var(--radius);
-  margin: 12px 0;
-  overflow-x: auto;
-}
-
-.narrative-body code {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  padding: 1px 4px;
-  border-radius: 3px;
-}
-
-.narrative-body pre code {
-  padding: 0;
-  background: none;
-}
-
-.narrative-body li {
-  margin: 4px 0 4px 20px;
-}
-
-.narrative-tips {
-  margin-top: 16px;
-  padding: 12px 16px;
-  border-radius: var(--radius);
-}
-
-.narrative-tips h3 {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-}
-
-.narrative-tips ul {
-  margin: 0;
-}
-
-.narrative-actions {
-  margin-top: 20px;
-  padding-top: 16px;
-}
-
-.btn-complete {
-  padding: 8px 20px;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  transition: all var(--transition);
-}
-
-.btn-complete.done {
-  cursor: default;
-}
-
-.narrative-loading,
-.narrative-error {
-  padding: 40px 24px;
-  text-align: center;
-}
-
-.lesson-error {
-  padding: 20px 12px;
-  text-align: center;
-}
-
-.content {
+.editor-section {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -237,28 +30,31 @@
   min-height: 0;
 }
 
-.output-panel {
+.lessons-screen .output-panel {
   height: 35%;
   min-height: 150px;
+}
+
+/* ========== PLAYGROUND SCREEN LAYOUT ========== */
+.playground-screen {
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.output-tabs {
+.playground-layout {
+  flex: 1;
   display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.output-tabs .tab {
+.playground-layout .editor-container {
   flex: 1;
-  padding: 8px 12px;
+  min-height: 0;
 }
 
-.output-content {
-  flex: 1;
-  overflow: auto;
-  padding: 16px;
-}
-
-.status-bar {
-  padding: 6px 20px;
+.playground-layout .output-panel {
+  height: 35%;
+  min-height: 150px;
 }

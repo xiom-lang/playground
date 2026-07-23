@@ -3,37 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XIOM Playground v0.49.9</title>
-<link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/editor/editor.main.css">
+<title>XIOM Playground — Learn Systems Programming</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/editor/editor.main.css">
 <link rel="stylesheet" href="css/theme.css">
 <link rel="stylesheet" href="css/layout.css">
 </head>
 <body>
-<div id="app">
-  <header class="header">
-    <div class="header-left">
-      <span class="logo">XIOM</span>
-      <span class="version">v0.49.9</span>
+
+<!-- LANDING SCREEN -->
+<div id="landing" class="landing-screen">
+  <div class="landing-hero">
+    <div class="hero-logo">XIOM</div>
+    <h1 class="hero-title">The Systems Language That <span class="gradient-text">Verifies Itself</span></h1>
+    <p class="hero-subtitle">Learn a language where contracts are compiler-enforced. Zero crashes. Zero nulls. Zero surprises.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="startLearning()">Start Learning — Free</button>
+      <button class="btn-secondary" onclick="openPlayground()">Open Playground</button>
     </div>
-    <nav class="header-nav">
-      <button id="btnLessons" class="nav-btn">Lessons</button>
-      <button id="btnRun" class="nav-btn run-btn" onclick="compile()">Run ▸</button>
-    </nav>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
+      <h3>Safe by Design</h3>
+      <p>No null, no GC, ownership with compile-time borrow checking. Use-after-free is impossible.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#x2713;</div>
+      <h3>Verified Contracts</h3>
+      <p>Write <code>requires</code> and <code>ensures</code>. The compiler enforces them. Z3 proves them.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#x26A1;</div>
+      <h3>Native Performance</h3>
+      <p>Compiles to native code via LLVM. Hot reload. Parallel compilation. Industrial-grade.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F4DA;</div>
+      <h3>370+ Lessons</h3>
+      <p>From zero coding experience to compiler internals. Progressive, interactive, free forever.</p>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><strong>930</strong> tests</div>
+    <div class="stat"><strong>378</strong> lessons</div>
+    <div class="stat"><strong>16</strong> crates</div>
+    <div class="stat"><strong>40</strong> stdlib modules</div>
+    <div class="stat">v0.49.9</div>
+  </div>
+</div>
+
+<!-- LESSONS SCREEN (hidden initially) -->
+<div id="lessonsScreen" class="lessons-screen hidden">
+  <header class="header">
+    <button class="back-btn" onclick="showLanding()">&#x2190; XIOM</button>
+    <span id="lessonTitle" class="lesson-header-title">Lessons</span>
+    <div class="header-actions">
+      <button id="btnSyntax" class="nav-btn" onclick="toggleSyntax()">Syntax Ref</button>
+      <button id="btnPlayground" class="nav-btn" onclick="openPlayground()">Playground</button>
+      <button id="btnRun" class="nav-btn run-btn" onclick="compile()">Run &#x25B8;</button>
+    </div>
   </header>
 
   <div class="main-layout">
-    <aside id="sidebar" class="sidebar hidden">
-      <div class="sidebar-header">Lessons</div>
+    <!-- LESSON SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <span>Lessons</span>
+        <span id="progressSummary" class="progress-summary">0/378</span>
+      </div>
       <div id="lessonList" class="lesson-list"></div>
     </aside>
 
-    <div class="content">
-      <div id="narrativePanel" class="narrative-panel hidden">
-        <div id="narrativeContent" class="narrative-content"></div>
+    <!-- NARRATIVE PANEL (lesson content) -->
+    <div id="narrativePanel" class="narrative-panel">
+      <div id="narrativeContent" class="narrative-content">
+        <div class="welcome-message">
+          <h2>Welcome to XIOM</h2>
+          <p>Select a lesson from the sidebar to begin learning, or click <strong>Playground</strong> to experiment freely.</p>
+          <button class="btn-primary" id="btnFirstLesson" onclick="loadFirstLesson()">Start First Lesson</button>
+        </div>
       </div>
+    </div>
 
+    <!-- EDITOR + OUTPUT -->
+    <div class="editor-section">
       <div id="editorContainer" class="editor-container"></div>
-
+      <div class="ln-col-bar">
+        <span id="lineCol">Ln 1, Col 1</span>
+      </div>
       <div class="output-panel">
         <div class="output-tabs">
           <button class="tab active" data-tab="output">Output</button>
@@ -42,24 +101,74 @@
           <button class="tab" data-tab="tokens">Tokens</button>
           <button class="tab" data-tab="contracts">Contracts</button>
         </div>
-        <div id="outputContent" class="output-content">
-          <pre id="output">Press Run ▸ or Ctrl+Enter to compile.</pre>
+        <div class="output-content">
+          <pre id="output">Press Run &#x25B8; or Ctrl+Enter.</pre>
           <pre id="ir" class="hidden"></pre>
           <div id="diag" class="hidden"></div>
           <pre id="tokens" class="hidden"></pre>
           <pre id="contracts" class="hidden"></pre>
         </div>
       </div>
-
-      <div id="status" class="status-bar">Ready. v0.49.9 — 930 tests</div>
+      <div class="completion-bar hidden" id="completionBar">
+        <span>&#x2713; Lesson complete!</span>
+        <button id="btnNextLesson" class="btn-primary" onclick="nextLesson()">Next Lesson &#x2192;</button>
+      </div>
     </div>
   </div>
+
+  <!-- SYNTAX REFERENCE PANEL (slide-in from right) -->
+  <div id="syntaxPanel" class="syntax-panel hidden">
+    <div class="syntax-header">
+      <h3>Syntax Reference</h3>
+      <button onclick="toggleSyntax()">&#x2715;</button>
+    </div>
+    <div class="syntax-content">
+    </div>
+  </div>
+
+  <div id="status" class="status-bar">Ready. v0.49.9 — 930 tests</div>
+</div>
+
+<!-- PLAYGROUND MODE (full-width editor, no sidebar) -->
+<div id="playgroundScreen" class="playground-screen hidden">
+  <header class="header">
+    <button class="back-btn" onclick="showLanding()">&#x2190; XIOM</button>
+    <span>Playground</span>
+    <div class="header-actions">
+      <button id="btnFormat" class="nav-btn" onclick="formatCode()">Format</button>
+      <button id="btnRun2" class="nav-btn run-btn" onclick="compile()">Run &#x25B8;</button>
+    </div>
+  </header>
+  <div class="playground-layout">
+    <div id="pgEditorContainer" class="editor-container"></div>
+    <div class="ln-col-bar">
+      <span id="pgLineCol">Ln 1, Col 1</span>
+    </div>
+    <div class="output-panel">
+      <div class="output-tabs">
+        <button class="tab active" data-tab="output">Output</button>
+        <button class="tab" data-tab="ir">LLVM IR</button>
+        <button class="tab" data-tab="diag">Diagnostics</button>
+        <button class="tab" data-tab="tokens">Tokens</button>
+        <button class="tab" data-tab="contracts">Contracts</button>
+      </div>
+      <div class="output-content">
+        <pre id="pgOutput">Press Run &#x25B8; or Ctrl+Enter.</pre>
+        <pre id="pgIR" class="hidden"></pre>
+        <div id="pgDiag" class="hidden"></div>
+        <pre id="pgTokens" class="hidden"></pre>
+        <pre id="pgContracts" class="hidden"></pre>
+      </div>
+    </div>
+  </div>
+  <div id="pgStatus" class="status-bar">Playground — v0.49.9</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
-<script src="js/lessons.js"></script>
 <script src="js/app.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/compiler.js"></script>
+<script src="js/lessons.js"></script>
+<script src="js/syntax.js"></script>
 </body>
 </html>

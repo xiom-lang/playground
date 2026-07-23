@@ -1,5 +1,9 @@
-require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs' } });
-require(['vs/editor/editor.main'], function () {
+var xiomLanguageRegistered = false;
+
+function registerXiomLanguage() {
+  if (xiomLanguageRegistered) return;
+  xiomLanguageRegistered = true;
+
   monaco.languages.register({ id: 'xiom' });
   monaco.languages.setMonarchTokensProvider('xiom', {
     tokenizer: { root: [
@@ -10,6 +14,7 @@ require(['vs/editor/editor.main'], function () {
       [/\b\d+(\.\d+)?\b/, 'number'],
     ]}
   });
+
   monaco.editor.defineTheme('xiom-dark', {
     base: 'vs-dark',
     inherit: true,
@@ -28,9 +33,11 @@ require(['vs/editor/editor.main'], function () {
       'editorLineNumber.foreground': '#444466',
     }
   });
+}
 
-  window.editor = monaco.editor.create(document.getElementById('editorContainer'), {
-    value: 'fn main() -> Int {\n  return 42;\n}',
+function createEditor(containerId, initialValue) {
+  return monaco.editor.create(document.getElementById(containerId), {
+    value: initialValue || 'fn main() -> Int {\n  return 42;\n}',
     language: 'xiom',
     theme: 'xiom-dark',
     fontSize: 14,
@@ -46,11 +53,57 @@ require(['vs/editor/editor.main'], function () {
     cursorSmoothCaretAnimation: 'on',
     renderLineHighlight: 'line',
   });
+}
 
-  window.editor.addAction({
+function addCompileAction(editor) {
+  editor.addAction({
     id: 'compile',
     label: 'Compile',
     keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-    run: () => compile(),
+    run: function () { compile(); },
+  });
+}
+
+function addLineColTracker(editor) {
+  editor.onDidChangeCursorPosition(function () {
+    updateLineCount();
+  });
+}
+
+require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs' } });
+require(['vs/editor/editor.main'], function () {
+  registerXiomLanguage();
+
+  window.editor = createEditor('editorContainer', 'fn main() -> Int {\n  return 42;\n}');
+  addCompileAction(window.editor);
+  addLineColTracker(window.editor);
+
+  window.editor.onDidChangeCursorPosition(function () {
+    updateLineCount();
   });
 });
+
+window.initPlaygroundEditor = function () {
+  if (window.pgEditor) return;
+
+  if (!window.monaco) {
+    require(['vs/editor/editor.main'], function () {
+      registerXiomLanguage();
+      window.pgEditor = createEditor('pgEditorContainer', 'fn main() -> Int {\n  return 42;\n}');
+      addCompileAction(window.pgEditor);
+      window.pgEditor.onDidChangeCursorPosition(function () {
+        updateLineCount();
+      });
+      updateLineCount();
+    });
+    return;
+  }
+
+  registerXiomLanguage();
+  window.pgEditor = createEditor('pgEditorContainer', 'fn main() -> Int {\n  return 42;\n}');
+  addCompileAction(window.pgEditor);
+  window.pgEditor.onDidChangeCursorPosition(function () {
+    updateLineCount();
+  });
+  updateLineCount();
+};

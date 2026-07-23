@@ -56,29 +56,24 @@ function compileAllStages(source) {
   };
 
   try {
-    // Stage 1: Lex (tokens) — uses --emit-tokens
     const lexProc = runXiom(['--emit-tokens', tmp]);
     result.stages.lex = { success: lexProc.success, output: lexProc.stdout || 'Tokens not available' };
     if (lexProc.stdout) result.tokens = lexProc.stdout.split('\n').filter(l => l.trim());
 
-    // Stage 2: Parse (syntax check)
     const parseProc = runXiom(['--check', '--check-only', tmp]);
     result.stages.parse = { success: parseProc.success, output: parseProc.stdout || 'Parse OK' };
 
-    // Stage 3: Full compile (IR + diagnostics)
     const fullProc = runXiom(['--emit-ir', '--diagnostics-json', tmp]);
     result.success = fullProc.success;
     result.ir = fullProc.stdout || null;
     result.diagnostics = parseDiagnostics(fullProc.stderr);
 
-    // Stage 4: Contracts verification (if contracts present)
     if (source.includes('requires:') || source.includes('ensures:') || source.includes('invariant:')) {
       const verifyProc = runXiom(['--verify', tmp]);
       result.contracts = verifyProc.stdout || verifyProc.stderr || 'Contract verification not available';
       result.stages.verify = { success: verifyProc.success, output: result.contracts };
     }
 
-    // Human-readable output
     if (result.success) {
       result.output = 'Compilation successful.\nLLVM IR generated. Check the IR tab for generated code.';
     } else {
@@ -93,31 +88,63 @@ function compileAllStages(source) {
   return result;
 }
 
-const server = http.createServer((req, res) => {
+function formatSource(source) {
+  const tmp = path.join(os.tmpdir(), `xiom_pg_${Date.now()}.xi`);
+  fs.writeFileSync(tmp, source);
+
+  try {
+    const proc = runXiom(['fmt', tmp]);
+    if (proc.success && proc.stdout) {
+      return { formatted: proc.stdout };
+    }
+    return { formatted: null, error: proc.stderr || 'Format failed' };
+  } finally {
+    try { fs.unlinkSync(tmp); } catch {}
+  }
+}
+
+function parseBody(req) {
+  return new Promise((resolve) => {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => resolve(body));
+  });
+}
+
+const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
 
-  // Compile API — multi-stage
   if (req.method === 'POST' && req.url === '/api/compile') {
-    let body = '';
-    req.on('data', c => body += c);
-    req.on('end', () => {
-      try {
-        const { source } = JSON.parse(body);
-        const result = compileAllStages(source);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(result, null, 2));
-      } catch(e) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, output: e.message, diagnostics: [{code:'S001',kind:'error',line:0,col:0,message:e.message}] }));
-      }
-    });
+    try {
+      const body = await parseBody(req);
+      const { source } = JSON.parse(body);
+      const result = compileAllStages(source);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(result, null, 2));
+    } catch(e) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, output: e.message, diagnostics: [{code:'S001',kind:'error',line:0,col:0,message:e.message}] }));
+    }
     return;
   }
 
-  // Lesson catalog API
+  if (req.method === 'POST' && req.url === '/api/format') {
+    try {
+      const body = await parseBody(req);
+      const { source } = JSON.parse(body);
+      const result = formatSource(source);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(result));
+    } catch(e) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ formatted: null, error: e.message }));
+    }
+    return;
+  }
+
   if (req.method === 'GET' && req.url === '/api/lessons') {
     try {
       const catalog = fs.readFileSync(path.join(SCRIPT_DIR, 'lessons', 'index.json'), 'utf-8');
@@ -129,7 +156,6 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Serve static
   let filepath = path.join(SCRIPT_DIR, req.url === '/' ? 'index.html' : req.url);
   serveFile(res, filepath);
 });
@@ -138,5 +164,6 @@ server.listen(PORT, HOST, () => {
   console.log(`XIOM Playground Server v0.49.9`);
   console.log(`URL: http://${HOST}:${PORT}`);
   console.log(`Compiler: ${XIOM_BIN} (${fs.existsSync(XIOM_BIN) ? 'found' : 'NOT FOUND'})`);
+  console.log(`Endpoints: /api/compile, /api/format, /api/lessons`);
   console.log(`Multi-stage: tokens, parse, IR, diagnostics, contracts`);
 });
