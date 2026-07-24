@@ -25,9 +25,9 @@ async function compile() {
     if (r.ir) {
       irEl.innerHTML = highlightIR(r.ir);
     } else if (r.stages && r.stages.lex && r.stages.lex.success === false) {
-      irEl.innerHTML = '<span style="color:#888">Lexer errors prevented code generation. Fix the errors first.</span>';
+      irEl.innerHTML = '<span style="color:#5c5f6b">Lexer errors prevented code generation. Fix the errors first.</span>';
     } else {
-      irEl.innerHTML = '<span style="color:#888">No IR generated. Code may have errors.</span>';
+      irEl.innerHTML = '<span style="color:#5c5f6b">No IR generated. Code may have errors.</span>';
     }
 
     var diagEl = document.getElementById(ids.diag);
@@ -37,25 +37,25 @@ async function compile() {
         return '<div class="diag-item ' + cls + '"><b>[' + escapeHtml(d.code) + ']</b> line ' + d.line + ':' + d.col + ' — ' + escapeHtml(d.message) + '</div>';
       }).join('');
     } else if (r.success) {
-      diagEl.innerHTML = '<span style="color:#4ecca3">No diagnostics — clean compilation. &#x2713;</span>';
+      diagEl.innerHTML = '<span style="color:#34d399">No diagnostics — clean compilation. &#x2713;</span>';
     } else {
-      diagEl.innerHTML = '<span style="color:#888">No diagnostics available.</span>';
+      diagEl.innerHTML = '<span style="color:#5c5f6b">No diagnostics available.</span>';
     }
 
     var tokensEl = document.getElementById(ids.tokens);
     if (r.tokens && r.tokens.length > 0) {
-      tokensEl.innerHTML = r.tokens.map(function (t) { return '<span style="color:#888">' + escapeHtml(t) + '</span>'; }).join('\n');
+      tokensEl.innerHTML = r.tokens.map(function (t) { return '<span style="color:#5c5f6b">' + escapeHtml(t) + '</span>'; }).join('\n');
     } else {
-      tokensEl.innerHTML = '<span style="color:#888">Token stream not available. Run with --emit-tokens on the server.</span>';
+      tokensEl.innerHTML = '<span style="color:#5c5f6b">Token stream not available. Run with --emit-tokens on the server.</span>';
     }
 
     var contractsEl = document.getElementById(ids.contracts);
     if (r.contracts) {
       contractsEl.textContent = r.contracts;
     } else if (source.indexOf('requires:') >= 0 || source.indexOf('ensures:') >= 0) {
-      contractsEl.innerHTML = '<span style="color:#ffd700">Contracts detected but verification not run. Check server support.</span>';
+      contractsEl.innerHTML = '<span style="color:#f0b445">Contracts detected but verification not run. Check server support.</span>';
     } else {
-      contractsEl.innerHTML = '<span style="color:#888">No contracts in this code. Add <code style="color:#e94560">requires:</code> or <code style="color:#e94560">ensures:</code> to see verification.</span>';
+      contractsEl.innerHTML = '<span style="color:#5c5f6b">No contracts in this code. Add <code style="color:#5c6bff">requires:</code> or <code style="color:#5c6bff">ensures:</code> to see verification.</span>';
     }
 
     if (window.editor && window.monaco && currentMode === 'lessons') {
@@ -102,9 +102,9 @@ function escapeHtml(s) {
 
 function highlightIR(ir) {
   return escapeHtml(ir)
-    .replace(/\b(define|declare|ret|br|call|load|store|alloca|getelementptr|icmp|fcmp|add|sub|mul|sdiv|srem|zext|sext|bitcast|inttoptr|ptrtoint|unreachable|switch|phi|select|fadd|fsub|fmul|fdiv)\b/g, '<span style="color:#ff79c6;font-weight:bold">$1</span>')
-    .replace(/\b(i64|i32|i8|i16|double|float|void|i1|%struct\\.\\w+)\b/g, '<span style="color:#50fa7b">$1</span>')
-    .replace(/\b(\d+)\b/g, '<span style="color:#bd93f9">$1</span>')
-    .replace(/(%\\w+)/g, '<span style="color:#8be9fd">$1</span>')
-    .replace(/(@\\w+)/g, '<span style="color:#f1fa8c">$1</span>');
+    .replace(/\b(define|declare|ret|br|call|load|store|alloca|getelementptr|icmp|fcmp|add|sub|mul|sdiv|srem|zext|sext|bitcast|inttoptr|ptrtoint|unreachable|switch|phi|select|fadd|fsub|fmul|fdiv)\b/g, '<span style="color:#ff8fb3;font-weight:bold">$1</span>')
+    .replace(/\b(i64|i32|i8|i16|double|float|void|i1|%struct\\.\\w+)\b/g, '<span style="color:#7fd6c0">$1</span>')
+    .replace(/\b(\d+)\b/g, '<span style="color:#e8c37a">$1</span>')
+    .replace(/(%\\w+)/g, '<span style="color:#8fb3ff">$1</span>')
+    .replace(/(@\\w+)/g, '<span style="color:#e8c37a">$1</span>');
 }

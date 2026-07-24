@@ -1,4 +1,9 @@
-/* ========== LESSONS SCREEN LAYOUT ========== */
+/* ================================================================
+   XIOM Playground Layout — v0.49.9
+   Flex-based responsive layout: sidebar | narrative | editor+output
+   ================================================================ */
+
+/* ---- Lessons Screen ---- */
 .lessons-screen {
   height: 100vh;
   display: flex;
@@ -10,6 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .main-layout {
@@ -18,11 +24,27 @@
   overflow: hidden;
 }
 
+/* ---- Sidebar (lesson list) ---- */
+/* width is set in theme.css at 280px */
+
+/* ---- Narrative Panel (lesson content) ---- */
+/* Sits between sidebar and editor in a vertical split */
+.lessons-screen .narrative-panel {
+  width: 370px;
+  min-width: 320px;
+  max-width: 420px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-soft);
+}
+
+/* ---- Editor Section (editor + output + status) ---- */
 .editor-section {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0;
 }
 
 .editor-container {
@@ -31,11 +53,12 @@
 }
 
 .lessons-screen .output-panel {
-  height: 35%;
-  min-height: 150px;
+  height: 34%;
+  min-height: 140px;
+  flex-shrink: 0;
 }
 
-/* ========== PLAYGROUND SCREEN LAYOUT ========== */
+/* ---- Playground Screen ---- */
 .playground-screen {
   height: 100vh;
   display: flex;
@@ -57,4 +80,43 @@
 .playground-layout .output-panel {
   height: 35%;
   min-height: 150px;
+  flex-shrink: 0;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .lessons-screen .narrative-panel {
+    width: 280px;
+    min-width: 240px;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 720px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100% !important;
+    max-height: 200px;
+    flex-shrink: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .lessons-screen .narrative-panel {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    max-height: 35%;
+    flex-shrink: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .editor-section {
+    flex: 1;
+    min-height: 300px;
+  }
 }

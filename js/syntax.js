@@ -227,6 +227,15 @@ function populateSyntaxPanel() {
   container.appendChild(grid);
 }
 
+function renderMetaphor(text) {
+  var escaped = String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+  return escaped;
+}
+
 function buildConceptCard(concept) {
   var card = document.createElement('div');
   card.className = 'concept-card';
@@ -252,7 +261,7 @@ function buildConceptCard(concept) {
 
   var metaphor = document.createElement('div');
   metaphor.className = 'concept-card-metaphor-short';
-  metaphor.textContent = concept.metaphor;
+  metaphor.innerHTML = renderMetaphor(concept.metaphor);
 
   textCol.appendChild(name);
   textCol.appendChild(metaphor);
@@ -265,7 +274,7 @@ function buildConceptCard(concept) {
 
   var fullMetaphor = document.createElement('p');
   fullMetaphor.className = 'concept-card-metaphor-full';
-  fullMetaphor.textContent = concept.metaphor;
+  fullMetaphor.innerHTML = renderMetaphor(concept.metaphor);
   body.appendChild(fullMetaphor);
 
   var codeBlock = document.createElement('pre');
@@ -285,7 +294,7 @@ function buildConceptCard(concept) {
 
   var tryBtn = document.createElement('button');
   tryBtn.className = 'concept-card-try';
-  tryBtn.textContent = 'Try It →';
+  tryBtn.textContent = 'Try It \u2192';
   tryBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     loadExample(concept);
@@ -296,6 +305,33 @@ function buildConceptCard(concept) {
   card.appendChild(body);
 
   return card;
+}
+
+function loadExample(concept) {
+  // If no editor is active (e.g. first-time use), switch to playground and init one.
+  if (!window.editor && !window.pgEditor && currentMode === 'landing') {
+    openPlayground();
+  }
+
+  var ed = getActiveEditor();
+  if (ed) {
+    ed.setValue(concept.example);
+    ed.focus();
+  } else {
+    // Fallback: try playground editor directly
+    if (!window.pgEditor) {
+      window.initPlaygroundEditor();
+    }
+    // Wait briefly for Monaco to initialise, then set value
+    setTimeout(function () {
+      var pgEd = window.pgEditor;
+      if (pgEd) {
+        pgEd.setValue(concept.example);
+        pgEd.focus();
+      }
+    }, 300);
+  }
+  toggleSyntax();
 }
 
 function toggleCard(conceptId) {
