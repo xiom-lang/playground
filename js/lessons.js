@@ -128,6 +128,13 @@ function renderNarrative(lesson) {
   html += '<span class="narrative-duration">' + lesson.duration + '</span>';
   html += '</div>';
 
+  if (lesson.story) {
+    html += '<div class="narrative-story">';
+    html += '<div class="narrative-story-label">📖 Story</div>';
+    html += '<p>' + escapeHtml(lesson.story) + '</p>';
+    html += '</div>';
+  }
+
   if (lesson.concepts && lesson.concepts.length) {
     html += '<div class="narrative-concepts">';
     lesson.concepts.forEach(function (c) {
@@ -138,6 +145,20 @@ function renderNarrative(lesson) {
 
   if (lesson.concept) {
     html += '<div class="narrative-body"><p><em>' + lesson.concept + '</em></p></div>';
+  }
+
+  if (lesson.analogy) {
+    html += '<div class="narrative-analogy">';
+    html += '<div class="narrative-analogy-label">💡 Key Idea</div>';
+    html += '<p>' + escapeHtml(lesson.analogy) + '</p>';
+    html += '</div>';
+  }
+
+  if (lesson.why) {
+    html += '<div class="narrative-why">';
+    html += '<div class="narrative-why-label">🎯 Why This Matters</div>';
+    html += '<p>' + escapeHtml(lesson.why) + '</p>';
+    html += '</div>';
   }
 
   if (lesson.theory) {
@@ -176,6 +197,13 @@ function renderNarrative(lesson) {
     html += '<button class="btn-complete" onclick="window.markComplete()">Mark Complete</button>';
   }
   html += '</div>';
+
+  if (lesson.try_it) {
+    html += '<div class="narrative-tryit">';
+    html += '<div class="narrative-tryit-label">🔬 Experiment</div>';
+    html += '<p>' + escapeHtml(lesson.try_it) + '</p>';
+    html += '</div>';
+  }
 
   panel.innerHTML = html;
 }

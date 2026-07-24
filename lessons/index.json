@@ -10,46 +10,53 @@
       "lessons": [
         {
           "id": "L0-01",
-          "title": "Hello, World!",
+          "title": "Your First Program",
           "file": "L0-first-steps/01-hello.json",
-          "duration": "5 min",
+          "duration": "6 min",
           "concepts": [
             "fn",
             "main",
-            "io.println"
+            "io.println",
+            "comment",
+            "string"
           ]
         },
         {
           "id": "L0-02",
-          "title": "Hello, XIOM!",
-          "file": "L0-first-steps/02-hello-xiom.json",
+          "title": "Printing Messages",
+          "file": "L0-first-steps/02-printing.json",
           "duration": "7 min",
           "concepts": [
             "io.println",
-            "Str",
-            "string literal"
+            "sequential execution",
+            "print numbers",
+            "string"
           ]
         },
         {
           "id": "L0-03",
-          "title": "What is a Variable?",
-          "file": "L0-first-steps/03-variables.json",
+          "title": "Math is Easy",
+          "file": "L0-first-steps/03-math.json",
           "duration": "8 min",
           "concepts": [
-            "let",
-            "type annotation",
-            "Int"
+            "Int",
+            "addition",
+            "subtraction",
+            "multiplication",
+            "division",
+            "parentheses"
           ]
         },
         {
           "id": "L0-04",
-          "title": "Mutable Variables",
-          "file": "L0-first-steps/04-mutable.json",
+          "title": "Named Boxes (Variables)",
+          "file": "L0-first-steps/04-variables.json",
           "duration": "8 min",
           "concepts": [
-            "var",
-            "reassignment",
-            "mutable"
+            "let",
+            "variable",
+            "type inference",
+            "assignment"
           ]
         },
         {

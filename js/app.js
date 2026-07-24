@@ -4,6 +4,7 @@ var currentLessonFile = null;
 var currentLessonData = null;
 var lessonCatalogCache = null;
 var syntaxVisible = false;
+var compilerRefVisible = false;
 
 function showLanding() {
   currentMode = 'landing';
@@ -31,12 +32,38 @@ function openPlayground() {
 }
 
 function toggleSyntax() {
+  if (compilerRefVisible) {
+    compilerRefVisible = false;
+    syntaxVisible = true;
+    var panel = document.getElementById('syntaxPanel');
+    panel.classList.remove('hidden');
+    hideCompilerRef();
+    return;
+  }
   syntaxVisible = !syntaxVisible;
   var panel = document.getElementById('syntaxPanel');
   panel.classList.toggle('hidden', !syntaxVisible);
   if (syntaxVisible) {
     populateSyntaxPanel();
   }
+}
+
+function toggleCompilerRef() {
+  var panel = document.getElementById('syntaxPanel');
+  if (syntaxVisible && !compilerRefVisible) {
+    compilerRefVisible = true;
+    showCompilerRef();
+    return;
+  }
+  if (compilerRefVisible) {
+    compilerRefVisible = false;
+    panel.classList.add('hidden');
+    return;
+  }
+  compilerRefVisible = true;
+  syntaxVisible = true;
+  panel.classList.remove('hidden');
+  showCompilerRef();
 }
 
 function formatCode() {
@@ -180,6 +207,11 @@ document.addEventListener('keydown', function (e) {
     toggleSyntax();
   }
   if (e.key === 'Escape') {
+    if (compilerRefVisible) {
+      compilerRefVisible = false;
+      document.getElementById('syntaxPanel').classList.add('hidden');
+      return;
+    }
     if (syntaxVisible) toggleSyntax();
   }
 });

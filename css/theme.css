@@ -638,6 +638,97 @@ body {
   font-size: 13px;
 }
 
+/* ---- Story & Analogy Callouts ---- */
+.narrative-story {
+  margin: 16px 0;
+  padding: 14px 18px;
+  background: rgba(240,180,69,0.08);
+  border: 1px solid rgba(240,180,69,0.2);
+  border-radius: var(--radius-sm);
+}
+.narrative-story-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--amber);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+.narrative-story p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mid);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.narrative-analogy {
+  margin: 16px 0;
+  padding: 14px 18px;
+  background: var(--indigo-soft);
+  border: 1px solid rgba(92,107,255,0.25);
+  border-radius: var(--radius-sm);
+}
+.narrative-analogy-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--indigo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+.narrative-analogy p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--hi);
+  line-height: 1.6;
+}
+
+.narrative-why {
+  margin: 16px 0;
+  padding: 14px 18px;
+  background: rgba(52,211,153,0.08);
+  border: 1px solid rgba(52,211,153,0.2);
+  border-radius: var(--radius-sm);
+}
+.narrative-why-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+.narrative-why p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--hi);
+  line-height: 1.6;
+}
+
+.narrative-tryit {
+  margin: 20px 0 12px;
+  padding: 14px 18px;
+  background: rgba(92,107,255,0.06);
+  border: 1px dashed rgba(92,107,255,0.3);
+  border-radius: var(--radius-sm);
+}
+.narrative-tryit-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--indigo);
+  margin-bottom: 6px;
+}
+.narrative-tryit p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+
 .narrative-actions {
   margin-top: 20px;
   padding-top: 16px;
@@ -1034,6 +1125,44 @@ body {
   .syntax-panel { width: 100vw; }
   .concept-grid { grid-template-columns: 1fr; }
   .concept-card.expanded { grid-column: 1; }
+}
+
+/* ================================================================
+   COMPILER REFERENCE
+   ================================================================ */
+.compiler-ref-section {
+  margin-bottom: 20px;
+}
+.compiler-ref-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--indigo);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.compiler-ref-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: var(--void);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+}
+.compiler-ref-entry code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--hi);
+  white-space: nowrap;
+}
+.compiler-ref-entry span {
+  font-size: 12px;
+  color: var(--mid);
+  text-align: right;
+  max-width: 55%;
 }
 
 /* ================================================================

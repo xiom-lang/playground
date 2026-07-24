@@ -1,17 +1,28 @@
 {
   "id": "L0-01",
-  "title": "Hello, World!",
+  "title": "Your First Program",
   "level": "L0",
-  "duration": "5 min",
-  "concepts": ["fn", "main", "io.println"],
-  "concept": "Write your first program that prints a message to the screen.",
-  "why": "Welcome! You're about to write your first computer program. A program is like a recipe — it's a set of instructions that tells the computer what to do, step by step.",
-  "theory": "## Welcome to Your First Program!\n\nYou're about to write your first computer program. Think of a program like a **recipe**:\n\n- A recipe lists ingredients and steps for making food.\n- A program lists instructions the computer should follow, one by one.\n\nIn XIOM, every program starts with a special function called `main`. This is the entry point — the first thing the computer runs.\n\nHere's your first program:\n\n```xiom\nfn main() {\n  io.println(\"Hello!\");\n}\n```\n\nLet's break it down:\n\n- **`fn`** — short for \"function\". It tells XIOM you're defining a function (a block of instructions).\n- **`main`** — the name of the function. XIOM always looks for `main` to start.\n- **`()`** — empty parentheses mean this function takes no inputs.\n- **`{ ... }`** — curly braces wrap the function's body — the actual instructions.\n- **`io.println(\"Hello!\");`** — this is an instruction that prints the text `Hello!` to the screen.\n- **`;`** — the semicolon ends every statement, like a period ends a sentence.\n\nTry it! Click **Run** (or press Ctrl+Enter) and you'll see `Hello!` appear in the output panel. You just wrote and ran a real program!",
-  "syntax_ref": "fn main() { io.println(\"Hello!\"); }",
-  "code_template": "fn main() {\n  io.println(\"Hello!\");\n}",
-  "solution": "fn main() {\n  io.println(\"Hello!\");\n}",
-  "tips": ["The main function is where every program starts", "Every statement ends with a semicolon `;`", "io.println(text) prints text to the output panel", "Text in quotes is called a \"string\" — a sequence of characters"],
-  "common_mistakes": ["Forgetting the semicolon after `io.println(\"Hello!\")`", "Missing the closing parenthesis", "Forgetting quotes around the text: use \"Hello!\" not Hello!"],
-  "related": ["L0-02"],
-  "next_lesson": "L0-02"
+  "duration": "6 min",
+  "story": "Imagine teaching your dog a new trick. You say 'sit,' and your dog sits. A program works the same way — you give the computer instructions, and it follows them exactly, one by one. Today you're going to teach the computer to say hello!",
+  "why": "Every app, game, and website you use starts with a program like this one — it's the first step in telling a computer what to do.",
+  "narrative": "## What Is a Program?\n\nA program is a set of instructions you give to a computer — just like a **recipe** tells a cook what steps to follow. The computer reads your instructions from top to bottom, doing each one in order.\n\nLet's write the simplest possible program: one that prints \"Hello, world!\" to the screen.\n\n```xiom\nfn main() {\n  io.println(\"Hello, world!\");\n}\n```\n\nLet's look at each piece:\n\n- **`fn main()`** — This is the starting point of your program. `fn` means \"function,\" which is just a block of instructions with a name. `main` is the special name the computer looks for first. The empty parentheses `()` mean this function takes no extra information.\n- **`{` and `}`** — These curly braces wrap the body of your function. Everything between them is what the computer will do.\n- **`io.println(\"...\");`** — This is an instruction that prints text to the screen. `io` is the module for input/output, and `println` means \"print a line.\" The text between the double quotes is called a **string**.\n- **`;`** — Every statement in XIOM ends with a semicolon, just like every sentence in English ends with a period.\n\n### Adding Comments\n\nSometimes you want to leave notes for yourself (or other people) inside your code. These are called **comments**, and the computer ignores them completely. In XIOM, anything after `//` on a line is a comment:\n\n```xiom\nfn main() {\n  // This is a comment — the computer skips it\n  io.println(\"Hello, world!\"); // This prints a greeting\n}\n```\n\nComments are like sticky notes on a recipe page. They help you remember why you wrote something.",
+  "analogy": "A program is like a recipe: you write down step-by-step instructions, and the computer follows them exactly, from top to bottom.",
+  "code_template": "fn main() {\n  // TODO: Write an instruction that prints \"Hello, world!\" to the screen\n}",
+  "solution": "fn main() {\n  // This is a comment — the computer ignores it\n  io.println(\"Hello, world!\");\n}",
+  "try_it": "Change the greeting to your own language. Try \"Hola, mundo!\" or \"Ciao, mondo!\" or even \"Hej, verden!\" — the computer doesn't care what language you speak!",
+  "concepts": ["fn", "main", "io.println", "comment", "string"],
+  "tips": [
+    "Every statement in XIOM ends with a semicolon `;` — just like a period at the end of a sentence.",
+    "Text inside double quotes is called a string: `\"like this\"`.",
+    "The computer runs your code from top to bottom, one line at a time.",
+    "Comments start with `//` — use them to leave notes for yourself!"
+  ],
+  "common_mistakes": [
+    "Forgetting the semicolon at the end of `io.println(...)` — without it, the computer gets confused about where the instruction ends.",
+    "Forgetting the closing double quote — every opening `\"` needs a closing `\"`.",
+    "Writing `fn main` without the parentheses `()` — the computer needs them to know this is the starting point.",
+    "Putting code outside the curly braces `{ }` — everything you want the computer to run must be inside `fn main()`."
+  ],
+  "next_lesson": "L0-02",
+  "related": ["L0-02"]
 }
