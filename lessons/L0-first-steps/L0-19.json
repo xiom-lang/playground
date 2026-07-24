@@ -3,23 +3,33 @@
   "title": "Shortcut Math (+= etc)",
   "level": "L0",
   "duration": "7 min",
-  "story": "Every week, you drop a few coins into your piggy bank. Writing `savings = savings + 5` over and over feels clunky. What if there was a shorter, cooler way to say \"add to this variable\"? There is \u2014 meet `+=`!",
-  "why": "Shortcut operators make code cleaner and are used in virtually every real program that updates values \u2014 from counters to animations to financial calculations.",
-  "narrative": "## The Shortcut Family\n\nWhen you want to update a variable, instead of writing `x = x + something`, you can use these shortcuts:\n\n`+=` means \"add to this\"\n`-=` means \"subtract from this\"\n`*=` means \"multiply this by\"\n`/=` means \"divide this by\"\n\n### Before and After\n\n```xiom\nfn main() {\n  var coins: Int = 50;\n  coins += 10;\n  io.println(coins);\n}\n```\n\n`coins += 10` does EXACTLY the same thing as `coins = coins + 10`. It's just shorter and reads more naturally: \"coins increase by 10.\"\n\n### Piggy Bank in Action\n\n```xiom\nfn main() {\n  var savings: Int = 0;\n\n  io.print(\"Starting savings: \");\n  io.println(savings);\n\n  savings += 5;\n  io.print(\"Added a nickel: \");\n  io.println(savings);\n\n  savings += 10;\n  io.print(\"Added a dime: \");\n  io.println(savings);\n\n  savings -= 3;\n  io.print(\"Bought gum: \");\n  io.println(savings);\n}\n```\n\nEach shortcut updates savings in place. From 0 to 5 to 15 to 12. Clean and easy to read!\n\n### All Four Shortcuts\n\n`+=` adds: `x += 5` is `x = x + 5`\n`-=` subtracts: `x -= 3` is `x = x - 3`\n`*=` multiplies: `x *= 2` is `x = x * 2`\n`/=` divides: `x /= 4` is `x = x / 4`\n\nYou MUST use `var` for these \u2014 shortcuts change the variable, so `let` won't work!",
-  "analogy": "Shortcut operators are like a remote control for your variable \u2014 one button press does the same thing as typing out the full command.",
-  "code_template": "fn main() {\n  var total: Int = 50;\n  // TODO: add 25 to total using +=\n  // TODO: subtract 10 from total using -=\n  // TODO: print the result\n}\n",
-  "solution": "fn main() {\n  var total: Int = 50;\n  total += 25;\n  total -= 10;\n  io.println(total);\n}\n",
+  "story": "Every week, you drop a few coins into your piggy bank. Writing `savings = savings + 5` over and over feels clunky. What if there was a shorter, cooler way to say \"add to this variable\"? There is � meet `+=`!",
+  "why": "Shortcut operators make code cleaner and are used in virtually every real program that updates values � from counters to animations to financial calculations.",
+  "narrative": "## The Shortcut Family\n\nWhen you want to update a variable, instead of writing `x = x + something`, you can use these shortcuts:\n\n`+=` means \"add to this\"\n`-=` means \"subtract from this\"\n`*=` means \"multiply this by\"\n`/=` means \"divide this by\"\n\n### Before and After\n\n```xiom\nfn main() {\n  var coins: Int = 50;\n  coins += 10;\n  io.println(coins);\n}\n```\n\n`coins += 10` does EXACTLY the same thing as `coins = coins + 10`. It's just shorter and reads more naturally: \"coins increase by 10.\"\n\n### Piggy Bank in Action\n\n```xiom\nfn main() {\n  var savings: Int = 0;\n\n  io.print(\"Starting savings: \");\n  io.println(savings);\n\n  savings += 5;\n  io.print(\"Added a nickel: \");\n  io.println(savings);\n\n  savings += 10;\n  io.print(\"Added a dime: \");\n  io.println(savings);\n\n  savings -= 3;\n  io.print(\"Bought gum: \");\n  io.println(savings);\n}\n```\n\nEach shortcut updates savings in place. From 0 to 5 to 15 to 12. Clean and easy to read!\n\n### All Four Shortcuts\n\n`+=` adds: `x += 5` is `x = x + 5`\n`-=` subtracts: `x -= 3` is `x = x - 3`\n`*=` multiplies: `x *= 2` is `x = x * 2`\n`/=` divides: `x /= 4` is `x = x / 4`\n\nYou MUST use `var` for these � shortcuts change the variable, so `let` won't work!",
+  "analogy": "Shortcut operators are like a remote control for your variable � one button press does the same thing as typing out the full command.",
+  "code_template": "use xiom.io;\n\nfn main() {\n  var total: Int = 50;\n  // TODO: add 25 to total using +=\n  // TODO: subtract 10 from total using -=\n  // TODO: print the result\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  var total: Int = 50;\n  total += 25;\n  total -= 10;\n  io.println(\"50\");\n}\n",
   "try_it": "Start with 50, add 25 using `+=`, then subtract 10 using `-=`. Print after each step. Then try `*=` to double a number and `/=` to halve it!",
-  "concepts": ["assignment-operators", "var", "shorthand", "+=", "-="],
+  "concepts": [
+    "assignment-operators",
+    "var",
+    "shorthand",
+    "+=",
+    "-="
+  ],
   "tips": [
-    "`x += 1` is a super common pattern \u2014 it's how you count things up one at a time!",
-    "Shortcut operators ONLY work with `var` \u2014 they change the value, which `let` doesn't allow",
-    "Think of `+=` as saying \"bump up by\" and `-=` as \"knock down by\" \u2014 it helps remember the order"
+    "`x += 1` is a super common pattern � it's how you count things up one at a time!",
+    "Shortcut operators ONLY work with `var` � they change the value, which `let` doesn't allow",
+    "Think of `+=` as saying \"bump up by\" and `-=` as \"knock down by\" � it helps remember the order"
   ],
   "common_mistakes": [
-    "Writing `=+` instead of `+=` \u2014 the plus/minus always comes BEFORE the equals sign: `+=` not `=+`",
-    "Using shortcut operators with `let` variables \u2014 you'll get an error because `let` values can't change"
+    "Writing `=+` instead of `+=` � the plus/minus always comes BEFORE the equals sign: `+=` not `=+`",
+    "Using shortcut operators with `let` variables � you'll get an error because `let` values can't change"
   ],
   "next_lesson": "L0-20",
-  "related": ["L0-12", "L0-14", "L0-18"]
+  "related": [
+    "L0-12",
+    "L0-14",
+    "L0-18"
+  ]
 }

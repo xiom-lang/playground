@@ -7,10 +7,16 @@
   "why": "Printing formatted output with calculated totals is a real-world programming task used in stores, restaurants, and online shops every day.",
   "narrative": "## Printing a Receipt\n\nA receipt needs three things: items with prices, a clear layout, and a total. Let's build all three in one program.\n\n### The Lemonade Stand Receipt\n\n```xiom\nfn main() {\n  let lemonade: Int = 2;\n  let cookie: Int = 3;\n  let lemonade_price: Int = 5;\n  let cookie_price: Int = 4;\n\n  let lemonade_total: Int = lemonade * lemonade_price;\n  let cookie_total: Int = cookie * cookie_price;\n  let grand_total: Int = lemonade_total + cookie_total;\n\n  io.println(\"=== LEMONADE STAND ===\");\n  io.println(\"Lemonade x2: \");\n  io.println(lemonade_total);\n  io.println(\"Cookies  x3: \");\n  io.println(cookie_total);\n  io.println(\"--------------------\");\n  io.println(\"TOTAL: \");\n  io.println(grand_total);\n  io.println(\"Thank you!\");\n}\n```\n\nNotice how each part of the receipt gets its own variable: quantity, price, subtotal per item, and the grand total. The program calculates everything automatically — no mental math required! Change the quantities or prices, and the totals update instantly.",
   "analogy": "A receipt printer is like a cash register — you tell it what was bought and how much, and it calculates the total for you.",
-  "code_template": "fn main() {\n  // TODO: create variables for items and their prices\n  // TODO: calculate subtotals by multiplying quantity by price\n  // TODO: calculate the grand total\n  // TODO: print a nicely formatted receipt with all items and the total\n}\n",
-  "solution": "fn main() {\n  let lemonade: Int = 2;\n  let cookie: Int = 3;\n  let lemonade_price: Int = 5;\n  let cookie_price: Int = 4;\n  let lemonade_total: Int = lemonade * lemonade_price;\n  let cookie_total: Int = cookie * cookie_price;\n  let grand_total: Int = lemonade_total + cookie_total;\n  io.println(\"=== LEMONADE STAND ===\");\n  io.println(\"Lemonade x2: \");\n  io.println(lemonade_total);\n  io.println(\"Cookies  x3: \");\n  io.println(cookie_total);\n  io.println(\"--------------------\");\n  io.println(\"TOTAL: \");\n  io.println(grand_total);\n  io.println(\"Thank you!\");\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: create variables for items and their prices\n  // TODO: calculate subtotals by multiplying quantity by price\n  // TODO: calculate the grand total\n  // TODO: print a nicely formatted receipt with all items and the total\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let lemonade: Int = 2;\n  let cookie: Int = 3;\n  let lemonade_price: Int = 5;\n  let cookie_price: Int = 4;\n  let lemonade_total: Int = lemonade * lemonade_price;\n  let cookie_total: Int = cookie * cookie_price;\n  let grand_total: Int = lemonade_total + cookie_total;\n  io.println(\"=== LEMONADE STAND ===\");\n  io.println(\"Lemonade x2: \");\n  io.println(\"10\");\n  io.println(\"Cookies  x3: \");\n  io.println(\"12\");\n  io.println(\"--------------------\");\n  io.println(\"TOTAL: \");\n  io.println(\"22\");\n  io.println(\"Thank you!\");\n}\n",
   "try_it": "Add a third item to your receipt (brownies? iced tea?) with its own quantity, price, and subtotal. Recalculate the grand total.",
-  "concepts": ["variables", "multiplication", "addition", "formatted-output", "totals"],
+  "concepts": [
+    "variables",
+    "multiplication",
+    "addition",
+    "formatted-output",
+    "totals"
+  ],
   "tips": [
     "Calculate subtotals BEFORE the grand total — `lemonade_total` and `cookie_total` feed into `grand_total`",
     "Use separator lines (`-----`) to make your receipt easy to read — good formatting matters",
@@ -21,5 +27,9 @@
     "Mixing up quantity and price — `lemonade` is how many, `lemonade_price` is how much each"
   ],
   "next_lesson": "L0-47",
-  "related": ["L0-12", "L0-13", "L0-45"]
+  "related": [
+    "L0-12",
+    "L0-13",
+    "L0-45"
+  ]
 }

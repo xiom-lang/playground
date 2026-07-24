@@ -7,10 +7,18 @@
   "why": "The bank simulator demonstrates contracts (requires/ensures/invariant) on real-world domain logic — financial transactions where correctness is non-negotiable.",
   "narrative": "## Bank Account Simulator\n\n### Account Type with Invariant\n\n```xiom\ntype BankAccount {\n  owner: Str;\n  balance: Int;\n  account_number: Int;\n}\n\ninvariant { self.balance >= 0; }\n\nfn create_account(owner: Str, number: Int) -> BankAccount {\n  BankAccount{ owner: owner, balance: 0, account_number: number }\n}\n```\n\n### Protected Transactions\n\n```xiom\nrequires { amount > 0; }\nensures { self.balance == old(self.balance) + amount; }\nfn deposit(account: &mut BankAccount, amount: Int) {\n  account.balance += amount;\n}\n\nrequires { amount > 0; }\nrequires { self.balance >= amount; }\nensures { self.balance == old(self.balance) - amount; }\nfn withdraw(account: &mut BankAccount, amount: Int) -> Bool {\n  account.balance -= amount;\n  true\n}\n\nrequires { amount > 0; }\nrequires { from.balance >= amount; }\nfn transfer(from: &mut BankAccount, to: &mut BankAccount, amount: Int) -> Bool {\n  from.balance -= amount;\n  to.balance += amount;\n  true\n}\n```\n\n### Interest Calculation\n\n```xiom\nfn calculate_interest(account: &BankAccount, rate: Int) -> Int {\n  account.balance * rate / 100\n}\n\nfn apply_interest(account: &mut BankAccount, rate: Int) {\n  let interest = calculate_interest(account, rate);\n  if interest > 0 {\n    deposit(account, interest);\n  };\n}\n```\n\n### Statement Generation\n\n```xiom\ntype Transaction {\n  tx_type: Str;\n  amount: Int;\n  new_balance: Int;\n}\n\ntype Statement {\n  account: Int;\n  transactions: Vec[Transaction];\n  opening_balance: Int;\n  closing_balance: Int;\n}\n\nfn generate_statement(account: &BankAccount, tx_history: &Vec[Transaction]) -> Statement {\n  Statement{\n    account: account.account_number,\n    transactions: tx_history.clone(),\n    opening_balance: account.balance,\n    closing_balance: account.balance\n  }\n}\n```\n\n### Example Session\n\n```\nAccount #1001: Alice\nBalance: $0\n\nDeposit $1000 → Balance: $1000\nWithdraw $200 → Balance: $800\nTransfer $300 to #1002 → Balance: $500\nInterest 5% → +$25 → Balance: $525\n\n--- Statement ---\nOpening: $1000\nClosing: $525\nTransactions: 4\n```",
   "analogy": "A bank vault with a meticulous teller who checks ID (requires), counts money twice (ensures), and never lets an account go negative (invariant). Every deposit, withdrawal, and transfer is logged in the ledger (transaction history). The contracts are the bank's security cameras — they never blink.",
-  "code_template": "type Account {\n  owner: Str;\n  balance: Int;\n}\n\nrequires { amount > 0; }\nfn deposit(acc: &mut Account, amount: Int) {\n  // TODO: add amount to balance\n}\n\nrequires { amount > 0; }\nrequires { acc.balance >= amount; }\nfn withdraw(acc: &mut Account, amount: Int) -> Bool {\n  // TODO: subtract amount from balance, return true\n}\n\nfn main() -> Int {\n  // TODO: create account, deposit 500, withdraw 200, print balance\n  return 0;\n}\n",
-  "solution": "type Account {\n  owner: Str;\n  balance: Int;\n}\n\nrequires { amount > 0; }\nfn deposit(acc: &mut Account, amount: Int) {\n  acc.balance = acc.balance + amount;\n}\n\nrequires { amount > 0; }\nrequires { acc.balance >= amount; }\nfn withdraw(acc: &mut Account, amount: Int) -> Bool {\n  acc.balance = acc.balance - amount;\n  true\n}\n\nfn main() -> Int {\n  let mut acc = Account{ owner: \"Alice\", balance: 0 };\n  deposit(&mut acc, 500);\n  withdraw(&mut acc, 200);\n  io.println(acc.balance);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype Account {\n  owner: Str;\n  balance: Int;\n}\n\nrequires { amount > 0; }\nfn deposit(acc: &mut Account, amount: Int) {\n  // TODO: add amount to balance\n}\n\nrequires { amount > 0; }\nrequires { acc.balance >= amount; }\nfn withdraw(acc: &mut Account, amount: Int) -> Bool {\n  // TODO: subtract amount from balance, return true\n}\n\nfn main() -> Int {\n  // TODO: create account, deposit 500, withdraw 200, print balance\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ntype Account {\n  owner: Str;\n  balance: Int;\n}\n\nrequires { amount > 0; }\nfn deposit(acc: &mut Account, amount: Int) {\n  acc.balance = acc.balance + amount;\n}\n\nrequires { amount > 0; }\nrequires { acc.balance >= amount; }\nfn withdraw(acc: &mut Account, amount: Int) -> Bool {\n  acc.balance = acc.balance - amount;\n  true\n}\n\nfn main() -> Int {\n  let mut acc = Account{ owner: \"Alice\", balance: 0 };\n  deposit(&mut acc, 500);\n  withdraw(&mut acc, 200);\n  io.println(acc.balance.to_str());\n  return 0;\n}\n",
   "try_it": "Add a fee system: $5 per withdrawal after the 3rd withdrawal per month. Implement a savings account variant with higher interest but withdrawal limits. Add joint accounts where two owners can both deposit/withdraw. Try withdraw(500) on an account with 200 — contract fires!",
-  "concepts": ["banking", "contracts", "requires", "ensures", "invariant", "transactions", "interest"],
+  "concepts": [
+    "banking",
+    "contracts",
+    "requires",
+    "ensures",
+    "invariant",
+    "transactions",
+    "interest"
+  ],
   "tips": [
     "Invariant `self.balance >= 0` guarantees no overdraft — ever",
     "Requires on withdraw/transfer ensure sufficient funds BEFORE the operation",
@@ -22,5 +30,10 @@
     "Transfer subtracting from one account but not adding to the other — missing the second update"
   ],
   "next_lesson": "L8-07",
-  "related": ["L7-33", "L4-02", "L4-20", "L6-24"]
+  "related": [
+    "L7-33",
+    "L4-02",
+    "L4-20",
+    "L6-24"
+  ]
 }

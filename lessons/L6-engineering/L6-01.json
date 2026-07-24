@@ -7,10 +7,17 @@
   "why": "Interfaces let you write code that works with any type that has certain methods — the foundation of polymorphism, the most powerful abstraction in programming.",
   "narrative": "## Saying 'Anything That Can Greet'\n\nAn **interface** defines a set of methods a type must have. Any type that has those methods automatically satisfies the interface — no special keyword needed.\n\n### Defining and Using an Interface\n\n```xiom\ninterface Greetable {\n  fn greet() -> Str;\n}\n\ntype Person = {\n  name: Str;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\nfn say_hello[T: Greetable](thing: &T) {\n  io.println(thing.greet());\n}\n\nfn main() -> Int {\n  let person = Person{ name: \"Alex\" };\n  say_hello(&person);\n  return 0;\n}\n```\n\n### How It Works\n\n1. `interface Greetable` says: 'anything that implements `greet() -> Str` satisfies me'\n2. `Person` has a `greet` method, so it AUTOMATICALLY satisfies Greetable — no `implements` keyword\n3. `fn say_hello[T: Greetable]` means: 'T can be any type that satisfies Greetable'\n4. Inside `say_hello`, you can call `thing.greet()` because the interface GUARANTEES T has that method\n\n### The Magic: Checked at Use Site\n\nXIOM checks interface satisfaction when you CALL the function, not when you define the type. If you write `say_hello(&42)`, XIOM says 'Int doesn't satisfy Greetable' — it catches the error at the call site.\n\n### Why This Beats Writing Three Functions\n\nWithout interfaces, you'd need:\n```xiom\nfn say_hello_to_person(p: &Person) { ... }\nfn say_hello_to_robot(r: &Robot) { ... }\nfn say_hello_to_pet(p: &Pet) { ... }\n```\n\nWith interfaces: one function, infinite types — as long as they can greet.",
   "analogy": "An interface is like a job description — 'must be able to greet.' Any candidate (type) that can do the job qualifies, regardless of whether they're a Person, Robot, or Alien. The hiring manager (generic function) only cares about the skill, not the species.",
-  "code_template": "// TODO: Define interface Greetable with fn greet() -> Str\n\n// TODO: Define type Person with name: Str\n\n// TODO: Write Person.greet(self) -> Str that returns \"Hi, I'm \" + self.name\n\n// TODO: Write introduce[T: Greetable](thing: &T)\n//   Call thing.greet() and print the result\n\nfn main() -> Int {\n  // TODO: Create a Person, call introduce with it\n  return 0;\n}\n",
-  "solution": "interface Greetable {\n  fn greet() -> Str;\n}\n\ntype Person = {\n  name: Str;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\nfn introduce[T: Greetable](thing: &T) {\n  io.println(thing.greet());\n}\n\nfn main() -> Int {\n  let p = Person{ name: \"Alex\" };\n  introduce(&p);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Define interface Greetable with fn greet() -> Str\n\n// TODO: Define type Person with name: Str\n\n// TODO: Write Person.greet(self) -> Str that returns \"Hi, I'm \" + self.name\n\n// TODO: Write introduce[T: Greetable](thing: &T)\n//   Call thing.greet() and print the result\n\nfn main() -> Int {\n  // TODO: Create a Person, call introduce with it\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ninterface Greetable {\n  fn greet() -> Str;\n}\n\ntype Person = {\n  name: Str;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\nfn introduce[T: Greetable](thing: &T) {\n  io.println(thing.greet());\n}\n\nfn main() -> Int {\n  let p = Person{ name: \"Alex\" };\n  introduce(&p);\n  return 0;\n}\n",
   "try_it": "Add a `Robot` type with a `model: Str` field. Make it implement `greet()` by returning \"Beep boop, model \" + self.model. Pass a Robot to `introduce` — it should work immediately without changing `introduce`. Then try passing an Int — what error do you get?",
-  "concepts": ["interface", "generic-constraint", "polymorphism", "duck-typing", "greetable", "use-site-checking"],
+  "concepts": [
+    "interface",
+    "generic-constraint",
+    "polymorphism",
+    "duck-typing",
+    "greetable",
+    "use-site-checking"
+  ],
   "tips": [
     "Any type that HAS the interface methods automatically satisfies the interface — no `implements` or `extends` keyword",
     "`[T: Greetable]` constrains T to types that satisfy Greetable — the compiler enforces this",
@@ -22,5 +29,9 @@
     "Writing `fn introduce(thing: &Greetable)` instead of using generics — interfaces are constraints on generics, not standalone types"
   ],
   "next_lesson": "L6-02",
-  "related": ["L5-31", "L5-32", "L5-47"]
+  "related": [
+    "L5-31",
+    "L5-32",
+    "L5-47"
+  ]
 }

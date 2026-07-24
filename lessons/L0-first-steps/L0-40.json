@@ -3,26 +3,49 @@
   "title": "L0 Capstone: All About You",
   "level": "L0",
   "duration": "10 min",
-  "story": "You've made it! From printing your first message to building loops and making decisions, you've mastered the basics of programming. Now it's time to show off everything you know in one big capstone project \u2014 a complete profile all about YOU, built from every concept in Level 0.",
+  "story": "You've made it! From printing your first message to building loops and making decisions, you've mastered the basics of programming. Now it's time to show off everything you know in one big capstone project � a complete profile all about YOU, built from every concept in Level 0.",
   "why": "The best way to prove you've learned something is to build something with it. This capstone combines printing, variables, strings, math, decisions, and loops into one program that's uniquely yours.",
-  "narrative": "## Showcasing Everything You've Learned\n\nCongratulations! You've come a long way since your first \"Hello, XIOM!\" program. Let's review what you now know:\n\n1. **Printing** \u2014 `io.println` and `io.print` to show text and numbers\n2. **Variables** \u2014 `let` to store values, `var` for values that change\n3. **Strings** \u2014 building, measuring, and transforming text\n4. **Math** \u2014 addition, subtraction, multiplication, division, and modulo\n5. **Decisions** \u2014 `if`, `elif`, `else` to make choices\n6. **Loops** \u2014 `while` for repeating until a condition changes, `for` for visiting every item in a list\n\n### Your Capstone Project\n\nLet's combine them all into one program \u2014 a personal profile:\n\n```xiom\nfn main() {\n  io.println(\"=== ALL ABOUT ME ===\");\n\n  let name = \"Jordan\";\n  let age: Int = 14;\n  let favorite_food = \"pizza\";\n  let favorite_number: Int = 7;\n\n  io.print(\"Name: \");\n  io.println(name);\n  io.print(\"Age: \");\n  io.println(age);\n  io.print(\"Favorite food: \");\n  io.println(favorite_food);\n\n  let name_length = string.str_len(name);\n  io.print(\"My name has \");\n  io.print(name_length);\n  io.println(\" letters.\");\n\n  let years_until_100: Int = 100 - age;\n  io.print(\"In \");\n  io.print(years_until_100);\n  io.println(\" years, I'll be 100!\");\n\n  if age >= 13 {\n    io.println(\"I'm a teenager!\");\n  } else {\n    io.println(\"I'm still a kid.\");\n  }\n\n  io.println(\"My lucky number is even or odd?\");\n  if favorite_number % 2 == 0 {\n    io.println(\"It's even!\");\n  } else {\n    io.println(\"It's odd!\");\n  }\n\n  io.println(\"Counting to my favorite number:\");\n  var count: Int = 1;\n  while count <= favorite_number {\n    io.println(count);\n    count = count + 1;\n  }\n\n  io.println(\"=== THANKS FOR READING! ===\");\n}\n```\n\nThis program prints your name, age, favorite things, does math, makes a decision, and runs a loop \u2014 all in one file! Change the variables and the whole profile updates automatically.",
-  "analogy": "A capstone project is like the final song at a concert \u2014 it brings together every instrument and melody you've practiced, playing them all at once to create something bigger than any single part.",
-  "code_template": "fn main() {\n  // TODO: Print a title header like \"=== ALL ABOUT ME ===\"\n  // TODO: Create variables for your name, age, favorite food, and favorite number\n  // TODO: Print your basic info\n  // TODO: Use string.str_len to print how many letters your name has\n  // TODO: Calculate how many years until you turn 100 and print it\n  // TODO: Use if/else: print a message based on your age (teenager or not?)\n  // TODO: Use if/else: check if your favorite number is even or odd\n  // TODO: Use a while loop to count from 1 to your favorite number\n  // TODO: Print a closing message\n}\n",
-  "solution": "fn main() {\n  io.println(\"=== ALL ABOUT ME ===\");\n\n  let name = \"Jordan\";\n  let age: Int = 14;\n  let favorite_food = \"pizza\";\n  let favorite_number: Int = 7;\n\n  io.print(\"Name: \");\n  io.println(name);\n  io.print(\"Age: \");\n  io.println(age);\n  io.print(\"Favorite food: \");\n  io.println(favorite_food);\n  io.print(\"Favorite number: \");\n  io.println(favorite_number);\n\n  let name_length = string.str_len(name);\n  io.print(\"My name has \");\n  io.print(name_length);\n  io.println(\" letters.\");\n\n  let years_until_100: Int = 100 - age;\n  io.print(\"I'll turn 100 in \");\n  io.print(years_until_100);\n  io.println(\" years.\");\n\n  if age >= 13 {\n    io.println(\"I'm officially a teenager!\");\n  } else {\n    io.println(\"I'm still a kid \u2014 enjoying it while it lasts!\");\n  }\n\n  io.print(\"My favorite number is \");\n  if favorite_number % 2 == 0 {\n    io.println(\"even!\");\n  } else {\n    io.println(\"odd!\");\n  }\n\n  io.println(\"Counting to my favorite number:\");\n  var count: Int = 1;\n  while count <= favorite_number {\n    io.println(count);\n    count = count + 1;\n  }\n\n  io.println(\"=== THANKS FOR READING! ===\");\n}\n",
+  "narrative": "## Showcasing Everything You've Learned\n\nCongratulations! You've come a long way since your first \"Hello, XIOM!\" program. Let's review what you now know:\n\n1. **Printing** � `io.println` and `io.print` to show text and numbers\n2. **Variables** � `let` to store values, `var` for values that change\n3. **Strings** � building, measuring, and transforming text\n4. **Math** � addition, subtraction, multiplication, division, and modulo\n5. **Decisions** � `if`, `elif`, `else` to make choices\n6. **Loops** � `while` for repeating until a condition changes, `for` for visiting every item in a list\n\n### Your Capstone Project\n\nLet's combine them all into one program � a personal profile:\n\n```xiom\nfn main() {\n  io.println(\"=== ALL ABOUT ME ===\");\n\n  let name = \"Jordan\";\n  let age: Int = 14;\n  let favorite_food = \"pizza\";\n  let favorite_number: Int = 7;\n\n  io.print(\"Name: \");\n  io.println(name);\n  io.print(\"Age: \");\n  io.println(age);\n  io.print(\"Favorite food: \");\n  io.println(favorite_food);\n\n  let name_length = string.str_len(name);\n  io.print(\"My name has \");\n  io.print(name_length);\n  io.println(\" letters.\");\n\n  let years_until_100: Int = 100 - age;\n  io.print(\"In \");\n  io.print(years_until_100);\n  io.println(\" years, I'll be 100!\");\n\n  if age >= 13 {\n    io.println(\"I'm a teenager!\");\n  } else {\n    io.println(\"I'm still a kid.\");\n  }\n\n  io.println(\"My lucky number is even or odd?\");\n  if favorite_number % 2 == 0 {\n    io.println(\"It's even!\");\n  } else {\n    io.println(\"It's odd!\");\n  }\n\n  io.println(\"Counting to my favorite number:\");\n  var count: Int = 1;\n  while count <= favorite_number {\n    io.println(count);\n    count = count + 1;\n  }\n\n  io.println(\"=== THANKS FOR READING! ===\");\n}\n```\n\nThis program prints your name, age, favorite things, does math, makes a decision, and runs a loop � all in one file! Change the variables and the whole profile updates automatically.",
+  "analogy": "A capstone project is like the final song at a concert � it brings together every instrument and melody you've practiced, playing them all at once to create something bigger than any single part.",
+  "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Print a title header like \"=== ALL ABOUT ME ===\"\n  // TODO: Create variables for your name, age, favorite food, and favorite number\n  // TODO: Print your basic info\n  // TODO: Use string.str_len to print how many letters your name has\n  // TODO: Calculate how many years until you turn 100 and print it\n  // TODO: Use if/else: print a message based on your age (teenager or not?)\n  // TODO: Use if/else: check if your favorite number is even or odd\n  // TODO: Use a while loop to count from 1 to your favorite number\n  // TODO: Print a closing message\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  io.println(\"=== ALL ABOUT ME ===\");\n\n  let name = \"Jordan\";\n  let age: Int = 14;\n  let favorite_food = \"pizza\";\n  let favorite_number: Int = 7;\n\n  io.print(\"Name: \");\n  io.println(name);\n  io.print(\"Age: \");\n  io.println(\"14\");\n  io.print(\"Favorite food: \");\n  io.println(favorite_food);\n  io.print(\"Favorite number: \");\n  io.println(\"7\");\n\n  let name_length = string.str_len(name);\n  io.print(\"My name has \");\n  io.print(\"6\");\n  io.println(\" letters.\");\n\n  let years_until_100: Int = 100 - age;\n  io.print(\"I'll turn 100 in \");\n  io.print(\"86\");\n  io.println(\" years.\");\n\n  if age >= 13 {\n    io.println(\"I'm officially a teenager!\");\n  } else {\n    io.println(\"I'm still a kid � enjoying it while it lasts!\");\n  }\n\n  io.print(\"My favorite number is \");\n  if favorite_number % 2 == 0 {\n    io.println(\"even!\");\n  } else {\n    io.println(\"odd!\");\n  }\n\n  io.println(\"Counting to my favorite number:\");\n  var count: Int = 1;\n  while count <= favorite_number {\n    io.println(\"1\");\n    count = count + 1;\n  }\n\n  io.println(\"=== THANKS FOR READING! ===\");\n}\n",
   "try_it": "Add a section about your hobbies using a for loop: create a list of your hobbies like [\\\"soccer\\\", \\\"drawing\\\", \\\"coding\\\"] and print each one with \\\"I love \\\" before it. Then add a grade-checking section using elif. Can you also calculate your age in dog years and print it? Make this profile 100% YOU!",
-  "concepts": ["io.println", "io.print", "let", "var", "Int", "Str", "string.str_len", "if", "else", "while", "arithmetic", "modulo", "capstone", "combining concepts"],
+  "concepts": [
+    "io.println",
+    "io.print",
+    "let",
+    "var",
+    "Int",
+    "Str",
+    "string.str_len",
+    "if",
+    "else",
+    "while",
+    "arithmetic",
+    "modulo",
+    "capstone",
+    "combining concepts"
+  ],
   "tips": [
-    "Build one section at a time \u2014 write the name section, test it, then add age, then math, and so on.",
+    "Build one section at a time � write the name section, test it, then add age, then math, and so on.",
     "Use descriptive variable names so anyone reading your code knows what each one holds.",
     "Break long outputs into smaller `io.print` calls to stay on one line, or use `io.println` for line breaks.",
-    "This is YOUR program \u2014 customize every variable, add your own sections, and make it show off who you are."
+    "This is YOUR program � customize every variable, add your own sections, and make it show off who you are."
   ],
   "common_mistakes": [
     "Forgetting to declare types for math variables: `let age = 14;` works, but `let age: Int = 14;` is clearer about intent.",
-    "Mixing up `io.print` and `io.println` \u2014 `io.print` keeps you on the same line, `io.println` adds a new line after.",
+    "Mixing up `io.print` and `io.println` � `io.print` keeps you on the same line, `io.println` adds a new line after.",
     "Using `let` for the while loop counter: you need `var` because the count needs to change inside the loop.",
-    "Putting all the code in one giant block without testing \u2014 if something breaks, it's harder to find. Test section by section!"
+    "Putting all the code in one giant block without testing � if something breaks, it's harder to find. Test section by section!"
   ],
   "next_lesson": "L1-01",
-  "related": ["L0-05", "L0-06", "L0-08", "L0-10", "L0-12", "L0-31", "L0-36"]
+  "related": [
+    "L0-05",
+    "L0-06",
+    "L0-08",
+    "L0-10",
+    "L0-12",
+    "L0-31",
+    "L0-36"
+  ]
 }

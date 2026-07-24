@@ -7,10 +7,17 @@
   "why": "Generic types wrapping Vec let you build reusable data structures — a counter that tracks items of any type, with add, count, clear, and list operations that work universally.",
   "narrative": "## Counting Anything\n\nA **Counter** tracks how many times you've seen each item. With generics, one `Counter[T]` works for strings, numbers, or any type.\n\n### Defining a Generic Counter\n\n```xiom\ntype Counter[T] = {\n  items: Vec[T];\n}\n\nfn Counter.new[T]() -> Counter[T] {\n  return Counter[T]{ items: Vec[T].new() };\n}\n\nfn Counter.add[T](self: &mut Counter[T], item: T) {\n  self.items.push(item);\n}\n\nfn Counter.count[T](self) -> Int {\n  return self.items.len();\n}\n\nfn Counter.clear[T](self: &mut Counter[T]) {\n  while self.items.len() > 0 {\n    self.items.pop();\n  }\n}\n```\n\n### Using the Counter\n\n```xiom\nfn main() -> Int {\n  var visits: Counter[Str] = Counter[Str].new();\n  visits.add(\"homepage\");\n  visits.add(\"about\");\n  visits.add(\"homepage\");\n  visits.add(\"contact\");\n\n  io.println(\"Total visits: \" + string.int_to_str(visits.count()));\n\n  visits.clear();\n  io.println(\"After clear: \" + string.int_to_str(visits.count()));\n  return 0;\n}\n```\n\n### Different Types, Same Counter\n\n```xiom\nfn main() -> Int {\n  var str_counter: Counter[Str] = Counter[Str].new();\n  str_counter.add(\"login\");\n  str_counter.add(\"logout\");\n  io.println(string.int_to_str(str_counter.count()));\n\n  var int_counter: Counter[Int] = Counter[Int].new();\n  int_counter.add(42);\n  int_counter.add(7);\n  io.println(string.int_to_str(int_counter.count()));\n\n  return 0;\n}\n```\n\n### Listing All Items\n\n```xiom\nfn Counter.list_all[T](self) -> Vec[T] {\n  let result: Vec[T] = Vec[T].new();\n  let i = 0;\n  while i < self.items.len() {\n    let item = match self.items.get(i) { Some(v) => v, None => continue };\n    result.push(item);\n    i = i + 1;\n  }\n  return result;\n}\n```\n\nNotice: we never care what T is. The Counter works whether T is Int, Str, Bool, or any custom type you create.",
   "analogy": "A Counter[T] is like a tally sheet — you can tally apples sold, customers served, or errors logged. The sheet works the same way regardless of what you're counting. One sheet design, infinite counting possibilities.",
-  "code_template": "type Counter[T] = {\n  items: Vec[T];\n}\n\nfn Counter.new[T]() -> Counter[T] {\n  // TODO: Return a new Counter with an empty Vec\n}\n\nfn Counter.add[T](self: &mut Counter[T], item: T) {\n  // TODO: Push item into self.items\n}\n\nfn Counter.count[T](self) -> Int {\n  // TODO: Return the length of self.items\n}\n\nfn main() -> Int {\n  // TODO: Create a Counter[Str], add 3 items, print the count\n  // TODO: Create a Counter[Int], add 2 numbers, print the count\n  return 0;\n}\n",
-  "solution": "type Counter[T] = {\n  items: Vec[T];\n}\n\nfn Counter.new[T]() -> Counter[T] {\n  return Counter[T]{ items: Vec[T].new() };\n}\n\nfn Counter.add[T](self: &mut Counter[T], item: T) {\n  self.items.push(item);\n}\n\nfn Counter.count[T](self) -> Int {\n  return self.items.len();\n}\n\nfn main() -> Int {\n  var str_counter: Counter[Str] = Counter[Str].new();\n  str_counter.add(\"error\");\n  str_counter.add(\"warning\");\n  str_counter.add(\"info\");\n  io.println(string.int_to_str(str_counter.count()));\n\n  var int_counter: Counter[Int] = Counter[Int].new();\n  int_counter.add(10);\n  int_counter.add(20);\n  io.println(string.int_to_str(int_counter.count()));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype Counter[T] = {\n  items: Vec[T];\n}\n\nfn Counter.new[T]() -> Counter[T] {\n  // TODO: Return a new Counter with an empty Vec\n}\n\nfn Counter.add[T](self: &mut Counter[T], item: T) {\n  // TODO: Push item into self.items\n}\n\nfn Counter.count[T](self) -> Int {\n  // TODO: Return the length of self.items\n}\n\nfn main() -> Int {\n  // TODO: Create a Counter[Str], add 3 items, print the count\n  // TODO: Create a Counter[Int], add 2 numbers, print the count\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\ntype Counter[T] = {\n  items: Vec[T];\n}\n\nfn Counter.new[T]() -> Counter[T] {\n  return Counter[T]{ items: Vec[T].new() };\n}\n\nfn Counter.add[T](self: &mut Counter[T], item: T) {\n  self.items.push(item);\n}\n\nfn Counter.count[T](self) -> Int {\n  return self.items.len();\n}\n\nfn main() -> Int {\n  var str_counter: Counter[Str] = Counter[Str].new();\n  str_counter.add(\"error\");\n  str_counter.add(\"warning\");\n  str_counter.add(\"info\");\n  io.println(string.int_to_str(str_counter.count()));\n\n  var int_counter: Counter[Int] = Counter[Int].new();\n  int_counter.add(10);\n  int_counter.add(20);\n  io.println(string.int_to_str(int_counter.count()));\n  return 0;\n}\n",
   "try_it": "Add a `Counter.most_common[T](self) -> Option[T]` method that returns the item that appears most frequently. Use a Map[T, Int] internally to count frequencies, then scan to find the max. Test with a Counter[Str] tracking words. Then add a `Counter.sum[T](self) -> Option[T]` that only works for... wait, how do you add generic T values? (Another L6 interface topic!)",
-  "concepts": ["generics", "Counter", "generic-methods", "Vec-wrapping", "reusability", "type-parameter-propagation"],
+  "concepts": [
+    "generics",
+    "Counter",
+    "generic-methods",
+    "Vec-wrapping",
+    "reusability",
+    "type-parameter-propagation"
+  ],
   "tips": [
     "Type parameter `[T]` propagates: if the type has `[T]`, every method that uses it also needs `[T]`",
     "Constructors conventionally return the type: `fn Counter.new[T]() -> Counter[T]` is a factory pattern",
@@ -22,5 +29,9 @@
     "Returning `self.items` directly — this would move the Vec out; use a while loop to copy items instead"
   ],
   "next_lesson": "L5-34",
-  "related": ["L5-31", "L5-32", "L5-01"]
+  "related": [
+    "L5-31",
+    "L5-32",
+    "L5-01"
+  ]
 }

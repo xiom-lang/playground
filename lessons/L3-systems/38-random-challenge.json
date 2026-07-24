@@ -1,25 +1,38 @@
 {
-  "id": "L3-38",
-  "title": "Random Math Challenge",
-  "level": "L3",
-  "duration": "9 min",
-  "story": "Your little sibling is learning addition and keeps asking 'what's X plus Y?' You build a program that generates random numbers, poses a challenge, and checks the answer — returning either a congratulations or the correct solution.",
-  "why": "Combining random generation with Result-based answer checking models quiz apps, educational games, and interactive tutorials.",
-  "narrative": "## Building a Random Math Quiz\n\nA quiz generator picks two random numbers, checks a hardcoded answer, and returns either praise or the correct sum.\n\n### Generating Random Numbers\n\nXIOM's `math` module provides random integer generation:\n\n```xiom\nlet a = math.random_int(1, 20);\nlet b = math.random_int(1, 20);\nlet correct_sum = a + b;\n```\n\n### The Challenge Function\n\nGiven the generated numbers and the user's guess, check if they match:\n\n```xiom\nfn check_answer(a: Int, b: Int, guess: Int) -> Result[Str, Str] {\n  let correct = a + b;\n  if guess == correct {\n    return Ok(\"Correct! \" + a + \" + \" + b + \" = \" + correct);\n  } else {\n    return Err(\"Wrong! \" + a + \" + \" + b + \" = \" + correct + \", not \" + guess);\n  }\n}\n```\n\nUnlike previous validators that return `Err` for bad input, this one uses `Err` to mean 'wrong answer' — the error message IS the feedback.\n\n### Running the Challenge\n\n```xiom\nfn main() -> Int {\n  let a = math.random_int(1, 10);\n  let b = math.random_int(1, 10);\n  // Imagine the user guessed a + b (always correct!)\n  let guess = a + b;\n  match check_answer(a, b, guess) {\n    Ok(msg) => { return 1; }\n    Err(msg) => { return 0; }\n  }\n}\n```\n\n### Making It More Interesting\n\nYou can vary the operation, range, and difficulty:\n\n```xiom\n// Random operator: 0 = add, 1 = subtract\nlet op = math.random_int(0, 1);\nif op == 0 {\n  // addition challenge\n} else {\n  // subtraction challenge\n}\n```\n\n### The Pattern\n\n`Result[Str, Str]` where `Ok` is 'correct answer' and `Err` is 'wrong answer + explanation' flips the usual meaning. This shows that `Result` can model any two-outcome situation — not just success/failure.",
-  "analogy": "A math quiz is like flashcards. You hold up a card that says '7 + 5 = ?' The student says '12.' You flip the card — if the back says 12, you smile and say 'correct!' If the back says 12 but they said 11, you show them the card and say 'nope, it's 12.' The `Ok` path is praise, the `Err` path is correction.",
-  "code_template": "fn check_answer(a: Int, b: Int, guess: Int) -> Result[Str, Str] {\n  // TODO: calculate correct = a + b\n  // TODO: if guess == correct, return Ok with a congratulatory message\n  // TODO: otherwise, return Err with the correct answer\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: generate two random numbers 1-10\n  // TODO: check if the guess matches a + b, return 1 if Ok, 0 if Err\n  return 0;\n}",
-  "solution": "fn check_answer(a: Int, b: Int, guess: Int) -> Result[Str, Str] {\n  let correct = a + b;\n  if guess == correct {\n    return Ok(\"Correct!\");\n  } else {\n    return Err(\"Wrong, the answer was \" + correct);\n  }\n}\n\nfn main() -> Int {\n  let a = math.random_int(1, 10);\n  let b = math.random_int(1, 10);\n  let guess = a + b;\n  match check_answer(a, b, guess) {\n    Ok(_) => { return 1; }\n    Err(_) => { return 0; }\n  }\n}",
-  "try_it": "Change the range from 1-10 to 1-100 for harder problems. Add subtraction and multiplication challenges (randomly pick the operator). Track how many correct answers the user gets in a row. Add a `generate_challenge() -> (Int, Int, Int)` function that returns (a, b, correct_answer) as a tuple.",
-  "concepts": ["Result", "Ok", "Err", "math.random_int", "Int", "feedback", "match", "tuple"],
-  "tips": [
-    "`math.random_int(min, max)` returns an integer between min and max inclusive — both bounds are included",
-    "Result can be used creatively — `Ok` for correct answers and `Err` for wrong ones with the right answer in the message",
-    "The guess is hardcoded as `a + b` in the solution so the test always passes, but in a real app it'd come from user input"
-  ],
-  "common_mistakes": [
-    "Using `math.random_int(1, 10)` but expecting values only up to 9 — the upper bound is INCLUSIVE",
-    "Concatenating Int to Str without conversion — XIOM's `+` operator on strings may require explicit conversion; use descriptive message formats"
-  ],
-  "next_lesson": "L3-39",
-  "related": ["L2-30", "L3-32", "L1-19"]
+    "id":  "L3-38",
+    "title":  "Random Math Challenge",
+    "level":  "L3",
+    "duration":  "9 min",
+    "story":  "Your little sibling is learning addition and keeps asking \u0027what\u0027s X plus Y?\u0027 You build a program that generates random numbers, poses a challenge, and checks the answer — returning either a congratulations or the correct solution.",
+    "why":  "Combining random generation with Result-based answer checking models quiz apps, educational games, and interactive tutorials.",
+    "narrative":  "## Building a Random Math Quiz\n\nA quiz generator picks two random numbers, checks a hardcoded answer, and returns either praise or the correct sum.\n\n### Generating Random Numbers\n\nXIOM\u0027s `math` module provides random integer generation:\n\n```xiom\nlet a = math.random_int(1, 20);\nlet b = math.random_int(1, 20);\nlet correct_sum = a + b;\n```\n\n### The Challenge Function\n\nGiven the generated numbers and the user\u0027s guess, check if they match:\n\n```xiom\nfn check_answer(a: Int, b: Int, guess: Int) -\u003e Result[Str, Str] {\n  let correct = a + b;\n  if guess == correct {\n    return Ok(\"Correct! \" + a + \" + \" + b + \" = \" + correct);\n  } else {\n    return Err(\"Wrong! \" + a + \" + \" + b + \" = \" + correct + \", not \" + guess);\n  }\n}\n```\n\nUnlike previous validators that return `Err` for bad input, this one uses `Err` to mean \u0027wrong answer\u0027 — the error message IS the feedback.\n\n### Running the Challenge\n\n```xiom\nfn main() -\u003e Int {\n  let a = math.random_int(1, 10);\n  let b = math.random_int(1, 10);\n  // Imagine the user guessed a + b (always correct!)\n  let guess = a + b;\n  match check_answer(a, b, guess) {\n    Ok(msg) =\u003e { return 1; }\n    Err(msg) =\u003e { return 0; }\n  }\n}\n```\n\n### Making It More Interesting\n\nYou can vary the operation, range, and difficulty:\n\n```xiom\n// Random operator: 0 = add, 1 = subtract\nlet op = math.random_int(0, 1);\nif op == 0 {\n  // addition challenge\n} else {\n  // subtraction challenge\n}\n```\n\n### The Pattern\n\n`Result[Str, Str]` where `Ok` is \u0027correct answer\u0027 and `Err` is \u0027wrong answer + explanation\u0027 flips the usual meaning. This shows that `Result` can model any two-outcome situation — not just success/failure.",
+    "analogy":  "A math quiz is like flashcards. You hold up a card that says \u00277 + 5 = ?\u0027 The student says \u002712.\u0027 You flip the card — if the back says 12, you smile and say \u0027correct!\u0027 If the back says 12 but they said 11, you show them the card and say \u0027nope, it\u0027s 12.\u0027 The `Ok` path is praise, the `Err` path is correction.",
+    "code_template":  "use xiom.io;\n\nfn check_answer(a: Int, b: Int, guess: Int) -\u003e Result[Str, Str] {\n  // TODO: calculate correct = a + b\n  // TODO: if guess == correct, return Ok with a congratulatory message\n  // TODO: otherwise, return Err with the correct answer\n  return Err(\"not implemented\");\n}\n\nfn main() -\u003e Int {\n  // TODO: generate two random numbers 1-10\n  // TODO: check if the guess matches a + b, return 1 if Ok, 0 if Err\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nuse xiom.math;\nfn check_answer(a: Int, b: Int, guess: Int) -\u003e Result[Str, Str] {\n  let correct = a + b;\n  if guess == correct {\n    return Ok(\"Correct!\");\n  } else {\n    return Err(\"Wrong, the answer was \" + correct);\n  }\n}\n\nfn main() -\u003e Int {\n  let a = math.random_int(1, 10);\n  let b = math.random_int(1, 10);\n  let guess = a + b;\n  match check_answer(a, b, guess) {\n    Ok(_) =\u003e { return 1; }\n    Err(_) =\u003e { return 0; }\n  }\n}",
+    "try_it":  "Change the range from 1-10 to 1-100 for harder problems. Add subtraction and multiplication challenges (randomly pick the operator). Track how many correct answers the user gets in a row. Add a `generate_challenge() -\u003e (Int, Int, Int)` function that returns (a, b, correct_answer) as a tuple.",
+    "concepts":  [
+                     "Result",
+                     "Ok",
+                     "Err",
+                     "math.random_int",
+                     "Int",
+                     "feedback",
+                     "match",
+                     "tuple"
+                 ],
+    "tips":  [
+                 "`math.random_int(min, max)` returns an integer between min and max inclusive — both bounds are included",
+                 "Result can be used creatively — `Ok` for correct answers and `Err` for wrong ones with the right answer in the message",
+                 "The guess is hardcoded as `a + b` in the solution so the test always passes, but in a real app it\u0027d come from user input"
+             ],
+    "common_mistakes":  [
+                            "Using `math.random_int(1, 10)` but expecting values only up to 9 — the upper bound is INCLUSIVE",
+                            "Concatenating Int to Str without conversion — XIOM\u0027s `+` operator on strings may require explicit conversion; use descriptive message formats"
+                        ],
+    "next_lesson":  "L3-39",
+    "related":  [
+                    "L2-30",
+                    "L3-32",
+                    "L1-19"
+                ]
 }

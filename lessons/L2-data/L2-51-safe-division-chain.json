@@ -4,22 +4,32 @@
   "level": "L2",
   "duration": "9 min",
   "story": "Your calculator needs to chain operations safely. First divide 100 by 5 (safe!), then divide that result by 0 (danger!). Instead of crashing, you want each step to return either a valid number or an error, and the caller handles both. Chaining multiple safe operations is a real-world pattern.",
-  "why": "Chaining Result-returning functions teaches error propagation \u2014 the backbone of reliable software.",
-  "narrative": "## Chaining Safe Operations\n\nA single safe division is useful. But real code chains operations: divide A by B, then divide that result by C. Each step might fail.\n\n### The DivResult Enum\n\n```xiom\nenum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n```\n\n### Single Safe Division\n\n```xiom\nfn safe_divide(a: Int, b: Int) -> DivResult {\n  if b == 0 {\n    return DivResult.DivByZero;\n  }\n  return DivResult.Ok(a / b);\n}\n```\n\n### Chaining Two Divisions\n\nChain `safe_divide(100, 5)` into `safe_divide(result, 2)`. But you can't pass a `DivResult` directly \u2014 you must match first:\n\n```xiom\nlet first = safe_divide(100, 5);\nlet second = match first {\n  Ok(n) => { safe_divide(n, 2); }\n  DivByZero => { DivResult.DivByZero; }\n};\n```\n\n### The Chain Function\n\nWrap the pattern in a function:\n\n```xiom\nfn chain_divide(a: Int, b: Int, c: Int) -> DivResult {\n  let r1 = safe_divide(a, b);\n  match r1 {\n    Ok(n) => { return safe_divide(n, c); }\n    DivByZero => { return DivResult.DivByZero; }\n  }\n}\n```\n\n### Testing Edge Cases\n\n```xiom\nchain_divide(100, 5, 2);   // Ok(10)\nchain_divide(100, 0, 2);   // DivByZero (fails at step 1)\nchain_divide(100, 5, 0);   // DivByZero (fails at step 2)\n```\n\nIf any link in the chain fails, the whole chain fails.",
+  "why": "Chaining Result-returning functions teaches error propagation � the backbone of reliable software.",
+  "narrative": "## Chaining Safe Operations\n\nA single safe division is useful. But real code chains operations: divide A by B, then divide that result by C. Each step might fail.\n\n### The DivResult Enum\n\n```xiom\nenum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n```\n\n### Single Safe Division\n\n```xiom\nfn safe_divide(a: Int, b: Int) -> DivResult {\n  if b == 0 {\n    return DivResult.DivByZero;\n  }\n  return DivResult.Ok(a / b);\n}\n```\n\n### Chaining Two Divisions\n\nChain `safe_divide(100, 5)` into `safe_divide(result, 2)`. But you can't pass a `DivResult` directly � you must match first:\n\n```xiom\nlet first = safe_divide(100, 5);\nlet second = match first {\n  Ok(n) => { safe_divide(n, 2); }\n  DivByZero => { DivResult.DivByZero; }\n};\n```\n\n### The Chain Function\n\nWrap the pattern in a function:\n\n```xiom\nfn chain_divide(a: Int, b: Int, c: Int) -> DivResult {\n  let r1 = safe_divide(a, b);\n  match r1 {\n    Ok(n) => { return safe_divide(n, c); }\n    DivByZero => { return DivResult.DivByZero; }\n  }\n}\n```\n\n### Testing Edge Cases\n\n```xiom\nchain_divide(100, 5, 2);   // Ok(10)\nchain_divide(100, 0, 2);   // DivByZero (fails at step 1)\nchain_divide(100, 5, 0);   // DivByZero (fails at step 2)\n```\n\nIf any link in the chain fails, the whole chain fails.",
   "analogy": "Chaining safe operations is like a relay race. Each runner (operation) passes the baton (result value) to the next. If one runner drops the baton (error), the whole team is disqualified. The match expression is the handoff point.",
-  "code_template": "enum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n\n// TODO: write 'safe_divide' that returns DivResult.Ok or DivResult.DivByZero\n\n// TODO: write 'chain_divide' that chains a/b then result/c, failing at first error\n\nfn main() -> Int {\n  // TODO: chain 100/5 then result/2, return the final value or -1 on error\n  return 0;\n}",
-  "solution": "enum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n\nfn safe_divide(a: Int, b: Int) -> DivResult {\n  if b == 0 {\n    return DivResult.DivByZero;\n  }\n  return DivResult.Ok(a / b);\n}\n\nfn chain_divide(a: Int, b: Int, c: Int) -> DivResult {\n  let r1 = safe_divide(a, b);\n  match r1 {\n    Ok(n) => { return safe_divide(n, c); }\n    DivByZero => { return DivResult.DivByZero; }\n  }\n}\n\nfn main() -> Int {\n  let result = chain_divide(100, 5, 2);\n  match result {\n    Ok(n) => { return n; }\n    DivByZero => { return -1; }\n  }\n}",
+  "code_template": "use xiom.io;\n\nenum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n\n// TODO: write 'safe_divide' that returns DivResult.Ok or DivResult.DivByZero\n\n// TODO: write 'chain_divide' that chains a/b then result/c, failing at first error\n\nfn main() -> Int {\n  // TODO: chain 100/5 then result/2, return the final value or -1 on error\n  return 0;\n}",
+  "solution": "use xiom.io;\n\nenum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n\nfn safe_divide(a: Int, b: Int) -> DivResult {\n  if b == 0 {\n    return DivResult.DivByZero;\n  }\n  return DivResult.Ok(a / b);\n}\n\nfn chain_divide(a: Int, b: Int, c: Int) -> DivResult {\n  let r1 = safe_divide(a, b);\n  match r1 {\n    Ok(n) => { return safe_divide(n, c); }\n    DivByZero => { return DivResult.DivByZero; }\n  }\n}\n\nfn main() -> Int {\n  let result = chain_divide(100, 5, 2);\n  match result {\n    Ok(n) => { return n; }\n    DivByZero => { return -1; }\n  }\n}",
   "try_it": "Extend to a 3-step chain: divide A by B, then by C, then by D. Test it with 100/5/2/5 (should succeed), 100/0/2/5 (fail at step 1), and 100/5/0/5 (fail at step 2). Add a `safe_remainder` that also returns DivResult.",
-  "concepts": ["enum", "Result pattern", "chaining", "match", "error propagation"],
+  "concepts": [
+    "enum",
+    "Result pattern",
+    "chaining",
+    "match",
+    "error propagation"
+  ],
   "tips": [
     "Match on the intermediate result to peel out the Ok value before passing it to the next function",
-    "Return `DivResult.DivByZero` early in the error arm \u2014 don't try to continue the chain on failure",
+    "Return `DivResult.DivByZero` early in the error arm � don't try to continue the chain on failure",
     "Name the error variant clearly: `DivByZero` tells callers exactly what went wrong"
   ],
   "common_mistakes": [
-    "Passing a `DivResult` directly to `safe_divide` \u2014 the function expects Int, not DivResult",
-    "Forgetting to handle the DivByZero case in the intermediate match \u2014 the match must be exhaustive"
+    "Passing a `DivResult` directly to `safe_divide` � the function expects Int, not DivResult",
+    "Forgetting to handle the DivByZero case in the intermediate match � the match must be exhaustive"
   ],
   "next_lesson": "L2-52",
-  "related": ["L2-33", "L2-15", "L2-16"]
+  "related": [
+    "L2-33",
+    "L2-15",
+    "L2-16"
+  ]
 }

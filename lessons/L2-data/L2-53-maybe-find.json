@@ -3,23 +3,33 @@
   "title": "Maybe Find",
   "level": "L2",
   "duration": "9 min",
-  "story": "You're searching for a letter inside a string \u2014 like finding the '@' in an email address. Sometimes you find it (with its position), sometimes you don't. Instead of returning -1 for \"not found\" (easy to forget to check), you return a clear enum that forces the caller to handle both cases.",
+  "story": "You're searching for a letter inside a string � like finding the '@' in an email address. Sometimes you find it (with its position), sometimes you don't. Instead of returning -1 for \"not found\" (easy to forget to check), you return a clear enum that forces the caller to handle both cases.",
   "why": "An enum for search results eliminates the magic number -1 and makes missing values explicit.",
   "narrative": "## Searching with Explicit Results\n\nWhen searching a string for a character, the result is either \"found it at position X\" or \"not found.\" An enum makes this explicit.\n\n### The FindResult Enum\n\n```xiom\nenum FindResult {\n  Found(item: Str, position: Int),\n  NotFound,\n}\n```\n\nThe `Found` variant carries two pieces of data: what was found and where.\n\n### Creating a Search Function\n\nIterate through the string character by character, checking each position:\n\n```xiom\nfn find_char(text: Str, target: Str) -> FindResult {\n  var pos = 0;\n  if text == target { return FindResult.Found(text, pos); }\n  return FindResult.NotFound;\n}\n```\n\n### Handling the Result\n\nThe caller must match on the result:\n\n```xiom\nlet result = find_char(\"hello\", \"e\");\nmatch result {\n  Found(item, pos) => {\n    // Found 'e' at position 1\n  }\n  NotFound => {\n    // Character not in string\n  }\n}\n```\n\n### Searching for Different Characters\n\n```xiom\nfind_char(\"rust\", \"r\");    // Found(\"r\", 0)\nfind_char(\"rust\", \"t\");    // Found(\"t\", 3)\nfind_char(\"rust\", \"z\");    // NotFound\n```\n\n### Extracting the Position\n\n```xiom\nfn get_position(result: FindResult) -> Int {\n  match result {\n    Found(_, pos) => { return pos; }\n    NotFound => { return -1; }\n  }\n}\n```\n\n### Why This Is Better Than -1\n\nWith an enum, you can't forget to check. If you write `pos + 1` without matching, the compiler says \"you haven't handled NotFound.\" Magic number -1 has no such protection.",
-  "analogy": "FindResult is like tracking a package. \"Found\" means the courier has your package and tells you which shelf it's on (position). \"NotFound\" means the warehouse is empty. You can't open \"NotFound\" expecting contents \u2014 the courier forces you to look inside first.",
-  "code_template": "enum FindResult {\n  Found(item: Str, position: Int),\n  NotFound,\n}\n\n// TODO: write 'find_char' that searches text for the first occurrence of target\n\n// TODO: write 'get_position' that returns the position from Found, or -1 for NotFound\n\nfn main() -> Int {\n  // TODO: search for \"e\" in \"hello\", return the position (or -1)\n  return 0;\n}",
-  "solution": "enum FindResult {\n  Found(item: Str, position: Int),\n  NotFound,\n}\n\nfn find_char(text: Str, target: Str) -> FindResult {\n  if text == target { return FindResult.Found(text, 0); }\n  return FindResult.NotFound;\n}\n\nfn get_position(result: FindResult) -> Int {\n  match result {\n    Found(_, pos) => { return pos; }\n    NotFound => { return -1; }\n  }\n}\n\nfn main() -> Int {\n  let r = find_char(\"hello\", \"e\");\n  return get_position(r);\n}",
+  "analogy": "FindResult is like tracking a package. \"Found\" means the courier has your package and tells you which shelf it's on (position). \"NotFound\" means the warehouse is empty. You can't open \"NotFound\" expecting contents � the courier forces you to look inside first.",
+  "code_template": "use xiom.io;\n\nenum FindResult {\n  Found(item: Str, position: Int),\n  NotFound,\n}\n\n// TODO: write 'find_char' that searches text for the first occurrence of target\n\n// TODO: write 'get_position' that returns the position from Found, or -1 for NotFound\n\nfn main() -> Int {\n  // TODO: search for \"e\" in \"hello\", return the position (or -1)\n  return 0;\n}",
+  "solution": "use xiom.io;\n\nenum FindResult {\n  Found(item: Str, position: Int),\n  NotFound,\n}\n\nfn find_char(text: Str, target: Str) -> FindResult {\n  if text == target { return FindResult.Found(text, 0); }\n  return FindResult.NotFound;\n}\n\nfn get_position(result: FindResult) -> Int {\n  match result {\n    Found(_, pos) => { return pos; }\n    NotFound => { return -1; }\n  }\n}\n\nfn main() -> Int {\n  let r = find_char(\"hello\", \"e\");\n  return get_position(r);\n}",
   "try_it": "Search for different letters in \"chocolate\": try 'o', 'x', 'c', 'e'. Add a `find_all` concept that tracks multiple positions. Add a `FoundFirst(position: Int)` variant that only stores position (not the item).",
-  "concepts": ["enum", "Option pattern", "search", "match", "NotFound"],
+  "concepts": [
+    "enum",
+    "Option pattern",
+    "search",
+    "match",
+    "NotFound"
+  ],
   "tips": [
     "Name the enum after what it represents: `FindResult` tells readers \"this is a search outcome\"",
     "Use `_` to ignore the found item when you only care about the position",
-    "The NotFound variant needs no data \u2014 \"not found\" is a complete answer"
+    "The NotFound variant needs no data � \"not found\" is a complete answer"
   ],
   "common_mistakes": [
-    "Trying to access `.position` directly on a FindResult without matching first \u2014 it might be NotFound",
-    "Returning -1 from the search function instead of using an enum \u2014 that defeats the purpose of type safety"
+    "Trying to access `.position` directly on a FindResult without matching first � it might be NotFound",
+    "Returning -1 from the search function instead of using an enum � that defeats the purpose of type safety"
   ],
   "next_lesson": "L2-54",
-  "related": ["L2-33", "L2-15", "L2-37"]
+  "related": [
+    "L2-33",
+    "L2-15",
+    "L2-37"
+  ]
 }

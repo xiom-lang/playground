@@ -7,12 +7,32 @@
   "why": "A suite of number-classifying functions shows how Boolean and String-returning functions can answer different questions about the same data — each function is a specialized lens.",
   "narrative": "## Building a Number Classification Suite\n\nDifferent questions need different functions. Each function answers exactly one question about a number.\n\n### Classify: Positive, Negative, or Zero\n\n```xiom\nfn classify(n: Int) -> Str {\n  if n > 0 {\n    return \"positive\";\n  } elif n < 0 {\n    return \"negative\";\n  } else {\n    return \"zero\";\n  }\n}\n```\n\n### Check If Even\n\n```xiom\nfn is_even(n: Int) -> Bool {\n  return n % 2 == 0;\n}\n```\n\n### Check Divisibility\n\n```xiom\nfn is_divisible_by(n: Int, d: Int) -> Bool {\n  if d == 0 {\n    return false;\n  }\n  return n % d == 0;\n}\n```\n\n### Using the Classifiers Together\n\n```xiom\nfn main() -> Int {\n  let numbers = [15, -7, 0, 42, -3, 8];\n  for n in numbers {\n    let kind = classify(n);\n    let even = is_even(n);\n    let by3 = is_divisible_by(n, 3);\n\n    io.println(\"Number analyzed!\");\n  }\n  return 0;\n}\n```\n\n### Why Separate Functions?\n\n- `classify` returns a string label — useful for display\n- `is_even` returns a boolean — useful for conditions\n- `is_divisible_by` is parameterized — check any divisor\n\nEach function is simple to write, test, and understand. Together they form a complete classification toolkit.",
   "analogy": "These functions are like different tools in a toolbox. `classify()` is the label maker — it puts a sticker on each number. `is_even()` is a two-hole punch — it checks if the number fits. `is_divisible_by()` is an adjustable wrench — you set the divisor and it tells you if the fit is perfect.",
-  "code_template": "// TODO: Write classify(n: Int) -> Str (returns \"positive\", \"negative\", or \"zero\")\n// TODO: Write is_even(n: Int) -> Bool (true if n % 2 == 0)\n// TODO: Write is_divisible_by(n: Int, d: Int) -> Bool (true if n % d == 0, false if d == 0)\n\nfn main() -> Int {\n  // TODO: Test classify on 5, -3, and 0\n  // TODO: Test is_even on 4 and 7\n  // TODO: Test is_divisible_by on (10, 2) and (10, 3)\n  // Print the results\n  return 0;\n}",
-  "solution": "fn classify(n: Int) -> Str {\n  if n > 0 {\n    return \"positive\";\n  } elif n < 0 {\n    return \"negative\";\n  } else {\n    return \"zero\";\n  }\n}\n\nfn is_even(n: Int) -> Bool {\n  return n % 2 == 0;\n}\n\nfn is_divisible_by(n: Int, d: Int) -> Bool {\n  if d == 0 {\n    return false;\n  }\n  return n % d == 0;\n}\n\nfn main() -> Int {\n  let n1 = 5;\n  let n2 = -3;\n  let n3 = 0;\n  io.println(\"Classification complete!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write classify(n: Int) -> Str (returns \"positive\", \"negative\", or \"zero\")\n// TODO: Write is_even(n: Int) -> Bool (true if n % 2 == 0)\n// TODO: Write is_divisible_by(n: Int, d: Int) -> Bool (true if n % d == 0, false if d == 0)\n\nfn main() {\n  // TODO: Test classify on 5, -3, and 0\n  // TODO: Test is_even on 4 and 7\n  // TODO: Test is_divisible_by on (10, 2) and (10, 3)\n  // Print the results\n}",
+  "solution": "use xiom.io;\nfn classify(n: Int) -> Str {\n  if n > 0 {\n    return \"positive\";\n  } elif n < 0 {\n    return \"negative\";\n  } else {\n    return \"zero\";\n  }\n}\n\nfn is_even(n: Int) -> Bool {\n  return n % 2 == 0;\n}\n\nfn is_divisible_by(n: Int, d: Int) -> Bool {\n  if d == 0 {\n  }\n  return n % d == 0;\n}\n\nfn main() {\n  let n1 = 5;\n  let n2 = -3;\n  let n3 = 0;\n  io.println(\"Classification complete!\");\n}",
   "try_it": "Add a fourth function `is_odd(n: Int) -> Bool` that reuses `is_even` (hint: return !is_even(n)). Then write a `describe_number(n: Int) -> Str` function that combines classify, is_even, and is_divisible_by into one descriptive sentence.",
-  "concepts": ["classification functions", "modulo operator", "String return", "parameterized check"],
-  "tips": ["classify uses a three-way if/elif/else: positive, negative, and zero are the only possibilities", "is_even is a one-liner: a number is even when n % 2 == 0", "is_divisible_by protects against division by zero — always check d == 0 first", "Each function has one clear question in its name — if you can't name it, split it"],
-  "common_mistakes": ["Writing `if n > 0` then `else if n < 0` instead of `elif n < 0` — use elif for chained conditions", "Forgetting the zero case in classify — every Int falls into one of three buckets", "Returning 0 or 1 instead of true/false from Boolean functions", "Not checking d == 0 in is_divisible_by — modulo by zero crashes the program"],
+  "concepts": [
+    "classification functions",
+    "modulo operator",
+    "String return",
+    "parameterized check"
+  ],
+  "tips": [
+    "classify uses a three-way if/elif/else: positive, negative, and zero are the only possibilities",
+    "is_even is a one-liner: a number is even when n % 2 == 0",
+    "is_divisible_by protects against division by zero — always check d == 0 first",
+    "Each function has one clear question in its name — if you can't name it, split it"
+  ],
+  "common_mistakes": [
+    "Writing `if n > 0` then `else if n < 0` instead of `elif n < 0` — use elif for chained conditions",
+    "Forgetting the zero case in classify — every Int falls into one of three buckets",
+    "Returning 0 or 1 instead of true/false from Boolean functions",
+    "Not checking d == 0 in is_divisible_by — modulo by zero crashes the program"
+  ],
   "next_lesson": "L1-38",
-  "related": ["L1-07", "L1-10", "L1-13", "L1-33"]
+  "related": [
+    "L1-07",
+    "L1-10",
+    "L1-13",
+    "L1-33"
+  ]
 }

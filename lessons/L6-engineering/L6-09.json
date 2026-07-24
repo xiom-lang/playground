@@ -7,10 +7,17 @@
   "why": "Visibility control is essential for building libraries — public items form the stable API contract, while private internals can change freely without breaking callers.",
   "narrative": "## Controlling What Others See\n\nBy default, everything in a module is **private** — only accessible within that module. Adding `pub` makes an item **public** — accessible from outside.\n\n### Public vs Private\n\n```xiom\nmodule calculator {\n  pub fn add(a: Int, b: Int) -> Int {\n    return a + b;\n  }\n\n  fn internal_validate(n: Int) -> Bool {\n    return n >= 0;\n  }\n\n  pub fn safe_sqrt(n: Int) -> Int {\n    if !internal_validate(n) {\n      return 0;\n    }\n    // Simplified sqrt\n    return n / 2;\n  }\n}\n\nfn main() -> Int {\n  let sum = calculator.add(5, 3);  // Works: add is pub\n  io.println(string.int_to_str(sum));\n\n  // let ok = calculator.internal_validate(10);  // ERROR: not pub!\n\n  return 0;\n}\n```\n\n### The Visibility Rules\n\n| Without `pub` | With `pub` |\n|--------------|-----------|\n| Only accessible inside the module | Accessible from anywhere |\n| Can change/remove freely | Changing it may break callers |\n| Implementation detail | Public API contract |\n\n### Why Private by Default?\n\nMaking everything public is like leaving your house keys in the door — anyone can access anything. Private by default means you deliberately CHOOSE what to expose. This gives you freedom to refactor internals without breaking users.\n\n### A Real Example\n\n```xiom\nmodule bank {\n  type Account = {\n    owner: Str;\n    balance: Int;\n  }\n\n  pub fn create_account(owner: Str) -> Account {\n    return Account{ owner: owner, balance: 0 };\n  }\n\n  pub fn deposit(account: &mut Account, amount: Int) {\n    if validate_amount(amount) {\n      account.balance = account.balance + amount;\n    }\n  }\n\n  fn validate_amount(amount: Int) -> Bool {\n    return amount > 0 & amount <= 10000;\n  }\n\n  pub fn get_balance(account: &Account) -> Int {\n    return account.balance;\n  }\n}\n```\n\n`create_account`, `deposit`, and `get_balance` are the public API. `validate_amount` is an internal helper — users can't call it directly, which is correct: only `deposit` should use it.",
   "analogy": "`pub` vs private is like a restaurant kitchen — the dining room (public API) is where customers interact: they see the menu (pub functions). The kitchen (private internals) is off-limits: customers can't walk in and start cooking. The chef (module author) can reorganize the kitchen without affecting the dining experience.",
-  "code_template": "module auth {\n  fn hash_password(pw: Str) -> Str {\n    return \"hashed_\" + pw;  // simplified\n  }\n\n  // TODO: Make check_password pub — it should return true if the input is not empty\n  fn check_password(pw: Str) -> Bool {\n    return string.str_len(pw) > 0;\n  }\n\n  // TODO: Make login pub — it should return \"Welcome!\" if check_password passes, else \"Denied\"\n  fn login(pw: Str) -> Str {\n    if check_password(pw) {\n      return \"Welcome!\";\n    }\n    return \"Denied\";\n  }\n}\n\nfn main() -> Int {\n  // TODO: Call auth.login(\"secret\") and print result\n  // TODO: Try calling auth.check_password directly — does it work?\n  return 0;\n}\n",
-  "solution": "module auth {\n  fn hash_password(pw: Str) -> Str {\n    return \"hashed_\" + pw;\n  }\n\n  pub fn check_password(pw: Str) -> Bool {\n    return string.str_len(pw) > 0;\n  }\n\n  pub fn login(pw: Str) -> Str {\n    if check_password(pw) {\n      return \"Welcome!\";\n    }\n    return \"Denied\";\n  }\n}\n\nfn main() -> Int {\n  io.println(auth.login(\"secret\"));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\nuse xiom.string;\nmodule auth {\n  fn hash_password(pw: Str) -> Str {\n    return \"hashed_\" + pw;  // simplified\n  }\n\n  // TODO: Make check_password pub — it should return true if the input is not empty\n  fn check_password(pw: Str) -> Bool {\n    return string.str_len(pw) > 0;\n  }\n\n  // TODO: Make login pub — it should return \"Welcome!\" if check_password passes, else \"Denied\"\n  fn login(pw: Str) -> Str {\n    if check_password(pw) {\n      return \"Welcome!\";\n    }\n    return \"Denied\";\n  }\n}\n\nfn main() -> Int {\n  // TODO: Call auth.login(\"secret\") and print result\n  // TODO: Try calling auth.check_password directly — does it work?\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nmodule auth {\n  fn hash_password(pw: Str) -> Str {\n    return \"hashed_\" + pw;\n  }\n\n  pub fn check_password(pw: Str) -> Bool {\n    return string.str_len(pw) > 0;\n  }\n\n  pub fn login(pw: Str) -> Str {\n    if check_password(pw) {\n      return \"Welcome!\";\n    }\n    return \"Denied\";\n  }\n}\n\nfn main() -> Int {\n  io.println(auth.login(\"secret\"));\n  return 0;\n}\n",
   "try_it": "Add a `pub` function `reset_password` that calls the private `hash_password`. Then try calling `auth.hash_password(\"test\")` from main — does it compile? (No! Private means private.) Now add a second public function that internally uses `hash_password` — notice how you changed the internal helper without affecting the public API.",
-  "concepts": ["pub", "visibility", "private-by-default", "public-api", "encapsulation", "module-boundary"],
+  "concepts": [
+    "pub",
+    "visibility",
+    "private-by-default",
+    "public-api",
+    "encapsulation",
+    "module-boundary"
+  ],
   "tips": [
     "Everything is private unless marked `pub` — when in doubt, keep it private; you can always make it public later",
     "Your public API is a commitment — once people depend on a `pub` function, removing it breaks their code",
@@ -22,5 +29,9 @@
     "Marking types as pub but forgetting to mark their methods — a pub type with private methods is a locked door"
   ],
   "next_lesson": "L6-10",
-  "related": ["L6-08", "L6-11", "L5-48"]
+  "related": [
+    "L6-08",
+    "L6-11",
+    "L5-48"
+  ]
 }

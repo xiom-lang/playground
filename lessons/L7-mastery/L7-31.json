@@ -7,10 +7,17 @@
   "why": "A calculator app combines arithmetic operations, state management (memory, history), match for operation selection, and Vec for history — a polished utility program.",
   "narrative": "## Building a Calculator\n\n### Calculator State\n\n```xiom\ntype Calculator {\n  current_value: Int;\n  memory: Int;\n  history: Vec[Str];\n  last_result: Int;\n}\n\nfn create_calculator() -> Calculator {\n  Calculator{ current_value: 0, memory: 0, history: Vec[Str].new(), last_result: 0 }\n}\n```\n\n### Operations\n\n```xiom\nenum Operation {\n  Add; Subtract; Multiply; Divide;\n  Store; Recall; Clear;\n  ShowHistory;\n}\n\nfn execute(calc: &mut Calculator, op: Operation, operand: Int) -> Int {\n  match op {\n    Operation.Add => { calc.last_result = calc.current_value + operand; },\n    Operation.Subtract => { calc.last_result = calc.current_value - operand; },\n    Operation.Multiply => { calc.last_result = calc.current_value * operand; },\n    Operation.Divide => {\n      if operand == 0 { return -1; };\n      calc.last_result = calc.current_value / operand;\n    },\n    Operation.Store => { calc.memory = calc.current_value; },\n    Operation.Recall => { calc.current_value = calc.memory; },\n    Operation.Clear => { calc.current_value = 0; },\n    Operation.ShowHistory => { },\n  };\n\n  let entry = format_entry(op, operand, calc.last_result);\n  calc.history.push(entry);\n  calc.current_value = calc.last_result;\n  calc.last_result\n}\n```\n\n### History Display\n\n```xiom\nfn print_history(calc: &Calculator) {\n  let mut i = 0;\n  while i < calc.history.len() {\n    io.println(calc.history.get(i).unwrap());\n    i += 1;\n  };\n}\n```\n\n### Memory Operations\n\n- **Store (MS)**: Save current value to memory\n- **Recall (MR)**: Load memory into current value\n- **Clear (MC)**: Reset memory to 0\n- **Add to memory (M+)**: Add current value to memory\n\n### Example Usage\n\n```\ncalc = 0\nADD 5 → 5\nMULTIPLY 3 → 15\nSTORE → memory = 15\nADD 10 → 25\nRECALL → 15\n```",
   "analogy": "A desk calculator with paper tape: the display shows the current number, memory stores a number for later, and the tape records every calculation. Your calculator app has a display (current_value), a memory slot, and a tape (Vec history). Press C to clear, M+ to store.",
-  "code_template": "type CalcState {\n  value: Int;\n  memory: Int;\n  history_count: Int;\n}\n\nfn add(state: &mut CalcState, n: Int) -> Int {\n  // TODO: add n to value, record in history\n}\n\nfn multiply(state: &mut CalcState, n: Int) -> Int {\n  // TODO: multiply value by n, record in history\n}\n\nfn store_memory(state: &mut CalcState) {\n  // TODO: save current value to memory\n}\n\nfn main() -> Int {\n  // TODO: create calculator, do: add 10, multiply 3, store, add 5, recall memory\n  return 0;\n}\n",
-  "solution": "type CalcState {\n  value: Int;\n  memory: Int;\n  history_count: Int;\n}\n\nfn add(state: &mut CalcState, n: Int) -> Int {\n  state.value = state.value + n;\n  state.history_count += 1;\n  state.value\n}\n\nfn multiply(state: &mut CalcState, n: Int) -> Int {\n  state.value = state.value * n;\n  state.history_count += 1;\n  state.value\n}\n\nfn store_memory(state: &mut CalcState) {\n  state.memory = state.value;\n}\n\nfn recall_memory(state: &mut CalcState) {\n  state.value = state.memory;\n}\n\nfn main() -> Int {\n  let mut calc = CalcState{ value: 0, memory: 0, history_count: 0 };\n  io.println(add(&mut calc, 10));\n  io.println(multiply(&mut calc, 3));\n  store_memory(&mut calc);\n  io.println(add(&mut calc, 5));\n  recall_memory(&mut calc);\n  io.println(calc.value);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype CalcState {\n  value: Int;\n  memory: Int;\n  history_count: Int;\n}\n\nfn add(state: &mut CalcState, n: Int) -> Int {\n  // TODO: add n to value, record in history\n}\n\nfn multiply(state: &mut CalcState, n: Int) -> Int {\n  // TODO: multiply value by n, record in history\n}\n\nfn store_memory(state: &mut CalcState) {\n  // TODO: save current value to memory\n}\n\nfn main() -> Int {\n  // TODO: create calculator, do: add 10, multiply 3, store, add 5, recall memory\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ntype CalcState {\n  value: Int;\n  memory: Int;\n  history_count: Int;\n}\n\nfn add(state: &mut CalcState, n: Int) -> Int {\n  state.value = state.value + n;\n  state.history_count += 1;\n  state.value\n}\n\nfn multiply(state: &mut CalcState, n: Int) -> Int {\n  state.value = state.value * n;\n  state.history_count += 1;\n  state.value\n}\n\nfn store_memory(state: &mut CalcState) {\n  state.memory = state.value;\n}\n\nfn recall_memory(state: &mut CalcState) {\n  state.value = state.memory;\n}\n\nfn main() -> Int {\n  let mut calc = CalcState{ value: 0, memory: 0, history_count: 0 };\n  io.println((add(&mut calc, 10)).to_str());\n  io.println((multiply(&mut calc, 3)).to_str());\n  store_memory(&mut calc);\n  io.println((add(&mut calc, 5)).to_str());\n  recall_memory(&mut calc);\n  io.println(calc.value.to_str());\n  return 0;\n}\n",
   "try_it": "Add more operations: power (x^y), percentage (x% of y), square root, sign flip (+/-). Add 'undo' that reverses the last operation using history. Implement BigDecimal-like precision for floating-point. Add parentheses and order-of-operations to handle '2 + 3 * 4' correctly.",
-  "concepts": ["calculator", "memory-operations", "history", "state-management", "arithmetic", "Vec"],
+  "concepts": [
+    "calculator",
+    "memory-operations",
+    "history",
+    "state-management",
+    "arithmetic",
+    "Vec"
+  ],
   "tips": [
     "Track history in a Vec — each entry contains the operation and result",
     "Memory is just a separate stored value — simple but powerful",
@@ -22,5 +29,9 @@
     "History growing unbounded — consider capping at last N entries"
   ],
   "next_lesson": "L7-32",
-  "related": ["L7-01", "L6-22", "L2-36"]
+  "related": [
+    "L7-01",
+    "L6-22",
+    "L2-36"
+  ]
 }

@@ -1,27 +1,38 @@
 {
-  "id": "L4-27",
-  "title": "Write Borrow Pattern",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "Sometimes you need to rearrange, update, or transform data in place. The write borrow pattern gives you exclusive access to modify — nobody can read or write while you work.",
-  "why": "The write borrow pattern guarantees exclusive mutation access, eliminating the possibility of data corruption from concurrent modifications.",
-  "narrative": "## Functions That Modify In Place\n\nUse `&mut` when a function needs to modify data it receives:\n\n```xiom\nfn normalize(scores: &mut Vec[Int]) {\n  let m = max_val(scores);  // Valid: &Vec coerces from &mut Vec\n  let i = 0;\n  while i < scores.len() {\n    scores[i] = scores[i] * 100 / m;\n    i = i + 1;\n  }\n}\n\nfn clamp(scores: &mut Vec[Int], lo: Int, hi: Int)\n  requires: lo <= hi;\n{\n  let i = 0;\n  while i < scores.len() {\n    if scores[i] < lo { scores[i] = lo; }\n    if scores[i] > hi { scores[i] = hi; }\n    i = i + 1;\n  }\n}\n```\n\n### Exclusive Access Guarantee\n\n```xiom\nfn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(10);\n  data.push(50);\n  data.push(30);\n\n  normalize(&mut data);  // Exclusive write — no other access\n  clamp(&mut data, 0, 100);  // Another exclusive write\n  // Between normalize and clamp, data is available again\n  return data[0];\n}\n```\n\n### &mut Coerces to & for Reads\n\n```xiom\nfn process(data: &mut Vec[Int]) {\n  let len = data.len();  // Auto-coerces to & for read\n  let first = data[0];   // Also auto-coerces\n  data.push(99);          // Uses &mut for write\n}\n```\n\nThe compiler allows re-borrowing `&mut` as `&` temporarily when you only need to read.",
-  "analogy": "A write borrow is like booking a private editing room — you go in alone, make your changes, and when you're done, the room (data) is available for others again.",
-  "code_template": "// TODO: Write fn 'zero_negatives' that takes &mut Vec[Int]\n// Replace any negative value with 0\n// Write fn 'remove_evens' that takes &mut Vec[Int]\n// Remove all even numbers from the Vec\n// In main, create Vec, apply both, print result\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
-  "solution": "fn zero_negatives(items: &mut Vec[Int]) {\n  let i = 0;\n  while i < items.len() {\n    if items[i] < 0 { items[i] = 0; }\n    i = i + 1;\n  }\n}\n\nfn remove_evens(items: &mut Vec[Int]) {\n  let i = 0;\n  while i < items.len() {\n    if items[i] % 2 == 0 {\n      items[i] = items[items.len() - 1];\n      items.pop();\n    } else {\n      i = i + 1;\n    }\n  }\n}\n\nfn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(-5);\n  data.push(10);\n  data.push(-3);\n  data.push(7);\n  data.push(4);\n  data.push(-1);\n  zero_negatives(&mut data);\n  remove_evens(&mut data);\n  return data.len() as Int;\n}",
-  "try_it": "Write a fn shuffle(items: &mut Vec[Int]) that rearranges elements randomly. Verify the Vec has the same length after shuffling.",
-  "concepts": ["write borrow pattern", "&mut parameter", "in-place modification", "exclusive access", "reborrowing"],
-  "tips": [
-    "Use &mut when your function needs to modify data — the signature tells callers clearly",
-    "&mut auto-coerces to & for reads — you don't need separate read and write references",
-    "Chain &mut calls sequentially, not simultaneously — only one &mut can exist at a time",
-    "After a &mut function returns, the original variable is usable again"
-  ],
-  "common_mistakes": [
-    "Using owned parameters when &mut would work — consuming the value is unnecessary",
-    "Trying to call two &mut functions on the same data at once — wrap in scopes",
-    "Forgetting that &mut is exclusive — even read-only access is blocked during &mut"
-  ],
-  "next_lesson": "L4-28",
-  "related": ["L4-16", "L4-18", "L4-24", "L4-25"]
+    "id":  "L4-27",
+    "title":  "Write Borrow Pattern",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "Sometimes you need to rearrange, update, or transform data in place. The write borrow pattern gives you exclusive access to modify — nobody can read or write while you work.",
+    "why":  "The write borrow pattern guarantees exclusive mutation access, eliminating the possibility of data corruption from concurrent modifications.",
+    "narrative":  "## Functions That Modify In Place\n\nUse `\u0026mut` when a function needs to modify data it receives:\n\n```xiom\nfn normalize(scores: \u0026mut Vec[Int]) {\n  let m = max_val(scores);  // Valid: \u0026Vec coerces from \u0026mut Vec\n  let i = 0;\n  while i \u003c scores.len() {\n    scores[i] = scores[i] * 100 / m;\n    i = i + 1;\n  }\n}\n\nfn clamp(scores: \u0026mut Vec[Int], lo: Int, hi: Int)\n  requires: lo \u003c= hi;\n{\n  let i = 0;\n  while i \u003c scores.len() {\n    if scores[i] \u003c lo { scores[i] = lo; }\n    if scores[i] \u003e hi { scores[i] = hi; }\n    i = i + 1;\n  }\n}\n```\n\n### Exclusive Access Guarantee\n\n```xiom\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(10);\n  data.push(50);\n  data.push(30);\n\n  normalize(\u0026mut data);  // Exclusive write — no other access\n  clamp(\u0026mut data, 0, 100);  // Another exclusive write\n  // Between normalize and clamp, data is available again\n  return data[0];\n}\n```\n\n### \u0026mut Coerces to \u0026 for Reads\n\n```xiom\nfn process(data: \u0026mut Vec[Int]) {\n  let len = data.len();  // Auto-coerces to \u0026 for read\n  let first = data[0];   // Also auto-coerces\n  data.push(99);          // Uses \u0026mut for write\n}\n```\n\nThe compiler allows re-borrowing `\u0026mut` as `\u0026` temporarily when you only need to read.",
+    "analogy":  "A write borrow is like booking a private editing room — you go in alone, make your changes, and when you\u0027re done, the room (data) is available for others again.",
+    "code_template":  "use xiom.io;\n\n// TODO: Write fn \u0027zero_negatives\u0027 that takes \u0026mut Vec[Int]\n// Replace any negative value with 0\n// Write fn \u0027remove_evens\u0027 that takes \u0026mut Vec[Int]\n// Remove all even numbers from the Vec\n// In main, create Vec, apply both, print result\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn zero_negatives(items: \u0026mut Vec[Int]) {\n  let i = 0;\n  while i \u003c items.len() {\n    if items[i] \u003c 0 { items[i] = 0; }\n    i = i + 1;\n  }\n}\n\nfn remove_evens(items: \u0026mut Vec[Int]) {\n  let i = 0;\n  while i \u003c items.len() {\n    if items[i] % 2 == 0 {\n      items[i] = items[items.len() - 1];\n      items.pop();\n    } else {\n      i = i + 1;\n    }\n  }\n}\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(-5);\n  data.push(10);\n  data.push(-3);\n  data.push(7);\n  data.push(4);\n  data.push(-1);\n  zero_negatives(\u0026mut data);\n  remove_evens(\u0026mut data);\n  return data.len() as Int;\n}",
+    "try_it":  "Write a fn shuffle(items: \u0026mut Vec[Int]) that rearranges elements randomly. Verify the Vec has the same length after shuffling.",
+    "concepts":  [
+                     "write borrow pattern",
+                     "\u0026mut parameter",
+                     "in-place modification",
+                     "exclusive access",
+                     "reborrowing"
+                 ],
+    "tips":  [
+                 "Use \u0026mut when your function needs to modify data — the signature tells callers clearly",
+                 "\u0026mut auto-coerces to \u0026 for reads — you don\u0027t need separate read and write references",
+                 "Chain \u0026mut calls sequentially, not simultaneously — only one \u0026mut can exist at a time",
+                 "After a \u0026mut function returns, the original variable is usable again"
+             ],
+    "common_mistakes":  [
+                            "Using owned parameters when \u0026mut would work — consuming the value is unnecessary",
+                            "Trying to call two \u0026mut functions on the same data at once — wrap in scopes",
+                            "Forgetting that \u0026mut is exclusive — even read-only access is blocked during \u0026mut"
+                        ],
+    "next_lesson":  "L4-28",
+    "related":  [
+                    "L4-16",
+                    "L4-18",
+                    "L4-24",
+                    "L4-25"
+                ]
 }

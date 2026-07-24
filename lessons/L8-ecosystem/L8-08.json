@@ -7,10 +7,18 @@
   "why": "The gradebook combines structs, Vec, Map for subject grades, weighted averages, grade scale mapping, sorting for rankings, and contracts — a complete educational data system.",
   "narrative": "## Student Gradebook\n\n### Student and Grade Structures\n\n```xiom\ntype Grade {\n  subject: Str;\n  score: Int;\n  max_score: Int;\n}\n\ntype Student {\n  name: Str;\n  grades: Vec[Grade];\n}\n\ntype Gradebook {\n  students: Vec[Student];\n}\n```\n\n### Adding Grades\n\n```xiom\nrequires { score >= 0; }\nrequires { score <= max_score; }\nfn add_grade(student: &mut Student, subject: Str, score: Int, max_score: Int) {\n  student.grades.push(Grade{ subject: subject, score: score, max_score: max_score });\n}\n```\n\nThe contract guarantees scores are valid (0 to max). No negative scores, no 110/100.\n\n### Calculating Averages\n\n```xiom\nfn student_average(student: &Student) -> Int {\n  if student.grades.len() == 0 { return 0; };\n  let mut total = 0;\n  let mut i = 0;\n  while i < student.grades.len() {\n    let g = student.grades.get(i).unwrap();\n    total += g.score * 100 / g.max_score;\n    i += 1;\n  };\n  total / student.grades.len()\n}\n\nfn subject_average(gradebook: &Gradebook, subject: Str) -> Int {\n  let mut total = 0;\n  let mut count = 0;\n  let mut i = 0;\n  while i < gradebook.students.len() {\n    let student = gradebook.students.get(i).unwrap();\n    let mut j = 0;\n    while j < student.grades.len() {\n      let g = student.grades.get(j).unwrap();\n      if g.subject == subject {\n        total += g.score;\n        count += 1;\n      };\n      j += 1;\n    };\n    i += 1;\n  };\n  if count == 0 { return 0; };\n  total / count\n}\n```\n\n### Top Performers\n\n```xiom\nfn top_student(gradebook: &Gradebook) -> Option<Str> {\n  if gradebook.students.len() == 0 { return Option.None; };\n  let mut best_idx = 0;\n  let mut best_avg = student_average(gradebook.students.get(0).unwrap());\n  let mut i = 1;\n  while i < gradebook.students.len() {\n    let avg = student_average(gradebook.students.get(i).unwrap());\n    if avg > best_avg {\n      best_avg = avg;\n      best_idx = i;\n    };\n    i += 1;\n  };\n  Option.Some(gradebook.students.get(best_idx).unwrap().name.clone())\n}\n```\n\n### Report Card\n\n```xiom\nfn print_report_card(student: &Student) {\n  let avg = student_average(student);\n  let letter = grade_to_letter(avg);\n\n  io.println(student.name);\n  io.println(avg);\n  io.println(letter);\n\n  let mut i = 0;\n  while i < student.grades.len() {\n    let g = student.grades.get(i).unwrap();\n    io.println(g.subject);\n    io.println(g.score);\n    i += 1;\n  };\n}\n```\n\n### Class Statistics\n\n```\n--- Class Report ---\nStudents: 30\nClass Average: 82%\nTop Student: Alex (94%)\n\nGrade Distribution:\n  A: 8  B: 12  C: 7  D: 2  F: 1\n```",
   "analogy": "A teacher's gradebook spreadsheet with rows of students and columns of assignments. The final column uses a formula to calculate the weighted average, then maps it to A/B/C/D/F. Your gradebook IS that spreadsheet, with contracts ensuring no grade slips outside the valid range.",
-  "code_template": "type StudentRecord {\n  name: Str;\n  scores: Vec[Int];\n}\n\nfn average_score(student: &StudentRecord) -> Int {\n  // TODO: sum scores, divide by count, return 0 if no scores\n}\n\nfn letter_grade_from_avg(avg: Int) -> Str {\n  // TODO: 90+=A, 80+=B, 70+=C, 60+=D, else F\n}\n\nfn main() -> Int {\n  // TODO: create 3 students with scores, compute averages, print letter grades\n  return 0;\n}\n",
-  "solution": "type StudentRecord {\n  name: Str;\n  scores: Vec[Int];\n}\n\nfn average_score(student: &StudentRecord) -> Int {\n  if student.scores.len() == 0 { return 0; };\n  let mut sum = 0;\n  let mut i = 0;\n  while i < student.scores.len() {\n    sum += student.scores.get(i).unwrap();\n    i += 1;\n  };\n  sum / student.scores.len()\n}\n\nfn letter_grade_from_avg(avg: Int) -> Str {\n  if avg >= 90 { return \"A\"; };\n  if avg >= 80 { return \"B\"; };\n  if avg >= 70 { return \"C\"; };\n  if avg >= 60 { return \"D\"; };\n  \"F\"\n}\n\nfn main() -> Int {\n  let mut s1 = StudentRecord{ name: \"Alex\", scores: Vec[Int].new() };\n  s1.scores.push(95); s1.scores.push(88); s1.scores.push(92);\n  io.println(average_score(&s1));\n  io.println(letter_grade_from_avg(average_score(&s1)));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype StudentRecord {\n  name: Str;\n  scores: Vec[Int];\n}\n\nfn average_score(student: &StudentRecord) -> Int {\n  // TODO: sum scores, divide by count, return 0 if no scores\n}\n\nfn letter_grade_from_avg(avg: Int) -> Str {\n  // TODO: 90+=A, 80+=B, 70+=C, 60+=D, else F\n}\n\nfn main() -> Int {\n  // TODO: create 3 students with scores, compute averages, print letter grades\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ntype StudentRecord {\n  name: Str;\n  scores: Vec[Int];\n}\n\nfn average_score(student: &StudentRecord) -> Int {\n  if student.scores.len() == 0 { return 0; };\n  let mut sum = 0;\n  let mut i = 0;\n  while i < student.scores.len() {\n    sum += student.scores.get(i).unwrap();\n    i += 1;\n  };\n  sum / student.scores.len()\n}\n\nfn letter_grade_from_avg(avg: Int) -> Str {\n  if avg >= 90 { return \"A\"; };\n  if avg >= 80 { return \"B\"; };\n  if avg >= 70 { return \"C\"; };\n  if avg >= 60 { return \"D\"; };\n  \"F\"\n}\n\nfn main() -> Int {\n  let mut s1 = StudentRecord{ name: \"Alex\", scores: Vec[Int].new() };\n  s1.scores.push(95); s1.scores.push(88); s1.scores.push(92);\n  io.println(average_score(&s1).to_str());\n  io.println(letter_grade_from_avg(average_score(&s1)));\n  return 0;\n}\n",
   "try_it": "Add weighted grades: tests=50%, homework=30%, participation=20%. Add grade distribution histogram. Identify students at risk (average below 60%). Add extra credit that can boost scores up to 105%. Implement ranking: 1st, 2nd, 3rd place.",
-  "concepts": ["gradebook", "students", "averages", "contracts", "report-cards", "ranking", "statistics"],
+  "concepts": [
+    "gradebook",
+    "students",
+    "averages",
+    "contracts",
+    "report-cards",
+    "ranking",
+    "statistics"
+  ],
   "tips": [
     "Contracts on add_grade guarantee values stay in valid range (0-100)",
     "Calculate weighted average: sum(score × weight) / sum(weights)",
@@ -22,5 +30,9 @@
     "Printing report cards for students with no grades — handle empty gracefully"
   ],
   "next_lesson": "L8-09",
-  "related": ["L7-34", "L8-06", "L4-02"]
+  "related": [
+    "L7-34",
+    "L8-06",
+    "L4-02"
+  ]
 }

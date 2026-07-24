@@ -1,18 +1,35 @@
 {
   "id": "L0-01",
-  "title": "Hello, XIOM!",
+  "title": "Your First Program",
   "level": "L0",
-  "duration": "10 min",
-  "story": "You are about to write your first XIOM program.",
-  "why": "Learning to print output is the first step in any language.",
-  "narrative": "## Your First Program\n\nLet's write a simple program that prints a message.\n\n## Try It\n\nRun the code and see what happens.",
-  "analogy": "Printing is like shouting into a void — but the void answers back.",
-  "code_template": "// Write your first XIOM program\nfn main() {\n    println(\"Hello, XIOM!\");\n}",
-  "solution": "fn main() {\n    println(\"Hello, XIOM!\");\n}",
-  "try_it": "Change the message and run again.",
-  "concepts": ["println", "main function", "strings"],
-  "tips": ["Use double quotes for strings", "Every statement ends with a newline"],
-  "common_mistakes": ["Forgetting the opening brace", "Using single quotes"],
+  "duration": "6 min",
+  "story": "Imagine teaching your dog a new trick. You say 'sit,' and your dog sits. A program works the same way — you give the computer instructions, and it follows them exactly, one by one.",
+  "why": "Every app, game, and website you use starts with a program like this one.",
+  "narrative": "## What Is a Program?\n\nA program is a set of instructions you give to a computer — just like a **recipe** tells a cook what steps to follow. The computer reads your instructions from top to bottom, doing each one in order.\n\nLet's write the simplest possible program:\n\n```xiom\nuse xiom.io;\nfn main() {\n  io.println(\"Hello, world!\");\n}\n```\n\n### What Each Part Does\n\n- **`use xiom.io;`** — Tells XIOM you want to use the input/output module. Every program that prints needs this line at the top.\n- **`fn main()`** — The starting point. `fn` means \"function\" — a block of instructions with a name. `main` is where your program begins.\n- **`{` and `}`** — Curly braces wrap the body. Everything between them runs.\n- **`io.println(\"...\");`** — Prints text to the screen. Words between double quotes are called **strings**.\n- **`;`** — Every statement ends with a semicolon, like a period in English.\n\n### Comments: Notes for Humans\n\nThe `//` marks a **comment** — a note for humans. The computer IGNORES everything after `//` on a line:\n\n```xiom\nuse xiom.io;\nfn main() {\n  // Print a greeting\n  io.println(\"Hello, world!\");\n}\n```\n\nComments are like sticky notes. Use them to explain WHY you wrote something.",
+  "analogy": "A program is like a recipe: you write step-by-step instructions, and the computer follows them exactly.",
+  "code_template": "use xiom.io;\n\n// Write your first XIOM program\nfn main() {\n  io.println(\"Hello, XIOM!\");\n}",
+  "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"Hello, XIOM!\");\n}",
+  "try_it": "Change the greeting inside the quotes. Try your name, a different language, or an emoji!",
+  "concepts": [
+    "use",
+    "fn",
+    "main",
+    "io.println",
+    "comment"
+  ],
+  "tips": [
+    "Every statement ends with a semicolon ;",
+    "Text in quotes is called a string",
+    "Comments with // are ignored by the computer",
+    "use xiom.io; goes at the very top of your file"
+  ],
+  "common_mistakes": [
+    "Forgetting the semicolon ; at the end",
+    "Missing the closing double quote",
+    "Spelling io.println wrong — it's println, not printline"
+  ],
   "next_lesson": "L0-02",
-  "related": ["L1-01"]
+  "related": [
+    "L0-02"
+  ]
 }

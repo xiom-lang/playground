@@ -1,25 +1,35 @@
 {
-  "id": "L2-30",
-  "title": "Sports Team",
-  "level": "L2",
-  "duration": "8 min",
-  "story": "Your local football league needs player profiles. Each player has a name, jersey number, and position. Before a game, the announcer reads each player's intro: \"Number 10, playing Forward \u2014 Alex!\"",
-  "why": "Grouping related fields into a struct keeps player data organized and easy to pass to formatting functions.",
-  "narrative": "## Modeling a Sports Player\n\nA player has a name, jersey number, and field position. A struct bundles these together so you can pass one value instead of three.\n\n### The Player Struct\n\n```xiom\ntype Player = {\n  name: Str;\n  number: Int;\n  position: Str;\n}\n```\n\n### The Team Struct\n\nA team has a name and sport, plus you track its star player:\n\n```xiom\ntype Team = {\n  name: Str;\n  sport: Str;\n  star: Player;\n}\n```\n\n### Creating Players and Teams\n\n```xiom\nlet messi = Player{ name: \"Lionel Messi\"; number: 10; position: \"Forward\"; };\n\nlet fc_barcelona = Team{\n  name: \"FC Barcelona\";\n  sport: \"Football\";\n  star: messi;\n};\n```\n\n### Announcing a Player\n\nA function that produces a stadium-style introduction:\n\n```xiom\nfn announce(p: Player) -> Str {\n  return \"Number \" + p.number + \", playing \" + p.position + \" \u2014 \" + p.name + \"!\";\n}\n```\n\nUsing it:\n\n```xiom\nannounce(messi);  // \"Number 10, playing Forward \u2014 Lionel Messi!\"\n```\n\n### Accessing Nested Data\n\n```xiom\nfc_barcelona.star.name;      // \"Lionel Messi\"\nfc_barcelona.star.number;    // 10\nfc_barcelona.sport;          // \"Football\"\n```\n\nThe dot chain reads left to right: team \u2192 star player \u2192 field.",
-  "analogy": "A team is like a folder, the star player is a file inside it, and the fields are the file's contents. You open the folder first (`team`), then the file (`star`), then read a line (`name`).",
-  "code_template": "type Player = {\n  name: Str;\n  number: Int;\n  position: Str;\n}\n\ntype Team = {\n  name: Str;\n  sport: Str;\n  star: Player;\n}\n\n// TODO: write a function 'announce' that returns \"Number X, playing Position \u2014 Name!\"\n\n// TODO: write a function 'same_sport' that returns true if two teams play the same sport\n\nfn main() -> Int {\n  // TODO: create two football teams, check if same sport, return 1 if true else 0\n  return 0;\n}",
-  "solution": "type Player = {\n  name: Str;\n  number: Int;\n  position: Str;\n}\n\ntype Team = {\n  name: Str;\n  sport: Str;\n  star: Player;\n}\n\nfn announce(p: Player) -> Str {\n  return \"Number \" + p.number + \", playing \" + p.position + \" \u2014 \" + p.name + \"!\";\n}\n\nfn same_sport(a: Team, b: Team) -> Bool {\n  return a.sport == b.sport;\n}\n\nfn main() -> Int {\n  let p1 = Player{ name: \"Messi\"; number: 10; position: \"Forward\"; };\n  let p2 = Player{ name: \"Ronaldo\"; number: 7; position: \"Forward\"; };\n  let team1 = Team{ name: \"Barcelona\"; sport: \"Football\"; star: p1; };\n  let team2 = Team{ name: \"Madrid\"; sport: \"Football\"; star: p2; };\n  if same_sport(team1, team2) { return 1; }\n  return 0;\n}",
-  "try_it": "Add a `substitute` method to Player that changes the name and number. Create a starting lineup of 5 players (use separate variables, no collections yet). Write a function that finds the player with the highest jersey number among any 3 given players.",
-  "concepts": ["struct", "nested struct", "string concat", "Bool", "comparison"],
-  "tips": [
-    "Build data from the inside out: create Players first, then the Team that contains them",
-    "Use `+` to concatenate strings with numbers \u2014 XIOM converts numbers to strings automatically",
-    "Dot notation chains left to right: `team.star.name` reads as (team's star's name)"
-  ],
-  "common_mistakes": [
-    "Trying to access `team.name` when you meant `team.star.name` \u2014 the star's name is nested one level deeper",
-    "Using `==` on strings from different sources \u2014 string comparison is case-sensitive"
-  ],
-  "next_lesson": "L2-31",
-  "related": ["L2-21", "L2-01", "L2-03"]
+    "id":  "L2-30",
+    "title":  "Sports Team",
+    "level":  "L2",
+    "duration":  "8 min",
+    "story":  "Your local football league needs player profiles. Each player has a name, jersey number, and position. Before a game, the announcer reads each player\u0027s intro: \"Number 10, playing Forward — Alex!\"",
+    "why":  "Grouping related fields into a struct keeps player data organized and easy to pass to formatting functions.",
+    "narrative":  "## Modeling a Sports Player\n\nA player has a name, jersey number, and field position. A struct bundles these together so you can pass one value instead of three.\n\n### The Player Struct\n\n```xiom\ntype Player = {\n  name: Str;\n  number: Int;\n  position: Str;\n}\n```\n\n### The Team Struct\n\nA team has a name and sport, plus you track its star player:\n\n```xiom\ntype Team = {\n  name: Str;\n  sport: Str;\n  star: Player;\n}\n```\n\n### Creating Players and Teams\n\n```xiom\nlet messi = Player{ name: \"Lionel Messi\"; number: 10; position: \"Forward\"; };\n\nlet fc_barcelona = Team{\n  name: \"FC Barcelona\";\n  sport: \"Football\";\n  star: messi;\n};\n```\n\n### Announcing a Player\n\nA function that produces a stadium-style introduction:\n\n```xiom\nfn announce(p: Player) -\u003e Str {\n  return \"Number \" + p.number + \", playing \" + p.position + \" — \" + p.name + \"!\";\n}\n```\n\nUsing it:\n\n```xiom\nannounce(messi);  // \"Number 10, playing Forward — Lionel Messi!\"\n```\n\n### Accessing Nested Data\n\n```xiom\nfc_barcelona.star.name;      // \"Lionel Messi\"\nfc_barcelona.star.number;    // 10\nfc_barcelona.sport;          // \"Football\"\n```\n\nThe dot chain reads left to right: team ? star player ? field.",
+    "analogy":  "A team is like a folder, the star player is a file inside it, and the fields are the file\u0027s contents. You open the folder first (`team`), then the file (`star`), then read a line (`name`).",
+    "code_template":  "use xiom.io;\n\ntype Player = {\n  name: Str;\n  number: Int;\n  position: Str;\n}\n\ntype Team = {\n  name: Str;\n  sport: Str;\n  star: Player;\n}\n\n// TODO: write a function \u0027announce\u0027 that returns \"Number X, playing Position — Name!\"\n\n// TODO: write a function \u0027same_sport\u0027 that returns true if two teams play the same sport\n\nfn main() -\u003e Int {\n  // TODO: create two football teams, check if same sport, return 1 if true else 0\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype Player = {\n  name: Str;\n  number: Int;\n  position: Str;\n}\n\ntype Team = {\n  name: Str;\n  sport: Str;\n  star: Player;\n}\n\nfn announce(p: Player) -\u003e Str {\n  return \"Number \" + p.number + \", playing \" + p.position + \" — \" + p.name + \"!\";\n}\n\nfn same_sport(a: Team, b: Team) -\u003e Bool {\n  return a.sport == b.sport;\n}\n\nfn main() -\u003e Int {\n  let p1 = Player{ name: \"Messi\"; number: 10; position: \"Forward\"; };\n  let p2 = Player{ name: \"Ronaldo\"; number: 7; position: \"Forward\"; };\n  let team1 = Team{ name: \"Barcelona\"; sport: \"Football\"; star: p1; };\n  let team2 = Team{ name: \"Madrid\"; sport: \"Football\"; star: p2; };\n  if same_sport(team1, team2) { return 1; }\n  return 0;\n}",
+    "try_it":  "Add a `substitute` method to Player that changes the name and number. Create a starting lineup of 5 players (use separate variables, no collections yet). Write a function that finds the player with the highest jersey number among any 3 given players.",
+    "concepts":  [
+                     "struct",
+                     "nested struct",
+                     "string concat",
+                     "Bool",
+                     "comparison"
+                 ],
+    "tips":  [
+                 "Build data from the inside out: create Players first, then the Team that contains them",
+                 "Use `+` to concatenate strings with numbers — XIOM converts numbers to strings automatically",
+                 "Dot notation chains left to right: `team.star.name` reads as (team\u0027s star\u0027s name)"
+             ],
+    "common_mistakes":  [
+                            "Trying to access `team.name` when you meant `team.star.name` — the star\u0027s name is nested one level deeper",
+                            "Using `==` on strings from different sources — string comparison is case-sensitive"
+                        ],
+    "next_lesson":  "L2-31",
+    "related":  [
+                    "L2-21",
+                    "L2-01",
+                    "L2-03"
+                ]
 }

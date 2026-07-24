@@ -7,12 +7,31 @@
   "why": "String manipulation functions show how input text can be transformed through a pipeline of operations — a pattern used everywhere from web apps to compilers.",
   "narrative": "## Building String Formatter Functions\n\nText transformation is a classic function pattern: take a string, apply an operation, return the modified string.\n\n### Title Case Converter\n\n```xiom\nfn title_case(text: Str) -> Str {\n  let first = string.str_upper(text);\n  return first;\n}\n```\n\nWait — that uppercases the ENTIRE string. For a simple title case, we want only the first letter uppercased. Here's one approach:\n\n```xiom\nfn title_case(text: Str) -> Str {\n  let first_char = string.str_upper(text);\n  return first_char;\n}\n```\n\nActually, a simpler \"title case\" for our purposes: uppercase the whole string. It's a start!\n\n### Add Exclamation\n\n```xiom\nfn add_exclamation(text: Str) -> Str {\n  return text + \"!!!\";\n}\n```\n\n### Repeat a Word\n\n```xiom\nfn repeat_word(word: Str, times: Int) -> Str {\n  var result = \"\";\n  var count = 0;\n  while count < times {\n    result = string.str_concat(result, word);\n    count = count + 1;\n  }\n  return result;\n}\n```\n\n### Composing the Formatters\n\n```xiom\nfn main() -> Int {\n  let headline = \"breaking news\";\n  let loud = title_case(headline);\n  let louder = add_exclamation(loud);\n  io.println(\"Formatted text ready!\");\n\n  let chant = repeat_word(\"Go! \", 3);\n  io.println(\"Chant ready!\");\n\n  return 0;\n}\n```\n\nEach function transforms a string and passes it to the next, like an assembly line for text.",
   "analogy": "String formatting is like a photo editing app with filters. You apply the 'uppercase' filter, then the 'add excitement' filter, then the 'repeat' filter. Each filter transforms the image (string) and hands it to the next filter in the pipeline.",
-  "code_template": "// TODO: Write title_case(text: Str) -> Str using string.str_upper\n// TODO: Write add_exclamation(text: Str) -> Str (append \"!!!\")\n// TODO: Write repeat_word(word: Str, times: Int) -> Str using a while loop\n\nfn main() -> Int {\n  let message = \"hello world\";\n  // TODO: Apply all three formatters to message in sequence\n  // TODO: Print the final formatted result\n  return 0;\n}",
-  "solution": "fn title_case(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn add_exclamation(text: Str) -> Str {\n  return text + \"!!!\";\n}\n\nfn repeat_word(word: Str, times: Int) -> Str {\n  var result = \"\";\n  var count = 0;\n  while count < times {\n    result = string.str_concat(result, word);\n    count = count + 1;\n  }\n  return result;\n}\n\nfn main() -> Int {\n  let message = \"hello world\";\n  let step1 = title_case(message);\n  let step2 = add_exclamation(step1);\n  io.println(\"Text formatting complete!\");\n  let chant = repeat_word(\"XIOM! \", 4);\n  io.println(\"Chant generated!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\nuse xiom.string;\n// TODO: Write title_case(text: Str) -> Str using string.str_upper\n// TODO: Write add_exclamation(text: Str) -> Str (append \"!!!\")\n// TODO: Write repeat_word(word: Str, times: Int) -> Str using a while loop\n\nfn main() {\n  let message = \"hello world\";\n  // TODO: Apply all three formatters to message in sequence\n  // TODO: Print the final formatted result\n}",
+  "solution": "use xiom.io;\nuse xiom.string;\nfn title_case(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn add_exclamation(text: Str) -> Str {\n  return text + \"!!!\";\n}\n\nfn repeat_word(word: Str, times: Int) -> Str {\n  var result = \"\";\n  var count = 0;\n  while count < times {\n    result = string.str_concat(result, word);\n    count = count + 1;\n  }\n}\nfn main() {\n  let message = \"hello world\";\n  let step1 = title_case(message);\n  let step2 = add_exclamation(step1);\n  io.println(\"Text formatting complete!\");\n  let chant = repeat_word(\"XIOM! \", 4);\n  io.println(\"Chant generated!\");\n}",
   "try_it": "Write a `reverse_text(text: Str) -> Str` function that reverses a string using a while loop, and add it to the formatting pipeline before `add_exclamation`.",
-  "concepts": ["string manipulation", "while loop in functions", "string concatenation", "function pipeline"],
-  "tips": ["string.str_upper and string.str_lower transform the entire string", "Use `+` to concatenate two strings simply; use string.str_concat in loops", "Build pipelines by assigning each function's output to a new variable", "A while loop inside a function lets you repeat operations a variable number of times"],
-  "common_mistakes": ["Forgetting to initialize the result variable as an empty string `\"\"` before the loop", "Not incrementing the counter in the while loop — causes infinite loop", "Confusing string.str_upper (entire string) with capitalizing just the first letter"],
+  "concepts": [
+    "string manipulation",
+    "while loop in functions",
+    "string concatenation",
+    "function pipeline"
+  ],
+  "tips": [
+    "string.str_upper and string.str_lower transform the entire string",
+    "Use `+` to concatenate two strings simply; use string.str_concat in loops",
+    "Build pipelines by assigning each function's output to a new variable",
+    "A while loop inside a function lets you repeat operations a variable number of times"
+  ],
+  "common_mistakes": [
+    "Forgetting to initialize the result variable as an empty string `\"\"` before the loop",
+    "Not incrementing the counter in the while loop — causes infinite loop",
+    "Confusing string.str_upper (entire string) with capitalizing just the first letter"
+  ],
   "next_lesson": "L1-30",
-  "related": ["L1-03", "L1-17", "L1-24", "L1-34"]
+  "related": [
+    "L1-03",
+    "L1-17",
+    "L1-24",
+    "L1-34"
+  ]
 }

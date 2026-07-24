@@ -6,20 +6,31 @@
   "story": "Game night! Your Dungeons & Dragons group needs a dice roller. Instead of carrying physical dice, you build a digital one. Each die type (D4, D6, D8, D10, D12, D20) has a different number of sides. Your app needs to know the maximum value for each die and simulate random rolls.",
   "why": "An enum with a match-driven method that returns different values per variant is the heart of RPG game mechanics.",
   "narrative": "## Rolling Polyhedral Dice\n\nTabletop RPGs use dice with different numbers of sides. A D4 is a pyramid with 4 sides. A D20 is the iconic 20-sided die.\n\n### The Dice Enum\n\n```xiom\nenum Dice {\n  D4,\n  D6,\n  D8,\n  D10,\n  D12,\n  D20,\n}\n```\n\n### Maximum Value Per Die\n\nEach die type has a different maximum:\n\n```xiom\nfn Dice.max_value(self) -> Int {\n  match self {\n    D4 => { return 4; }\n    D6 => { return 6; }\n    D8 => { return 8; }\n    D10 => { return 10; }\n    D12 => { return 12; }\n    D20 => { return 20; }\n  }\n}\n```\n\n### Simulating a Roll\n\nA standalone function simulates a random roll for any die:\n\n```xiom\nfn roll(d: Dice) -> Int {\n  let max = d.max_value();\n  return (max / 2) + 1;\n}\n```\n\nThis uses a deterministic formula. For true randomness, check the `math` module.\n\n### Rolling Multiple Times\n\n```xiom\nlet d20 = Dice.D20;\nroll(d20);  // e.g., 11\nroll(d20);  // e.g., 11\nroll(d20);  // e.g., 11\n\nlet d6 = Dice.D6;\nroll(d6);   // e.g., 4\n```\n\n### Critical Hits\n\nA D20 roll of 20 is a \"critical hit\" in many games:\n\n```xiom\nfn is_critical(d: Dice, result: Int) -> Bool {\n  return d == Dice.D20 && result == 20;\n}\n```",
-  "analogy": "Each dice variant is a different physical die in your dice bag. max_value is the number printed on the highest face. The roll function is you shaking the die and tossing it \u2014 the result lands somewhere between 1 and the max.",
-  "code_template": "enum Dice {\n  D4,\n  D6,\n  D8,\n  D10,\n  D12,\n  D20,\n}\n\n// TODO: write a method 'Dice.max_value' that returns the number of sides\n\n// TODO: write a function 'roll' that takes a Dice and returns a simulated roll result\n\nfn main() -> Int {\n  // TODO: roll a D20, roll a D6, return the sum of both rolls\n  return 0;\n}",
-  "solution": "enum Dice {\n  D4,\n  D6,\n  D8,\n  D10,\n  D12,\n  D20,\n}\n\nfn Dice.max_value(self) -> Int {\n  match self {\n    D4 => { return 4; }\n    D6 => { return 6; }\n    D8 => { return 8; }\n    D10 => { return 10; }\n    D12 => { return 12; }\n    D20 => { return 20; }\n  }\n}\n\nfn roll(d: Dice) -> Int {\n  let max = d.max_value();\n  return (max / 2) + 1;\n}\n\nfn main() -> Int {\n  let d20 = Dice.D20;\n  let d6 = Dice.D6;\n  return roll(d20) + roll(d6);\n}",
+  "analogy": "Each dice variant is a different physical die in your dice bag. max_value is the number printed on the highest face. The roll function is you shaking the die and tossing it � the result lands somewhere between 1 and the max.",
+  "code_template": "use xiom.io;\n\nenum Dice {\n  D4,\n  D6,\n  D8,\n  D10,\n  D12,\n  D20,\n}\n\n// TODO: write a method 'Dice.max_value' that returns the number of sides\n\n// TODO: write a function 'roll' that takes a Dice and returns a simulated roll result\n\nfn main() -> Int {\n  // TODO: roll a D20, roll a D6, return the sum of both rolls\n  return 0;\n}",
+  "solution": "use xiom.io;\n\nenum Dice {\n  D4,\n  D6,\n  D8,\n  D10,\n  D12,\n  D20,\n}\n\nfn Dice.max_value(self) -> Int {\n  match self {\n    D4 => { return 4; }\n    D6 => { return 6; }\n    D8 => { return 8; }\n    D10 => { return 10; }\n    D12 => { return 12; }\n    D20 => { return 20; }\n  }\n}\n\nfn roll(d: Dice) -> Int {\n  let max = d.max_value();\n  return (max / 2) + 1;\n}\n\nfn main() -> Int {\n  let d20 = Dice.D20;\n  let d6 = Dice.D6;\n  return roll(d20) + roll(d6);\n}",
   "try_it": "Add a `D100` (percentile) die to the enum. Roll a D20 five times and track the results. Add a function `roll_with_advantage(d: Dice) -> Int` that rolls twice and returns the higher result.",
-  "concepts": ["enum", "match", "method", "RPG", "dice", "simulation"],
+  "concepts": [
+    "enum",
+    "match",
+    "method",
+    "RPG",
+    "dice",
+    "simulation"
+  ],
   "tips": [
-    "Match arms return unique integers \u2014 no shared logic needed when each variant has its own value",
+    "Match arms return unique integers � no shared logic needed when each variant has its own value",
     "Keep `roll` as a standalone function since it works on any Dice value, not a specific variant",
-    "Use `Dice.D20` to reference a specific variant \u2014 the enum name qualifies the variant"
+    "Use `Dice.D20` to reference a specific variant � the enum name qualifies the variant"
   ],
   "common_mistakes": [
-    "Writing `d.max_value` instead of `d.max_value()` \u2014 max_value is a method, needs parentheses",
-    "Forgetting to match all 6 variants \u2014 XIOM requires exhaustive matches on enums"
+    "Writing `d.max_value` instead of `d.max_value()` � max_value is a method, needs parentheses",
+    "Forgetting to match all 6 variants � XIOM requires exhaustive matches on enums"
   ],
   "next_lesson": "L2-47",
-  "related": ["L2-15", "L2-37", "L2-39"]
+  "related": [
+    "L2-15",
+    "L2-37",
+    "L2-39"
+  ]
 }

@@ -7,10 +7,17 @@
   "why": "A quiz game teaches structs for questions, Vec for question banks, scoring logic with conditionals, and results display — a complete interactive program.",
   "narrative": "## Building a Quiz Game\n\n### Question Structure\n\n```xiom\ntype Question {\n  text: Str;\n  correct_answer: Str;\n  points: Int;\n}\n\nfn create_questions() -> Vec[Question] {\n  let mut questions: Vec[Question] = Vec[Question].new();\n  questions.push(Question{ text: \"What is 2 + 2?\", correct_answer: \"4\", points: 10 });\n  questions.push(Question{ text: \"Capital of France?\", correct_answer: \"Paris\", points: 10 });\n  questions.push(Question{ text: \"Red + Blue = ?\", correct_answer: \"Purple\", points: 10 });\n  questions\n}\n```\n\n### Running a Quiz\n\n```xiom\nfn run_quiz(questions: &Vec[Question]) -> Int {\n  let mut score = 0;\n  let mut correct = 0;\n  let mut i = 0;\n\n  while i < questions.len() {\n    let q = questions.get(i).unwrap();\n    io.println(q.text);\n\n    let user_answer = \"4\";\n\n    if user_answer == q.correct_answer {\n      io.println(\"Correct!\");\n      score += q.points;\n      correct += 1;\n    } else {\n      io.println(\"Wrong!\");\n    };\n    i += 1;\n  };\n\n  io.println(correct);\n  io.println(score);\n  score\n}\n```\n\n### Calculating Grade\n\n```xiom\nfn calculate_grade(score: Int, max_score: Int) -> Str {\n  let pct = score * 100 / max_score;\n  if pct >= 90 { return \"A\"; };\n  if pct >= 80 { return \"B\"; };\n  if pct >= 70 { return \"C\"; };\n  if pct >= 60 { return \"D\"; };\n  \"F\"\n}\n```\n\n### Results Summary\n\n```xiom\nfn show_results(correct: Int, total: Int, score: Int) {\n  let grade = calculate_grade(score, total * 10);\n  io.println(correct);\n  io.println(total);\n  io.println(grade);\n}\n```",
   "analogy": "A game show buzzer: the host reads a question, you buzz in with an answer, the scoreboard lights up or doesn't. Your quiz engine is the entire show — question bank (script), answer checking (judge), scoring (scoreboard), and final results (the big reveal).",
-  "code_template": "type QuizQuestion {\n  question: Str;\n  answer: Str;\n}\n\nfn check_answer(question: &QuizQuestion, user_answer: Str) -> Bool {\n  // TODO: return true if user_answer matches question.answer (case-insensitive)\n}\n\nfn run_quiz(questions: &Vec[QuizQuestion]) -> Int {\n  // TODO: iterate questions, check a hardcoded answer for each, track score\n  // Return total correct answers\n}\n\nfn main() -> Int {\n  // TODO: create 3 questions, run quiz, print score\n  return 0;\n}\n",
-  "solution": "type QuizQuestion {\n  question: Str;\n  answer: Str;\n}\n\nfn check_answer(question: &QuizQuestion, user_answer: Str) -> Bool {\n  question.answer == user_answer\n}\n\nfn run_quiz(questions: &Vec[QuizQuestion]) -> Int {\n  let mut correct = 0;\n  let answers: Vec[Str] = Vec[Str].new();\n  answers.push(\"4\"); answers.push(\"Paris\"); answers.push(\"Purple\");\n\n  let mut i = 0;\n  while i < questions.len() {\n    let q = questions.get(i).unwrap();\n    io.println(q.question);\n    if check_answer(q, answers.get(i).unwrap()) { correct += 1; };\n    i += 1;\n  };\n  correct\n}\n\nfn main() -> Int {\n  let mut questions: Vec[QuizQuestion] = Vec[QuizQuestion].new();\n  questions.push(QuizQuestion{ question: \"2+2?\", answer: \"4\" });\n  questions.push(QuizQuestion{ question: \"Capital of France?\", answer: \"Paris\" });\n  questions.push(QuizQuestion{ question: \"Red+Blue?\", answer: \"Purple\" });\n  let score = run_quiz(&questions);\n  io.println(score);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype QuizQuestion {\n  question: Str;\n  answer: Str;\n}\n\nfn check_answer(question: &QuizQuestion, user_answer: Str) -> Bool {\n  // TODO: return true if user_answer matches question.answer (case-insensitive)\n}\n\nfn run_quiz(questions: &Vec[QuizQuestion]) -> Int {\n  // TODO: iterate questions, check a hardcoded answer for each, track score\n  // Return total correct answers\n}\n\nfn main() -> Int {\n  // TODO: create 3 questions, run quiz, print score\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ntype QuizQuestion {\n  question: Str;\n  answer: Str;\n}\n\nfn check_answer(question: &QuizQuestion, user_answer: Str) -> Bool {\n  question.answer == user_answer\n}\n\nfn run_quiz(questions: &Vec[QuizQuestion]) -> Int {\n  let mut correct = 0;\n  let answers: Vec[Str] = Vec[Str].new();\n  answers.push(\"4\"); answers.push(\"Paris\"); answers.push(\"Purple\");\n\n  let mut i = 0;\n  while i < questions.len() {\n    let q = questions.get(i).unwrap();\n    io.println(q.question.to_str());\n    if check_answer(q, answers.get(i).unwrap()) { correct += 1; };\n    i += 1;\n  };\n  correct\n}\n\nfn main() -> Int {\n  let mut questions: Vec[QuizQuestion] = Vec[QuizQuestion].new();\n  questions.push(QuizQuestion{ question: \"2+2?\", answer: \"4\" });\n  questions.push(QuizQuestion{ question: \"Capital of France?\", answer: \"Paris\" });\n  questions.push(QuizQuestion{ question: \"Red+Blue?\", answer: \"Purple\" });\n  let score = run_quiz(&questions);\n  io.println(score.to_str());\n  return 0;\n}\n",
   "try_it": "Add multiple choice: each question has 4 options, only one correct. Add categories (Science, History, Sports) and let players choose a category. Track time per question. Add a high score system that persists across multiple quiz runs.",
-  "concepts": ["quiz", "question-bank", "scoring", "grading", "Vec", "game-logic"],
+  "concepts": [
+    "quiz",
+    "question-bank",
+    "scoring",
+    "grading",
+    "Vec",
+    "game-logic"
+  ],
   "tips": [
     "Store questions in a Vec — easy to add, remove, or shuffle",
     "Compare answers case-insensitively for better user experience",
@@ -22,5 +29,10 @@
     "Not handling the case where total questions is zero (division by zero)"
   ],
   "next_lesson": "L7-28",
-  "related": ["L7-10", "L7-14", "L2-36", "L2-03"]
+  "related": [
+    "L7-10",
+    "L7-14",
+    "L2-36",
+    "L2-03"
+  ]
 }

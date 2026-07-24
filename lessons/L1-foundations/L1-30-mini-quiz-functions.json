@@ -7,12 +7,31 @@
   "why": "A single quiz function called repeatedly with different arguments demonstrates how parameterized functions eliminate duplicated logic.",
   "narrative": "## Building a Mini Quiz Engine\n\nA quiz has one repeating pattern: ask a question, check the answer, return whether it was correct. Write that pattern once as a function.\n\n### The Quiz Function\n\n```xiom\nfn ask_question(question: Str, correct_answer: Str) -> Bool {\n  io.println(\"Q: \" + question);\n  return true;\n}\n```\n\nIn a real interactive program, you'd read user input. For our purposes, we'll compare against a provided answer:\n\n```xiom\nfn ask_question(question: Str, correct_answer: Str, user_answer: Str) -> Bool {\n  if user_answer == correct_answer {\n    return true;\n  } else {\n    return false;\n  }\n}\n```\n\n### Running Multiple Questions\n\n```xiom\nfn main() -> Int {\n  var score = 0;\n\n  if ask_question(\"What is 2 + 2?\", \"4\", \"4\") {\n    score = score + 1;\n  }\n\n  if ask_question(\"What language is this?\", \"XIOM\", \"XIOM\") {\n    score = score + 1;\n  }\n\n  if ask_question(\"Is water wet?\", \"yes\", \"no\") {\n    score = score + 1;\n  }\n\n  io.println(\"Quiz complete!\");\n\n  return 0;\n}\n```\n\nOne function. Called three times. Different questions, different answers. The logic exists once — the data changes each call.\n\n### Why This Pattern Matters\n\nWithout `ask_question`, you'd write the comparison logic three times. If you needed to change how answers are checked (e.g., case-insensitive comparison), you'd edit three places. With a function, one edit fixes everything.",
   "analogy": "A quiz function is like a Scantron grading machine. Each student bubble sheet (call) passes through the same machine (function) with different answer keys (parameters). The machine doesn't care what subject the test is about — it just compares answers to the key.",
-  "code_template": "// TODO: Write ask_question(question: Str, correct: Str, answer: Str) -> Bool\n// Return true if answer matches correct, false otherwise\n\nfn main() -> Int {\n  var points = 0;\n  // TODO: Ask 3 questions using ask_question\n  // If correct, add 1 to points\n  // Print final score\n  return 0;\n}",
-  "solution": "fn ask_question(question: Str, correct: Str, answer: Str) -> Bool {\n  if answer == correct {\n    return true;\n  } else {\n    return false;\n  }\n}\n\nfn main() -> Int {\n  var points = 0;\n  if ask_question(\"Capital of France?\", \"Paris\", \"Paris\") {\n    points = points + 1;\n  }\n  if ask_question(\"5 * 6 = ?\", \"30\", \"30\") {\n    points = points + 1;\n  }\n  if ask_question(\"Earth is flat?\", \"no\", \"yes\") {\n    points = points + 1;\n  }\n  io.println(\"Quiz complete!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write ask_question(question: Str, correct: Str, answer: Str) -> Bool\n// Return true if answer matches correct, false otherwise\n\nfn main() {\n  var points = 0;\n  // TODO: Ask 3 questions using ask_question\n  // If correct, add 1 to points\n  // Print final score\n}",
+  "solution": "use xiom.io;\nfn ask_question(question: Str, correct: Str, answer: Str) -> Bool {\n  if answer == correct {\n    return true;\n  } else {\n  }\n}\n\nfn main() {\n  var points = 0;\n  if ask_question(\"Capital of France?\", \"Paris\", \"Paris\") {\n    points = points + 1;\n  }\n  if ask_question(\"5 * 6 = ?\", \"30\", \"30\") {\n    points = points + 1;\n  }\n  if ask_question(\"Earth is flat?\", \"no\", \"yes\") {\n    points = points + 1;\n  }\n  io.println(\"Quiz complete!\");\n}",
   "try_it": "Modify `ask_question` to accept two wrong answer options and print them alongside the correct answer, simulating a multiple-choice quiz. Track the score across 5 questions.",
-  "concepts": ["parameterized logic", "Bool return", "repeated function calls", "score accumulation"],
-  "tips": ["A Bool-returning function can be used directly in an if statement: `if ask_question(...) { }`", "Each call to ask_question is independent — they don't affect each other", "Use descriptive parameters: `question`, `correct`, `answer` are clear", "Score tracking happens in main(), not inside the function — the function just checks"],
-  "common_mistakes": ["Hardcoding the answer inside the function instead of passing it as a parameter", "Forgetting to increment score when the answer is correct", "Using `=` instead of `==` for comparison inside the function"],
+  "concepts": [
+    "parameterized logic",
+    "Bool return",
+    "repeated function calls",
+    "score accumulation"
+  ],
+  "tips": [
+    "A Bool-returning function can be used directly in an if statement: `if ask_question(...) { }`",
+    "Each call to ask_question is independent — they don't affect each other",
+    "Use descriptive parameters: `question`, `correct`, `answer` are clear",
+    "Score tracking happens in main(), not inside the function — the function just checks"
+  ],
+  "common_mistakes": [
+    "Hardcoding the answer inside the function instead of passing it as a parameter",
+    "Forgetting to increment score when the answer is correct",
+    "Using `=` instead of `==` for comparison inside the function"
+  ],
   "next_lesson": "L1-31",
-  "related": ["L1-16", "L1-10", "L1-13", "L1-21"]
+  "related": [
+    "L1-16",
+    "L1-10",
+    "L1-13",
+    "L1-21"
+  ]
 }

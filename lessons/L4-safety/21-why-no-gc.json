@@ -7,10 +7,15 @@
   "why": "XIOM's ownership system achieves memory safety without a garbage collector, giving you predictable performance with no GC pauses and no manual free().",
   "narrative": "## Memory Safety Without Runtime Cost\n\n### Three Approaches to Memory\n\n| Approach | Speed | Safety | Example |\n|----------|-------|--------|--------|\n| Manual (malloc/free) | Fast | Unsafe | C |\n| Garbage Collector | Slower | Safe | Java, Go, C# |\n| Ownership | Fast | Safe | XIOM |\n\n### What Ownership Eliminates\n\n```xiom\nfn main() -> Int {\n  // No use-after-free — compiler tracks ownership\n  let v = Vec[Int].new();\n  let v2 = v;          // v is now dead — can't use it\n  // No double-free — only one owner frees\n  // No null pointer dereference — references are always valid\n  // No data races — borrow rules prevent concurrent mutation\n  return v2.len() as Int;\n}\n```\n\n### Zero Runtime Overhead\n\nThe borrow checker runs at COMPILE TIME. By the time your program runs:\n- No reference counting\n- No garbage collection pauses\n- No runtime borrow checks\n- No lock acquisition for thread safety\n\n### The Trade-off\n\nYou must think about ownership while coding. But the reward is:\n- Predictable performance (no GC pauses)\n- Memory safety (no segfaults)\n- Thread safety (no data races)\n\nAll guaranteed before your program ever runs.",
   "analogy": "Garbage collector = a janitor who cleans up after everyone at unpredictable times. Ownership = everyone cleans up after themselves immediately when they leave. No surprises.",
-  "code_template": "// TODO: Create a Vec, move it, use clone for sharing\n// Show the three ways to handle memory:\n// 1. Ownership (default)\n// 2. Clone (explicit copy)\n// 3. Borrow (&) (shared access)\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
-  "solution": "fn main() -> Int {\n  let original = Vec[Int].new();\n  original.push(1);\n\n  let moved = original;       // 1. Ownership: original is gone\n  let copy = moved.clone();   // 2. Clone: independent copy\n  let ref = &moved;           // 3. Borrow: shared read access\n\n  io.println(ref.len());\n  return copy.len() as Int;\n}",
+  "code_template": "use xiom.io;\n\n// TODO: Create a Vec, move it, use clone for sharing\n// Show the three ways to handle memory:\n// 1. Ownership (default)\n// 2. Clone (explicit copy)\n// 3. Borrow (&) (shared access)\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "use xiom.io;\n\nfn main() -> Int {\n  let original = Vec[Int].new();\n  original.push(1);\n\n  let moved = original;       // 1. Ownership: original is gone;\n  let copy = moved.clone();   // 2. Clone: independent copy;\n  let ref = &moved;           // 3. Borrow: shared read access;\n\n  io.println(ref.len().to_str());\n  return copy.len() as Int;\n}",
   "try_it": "Imagine this code in C: create a Vec, free it, then try to use it (use-after-free). In XIOM, the compiler would catch this before it runs.",
-  "concepts": ["garbage collector", "zero-cost abstraction", "compile-time safety", "memory management"],
+  "concepts": [
+    "garbage collector",
+    "zero-cost abstraction",
+    "compile-time safety",
+    "memory management"
+  ],
   "tips": [
     "XIOM achieves 'fast AND safe' through compile-time ownership checks",
     "No GC means no unpredictable pauses — critical for games and real-time systems",
@@ -23,5 +28,9 @@
     "Overusing clone() to simulate garbage collection — learn to use borrows instead"
   ],
   "next_lesson": "L4-22",
-  "related": ["L4-11", "L4-15", "L4-17"]
+  "related": [
+    "L4-11",
+    "L4-15",
+    "L4-17"
+  ]
 }

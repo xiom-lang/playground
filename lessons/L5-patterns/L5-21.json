@@ -7,10 +7,19 @@
   "why": "Vec[T] is a generic container — understanding that you can parameterize it with any type opens up Vec[YourType], Vec[Pair], and beyond.",
   "narrative": "## The Generic Vec\n\n`Vec` itself is a generic type: `Vec[T]` where `T` can be ANY type. Every Vec you've used so far — `Vec[Int]`, `Vec[Str]` — is the same Vec type with a different type parameter.\n\n### Vec of Different Types\n\n```xiom\nlet ints: Vec[Int] = Vec[Int].new();\nints.push(1); ints.push(2);\n\nlet strs: Vec[Str] = Vec[Str].new();\nstrs.push(\"hello\"); strs.push(\"world\");\n\nlet bools: Vec[Bool] = Vec[Bool].new();\nbools.push(true); bools.push(false);\n\nlet floats: Vec[Float64] = Vec[Float64].new();\nfloats.push(3.14); floats.push(2.71);\n```\n\n### Generic Functions on Any Vec\n\n```xiom\nfn count_items[T](v: Vec[T]) -> Int {\n  return v.len();\n}\n\nfn has_items[T](v: Vec[T]) -> Bool {\n  return !v.is_empty();\n}\n\nfn peek_last[T](v: Vec[T]) -> Option[T] {\n  return v.get(v.len() - 1);\n}\n```\n\nThese functions work on `Vec[Int]`, `Vec[Str]`, `Vec[Bool]` — any Vec at all.\n\n### Full Program\n\n```xiom\nfn print_all[T](v: Vec[T]) {\n  for item in v { io.println(item); }\n}\n\nfn main() -> Int {\n  let bools: Vec[Bool] = Vec[Bool].new();\n  bools.push(true); bools.push(false); bools.push(true);\n\n  print_all(bools);\n  io.println(\"Count: \" + string.int_to_str(bools.len()));\n\n  let floats: Vec[Float64] = Vec[Float64].new();\n  floats.push(1.1); floats.push(2.2);\n\n  print_all(floats);\n  return 0;\n}\n```\n\n### What T Can Be\n\n- Built-in types: `Int`, `Float64`, `Str`, `Bool`, `Char`\n- Custom types: `Vec[Person]`, `Vec[Card]`\n- Nested generics: `Vec[Pair[Str,Int]]` — a Vec of Pairs\n- Collections: `Vec[Vec[Int]]` — a Vec of Vecs (matrix)",
   "analogy": "Vec is like a shipping container. A container can hold anything: crates of apples (Vec[Str]), barrels of oil (Vec[Float64]), or boxes of machinery (Vec[YourType]). The container (Vec) doesn't care what's inside — it just provides the same push/pop/get operations. The label on the outside (Vec[Int] vs Vec[Str]) tells the dock workers what to expect.",
-  "code_template": "fn main() -> Int {\n  // TODO: Create a Vec[Bool] with true, false, true\n  let bools: Vec[Bool] = Vec[Bool].new();\n  // TODO: Create a Vec[Float64] with 1.5, 2.5, 3.5\n  // TODO: Print the length of both Vecs\n  // TODO: Use a generic function to print all items from both Vecs\n  return 0;\n}\n",
-  "solution": "fn print_all[T](v: Vec[T]) {\n  for item in v { io.println(item); }\n}\n\nfn main() -> Int {\n  let bools: Vec[Bool] = Vec[Bool].new();\n  bools.push(true); bools.push(false); bools.push(true);\n\n  let floats: Vec[Float64] = Vec[Float64].new();\n  floats.push(1.5); floats.push(2.5); floats.push(3.5);\n\n  io.println(bools.len());\n  io.println(floats.len());\n\n  print_all(bools);\n  print_all(floats);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn main() -> Int {\n  // TODO: Create a Vec[Bool] with true, false, true\n  let bools: Vec[Bool] = Vec[Bool].new();\n  // TODO: Create a Vec[Float64] with 1.5, 2.5, 3.5\n  // TODO: Print the length of both Vecs\n  // TODO: Use a generic function to print all items from both Vecs\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn print_all[T](v: Vec[T]) {\n  for item in v { io.println(item.to_str()); }\n}\n\nfn main() -> Int {\n  let bools: Vec[Bool] = Vec[Bool].new();\n  bools.push(true); bools.push(false); bools.push(true);\n\n  let floats: Vec[Float64] = Vec[Float64].new();\n  floats.push(1.5); floats.push(2.5); floats.push(3.5);\n\n  io.println(bools.len().to_str());\n  io.println(floats.len().to_str());\n\n  print_all(bools);\n  print_all(floats);\n  return 0;\n}\n",
   "try_it": "Create a `Vec[Float64]` with five decimal numbers and write a generic `sum_vec[T]` that works on any numeric Vec. Create a `Vec[Pair[Str,Int]]` — a Vec of name-score pairs — and iterate over it. Create `Vec[Vec[Int]]` (a grid) and write a function to print it row by row.",
-  "concepts": ["Vec", "generics", "T", "generic-container", "Bool", "Float64", "parameterized-type", "nested-generics"],
+  "concepts": [
+    "Vec",
+    "generics",
+    "T",
+    "generic-container",
+    "Bool",
+    "Float64",
+    "parameterized-type",
+    "nested-generics"
+  ],
   "tips": [
     "`Vec` itself is generic — `Vec[T]` means 'Vec parameterized by type T'",
     "Write functions generic over `Vec[T]` when the logic doesn't depend on what T is",
@@ -22,5 +31,10 @@
     "Trying to create `Vec[Pair]` without specifying Pair's own type parameters — it must be `Vec[Pair[Str,Int]]`"
   ],
   "next_lesson": "L5-22",
-  "related": ["L5-18", "L5-20", "L5-01", "L2-01"]
+  "related": [
+    "L5-18",
+    "L5-20",
+    "L5-01",
+    "L2-01"
+  ]
 }

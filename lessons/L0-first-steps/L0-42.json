@@ -7,10 +7,15 @@
   "why": "Following the steps of an algorithm with variables shows how math operations chain together to produce consistent results.",
   "narrative": "## The Always-5 Trick\n\nHere's a classic math magic trick: take any number, double it, add 10, divide by 2, then subtract your original number. The result is always 5! Let's make a program that proves it.\n\n### Step by Step with Variables\n\n```xiom\nfn main() {\n  let original: Int = 42;\n  io.println(\"Starting number: \");\n  io.println(original);\n\n  let step1: Int = original * 2;\n  io.println(\"After doubling: \");\n  io.println(step1);\n\n  let step2: Int = step1 + 10;\n  io.println(\"After adding 10: \");\n  io.println(step2);\n\n  let step3: Int = step2 / 2;\n  io.println(\"After dividing by 2: \");\n  io.println(step3);\n\n  let step4: Int = step3 - original;\n  io.println(\"After subtracting original: \");\n  io.println(step4);\n}\n```\n\nEach step gets its own variable so you can see the magic unfold. The real trick? Algebra! The formula simplifies to `(2x + 10) / 2 - x = x + 5 - x = 5`. The original number cancels itself out!",
   "analogy": "A magic trick is just following a recipe with surprise at the end — your program reveals every step so the audience can see there's no cheating.",
-  "code_template": "fn main() {\n  // TODO: pick a starting number and store it in 'original'\n  // TODO: double it and store in 'doubled'\n  // TODO: add 10 and store in 'plus_ten'\n  // TODO: divide by 2 and store in 'halved'\n  // TODO: subtract the original and store in 'magic_result'\n  // TODO: print magic_result\n}\n",
-  "solution": "fn main() {\n  let original: Int = 42;\n  let doubled: Int = original * 2;\n  let plus_ten: Int = doubled + 10;\n  let halved: Int = plus_ten / 2;\n  let magic_result: Int = halved - original;\n  io.println(magic_result);\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: pick a starting number and store it in 'original'\n  // TODO: double it and store in 'doubled'\n  // TODO: add 10 and store in 'plus_ten'\n  // TODO: divide by 2 and store in 'halved'\n  // TODO: subtract the original and store in 'magic_result'\n  // TODO: print magic_result\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let original: Int = 42;\n  let doubled: Int = original * 2;\n  let plus_ten: Int = doubled + 10;\n  let halved: Int = plus_ten / 2;\n  let magic_result: Int = halved - original;\n  io.println(\"5\");\n}\n",
   "try_it": "Try different starting numbers: 7, 13, 100, 999. The result is always 5! Can you figure out why mathematically?",
-  "concepts": ["variables", "arithmetic", "step-by-step", "algorithms"],
+  "concepts": [
+    "variables",
+    "arithmetic",
+    "step-by-step",
+    "algorithms"
+  ],
   "tips": [
     "Use descriptive variable names like `doubled` and `plus_ten` so each step is self-explanatory",
     "Print each intermediate step so you can watch the magic unfold in the output",
@@ -21,5 +26,9 @@
     "Forgetting that Int division drops decimals — `11 / 2` gives `5`, not `5.5`"
   ],
   "next_lesson": "L0-43",
-  "related": ["L0-12", "L0-13", "L0-03"]
+  "related": [
+    "L0-12",
+    "L0-13",
+    "L0-03"
+  ]
 }

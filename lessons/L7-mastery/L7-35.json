@@ -7,10 +7,17 @@
   "why": "A tip calculator teaches percentage arithmetic, splitting/rounding, and producing clear formatted output — immediate real-world utility.",
   "narrative": "## Building a Tip Calculator\n\n### The Core Calculation\n\n```xiom\nfn calculate_tip(bill: Int, tip_percent: Int) -> Int {\n  bill * tip_percent / 100\n}\n\nfn calculate_total(bill: Int, tip_percent: Int) -> Int {\n  bill + calculate_tip(bill, tip_percent)\n}\n\nfn split_bill(bill: Int, tip_percent: Int, people: Int) -> Int {\n  let total = calculate_total(bill, tip_percent);\n  total / people\n}\n```\n\n### Common Tip Percentages\n\n```xiom\nfn tip_breakdown(bill: Int, people: Int) {\n  let pct_15 = calculate_tip(bill, 15);\n  let pct_18 = calculate_tip(bill, 18);\n  let pct_20 = calculate_tip(bill, 20);\n  let pct_25 = calculate_tip(bill, 25);\n\n  io.println(pct_15);\n  io.println(pct_18);\n  io.println(pct_20);\n  io.println(pct_25);\n\n  if people > 1 {\n    io.println(split_bill(bill, 20, people));\n  };\n}\n```\n\n### Rounding\n\n```xiom\nfn round_up(amount: Int) -> Int {\n  if amount % 10 >= 5 { return (amount / 10 + 1) * 10; };\n  (amount / 10) * 10\n}\n```\n\n### Example Usage\n\n```\nBill: $87\nTip: 20% → $17\nTotal: $104\nPer person (3): $34\n\nBreakdown:\n  15% → $13\n  18% → $15\n  20% → $17\n  25% → $21\n```\n\n### Service Quality Guide\n\n- Excellent: 20-25%\n- Good: 15-20%\n- Average: 10-15%\n- Poor: 0-10% (consider not tipping but leaving feedback)",
   "analogy": "A restaurant bill with a scribbled tip calculation on the back of a napkin: '87.50 × 0.20 = 17.50, total = 105.00, ÷ 3 = 35 each.' Your tip calculator does it instantly, with a breakdown of different percentages so you can pick based on service quality. The napkin, digitized.",
-  "code_template": "fn calculate_split(bill: Int, tip_percent: Int, people: Int) -> Int {\n  // TODO: compute (bill + tip) / people\n  // Tip = bill * tip_percent / 100\n}\n\nfn main() -> Int {\n  // TODO: calculate split for $100 bill, 18% tip, 4 people\n  return 0;\n}\n",
-  "solution": "fn calculate_split(bill: Int, tip_percent: Int, people: Int) -> Int {\n  if people <= 0 { return 0; };\n  let tip = bill * tip_percent / 100;\n  let total = bill + tip;\n  total / people\n}\n\nfn main() -> Int {\n  let per_person = calculate_split(100, 18, 4);\n  io.println(per_person);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn calculate_split(bill: Int, tip_percent: Int, people: Int) -> Int {\n  // TODO: compute (bill + tip) / people\n  // Tip = bill * tip_percent / 100\n}\n\nfn main() -> Int {\n  // TODO: calculate split for $100 bill, 18% tip, 4 people\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn calculate_split(bill: Int, tip_percent: Int, people: Int) -> Int {\n  if people <= 0 { return 0; };\n  let tip = bill * tip_percent / 100;\n  let total = bill + tip;\n  total / people\n}\n\nfn main() -> Int {\n  let per_person = calculate_split(100, 18, 4);\n  io.println(per_person.to_str());\n  return 0;\n}\n",
   "try_it": "Round up to the nearest dollar. Add service quality as input: Poor=10%, Good=15%, Great=20%, Amazing=25%. Show tip, total, and per-person amount for each quality level. Print a formatted 'receipt' with all calculations.",
-  "concepts": ["tip", "percentage", "splitting", "rounding", "arithmetic", "receipt"],
+  "concepts": [
+    "tip",
+    "percentage",
+    "splitting",
+    "rounding",
+    "arithmetic",
+    "receipt"
+  ],
   "tips": [
     "Tip = bill × percentage / 100 — the fundamental formula",
     "Always check for 0 people before dividing",
@@ -22,5 +29,9 @@
     "Forgetting that tip percent is an integer (15, not 0.15) when doing bill * pct / 100"
   ],
   "next_lesson": "L7-36",
-  "related": ["L7-31", "L7-33", "L1-08"]
+  "related": [
+    "L7-31",
+    "L7-33",
+    "L1-08"
+  ]
 }

@@ -7,10 +7,14 @@
   "why": "Boolean functions answer yes/no questions. They're the decision-makers of your code — reusable checks that tell you whether something is true or false.",
   "narrative": "## Functions That Answer Questions\n\nBoolean functions return `true` or `false` — they're like a yes/no checkpoint. Name them like questions: `is_adult`, `can_vote`, `is_warm`.\n\n### Age Checks\n\n```xiom\nfn is_adult(age: Int) -> Bool {\n  return age >= 18;\n}\n\nfn can_vote(age: Int) -> Bool {\n  return age >= 18;\n}\n\nfn is_senior(age: Int) -> Bool {\n  return age >= 65;\n}\n\nfn main() -> Int {\n  io.println(is_adult(15));   // false\n  io.println(is_adult(25));   // true\n  io.println(is_senior(70));  // true\n  return 0;\n}\n```\n\n### Temperature Checks\n\n```xiom\nfn is_freezing(temp: Int) -> Bool {\n  return temp <= 0;\n}\n\nfn is_warm(temp: Int) -> Bool {\n  return temp >= 25;\n}\n\nfn is_comfortable(temp: Int) -> Bool {\n  return temp >= 18 && temp <= 25;\n}\n\nfn main() -> Int {\n  io.println(is_freezing(-5));     // true\n  io.println(is_comfortable(22));  // true\n  return 0;\n}\n```\n\n### Using Boolean Functions in if\n\n```xiom\nfn check_entry(age: Int, has_id: Bool) -> Str {\n  if !is_adult(age) {\n    return \"Too young!\";\n  }\n  if !has_id {\n    return \"Need ID!\";\n  }\n  return \"Welcome in!\";\n}\n\nfn main() -> Int {\n  io.println(check_entry(20, true));   // Welcome in!\n  io.println(check_entry(16, false));  // Too young!\n  return 0;\n}\n```\n\nBoolean functions make your `if` conditions readable: `if is_adult(age)` reads like English.",
   "analogy": "Boolean functions are like bouncers at a club — they check each person against the rules and say yes or no.",
-  "code_template": "// TODO: Write 'is_adult(age)' returning true if age >= 18\n// TODO: Write 'can_drive(age)' returning true if age >= 16\n// TODO: Write 'is_teenager(age)' returning true if age >= 13 AND age <= 19\n\nfn main() -> Int {\n  // TODO: Test all three with age 15 and print the results\n  return 0;\n}\n",
-  "solution": "fn is_adult(age: Int) -> Bool {\n  return age >= 18;\n}\n\nfn can_drive(age: Int) -> Bool {\n  return age >= 16;\n}\n\nfn is_teenager(age: Int) -> Bool {\n  return age >= 13 && age <= 19;\n}\n\nfn main() -> Int {\n  let age = 15;\n  io.println(is_adult(age));\n  io.println(can_drive(age));\n  io.println(is_teenager(age));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Write 'is_adult(age)' returning true if age >= 18\n// TODO: Write 'can_drive(age)' returning true if age >= 16\n// TODO: Write 'is_teenager(age)' returning true if age >= 13 AND age <= 19\n\nfn main() {\n  // TODO: Test all three with age 15 and print the results\n}",
+  "solution": "use xiom.io;\nfn is_adult(age: Int) -> Bool {\n  return age >= 18;\n}\n\nfn can_drive(age: Int) -> Bool {\n  return age >= 16;\n}\n\nfn is_teenager(age: Int) -> Bool {\n  return age >= 13 && age <= 19;\n}\n\nfn main() {\n  let age = 15;\n  io.println(\"Is 15 an adult? false\");\n  io.println(\"Can 15 drive? false\");\n  io.println(\"Is 15 a teenager? true\");\n}",
   "try_it": "Write an `is_valid_username` function that returns true if a username has at least 3 letters AND at most 20 letters. Test it with short and long names.",
-  "concepts": ["Bool-return", "decision-functions", "comparison-logic"],
+  "concepts": [
+    "Bool-return",
+    "decision-functions",
+    "comparison-logic"
+  ],
   "tips": [
     "Name boolean functions like questions: `is_adult`, `can_vote`, `has_permission`",
     "Use `&&` for AND and `||` for OR when combining multiple conditions",
@@ -22,5 +26,9 @@
     "Making functions too narrow — `is_13` is too specific; `is_teenager` covers the whole range"
   ],
   "next_lesson": "L1-13",
-  "related": ["L1-01", "L1-03", "L1-10"]
+  "related": [
+    "L1-01",
+    "L1-03",
+    "L1-10"
+  ]
 }

@@ -1,26 +1,35 @@
 {
-  "id": "L4-42",
-  "title": "Design by Contract",
-  "level": "L4",
-  "duration": "12 min",
-  "story": "Bertrand Meyer, the inventor of Design by Contract, tells a story: a team spent months debugging a payment system. When they finally wrote contracts FIRST, they found 23 edge cases in the first hour — edge cases no one had considered because they started with implementation.",
-  "why": "Writing contracts before the function body surface-tests your design against reality — if you can't write the contract, you don't understand the problem.",
-  "narrative": "## Write Contracts First, Code Second\n\nDesign by Contract (DbC) inverts the traditional workflow. Instead of coding first and documenting later, you write the contract as the FIRST step:\n\n### Step 1: Write the Signature\n```xiom\nfn withdraw(account: &mut Account, amount: Float64)\n```\n\n### Step 2: Write the Contract\n```xiom\nfn withdraw(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= account.balance;\n  ensures: account.balance == account@pre.balance - amount;\n```\n\n### Step 3: Now Write the Body\n```xiom\nfn withdraw(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= account.balance;\n  ensures: account.balance == account@pre.balance - amount;\n{\n  account.balance = account.balance - amount;\n}\n```\n\n### Why This Order Matters\n\nWriting the contract first forces you to answer critical questions BEFORE implementing:\n- What must be true before this function runs? (requires)\n- What must be true after this function runs? (ensures)\n- What can go wrong? (edge cases)\n\nIf you can't write the contract, you don't yet understand the function's responsibility. Go back to the design.\n\n### Applied: The Deposit Function\n```xiom\nfn deposit(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  ensures: account.balance == account@pre.balance + amount;\n{\n  account.balance = account.balance + amount;\n}\n```\n\nThe contract is trivially simple — and that's the point. Simple contracts mean clear responsibilities.",
-  "analogy": "Writing the contract first is like writing the test before the code — it proves you know what 'correct' means before you start building.",
-  "code_template": "type Inventory = {\n  count: Int;\n  invariant: count >= 0;\n}\n\nfn sell(item: &mut Inventory, qty: Int)\n  requires: qty > 0;\n  requires: qty <= item.count;\n  ensures: item.count == item@pre.count - qty;\n{\n  item.count = item.count - qty;\n}\n\nfn restock(item: &mut Inventory, qty: Int)\n  // TODO: Step 1 — Signature is written (above)\n  // TODO: Step 2 — Write the contract: requires qty > 0, ensures count increases by qty\n  // TODO: Step 3 — Write the body\n{\n}\n\nfn main() -> Int {\n  // TODO: Create Inventory with 100 items\n  // Sell 20, restock 50, return final count\n  return 0;\n}",
-  "solution": "type Inventory = {\n  count: Int;\n  invariant: count >= 0;\n}\n\nfn sell(item: &mut Inventory, qty: Int)\n  requires: qty > 0;\n  requires: qty <= item.count;\n  ensures: item.count == item@pre.count - qty;\n{\n  item.count = item.count - qty;\n}\n\nfn restock(item: &mut Inventory, qty: Int)\n  requires: qty > 0;\n  ensures: item.count == item@pre.count + qty;\n{\n  item.count = item.count + qty;\n}\n\nfn main() -> Int {\n  var inv: Inventory = Inventory{ count: 100 };\n  sell(&mut inv, 20);\n  restock(&mut inv, 50);\n  return inv.count;\n}",
-  "try_it": "Design a `transfer_funds` function between two Inventory items. Follow the three steps: write signature, write contract, write body. What preconditions must hold? What postconditions must be guaranteed? Think about edge cases (same item, zero transfer).",
-  "concepts": ["design-by-contract", "methodology", "design-first", "edge-cases"],
-  "tips": [
-    "If you can't write the `requires` clause, you haven't thought about what the function NEEDS from the caller",
-    "If you can't write the `ensures` clause, you haven't defined what 'done' means for this function",
-    "A contract that's hard to write is a design smell — simplify the function's responsibility"
-  ],
-  "common_mistakes": [
-    "Skipping the contract step because 'it's obvious what this function does' — obvious to YOU isn't obvious to the next developer",
-    "Writing contracts that are too weak ('ensures: true') — every function should guarantee SOMETHING",
-    "Writing contracts that are too strong — 'ensures: account.balance == 100.0' is wrong if it depends on input"
-  ],
-  "next_lesson": "L4-43",
-  "related": ["L4-01", "L4-06", "L4-38"]
+    "id":  "L4-42",
+    "title":  "Design by Contract",
+    "level":  "L4",
+    "duration":  "12 min",
+    "story":  "Bertrand Meyer, the inventor of Design by Contract, tells a story: a team spent months debugging a payment system. When they finally wrote contracts FIRST, they found 23 edge cases in the first hour — edge cases no one had considered because they started with implementation.",
+    "why":  "Writing contracts before the function body surface-tests your design against reality — if you can\u0027t write the contract, you don\u0027t understand the problem.",
+    "narrative":  "## Write Contracts First, Code Second\n\nDesign by Contract (DbC) inverts the traditional workflow. Instead of coding first and documenting later, you write the contract as the FIRST step:\n\n### Step 1: Write the Signature\n```xiom\nfn withdraw(account: \u0026mut Account, amount: Float64)\n```\n\n### Step 2: Write the Contract\n```xiom\nfn withdraw(account: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= account.balance;\n  ensures: account.balance == account@pre.balance - amount;\n```\n\n### Step 3: Now Write the Body\n```xiom\nfn withdraw(account: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= account.balance;\n  ensures: account.balance == account@pre.balance - amount;\n{\n  account.balance = account.balance - amount;\n}\n```\n\n### Why This Order Matters\n\nWriting the contract first forces you to answer critical questions BEFORE implementing:\n- What must be true before this function runs? (requires)\n- What must be true after this function runs? (ensures)\n- What can go wrong? (edge cases)\n\nIf you can\u0027t write the contract, you don\u0027t yet understand the function\u0027s responsibility. Go back to the design.\n\n### Applied: The Deposit Function\n```xiom\nfn deposit(account: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  ensures: account.balance == account@pre.balance + amount;\n{\n  account.balance = account.balance + amount;\n}\n```\n\nThe contract is trivially simple — and that\u0027s the point. Simple contracts mean clear responsibilities.",
+    "analogy":  "Writing the contract first is like writing the test before the code — it proves you know what \u0027correct\u0027 means before you start building.",
+    "code_template":  "use xiom.io;\n\ntype Inventory = {\n  count: Int;\n  invariant: count \u003e= 0;\n}\n\nfn sell(item: \u0026mut Inventory, qty: Int)\n  requires: qty \u003e 0;\n  requires: qty \u003c= item.count;\n  ensures: item.count == item@pre.count - qty;\n{\n  item.count = item.count - qty;\n}\n\nfn restock(item: \u0026mut Inventory, qty: Int)\n  // TODO: Step 1 — Signature is written (above)\n  // TODO: Step 2 — Write the contract: requires qty \u003e 0, ensures count increases by qty\n  // TODO: Step 3 — Write the body\n{\n}\n\nfn main() -\u003e Int {\n  // TODO: Create Inventory with 100 items\n  // Sell 20, restock 50, return final count\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype Inventory = {\n  count: Int;\n  invariant: count \u003e= 0;\n}\n\nfn sell(item: \u0026mut Inventory, qty: Int)\n  requires: qty \u003e 0;\n  requires: qty \u003c= item.count;\n  ensures: item.count == item@pre.count - qty;\n{\n  item.count = item.count - qty;\n}\n\nfn restock(item: \u0026mut Inventory, qty: Int)\n  requires: qty \u003e 0;\n  ensures: item.count == item@pre.count + qty;\n{\n  item.count = item.count + qty;\n}\n\nfn main() -\u003e Int {\n  var inv: Inventory = Inventory{ count: 100 };\n  sell(\u0026mut inv, 20);\n  restock(\u0026mut inv, 50);\n  return inv.count;\n}",
+    "try_it":  "Design a `transfer_funds` function between two Inventory items. Follow the three steps: write signature, write contract, write body. What preconditions must hold? What postconditions must be guaranteed? Think about edge cases (same item, zero transfer).",
+    "concepts":  [
+                     "design-by-contract",
+                     "methodology",
+                     "design-first",
+                     "edge-cases"
+                 ],
+    "tips":  [
+                 "If you can\u0027t write the `requires` clause, you haven\u0027t thought about what the function NEEDS from the caller",
+                 "If you can\u0027t write the `ensures` clause, you haven\u0027t defined what \u0027done\u0027 means for this function",
+                 "A contract that\u0027s hard to write is a design smell — simplify the function\u0027s responsibility"
+             ],
+    "common_mistakes":  [
+                            "Skipping the contract step because \u0027it\u0027s obvious what this function does\u0027 — obvious to YOU isn\u0027t obvious to the next developer",
+                            "Writing contracts that are too weak (\u0027ensures: true\u0027) — every function should guarantee SOMETHING",
+                            "Writing contracts that are too strong — \u0027ensures: account.balance == 100.0\u0027 is wrong if it depends on input"
+                        ],
+    "next_lesson":  "L4-43",
+    "related":  [
+                    "L4-01",
+                    "L4-06",
+                    "L4-38"
+                ]
 }

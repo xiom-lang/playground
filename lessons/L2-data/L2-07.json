@@ -1,26 +1,34 @@
 {
-  "id": "L2-07",
-  "title": "Comparing Structs",
-  "level": "L2",
-  "duration": "7 min",
-  "story": "You and your friend are arguing about who is older — by only a few months! Instead of doing the math yourself, you'll write a function that compares Person structs.",
-  "why": "Comparing structs lets you sort, filter, and make decisions based on data — like finding the oldest person or checking if two ages match.",
-  "narrative": "## Making Decisions with Struct Data\n\nStructs hold data, and comparing that data is a common task. Let's write functions that answer questions about our Person struct.\n\n### Comparing by Age\n\n```xiom\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn is_older(a: Person, b: Person) -> Bool {\n  return a.age > b.age;\n}\n\nfn same_age(a: Person, b: Person) -> Bool {\n  return a.age == b.age;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Kai\", age: 15 };\n  let friend = Person{ name: \"Lee\", age: 14 };\n\n  io.println(is_older(me, friend));    // true\n  io.println(same_age(me, friend));    // false\n  return 0;\n}\n```\n\n### Using Comparison in if\n\n```xiom\nfn compare_ages(a: Person, b: Person) {\n  if a.age > b.age {\n    io.println(a.name + \" is older than \" + b.name);\n  } else {\n    if a.age < b.age {\n      io.println(b.name + \" is older than \" + a.name);\n    } else {\n      io.println(a.name + \" and \" + b.name + \" are the same age\");\n    }\n  }\n}\n\nfn main() -> Int {\n  let p1 = Person{ name: \"Morgan\", age: 16 };\n  let p2 = Person{ name: \"Nico\", age: 16 };\n  compare_ages(p1, p2);\n  return 0;\n}\n```\n\n### Comparing by Name\n\nComparisons aren't just for numbers — you can compare any field:\n\n```xiom\nfn same_name(a: Person, b: Person) -> Bool {\n  return a.name == b.name;\n}\n\nfn main() -> Int {\n  let p1 = Person{ name: \"Alex\", age: 14 };\n  let p2 = Person{ name: \"Alex\", age: 16 };\n  io.println(same_name(p1, p2));  // true — same name, different ages!\n  return 0;\n}\n```\n\nComparison functions turn raw data into meaningful answers — turning \"here are two ages\" into \"Kai is older than Lee.\"",
-  "analogy": "Comparing structs is like comparing two trading cards — you look at specific stats (fields) to decide which one is better, older, or bigger.",
-  "code_template": "type Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write 'is_older' — returns true if first person is older than second\n\n// TODO: Write 'same_age' — returns true if both people have the same age\n\n// TODO: Write 'has_longer_name' — returns true if first person's name is longer\n\nfn main() -> Int {\n  // TODO: Create two people, test all three comparison functions\n  return 0;\n}\n",
-  "solution": "type Person = {\n  name: Str;\n  age: Int;\n}\n\nfn is_older(a: Person, b: Person) -> Bool {\n  return a.age > b.age;\n}\n\nfn same_age(a: Person, b: Person) -> Bool {\n  return a.age == b.age;\n}\n\nfn has_longer_name(a: Person, b: Person) -> Bool {\n  return string.str_len(a.name) > string.str_len(b.name);\n}\n\nfn main() -> Int {\n  let p1 = Person{ name: \"Oliver\", age: 16 };\n  let p2 = Person{ name: \"Pat\", age: 14 };\n  io.println(is_older(p1, p2));\n  io.println(same_age(p1, p2));\n  io.println(has_longer_name(p1, p2));\n  return 0;\n}\n",
-  "try_it": "Add a `youngest_of_three` function that takes three Persons and returns the name of the youngest. Test it with three different ages.",
-  "concepts": ["struct-comparison", "field-comparison", "sorting-pattern"],
-  "tips": [
-    "Access struct fields with dot notation even inside comparison functions: `a.age > b.age`",
-    "Comparison functions return Bool — name them like questions: `is_older`, `same_age`, `has_longer_name`",
-    "You can compare any field type: Int with `>`, Str with `==`, Float64 with `>`"
-  ],
-  "common_mistakes": [
-    "Comparing Int fields with `==` for \"is older\" instead of `>` — `==` checks equality, not greater-than",
-    "Accessing the wrong person's field — `a.age > a.age` compares a person to themselves (always false)",
-    "Forgetting that `is_older(a, b)` returns false when they're the SAME age — `>` is strict, not `>=`"
-  ],
-  "next_lesson": "L2-08",
-  "related": ["L2-01", "L2-06", "L1-12"]
+    "id":  "L2-07",
+    "title":  "Comparing Structs",
+    "level":  "L2",
+    "duration":  "7 min",
+    "story":  "You and your friend are arguing about who is older — by only a few months! Instead of doing the math yourself, you\u0027ll write a function that compares Person structs.",
+    "why":  "Comparing structs lets you sort, filter, and make decisions based on data — like finding the oldest person or checking if two ages match.",
+    "narrative":  "## Making Decisions with Struct Data\n\nStructs hold data, and comparing that data is a common task. Let\u0027s write functions that answer questions about our Person struct.\n\n### Comparing by Age\n\n```xiom\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn is_older(a: Person, b: Person) -\u003e Bool {\n  return a.age \u003e b.age;\n}\n\nfn same_age(a: Person, b: Person) -\u003e Bool {\n  return a.age == b.age;\n}\n\nfn main() -\u003e Int {\n  let me = Person{ name: \"Kai\", age: 15 };\n  let friend = Person{ name: \"Lee\", age: 14 };\n\n  io.println(is_older(me, friend));    // true\n  io.println(same_age(me, friend));    // false\n  return 0;\n}\n```\n\n### Using Comparison in if\n\n```xiom\nfn compare_ages(a: Person, b: Person) {\n  if a.age \u003e b.age {\n    io.println(a.name + \" is older than \" + b.name);\n  } else {\n    if a.age \u003c b.age {\n      io.println(b.name + \" is older than \" + a.name);\n    } else {\n      io.println(a.name + \" and \" + b.name + \" are the same age\");\n    }\n  }\n}\n\nfn main() -\u003e Int {\n  let p1 = Person{ name: \"Morgan\", age: 16 };\n  let p2 = Person{ name: \"Nico\", age: 16 };\n  compare_ages(p1, p2);\n  return 0;\n}\n```\n\n### Comparing by Name\n\nComparisons aren\u0027t just for numbers — you can compare any field:\n\n```xiom\nfn same_name(a: Person, b: Person) -\u003e Bool {\n  return a.name == b.name;\n}\n\nfn main() -\u003e Int {\n  let p1 = Person{ name: \"Alex\", age: 14 };\n  let p2 = Person{ name: \"Alex\", age: 16 };\n  io.println(same_name(p1, p2));  // true — same name, different ages!\n  return 0;\n}\n```\n\nComparison functions turn raw data into meaningful answers — turning \"here are two ages\" into \"Kai is older than Lee.\"",
+    "analogy":  "Comparing structs is like comparing two trading cards — you look at specific stats (fields) to decide which one is better, older, or bigger.",
+    "code_template":  "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write \u0027is_older\u0027 — returns true if first person is older than second\n\n// TODO: Write \u0027same_age\u0027 — returns true if both people have the same age\n\n// TODO: Write \u0027has_longer_name\u0027 — returns true if first person\u0027s name is longer\n\nfn main() -\u003e Int {\n  // TODO: Create two people, test all three comparison functions\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn is_older(a: Person, b: Person) -\u003e Bool {\n  return a.age \u003e b.age;\n}\n\nfn same_age(a: Person, b: Person) -\u003e Bool {\n  return a.age == b.age;\n}\n\nfn has_longer_name(a: Person, b: Person) -\u003e Bool {\n  return string.str_len(a.name) \u003e string.str_len(b.name);\n}\n\nfn main() -\u003e Int {\n  let p1 = Person{ name: \"Oliver\", age: 16 };\n  let p2 = Person{ name: \"Pat\", age: 14 };\n  io.println(is_older(p1, p2).to_str());\n  io.println(same_age(p1, p2).to_str());\n  io.println(has_longer_name(p1, p2).to_str());\n  return 0;\n}\n",
+    "try_it":  "Add a `youngest_of_three` function that takes three Persons and returns the name of the youngest. Test it with three different ages.",
+    "concepts":  [
+                     "struct-comparison",
+                     "field-comparison",
+                     "sorting-pattern"
+                 ],
+    "tips":  [
+                 "Access struct fields with dot notation even inside comparison functions: `a.age \u003e b.age`",
+                 "Comparison functions return Bool — name them like questions: `is_older`, `same_age`, `has_longer_name`",
+                 "You can compare any field type: Int with `\u003e`, Str with `==`, Float64 with `\u003e`"
+             ],
+    "common_mistakes":  [
+                            "Comparing Int fields with `==` for \"is older\" instead of `\u003e` — `==` checks equality, not greater-than",
+                            "Accessing the wrong person\u0027s field — `a.age \u003e a.age` compares a person to themselves (always false)",
+                            "Forgetting that `is_older(a, b)` returns false when they\u0027re the SAME age — `\u003e` is strict, not `\u003e=`"
+                        ],
+    "next_lesson":  "L2-08",
+    "related":  [
+                    "L2-01",
+                    "L2-06",
+                    "L1-12"
+                ]
 }

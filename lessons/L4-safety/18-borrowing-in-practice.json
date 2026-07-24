@@ -7,10 +7,15 @@
   "why": "Most real-world code uses borrowing patterns — reading data for display and writing data for updates. Mastering borrow patterns is essential for idiomatic XIOM.",
   "narrative": "## Common Borrow Patterns\n\n### Read-Only Access Pattern\n\n```xiom\ntype Person = { name: Str; age: Int; }\n\nfn describe(p: &Person) {\n  io.println(p.name + \" is \" + p.age + \" years old.\");\n}\n```\n\n### Mutation Pattern\n\n```xiom\nfn birthday(p: &mut Person) {\n  p.age = p.age + 1;  // Happy birthday!\n}\n```\n\n### Read Then Write (Scoped)\n\n```xiom\nfn main() -> Int {\n  var person = Person{ name: \"Alice\", age: 29 };\n\n  describe(&person);      // Read borrow — OK\n  birthday(&mut person);  // Write borrow — previous read ended, OK\n  describe(&person);      // Read borrow — previous write ended, OK\n\n  return person.age;\n}\n```\n\n### Mixed Access Patterns\n\n```xiom\nfn print_and_clear(items: &mut Vec[Str]) {\n  for item in &items {       // Read-like iteration\n    io.println(item);\n  }\n  while items.len() > 0 {   // Write: clear items\n    items.pop();\n  }\n}\n```\n\nThe compiler ensures these patterns are safe by tracking exactly when each borrow starts and ends.",
   "analogy": "Think of your data as a shared document. Viewers (&) can all look at once. Editors (&mut) need exclusive access. The system ensures nobody edits while others view.",
-  "code_template": "// TODO: Define struct 'Book' with title: Str, pages: Int\n// Write: fn read_book(b: &Book) — prints title\n// Write: fn add_pages(b: &mut Book, n: Int) — adds pages\n// In main, create a Book, read it, modify it, read again\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
-  "solution": "type Book = { title: Str; pages: Int; }\n\nfn read_book(b: &Book) {\n  io.println(b.title + \": \" + b.pages + \" pages\");\n}\n\nfn add_pages(b: &mut Book, n: Int) {\n  b.pages = b.pages + n;\n}\n\nfn main() -> Int {\n  var book = Book{ title: \"XIOM Guide\", pages: 100 };\n  read_book(&book);\n  add_pages(&mut book, 50);\n  read_book(&book);\n  return book.pages;\n}",
+  "code_template": "use xiom.io;\n\n// TODO: Define struct 'Book' with title: Str, pages: Int\n// Write: fn read_book(b: &Book) — prints title\n// Write: fn add_pages(b: &mut Book, n: Int) — adds pages\n// In main, create a Book, read it, modify it, read again\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Book = { title: Str; pages: Int; }\n\nfn read_book(b: &Book) {\n  io.println(b.title.to_str() + \": \" + b.pages.to_str() + \" pages\");\n}\n\nfn add_pages(b: &mut Book, n: Int) {\n  b.pages = b.pages + n;\n}\n\nfn main() -> Int {\n  var book = Book{ title: \"XIOM Guide\", pages: 100 };\n  read_book(&book);\n  add_pages(&mut book, 50);\n  read_book(&book);\n  return book.pages;\n}",
   "try_it": "Add another borrow function like fn rename(b: &mut Book, new_title: Str). Call it between reads and verify the scoping works.",
-  "concepts": ["borrow patterns", "read-only access", "mutation pattern", "scoped borrowing"],
+  "concepts": [
+    "borrow patterns",
+    "read-only access",
+    "mutation pattern",
+    "scoped borrowing"
+  ],
   "tips": [
     "Group read operations together, then do writes — this minimizes borrow conflicts",
     "Use descriptive function names: describe, display, print for &; update, modify, set for &mut",
@@ -23,5 +28,10 @@
     "Forgetting to use var instead of let for values that need &mut access"
   ],
   "next_lesson": "L4-19",
-  "related": ["L4-15", "L4-16", "L4-26", "L4-27"]
+  "related": [
+    "L4-15",
+    "L4-16",
+    "L4-26",
+    "L4-27"
+  ]
 }

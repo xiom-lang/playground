@@ -7,10 +7,17 @@
   "why": "Queue[T] demonstrates first-in-first-out (FIFO) behavior with a generic implementation that works for any data type.",
   "narrative": "## Building Queue[T] — FIFO\n\n### The Generic Type\n\n```xiom\ntype Queue[T] {\n  items: Vec[T];\n}\n```\n\n### Queue Operations\n\n```xiom\nfn Queue.enqueue[T](&mut self, item: T) {\n  self.items.push(item);\n}\n\nfn Queue.dequeue[T](&mut self) -> Option[T] {\n  if self.items.len() == 0 {\n    return Option.None;\n  };\n  let result = self.items.get(0).unwrap().clone();\n  self.items.remove(0);\n  Option.Some(result)\n}\n\nfn Queue.front[T](&self) -> Option[&T] {\n  if self.items.len() == 0 {\n    return Option.None;\n  };\n  Option.Some(self.items.get(0).unwrap())\n}\n\nfn Queue.is_empty[T](&self) -> Bool {\n  self.items.len() == 0\n}\n```\n\n### Queue vs Stack\n\n| Operation | Stack (LIFO) | Queue (FIFO) |\n|-----------|-------------|-------------|\n| Add | push (back) | enqueue (back) |\n| Remove | pop (back) | dequeue (front) |\n| Order | Last in, first out | First in, first out |\n\n### Usage\n\n```xiom\nlet mut q: Queue[Str] = Queue{ items: Vec[Str].new() };\nq.enqueue(\"Alice\");\nq.enqueue(\"Bob\");\nq.enqueue(\"Carol\");\n// Alice is served first, then Bob, then Carol\n```",
   "analogy": "A ticket line at a movie theater: the first person in line gets the first ticket. You join at the back (enqueue) and leave from the front (dequeue). That's FIFO - exactly what a Queue guarantees.",
-  "code_template": "type Queue[T] {\n  items: Vec[T];\n}\n\nfn Queue.enqueue[T](&mut self, item: T) {\n  // TODO: add item to the back\n}\n\nfn Queue.dequeue[T](&mut self) -> Option[T] {\n  // TODO: remove and return the front item, or None if empty\n}\n\nfn main() -> Int {\n  // TODO: create Queue[Int], enqueue 1,2,3, dequeue all three and print\n  return 0;\n}\n",
-  "solution": "type Queue[T] {\n  items: Vec[T];\n}\n\nfn Queue.enqueue[T](&mut self, item: T) {\n  self.items.push(item);\n}\n\nfn Queue.dequeue[T](&mut self) -> Option[T] {\n  if self.items.len() == 0 {\n    return Option.None;\n  };\n  let result = self.items.get(0).unwrap().clone();\n  self.items.remove(0);\n  Option.Some(result)\n}\n\nfn main() -> Int {\n  let mut q: Queue[Int] = Queue{ items: Vec[Int].new() };\n  q.enqueue(1);\n  q.enqueue(2);\n  q.enqueue(3);\n  let v1 = q.dequeue().unwrap();\n  let v2 = q.dequeue().unwrap();\n  let v3 = q.dequeue().unwrap();\n  io.println(v1);\n  io.println(v2);\n  io.println(v3);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype Queue[T] {\n  items: Vec[T];\n}\n\nfn Queue.enqueue[T](&mut self, item: T) {\n  // TODO: add item to the back\n}\n\nfn Queue.dequeue[T](&mut self) -> Option[T] {\n  // TODO: remove and return the front item, or None if empty\n}\n\nfn main() -> Int {\n  // TODO: create Queue[Int], enqueue 1,2,3, dequeue all three and print\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ntype Queue[T] {\n  items: Vec[T];\n}\n\nfn Queue.enqueue[T](&mut self, item: T) {\n  self.items.push(item);\n}\n\nfn Queue.dequeue[T](&mut self) -> Option[T] {\n  if self.items.len() == 0 {\n    return Option.None;\n  };\n  let result = self.items.get(0).unwrap().clone();\n  self.items.remove(0);\n  Option.Some(result)\n}\n\nfn main() -> Int {\n  let mut q: Queue[Int] = Queue{ items: Vec[Int].new() };\n  q.enqueue(1);\n  q.enqueue(2);\n  q.enqueue(3);\n  let v1 = q.dequeue().unwrap();\n  let v2 = q.dequeue().unwrap();\n  let v3 = q.dequeue().unwrap();\n  io.println(v1.to_str());\n  io.println(v2.to_str());\n  io.println(v3.to_str());\n  return 0;\n}\n",
   "try_it": "Simulate a help desk: create Queue[Str] with three customer names, then process them in a while loop: `while !q.is_empty() { serve next customer }`. Print 'Serving: <name>' for each.",
-  "concepts": ["generic-struct", "Queue", "FIFO", "enqueue", "dequeue", "Option"],
+  "concepts": [
+    "generic-struct",
+    "Queue",
+    "FIFO",
+    "enqueue",
+    "dequeue",
+    "Option"
+  ],
   "tips": [
     "enqueue adds to the back (end of Vec)",
     "dequeue removes from the front (index 0) and shifts everything left",
@@ -22,5 +29,9 @@
     "Using dequeue when you meant front (which should NOT remove the item)"
   ],
   "next_lesson": "L6-28",
-  "related": ["L6-26", "L2-59", "L5-03"]
+  "related": [
+    "L6-26",
+    "L2-59",
+    "L5-03"
+  ]
 }

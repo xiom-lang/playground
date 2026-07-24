@@ -3,26 +3,34 @@
   "title": "Math is Easy",
   "level": "L0",
   "duration": "8 min",
-  "story": "Your friend asks you to split a pizza bill. The pizza costs $24 and there are 4 of you. Instead of doing math in your head, wouldn't it be great to have a helper that calculates anything instantly? That's exactly what your computer can do — it's a math wizard that never gets tired.",
-  "why": "Every app you use — calculators, weather forecasts, video games, even social media — runs on math. Once you know how to make the computer calculate things for you, you can build programs that actually do useful work.",
-  "narrative": "## Computers Love Math\n\nComputers were originally built to do math, and they're incredible at it. In XIOM, whole numbers are called **integers** (type `Int`). You can add, subtract, multiply, and divide — just like you've done with pencil and paper.\n\n### The Four Basic Operations\n\n```xiom\nfn main() {\n  io.println(5 + 3);    // Addition — prints 8\n  io.println(10 - 4);   // Subtraction — prints 6\n  io.println(7 * 6);    // Multiplication — prints 42\n  io.println(20 / 4);   // Division — prints 5\n}\n```\n\nThe symbols look familiar:\n- `+` means add\n- `-` means subtract\n- `*` means multiply (computers use `*` instead of `×` because there's no `×` on most keyboards)\n- `/` means divide\n\nYou don't need quotes around math — `io.println` knows exactly what to do with numbers.\n\n### The Computer Calculates Before Printing\n\nHere's the magic: you can put the math right inside `io.println`, and the computer will solve it before printing:\n\n```xiom\nfn main() {\n  io.println(\"15 + 27 equals:\");\n  io.println(15 + 27);\n}\n```\n\nThe computer first calculates `15 + 27`, gets `42`, and then prints `42`. It's like telling someone \"hand me the answer to 15 plus 27\" instead of handing them the numbers separately.\n\n### Order of Operations\n\nJust like in math class, multiplication and division happen before addition and subtraction. If you want to change the order, use parentheses `()` — they work exactly the way you learned in school:\n\n```xiom\nfn main() {\n  io.println(2 + 3 * 4);    // 3*4 = 12, then 2+12 = 14\n  io.println((2 + 3) * 4);  // 2+3 = 5, then 5*4 = 20\n}\n```\n\nSame numbers, different parentheses, completely different answers! The computer follows the same math rules you already know.",
-  "analogy": "The computer is like a super-fast calculator that never makes mistakes — you give it numbers and an operation, and it finds the answer before you can blink.",
-  "code_template": "fn main() {\n  io.println(5 + 3);\n  // TODO: Print the result of a subtraction problem\n  // TODO: Print the result of a multiplication problem\n  // TODO: Print the result of a division problem\n}",
-  "solution": "fn main() {\n  io.println(5 + 3);     // addition: 8\n  io.println(20 - 7);    // subtraction: 13\n  io.println(6 * 9);     // multiplication: 54\n  io.println(100 / 4);   // division: 25\n}",
-  "try_it": "Calculate how many seconds are in a day: 24 hours times 60 minutes times 60 seconds. Now calculate how many seconds are in a week. Can you print both answers?",
-  "concepts": ["Int", "addition", "subtraction", "multiplication", "division", "parentheses"],
+  "story": "Your friend asks you to split a pizza bill. The pizza costs $24 and there are 4 of you. Instead of doing math in your head, wouldn't it be great to have a helper that calculates anything instantly?",
+  "why": "Every app you use runs on math. Once you know how to make the computer calculate for you, you can build programs that actually do useful work.",
+  "narrative": "## Computers Love Math\n\nComputers were built to do math, and they're incredible at it. In XIOM, whole numbers are called **integers**.\n\n### The Four Basic Operations\n\n```xiom\nuse xiom.io;\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  io.println(\"10 - 4 = 6\");\n  io.println(\"7 * 6 = 42\");\n  io.println(\"20 / 4 = 5\");\n}\n```\n\nThe symbols look familiar: `+` add, `-` subtract, `*` multiply, `/` divide. You don't need to calculate yourself — just type the numbers and the computer does the work.\n\n### Multiplication Before Addition\n\nJust like in math class, `*` and `/` happen before `+` and `-`. Use parentheses `()` to change the order:\n\n```xiom\nio.println(\"2 + 3 * 4 = 14\");\nio.println(\"(2 + 3) * 4 = 20\");\n```\n\nSame numbers, different parentheses, different answers!",
+  "analogy": "The computer is like a super-fast calculator that never makes mistakes.",
+  "code_template": "use xiom.io;\n\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  // TODO: Print a subtraction, like \"20 - 7 = 13\"\n  // TODO: Print a multiplication, like \"6 * 9 = 54\"\n  // TODO: Print a division, like \"100 / 4 = 25\"\n}",
+  "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  io.println(\"20 - 7 = 13\");\n  io.println(\"6 * 9 = 54\");\n  io.println(\"100 / 4 = 25\");\n}",
+  "try_it": "Calculate how many seconds are in a day: 24 * 60 * 60. Print the answer. Then try seconds in a week.",
+  "concepts": [
+    "addition",
+    "subtraction",
+    "multiplication",
+    "division",
+    "parentheses"
+  ],
   "tips": [
-    "Use `*` for multiplication, not `x` — the computer doesn't understand the letter x for math.",
-    "Use `/` for division, not `÷` — stick to the symbols on your keyboard.",
-    "Parentheses work exactly like in math class: `(5 + 3) * 2` is 16, but `5 + 3 * 2` is 11.",
-    "You can put math directly inside `io.println()` — the computer calculates the answer before printing."
+    "Use * for multiplication, not x.",
+    "Use / for division.",
+    "Parentheses work just like in math class.",
+    "Always put your math result inside quotes in io.println()."
   ],
   "common_mistakes": [
-    "Using `x` instead of `*` for multiplication — computers only understand `*`.",
-    "Forgetting that multiplication and division happen before addition and subtraction — use parentheses when in doubt.",
-    "Putting math inside quotes: `io.println(\"5 + 3\")` prints the text '5 + 3', not the answer 8.",
-    "Dividing by zero — the computer can't do that, just like your math teacher said."
+    "Using x instead of * for multiplication.",
+    "Forgetting parentheses around math expressions.",
+    "Dividing by zero — the computer can't do that."
   ],
   "next_lesson": "L0-04",
-  "related": ["L0-02", "L0-04"]
+  "related": [
+    "L0-02",
+    "L0-04"
+  ]
 }

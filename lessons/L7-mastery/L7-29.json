@@ -7,10 +7,16 @@
   "why": "A memory game teaches sequence generation, Vec for storing patterns, user input comparison, and progressively increasing difficulty — cognitive training as code.",
   "narrative": "## Building a Memory Game\n\n### The Game Concept\n\n1. Computer shows a sequence of numbers\n2. Player must repeat the sequence in order\n3. Each round adds one more number\n4. Game ends on first mistake\n\n### Generating Sequences\n\n```xiom\nfn generate_sequence(round: Int, seed: &mut Int) -> Vec[Int] {\n  let mut seq: Vec[Int] = Vec[Int].new();\n  let mut i = 0;\n  while i < round {\n    seed = (seed * 1103515245 + 12345) % 2147483648;\n    seq.push(1 + (seed % 9));\n    i += 1;\n  };\n  seq\n}\n```\n\n### Checking Player Input\n\n```xiom\nfn check_sequence(target: &Vec[Int], player_input: &Vec[Int]) -> Bool {\n  if target.len() != player_input.len() {\n    return false;\n  };\n  let mut i = 0;\n  while i < target.len() {\n    if target.get(i).unwrap() != player_input.get(i).unwrap() {\n      return false;\n    };\n    i += 1;\n  };\n  true\n}\n```\n\n### Game Loop\n\n```xiom\nfn play_memory_game() -> Int {\n  let mut seed = 123;\n  let mut round = 1;\n  let mut score = 0;\n\n  while round <= 20 {\n    let target = generate_sequence(round, &mut seed);\n\n    let mut player_input: Vec[Int] = Vec[Int].new();\n    let mut i = 0;\n    while i < target.len() {\n      player_input.push(target.get(i).unwrap());\n      i += 1;\n    };\n\n    if check_sequence(&target, &player_input) {\n      score += round * 10;\n      round += 1;\n    } else {\n      break;\n    };\n  };\n\n  score\n}\n```\n\n### Difficulty Progression\n\n| Level | Sequence Length | Time to Memorize |\n|-------|----------------|------------------|\n| Easy | starting at 3 | Long display |\n| Medium | starting at 4 | Brief display |\n| Hard | starting at 5 | Flash display |\n\nHigher levels start with longer sequences and give less time to memorize.",
   "analogy": "The children's game 'Simon Says' with colored buttons that light up in sequence. Each round adds one more flash to remember. Your memory game is digital Simon: the computer plays a note, you echo it, then it plays two notes, you echo both, and the chain grows until your memory breaks.",
-  "code_template": "fn generate_sequence(length: Int) -> Vec[Int] {\n  // TODO: generate a random sequence of 'length' numbers (1-9)\n  // Use LCG: seed = (seed * 1103515245 + 12345) % 2^31; 1 + seed % 9\n}\n\nfn compare_sequences(a: &Vec[Int], b: &Vec[Int]) -> Bool {\n  // TODO: return true if sequences match exactly\n}\n\nfn main() -> Int {\n  // TODO: generate sequence of 5, simulate player matching it, print result\n  return 0;\n}\n",
-  "solution": "fn generate_sequence(length: Int) -> Vec[Int] {\n  let mut seq: Vec[Int] = Vec[Int].new();\n  let mut seed = 42;\n  let mut i = 0;\n  while i < length {\n    seed = (seed * 1103515245 + 12345) % 2147483648;\n    seq.push(1 + (seed % 9));\n    i += 1;\n  };\n  seq\n}\n\nfn compare_sequences(a: &Vec[Int], b: &Vec[Int]) -> Bool {\n  if a.len() != b.len() { return false; };\n  let mut i = 0;\n  while i < a.len() {\n    if a.get(i).unwrap() != b.get(i).unwrap() { return false; };\n    i += 1;\n  };\n  true\n}\n\nfn main() -> Int {\n  let target = generate_sequence(5);\n  let mut player: Vec[Int] = Vec[Int].new();\n  let mut i = 0;\n  while i < target.len() {\n    player.push(target.get(i).unwrap());\n    i += 1;\n  };\n  io.println(compare_sequences(&target, &player));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn generate_sequence(length: Int) -> Vec[Int] {\n  // TODO: generate a random sequence of 'length' numbers (1-9)\n  // Use LCG: seed = (seed * 1103515245 + 12345) % 2^31; 1 + seed % 9\n}\n\nfn compare_sequences(a: &Vec[Int], b: &Vec[Int]) -> Bool {\n  // TODO: return true if sequences match exactly\n}\n\nfn main() -> Int {\n  // TODO: generate sequence of 5, simulate player matching it, print result\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn generate_sequence(length: Int) -> Vec[Int] {\n  let mut seq: Vec[Int] = Vec[Int].new();\n  let mut seed = 42;\n  let mut i = 0;\n  while i < length {\n    seed = (seed * 1103515245 + 12345) % 2147483648;\n    seq.push(1 + (seed % 9));\n    i += 1;\n  };\n  seq\n}\n\nfn compare_sequences(a: &Vec[Int], b: &Vec[Int]) -> Bool {\n  if a.len() != b.len() { return false; };\n  let mut i = 0;\n  while i < a.len() {\n    if a.get(i).unwrap() != b.get(i).unwrap() { return false; };\n    i += 1;\n  };\n  true\n}\n\nfn main() -> Int {\n  let target = generate_sequence(5);\n  let mut player: Vec[Int] = Vec[Int].new();\n  let mut i = 0;\n  while i < target.len() {\n    player.push(target.get(i).unwrap());\n    i += 1;\n  };\n  io.println((compare_sequences(&target, &player)).to_str());\n  return 0;\n}\n",
   "try_it": "Track the highest round reached across multiple games. Add 'display sequence' that prints numbers one by one with a delay. Add letter mode (A-H) and color mode. Implement increasing difficulty: longer sequences, shorter display time.",
-  "concepts": ["memory-game", "sequence-matching", "random-generation", "progressive-difficulty", "Vec"],
+  "concepts": [
+    "memory-game",
+    "sequence-matching",
+    "random-generation",
+    "progressive-difficulty",
+    "Vec"
+  ],
   "tips": [
     "Generate sequences using LCG — predictable but random-looking",
     "Compare sequences element by element — early exit on first mismatch",
@@ -22,5 +28,9 @@
     "Using == on Vec directly instead of element-by-element comparison"
   ],
   "next_lesson": "L7-30",
-  "related": ["L7-21", "L7-10", "L2-36"]
+  "related": [
+    "L7-21",
+    "L7-10",
+    "L2-36"
+  ]
 }

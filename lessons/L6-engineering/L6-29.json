@@ -7,10 +7,16 @@
   "why": "Default methods in interfaces provide shared behavior that types can inherit without re-implementing, reducing code duplication.",
   "narrative": "## Default Methods in Interfaces\n\n### The Pattern\n\n```xiom\ninterface Playable {\n  fn play(&mut self);\n  fn pause(&mut self);\n\n  fn stop(&mut self) {\n    self.pause();\n  }\n}\n```\n\n`stop()` has a default body. Any type implementing `Playable` automatically gets `stop()` for free. If a type wants custom stop behavior, it can override the default.\n\n### Complete Example\n\n```xiom\ninterface Greeter {\n  fn name(&self) -> Str;\n\n  fn greet(&self) -> Str {\n    let base = \"Hello, \";\n    string.str_concat(base, self.name())\n  }\n\n  fn farewell(&self) -> Str {\n    let base = \"Goodbye, \";\n    string.str_concat(base, self.name())\n  }\n}\n\ntype User { username: Str; }\nfn User.name(&self) -> Str { self.username.clone() }\n\n// User automatically has greet() and farewell()!\n```\n\n### When to Use Default Methods\n\n- When behavior can be expressed in terms of other interface methods\n- For convenience methods that all implementors would write the same way\n- To add new methods to existing interfaces without breaking implementors\n\n### Override When Needed\n\n```xiom\nfn Admin.greet(&self) -> Str {\n  \"Welcome back, Administrator\"\n}\n```\n\nAdmin overrides `greet()` with a custom message while keeping the default `farewell()`.",
   "analogy": "A smartphone comes with default apps (calculator, calendar) that work for everyone. But you can install custom apps to replace them. Default interface methods are the built-in apps — they work out of the box, but you can override them with custom behavior.",
-  "code_template": "interface Describable {\n  fn label(&self) -> Str;\n\n  fn describe(&self) -> Str {\n    // TODO: return label() + \" - no description available\"\n  }\n}\n\ntype Product {\n  name: Str;\n}\n\nfn Product.label(&self) -> Str {\n  // TODO: return self.name\n}\n\nfn main() -> Int {\n  // TODO: create Product, call .label() and .describe()\n  return 0;\n}\n",
-  "solution": "interface Describable {\n  fn label(&self) -> Str;\n\n  fn describe(&self) -> Str {\n    string.str_concat(self.label(), \" - no description available\")\n  }\n}\n\ntype Product {\n  name: Str;\n}\n\nfn Product.label(&self) -> Str {\n  self.name.clone()\n}\n\nfn main() -> Int {\n  let p = Product{ name: \"Widget\" };\n  io.println(p.label());\n  io.println(p.describe());\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ninterface Describable {\n  fn label(&self) -> Str;\n\n  fn describe(&self) -> Str {\n    // TODO: return label() + \" - no description available\"\n  }\n}\n\ntype Product {\n  name: Str;\n}\n\nfn Product.label(&self) -> Str {\n  // TODO: return self.name\n}\n\nfn main() -> Int {\n  // TODO: create Product, call .label() and .describe()\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\ninterface Describable {\n  fn label(&self) -> Str;\n\n  fn describe(&self) -> Str {\n    string.str_concat(self.label(), \" - no description available\")\n  }\n}\n\ntype Product {\n  name: Str;\n}\n\nfn Product.label(&self) -> Str {\n  self.name.clone()\n}\n\nfn main() -> Int {\n  let p = Product{ name: \"Widget\" };\n  io.println(p.label());\n  io.println(p.describe());\n  return 0;\n}\n",
   "try_it": "Add a `summarize` default method that returns `label() + \" (type: \" + type_name() + \")\"`. Add `type_name()` to the interface. Then create a `Service` type that overrides `describe()` with a custom message.",
-  "concepts": ["default-methods", "interface", "override", "shared-behavior", "convenience-methods"],
+  "concepts": [
+    "default-methods",
+    "interface",
+    "override",
+    "shared-behavior",
+    "convenience-methods"
+  ],
   "tips": [
     "Default methods should be expressible in terms of other interface methods",
     "Types can override defaults — the override always takes priority",
@@ -22,5 +28,9 @@
     "Overriding when the default is fine — don't override just because you can"
   ],
   "next_lesson": "L6-30",
-  "related": ["L5-17", "L5-13", "L5-14"]
+  "related": [
+    "L5-17",
+    "L5-13",
+    "L5-14"
+  ]
 }

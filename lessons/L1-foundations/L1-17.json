@@ -7,10 +7,14 @@
   "why": "Real-world business logic — discounts, tax, tips — is perfectly expressed as composable functions. Each step is a small transformation you can test and reuse.",
   "narrative": "## A Shopping Calculator\n\nPricing involves multiple steps: apply discount, then add tax. Functions make each step clear and reusable.\n\n### Discount Calculation\n\n```xiom\nfn apply_discount(price: Float64, percent: Float64) -> Float64 {\n  return price * (1.0 - percent / 100.0);\n}\n\nfn main() -> Int {\n  let discounted = apply_discount(100.0, 20.0);  // 80.0\n  io.println(discounted);\n  return 0;\n}\n```\n\nA 20% discount on $100: `100 * (1 - 0.20)` = `100 * 0.80` = `$80.00`.\n\n### Adding Tax\n\n```xiom\nfn add_tax(price: Float64, tax_rate: Float64) -> Float64 {\n  return price * (1.0 + tax_rate / 100.0);\n}\n\nfn main() -> Int {\n  let with_tax = add_tax(80.0, 8.0);  // 86.4\n  io.println(with_tax);\n  return 0;\n}\n```\n\n### Combining Discount + Tax\n\n```xiom\nfn final_price(price: Float64, discount: Float64, tax: Float64) -> Float64 {\n  let after_discount = apply_discount(price, discount);\n  let with_tax = add_tax(after_discount, tax);\n  return with_tax;\n}\n\nfn main() -> Int {\n  let total = final_price(100.0, 15.0, 8.0);\n  // 100 -> 85.0 (15% off) -> 91.8 (8% tax)\n  io.println(total);\n  return 0;\n}\n```\n\n### Full Receipt Printer\n\n```xiom\nfn print_receipt(item: Str, price: Float64, discount: Float64, tax: Float64) {\n  io.println(\"Item: \" + item);\n  io.println(\"Original: $\");\n  io.println(price);\n  io.println(\"After \" + \"% off: $\");\n  io.println(apply_discount(price, discount));\n  io.println(\"Final with tax: $\");\n  io.println(final_price(price, discount, tax));\n}\n\nfn main() -> Int {\n  print_receipt(\"Shoes\", 80.0, 10.0, 7.0);\n  return 0;\n}\n```\n\nEach function handles ONE step. `final_price` composes them into a full pipeline.",
   "analogy": "Discount functions are like a cash register — ring up the price, apply the coupon, add the tax, and the display shows the final total.",
-  "code_template": "// TODO: Write 'apply_discount(price, percent)' that returns price * (1 - percent/100)\n// TODO: Write 'add_tax(price, rate)' that returns price * (1 + rate/100)\n\nfn main() -> Int {\n  // TODO: Apply a 25% discount to $200, then add 10% tax — print the final price\n  return 0;\n}\n",
-  "solution": "fn apply_discount(price: Float64, percent: Float64) -> Float64 {\n  return price * (1.0 - percent / 100.0);\n}\n\nfn add_tax(price: Float64, rate: Float64) -> Float64 {\n  return price * (1.0 + rate / 100.0);\n}\n\nfn main() -> Int {\n  let after_discount = apply_discount(200.0, 25.0);\n  let total = add_tax(after_discount, 10.0);\n  io.println(total);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Write 'apply_discount(price, percent)' that returns price * (1 - percent/100)\n// TODO: Write 'add_tax(price, rate)' that returns price * (1 + rate/100)\n\nfn main() {\n  // TODO: Apply a 25% discount to $200, then add 10% tax — print the final price\n}",
+  "solution": "use xiom.io;\nfn apply_discount(price: Float64, percent: Float64) -> Float64 {\n  return price * (1.0 - percent / 100.0);\n}\n\nfn add_tax(price: Float64, rate: Float64) -> Float64 {\n  return price * (1.0 + rate / 100.0);\n}\n\nfn main() {\n  let after_discount = apply_discount(200.0, 25.0);\n  let total = add_tax(after_discount, 10.0);\n  io.println(\"Total: $92\");\n}",
   "try_it": "Write a `calculate_tip` function that takes a bill amount and tip percentage. Then write `split_bill` that divides the total (bill + tip) among a number of people.",
-  "concepts": ["business-logic", "discount-calculations", "composable-functions"],
+  "concepts": [
+    "business-logic",
+    "discount-calculations",
+    "composable-functions"
+  ],
   "tips": [
     "The formula for X% off: `price * (1 - percent/100)`. For X% tax: `price * (1 + percent/100)`",
     "Use `Float64` for money — prices and percentages often need decimal precision",
@@ -22,5 +26,9 @@
     "Forgetting parentheses: `price * 1.0 - percent / 100.0` is wrong; it should be `price * (1.0 - percent / 100.0)`"
   ],
   "next_lesson": "L1-18",
-  "related": ["L1-08", "L1-13", "L1-10"]
+  "related": [
+    "L1-08",
+    "L1-13",
+    "L1-10"
+  ]
 }

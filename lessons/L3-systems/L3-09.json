@@ -1,26 +1,35 @@
 {
-  "id": "L3-09",
-  "title": "Result Unwrap or Default",
-  "level": "L3",
-  "duration": "8 min",
-  "story": "Your app reads a configuration value from a file. If the file is corrupted, you fall back to a safe default. You don't need a full crash report — you just need to keep running with plan B.",
-  "why": "Result's .unwrap_or(default) gives you a quick fallback value when you don't need detailed error handling — perfect for configs, defaults, and non-critical operations.",
-  "narrative": "## Fallback Values for Result\n\nJust like Option, Result has `.unwrap_or(default)`. It extracts the success value or uses your fallback.\n\n### Basic .unwrap_or on Result\n\n```xiom\nfn main() -> Int {\n  let parse_result: Result[Int, Str] = Ok(42);\n  let failed_parse: Result[Int, Str] = Err(\"Bad input\");\n\n  let num1 = parse_result.unwrap_or(0);   // 42\n  let num2 = failed_parse.unwrap_or(0);   // 0\n\n  io.println(string.int_to_str(num1));\n  io.println(string.int_to_str(num2));\n  return 0;\n}\n```\n\n### When to Use .unwrap_or vs Match\n\n```xiom\nfn get_config(key: Str) -> Result[Int, Str] {\n  if key == \"volume\" { return Ok(75); }\n  if key == \"brightness\" { return Ok(60); }\n  return Err(\"Unknown key\");\n}\n\nfn main() -> Int {\n  let volume = get_config(\"volume\").unwrap_or(50);\n  let contrast = get_config(\"contrast\").unwrap_or(80);  // key doesn't exist\n\n  io.println(string.int_to_str(volume));    // 75\n  io.println(string.int_to_str(contrast));  // 80 (default)\n  return 0;\n}\n```\n\n### .unwrap_or Being Lazy\n\n`unwrap_or` gives you the Ok value or the default — but it doesn't tell callers WHY it failed. Use it when:\n- You have a sensible fallback that's always acceptable\n- The error doesn't need to be logged or displayed\n- You're at the \"edge\" of your program (user-facing output)\n\n### Comparison: All Four Tools\n\n| Tool | When to Use |\n|---|---|\n| `match` | Need to handle both Ok and Err with different logic |\n| `if let Ok(x)` | Only care about the success case |\n| `.unwrap_or(d)` | Just want a value or fallback |\n| `?` | Propagate error to caller (coming soon!) |\n\n```xiom\nfn main() -> Int {\n  let result: Result[Str, Str] = Err(\"Failed\");\n  let display = result.unwrap_or(\"Unknown\");\n  io.println(display);  // Unknown\n  return 0;\n}\n```",
-  "analogy": ".unwrap_or on Result is like having a spare tire — if your main tire blows (Err), you don't call a tow truck; you just put on the spare and keep driving.",
-  "code_template": "// TODO: Write fetch_score(player: Str) -> Result[Int, Str]\n// \"Alice\" -> Ok(1200), \"Bob\" -> Ok(800), others -> Err(\"Player not found\")\n\nfn main() -> Int {\n  // TODO: Fetch \"Alice\"'s score, unwrap to 0, print it\n\n  // TODO: Fetch \"Charlie\"'s score, unwrap to 0, print it\n\n  // TODO: Fetch \"Bob\"'s score, unwrap to 0, print it\n  return 0;\n}\n",
-  "solution": "fn fetch_score(player: Str) -> Result[Int, Str] {\n  if player == \"Alice\" { return Ok(1200); }\n  if player == \"Bob\"   { return Ok(800); }\n  return Err(\"Player not found\");\n}\n\nfn main() -> Int {\n  let s1 = fetch_score(\"Alice\").unwrap_or(0);\n  let s2 = fetch_score(\"Charlie\").unwrap_or(0);\n  let s3 = fetch_score(\"Bob\").unwrap_or(0);\n  io.println(string.int_to_str(s1));\n  io.println(string.int_to_str(s2));\n  io.println(string.int_to_str(s3));\n  return 0;\n}\n",
-  "try_it": "Modify fetch_score to return different error messages (e.g., \"Player not found\" vs \"Score unavailable\"). Does .unwrap_or care about the error message? When would you switch to match instead?",
-  "concepts": ["Result-unwrap_or", "default-value", "fallback", "error-suppression"],
-  "tips": [
-    ".unwrap_or on Result works identically to Option — success gives the value, error gives the default",
-    "Use .unwrap_or at the last step before displaying to users — keep Results inside your logic chain",
-    "The default in .unwrap_or is always evaluated, even for Ok — for expensive defaults, use match"
-  ],
-  "common_mistakes": [
-    "Using .unwrap_or when you actually need to know what the error was — that information is silently discarded",
-    "Providing a default of the wrong type — `result_int.unwrap_or(\"hello\")` won't compile",
-    "Assuming .unwrap_or somehow retries or fixes the error — it just returns the default, the error is gone"
-  ],
-  "next_lesson": "L3-10",
-  "related": ["L3-07", "L3-02", "L3-08"]
+    "id":  "L3-09",
+    "title":  "Result Unwrap or Default",
+    "level":  "L3",
+    "duration":  "8 min",
+    "story":  "Your app reads a configuration value from a file. If the file is corrupted, you fall back to a safe default. You don\u0027t need a full crash report — you just need to keep running with plan B.",
+    "why":  "Result\u0027s .unwrap_or(default) gives you a quick fallback value when you don\u0027t need detailed error handling — perfect for configs, defaults, and non-critical operations.",
+    "narrative":  "## Fallback Values for Result\n\nJust like Option, Result has `.unwrap_or(default)`. It extracts the success value or uses your fallback.\n\n### Basic .unwrap_or on Result\n\n```xiom\nfn main() -\u003e Int {\n  let parse_result: Result[Int, Str] = Ok(42);\n  let failed_parse: Result[Int, Str] = Err(\"Bad input\");\n\n  let num1 = parse_result.unwrap_or(0);   // 42\n  let num2 = failed_parse.unwrap_or(0);   // 0\n\n  io.println(string.int_to_str(num1));\n  io.println(string.int_to_str(num2));\n  return 0;\n}\n```\n\n### When to Use .unwrap_or vs Match\n\n```xiom\nfn get_config(key: Str) -\u003e Result[Int, Str] {\n  if key == \"volume\" { return Ok(75); }\n  if key == \"brightness\" { return Ok(60); }\n  return Err(\"Unknown key\");\n}\n\nfn main() -\u003e Int {\n  let volume = get_config(\"volume\").unwrap_or(50);\n  let contrast = get_config(\"contrast\").unwrap_or(80);  // key doesn\u0027t exist\n\n  io.println(string.int_to_str(volume));    // 75\n  io.println(string.int_to_str(contrast));  // 80 (default)\n  return 0;\n}\n```\n\n### .unwrap_or Being Lazy\n\n`unwrap_or` gives you the Ok value or the default — but it doesn\u0027t tell callers WHY it failed. Use it when:\n- You have a sensible fallback that\u0027s always acceptable\n- The error doesn\u0027t need to be logged or displayed\n- You\u0027re at the \"edge\" of your program (user-facing output)\n\n### Comparison: All Four Tools\n\n| Tool | When to Use |\n|---|---|\n| `match` | Need to handle both Ok and Err with different logic |\n| `if let Ok(x)` | Only care about the success case |\n| `.unwrap_or(d)` | Just want a value or fallback |\n| `?` | Propagate error to caller (coming soon!) |\n\n```xiom\nfn main() -\u003e Int {\n  let result: Result[Str, Str] = Err(\"Failed\");\n  let display = result.unwrap_or(\"Unknown\");\n  io.println(display);  // Unknown\n  return 0;\n}\n```",
+    "analogy":  ".unwrap_or on Result is like having a spare tire — if your main tire blows (Err), you don\u0027t call a tow truck; you just put on the spare and keep driving.",
+    "code_template":  "use xiom.io;\n\n// TODO: Write fetch_score(player: Str) -\u003e Result[Int, Str]\n// \"Alice\" -\u003e Ok(1200), \"Bob\" -\u003e Ok(800), others -\u003e Err(\"Player not found\")\n\nfn main() -\u003e Int {\n  // TODO: Fetch \"Alice\"\u0027s score, unwrap to 0, print it\n\n  // TODO: Fetch \"Charlie\"\u0027s score, unwrap to 0, print it\n\n  // TODO: Fetch \"Bob\"\u0027s score, unwrap to 0, print it\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\nfn fetch_score(player: Str) -\u003e Result[Int, Str] {\n  if player == \"Alice\" { return Ok(1200); }\n  if player == \"Bob\"   { return Ok(800); }\n  return Err(\"Player not found\");\n}\n\nfn main() -\u003e Int {\n  let s1 = fetch_score(\"Alice\").unwrap_or(0);\n  let s2 = fetch_score(\"Charlie\").unwrap_or(0);\n  let s3 = fetch_score(\"Bob\").unwrap_or(0);\n  io.println(string.int_to_str(s1));\n  io.println(string.int_to_str(s2));\n  io.println(string.int_to_str(s3));\n  return 0;\n}\n",
+    "try_it":  "Modify fetch_score to return different error messages (e.g., \"Player not found\" vs \"Score unavailable\"). Does .unwrap_or care about the error message? When would you switch to match instead?",
+    "concepts":  [
+                     "Result-unwrap_or",
+                     "default-value",
+                     "fallback",
+                     "error-suppression"
+                 ],
+    "tips":  [
+                 ".unwrap_or on Result works identically to Option — success gives the value, error gives the default",
+                 "Use .unwrap_or at the last step before displaying to users — keep Results inside your logic chain",
+                 "The default in .unwrap_or is always evaluated, even for Ok — for expensive defaults, use match"
+             ],
+    "common_mistakes":  [
+                            "Using .unwrap_or when you actually need to know what the error was — that information is silently discarded",
+                            "Providing a default of the wrong type — `result_int.unwrap_or(\"hello\")` won\u0027t compile",
+                            "Assuming .unwrap_or somehow retries or fixes the error — it just returns the default, the error is gone"
+                        ],
+    "next_lesson":  "L3-10",
+    "related":  [
+                    "L3-07",
+                    "L3-02",
+                    "L3-08"
+                ]
 }

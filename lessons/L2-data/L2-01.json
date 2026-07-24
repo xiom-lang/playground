@@ -7,10 +7,16 @@
   "why": "Structs let you bundle related data into a single named type, keeping information organized and easy to pass around.",
   "narrative": "## Defining Custom Data Types\n\nA **struct** (short for *structure*) is a way to group related pieces of information together under one name. Each piece is called a **field**.\n\n### Your First Struct: Person\n\n```xiom\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let my_friend = Person{ name: \"Luna\", age: 14 };\n  io.println(my_friend.name);\n  io.println(my_friend.age);\n  return 0;\n}\n```\n\n### Breaking It Down\n\n- `type Person = { ... }` defines a new type called `Person`\n- Inside the braces, each field has a **name** and a **type**, separated by a colon, with a semicolon between fields\n- `Person{ name: \"Luna\", age: 14 }` creates a **Person value** (called an *instance*) with those field values\n- `my_friend.name` accesses the `name` field using dot notation — just like getting a specific box from a shelf\n\n### Why Structs?\n\nWithout structs, you'd need separate variables for every person:\n\n```xiom\nlet friend_name = \"Luna\";\nlet friend_age = 14;\nlet other_name = \"Kai\";\nlet other_age = 12;\n```\n\nThat gets messy fast. A struct packs everything into one tidy package: `Person{ name: \"Luna\", age: 14 }`.",
   "analogy": "A struct is like a form you fill out — it has labeled fields for each piece of information. Once filled, the whole form travels together as one unit.",
-  "code_template": "type Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create a Person with your name and age\n\n  // TODO: Print the name field\n\n  // TODO: Print the age field\n\n  return 0;\n}\n",
-  "solution": "type Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Alex\", age: 15 };\n  io.println(me.name);\n  io.println(me.age);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create a Person with your name and age\n\n  // TODO: Print the name field\n\n  // TODO: Print the age field\n\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Alex\", age: 15 };\n  io.println(me.name.to_str());\n  io.println(me.age.to_str());\n  return 0;\n}\n",
   "try_it": "Create a Person struct for your best friend. Add a third field called `hobby: Str`. Print all three fields.",
-  "concepts": ["type", "struct", "field", "instance", "dot-notation"],
+  "concepts": [
+    "type",
+    "struct",
+    "field",
+    "instance",
+    "dot-notation"
+  ],
   "tips": [
     "Use semicolons between fields in the type definition, commas when creating an instance",
     "Field access uses dot notation: `my_person.name` — no brackets or parentheses",
@@ -22,5 +28,9 @@
     "Trying to print the whole struct with `io.println(my_friend)` — print individual fields instead"
   ],
   "next_lesson": "L2-02",
-  "related": ["L2-02", "L2-03", "L1-06"]
+  "related": [
+    "L2-02",
+    "L2-03",
+    "L1-06"
+  ]
 }

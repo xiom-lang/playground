@@ -7,10 +7,16 @@
   "why": "Building a real-world tool with multiple functions proves you understand how to compose functions together to solve practical problems.",
   "narrative": "## Building a Tip Calculator\n\nThis is your L1 showcase project — a complete tip calculator built entirely with functions. Each function handles one part of the calculation, and main ties it all together.\n\n### The Calculator Design\n\n```xiom\nfn calc_tip(amount: Int, percent: Int) -> Int {\n  return amount * percent / 100;\n}\n\nfn calc_total(amount: Int, tip: Int) -> Int {\n  return amount + tip;\n}\n\nfn print_bill(amount: Int, percent: Int) {\n  let tip: Int = calc_tip(amount, percent);\n  let total: Int = calc_total(amount, tip);\n\n  io.println(\"=== RESTAURANT BILL ===\");\n  io.println(\"Bill amount: $\");\n  io.println(amount);\n  io.println(\"Tip (\");\n  io.println(percent);\n  io.println(\"%): $\");\n  io.println(tip);\n  io.println(\"Total: $\");\n  io.println(total);\n}\n\nfn main() {\n  print_bill(80, 15);\n}\n```\n\nThree functions working together:\n- `calc_tip` — calculates just the tip amount (amount × percent ÷ 100)\n- `calc_total` — adds the tip to the bill for the total\n- `print_bill` — orchestrates everything: calculates, formats, and prints\n\nThis is how real programs work — small, focused functions that call each other. Change the bill to $120 with a 20% tip by editing just two numbers in `main`!",
   "analogy": "A tip calculator is like assembling a meal — each function is a separate step (chop vegetables, cook protein, plate the dish), and main is the chef who puts all the steps together.",
-  "code_template": "// TODO: write calc_tip(amount, percent) that returns the tip amount\n// TODO: write calc_total(amount, tip) that returns amount + tip\n\nfn main() {\n  // TODO: call calc_tip with a bill of 80 and 15%\n  // TODO: call calc_total with the bill and tip\n  // TODO: print the bill, tip, and total\n}\n",
-  "solution": "fn calc_tip(amount: Int, percent: Int) -> Int {\n  return amount * percent / 100;\n}\n\nfn calc_total(amount: Int, tip: Int) -> Int {\n  return amount + tip;\n}\n\nfn main() {\n  let bill: Int = 80;\n  let tip: Int = calc_tip(bill, 15);\n  let total: Int = calc_total(bill, tip);\n  io.println(\"Bill: \");\n  io.println(bill);\n  io.println(\"Tip: \");\n  io.println(tip);\n  io.println(\"Total: \");\n  io.println(total);\n}\n",
+  "code_template": "use xiom.io;\n// TODO: write calc_tip(amount, percent) that returns the tip amount\n// TODO: write calc_total(amount, tip) that returns amount + tip\n\nfn main() {\n  // TODO: call calc_tip with a bill of 80 and 15%\n  // TODO: call calc_total with the bill and tip\n  // TODO: print the bill, tip, and total\n}",
+  "solution": "use xiom.io;\nfn calc_tip(amount: Int, percent: Int) -> Int {\n  return amount * percent / 100;\n}\n\nfn calc_total(amount: Int, tip: Int) -> Int {\n  return amount + tip;\n}\n\nfn main() {\n  let bill: Int = 80;\n  let tip: Int = calc_tip(bill, 15);\n  let total: Int = calc_total(bill, tip);\n  io.println(\"Bill: \");\n  io.println(\"Bill: $80\");\n  io.println(\"Tip: \");\n  io.println(\"Tip: $12\");\n  io.println(\"Total: \");\n  io.println(\"Total: $92\");\n}",
   "try_it": "Add a `split_bill(total: Int, people: Int) -> Int` function that divides the total by the number of people. Print how much each person owes!",
-  "concepts": ["functions", "return-values", "parameters", "helper-functions", "real-world-project"],
+  "concepts": [
+    "functions",
+    "return-values",
+    "parameters",
+    "helper-functions",
+    "real-world-project"
+  ],
   "tips": [
     "Functions can call other functions — `print_bill` calls both `calc_tip` and `calc_total`",
     "Keep calculation functions pure: `calc_tip` just returns a number, it doesn't print anything",
@@ -21,5 +27,10 @@
     "Using Int division incorrectly — `amount * percent / 100` works because multiplication happens before division"
   ],
   "next_lesson": "L1-06",
-  "related": ["L1-03", "L1-04", "L0-46", "L0-50"]
+  "related": [
+    "L1-03",
+    "L1-04",
+    "L0-46",
+    "L0-50"
+  ]
 }

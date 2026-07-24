@@ -7,12 +7,30 @@
   "why": "Functions that select random elements from lists demonstrate how to build creative generators by composing independent data-picking functions.",
   "narrative": "## Generating Random Stories\n\nA story has three ingredients: a character, a place, and an action. Write one function per ingredient, each randomly picking from a list.\n\n### Picking Random Elements\n\n```xiom\nfn random_character() -> Str {\n  let characters = [\"a wizard\", \"a cat\", \"a robot\", \"a pirate\", \"a chef\"];\n  let index = math.random_range(0, 4);\n  return characters[index];\n}\n\nfn random_place() -> Str {\n  let places = [\"a castle\", \"the moon\", \"a spaceship\", \"a forest\", \"a kitchen\"];\n  let index = math.random_range(0, 4);\n  return places[index];\n}\n\nfn random_action() -> Str {\n  let actions = [\"discovered a treasure\", \"baked a giant cake\", \"fought a dragon\", \"invented a machine\", \"sang an opera\"];\n  let index = math.random_range(0, 4);\n  return actions[index];\n}\n```\n\nEach function:\n1. Defines a list of options\n2. Picks a random index with `math.random_range(0, 4)`\n3. Returns the element at that index\n\n### Combining Into a Story\n\n```xiom\nfn main() -> Int {\n  let hero = random_character();\n  let location = random_place();\n  let deed = random_action();\n\n  io.println(\"Once upon a time...\");\n  io.println(\"Story generated!\");\n\n  return 0;\n}\n```\n\nEvery run produces a different combination. 5 characters x 5 places x 5 actions = 125 possible stories from just three small functions.",
   "analogy": "A story generator is like a slot machine with three reels. Each reel (character, place, action) spins independently and lands on a random option. The fun comes from the unexpected combinations the machine produces.",
-  "code_template": "// TODO: Write random_character() -> Str (pick from a list of 4 characters)\n// TODO: Write random_place() -> Str (pick from a list of 4 places)\n// TODO: Write random_action() -> Str (pick from a list of 4 actions)\n// Use math.random_range(0, 3) to get a random index\n\nfn main() -> Int {\n  // TODO: Get one random element from each function\n  // Print a story that combines all three\n  return 0;\n}",
-  "solution": "fn random_character() -> Str {\n  let characters = [\"a wizard\", \"a cat\", \"a robot\", \"a pirate\"];\n  let index = math.random_range(0, 3);\n  return characters[index];\n}\n\nfn random_place() -> Str {\n  let places = [\"a castle\", \"the moon\", \"a spaceship\", \"a forest\"];\n  let index = math.random_range(0, 3);\n  return places[index];\n}\n\nfn random_action() -> Str {\n  let actions = [\"discovered a treasure\", \"baked a giant cake\", \"fought a dragon\", \"sang an opera\"];\n  let index = math.random_range(0, 3);\n  return actions[index];\n}\n\nfn main() -> Int {\n  let hero = random_character();\n  let location = random_place();\n  let deed = random_action();\n  io.println(\"Once upon a time...\");\n  io.println(\"Your random story is ready!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\nuse xiom.math;\n// TODO: Write random_character() -> Str (pick from a list of 4 characters)\n// TODO: Write random_place() -> Str (pick from a list of 4 places)\n// TODO: Write random_action() -> Str (pick from a list of 4 actions)\n// Use math.random_range(0, 3) to get a random index\n\nfn main() {\n  // TODO: Get one random element from each function\n  // Print a story that combines all three\n}",
+  "solution": "use xiom.io;\nuse xiom.math;\nfn random_character() -> Str {\n  let characters = [\"a wizard\", \"a cat\", \"a robot\", \"a pirate\"];\n  let index = math.random_range(0, 3);\n  return characters[index];\n}\n\nfn random_place() -> Str {\n  let places = [\"a castle\", \"the moon\", \"a spaceship\", \"a forest\"];\n  let index = math.random_range(0, 3);\n  return places[index];\n}\n\nfn random_action() -> Str {\n  let actions = [\"discovered a treasure\", \"baked a giant cake\", \"fought a dragon\", \"sang an opera\"];\n  let index = math.random_range(0, 3);\n  return actions[index];\n}\n\nfn main() {\n  let hero = random_character();\n  let location = random_place();\n  let deed = random_action();\n  io.println(\"Once upon a time...\");\n  io.println(\"Your random story is ready!\");\n}",
   "try_it": "Add a fourth function `random_twist() -> Str` that picks a surprise twist ending, and include it in your story. Run the program several times to see different combinations.",
-  "concepts": ["random selection", "list indexing", "string return", "generator pattern"],
-  "tips": ["math.random_range(min, max) returns a random Int between min and max inclusive", "Make sure your list length matches your random range: 4 items means range(0, 3)", "Keep each function focused on ONE category — don't mix characters with places", "Run your program multiple times to verify different outputs appear"],
-  "common_mistakes": ["Using a random range that goes beyond the list length — causes an index error", "Forgetting the `math.` prefix before `random_range`", "Defining the list outside the function — each call should have its own fresh pick"],
+  "concepts": [
+    "random selection",
+    "list indexing",
+    "string return",
+    "generator pattern"
+  ],
+  "tips": [
+    "math.random_range(min, max) returns a random Int between min and max inclusive",
+    "Make sure your list length matches your random range: 4 items means range(0, 3)",
+    "Keep each function focused on ONE category — don't mix characters with places",
+    "Run your program multiple times to verify different outputs appear"
+  ],
+  "common_mistakes": [
+    "Using a random range that goes beyond the list length — causes an index error",
+    "Forgetting the `math.` prefix before `random_range`",
+    "Defining the list outside the function — each call should have its own fresh pick"
+  ],
   "next_lesson": "L1-26",
-  "related": ["L1-03", "L1-23-for-vec", "L1-06"]
+  "related": [
+    "L1-03",
+    "L1-23-for-vec",
+    "L1-06"
+  ]
 }

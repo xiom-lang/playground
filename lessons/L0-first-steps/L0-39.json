@@ -3,25 +3,36 @@
   "title": "Mad Libs Story",
   "level": "L0",
   "duration": "6 min",
-  "story": "Remember playing Mad Libs? You ask a friend for 'a silly name,' 'an adjective,' 'a noun,' and 'a verb' \u2014 then you plug those words into a story and it comes out hilariously weird. Let's build our own Mad Libs generator where YOU supply the words and the program creates the story!",
-  "why": "Mad Libs teaches you to think of variables as placeholders. Each blank is a variable, and when you fill them in, the story comes to life. This is exactly how templates work in real apps \u2014 from email greetings to personalized websites.",
-  "narrative": "## Variables as Story Blanks\n\nIn Mad Libs, you collect random words and insert them into a pre-written story. In programming, you use variables as the blanks. The story stays the same, but every time you change the variables, you get a new, ridiculous tale.\n\n### Building a Mad Lib\n\nLet's collect a name, an adjective, a noun, and a verb, then weave them into a story:\n\n```xiom\nfn main() {\n  let silly_name = \"Captain Waffles\";\n  let adjective = \"sparkly\";\n  let noun = \"toaster\";\n  let verb = \"dance\";\n\n  io.println(\"Once upon a time, there was a hero named:\");\n  io.println(silly_name);\n  io.println(\"\");\n\n  let line1 = string.str_concat(silly_name, \" found a \");\n  let line2 = string.str_concat(line1, adjective);\n  let line3 = string.str_concat(line2, \" \");\n  let line4 = string.str_concat(line3, noun);\n  io.println(line4);\n\n  let line5 = string.str_concat(\"The \", noun);\n  let line6 = string.str_concat(line5, \" started to \");\n  let line7 = string.str_concat(line6, verb);\n  let line8 = string.str_concat(line7, \" all by itself!\");\n  io.println(line8);\n\n  io.println(\"Everyone laughed and cheered. The end!\");\n}\n```\n\nThis prints a silly story about Captain Waffles finding a sparkly toaster that started to dance!\n\n### How It Works\n\nEach variable holds a word. `string.str_concat` glues the pieces together around the variable words. The story structure is fixed, but the words are flexible. Change `silly_name` to \"Princess Pickles\" and `noun` to \"refrigerator\" \u2014 suddenly it's a completely different tale!\n\n### Why This Is Powerful\n\nThis is how real apps create personalized content. When a game says \"Welcome back, [your username]!\", it's using the same pattern: a template with a variable slot where your name gets inserted.",
-  "analogy": "A Mad Lib is like a fill-in-the-blank worksheet \u2014 the story structure stays the same, but you can swap in any words to make it funny, weird, or completely unhinged.",
-  "code_template": "fn main() {\n  // TODO: Create variables: name, adjective, noun, verb\n  // TODO: Use string.str_concat to build a silly story with those words\n  // TODO: Print the story line by line\n}\n",
-  "solution": "fn main() {\n  let silly_name = \"Captain Waffles\";\n  let adjective = \"sparkly\";\n  let noun = \"toaster\";\n  let verb = \"dance\";\n\n  let line1 = string.str_concat(\"Once upon a time, \", silly_name);\n  let line2 = string.str_concat(line1, \" found a \");\n  let line3 = string.str_concat(line2, adjective);\n  let line4 = string.str_concat(line3, \" \");\n  let line5 = string.str_concat(line4, noun);\n  let line6 = string.str_concat(line5, \".\");\n  io.println(line6);\n\n  let line7 = string.str_concat(\"The \", noun);\n  let line8 = string.str_concat(line7, \" began to \");\n  let line9 = string.str_concat(line8, verb);\n  let line10 = string.str_concat(line9, \"!\");\n  io.println(line10);\n\n  io.println(\"And everyone lived happily ever after.\");\n}\n",
-  "try_it": "Make the story even crazier! Change all four words and see how the story transforms. Add a fifth variable \u2014 maybe an `animal` or a `place` \u2014 and weave it into the story. Can you make the story rhyme? What's the funniest combination you can create?",
-  "concepts": ["Str", "string.str_concat", "variables", "template", "string building", "creative coding"],
+  "story": "Remember playing Mad Libs? You ask a friend for 'a silly name,' 'an adjective,' 'a noun,' and 'a verb' � then you plug those words into a story and it comes out hilariously weird. Let's build our own Mad Libs generator where YOU supply the words and the program creates the story!",
+  "why": "Mad Libs teaches you to think of variables as placeholders. Each blank is a variable, and when you fill them in, the story comes to life. This is exactly how templates work in real apps � from email greetings to personalized websites.",
+  "narrative": "## Variables as Story Blanks\n\nIn Mad Libs, you collect random words and insert them into a pre-written story. In programming, you use variables as the blanks. The story stays the same, but every time you change the variables, you get a new, ridiculous tale.\n\n### Building a Mad Lib\n\nLet's collect a name, an adjective, a noun, and a verb, then weave them into a story:\n\n```xiom\nfn main() {\n  let silly_name = \"Captain Waffles\";\n  let adjective = \"sparkly\";\n  let noun = \"toaster\";\n  let verb = \"dance\";\n\n  io.println(\"Once upon a time, there was a hero named:\");\n  io.println(silly_name);\n  io.println(\"\");\n\n  let line1 = string.str_concat(silly_name, \" found a \");\n  let line2 = string.str_concat(line1, adjective);\n  let line3 = string.str_concat(line2, \" \");\n  let line4 = string.str_concat(line3, noun);\n  io.println(line4);\n\n  let line5 = string.str_concat(\"The \", noun);\n  let line6 = string.str_concat(line5, \" started to \");\n  let line7 = string.str_concat(line6, verb);\n  let line8 = string.str_concat(line7, \" all by itself!\");\n  io.println(line8);\n\n  io.println(\"Everyone laughed and cheered. The end!\");\n}\n```\n\nThis prints a silly story about Captain Waffles finding a sparkly toaster that started to dance!\n\n### How It Works\n\nEach variable holds a word. `string.str_concat` glues the pieces together around the variable words. The story structure is fixed, but the words are flexible. Change `silly_name` to \"Princess Pickles\" and `noun` to \"refrigerator\" � suddenly it's a completely different tale!\n\n### Why This Is Powerful\n\nThis is how real apps create personalized content. When a game says \"Welcome back, [your username]!\", it's using the same pattern: a template with a variable slot where your name gets inserted.",
+  "analogy": "A Mad Lib is like a fill-in-the-blank worksheet � the story structure stays the same, but you can swap in any words to make it funny, weird, or completely unhinged.",
+  "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Create variables: name, adjective, noun, verb\n  // TODO: Use string.str_concat to build a silly story with those words\n  // TODO: Print the story line by line\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let silly_name = \"Captain Waffles\";\n  let adjective = \"sparkly\";\n  let noun = \"toaster\";\n  let verb = \"dance\";\n\n  let line1 = string.str_concat(\"Once upon a time, \", silly_name);\n  let line2 = string.str_concat(line1, \" found a \");\n  let line3 = string.str_concat(line2, adjective);\n  let line4 = string.str_concat(line3, \" \");\n  let line5 = string.str_concat(line4, noun);\n  let line6 = string.str_concat(line5, \".\");\n  io.println(line6);\n\n  let line7 = string.str_concat(\"The \", noun);\n  let line8 = string.str_concat(line7, \" began to \");\n  let line9 = string.str_concat(line8, verb);\n  let line10 = string.str_concat(line9, \"!\");\n  io.println(line10);\n\n  io.println(\"And everyone lived happily ever after.\");\n}\n",
+  "try_it": "Make the story even crazier! Change all four words and see how the story transforms. Add a fifth variable � maybe an `animal` or a `place` � and weave it into the story. Can you make the story rhyme? What's the funniest combination you can create?",
+  "concepts": [
+    "Str",
+    "string.str_concat",
+    "variables",
+    "template",
+    "string building",
+    "creative coding"
+  ],
   "tips": [
-    "Think of variables as blank slots in your story \u2014 you fill them in once and the story uses them everywhere.",
-    "Break long sentences into smaller pieces and concatenate step by step \u2014 each `string.str_concat` adds one more word.",
+    "Think of variables as blank slots in your story � you fill them in once and the story uses them everywhere.",
+    "Break long sentences into smaller pieces and concatenate step by step � each `string.str_concat` adds one more word.",
     "Add spaces inside your strings: `\"found a \"` has a space at the end so the next word doesn't stick to 'a'.",
     "Use empty `io.println(\"\")` to print blank lines between parts of your story for better readability."
   ],
   "common_mistakes": [
     "Forgetting spaces between words: `string.str_concat(adjective, noun)` produces `sparklytoaster` instead of \"sparkly toaster\".",
-    "Misspelling `string.str_concat` \u2014 it's `str_concat` not `str_concatonate` or `str_cat`.",
-    "Trying to pass more than two arguments: `string.str_concat(a, b, c)` doesn't work \u2014 chain multiple calls instead."
+    "Misspelling `string.str_concat` � it's `str_concat` not `str_concatonate` or `str_cat`.",
+    "Trying to pass more than two arguments: `string.str_concat(a, b, c)` doesn't work � chain multiple calls instead."
   ],
   "next_lesson": "L0-40",
-  "related": ["L0-06", "L0-27", "L0-04"]
+  "related": [
+    "L0-06",
+    "L0-27",
+    "L0-04"
+  ]
 }

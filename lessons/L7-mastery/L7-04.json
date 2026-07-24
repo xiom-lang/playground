@@ -7,10 +7,16 @@
   "why": "Nested loops are essential for grid-based problems. Building a multiplication table teaches row/column iteration, formatting, and loop nesting.",
   "narrative": "## Building a Multiplication Table\n\n### The Grid Pattern\n\nA 12x12 multiplication table has:\n- Outer loop: rows (1 to 12)\n- Inner loop: columns (1 to 12)\n- Each cell: row × column\n\n### Implementation\n\n```xiom\nfn print_table(size: Int) {\n  let mut row = 1;\n  while row <= size {\n    let mut col = 1;\n    while col <= size {\n      let product = row * col;\n      let formatted = format_number(product, 4);\n      io.print(formatted);\n      col += 1;\n    };\n    io.println(\"\");\n    row += 1;\n  };\n}\n\nfn format_number(n: Int, width: Int) -> Str {\n  let s = int_to_str(n);\n  let padding = width - s.len();\n  let mut result = \"\";\n  let mut i = 0;\n  while i < padding {\n    result = string.str_concat(result, \" \");\n    i += 1;\n  };\n  string.str_concat(result, s)\n}\n```\n\n### The Header Row\n\nAdd a header row showing column numbers to make it readable:\n\n```\n    1   2   3   4   5\n1   1   2   3   4   5\n2   2   4   6   8  10\n3   3   6   9  12  15\n```\n\n### Format Alignment\n\nUse consistent width (4 characters per cell) so columns align perfectly. Pad with spaces for a clean grid.",
   "analogy": "A spreadsheet grid where rows and columns intersect to form cells. Each cell = row_header × column_header. Your nested loop is Excel's calculation engine — for every row, compute every column. Simple, systematic, powerful.",
-  "code_template": "fn print_multiplication_table(size: Int) {\n  // TODO: use nested while loops to print a size x size multiplication table\n  // Each cell should be row * col, formatted to 4 characters wide\n}\n\nfn main() -> Int {\n  // TODO: print a 10x10 multiplication table\n  return 0;\n}\n",
-  "solution": "fn print_multiplication_table(size: Int) {\n  let mut row = 1;\n  while row <= size {\n    let mut col = 1;\n    while col <= size {\n      let product = row * col;\n      io.print(product);\n      io.print(\" \");\n      col += 1;\n    };\n    io.println(\"\");\n    row += 1;\n  };\n}\n\nfn main() -> Int {\n  print_multiplication_table(10);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn print_multiplication_table(size: Int) {\n  // TODO: use nested while loops to print a size x size multiplication table\n  // Each cell should be row * col, formatted to 4 characters wide\n}\n\nfn main() -> Int {\n  // TODO: print a 10x10 multiplication table\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn print_multiplication_table(size: Int) {\n  let mut row = 1;\n  while row <= size {\n    let mut col = 1;\n    while col <= size {\n      let product = row * col;\n      io.print(product);\n      io.print(\" \");\n      col += 1;\n    };\n    io.println(\"\");\n    row += 1;\n  };\n}\n\nfn main() -> Int {\n  print_multiplication_table(10);\n  return 0;\n}\n",
   "try_it": "Add a header row showing column numbers 1-N. Add row labels at the start of each row. Make the grid size configurable — try 5x5 and 15x15. Highlight perfect squares (1, 4, 9, 16...) with a different marker.",
-  "concepts": ["nested-loops", "grid", "multiplication", "formatting", "while"],
+  "concepts": [
+    "nested-loops",
+    "grid",
+    "multiplication",
+    "formatting",
+    "while"
+  ],
   "tips": [
     "Outer loop = rows, inner loop = columns — the standard grid pattern",
     "Use consistent width for formatting or columns won't align",
@@ -22,5 +28,9 @@
     "Starting at 0 instead of 1 — multiplication by 0 is always 0"
   ],
   "next_lesson": "L7-05",
-  "related": ["L7-01", "L1-24", "L1-17"]
+  "related": [
+    "L7-01",
+    "L1-24",
+    "L1-17"
+  ]
 }

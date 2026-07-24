@@ -1,25 +1,38 @@
 {
-  "id": "L3-39",
-  "title": "Error Recovery with Fallbacks",
-  "level": "L3",
-  "duration": "9 min",
-  "story": "Real systems don't just crash — they try alternatives. Your app connects to a primary database, but if it's down, it tries a backup. If the backup is down too, it tries a local cache. Only when all three fail does it finally give up and report the error.",
-  "why": "Trying fallback operations with `match` and `if let` is the pattern behind retry logic, failover systems, and resilient architectures.",
-  "narrative": "## When Plan A Fails, Try Plan B\n\nCrashing on the first error is easy. Real systems try alternatives before giving up.\n\n### Three Fallible Operations\n\nImagine three database connections. Each returns `Result[Str, Str]`:\n\n```xiom\nfn connect_primary() -> Result[Str, Str] {\n  return Err(\"Primary database offline\");\n}\n\nfn connect_backup() -> Result[Str, Str] {\n  return Err(\"Backup database offline\");\n}\n\nfn connect_cache() -> Result[Str, Str] {\n  return Ok(\"Connected to local cache\");\n}\n```\n\n### The Fallback Pattern\n\nTry each option in sequence. As soon as one succeeds, use it. If all fail, return the last error:\n\n```xiom\nfn connect_with_fallback() -> Result[Str, Str] {\n  let result = connect_primary();\n  if result is Ok {\n    return result;\n  }\n\n  let result = connect_backup();\n  if result is Ok {\n    return result;\n  }\n\n  let result = connect_cache();\n  if result is Ok {\n    return result;\n  }\n\n  return Err(\"All connections failed\");\n}\n```\n\n### Using `if let` for Cleaner Fallbacks\n\n`if let Ok(val) = expr` is a concise way to check and unwrap:\n\n```xiom\nfn connect_clean() -> Result[Str, Str] {\n  if let Ok(conn) = connect_primary() {\n    return Ok(conn);\n  }\n  if let Ok(conn) = connect_backup() {\n    return Ok(conn);\n  }\n  if let Ok(conn) = connect_cache() {\n    return Ok(conn);\n  }\n  return Err(\"All connections failed\");\n}\n```\n\n### The `match` Version\n\nMore explicit — useful when you want to log which attempt failed:\n\n```xiom\nfn connect_explicit() -> Result[Str, Str] {\n  match connect_primary() {\n    Ok(conn) => { return Ok(conn); }\n    Err(_) => {\n      match connect_backup() {\n        Ok(conn) => { return Ok(conn); }\n        Err(_) => {\n          match connect_cache() {\n            Ok(conn) => { return Ok(conn); }\n            Err(e) => { return Err(\"All failed. Last error: \" + e); }\n          }\n        }\n      }\n    }\n  }\n}\n```\n\n### When to Use Each\n\n- `if let`: quick, readable fallback chains\n- `match`: when you need the error message from each failure\n- Nested: when each failure needs different handling",
-  "analogy": "Error recovery is like trying to get into your house. You reach for your keys (primary) — not in your pocket. You check under the doormat (backup) — no spare key. You try the back door (cache) — it's unlocked! You go in. Only if all three are locked do you sit on the porch and call a locksmith. Each attempt is an independent operation that either succeeds or passes control to the next.",
-  "code_template": "fn operation_a() -> Result[Str, Str] {\n  return Err(\"A failed\");\n}\n\nfn operation_b() -> Result[Str, Str] {\n  return Err(\"B failed\");\n}\n\nfn operation_c() -> Result[Str, Str] {\n  // TODO: return Ok(\"C succeeded\")\n  return Err(\"not implemented\");\n}\n\nfn try_all() -> Result[Str, Str] {\n  // TODO: try operation_a, if Ok return it\n  // TODO: try operation_b, if Ok return it\n  // TODO: try operation_c, if Ok return it\n  // TODO: return Err(\"All operations failed\")\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: call try_all(), return 200 if Ok, 500 if Err\n  return 0;\n}",
-  "solution": "fn operation_a() -> Result[Str, Str] {\n  return Err(\"A failed\");\n}\n\nfn operation_b() -> Result[Str, Str] {\n  return Err(\"B failed\");\n}\n\nfn operation_c() -> Result[Str, Str] {\n  return Ok(\"C succeeded\");\n}\n\nfn try_all() -> Result[Str, Str] {\n  if let Ok(val) = operation_a() {\n    return Ok(val);\n  }\n  if let Ok(val) = operation_b() {\n    return Ok(val);\n  }\n  if let Ok(val) = operation_c() {\n    return Ok(val);\n  }\n  return Err(\"All operations failed\");\n}\n\nfn main() -> Int {\n  match try_all() {\n    Ok(_) => { return 200; }\n    Err(_) => { return 500; }\n  }\n}",
-  "try_it": "Change which operation succeeds (make A succeed, B and C fail; make B succeed; make all fail). Add a fourth operation D. Add a counter that tracks how many attempts were made. Use `match` instead of `if let` to capture and print which error each failed operation returned. Change the final error message to include all attempted errors.",
-  "concepts": ["Result", "if let", "match", "fallback", "error recovery", "resilience", "is"],
-  "tips": [
-    "`if let Ok(val) = expr` is shorthand: 'if this is Ok, bind the value to val and run the block, otherwise skip it'",
-    "`result is Ok` tests the variant without extracting — use it when you only care about success vs failure",
-    "Fallback order matters — try the most desirable option first (fastest, cheapest, or best quality)"
-  ],
-  "common_mistakes": [
-    "Using `?` in a fallback chain — `let conn = connect_primary()?;` would return Err immediately, never trying the backup",
-    "Shadowing variables across attempts — `let result = connect_a(); let result = connect_b();` is fine since each shadows the previous"
-  ],
-  "next_lesson": "L3-40",
-  "related": ["L2-28", "L2-30", "L2-34", "L3-33"]
+    "id":  "L3-39",
+    "title":  "Error Recovery with Fallbacks",
+    "level":  "L3",
+    "duration":  "9 min",
+    "story":  "Real systems don\u0027t just crash — they try alternatives. Your app connects to a primary database, but if it\u0027s down, it tries a backup. If the backup is down too, it tries a local cache. Only when all three fail does it finally give up and report the error.",
+    "why":  "Trying fallback operations with `match` and `if let` is the pattern behind retry logic, failover systems, and resilient architectures.",
+    "narrative":  "## When Plan A Fails, Try Plan B\n\nCrashing on the first error is easy. Real systems try alternatives before giving up.\n\n### Three Fallible Operations\n\nImagine three database connections. Each returns `Result[Str, Str]`:\n\n```xiom\nfn connect_primary() -\u003e Result[Str, Str] {\n  return Err(\"Primary database offline\");\n}\n\nfn connect_backup() -\u003e Result[Str, Str] {\n  return Err(\"Backup database offline\");\n}\n\nfn connect_cache() -\u003e Result[Str, Str] {\n  return Ok(\"Connected to local cache\");\n}\n```\n\n### The Fallback Pattern\n\nTry each option in sequence. As soon as one succeeds, use it. If all fail, return the last error:\n\n```xiom\nfn connect_with_fallback() -\u003e Result[Str, Str] {\n  let result = connect_primary();\n  if result is Ok {\n    return result;\n  }\n\n  let result = connect_backup();\n  if result is Ok {\n    return result;\n  }\n\n  let result = connect_cache();\n  if result is Ok {\n    return result;\n  }\n\n  return Err(\"All connections failed\");\n}\n```\n\n### Using `if let` for Cleaner Fallbacks\n\n`if let Ok(val) = expr` is a concise way to check and unwrap:\n\n```xiom\nfn connect_clean() -\u003e Result[Str, Str] {\n  if let Ok(conn) = connect_primary() {\n    return Ok(conn);\n  }\n  if let Ok(conn) = connect_backup() {\n    return Ok(conn);\n  }\n  if let Ok(conn) = connect_cache() {\n    return Ok(conn);\n  }\n  return Err(\"All connections failed\");\n}\n```\n\n### The `match` Version\n\nMore explicit — useful when you want to log which attempt failed:\n\n```xiom\nfn connect_explicit() -\u003e Result[Str, Str] {\n  match connect_primary() {\n    Ok(conn) =\u003e { return Ok(conn); }\n    Err(_) =\u003e {\n      match connect_backup() {\n        Ok(conn) =\u003e { return Ok(conn); }\n        Err(_) =\u003e {\n          match connect_cache() {\n            Ok(conn) =\u003e { return Ok(conn); }\n            Err(e) =\u003e { return Err(\"All failed. Last error: \" + e); }\n          }\n        }\n      }\n    }\n  }\n}\n```\n\n### When to Use Each\n\n- `if let`: quick, readable fallback chains\n- `match`: when you need the error message from each failure\n- Nested: when each failure needs different handling",
+    "analogy":  "Error recovery is like trying to get into your house. You reach for your keys (primary) — not in your pocket. You check under the doormat (backup) — no spare key. You try the back door (cache) — it\u0027s unlocked! You go in. Only if all three are locked do you sit on the porch and call a locksmith. Each attempt is an independent operation that either succeeds or passes control to the next.",
+    "code_template":  "use xiom.io;\n\nfn operation_a() -\u003e Result[Str, Str] {\n  return Err(\"A failed\");\n}\n\nfn operation_b() -\u003e Result[Str, Str] {\n  return Err(\"B failed\");\n}\n\nfn operation_c() -\u003e Result[Str, Str] {\n  // TODO: return Ok(\"C succeeded\")\n  return Err(\"not implemented\");\n}\n\nfn try_all() -\u003e Result[Str, Str] {\n  // TODO: try operation_a, if Ok return it\n  // TODO: try operation_b, if Ok return it\n  // TODO: try operation_c, if Ok return it\n  // TODO: return Err(\"All operations failed\")\n  return Err(\"not implemented\");\n}\n\nfn main() -\u003e Int {\n  // TODO: call try_all(), return 200 if Ok, 500 if Err\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn operation_a() -\u003e Result[Str, Str] {\n  return Err(\"A failed\");\n}\n\nfn operation_b() -\u003e Result[Str, Str] {\n  return Err(\"B failed\");\n}\n\nfn operation_c() -\u003e Result[Str, Str] {\n  return Ok(\"C succeeded\");\n}\n\nfn try_all() -\u003e Result[Str, Str] {\n  if let Ok(val) = operation_a() {\n    return Ok(val);\n  }\n  if let Ok(val) = operation_b() {\n    return Ok(val);\n  }\n  if let Ok(val) = operation_c() {\n    return Ok(val);\n  }\n  return Err(\"All operations failed\");\n}\n\nfn main() -\u003e Int {\n  match try_all() {\n    Ok(_) =\u003e { return 200; }\n    Err(_) =\u003e { return 500; }\n  }\n}",
+    "try_it":  "Change which operation succeeds (make A succeed, B and C fail; make B succeed; make all fail). Add a fourth operation D. Add a counter that tracks how many attempts were made. Use `match` instead of `if let` to capture and print which error each failed operation returned. Change the final error message to include all attempted errors.",
+    "concepts":  [
+                     "Result",
+                     "if let",
+                     "match",
+                     "fallback",
+                     "error recovery",
+                     "resilience",
+                     "is"
+                 ],
+    "tips":  [
+                 "`if let Ok(val) = expr` is shorthand: \u0027if this is Ok, bind the value to val and run the block, otherwise skip it\u0027",
+                 "`result is Ok` tests the variant without extracting — use it when you only care about success vs failure",
+                 "Fallback order matters — try the most desirable option first (fastest, cheapest, or best quality)"
+             ],
+    "common_mistakes":  [
+                            "Using `?` in a fallback chain — `let conn = connect_primary()?;` would return Err immediately, never trying the backup",
+                            "Shadowing variables across attempts — `let result = connect_a(); let result = connect_b();` is fine since each shadows the previous"
+                        ],
+    "next_lesson":  "L3-40",
+    "related":  [
+                    "L2-28",
+                    "L2-30",
+                    "L2-34",
+                    "L3-33"
+                ]
 }

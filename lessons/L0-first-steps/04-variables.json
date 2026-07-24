@@ -7,10 +7,15 @@
   "why": "Variables are how programs remember things. Without them, every time you needed a piece of information — your name, your score, your high score — you'd have to retype it from scratch.",
   "narrative": "## What Is a Variable?\n\nA **variable** is a labeled box that holds a piece of information. You choose a name for the box, put something inside, and then use the name whenever you need what's inside.\n\nIn XIOM, you create a variable with the word `let`:\n\n```xiom\nfn main() {\n  let name = \"Alex\";\n  let age = 14;\n  io.println(name);\n  io.println(age);\n}\n```\n\nLet's unpack each line:\n\n- **`let name = \"Alex\";`** — This creates a box called `name` and puts `\"Alex\"` inside.\n- **`let age = 14;`** — This creates a box called `age` and puts the number `14` inside.\n- **`io.println(name);`** — This prints whatever is inside the `name` box. No quotes — `name` is a variable, not text.\n- **`io.println(age);`** — Same idea: prints the contents of the `age` box, which is `14`.\n\nWhen you run this, it prints `Alex` and then `14`.\n\n### Why Variables Save You Time\n\nImagine you're writing a program that uses your name ten times. Without a variable, you'd type `\"Alex\"` ten times. If your name changed, you'd have to find and update all ten places. With a variable, you change it in **one** place:\n\n```xiom\nfn main() {\n  let name = \"Alex\";\n  // Change \"Alex\" to \"Taylor\" on the line above...\n  io.println(name);  // ...and ALL these lines update automatically\n  io.println(name);\n  io.println(name);\n}\n```\n\n### The Computer Figures Out the Type\n\nNotice we didn't tell the computer \"name is text\" or \"age is a number.\" XIOM is smart enough to figure that out on its own. When you write `let age = 14`, it knows `age` holds a number. When you write `let name = \"Alex\"`, it knows `name` holds text. This is called **type inference** — the compiler figures out what type everything is for you.\n\n### Naming Your Boxes\n\nVariable names can be almost anything, but there are a few simple rules:\n- Use letters, numbers, and underscores `_`.\n- Start with a letter or underscore — never a number.\n- No spaces allowed — use underscores: `high_score`, not `high score`.\n- Choose names that describe what's inside: `favorite_color` is clear, `fc` is not.",
   "analogy": "A variable is like a labeled box — you put something inside and give it a name so you can find it later.",
-  "code_template": "fn main() {\n  // TODO: Create a variable called 'name' with your name\n  // TODO: Create a variable called 'favorite_color' with your favorite color\n  // TODO: Print both variables using io.println\n}",
-  "solution": "fn main() {\n  let name = \"Taylor\";\n  let age = 12;\n  let favorite_color = \"blue\";\n  io.println(\"Hi, my name is:\");\n  io.println(name);\n  io.println(\"I am this old:\");\n  io.println(age);\n  io.println(\"My favorite color is:\");\n  io.println(favorite_color);\n}",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable called 'name' with your name\n  // TODO: Create a variable called 'favorite_color' with your favorite color\n  // TODO: Print both variables using io.println\n}",
+  "solution": "use xiom.io;\n\nfn main() {\n  let name = \"Taylor\";\n  let age = 12;\n  let favorite_color = \"blue\";\n  io.println(\"Hi, my name is:\");\n  io.println(name);\n  io.println(\"I am this old:\");\n  io.println(\"12\");\n  io.println(\"My favorite color is:\");\n  io.println(favorite_color);\n}",
   "try_it": "Add a variable for your favorite food and print it. Then add a variable for your favorite number. Can you print them all in one program?",
-  "concepts": ["let", "variable", "type inference", "assignment"],
+  "concepts": [
+    "let",
+    "variable",
+    "type inference",
+    "assignment"
+  ],
   "tips": [
     "Use `let` to create a variable — think of it as 'let this box hold this value.'",
     "When printing a variable, don't use quotes: `io.println(name)` prints the value, while `io.println(\"name\")` prints the word 'name'.",
@@ -24,5 +29,8 @@
     "Starting a variable name with a number: `1st_place` won't work. Use `first_place` instead."
   ],
   "next_lesson": "L0-05",
-  "related": ["L0-03", "L0-05"]
+  "related": [
+    "L0-03",
+    "L0-05"
+  ]
 }

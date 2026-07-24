@@ -1,10 +1,12 @@
 var currentMode = 'landing';
+var currentEditorTheme = localStorage.getItem('xiom_editor_theme') || 'xiom-dark';
 var currentLessonId = null;
 var currentLessonFile = null;
 var currentLessonData = null;
 var lessonCatalogCache = null;
 var syntaxVisible = false;
 var compilerRefVisible = false;
+var stdlibPinned = false;
 
 function showLanding() {
   currentMode = 'landing';
@@ -47,8 +49,8 @@ function toggleSyntax() {
     return;
   }
   syntaxVisible = !syntaxVisible;
-  var panel = document.getElementById('syntaxPanel');
-  panel.classList.toggle('hidden', !syntaxVisible);
+  var panel2 = document.getElementById('syntaxPanel');
+  panel2.classList.toggle('hidden', !syntaxVisible);
   if (syntaxVisible) {
     populateSyntaxPanel();
   }
@@ -56,6 +58,7 @@ function toggleSyntax() {
 
 function toggleCompilerRef() {
   var panel = document.getElementById('syntaxPanel');
+
   if (syntaxVisible && !compilerRefVisible) {
     compilerRefVisible = true;
     showCompilerRef();
@@ -70,6 +73,36 @@ function toggleCompilerRef() {
   syntaxVisible = true;
   panel.classList.remove('hidden');
   showCompilerRef();
+}
+
+function toggleStdlibPanel() {
+  var panel = document.getElementById('stdlibPanel');
+  if (!panel || panel.classList.contains('hidden')) {
+    panel = document.getElementById('stdlibPanelPlay');
+  }
+  if (!panel) return;
+  panel.classList.toggle('hidden');
+  if (!panel.classList.contains('hidden')) {
+    showStdlibPanel();
+  }
+}
+
+function closeStdlibPanel() {
+  if (stdlibPinned) return;
+  var panel = document.getElementById('stdlibPanel');
+  if (!panel || panel.classList.contains('hidden')) {
+    panel = document.getElementById('stdlibPanelPlay');
+  }
+  if (panel) panel.classList.add('hidden');
+}
+
+function pinStdlib() {
+  stdlibPinned = !stdlibPinned;
+  var panels = document.querySelectorAll('.stdlib-panel');
+  var btns = document.querySelectorAll('.stdlib-pin-btn');
+  panels.forEach(function (p) { p.classList.toggle('pinned', stdlibPinned); });
+  btns.forEach(function (b) { b.classList.toggle('pinned', stdlibPinned); });
+  btns.forEach(function (b) { b.innerHTML = stdlibPinned ? '📌' : '📍'; });
 }
 
 function formatCode() {
@@ -120,7 +153,8 @@ function findAndSelectLesson(lessonId) {
 
   if (found && window.selectLesson) {
     window.selectLesson(found.id, found.file);
-    document.getElementById('completionBar').classList.add('hidden');
+    var floating = document.querySelector('.floating-complete');
+    if (floating) floating.remove();
   }
 }
 
@@ -136,7 +170,20 @@ function loadFirstLesson() {
 }
 
 function showCompletionBar() {
-  document.getElementById('completionBar').classList.remove('hidden');
+  var el = document.querySelector('.floating-complete');
+  if (el) el.classList.remove('hidden');
+}
+
+function checkOnboarding() {
+  if (localStorage.getItem('xiom_onboarding_seen')) return;
+  var modal = document.getElementById('onboardingModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function dismissOnboarding() {
+  localStorage.setItem('xiom_onboarding_seen', '1');
+  var modal = document.getElementById('onboardingModal');
+  if (modal) modal.classList.add('hidden');
 }
 
 function updateLineCount() {
@@ -162,12 +209,21 @@ function getActiveEditorValue() {
 
 function loadQuickExample(name) {
   var examples = {
-    hello: '// Your first program!\nio.println("Hello, world!");',
-    vars: '// Variables are named boxes\nlet myName = "Alex";\nio.println(myName);',
-    math: '// Math is easy\nlet apples = 5;\nlet oranges = 3;\nio.println(apples + oranges);'
+    hello: 'fn main() {\n  io.println("Hello, world!");\n}',
+    vars: 'fn main() {\n  let myName = "Alex";\n  let myAge = 14;\n  io.println(myName);\n  io.println(myAge);\n}',
+    math: 'fn main() {\n  let apples = 5;\n  let oranges = 3;\n  let total = apples + oranges;\n  io.println("Total fruit: ");\n  io.println(total);\n}'
   };
   var ed = window.editor || window.pgEditor;
-  if (ed && examples[name]) ed.setValue(examples[name]);
+  if (ed && examples[name]) {
+    ed.setValue(examples[name]);
+    ed.focus();
+  } else if (examples[name]) {
+    // Editor not ready yet — retry after delay
+    setTimeout(function () {
+      var retryEd = window.editor || window.pgEditor;
+      if (retryEd) { retryEd.setValue(examples[name]); retryEd.focus(); }
+    }, 500);
+  }
   document.getElementById('exampleSelect').value = '';
 }
 
@@ -219,6 +275,16 @@ document.addEventListener('keydown', function (e) {
       modal.classList.add('hidden');
       return;
     }
+    var stdlibPanel = document.getElementById('stdlibPanel');
+    if (stdlibPanel && !stdlibPanel.classList.contains('hidden') && !stdlibPinned) {
+      stdlibPanel.classList.add('hidden');
+      return;
+    }
+    var stdlibPanelPlay = document.getElementById('stdlibPanelPlay');
+    if (stdlibPanelPlay && !stdlibPanelPlay.classList.contains('hidden') && !stdlibPinned) {
+      stdlibPanelPlay.classList.add('hidden');
+      return;
+    }
     if (compilerRefVisible) {
       compilerRefVisible = false;
       document.getElementById('syntaxPanel').classList.add('hidden');
@@ -233,10 +299,13 @@ document.addEventListener('keydown', function (e) {
 });
 
 window.addEventListener('load', function () {
+  applyAppTheme();
   setupTabs();
   if (window.loadLessonCatalog) window.loadLessonCatalog();
   checkLastProgress();
   initResizeHandle();
+  applySavedTheme();
+  checkOnboarding();
 });
 
 function checkLastProgress() {
@@ -356,4 +425,116 @@ function toggleShortcuts() {
   var modal = document.getElementById('shortcutModal');
   if (!modal) return;
   modal.classList.toggle('hidden');
+}
+
+function toggleHamburger() {
+  var actions = document.querySelector('#lessonsScreen:not(.hidden) .header-actions') ||
+                document.querySelector('#playgroundScreen:not(.hidden) .header-actions');
+  if (actions) actions.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.header-actions') && !e.target.closest('.hamburger-btn')) {
+    document.querySelectorAll('.header-actions.open').forEach(function(el) { el.classList.remove('open'); });
+  }
+});
+
+function toggleNarrative() {
+  var panel = document.getElementById('narrativePanel');
+  if (panel) panel.classList.toggle('collapsed');
+}
+
+// ========== THEME TOGGLE ==========
+var currentAppTheme = localStorage.getItem('xiom_app_theme') || 'dark';
+
+function applyAppTheme() {
+  var html = document.documentElement;
+  if (currentAppTheme === 'light') {
+    html.classList.add('light-mode');
+  } else {
+    html.classList.remove('light-mode');
+  }
+  // Sync editor theme
+  currentEditorTheme = currentAppTheme === 'light' ? 'xiom-light' : 'xiom-dark';
+  updateThemeButtons();
+}
+
+function toggleEditorTheme() {
+  currentAppTheme = currentAppTheme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('xiom_app_theme', currentAppTheme);
+  applyAppTheme();
+
+  // Switch Monaco theme
+  try {
+    var t = currentAppTheme === 'light' ? 'xiom-light' : 'xiom-dark';
+    if (window.editor) monaco.editor.setTheme(t);
+    if (window.pgEditor) monaco.editor.setTheme(t);
+  } catch(e) {}
+
+  // Flash overlay
+  var overlay = document.getElementById('themeFlash');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'themeFlash';
+    overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--panel);color:var(--hi);padding:12px 24px;border-radius:12px;font-size:15px;font-weight:600;z-index:999;pointer-events:none;transition:opacity 0.4s;opacity:1;border:1px solid var(--border);';
+    document.body.appendChild(overlay);
+  }
+  overlay.textContent = currentAppTheme === 'dark' ? '\uD83C\uDF19 Dark mode' : '\u2600\uFE0F Light mode';
+  overlay.style.opacity = '1';
+  setTimeout(function () { overlay.style.opacity = '0'; }, 1200);
+}
+
+function updateThemeButtons() {
+  var isDark = currentAppTheme === 'dark';
+  var btns = document.querySelectorAll('.theme-toggle');
+  btns.forEach(function (btn) {
+    btn.innerHTML = isDark ? '\uD83C\uDF19' : '\u2600\uFE0F';
+    btn.title = isDark ? 'Dark mode' : 'Light mode';
+  });
+}
+
+function applySavedTheme() {
+  var btns = document.querySelectorAll('.theme-toggle');
+  var isDark = currentAppTheme === 'dark';
+  btns.forEach(function (btn) {
+    btn.innerHTML = isDark ? '\uD83C\uDF19' : '\u2600\uFE0F';
+    btn.title = isDark ? 'Dark mode' : 'Light mode';
+  });
+}
+window.applySavedTheme = applySavedTheme;
+
+function celebrateCompletion() {
+  var colors = ['#5c6bff', '#34d399', '#f0b445', '#ff8fb3', '#7fd6c0', '#8fb3ff'];
+  var container = document.getElementById('confettiContainer');
+  if (!container) { container = document.body; }
+
+  for (var i = 0; i < 30; i++) {
+    var particle = document.createElement('div');
+    var color = colors[Math.floor(Math.random() * colors.length)];
+    var left = Math.random() * 100;
+    var delay = Math.random() * 0.5;
+    var size = 4 + Math.random() * 6;
+    var rotation = Math.random() * 360;
+
+    particle.style.cssText = [
+      'position: fixed',
+      'top: -10px',
+      'left: ' + left + '%',
+      'width: ' + size + 'px',
+      'height: ' + size + 'px',
+      'background: ' + color,
+      'border-radius: 2px',
+      'z-index: 999',
+      'pointer-events: none',
+      'animation: confettiFall ' + (1.5 + Math.random() * 2) + 's ease-in ' + delay + 's forwards',
+      'transform: rotate(' + rotation + 'deg)',
+      'opacity: 0.9'
+    ].join(';');
+
+    container.appendChild(particle);
+
+    (function(p) {
+      setTimeout(function() { p.remove(); }, 3500);
+    })(particle);
+  }
 }

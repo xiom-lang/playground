@@ -1,26 +1,35 @@
 {
-  "id": "L4-49",
-  "title": "Safety Review: Ownership Checklist",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "The borrow checker is XIOM's most famous feature — and the most feared by newcomers. But it operates on simple rules. Learn the rules, and the compiler becomes your ally instead of your adversary.",
-  "why": "A systematic ownership audit catches use-after-move, double-borrow, and lifetime violations at the design stage, before you even compile.",
-  "narrative": "## The Ownership Audit Checklist\n\nFor every variable in a function, verify these four rules:\n\n### Rule 1: One Owner\nEvery value has exactly one owner at any time:\n```xiom\nfn owner_check() {\n  let a = Vec::new();\n  let b = a;  // 'a' moved to 'b'. 'a' is dead.\n  // a.push(1);  // COMPILE ERROR: use after move\n}\n```\n\n### Rule 2: Borrows Don't Outlive Owners\n```xiom\nfn bad_borrow() -> &Int {\n  let x = 42;\n  return &x;  // COMPILE ERROR: 'x' dies here, can't return reference\n}\n\nfn good_borrow(data: &Int) -> &Int {\n  return data;  // OK: 'data' lives in the caller\n}\n```\n\n### Rule 3: No Use After Move\n```xiom\nfn use_after_move_bad() {\n  let data = Vec::new();\n  process(data);  // data moved\n  io.println(data.len());  // COMPILE ERROR\n}\n```\n\n### Rule 4: No Simultaneous & and &mut\n```xiom\nfn double_borrow_bad() {\n  var data = Vec::new();\n  let r1 = &data;\n  let r2 = &mut data;  // COMPILE ERROR: &mut while & exists\n}\n```\n\n### Rule 5: Contracts + Ownership\nEvery `&mut` parameter should have a `requires` that checks state validity. Every `&` parameter should have an `ensures` if the function computes something.\n\n### Trace It\nPick a complex function. Trace every variable from creation to destruction. Does any variable violate the rules?",
-  "analogy": "The ownership rules are like traffic laws — they feel restrictive until you realize they're the only thing preventing head-on collisions.",
-  "code_template": "type Resource = {\n  data: Int;\n  active: Bool;\n  invariant: active == true;\n}\n\nfn process_resource(r: &mut Resource)\n  requires: r.active;\n{\n  r.data = r.data * 2;\n}\n\nfn consume_resource(r: Resource) -> Int {\n  return r.data;\n}\n\nfn main() -> Int {\n  // TODO: Create a Resource\n  // Audit it against the 5 rules:\n  // 1. Who owns it?\n  // 2. Do any borrows outlive it?\n  // 3. Is it used after a move?\n  // 4. Are there simultaneous & and &mut?\n  // 5. Are contracts on all &mut params?\n  // Then process it, consume it, return result\n  return 0;\n}",
-  "solution": "type Resource = {\n  data: Int;\n  active: Bool;\n  invariant: active == true;\n}\n\nfn process_resource(r: &mut Resource)\n  requires: r.active;\n{\n  r.data = r.data * 2;\n}\n\nfn consume_resource(r: Resource) -> Int {\n  return r.data;\n}\n\nfn main() -> Int {\n  var res: Resource = Resource{ data: 21, active: true };\n  process_resource(&mut res);\n  let value = consume_resource(res);\n  return value;\n}",
-  "try_it": "Trace `main()` line by line. At each line, answer: who owns `res`? When is `&mut res` borrowed and released? When does `res` move into `consume_resource`? Could you call `process_resource(&mut res)` after `consume_resource(res)`? Why not?",
-  "concepts": ["ownership-audit", "borrow-rules", "move-semantics", "lifetime"],
-  "tips": [
-    "The compiler IS your checklist — every borrow error is one of the 5 rules being violated",
-    "When you get a borrow error, identify which rule is broken, then fix the design, not just the syntax",
-    "Practice tracing ownership on paper until it becomes mental — it's the fastest way to fluency"
-  ],
-  "common_mistakes": [
-    "Trying to beat the borrow checker with unsafe — the checker is right 99.9% of the time; your 'clever' workaround is wrong",
-    "Using clone() to silence borrow errors — understand WHY the error occurred before reaching for clone",
-    "Returning references to local variables — the variable dies when the function returns; the reference becomes dangling"
-  ],
-  "next_lesson": "L4-50",
-  "related": ["L4-41", "L4-40", "L3-20"]
+    "id":  "L4-49",
+    "title":  "Safety Review: Ownership Checklist",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "The borrow checker is XIOM\u0027s most famous feature — and the most feared by newcomers. But it operates on simple rules. Learn the rules, and the compiler becomes your ally instead of your adversary.",
+    "why":  "A systematic ownership audit catches use-after-move, double-borrow, and lifetime violations at the design stage, before you even compile.",
+    "narrative":  "## The Ownership Audit Checklist\n\nFor every variable in a function, verify these four rules:\n\n### Rule 1: One Owner\nEvery value has exactly one owner at any time:\n```xiom\nfn owner_check() {\n  let a = Vec::new();\n  let b = a;  // \u0027a\u0027 moved to \u0027b\u0027. \u0027a\u0027 is dead.\n  // a.push(1);  // COMPILE ERROR: use after move\n}\n```\n\n### Rule 2: Borrows Don\u0027t Outlive Owners\n```xiom\nfn bad_borrow() -\u003e \u0026Int {\n  let x = 42;\n  return \u0026x;  // COMPILE ERROR: \u0027x\u0027 dies here, can\u0027t return reference\n}\n\nfn good_borrow(data: \u0026Int) -\u003e \u0026Int {\n  return data;  // OK: \u0027data\u0027 lives in the caller\n}\n```\n\n### Rule 3: No Use After Move\n```xiom\nfn use_after_move_bad() {\n  let data = Vec::new();\n  process(data);  // data moved\n  io.println(data.len());  // COMPILE ERROR\n}\n```\n\n### Rule 4: No Simultaneous \u0026 and \u0026mut\n```xiom\nfn double_borrow_bad() {\n  var data = Vec::new();\n  let r1 = \u0026data;\n  let r2 = \u0026mut data;  // COMPILE ERROR: \u0026mut while \u0026 exists\n}\n```\n\n### Rule 5: Contracts + Ownership\nEvery `\u0026mut` parameter should have a `requires` that checks state validity. Every `\u0026` parameter should have an `ensures` if the function computes something.\n\n### Trace It\nPick a complex function. Trace every variable from creation to destruction. Does any variable violate the rules?",
+    "analogy":  "The ownership rules are like traffic laws — they feel restrictive until you realize they\u0027re the only thing preventing head-on collisions.",
+    "code_template":  "use xiom.io;\n\ntype Resource = {\n  data: Int;\n  active: Bool;\n  invariant: active == true;\n}\n\nfn process_resource(r: \u0026mut Resource)\n  requires: r.active;\n{\n  r.data = r.data * 2;\n}\n\nfn consume_resource(r: Resource) -\u003e Int {\n  return r.data;\n}\n\nfn main() -\u003e Int {\n  // TODO: Create a Resource\n  // Audit it against the 5 rules:\n  // 1. Who owns it?\n  // 2. Do any borrows outlive it?\n  // 3. Is it used after a move?\n  // 4. Are there simultaneous \u0026 and \u0026mut?\n  // 5. Are contracts on all \u0026mut params?\n  // Then process it, consume it, return result\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype Resource = {\n  data: Int;\n  active: Bool;\n  invariant: active == true;\n}\n\nfn process_resource(r: \u0026mut Resource)\n  requires: r.active;\n{\n  r.data = r.data * 2;\n}\n\nfn consume_resource(r: Resource) -\u003e Int {\n  return r.data;\n}\n\nfn main() -\u003e Int {\n  var res: Resource = Resource{ data: 21, active: true };\n  process_resource(\u0026mut res);\n  let value = consume_resource(res);\n  return value;\n}",
+    "try_it":  "Trace `main()` line by line. At each line, answer: who owns `res`? When is `\u0026mut res` borrowed and released? When does `res` move into `consume_resource`? Could you call `process_resource(\u0026mut res)` after `consume_resource(res)`? Why not?",
+    "concepts":  [
+                     "ownership-audit",
+                     "borrow-rules",
+                     "move-semantics",
+                     "lifetime"
+                 ],
+    "tips":  [
+                 "The compiler IS your checklist — every borrow error is one of the 5 rules being violated",
+                 "When you get a borrow error, identify which rule is broken, then fix the design, not just the syntax",
+                 "Practice tracing ownership on paper until it becomes mental — it\u0027s the fastest way to fluency"
+             ],
+    "common_mistakes":  [
+                            "Trying to beat the borrow checker with unsafe — the checker is right 99.9% of the time; your \u0027clever\u0027 workaround is wrong",
+                            "Using clone() to silence borrow errors — understand WHY the error occurred before reaching for clone",
+                            "Returning references to local variables — the variable dies when the function returns; the reference becomes dangling"
+                        ],
+    "next_lesson":  "L4-50",
+    "related":  [
+                    "L4-41",
+                    "L4-40",
+                    "L3-20"
+                ]
 }

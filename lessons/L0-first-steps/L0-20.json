@@ -3,23 +3,33 @@
   "title": "Multiple Conditions (and/or)",
   "level": "L0",
   "duration": "7 min",
-  "story": "The sign at the roller coaster says: \"Must be at least 130 cm tall AND at least 10 years old.\" You're tall enough, but are you old enough? A single comparison won't cut it \u2014 you need to check TWO things at once!",
-  "why": "Real-world decisions almost always involve multiple conditions \u2014 combining them with AND/OR lets programs make smarter, more realistic choices.",
-  "narrative": "## Checking Two Things at Once\n\nSometimes one comparison isn't enough. That's when we combine comparisons with `&&` (AND) and `||` (OR).\n\n### The AND Operator: &&\n\n`&&` means BOTH sides must be true. If either side is false, the whole thing is false.\n\n```xiom\nfn main() {\n  let is_tall: Bool = true;\n  let is_old_enough: Bool = true;\n  let can_ride: Bool = is_tall && is_old_enough;\n  io.println(can_ride);\n}\n```\n\nThis prints `true` only if you're tall AND old enough. If you're missing either one, `can_ride` becomes `false`.\n\n### The OR Operator: ||\n\n`||` means AT LEAST ONE side must be true. If either side is true, the whole thing is true.\n\n```xiom\nfn main() {\n  let has_umbrella: Bool = true;\n  let has_raincoat: Bool = false;\n  let stays_dry: Bool = has_umbrella || has_raincoat;\n  io.println(stays_dry);\n}\n```\n\nYou stay dry if you have an umbrella OR a raincoat \u2014 either one works!\n\n### Combining with Comparisons\n\n```xiom\nfn main() {\n  let age: Int = 12;\n  let height: Int = 145;\n  let can_ride: Bool = age >= 10 && height >= 130;\n  io.println(can_ride);\n}\n```\n\nWe combine two comparisons with `&&`. The program checks age AND height in one line!",
+  "story": "The sign at the roller coaster says: \"Must be at least 130 cm tall AND at least 10 years old.\" You're tall enough, but are you old enough? A single comparison won't cut it � you need to check TWO things at once!",
+  "why": "Real-world decisions almost always involve multiple conditions � combining them with AND/OR lets programs make smarter, more realistic choices.",
+  "narrative": "## Checking Two Things at Once\n\nSometimes one comparison isn't enough. That's when we combine comparisons with `&&` (AND) and `||` (OR).\n\n### The AND Operator: &&\n\n`&&` means BOTH sides must be true. If either side is false, the whole thing is false.\n\n```xiom\nfn main() {\n  let is_tall: Bool = true;\n  let is_old_enough: Bool = true;\n  let can_ride: Bool = is_tall && is_old_enough;\n  io.println(can_ride);\n}\n```\n\nThis prints `true` only if you're tall AND old enough. If you're missing either one, `can_ride` becomes `false`.\n\n### The OR Operator: ||\n\n`||` means AT LEAST ONE side must be true. If either side is true, the whole thing is true.\n\n```xiom\nfn main() {\n  let has_umbrella: Bool = true;\n  let has_raincoat: Bool = false;\n  let stays_dry: Bool = has_umbrella || has_raincoat;\n  io.println(stays_dry);\n}\n```\n\nYou stay dry if you have an umbrella OR a raincoat � either one works!\n\n### Combining with Comparisons\n\n```xiom\nfn main() {\n  let age: Int = 12;\n  let height: Int = 145;\n  let can_ride: Bool = age >= 10 && height >= 130;\n  io.println(can_ride);\n}\n```\n\nWe combine two comparisons with `&&`. The program checks age AND height in one line!",
   "analogy": "&& is like a door that needs TWO keys to open. || is like a door that opens with EITHER key.",
-  "code_template": "fn main() {\n  let number: Int = 15;\n  // TODO: check if number is greater than 10 AND less than 20\n  // TODO: store the result and print it\n}\n",
-  "solution": "fn main() {\n  let number: Int = 15;\n  let in_range: Bool = number > 10 && number < 20;\n  io.println(in_range);\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() {\n  let number: Int = 15;\n  // TODO: check if number is greater than 10 AND less than 20\n  // TODO: store the result and print it\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let number: Int = 15;\n  let in_range: Bool = number > 10 && number < 20;\n  io.println(\"15\");\n}\n",
   "try_it": "Check if a number is between 10 and 20 (greater than 10 AND less than 20). Then check if a number is less than 5 OR greater than 95. Change the number and watch the result flip!",
-  "concepts": ["logical-operators", "and", "or", "&&", "||"],
+  "concepts": [
+    "logical-operators",
+    "and",
+    "or",
+    "&&",
+    "||"
+  ],
   "tips": [
-    "`&&` is stricter than `||` \u2014 AND needs everything true, OR just needs one thing true",
+    "`&&` is stricter than `||` � AND needs everything true, OR just needs one thing true",
     "You can chain more than two: `a && b && c` means all three must be true",
     "Use parentheses to group: `(age >= 13 || has_permission) && height >= 120`"
   ],
   "common_mistakes": [
-    "Writing `and` or `or` as words instead of `&&` and `||` \u2014 XIOM uses the symbols!",
+    "Writing `and` or `or` as words instead of `&&` and `||` � XIOM uses the symbols!",
     "Forgetting that both sides must be complete comparisons: write `x > 5 && x < 10`, not `x > 5 && < 10`"
   ],
   "next_lesson": "L0-21",
-  "related": ["L0-13", "L0-21", "L0-22"]
+  "related": [
+    "L0-13",
+    "L0-21",
+    "L0-22"
+  ]
 }

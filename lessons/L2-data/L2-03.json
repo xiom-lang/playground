@@ -7,10 +7,14 @@
   "why": "Real-world data often has many fields. Structs grow naturally — just add more fields to capture everything you need.",
   "narrative": "## Expanding Structs with More Information\n\nSo far we've used two-field structs. But real data is richer — a book has a title, an author, AND a page count.\n\n### Defining a Book Struct\n\n```xiom\ntype Book = {\n  title: Str;\n  author: Str;\n  pages: Int;\n}\n\nfn main() -> Int {\n  let book1 = Book{ title: \"The Hobbit\", author: \"J.R.R. Tolkien\", pages: 310 };\n  let book2 = Book{ title: \"Dune\", author: \"Frank Herbert\", pages: 412 };\n  let book3 = Book{ title: \"Ender's Game\", author: \"Orson Scott Card\", pages: 324 };\n\n  io.println(book1.title + \" by \" + book1.author);\n  io.println(book2.title + \" by \" + book2.author);\n  io.println(book3.title + \" by \" + book3.author);\n  return 0;\n}\n```\n\n### Different Field Types\n\nFields can be any type you've learned — `Str`, `Int`, `Float64`, `Bool`:\n\n```xiom\ntype Movie = {\n  title: Str;\n  year: Int;\n  rating: Float64;\n  is_favorite: Bool;\n}\n\nfn main() -> Int {\n  let movie = Movie{ title: \"Wall-E\", year: 2008, rating: 8.4, is_favorite: true };\n  io.println(movie.title);\n  io.println(movie.is_favorite);\n  return 0;\n}\n```\n\n### Structs with Many Fields\n\nThere's no artificial limit. If your data needs 5, 10, or even 20 fields — add them. The struct keeps them organized together under one name.",
   "analogy": "A struct with more fields is like a longer form — more blanks to fill, but still one piece of paper that travels as a unit.",
-  "code_template": "type Book = {\n  title: Str;\n  author: Str;\n  pages: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create three Book instances for three of your favorite books\n\n  // TODO: Print each book's title and page count\n\n  return 0;\n}\n",
-  "solution": "type Book = {\n  title: Str;\n  author: Str;\n  pages: Int;\n}\n\nfn main() -> Int {\n  let book1 = Book{ title: \"The Giver\", author: \"Lois Lowry\", pages: 240 };\n  let book2 = Book{ title: \"Holes\", author: \"Louis Sachar\", pages: 233 };\n  let book3 = Book{ title: \"Wonder\", author: \"R.J. Palacio\", pages: 320 };\n  io.println(book1.title + \" — \" + \" pages\");\n  io.println(book1.pages);\n  io.println(book2.title + \" — \" + \" pages\");\n  io.println(book2.pages);\n  io.println(book3.title + \" — \" + \" pages\");\n  io.println(book3.pages);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\ntype Book = {\n  title: Str;\n  author: Str;\n  pages: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create three Book instances for three of your favorite books\n\n  // TODO: Print each book's title and page count\n\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\ntype Book = {\n  title: Str;\n  author: Str;\n  pages: Int;\n}\n\nfn main() -> Int {\n  let book1 = Book{ title: \"The Giver\", author: \"Lois Lowry\", pages: 240 };\n  let book2 = Book{ title: \"Holes\", author: \"Louis Sachar\", pages: 233 };\n  let book3 = Book{ title: \"Wonder\", author: \"R.J. Palacio\", pages: 320 };\n  io.println(book1.title.to_str() + \" — \" + \" pages\");\n  io.println(book1.pages.to_str());\n  io.println(book2.title.to_str() + \" — \" + \" pages\");\n  io.println(book2.pages.to_str());\n  io.println(book3.title.to_str() + \" — \" + \" pages\");\n  io.println(book3.pages.to_str());\n  return 0;\n}\n",
   "try_it": "Add a `rating: Float64` field to the Book struct (1.0 to 5.0). Update all three books with ratings and print them alongside the title.",
-  "concepts": ["multi-field-struct", "field-types", "data-modeling"],
+  "concepts": [
+    "multi-field-struct",
+    "field-types",
+    "data-modeling"
+  ],
   "tips": [
     "Fields can be any type — mix Str, Int, Float64, and Bool in the same struct",
     "Name fields clearly so you know what data they hold — `pages` is better than `num`",
@@ -22,5 +26,9 @@
     "Forgetting to print some books after creating them — all instances should be verified"
   ],
   "next_lesson": "L2-04",
-  "related": ["L2-01", "L2-02", "L2-05"]
+  "related": [
+    "L2-01",
+    "L2-02",
+    "L2-05"
+  ]
 }

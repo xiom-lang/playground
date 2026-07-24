@@ -7,12 +7,31 @@
   "why": "Functions that return different types and use if/elif chains teach you how to build multi-step data pipelines — calculate, then classify.",
   "narrative": "## Calculating and Classifying BMI\n\nBMI (Body Mass Index) is a simple formula: `weight / (height * height)`. Your program will calculate the number, then classify it into a category.\n\n### Step 1: Calculate BMI\n\n```xiom\nfn calc_bmi(weight_kg: Float64, height_m: Float64) -> Float64 {\n  return weight_kg / (height_m * height_m);\n}\n```\n\n### Step 2: Classify the Result\n\n```xiom\nfn bmi_category(bmi: Float64) -> Str {\n  if bmi < 18.5 {\n    return \"Underweight\";\n  } elif bmi < 25.0 {\n    return \"Normal weight\";\n  } elif bmi < 30.0 {\n    return \"Overweight\";\n  } else {\n    return \"Obese\";\n  }\n}\n```\n\nThe `if/elif` chain checks thresholds from lowest to highest. Each condition catches a range before passing to the next.\n\n### Step 3: Put Them Together\n\n```xiom\nfn main() -> Int {\n  let weight = 70.0;\n  let height = 1.75;\n\n  let bmi = calc_bmi(weight, height);\n  let category = bmi_category(bmi);\n\n  io.println(\"BMI calculated!\");\n\n  return 0;\n}\n```\n\n`calc_bmi` produces a `Float64`, which flows directly into `bmi_category` to produce a `Str`. Two functions, one pipeline.",
   "analogy": "A BMI calculator is like a thermometer with colored zones. The thermometer measures the temperature (calc_bmi), then a color strip maps that number to a category (bmi_category): blue for cold, green for normal, red for fever.",
-  "code_template": "// TODO: Write calc_bmi(weight_kg: Float64, height_m: Float64) -> Float64\n// TODO: Write bmi_category(bmi: Float64) -> Str using if/elif\n// Categories: <18.5 Underweight, <25.0 Normal, <30.0 Overweight, else Obese\n\nfn main() -> Int {\n  let weight = 82.5;\n  let height = 1.80;\n  // TODO: Calculate BMI, then get category, then print both\n  return 0;\n}",
-  "solution": "fn calc_bmi(weight_kg: Float64, height_m: Float64) -> Float64 {\n  return weight_kg / (height_m * height_m);\n}\n\nfn bmi_category(bmi: Float64) -> Str {\n  if bmi < 18.5 {\n    return \"Underweight\";\n  } elif bmi < 25.0 {\n    return \"Normal weight\";\n  } elif bmi < 30.0 {\n    return \"Overweight\";\n  } else {\n    return \"Obese\";\n  }\n}\n\nfn main() -> Int {\n  let weight = 82.5;\n  let height = 1.80;\n  let bmi = calc_bmi(weight, height);\n  let category = bmi_category(bmi);\n  io.println(\"BMI calculation complete!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write calc_bmi(weight_kg: Float64, height_m: Float64) -> Float64\n// TODO: Write bmi_category(bmi: Float64) -> Str using if/elif\n// Categories: <18.5 Underweight, <25.0 Normal, <30.0 Overweight, else Obese\n\nfn main() {\n  let weight = 82.5;\n  let height = 1.80;\n  // TODO: Calculate BMI, then get category, then print both\n}",
+  "solution": "use xiom.io;\nfn calc_bmi(weight_kg: Float64, height_m: Float64) -> Float64 {\n  return weight_kg / (height_m * height_m);\n}\n\nfn bmi_category(bmi: Float64) -> Str {\n  if bmi < 18.5 {\n    return \"Underweight\";\n  } elif bmi < 25.0 {\n    return \"Normal weight\";\n  } elif bmi < 30.0 {\n    return \"Overweight\";\n  } else {\n    return \"Obese\";\n  }\n}\n\nfn main() {\n  let weight = 82.5;\n  let height = 1.80;\n  let bmi = calc_bmi(weight, height);\n  let category = bmi_category(bmi);\n  io.println(\"BMI calculation complete!\");\n}",
   "try_it": "Change the weight and height values to test different BMI categories. Try 50.0 kg at 1.70 m and 100.0 kg at 1.65 m.",
-  "concepts": ["Float64 return type", "if/elif chain", "function composition", "threshold classification"],
-  "tips": ["Order your if/elif conditions from lowest threshold to highest", "Use Float64 parameters when dealing with decimal values like weight and height", "The output of calc_bmi feeds directly into bmi_category — this is function composition", "Each function does ONE thing: calc_bmi computes, bmi_category classifies"],
-  "common_mistakes": ["Using Int instead of Float64 for BMI calculations — you'll lose decimal precision", "Ordering if/elif conditions incorrectly — start with the smallest threshold", "Forgetting that bmi_category requires a Float64, not an Int"],
+  "concepts": [
+    "Float64 return type",
+    "if/elif chain",
+    "function composition",
+    "threshold classification"
+  ],
+  "tips": [
+    "Order your if/elif conditions from lowest threshold to highest",
+    "Use Float64 parameters when dealing with decimal values like weight and height",
+    "The output of calc_bmi feeds directly into bmi_category — this is function composition",
+    "Each function does ONE thing: calc_bmi computes, bmi_category classifies"
+  ],
+  "common_mistakes": [
+    "Using Int instead of Float64 for BMI calculations — you'll lose decimal precision",
+    "Ordering if/elif conditions incorrectly — start with the smallest threshold",
+    "Forgetting that bmi_category requires a Float64, not an Int"
+  ],
   "next_lesson": "L1-24",
-  "related": ["L1-03", "L1-10", "L1-11", "L1-12"]
+  "related": [
+    "L1-03",
+    "L1-10",
+    "L1-11",
+    "L1-12"
+  ]
 }

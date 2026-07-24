@@ -1,25 +1,37 @@
 {
-  "id": "L3-29",
-  "title": "Safe Division Pipeline",
-  "level": "L3",
-  "duration": "9 min",
-  "story": "You're building a scientific calculator that chains operations. If the user types `100 / b / c`, and `b` happens to be zero halfway through, the entire pipeline should stop cleanly — not crash with a division-by-zero error.",
-  "why": "The `?` operator turns any chain of fallible operations into a clean pipeline where the first failure short-circuits the rest.",
-  "narrative": "## Chaining Operations That Can Fail\n\nWhen you chain multiple divisions, each step depends on the previous one. If any step fails, the whole pipeline fails — and `?` handles this automatically.\n\n### The Safe Division Function\n\nEvery division in our pipeline is guarded:\n\n```xiom\nfn divide_safely(a: Float64, b: Float64) -> Result[Float64, Str] {\n  if b == 0.0 {\n    return Err(\"Division by zero\");\n  }\n  return Ok(a / b);\n}\n```\n\n### Building a Pipeline with `?`\n\nThe `?` operator unwraps `Ok` or returns `Err` immediately:\n\n```xiom\nfn pipeline(a: Float64, b: Float64, c: Float64) -> Result[Float64, Str] {\n  let step1 = divide_safely(a, b)?;\n  let step2 = divide_safely(step1, c)?;\n  return Ok(step2);\n}\n```\n\nThis is equivalent to `100 / b / c` — but with error handling at every step.\n\n### Understanding Short-Circuiting\n\n```xiom\n// pipeline(100.0, 2.0, 5.0) returns Ok(10.0)\n//   100 / 2 = 50.0, then 50 / 5 = 10.0\n\n// pipeline(100.0, 0.0, 5.0) returns Err(\"Division by zero\")\n//   100 / 0 fails immediately — step 2 never runs!\n\n// pipeline(100.0, 2.0, 0.0) returns Err(\"Division by zero\")\n//   100 / 2 succeeds, but 50 / 0 fails at step 2\n```\n\n### The Pattern in One Line\n\nYou can even chain multiple `?` calls in a single expression:\n\n```xiom\nfn pipeline_compact(a: Float64, b: Float64, c: Float64) -> Result[Float64, Str] {\n  return divide_safely(divide_safely(a, b)?, c);\n}\n```\n\nEach `?` acts like a checkpoint — pass through if successful, bail out if not.",
-  "analogy": "A division pipeline is like a relay race with three runners and one baton. Runner 1 starts with 100, divides by b, and hands the result to runner 2. But if runner 1 trips (divides by zero), the race ends — runner 2 never even gets the baton. The `?` operator is the referee who blows the whistle the moment anyone falls.",
-  "code_template": "fn divide_safely(a: Float64, b: Float64) -> Result[Float64, Str] {\n  // TODO: return Err if b is zero, Ok(a / b) otherwise\n  return Err(\"not implemented\");\n}\n\nfn pipeline(a: Float64, b: Float64, c: Float64) -> Result[Float64, Str] {\n  // TODO: chain two safe divisions using ?\n  // TODO: divide a by b, then divide that result by c\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: call pipeline(100.0, 5.0, 2.0), return (result * 10) as Int if Ok, -1 if Err\n  return 0;\n}",
-  "solution": "fn divide_safely(a: Float64, b: Float64) -> Result[Float64, Str] {\n  if b == 0.0 {\n    return Err(\"Division by zero\");\n  }\n  return Ok(a / b);\n}\n\nfn pipeline(a: Float64, b: Float64, c: Float64) -> Result[Float64, Str] {\n  let step1 = divide_safely(a, b)?;\n  let step2 = divide_safely(step1, c)?;\n  return Ok(step2);\n}\n\nfn main() -> Int {\n  match pipeline(100.0, 5.0, 2.0) {\n    Ok(val) => { return (val * 10.0) as Int; }\n    Err(_) => { return -1; }\n  }\n}",
-  "try_it": "Test pipeline(100, 2, 5) → 10, pipeline(100, 0, 5) → error at step 1, pipeline(100, 2, 0) → error at step 2. Add a fourth parameter `d` and chain three divisions. Try pipeline(100, 2, 0, 5) — notice step 3 and 4 never execute.",
-  "concepts": ["Result", "?", "short-circuit", "pipeline", "Float64", "division by zero", "error propagation"],
-  "tips": [
-    "`let x = fallible_fn()?;` does two things: unwraps Ok(value) into x, or returns Err(msg) from the current function",
-    "The `?` operator only works inside functions that return `Result` or `Option` — the error types must be compatible",
-    "A pipeline with `?` reads top-to-bottom like normal code, but each line is a potential exit point"
-  ],
-  "common_mistakes": [
-    "Comparing `b == 0` instead of `b == 0.0` — XIOM distinguishes Int and Float64 literals, and the parameter is Float64",
-    "Using `?` outside a function that returns `Result` — the compiler will complain about incompatible return types"
-  ],
-  "next_lesson": "L3-30",
-  "related": ["L2-34", "L2-33", "L2-30"]
+    "id":  "L3-29",
+    "title":  "Safe Division Pipeline",
+    "level":  "L3",
+    "duration":  "9 min",
+    "story":  "You\u0027re building a scientific calculator that chains operations. If the user types `100 / b / c`, and `b` happens to be zero halfway through, the entire pipeline should stop cleanly — not crash with a division-by-zero error.",
+    "why":  "The `?` operator turns any chain of fallible operations into a clean pipeline where the first failure short-circuits the rest.",
+    "narrative":  "## Chaining Operations That Can Fail\n\nWhen you chain multiple divisions, each step depends on the previous one. If any step fails, the whole pipeline fails — and `?` handles this automatically.\n\n### The Safe Division Function\n\nEvery division in our pipeline is guarded:\n\n```xiom\nfn divide_safely(a: Float64, b: Float64) -\u003e Result[Float64, Str] {\n  if b == 0.0 {\n    return Err(\"Division by zero\");\n  }\n  return Ok(a / b);\n}\n```\n\n### Building a Pipeline with `?`\n\nThe `?` operator unwraps `Ok` or returns `Err` immediately:\n\n```xiom\nfn pipeline(a: Float64, b: Float64, c: Float64) -\u003e Result[Float64, Str] {\n  let step1 = divide_safely(a, b)?;\n  let step2 = divide_safely(step1, c)?;\n  return Ok(step2);\n}\n```\n\nThis is equivalent to `100 / b / c` — but with error handling at every step.\n\n### Understanding Short-Circuiting\n\n```xiom\n// pipeline(100.0, 2.0, 5.0) returns Ok(10.0)\n//   100 / 2 = 50.0, then 50 / 5 = 10.0\n\n// pipeline(100.0, 0.0, 5.0) returns Err(\"Division by zero\")\n//   100 / 0 fails immediately — step 2 never runs!\n\n// pipeline(100.0, 2.0, 0.0) returns Err(\"Division by zero\")\n//   100 / 2 succeeds, but 50 / 0 fails at step 2\n```\n\n### The Pattern in One Line\n\nYou can even chain multiple `?` calls in a single expression:\n\n```xiom\nfn pipeline_compact(a: Float64, b: Float64, c: Float64) -\u003e Result[Float64, Str] {\n  return divide_safely(divide_safely(a, b)?, c);\n}\n```\n\nEach `?` acts like a checkpoint — pass through if successful, bail out if not.",
+    "analogy":  "A division pipeline is like a relay race with three runners and one baton. Runner 1 starts with 100, divides by b, and hands the result to runner 2. But if runner 1 trips (divides by zero), the race ends — runner 2 never even gets the baton. The `?` operator is the referee who blows the whistle the moment anyone falls.",
+    "code_template":  "use xiom.io;\n\nfn divide_safely(a: Float64, b: Float64) -\u003e Result[Float64, Str] {\n  // TODO: return Err if b is zero, Ok(a / b) otherwise\n  return Err(\"not implemented\");\n}\n\nfn pipeline(a: Float64, b: Float64, c: Float64) -\u003e Result[Float64, Str] {\n  // TODO: chain two safe divisions using ?\n  // TODO: divide a by b, then divide that result by c\n  return Err(\"not implemented\");\n}\n\nfn main() -\u003e Int {\n  // TODO: call pipeline(100.0, 5.0, 2.0), return (result * 10) as Int if Ok, -1 if Err\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn divide_safely(a: Float64, b: Float64) -\u003e Result[Float64, Str] {\n  if b == 0.0 {\n    return Err(\"Division by zero\");\n  }\n  return Ok(a / b);\n}\n\nfn pipeline(a: Float64, b: Float64, c: Float64) -\u003e Result[Float64, Str] {\n  let step1 = divide_safely(a, b)?;\n  let step2 = divide_safely(step1, c)?;\n  return Ok(step2);\n}\n\nfn main() -\u003e Int {\n  match pipeline(100.0, 5.0, 2.0) {\n    Ok(val) =\u003e { return (val * 10.0) as Int; }\n    Err(_) =\u003e { return -1; }\n  }\n}",
+    "try_it":  "Test pipeline(100, 2, 5) → 10, pipeline(100, 0, 5) → error at step 1, pipeline(100, 2, 0) → error at step 2. Add a fourth parameter `d` and chain three divisions. Try pipeline(100, 2, 0, 5) — notice step 3 and 4 never execute.",
+    "concepts":  [
+                     "Result",
+                     "?",
+                     "short-circuit",
+                     "pipeline",
+                     "Float64",
+                     "division by zero",
+                     "error propagation"
+                 ],
+    "tips":  [
+                 "`let x = fallible_fn()?;` does two things: unwraps Ok(value) into x, or returns Err(msg) from the current function",
+                 "The `?` operator only works inside functions that return `Result` or `Option` — the error types must be compatible",
+                 "A pipeline with `?` reads top-to-bottom like normal code, but each line is a potential exit point"
+             ],
+    "common_mistakes":  [
+                            "Comparing `b == 0` instead of `b == 0.0` — XIOM distinguishes Int and Float64 literals, and the parameter is Float64",
+                            "Using `?` outside a function that returns `Result` — the compiler will complain about incompatible return types"
+                        ],
+    "next_lesson":  "L3-30",
+    "related":  [
+                    "L2-34",
+                    "L2-33",
+                    "L2-30"
+                ]
 }

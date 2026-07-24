@@ -1,25 +1,35 @@
 {
-  "id": "L2-42",
-  "title": "Contact Book Entry",
-  "level": "L2",
-  "duration": "9 min",
-  "story": "Your phone contacts are a mess \u2014 duplicate names, missing emails, wrong numbers. You decide to build a clean contact system where each entry has a name, phone, and email. You want to search by name and display contacts in a uniform format.",
-  "why": "A struct with a search method teaches the pattern of data + filtering, used in every app.",
-  "narrative": "## Building a Contact Book\n\nA contact entry captures the three essentials: who they are, how to call them, and how to email them.\n\n### The Contact Struct\n\n```xiom\ntype Contact = {\n  name: Str;\n  phone: Str;\n  email: Str;\n}\n```\n\n### Creating Contacts\n\n```xiom\nlet alice = Contact{ name: \"Alice Chen\"; phone: \"555-0101\"; email: \"alice@email.com\"; };\nlet bob = Contact{ name: \"Bob Smith\"; phone: \"555-0202\"; email: \"bob@email.com\"; };\nlet charlie = Contact{ name: \"Charlie Park\"; phone: \"555-0303\"; email: \"charlie@email.com\"; };\n```\n\n### Displaying a Contact\n\n```xiom\nfn Contact.display(self) -> Str {\n  return name + \" | \" + phone + \" | \" + email;\n}\n```\n\n### Searching by Name\n\nA method that checks if a search term appears anywhere in the contact's name:\n\n```xiom\nfn Contact.matches(self, search: Str) -> Bool {\n  return name == search;\n}\n```\n\nFor a simple exact match, compare names directly. For partial matching, check if the name contains the search text.\n\n### Using the Contact Book\n\n```xiom\nalice.display();              // \"Alice Chen | 555-0101 | alice@email.com\"\nalice.matches(\"Alice Chen\");  // true\nalice.matches(\"Bob\");         // false\n```",
-  "analogy": "A Contact is like a business card. The display method reads the card aloud. The matches method checks if \"Alice\" is written on the front \u2014 if so, you've found the right card in your Rolodex.",
-  "code_template": "type Contact = {\n  name: Str;\n  phone: Str;\n  email: Str;\n}\n\n// TODO: write a method 'Contact.display' that returns \"Name | Phone | Email\"\n\n// TODO: write a method 'Contact.matches' that returns true if search equals name\n\nfn main() -> Int {\n  // TODO: create 3 contacts, check how many match \"Alice Chen\", return the count\n  return 0;\n}",
-  "solution": "type Contact = {\n  name: Str;\n  phone: Str;\n  email: Str;\n}\n\nfn Contact.display(self) -> Str {\n  return name + \" | \" + phone + \" | \" + email;\n}\n\nfn Contact.matches(self, search: Str) -> Bool {\n  return name == search;\n}\n\nfn main() -> Int {\n  let alice = Contact{ name: \"Alice Chen\"; phone: \"555-0101\"; email: \"alice@email.com\"; };\n  let bob = Contact{ name: \"Bob Smith\"; phone: \"555-0202\"; email: \"bob@email.com\"; };\n  let charlie = Contact{ name: \"Charlie Park\"; phone: \"555-0303\"; email: \"charlie@email.com\"; };\n  var count = 0;\n  if alice.matches(\"Alice Chen\") { count = count + 1; }\n  if bob.matches(\"Alice Chen\") { count = count + 1; }\n  if charlie.matches(\"Alice Chen\") { count = count + 1; }\n  return count;\n}",
-  "try_it": "Add a `Contact.initials(self) -> Str` method that returns the first letter of each word in the name (e.g., \"Alice Chen\" \u2192 \"AC\"). Add your top 3 real contacts. Add a `Contact.has_email(self) -> Bool` method that checks if email is not empty.",
-  "concepts": ["struct", "method", "search", "Bool", "comparison"],
-  "tips": [
-    "Use `==` to compare strings for exact matches \u2014 it checks character-by-character",
-    "The `|` character is a common delimiter for contact display \u2014 use spaces around it for readability",
-    "Name your method `matches` not `search` \u2014 it asks the contact \"do you match this?\""
-  ],
-  "common_mistakes": [
-    "Using `=` instead of `==` for comparison \u2014 single `=` is assignment, `==` checks equality",
-    "Forgetting to return `Bool` from `matches` \u2014 the return type must be `-> Bool`"
-  ],
-  "next_lesson": "L2-43",
-  "related": ["L2-01", "L2-06", "L2-28"]
+    "id":  "L2-42",
+    "title":  "Contact Book Entry",
+    "level":  "L2",
+    "duration":  "9 min",
+    "story":  "Your phone contacts are a mess — duplicate names, missing emails, wrong numbers. You decide to build a clean contact system where each entry has a name, phone, and email. You want to search by name and display contacts in a uniform format.",
+    "why":  "A struct with a search method teaches the pattern of data + filtering, used in every app.",
+    "narrative":  "## Building a Contact Book\n\nA contact entry captures the three essentials: who they are, how to call them, and how to email them.\n\n### The Contact Struct\n\n```xiom\ntype Contact = {\n  name: Str;\n  phone: Str;\n  email: Str;\n}\n```\n\n### Creating Contacts\n\n```xiom\nlet alice = Contact{ name: \"Alice Chen\"; phone: \"555-0101\"; email: \"alice@email.com\"; };\nlet bob = Contact{ name: \"Bob Smith\"; phone: \"555-0202\"; email: \"bob@email.com\"; };\nlet charlie = Contact{ name: \"Charlie Park\"; phone: \"555-0303\"; email: \"charlie@email.com\"; };\n```\n\n### Displaying a Contact\n\n```xiom\nfn Contact.display(self) -\u003e Str {\n  return name + \" | \" + phone + \" | \" + email;\n}\n```\n\n### Searching by Name\n\nA method that checks if a search term appears anywhere in the contact\u0027s name:\n\n```xiom\nfn Contact.matches(self, search: Str) -\u003e Bool {\n  return name == search;\n}\n```\n\nFor a simple exact match, compare names directly. For partial matching, check if the name contains the search text.\n\n### Using the Contact Book\n\n```xiom\nalice.display();              // \"Alice Chen | 555-0101 | alice@email.com\"\nalice.matches(\"Alice Chen\");  // true\nalice.matches(\"Bob\");         // false\n```",
+    "analogy":  "A Contact is like a business card. The display method reads the card aloud. The matches method checks if \"Alice\" is written on the front — if so, you\u0027ve found the right card in your Rolodex.",
+    "code_template":  "use xiom.io;\n\ntype Contact = {\n  name: Str;\n  phone: Str;\n  email: Str;\n}\n\n// TODO: write a method \u0027Contact.display\u0027 that returns \"Name | Phone | Email\"\n\n// TODO: write a method \u0027Contact.matches\u0027 that returns true if search equals name\n\nfn main() -\u003e Int {\n  // TODO: create 3 contacts, check how many match \"Alice Chen\", return the count\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype Contact = {\n  name: Str;\n  phone: Str;\n  email: Str;\n}\n\nfn Contact.display(self) -\u003e Str {\n  return name + \" | \" + phone + \" | \" + email;\n}\n\nfn Contact.matches(self, search: Str) -\u003e Bool {\n  return name == search;\n}\n\nfn main() -\u003e Int {\n  let alice = Contact{ name: \"Alice Chen\"; phone: \"555-0101\"; email: \"alice@email.com\"; };\n  let bob = Contact{ name: \"Bob Smith\"; phone: \"555-0202\"; email: \"bob@email.com\"; };\n  let charlie = Contact{ name: \"Charlie Park\"; phone: \"555-0303\"; email: \"charlie@email.com\"; };\n  var count = 0;\n  if alice.matches(\"Alice Chen\") { count = count + 1; }\n  if bob.matches(\"Alice Chen\") { count = count + 1; }\n  if charlie.matches(\"Alice Chen\") { count = count + 1; }\n  return count;\n}",
+    "try_it":  "Add a `Contact.initials(self) -\u003e Str` method that returns the first letter of each word in the name (e.g., \"Alice Chen\" ? \"AC\"). Add your top 3 real contacts. Add a `Contact.has_email(self) -\u003e Bool` method that checks if email is not empty.",
+    "concepts":  [
+                     "struct",
+                     "method",
+                     "search",
+                     "Bool",
+                     "comparison"
+                 ],
+    "tips":  [
+                 "Use `==` to compare strings for exact matches — it checks character-by-character",
+                 "The `|` character is a common delimiter for contact display — use spaces around it for readability",
+                 "Name your method `matches` not `search` — it asks the contact \"do you match this?\""
+             ],
+    "common_mistakes":  [
+                            "Using `=` instead of `==` for comparison — single `=` is assignment, `==` checks equality",
+                            "Forgetting to return `Bool` from `matches` — the return type must be `-\u003e Bool`"
+                        ],
+    "next_lesson":  "L2-43",
+    "related":  [
+                    "L2-01",
+                    "L2-06",
+                    "L2-28"
+                ]
 }

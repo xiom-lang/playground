@@ -1,27 +1,38 @@
 {
-  "id": "L4-40",
-  "title": "Ownership in Practice",
-  "level": "L4",
-  "duration": "15 min",
-  "story": "A junior developer spent two days debugging a 'use after free' crash in C++. In XIOM, the borrow checker catches this at compile time. Combined with contracts, you catch both memory bugs AND logic bugs — at different stages of development.",
-  "why": "Understanding ownership patterns — move, borrow, clone — is the foundation of XIOM's memory safety. Contracts then layer logical safety on top.",
-  "narrative": "## The Four Ownership Patterns\n\nEvery variable in XIOM follows one of four patterns. Knowing which to use is the key to safe code:\n\n### 1. Pass by Value (Move)\n```xiom\nfn consume_account(acc: Account) -> Float64\n  requires: acc.balance >= 0.0;\n{\n  return acc.balance;\n}\n```\nThe caller transfers ownership. After the call, the caller can't use `acc` anymore. Use this when the function should own the data.\n\n### 2. Immutable Borrow (&)\n```xiom\nfn print_account(acc: &Account)\n  requires: acc.balance >= 0.0;\n{\n  io.println(\"Balance: \" + acc.balance);\n}\n```\nThe caller keeps ownership, the function can only read. Use this for queries and displays.\n\n### 3. Mutable Borrow (&mut)\n```xiom\nfn deposit(acc: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  ensures: acc.balance == acc@pre.balance + amount;\n{\n  acc.balance = acc.balance + amount;\n}\n```\nThe caller keeps ownership, the function can read and write. Only one mutable borrow exists at a time.\n\n### 4. Clone\n```xiom\nfn duplicate_account(acc: &Account) -> Account {\n  return acc.clone();\n}\n```\nCreates an independent copy. Both original and clone exist independently. Use when you need shared ownership.\n\n### Putting It Together\nEach pattern has a purpose. Move for transfer, `&` for reading, `&mut` for mutation, clone for copying. Contracts add logical guards to each.",
-  "analogy": "Ownership is the foundation of a house (memory safety). Contracts are the electrical and plumbing code (logic safety). You need both for a livable building.",
-  "code_template": "type Document = {\n  content: Str;\n  word_count: Int;\n  invariant: word_count >= 0;\n}\n\nfn consume_document(doc: Document) -> Str\n  requires: doc.word_count > 0;\n{\n  return doc.content;\n}\n\nfn read_document(doc: &Document) -> Str {\n  return doc.content;\n}\n\nfn edit_document(doc: &mut Document, new_text: Str)\n  requires: string.str_len(new_text) > 0;\n{\n  doc.content = new_text;\n  doc.word_count = string.str_len(new_text);\n}\n\nfn clone_document(doc: &Document) -> Document {\n  return Document{ content: doc.content, word_count: doc.word_count };\n}\n\nfn main() -> Int {\n  // TODO: Create a Document, read it, edit it, clone it, consume the clone\n  // Return the original's word_count\n  return 0;\n}",
-  "solution": "type Document = {\n  content: Str;\n  word_count: Int;\n  invariant: word_count >= 0;\n}\n\nfn consume_document(doc: Document) -> Str\n  requires: doc.word_count > 0;\n{\n  return doc.content;\n}\n\nfn read_document(doc: &Document) -> Str {\n  return doc.content;\n}\n\nfn edit_document(doc: &mut Document, new_text: Str)\n  requires: string.str_len(new_text) > 0;\n{\n  doc.content = new_text;\n  doc.word_count = string.str_len(new_text);\n}\n\nfn clone_document(doc: &Document) -> Document {\n  return Document{ content: doc.content, word_count: doc.word_count };\n}\n\nfn main() -> Int {\n  var original: Document = Document{ content: \"Hello XIOM\", word_count: 2 };\n  let content = read_document(&original);\n  edit_document(&mut original, \"Hello Safe World\");\n  let copy = clone_document(&original);\n  let consumed_content = consume_document(copy);\n  return original.word_count;\n}",
-  "try_it": "Trace every variable's ownership in main: who owns `original` throughout? When is `copy` created? When is `copy` consumed? Why can't we use `copy` after `consume_document(copy)`? Write a comment for each line explaining the ownership status.",
-  "concepts": ["ownership", "move", "borrow", "mutable-borrow", "clone", "contract"],
-  "tips": [
-    "Move when you want to transfer ownership (the caller can't use it afterward)",
-    "Use `&` when you only need to read — it's the cheapest and safest",
-    "Use `&mut` when you need to mutate — but remember only one &mut exists at a time",
-    "Clone is explicit — you must call `.clone()`; XIOM never clones implicitly"
-  ],
-  "common_mistakes": [
-    "Using a variable after it was moved — the borrow checker will reject this at compile time",
-    "Trying to take `&mut` while `&` borrows exist — borrows must be released before mutable access",
-    "Forgetting that contracts are checked on the CURRENT state — if a move invalidates a precondition, the contract traps"
-  ],
-  "next_lesson": "L4-41",
-  "related": ["L4-39", "L4-38", "L3-20"]
+    "id":  "L4-40",
+    "title":  "Ownership in Practice",
+    "level":  "L4",
+    "duration":  "15 min",
+    "story":  "A junior developer spent two days debugging a \u0027use after free\u0027 crash in C++. In XIOM, the borrow checker catches this at compile time. Combined with contracts, you catch both memory bugs AND logic bugs — at different stages of development.",
+    "why":  "Understanding ownership patterns — move, borrow, clone — is the foundation of XIOM\u0027s memory safety. Contracts then layer logical safety on top.",
+    "narrative":  "## The Four Ownership Patterns\n\nEvery variable in XIOM follows one of four patterns. Knowing which to use is the key to safe code:\n\n### 1. Pass by Value (Move)\n```xiom\nfn consume_account(acc: Account) -\u003e Float64\n  requires: acc.balance \u003e= 0.0;\n{\n  return acc.balance;\n}\n```\nThe caller transfers ownership. After the call, the caller can\u0027t use `acc` anymore. Use this when the function should own the data.\n\n### 2. Immutable Borrow (\u0026)\n```xiom\nfn print_account(acc: \u0026Account)\n  requires: acc.balance \u003e= 0.0;\n{\n  io.println(\"Balance: \" + acc.balance);\n}\n```\nThe caller keeps ownership, the function can only read. Use this for queries and displays.\n\n### 3. Mutable Borrow (\u0026mut)\n```xiom\nfn deposit(acc: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  ensures: acc.balance == acc@pre.balance + amount;\n{\n  acc.balance = acc.balance + amount;\n}\n```\nThe caller keeps ownership, the function can read and write. Only one mutable borrow exists at a time.\n\n### 4. Clone\n```xiom\nfn duplicate_account(acc: \u0026Account) -\u003e Account {\n  return acc.clone();\n}\n```\nCreates an independent copy. Both original and clone exist independently. Use when you need shared ownership.\n\n### Putting It Together\nEach pattern has a purpose. Move for transfer, `\u0026` for reading, `\u0026mut` for mutation, clone for copying. Contracts add logical guards to each.",
+    "analogy":  "Ownership is the foundation of a house (memory safety). Contracts are the electrical and plumbing code (logic safety). You need both for a livable building.",
+    "code_template":  "use xiom.io;\n\nuse xiom.string;\ntype Document = {\n  content: Str;\n  word_count: Int;\n  invariant: word_count \u003e= 0;\n}\n\nfn consume_document(doc: Document) -\u003e Str\n  requires: doc.word_count \u003e 0;\n{\n  return doc.content;\n}\n\nfn read_document(doc: \u0026Document) -\u003e Str {\n  return doc.content;\n}\n\nfn edit_document(doc: \u0026mut Document, new_text: Str)\n  requires: string.str_len(new_text) \u003e 0;\n{\n  doc.content = new_text;\n  doc.word_count = string.str_len(new_text);\n}\n\nfn clone_document(doc: \u0026Document) -\u003e Document {\n  return Document{ content: doc.content, word_count: doc.word_count };\n}\n\nfn main() -\u003e Int {\n  // TODO: Create a Document, read it, edit it, clone it, consume the clone\n  // Return the original\u0027s word_count\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\ntype Document = {\n  content: Str;\n  word_count: Int;\n  invariant: word_count \u003e= 0;\n}\n\nfn consume_document(doc: Document) -\u003e Str\n  requires: doc.word_count \u003e 0;\n{\n  return doc.content;\n}\n\nfn read_document(doc: \u0026Document) -\u003e Str {\n  return doc.content;\n}\n\nfn edit_document(doc: \u0026mut Document, new_text: Str)\n  requires: string.str_len(new_text) \u003e 0;\n{\n  doc.content = new_text;\n  doc.word_count = string.str_len(new_text);\n}\n\nfn clone_document(doc: \u0026Document) -\u003e Document {\n  return Document{ content: doc.content, word_count: doc.word_count };\n}\n\nfn main() -\u003e Int {\n  var original: Document = Document{ content: \"Hello XIOM\", word_count: 2 };\n  let content = read_document(\u0026original);\n  edit_document(\u0026mut original, \"Hello Safe World\");\n  let copy = clone_document(\u0026original);\n  let consumed_content = consume_document(copy);\n  return original.word_count;\n}",
+    "try_it":  "Trace every variable\u0027s ownership in main: who owns `original` throughout? When is `copy` created? When is `copy` consumed? Why can\u0027t we use `copy` after `consume_document(copy)`? Write a comment for each line explaining the ownership status.",
+    "concepts":  [
+                     "ownership",
+                     "move",
+                     "borrow",
+                     "mutable-borrow",
+                     "clone",
+                     "contract"
+                 ],
+    "tips":  [
+                 "Move when you want to transfer ownership (the caller can\u0027t use it afterward)",
+                 "Use `\u0026` when you only need to read — it\u0027s the cheapest and safest",
+                 "Use `\u0026mut` when you need to mutate — but remember only one \u0026mut exists at a time",
+                 "Clone is explicit — you must call `.clone()`; XIOM never clones implicitly"
+             ],
+    "common_mistakes":  [
+                            "Using a variable after it was moved — the borrow checker will reject this at compile time",
+                            "Trying to take `\u0026mut` while `\u0026` borrows exist — borrows must be released before mutable access",
+                            "Forgetting that contracts are checked on the CURRENT state — if a move invalidates a precondition, the contract traps"
+                        ],
+    "next_lesson":  "L4-41",
+    "related":  [
+                    "L4-39",
+                    "L4-38",
+                    "L3-20"
+                ]
 }

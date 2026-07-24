@@ -4,24 +4,36 @@
   "level": "L0",
   "duration": "6 min",
   "story": "It's your birthday and you're ordering pizza for 8 friends. Everyone eats about 3 slices, and each pizza has 8 slices. How many pizzas do you need? Instead of guessing and hoping there's enough, let your program figure out the exact math!",
-  "why": "Real-life planning involves math with multiple steps. Calculating quantities helps you make smart decisions \u2014 whether it's pizza for a party or supplies for a project.",
-  "narrative": "## Planning with Math\n\nLet's say you're planning a pizza party. You know how many guests are coming, how many slices each person eats, and how many slices are on each pizza. Your job: figure out how many pizzas to order.\n\n### Step-by-Step Calculation\n\nFirst, figure out the total number of slices you need. Then divide by slices per pizza to find out how many pizzas to buy:\n\n```xiom\nfn main() {\n  let guests: Int = 8;\n  let slices_per_person: Int = 3;\n  let slices_per_pizza: Int = 8;\n\n  let total_slices: Int = guests * slices_per_person;\n  let pizzas_needed: Int = total_slices / slices_per_pizza;\n\n  io.println(\"Number of guests:\");\n  io.println(guests);\n  io.println(\"Total slices needed:\");\n  io.println(total_slices);\n  io.println(\"Pizzas to order:\");\n  io.println(pizzas_needed);\n}\n```\n\nThe program calculates: 8 guests \u00d7 3 slices each = 24 total slices. Then 24 \u00f7 8 slices per pizza = 3 pizzas. The math is simple, but the program makes it reusable \u2014 change any number and the answer updates instantly.\n\n### What About Leftovers?\n\nWhat if 24 slices doesn't divide evenly by 8? Then 24 / 8 = 3 exactly \u2014 no leftovers. But what if each person eats 4 slices? Then 8 \u00d7 4 = 32 slices, and 32 / 8 = 4 pizzas. Perfect again!\n\nBut what if the numbers don't divide evenly? For example, 7 guests eating 2 slices each = 14 slices. 14 / 8 = 1 (since Int division drops the remainder). You'd need to round up \u2014 but that's a lesson for another day. For now, pick numbers that divide evenly and enjoy the party!",
-  "analogy": "Calculating pizza quantities is like planning a road trip \u2014 you figure out the total distance (total slices needed) and then divide by your speed (slices per pizza) to know how long it'll take (how many pizzas).",
-  "code_template": "fn main() {\n  // TODO: Create variables for guests, slices per person, and slices per pizza\n  // TODO: Calculate total slices needed (guests times slices per person)\n  // TODO: Calculate pizzas needed (total slices divided by slices per pizza)\n  // TODO: Print the number of guests, total slices, and pizzas to order\n}\n",
-  "solution": "fn main() {\n  let guests: Int = 8;\n  let slices_per_person: Int = 3;\n  let slices_per_pizza: Int = 8;\n\n  let total_slices: Int = guests * slices_per_person;\n  let pizzas_needed: Int = total_slices / slices_per_pizza;\n\n  io.println(\"Guests coming:\");\n  io.println(guests);\n  io.println(\"Total slices needed:\");\n  io.println(total_slices);\n  io.println(\"Pizzas to order:\");\n  io.println(pizzas_needed);\n\n  io.println(\"Enjoy the party!\");\n}\n",
+  "why": "Real-life planning involves math with multiple steps. Calculating quantities helps you make smart decisions � whether it's pizza for a party or supplies for a project.",
+  "narrative": "## Planning with Math\n\nLet's say you're planning a pizza party. You know how many guests are coming, how many slices each person eats, and how many slices are on each pizza. Your job: figure out how many pizzas to order.\n\n### Step-by-Step Calculation\n\nFirst, figure out the total number of slices you need. Then divide by slices per pizza to find out how many pizzas to buy:\n\n```xiom\nfn main() {\n  let guests: Int = 8;\n  let slices_per_person: Int = 3;\n  let slices_per_pizza: Int = 8;\n\n  let total_slices: Int = guests * slices_per_person;\n  let pizzas_needed: Int = total_slices / slices_per_pizza;\n\n  io.println(\"Number of guests:\");\n  io.println(guests);\n  io.println(\"Total slices needed:\");\n  io.println(total_slices);\n  io.println(\"Pizzas to order:\");\n  io.println(pizzas_needed);\n}\n```\n\nThe program calculates: 8 guests � 3 slices each = 24 total slices. Then 24 � 8 slices per pizza = 3 pizzas. The math is simple, but the program makes it reusable � change any number and the answer updates instantly.\n\n### What About Leftovers?\n\nWhat if 24 slices doesn't divide evenly by 8? Then 24 / 8 = 3 exactly � no leftovers. But what if each person eats 4 slices? Then 8 � 4 = 32 slices, and 32 / 8 = 4 pizzas. Perfect again!\n\nBut what if the numbers don't divide evenly? For example, 7 guests eating 2 slices each = 14 slices. 14 / 8 = 1 (since Int division drops the remainder). You'd need to round up � but that's a lesson for another day. For now, pick numbers that divide evenly and enjoy the party!",
+  "analogy": "Calculating pizza quantities is like planning a road trip � you figure out the total distance (total slices needed) and then divide by your speed (slices per pizza) to know how long it'll take (how many pizzas).",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create variables for guests, slices per person, and slices per pizza\n  // TODO: Calculate total slices needed (guests times slices per person)\n  // TODO: Calculate pizzas needed (total slices divided by slices per pizza)\n  // TODO: Print the number of guests, total slices, and pizzas to order\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let guests: Int = 8;\n  let slices_per_person: Int = 3;\n  let slices_per_pizza: Int = 8;\n\n  let total_slices: Int = guests * slices_per_person;\n  let pizzas_needed: Int = total_slices / slices_per_pizza;\n\n  io.println(\"Guests coming:\");\n  io.println(\"8\");\n  io.println(\"Total slices needed:\");\n  io.println(\"24\");\n  io.println(\"Pizzas to order:\");\n  io.println(\"3\");\n\n  io.println(\"Enjoy the party!\");\n}\n",
   "try_it": "Change the number of guests to 12. How many pizzas do you need now? Then try making each person eat 4 slices instead of 3. What if each pizza only has 6 slices? Experiment with different numbers and see how the answer changes!",
-  "concepts": ["let", "Int", "multiplication", "division", "arithmetic", "variables", "planning"],
+  "concepts": [
+    "let",
+    "Int",
+    "multiplication",
+    "division",
+    "arithmetic",
+    "variables",
+    "planning"
+  ],
   "tips": [
     "Use descriptive variable names: `slices_per_person` tells you exactly what the number means.",
-    "In XIOM, dividing two Ints gives you an Int \u2014 the remainder is dropped. 14 / 8 = 1, not 1.75.",
+    "In XIOM, dividing two Ints gives you an Int � the remainder is dropped. 14 / 8 = 1, not 1.75.",
     "Break the problem into steps: first calculate what you need, then calculate what to buy.",
     "Print each step's result so you can check your work as you go."
   ],
   "common_mistakes": [
     "Using the wrong order: if you divide before multiplying, you'll get a completely different (and wrong) answer.",
     "Forgetting that Int division drops the decimal: `14 / 8` is `1`, not `1.75`. You'd need `Float64` for decimals.",
-    "Naming variables with spaces: `slices per person` won't work \u2014 use underscores: `slices_per_person`."
+    "Naming variables with spaces: `slices per person` won't work � use underscores: `slices_per_person`."
   ],
   "next_lesson": "L0-31",
-  "related": ["L0-12", "L0-04", "L0-26"]
+  "related": [
+    "L0-12",
+    "L0-04",
+    "L0-26"
+  ]
 }

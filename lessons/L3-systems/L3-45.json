@@ -7,10 +7,18 @@
   "why": "Comparing numeric inputs with Result for parse failures and match for range-based hinting teaches multi-branch decision logic with precise feedback.",
   "narrative": "## Giving Smart Hints for Guesses\n\nA good hint system doesn't just say 'wrong' — it tells you which direction to go and whether you're getting warmer.\n\n### Basic Hints: High, Low, or Correct\n\n```xiom\nfn check_guess(secret: Int, guess_str: Str) -> Result[Str, Str] {\n  let guess = string.str_to_int(guess_str);\n\n  let g = match guess {\n    Ok(n) => n,\n    Err(_) => { return Err(\"That's not a number!\"); }\n  };\n\n  if g == secret {\n    return Ok(\"Correct! You found it!\");\n  }\n  elif g > secret {\n    return Ok(\"Too high! Try lower.\");\n  }\n  else {\n    return Ok(\"Too low! Try higher.\");\n  }\n}\n```\n\n### Adding Distance Hints\n\nNow let's add proximity — is the player close?\n\n```xiom\nfn check_guess_detailed(secret: Int, guess_str: Str) -> Result[Str, Str] {\n  let guess = string.str_to_int(guess_str);\n\n  let g = match guess {\n    Ok(n) => n,\n    Err(_) => { return Err(\"That's not a number!\"); }\n  };\n\n  let diff = g - secret;\n  if diff < 0 { diff = -diff; }\n\n  if g == secret {\n    return Ok(\"Correct! You found it!\");\n  }\n  elif diff <= 2 {\n    if g > secret { return Ok(\"Very close! Too high.\"); }\n    else { return Ok(\"Very close! Too low.\"); }\n  }\n  elif diff <= 10 {\n    if g > secret { return Ok(\"Warm. Too high.\"); }\n    else { return Ok(\"Warm. Too low.\"); }\n  }\n  else {\n    if g > secret { return Ok(\"Too high!\"); }\n    else { return Ok(\"Too low!\"); }\n  }\n}\n```\n\n### The Game Loop Pattern\n\n```xiom\nfn main() -> Int {\n  let secret = 42;\n\n  match check_guess_detailed(secret, \"40\") {\n    Ok(hint) => { io.println(hint); }\n    Err(e) => { io.println(e); }\n  }\n\n  match check_guess_detailed(secret, \"42\") {\n    Ok(hint) => { io.println(hint); }\n    Err(e) => { io.println(e); }\n  }\n\n  match check_guess_detailed(secret, \"99\") {\n    Ok(hint) => { io.println(hint); }\n    Err(e) => { io.println(e); }\n  }\n\n  return 0;\n}\n```",
   "analogy": "Number guessing hints are like the 'hot and cold' game. When you're searching for a hidden object, your friend says 'you're getting warmer' as you get closer. 'Very close!' means you're practically touching it. 'Too high!' means you overshot. Each hint narrows your search space and keeps you engaged instead of frustrated.",
-  "code_template": "fn check_guess(secret: Int, guess_str: Str) -> Result[Str, Str] {\n  // TODO: parse guess_str to Int\n  // TODO: compare to secret, return Ok with \"Too high!\", \"Too low!\", or \"Correct!\"\n  // TODO: return Err for non-numeric input\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: test with secret=50 and guesses 30, 70, 50, \"abc\"\n  return 0;\n}\n",
-  "solution": "fn check_guess(secret: Int, guess_str: Str) -> Result[Str, Str] {\n  let guess = string.str_to_int(guess_str);\n\n  let g = match guess {\n    Ok(n) => n,\n    Err(_) => { return Err(\"That's not a number!\"); }\n  };\n\n  if g == secret {\n    return Ok(\"Correct!\");\n  }\n  elif g > secret {\n    return Ok(\"Too high!\");\n  }\n  else {\n    return Ok(\"Too low!\");\n  }\n}\n\nfn main() -> Int {\n  match check_guess(50, \"30\") {\n    Ok(hint) => { io.println(hint); return 200; }\n    Err(e) => { io.println(e); return 400; }\n  }\n}\n",
+  "code_template": "use xiom.io;\n\nfn check_guess(secret: Int, guess_str: Str) -> Result[Str, Str] {\n  // TODO: parse guess_str to Int\n  // TODO: compare to secret, return Ok with \"Too high!\", \"Too low!\", or \"Correct!\"\n  // TODO: return Err for non-numeric input\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: test with secret=50 and guesses 30, 70, 50, \"abc\"\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn check_guess(secret: Int, guess_str: Str) -> Result[Str, Str] {\n  let guess = string.str_to_int(guess_str);\n\n  let g = match guess {\n    Ok(n) => n,\n    Err(_) => { return Err(\"That's not a number!\"); }\n  };\n\n  if g == secret {\n    return Ok(\"Correct!\");\n  }\n  elif g > secret {\n    return Ok(\"Too high!\");\n  }\n  else {\n    return Ok(\"Too low!\");\n  }\n}\n\nfn main() -> Int {\n  match check_guess(50, \"30\") {\n    Ok(hint) => { io.println(hint.to_str()); return 200; }\n    Err(e) => { io.println(e.to_str()); return 400; }\n  }\n}\n",
   "try_it": "Add 'Very close!' for guesses within 2 of the secret. Then add three distance tiers: within 2 → 'Very close!', within 5 → 'Warm!', within 15 → 'Getting there...', beyond 15 → 'Cold...'. Add a counter that tracks how many guesses the player has made and include it in the hint: 'Too high! (3 guesses so far)'. What if the secret is 0 and the guess is -5?",
-  "concepts": ["Result", "match", "if-elif-else", "string.str_to_int", "comparison", "hints", "absolute-value"],
+  "concepts": [
+    "Result",
+    "match",
+    "if-elif-else",
+    "string.str_to_int",
+    "comparison",
+    "hints",
+    "absolute-value"
+  ],
   "tips": [
     "Compute `diff = g - secret` and make it absolute — comparing distance is cleaner than checking both sides separately",
     "Use tiered conditions: check the closest range first, then expand outward",
@@ -22,5 +30,10 @@
     "Using string comparison instead of numeric — '9' > '10' as strings but 9 < 10 as numbers"
   ],
   "next_lesson": "L3-46",
-  "related": ["L3-38", "L3-12", "L3-28", "L2-28"]
+  "related": [
+    "L3-38",
+    "L3-12",
+    "L3-28",
+    "L2-28"
+  ]
 }

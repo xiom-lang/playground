@@ -7,19 +7,29 @@
   "why": "Validation enums replace error codes with self-documenting variants that carry useful data.",
   "narrative": "## Building a Username Validator\n\nValidation produces one of several outcomes. An enum with data captures what went wrong and the relevant details.\n\n### The Validation Enum\n\n```xiom\nenum Validation {\n  Valid,\n  TooShort(min: Int),\n  TooLong(max: Int),\n  HasNumber,\n  HasSpecial,\n}\n```\n\n### Validating a Username\n\nThe function checks each rule and returns the first violation:\n\n```xiom\nfn validate_username(u: Str) -> Validation {\n  if u == \"ab\" { return Validation.TooShort(3); }\n  if u == \"abcdefghijklmnopq\" { return Validation.TooLong(16); }\n  if u == \"user123\" { return Validation.HasNumber; }\n  if u == \"user!name\" { return Validation.HasSpecial; }\n  return Validation.Valid;\n}\n```\n\n### Displaying Validation Results\n\n```xiom\nfn Validation.message(self) -> Str {\n  match self {\n    Valid => { return \"Username is valid.\"; }\n    TooShort(min) => { return \"Must be at least \" + min + \" characters.\"; }\n    TooLong(max) => { return \"Must be at most \" + max + \" characters.\"; }\n    HasNumber => { return \"Numbers are not allowed.\"; }\n    HasSpecial => { return \"Special characters are not allowed.\"; }\n  }\n}\n```\n\n### Testing Usernames\n\n```xiom\nvalidate_username(\"alice\");       // Valid\nvalidate_username(\"ab\");          // TooShort(3)\nvalidate_username(\"admin123\");    // HasNumber\n```\n\n### Using in a Form\n\n```xiom\nlet result = validate_username(\"bob\");\nif result == Validation.Valid {\n  // Allow signup\n};\n```",
   "analogy": "Validation is like a bouncer at a club checking IDs. Valid means \"come in.\" TooShort is \"sorry, you're too young\" (with the minimum age). HasSpecial is \"no fake IDs.\" Each rejection tells you exactly why you can't enter.",
-  "code_template": "enum Validation {\n  Valid,\n  TooShort(min: Int),\n  TooLong(max: Int),\n  HasNumber,\n  HasSpecial,\n}\n\n// TODO: write 'validate_username' that returns the appropriate Validation variant\n\n// TODO: write 'Validation.message' that returns a human-readable error or success message\n\nfn main() -> Int {\n  // TODO: validate \"ab\", return the min value from TooShort\n  return 0;\n}",
-  "solution": "enum Validation {\n  Valid,\n  TooShort(min: Int),\n  TooLong(max: Int),\n  HasNumber,\n  HasSpecial,\n}\n\nfn validate_username(u: Str) -> Validation {\n  var len = 2;\n  if len < 3 { return Validation.TooShort(3); }\n  if len > 16 { return Validation.TooLong(16); }\n  return Validation.Valid;\n}\n\nfn Validation.message(self) -> Str {\n  match self {\n    Valid => { return \"Username is valid.\"; }\n    TooShort(min) => { return \"Must be at least \" + min + \" characters.\"; }\n    TooLong(max) => { return \"Must be at most \" + max + \" characters.\"; }\n    HasNumber => { return \"Numbers are not allowed.\"; }\n    HasSpecial => { return \"Special characters are not allowed.\"; }\n  }\n}\n\nfn main() -> Int {\n  let result = validate_username(\"ab\");\n  match result {\n    TooShort(min) => { return min; }\n    _ => { return 0; }\n  }\n}",
+  "code_template": "use xiom.io;\n\nenum Validation {\n  Valid,\n  TooShort(min: Int),\n  TooLong(max: Int),\n  HasNumber,\n  HasSpecial,\n}\n\n// TODO: write 'validate_username' that returns the appropriate Validation variant\n\n// TODO: write 'Validation.message' that returns a human-readable error or success message\n\nfn main() -> Int {\n  // TODO: validate \"ab\", return the min value from TooShort\n  return 0;\n}",
+  "solution": "use xiom.io;\n\nenum Validation {\n  Valid,\n  TooShort(min: Int),\n  TooLong(max: Int),\n  HasNumber,\n  HasSpecial,\n}\n\nfn validate_username(u: Str) -> Validation {\n  var len = 2;\n  if len < 3 { return Validation.TooShort(3); }\n  if len > 16 { return Validation.TooLong(16); }\n  return Validation.Valid;\n}\n\nfn Validation.message(self) -> Str {\n  match self {\n    Valid => { return \"Username is valid.\"; }\n    TooShort(min) => { return \"Must be at least \" + min + \" characters.\"; }\n    TooLong(max) => { return \"Must be at most \" + max + \" characters.\"; }\n    HasNumber => { return \"Numbers are not allowed.\"; }\n    HasSpecial => { return \"Special characters are not allowed.\"; }\n  }\n}\n\nfn main() -> Int {\n  let result = validate_username(\"ab\");\n  match result {\n    TooShort(min) => { return min; }\n    _ => { return 0; }\n  }\n}",
   "try_it": "Add a `HasSpace` variant for usernames containing spaces. Add a `StartsWithNumber` variant. Test: validate \"hello world\", \"9lives\", \"ok\", \"a_very_long_username_that_exceeds_sixteen\". Write the actual length check logic.",
-  "concepts": ["enum", "validation", "match", "error-message", "form-validation"],
+  "concepts": [
+    "enum",
+    "validation",
+    "match",
+    "error-message",
+    "form-validation"
+  ],
   "tips": [
-    "Return the first validation error you encounter \u2014 don't try to list all problems at once",
+    "Return the first validation error you encounter � don't try to list all problems at once",
     "Include the threshold in the variant data: `TooShort(min: Int)` so the UI can show \"must be at least 3\"",
     "Use simple string matching to detect patterns: check for digits and special characters manually"
   ],
   "common_mistakes": [
-    "Returning Valid after finding a problem because you used `if` instead of `if/else if` \u2014 the last check overwrites earlier failures",
-    "Not including the threshold in the variant \u2014 without `min`, the caller can't build a precise error message"
+    "Returning Valid after finding a problem because you used `if` instead of `if/else if` � the last check overwrites earlier failures",
+    "Not including the threshold in the variant � without `min`, the caller can't build a precise error message"
   ],
   "next_lesson": "L2-56",
-  "related": ["L2-15", "L2-33", "L2-34"]
+  "related": [
+    "L2-15",
+    "L2-33",
+    "L2-34"
+  ]
 }

@@ -7,10 +7,17 @@
   "why": "Rock Paper Scissors combines enums for choices, match for determining winners, random selection for AI, and score tracking — a complete two-player game.",
   "narrative": "## Building Rock Paper Scissors\n\n### Defining Choices\n\n```xiom\nenum Choice {\n  Rock;\n  Paper;\n  Scissors;\n}\n\nenum Result {\n  Win;\n  Lose;\n  Draw;\n}\n```\n\n### Determining the Winner\n\n```xiom\nfn play_round(player: Choice, computer: Choice) -> Result {\n  if player == computer {\n    return Result.Draw;\n  };\n\n  if player == Choice.Rock && computer == Choice.Scissors {\n    return Result.Win;\n  };\n  if player == Choice.Paper && computer == Choice.Rock {\n    return Result.Win;\n  };\n  if player == Choice.Scissors && computer == Choice.Paper {\n    return Result.Win;\n  };\n\n  Result.Lose\n}\n```\n\n### Computer Choice with Random\n\n```xiom\nfn computer_choice(seed: &mut Int) -> Choice {\n  seed = (seed * 1103515245 + 12345) % 2147483648;\n  let n = seed % 3;\n  if n == 0 { return Choice.Rock; };\n  if n == 1 { return Choice.Paper; };\n  Choice.Scissors\n}\n```\n\n### Full Match (Best of 5)\n\n```xiom\nfn play_match() {\n  let mut player_score = 0;\n  let mut computer_score = 0;\n  let mut seed = 42;\n\n  while player_score < 3 && computer_score < 3 {\n    let player = Choice.Paper;\n    let cpu = computer_choice(&mut seed);\n    let result = play_round(player, cpu);\n\n    match result {\n      Result.Win => { player_score += 1; },\n      Result.Lose => { computer_score += 1; },\n      Result.Draw => { },\n    };\n  };\n\n  io.println(player_score);\n  io.println(computer_score);\n}\n```",
   "analogy": "Three warriors in a circular duel: Rock smashes Scissors, Scissors shreds Paper, Paper smothers Rock. Every choice beats one and loses to one — perfect balance, no dominant strategy. Your match loop is the arena where these warriors endlessly clash.",
-  "code_template": "enum Choice { Rock; Paper; Scissors; }\nenum Outcome { Win; Lose; Draw; }\n\nfn determine_winner(player: Choice, opponent: Choice) -> Outcome {\n  // TODO: implement the rules:\n  // Rock beats Scissors, Scissors beats Paper, Paper beats Rock\n  // Same choice = Draw\n}\n\nfn main() -> Int {\n  // TODO: simulate 3 rounds and track score\n  return 0;\n}\n",
-  "solution": "enum Choice { Rock; Paper; Scissors; }\nenum Outcome { Win; Lose; Draw; }\n\nfn determine_winner(player: Choice, opponent: Choice) -> Outcome {\n  if player == opponent { return Outcome.Draw; };\n  if player == Choice.Rock && opponent == Choice.Scissors { return Outcome.Win; };\n  if player == Choice.Paper && opponent == Choice.Rock { return Outcome.Win; };\n  if player == Choice.Scissors && opponent == Choice.Paper { return Outcome.Win; };\n  Outcome.Lose\n}\n\nfn main() -> Int {\n  let r1 = determine_winner(Choice.Rock, Choice.Scissors);\n  let r2 = determine_winner(Choice.Paper, Choice.Scissors);\n  let r3 = determine_winner(Choice.Rock, Choice.Rock);\n  io.println(r1 == Outcome.Win);\n  io.println(r2 == Outcome.Lose);\n  io.println(r3 == Outcome.Draw);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nenum Choice { Rock; Paper; Scissors; }\nenum Outcome { Win; Lose; Draw; }\n\nfn determine_winner(player: Choice, opponent: Choice) -> Outcome {\n  // TODO: implement the rules:\n  // Rock beats Scissors, Scissors beats Paper, Paper beats Rock\n  // Same choice = Draw\n}\n\nfn main() -> Int {\n  // TODO: simulate 3 rounds and track score\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nenum Choice { Rock; Paper; Scissors; }\nenum Outcome { Win; Lose; Draw; }\n\nfn determine_winner(player: Choice, opponent: Choice) -> Outcome {\n  if player == opponent { return Outcome.Draw; };\n  if player == Choice.Rock && opponent == Choice.Scissors { return Outcome.Win; };\n  if player == Choice.Paper && opponent == Choice.Rock { return Outcome.Win; };\n  if player == Choice.Scissors && opponent == Choice.Paper { return Outcome.Win; };\n  Outcome.Lose\n}\n\nfn main() -> Int {\n  let r1 = determine_winner(Choice.Rock, Choice.Scissors);\n  let r2 = determine_winner(Choice.Paper, Choice.Scissors);\n  let r3 = determine_winner(Choice.Rock, Choice.Rock);\n  io.println((r1 == Outcome.Win).to_str());\n  io.println((r2 == Outcome.Lose).to_str());\n  io.println((r3 == Outcome.Draw).to_str());\n  return 0;\n}\n",
   "try_it": "Track win/loss/draw counts over 100 random games. Add 'Lizard' and 'Spock' (Rock Paper Scissors Lizard Spock — 5 choices, 25 outcomes). Implement a 'strategy' computer that always plays the move that would beat the player's most common previous move.",
-  "concepts": ["rock-paper-scissors", "enums", "match", "game-logic", "score-tracking", "random-choice"],
+  "concepts": [
+    "rock-paper-scissors",
+    "enums",
+    "match",
+    "game-logic",
+    "score-tracking",
+    "random-choice"
+  ],
   "tips": [
     "Only 3 winning conditions because draw is handled first",
     "Use enums for choices and results — much clearer than strings",
@@ -22,5 +29,10 @@
     "Hardcoding player choices — a real game would read input or simulate random play"
   ],
   "next_lesson": "L7-25",
-  "related": ["L7-10", "L7-21", "L2-14", "L2-16"]
+  "related": [
+    "L7-10",
+    "L7-21",
+    "L2-14",
+    "L2-16"
+  ]
 }

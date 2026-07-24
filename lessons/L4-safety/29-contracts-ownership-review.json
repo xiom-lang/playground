@@ -1,27 +1,39 @@
 {
-  "id": "L4-29",
-  "title": "Contracts + Ownership Review",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "You've learned the two pillars of XIOM safety — contracts for logic and ownership for memory. Now practice using both together in real functions.",
-  "why": "Mastering the combination of contracts and ownership is the capstone skill of L4 — it's what makes XIOM code provably correct and provably safe.",
-  "narrative": "## Practice: Contracts + Ownership Together\n\n### Function 1: Requires + &\n\n```xiom\nfn middle_element(items: &Vec[Int]) -> Int\n  requires: items.len() > 0;\n  ensures: result == items[items.len() / 2];\n{\n  return items[items.len() / 2];\n}\n```\n\n### Function 2: Requires + &mut\n\n```xiom\nfn prepend(items: &mut Vec[Int], value: Int)\n  ensures: items.len() == items@pre.len() + 1;\n  ensures: items[0] == value;\n{\n  // Insert value at the front\n  items.push(value);\n  let i = items.len() - 1;\n  while i > 0 {\n    let temp = items[i];\n    items[i] = items[i - 1];\n    items[i - 1] = temp;\n    i = i - 1;\n  }\n}\n```\n\n### Function 3: All Four\n\n```xiom\nfn safe_transfer(from: &mut Account, to: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: from.balance >= amount;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n  ensures: from.balance >= 0.0;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n```\n\n### The Complete Safety Stack\n\n| Layer | Mechanism | What It Prevents |\n|-------|-----------|-----------------|\n| Logic | requires | Invalid inputs |\n| Logic | ensures | Wrong outputs |\n| Type | invariant | Invalid states |\n| Memory | & | Use-after-free |\n| Memory | &mut | Data races |\n| Memory | move | Double-free |",
-  "analogy": "Contracts are the blueprint — they say what the building must look like. Ownership is the building code — it ensures the structure won't collapse.",
-  "code_template": "// TODO: Write fn 'safe_pop' that takes &mut Vec[Int] and returns Int\n// requires: vec is not empty\n// ensures: vec.len() == old_len - 1\n// ensures: result was the last element\n\nfn main() -> Int {\n  // TODO: Test safe_pop\n  return 0;\n}",
-  "solution": "fn safe_pop(items: &mut Vec[Int]) -> Int\n  requires: items.len() > 0;\n  ensures: items.len() == items@pre.len() - 1;\n{\n  let last = items[items.len() - 1];\n  items.pop();\n  return last;\n}\n\nfn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(10);\n  data.push(20);\n  data.push(30);\n  let val = safe_pop(&mut data);\n  return val;\n}",
-  "try_it": "Write fn 'safe_swap' that takes &mut Vec[Int] and two indices, with requires for valid indices and ensures for the swap result. Test edge cases.",
-  "concepts": ["contracts + ownership", "requires + &", "requires + &mut", "complete safety", "ensures"],
-  "tips": [
-    "Start with requires (validate inputs), then choose & or &mut (access pattern)",
-    "Add ensures to verify correctness of the output and side effects",
-    "Every public function should have both contracts AND correct ownership annotations",
-    "Think of requires/ensures as 'logic safety' and &/&mut as 'memory safety'"
-  ],
-  "common_mistakes": [
-    "Writing ensures without testing — ensures should match the actual behavior",
-    "Using owned parameters when & would work — be precise about your access needs",
-    "Forgetting that @pre refers to values BEFORE the function runs"
-  ],
-  "next_lesson": "L4-30",
-  "related": ["L4-02", "L4-06", "L4-15", "L4-16", "L4-25"]
+    "id":  "L4-29",
+    "title":  "Contracts + Ownership Review",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "You\u0027ve learned the two pillars of XIOM safety — contracts for logic and ownership for memory. Now practice using both together in real functions.",
+    "why":  "Mastering the combination of contracts and ownership is the capstone skill of L4 — it\u0027s what makes XIOM code provably correct and provably safe.",
+    "narrative":  "## Practice: Contracts + Ownership Together\n\n### Function 1: Requires + \u0026\n\n```xiom\nfn middle_element(items: \u0026Vec[Int]) -\u003e Int\n  requires: items.len() \u003e 0;\n  ensures: result == items[items.len() / 2];\n{\n  return items[items.len() / 2];\n}\n```\n\n### Function 2: Requires + \u0026mut\n\n```xiom\nfn prepend(items: \u0026mut Vec[Int], value: Int)\n  ensures: items.len() == items@pre.len() + 1;\n  ensures: items[0] == value;\n{\n  // Insert value at the front\n  items.push(value);\n  let i = items.len() - 1;\n  while i \u003e 0 {\n    let temp = items[i];\n    items[i] = items[i - 1];\n    items[i - 1] = temp;\n    i = i - 1;\n  }\n}\n```\n\n### Function 3: All Four\n\n```xiom\nfn safe_transfer(from: \u0026mut Account, to: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: from.balance \u003e= amount;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n  ensures: from.balance \u003e= 0.0;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n```\n\n### The Complete Safety Stack\n\n| Layer | Mechanism | What It Prevents |\n|-------|-----------|-----------------|\n| Logic | requires | Invalid inputs |\n| Logic | ensures | Wrong outputs |\n| Type | invariant | Invalid states |\n| Memory | \u0026 | Use-after-free |\n| Memory | \u0026mut | Data races |\n| Memory | move | Double-free |",
+    "analogy":  "Contracts are the blueprint — they say what the building must look like. Ownership is the building code — it ensures the structure won\u0027t collapse.",
+    "code_template":  "use xiom.io;\n\n// TODO: Write fn \u0027safe_pop\u0027 that takes \u0026mut Vec[Int] and returns Int\n// requires: vec is not empty\n// ensures: vec.len() == old_len - 1\n// ensures: result was the last element\n\nfn main() -\u003e Int {\n  // TODO: Test safe_pop\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn safe_pop(items: \u0026mut Vec[Int]) -\u003e Int\n  requires: items.len() \u003e 0;\n  ensures: items.len() == items@pre.len() - 1;\n{\n  let last = items[items.len() - 1];\n  items.pop();\n  return last;\n}\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(10);\n  data.push(20);\n  data.push(30);\n  let val = safe_pop(\u0026mut data);\n  return val;\n}",
+    "try_it":  "Write fn \u0027safe_swap\u0027 that takes \u0026mut Vec[Int] and two indices, with requires for valid indices and ensures for the swap result. Test edge cases.",
+    "concepts":  [
+                     "contracts + ownership",
+                     "requires + \u0026",
+                     "requires + \u0026mut",
+                     "complete safety",
+                     "ensures"
+                 ],
+    "tips":  [
+                 "Start with requires (validate inputs), then choose \u0026 or \u0026mut (access pattern)",
+                 "Add ensures to verify correctness of the output and side effects",
+                 "Every public function should have both contracts AND correct ownership annotations",
+                 "Think of requires/ensures as \u0027logic safety\u0027 and \u0026/\u0026mut as \u0027memory safety\u0027"
+             ],
+    "common_mistakes":  [
+                            "Writing ensures without testing — ensures should match the actual behavior",
+                            "Using owned parameters when \u0026 would work — be precise about your access needs",
+                            "Forgetting that @pre refers to values BEFORE the function runs"
+                        ],
+    "next_lesson":  "L4-30",
+    "related":  [
+                    "L4-02",
+                    "L4-06",
+                    "L4-15",
+                    "L4-16",
+                    "L4-25"
+                ]
 }

@@ -5,12 +5,17 @@
   "duration": "7 min",
   "story": "Imagine you're making a sign for a party. You want to write several lines — 'Welcome!', the date, the time, and maybe a fun message. Your program can do the same thing: print one line, then another, then another, building up a full display piece by piece.",
   "why": "Real programs don't just do one thing — they do many things in order. Learning to print multiple messages teaches you how the computer reads your code from top to bottom.",
-  "narrative": "## More Than One Message\n\nIn your first program, you printed a single message. But real programs say many things! Just like you'd write several lines on a party sign, your program can print one message after another.\n\n```xiom\nfn main() {\n  io.println(\"Hi there!\");\n  io.println(\"Welcome to coding.\");\n  io.println(\"Let's have some fun.\");\n}\n```\n\nEach call to `io.println` prints its message on a new line. The computer reads your code from top to bottom and runs each instruction in that exact order — every single time.\n\n### Printing Numbers\n\nHere's something cool: `io.println` isn't just for text. You can print numbers too, without any quotes around them:\n\n```xiom\nfn main() {\n  io.println(\"I am\");\n  io.println(12);\n  io.println(\"years old.\");\n}\n```\n\nWhen you run this, each piece appears on its own line:\n\n```\nI am\n12\nyears old.\n```\n\n### Text vs Numbers — What's the Difference?\n\nNotice that `\"I am\"` has quotes but `12` doesn't. That's because text (called **strings**) needs quotes to say \"this is words, not code.\" Numbers are numbers — the computer already knows what they are. If you put quotes around a number like `\"12\"`, you're telling the computer \"treat this as text,\" and it won't be able to do math with it later.\n\n### How The Computer Thinks\n\nIt helps to picture the computer as a very obedient helper. It reads each line and does exactly what you say — no more, no less. If you tell it to print three things, it prints three things. If you change the order, it changes the order. The computer never guesses or gets creative; it just follows your instructions, top to bottom.",
+  "narrative": "## More Than One Message\n\nIn your first program, you printed a single message. But real programs say many things! Just like you'd write several lines on a party sign, your program can print one message after another.\n\n```xiom\nfn main() {\n  io.println(\"Hi there!\");\n  io.println(\"Welcome to coding.\");\n  io.println(\"Let's have some fun.\");\n}\n```\n\nEach call to `io.println` prints its message on a new line. The computer reads your code from top to bottom and runs each instruction in that exact order — every single time.\n\n### Printing Numbers\n\nHere's something cool: `io.println` isn't just for text. You can print numbers too, without any quotes around them:\n\n```xiom\nfn main() {\n  io.println(\"I am\");\n  io.println(\"12\");\n  io.println(\"years old.\");\n}\n```\n\nWhen you run this, each piece appears on its own line:\n\n```\nI am\n12\nyears old.\n```\n\n### Text vs Numbers — What's the Difference?\n\nNotice that `\"I am\"` has quotes but `12` doesn't. That's because text (called **strings**) needs quotes to say \"this is words, not code.\" Numbers are numbers — the computer already knows what they are. If you put quotes around a number like `\"12\"`, you're telling the computer \"treat this as text,\" and it won't be able to do math with it later.\n\n### How The Computer Thinks\n\nIt helps to picture the computer as a very obedient helper. It reads each line and does exactly what you say — no more, no less. If you tell it to print three things, it prints three things. If you change the order, it changes the order. The computer never guesses or gets creative; it just follows your instructions, top to bottom.",
   "analogy": "A program reads top-to-bottom, like reading a page in a book — you start at the first line and work your way down.",
-  "code_template": "fn main() {\n  io.println(\"Hello!\");\n  // TODO: Print a second message, like your name\n  // TODO: Print a number, like your age\n  // TODO: Print one more message of your choice\n}",
-  "solution": "fn main() {\n  io.println(\"Welcome to my program!\");\n  io.println(\"My name is Taylor.\");\n  io.println(25);\n  io.println(\"Nice to meet you!\");\n}",
+  "code_template": "use xiom.io;\n\nfn main() {\n  io.println(\"Hello!\");\n  // TODO: Print a second message, like your name\n  // TODO: Print a number, like your age\n  // TODO: Print one more message of your choice\n}",
+  "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"Welcome to my program!\");\n  io.println(\"My name is Taylor.\");\n  io.println(\"25\");\n  io.println(\"Nice to meet you!\");\n}",
   "try_it": "Add a line that prints your age as a number. Then add another line that prints your age with quotes around it — what's different? Now add one more line that prints your shoe size as a number.",
-  "concepts": ["io.println", "sequential execution", "print numbers", "string"],
+  "concepts": [
+    "io.println",
+    "sequential execution",
+    "print numbers",
+    "string"
+  ],
   "tips": [
     "Text goes inside double quotes `\"...\"`. Numbers do NOT need quotes — just write them as they are.",
     "The computer runs your instructions in the exact order you write them, top to bottom.",
@@ -18,11 +23,14 @@
     "Mixing text and numbers in your output makes your program feel like a real conversation."
   ],
   "common_mistakes": [
-    "Putting quotes around numbers: `io.println(\"42\")` treats 42 as text, not a number. Use `io.println(42)` for actual numbers.",
+    "Putting quotes around numbers: `io.println(\"42\")` treats 42 as text, not a number. Use `io.println(\"42\")` for actual numbers.",
     "Forgetting to add a second `io.println` call — remember, every message needs its own instruction.",
     "Writing multiple messages inside one `io.println` separated by commas — XIOM prints only one thing per call.",
     "Forgetting the semicolon `;` at the end of any `io.println` line."
   ],
   "next_lesson": "L0-03",
-  "related": ["L0-01", "L0-03"]
+  "related": [
+    "L0-01",
+    "L0-03"
+  ]
 }

@@ -7,12 +7,32 @@
   "why": "A void function containing a while loop and formatted output teaches the pattern of generating structured, repeated output — a foundation for reports, tables, and data displays.",
   "narrative": "## Printing Multiplication Tables\n\nA void function does work without returning a value. `print_table(n)` prints the multiplication table for n — each line shows `i × n = result`.\n\n### The Table Printer\n\n```xiom\nfn print_table(n: Int) {\n  var i = 1;\n  while i <= 10 {\n    let product = i * n;\n    io.println(\"Calculated!\");\n    i = i + 1;\n  }\n}\n```\n\n### Understanding Void Functions\n\nThis function has no `-> ReturnType`. It doesn't produce a value to use elsewhere — it performs an action (printing). That's why it's called a void function or a procedure.\n\n### Using the Printer\n\n```xiom\nfn main() -> Int {\n  io.println(\"Table of 5:\");\n  print_table(5);\n\n  io.println(\"Table of 7:\");\n  print_table(7);\n\n  io.println(\"Table of 12:\");\n  print_table(12);\n\n  return 0;\n}\n```\n\n### Void vs Value-Returning\n\n| Aspect | void function | value-returning function |\n|--------|--------------|--------------------------|\n| Declaration | `fn name(params) { }` | `fn name(params) -> Type { }` |\n| Returns | Nothing | A value |\n| Purpose | Perform an action | Compute a result |\n| Usage | Called standalone | Captured with `let` or used in expression |\n\n### When to Use Each\n\n- **Void**: printing, logging, modifying external state, sending messages\n- **Value-returning**: calculations, transformations, checks, queries\n\n`print_table` is void because its job is displaying output. If you needed the table as a string for later use, you'd write `get_table(n: Int) -> Str` instead.",
   "analogy": "A void function like `print_table` is like a microwave — you press a button, it does work (heats food), but you don't 'get' anything back except the completed action. A value-returning function like `sum_to` is like a vending machine — you put in money, and you receive a product (the return value) in exchange.",
-  "code_template": "// TODO: Write print_table(n: Int) (a void function — no return type)\n// Use a while loop from 1 to 10\n// For each i, calculate i * n and print it\n\nfn main() -> Int {\n  // TODO: Call print_table(7) to print multiplication table of 7\n  // Call print_table(3) to print multiplication table of 3\n  return 0;\n}",
-  "solution": "fn print_table(n: Int) {\n  var i = 1;\n  while i <= 10 {\n    let product = i * n;\n    io.println(\"Calculated!\");\n    i = i + 1;\n  }\n}\n\nfn main() -> Int {\n  io.println(\"Table of 7:\");\n  print_table(7);\n  io.println(\"Table of 3:\");\n  print_table(3);\n  return 0;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write print_table(n: Int) (a void function — no return type)\n// Use a while loop from 1 to 10\n// For each i, calculate i * n and print it\n\nfn main() {\n  // TODO: Call print_table(7) to print multiplication table of 7\n  // Call print_table(3) to print multiplication table of 3\n}",
+  "solution": "use xiom.io;\nfn print_table(n: Int) {\n  var i = 1;\n  while i <= 10 {\n    let product = i * n;\n    io.println(\"Calculated!\");\n    i = i + 1;\n  }\n}\n\nfn main() {\n  io.println(\"Table of 7:\");\n  print_table(7);\n  io.println(\"Table of 3:\");\n  print_table(3);\n}",
   "try_it": "Extend `print_table` to accept a second parameter `up_to: Int` so the table prints from 1×n to up_to×n instead of always stopping at 10. Then write a `print_all_tables(max: Int)` function that prints tables 1 through max using a loop.",
-  "concepts": ["void functions", "loop inside function", "formatted output", "procedure pattern"],
-  "tips": ["A void function has no `-> ReturnType` — it does work but produces no value", "The loop inside print_table runs exactly 10 times, from i=1 to i=10", "Use clear labels like 'Table of 7:' before calling print_table for readability", "You can call the same void function multiple times with different arguments"],
-  "common_mistakes": ["Adding `-> Int` or `-> Str` to print_table — it doesn't return anything", "Starting i at 0 instead of 1 — multiplication tables start at 1×n", "Using `< 10` instead of `<= 10` — only prints 9 lines instead of 10", "Trying to capture the result with `let x = print_table(5)` — void functions can't be captured"],
+  "concepts": [
+    "void functions",
+    "loop inside function",
+    "formatted output",
+    "procedure pattern"
+  ],
+  "tips": [
+    "A void function has no `-> ReturnType` — it does work but produces no value",
+    "The loop inside print_table runs exactly 10 times, from i=1 to i=10",
+    "Use clear labels like 'Table of 7:' before calling print_table for readability",
+    "You can call the same void function multiple times with different arguments"
+  ],
+  "common_mistakes": [
+    "Adding `-> Int` or `-> Str` to print_table — it doesn't return anything",
+    "Starting i at 0 instead of 1 — multiplication tables start at 1×n",
+    "Using `< 10` instead of `<= 10` — only prints 9 lines instead of 10",
+    "Trying to capture the result with `let x = print_table(5)` — void functions can't be captured"
+  ],
   "next_lesson": "L1-44",
-  "related": ["L1-01", "L1-17", "L1-43", "L1-06"]
+  "related": [
+    "L1-01",
+    "L1-17",
+    "L1-43",
+    "L1-06"
+  ]
 }

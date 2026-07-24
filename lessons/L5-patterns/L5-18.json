@@ -7,10 +7,18 @@
   "why": "Generic functions with `[T]` let you write a single function that works with any type — eliminating duplicate code and embracing XIOM's type system.",
   "narrative": "## One Function, Many Types\n\nA **generic** is a function (or type) that works with ANY type. Instead of saying 'this works with Int,' you say 'this works with T — whatever T turns out to be.'\n\n### Without Generics: Three Functions\n\n```xiom\nfn print_int_vec(v: Vec[Int]) {\n  for item in v { io.println(item); }\n}\n\nfn print_str_vec(v: Vec[Str]) {\n  for item in v { io.println(item); }\n}\n\nfn print_bool_vec(v: Vec[Bool]) {\n  for item in v { io.println(item); }\n}\n```\n\nThese three functions are identical except for the type name. That's code duplication.\n\n### With Generics: One Function\n\n```xiom\nfn print_vec[T](v: Vec[T]) {\n  for item in v { io.println(item); }\n}\n```\n\nThe `[T]` after the function name declares a type parameter. `T` stands for 'any type.' When you call `print_vec(ints)`, `T` becomes `Int`. When you call `print_vec(strs)`, `T` becomes `Str`.\n\n### Full Program\n\n```xiom\nfn print_vec[T](v: Vec[T]) {\n  for item in v { io.println(item); }\n}\n\nfn main() -> Int {\n  let ints: Vec[Int] = Vec[Int].new();\n  ints.push(1); ints.push(2); ints.push(3);\n\n  let strs: Vec[Str] = Vec[Str].new();\n  strs.push(\"a\"); strs.push(\"b\");\n\n  print_vec(ints);\n  print_vec(strs);\n  return 0;\n}\n```\n\nOne `print_vec` function works for both `Vec[Int]` AND `Vec[Str]` — and any other type you throw at it.",
   "analogy": "A generic function is like a universal remote control. Instead of having separate remotes for your TV, DVD player, and sound system, one remote works with all of them. The `[T]` is like the remote saying 'I work with whatever device you point me at' — Int, Str, Bool, it doesn't matter.",
-  "code_template": "// TODO: Write a generic function show_len[T] that takes Vec[T] and prints its length\nfn show_len[T](v: Vec[T]) {\n\n}\n\nfn main() -> Int {\n  let ints: Vec[Int] = Vec[Int].new();\n  ints.push(10); ints.push(20);\n  let strs: Vec[Str] = Vec[Str].new();\n  strs.push(\"hi\"); strs.push(\"there\"); strs.push(\"!\");\n  // TODO: Call show_len with both Vecs\n  return 0;\n}\n",
-  "solution": "fn show_len[T](v: Vec[T]) {\n  io.println(v.len());\n}\n\nfn main() -> Int {\n  let ints: Vec[Int] = Vec[Int].new();\n  ints.push(10); ints.push(20);\n  let strs: Vec[Str] = Vec[Str].new();\n  strs.push(\"hi\"); strs.push(\"there\"); strs.push(\"!\");\n  show_len(ints);\n  show_len(strs);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Write a generic function show_len[T] that takes Vec[T] and prints its length\nfn show_len[T](v: Vec[T]) {\n\n}\n\nfn main() -> Int {\n  let ints: Vec[Int] = Vec[Int].new();\n  ints.push(10); ints.push(20);\n  let strs: Vec[Str] = Vec[Str].new();\n  strs.push(\"hi\"); strs.push(\"there\"); strs.push(\"!\");\n  // TODO: Call show_len with both Vecs\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn show_len[T](v: Vec[T]) {\n  io.println(v.len().to_str());\n}\n\nfn main() -> Int {\n  let ints: Vec[Int] = Vec[Int].new();\n  ints.push(10); ints.push(20);\n  let strs: Vec[Str] = Vec[Str].new();\n  strs.push(\"hi\"); strs.push(\"there\"); strs.push(\"!\");\n  show_len(ints);\n  show_len(strs);\n  return 0;\n}\n",
   "try_it": "Write a generic `first_element[T]` function that takes `Vec[T]` and returns `Option[T]` — the first element if it exists. Test it with Vec[Int], Vec[Str], and Vec[Bool]. Write a generic `is_empty_vec[T]` that takes `Vec[T]` and returns Bool. Notice how the function body doesn't need to know what T is — the logic works on any type.",
-  "concepts": ["generics", "type-parameter", "T", "generic-function", "polymorphism", "Vec", "code-reuse"],
+  "concepts": [
+    "generics",
+    "type-parameter",
+    "T",
+    "generic-function",
+    "polymorphism",
+    "Vec",
+    "code-reuse"
+  ],
   "tips": [
     "The `[T]` goes right after the function name, before the parameter list: `fn name[T](params)`",
     "You can name your type parameter anything — `T` is convention, but `Item` or `Element` are also fine",
@@ -22,5 +30,10 @@
     "Putting `[T]` on the Vec type instead of the function: `fn print(v: Vec[T])` without `[T]` on the function is an error"
   ],
   "next_lesson": "L5-19",
-  "related": ["L5-01", "L5-04", "L1-01", "L2-01"]
+  "related": [
+    "L5-01",
+    "L5-04",
+    "L1-01",
+    "L2-01"
+  ]
 }

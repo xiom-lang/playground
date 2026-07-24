@@ -7,10 +7,15 @@
   "why": "Match can destructure tuples, nested Options, and combined patterns — checking multiple values at once collapses nested if-else chains into readable pattern tables.",
   "narrative": "## Matching on Multiple Values at Once\n\nYou can match on a **tuple** — multiple values grouped together — and destructure all of them simultaneously.\n\n### Tuple Matching Basics\n\n```xiom\nfn main() -> Int {\n  let pair = (Some(10), Ok(\"hello\"));\n\n  match pair {\n    (Some(x), Ok(y)) => io.println(\"Both present: \" + string.int_to_str(x) + \" and \" + y),\n    (None, Ok(y)) => io.println(\"First missing, second: \" + y),\n    (Some(x), Err(e)) => io.println(\"First: \" + string.int_to_str(x) + \", second error: \" + e),\n    (None, Err(e)) => io.println(\"Both failed: \" + e),\n  };\n  return 0;\n}\n```\n\n### Real-World: Coordinate Check\n\n```xiom\nfn is_origin(point: (Int, Int)) -> Str {\n  return match point {\n    (0, 0) => \"At the origin\",\n    (0, y) => \"On the Y-axis at \" + string.int_to_str(y),\n    (x, 0) => \"On the X-axis at \" + string.int_to_str(x),\n    (x, y) => \"At (\" + string.int_to_str(x) + \", \" + string.int_to_str(y) + \")\",\n  };\n}\n\nfn main() -> Int {\n  io.println(is_origin((0, 0)));    // At the origin\n  io.println(is_origin((0, 5)));    // On the Y-axis at 5\n  io.println(is_origin((3, 0)));    // On the X-axis at 3\n  io.println(is_origin((4, 7)));    // At (4, 7)\n  return 0;\n}\n```\n\n### Nested Option and Result\n\n```xiom\nfn check_data(maybe_num: Option[Int], maybe_text: Result[Str, Str]) -> Str {\n  return match (maybe_num, maybe_text) {\n    (Some(n), Ok(t)) => {\n      return \"Got number \" + string.int_to_str(n) + \" and text '\" + t + \"'\";\n    },\n    (Some(n), Err(e)) => {\n      return \"Number is \" + string.int_to_str(n) + \" but text failed: \" + e;\n    },\n    (None, Ok(t)) => {\n      return \"No number but text is '\" + t + \"'\";\n    },\n    (None, Err(e)) => {\n      return \"Nothing worked: \" + e;\n    },\n  };\n}\n\nfn main() -> Int {\n  io.println(check_data(Some(42), Ok(\"success\")));\n  io.println(check_data(Some(7), Err(\"bad text\")));\n  io.println(check_data(None, Ok(\"data\")));\n  io.println(check_data(None, Err(\"all broken\")));\n  return 0;\n}\n```\n\n### Triple Matching\n\n```xiom\nfn compare_three(a: Int, b: Int, c: Int) -> Str {\n  return match (a, b, c) {\n    (x, y, z) if x == y && y == z => \"All three equal: \" + string.int_to_str(x),\n    (x, y, _) if x == y => \"First two equal: \" + string.int_to_str(x),\n    (_, y, z) if y == z => \"Last two equal: \" + string.int_to_str(y),\n    (x, _, _) => \"Largest is first: \" + string.int_to_str(x),\n  };\n}\n```",
   "analogy": "Tuple matching is like checking multiple security cameras at once — instead of watching one screen, then another, you see all feeds on one wall and spot patterns instantly.",
-  "code_template": "fn main() -> Int {\n  // TODO: Create a tuple (Option[Int], Result[Str, Str])\n  // Try: (Some(5), Ok(\"ready\"))\n\n  // TODO: Match on it — handle all 4 combinations\n  // (Some, Ok), (Some, Err), (None, Ok), (None, Err)\n\n  // TODO: Create a tuple of three Ints and match:\n  // All positive, all negative, mixed\n  return 0;\n}\n",
-  "solution": "fn main() -> Int {\n  let data = (Some(5), Ok(\"ready\"));\n  match data {\n    (Some(n), Ok(msg)) => io.println(\"Value: \" + string.int_to_str(n) + \", Message: \" + msg),\n    (Some(n), Err(e)) => io.println(\"Value: \" + string.int_to_str(n) + \", Error: \" + e),\n    (None, Ok(msg)) => io.println(\"No value, Message: \" + msg),\n    (None, Err(e)) => io.println(\"No value, Error: \" + e),\n  };\n\n  let nums = (5, -3, 8);\n  match nums {\n    (a, b, c) => {\n      if a > 0 && b > 0 && c > 0 { io.println(\"All positive\"); }\n      else if a < 0 && b < 0 && c < 0 { io.println(\"All negative\"); }\n      else { io.println(\"Mixed\"); }\n    },\n  };\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() -> Int {\n  // TODO: Create a tuple (Option[Int], Result[Str, Str])\n  // Try: (Some(5), Ok(\"ready\"))\n\n  // TODO: Match on it — handle all 4 combinations\n  // (Some, Ok), (Some, Err), (None, Ok), (None, Err)\n\n  // TODO: Create a tuple of three Ints and match:\n  // All positive, all negative, mixed\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  let data = (Some(5), Ok(\"ready\"));\n  match data {\n    (Some(n), Ok(msg)) => io.println(\"Value: \" + n.to_str()) + \", Message: \" + msg.to_str(),\n    (Some(n), Err(e)) => io.println(\"Value: \" + n.to_str()) + \", Error: \" + e.to_str(),\n    (None, Ok(msg)) => io.println(\"No value, Message: \" + msg.to_str()),\n    (None, Err(e)) => io.println(\"No value, Error: \" + e.to_str()),\n  };\n\n  let nums = (5, -3, 8);\n  match nums {\n    (a, b, c) => {\n      if a > 0 && b > 0 && c > 0 { io.println(\"All positive\"); }\n      else if a < 0 && b < 0 && c < 0 { io.println(\"All negative\"); }\n      else { io.println(\"Mixed\"); }\n    },\n  };\n  return 0;\n}\n",
   "try_it": "Write a function `classify_triangle(a: Int, b: Int, c: Int) -> Str`. Match on the tuple and return: 'Equilateral' if all equal, 'Isosceles' if any two equal, 'Scalene' if all different. Test with (3,3,3), (5,5,8), and (3,4,5).",
-  "concepts": ["tuple-matching", "pattern-destructuring", "multi-value-match", "nested-patterns"],
+  "concepts": [
+    "tuple-matching",
+    "pattern-destructuring",
+    "multi-value-match",
+    "nested-patterns"
+  ],
   "tips": [
     "Parentheses group values into tuples for matching: `(val1, val2, val3)`",
     "Pattern order matters — XIOM matches top to bottom, first matching arm wins",
@@ -22,5 +27,9 @@
     "Putting a general pattern like `(x, y)` BEFORE more specific ones like `(0, 0)` — order matters!"
   ],
   "next_lesson": "L3-21",
-  "related": ["L3-01", "L3-07", "L3-08"]
+  "related": [
+    "L3-01",
+    "L3-07",
+    "L3-08"
+  ]
 }

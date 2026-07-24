@@ -286,14 +286,109 @@ function markComplete() {
     loadLessonContent(currentLessonFile);
   }
   updateProgressSummary();
-  showCompletionBar();
+
+  var editorSection = document.querySelector('.editor-section');
+  if (!editorSection) return;
+
+  var existing = editorSection.querySelector('.floating-complete');
+  if (existing) existing.remove();
+
+  var isLastInLevel = false;
+  if (lessonCatalogCache && currentLessonData) {
+    lessonCatalogCache.levels.forEach(function (level) {
+      for (var i = 0; i < level.lessons.length; i++) {
+        if (level.lessons[i].id === currentLessonId) {
+          if (i === level.lessons.length - 1) isLastInLevel = true;
+          return;
+        }
+      }
+    });
+  }
+
+  var nextLabel = isLastInLevel ? 'Next Level \u2192' : 'Next \u2192';
+
+  var wrapper = document.createElement('div');
+  wrapper.className = 'floating-complete';
+
+  var checkmark = document.createElement('span');
+  checkmark.style.cssText = 'color:var(--green);font-weight:600;font-size:14px;';
+  checkmark.textContent = '\u2713 Completed';
+
+  var nextBtn = document.createElement('button');
+  nextBtn.className = 'btn-next';
+  nextBtn.textContent = nextLabel;
+  nextBtn.onclick = function () { nextLesson(); };
+
+  wrapper.appendChild(checkmark);
+  wrapper.appendChild(nextBtn);
+  editorSection.appendChild(wrapper);
+
+  celebrateCompletion();
+  if (currentLessonData && currentLessonData.level) {
+    checkLevelCompletion(currentLessonData.level);
+  }
+}
+
+function checkLevelCompletion(levelId) {
+  var progress = getProgress();
+  var levelLessons = [];
+
+  if (window.lessonCatalogCache && window.lessonCatalogCache.levels) {
+    window.lessonCatalogCache.levels.forEach(function (lvl) {
+      if (lvl.id === levelId) levelLessons = lvl.lessons;
+    });
+  }
+
+  if (levelLessons.length === 0) return;
+
+  var completed = levelLessons.filter(function (l) { return progress.indexOf(l.id) >= 0; });
+  if (completed.length === levelLessons.length) {
+    showLevelComplete(levelId, completed.length);
+  }
+}
+
+function showLevelComplete(levelId, count) {
+  var existing = document.getElementById('levelCompleteOverlay');
+  if (existing) existing.remove();
+
+  var names = { L0: 'First Steps', L1: 'Functions', L2: 'Data', L3: 'Pattern Power', L4: 'XIOM Magic', L5: 'Collections', L6: 'Engineering', L7: 'Practice', L8: 'Showcase' };
+  var name = names[levelId] || levelId;
+  var nextLevel = { L0: 'L1', L1: 'L2', L2: 'L3', L3: 'L4', L4: 'L5', L5: 'L6', L6: 'L7', L7: 'L8', L8: null }[levelId];
+
+  var overlay = document.createElement('div');
+  overlay.id = 'levelCompleteOverlay';
+  overlay.className = 'onboarding-modal';
+  overlay.innerHTML = '<div class="onboarding-content">' +
+    '<div style="font-size:48px;margin-bottom:8px">\uD83C\uDF89</div>' +
+    '<h2>' + name + ' \u2014 Complete!</h2>' +
+    '<p>You finished all ' + count + ' lessons in ' + name + '.</p>' +
+    (nextLevel ? '<button class="btn-primary" style="margin-top:12px" onclick="this.parentElement.parentElement.remove(); jumpToLevel(\'' + nextLevel + '\')">Next: ' + (names[nextLevel] || nextLevel) + ' \u2192</button>' : '<p style="color:var(--green);margin-top:12px">\uD83C\uDFC6 You completed the entire XIOM curriculum! Amazing!</p>') +
+    '<button class="btn-secondary" style="margin-top:8px" onclick="this.parentElement.parentElement.remove()">Keep Learning</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  celebrateCompletion();
+}
+
+function jumpToLevel(levelId) {
+  if (!window.lessonCatalogCache || !window.lessonCatalogCache.levels) return;
+  for (var i = 0; i < window.lessonCatalogCache.levels.length; i++) {
+    if (window.lessonCatalogCache.levels[i].id === levelId) {
+      var first = window.lessonCatalogCache.levels[i].lessons[0];
+      if (first && window.selectLesson) {
+        window.selectLesson(first.id, first.file);
+      }
+      break;
+    }
+  }
 }
 
 function updateProgressSummary() {
   var progress = getProgress();
   var el = document.getElementById('progressSummary');
-  if (!el) return;
-  el.textContent = progress.length + '/410';
+  if (el) el.textContent = progress.length + '/410';
+  var fill = document.getElementById('progressFill');
+  if (fill) fill.style.width = (progress.length / 410 * 100) + '%';
 }
 
 function filterLessons(query) {

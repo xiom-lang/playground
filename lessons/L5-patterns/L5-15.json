@@ -7,10 +7,20 @@
   "why": "Set operations — insert, contains, remove, plus logical combinations — model real-world filtering and membership scenarios.",
   "narrative": "## Working with Sets\n\nSets shine when you need to answer membership questions and filter data based on presence or absence.\n\n### The Three Core Operations\n\n```xiom\nlet users: Set[Str] = Set[Str].new();\nusers.insert(\"alice\");\nusers.insert(\"bob\");\n\nusers.contains(\"alice\");\nusers.remove(\"alice\");\n```\n\n`.insert()` adds, `.contains()` checks, `.remove()` deletes.\n\n### Duplicate Detection\n\n```xiom\nfn has_duplicates(items: Vec[Str]) -> Bool {\n  let seen: Set[Str] = Set[Str].new();\n  for item in items {\n    if seen.contains(item) { return true; }\n    seen.insert(item);\n  }\n  return false;\n}\n```\n\nThis function uses a Set to detect if any item appears more than once — the Set remembers what we've seen.\n\n### Filtering a List\n\n```xiom\nfn filter_by_allowed(names: Vec[Str], allowed: Set[Str]) -> Vec[Str] {\n  let result: Vec[Str] = Vec[Str].new();\n  for name in names {\n    if allowed.contains(name) {\n      result.push(name);\n    }\n  }\n  return result;\n}\n```\n\n### Full Program: Festival Matcher\n\n```xiom\nfn main() -> Int {\n  let my_artists: Set[Str] = Set[Str].new();\n  my_artists.insert(\"Luna\");\n  my_artists.insert(\"Neon Waves\");\n  my_artists.insert(\"The Circuits\");\n\n  let lineup: Set[Str] = Set[Str].new();\n  lineup.insert(\"Neon Waves\");\n  lineup.insert(\"DJ Spark\");\n\n  if my_artists.contains(\"Neon Waves\") && lineup.contains(\"Neon Waves\") {\n    io.println(\"Neon Waves is playing!\");\n  }\n\n  if my_artists.contains(\"Luna\") && !lineup.contains(\"Luna\") {\n    io.println(\"Luna is not playing\");\n  }\n\n  return 0;\n}\n```",
   "analogy": "Set operations are like a bouncer at a club with a guest list. `.insert()` adds names to the list. `.contains()` checks 'Are you on the list?' before letting someone in. `.remove()` crosses a name off. The duplicate detection pattern is like checking 'Have I seen this person before?' before writing their name down again.",
-  "code_template": "fn has_duplicate(items: Vec[Str]) -> Bool {\n  // TODO: Create a Set to track seen items\n  // TODO: Loop through items; if already seen, return true\n  // TODO: If loop finishes, return false\n  return false;\n}\n\nfn main() -> Int {\n  let nums: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"a\", \"b\", \"c\", \"a\" into nums\n  // TODO: Call has_duplicate and print the result\n  return 0;\n}\n",
-  "solution": "fn has_duplicate(items: Vec[Str]) -> Bool {\n  let seen: Set[Str] = Set[Str].new();\n  for item in items {\n    if seen.contains(item) { return true; }\n    seen.insert(item);\n  }\n  return false;\n}\n\nfn main() -> Int {\n  let nums: Vec[Str] = Vec[Str].new();\n  nums.push(\"a\");\n  nums.push(\"b\");\n  nums.push(\"c\");\n  nums.push(\"a\");\n\n  io.println(has_duplicate(nums));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn has_duplicate(items: Vec[Str]) -> Bool {\n  // TODO: Create a Set to track seen items\n  // TODO: Loop through items; if already seen, return true\n  // TODO: If loop finishes, return false\n  return false;\n}\n\nfn main() -> Int {\n  let nums: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"a\", \"b\", \"c\", \"a\" into nums\n  // TODO: Call has_duplicate and print the result\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn has_duplicate(items: Vec[Str]) -> Bool {\n  let seen: Set[Str] = Set[Str].new();\n  for item in items {\n    if seen.contains(item) { return true; }\n    seen.insert(item);\n  }\n  return false;\n}\n\nfn main() -> Int {\n  let nums: Vec[Str] = Vec[Str].new();\n  nums.push(\"a\");\n  nums.push(\"b\");\n  nums.push(\"c\");\n  nums.push(\"a\");\n\n  io.println(has_duplicate(nums).to_str());\n  return 0;\n}\n",
   "try_it": "Implement an intersection function: given two Sets, return a Set of elements that are in BOTH. Implement a union function: return a Set of elements in EITHER. Test both with the festival example — which artists are in both your list and the lineup (intersection), and what's the complete combined list (union)?",
-  "concepts": ["Set", "insert", "contains", "remove", "duplicate-detection", "filtering", "membership", "intersection", "union"],
+  "concepts": [
+    "Set",
+    "insert",
+    "contains",
+    "remove",
+    "duplicate-detection",
+    "filtering",
+    "membership",
+    "intersection",
+    "union"
+  ],
   "tips": [
     "Use a Set to track 'seen' items when scanning a Vec — it's the fastest way to detect duplicates",
     "`.contains()` is O(1) — just as fast as Map lookup, regardless of Set size",
@@ -22,5 +32,10 @@
     "Forgetting that `.remove()` returns Bool — `true` means 'I found and removed it', `false` means 'wasn't there'"
   ],
   "next_lesson": "L5-16",
-  "related": ["L5-14", "L5-13", "L5-04", "L2-23"]
+  "related": [
+    "L5-14",
+    "L5-13",
+    "L5-04",
+    "L2-23"
+  ]
 }

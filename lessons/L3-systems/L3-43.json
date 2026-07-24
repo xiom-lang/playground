@@ -7,10 +7,19 @@
   "why": "Building a menu system with match on parsed integers teaches the complete input→validate→dispatch pipeline that powers every interactive application.",
   "narrative": "## Building a Robust Menu System\n\nA menu takes a raw string from the user, parses it into a number, checks it's a valid option, and runs the corresponding action.\n\n### The Menu Options\n\n```xiom\nfn process_choice(choice_str: Str) -> Result[Str, Str] {\n  let choice = string.str_to_int(choice_str);\n\n  let num = match choice {\n    Ok(n) => n,\n    Err(_) => { return Err(\"Please enter a number, not '\" + choice_str + \"'\"); }\n  };\n\n  if num < 1 || num > 4 {\n    return Err(\"Choose 1-4. \" + string.int_to_str(num) + \" is not an option.\");\n  }\n\n  if num == 1 { return Ok(\"Starting new game...\"); }\n  elif num == 2 { return Ok(\"Loading save file...\"); }\n  elif num == 3 { return Ok(\"Opening settings...\"); }\n  elif num == 4 { return Ok(\"Goodbye!\"); }\n  else { return Err(\"Unexpected error\"); }\n}\n```\n\n### The Pattern in Action\n\n```xiom\nfn main() -> Int {\n  match process_choice(\"2\") {\n    Ok(msg) => { io.println(msg); return 200; }\n    Err(e) => { io.println(e); return 400; }\n  }\n}\n```\n\n### Why This Approach Works\n\n1. **Parse early**: Convert the string to a number as soon as possible\n2. **Validate range**: Check bounds before dispatching — catch \"5\" on a 4-option menu\n3. **Dispatch cleanly**: `if/elif` chain maps numbers to actions with clear string results\n4. **Every path returns Result**: No possibility of an unhandled case getting through\n\n### Adding Match Instead of If/Elif\n\nFor more complex menus, `match` can be cleaner:\n\n```xiom\nmatch num {\n  1 => { return Ok(\"New game started\"); }\n  2 => { return Ok(\"Game loaded\"); }\n  3 => { return Ok(\"Settings opened\"); }\n  4 => { return Ok(\"Quitting\"); }\n  _ => { return Err(\"Invalid option\"); }\n}\n```",
   "analogy": "A menu system is like a restaurant host. The customer says 'I want table 3' (choice string). The host checks that table 3 exists (parse + range check) and isn't already reserved. Then the host walks them to table 3 (dispatch to action). If the customer says 'I want table BANANA' or 'table 99', the host politely explains what's available instead of walking them into the kitchen.",
-  "code_template": "fn process_choice(choice_str: Str) -> Result[Str, Str] {\n  // TODO: parse choice_str to Int\n  // TODO: if parse fails, return Err with helpful message\n  // TODO: check if number is between 1-4\n  // TODO: dispatch each number to its action\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: test with \"1\", \"4\", \"0\", and \"xyz\"\n  return 0;\n}\n",
-  "solution": "fn process_choice(choice_str: Str) -> Result[Str, Str] {\n  let choice = string.str_to_int(choice_str);\n\n  let num = match choice {\n    Ok(n) => n,\n    Err(_) => { return Err(\"Please enter a number, not '\" + choice_str + \"'\"); }\n  };\n\n  if num < 1 || num > 4 {\n    return Err(\"Choose 1-4. \" + string.int_to_str(num) + \" is not an option.\");\n  }\n\n  if num == 1 { return Ok(\"Starting new game...\"); }\n  elif num == 2 { return Ok(\"Loading save file...\"); }\n  elif num == 3 { return Ok(\"Opening settings...\"); }\n  elif num == 4 { return Ok(\"Goodbye!\"); }\n  else { return Err(\"Unexpected error\"); }\n}\n\nfn main() -> Int {\n  match process_choice(\"2\") {\n    Ok(msg) => { io.println(msg); return 200; }\n    Err(e) => { io.println(e); return 400; }\n  }\n}\n",
+  "code_template": "use xiom.io;\n\nfn process_choice(choice_str: Str) -> Result[Str, Str] {\n  // TODO: parse choice_str to Int\n  // TODO: if parse fails, return Err with helpful message\n  // TODO: check if number is between 1-4\n  // TODO: dispatch each number to its action\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: test with \"1\", \"4\", \"0\", and \"xyz\"\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn process_choice(choice_str: Str) -> Result[Str, Str] {\n  let choice = string.str_to_int(choice_str);\n\n  let num = match choice {\n    Ok(n) => n,\n    Err(_) => { return Err(\"Please enter a number, not '\" + choice_str + \"'\"); }\n  };\n\n  if num < 1 || num > 4 {\n    return Err(\"Choose 1-4. \" + string.int_to_str(num) + \" is not an option.\");\n  }\n\n  if num == 1 { return Ok(\"Starting new game...\"); }\n  elif num == 2 { return Ok(\"Loading save file...\"); }\n  elif num == 3 { return Ok(\"Opening settings...\"); }\n  elif num == 4 { return Ok(\"Goodbye!\"); }\n  else { return Err(\"Unexpected error\"); }\n}\n\nfn main() -> Int {\n  match process_choice(\"2\") {\n    Ok(msg) => { io.println(msg.to_str()); return 200; }\n    Err(e) => { io.println(e.to_str()); return 400; }\n  }\n}\n",
   "try_it": "Add options 5 through 8: help, about, high scores, and credits. Rewrite the dispatch using `match` with integer arms instead of `if/elif`. Then add sub-menus: option 3 (settings) returns another prompt asking for sound/display/controls. Use nested `process_choice` calls. What happens if a user types '-3'? Should negative numbers be valid?",
-  "concepts": ["Result", "Ok", "Err", "match", "string.str_to_int", "if-elif", "dispatch", "input-validation"],
+  "concepts": [
+    "Result",
+    "Ok",
+    "Err",
+    "match",
+    "string.str_to_int",
+    "if-elif",
+    "dispatch",
+    "input-validation"
+  ],
   "tips": [
     "Parse the string BEFORE validating the range — you can't check if 'abc' is between 1 and 4",
     "The error message should tell the user what they typed AND what's expected: '12 is not an option' is friendlier than 'Invalid'",
@@ -22,5 +31,10 @@
     "Forgetting the final `else` or `_` arm in dispatch — the compiler will warn you if not all cases are covered"
   ],
   "next_lesson": "L3-44",
-  "related": ["L3-12", "L3-28", "L3-16", "L2-30"]
+  "related": [
+    "L3-12",
+    "L3-28",
+    "L3-16",
+    "L2-30"
+  ]
 }

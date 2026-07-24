@@ -1,25 +1,35 @@
 {
-  "id": "L2-43",
-  "title": "Shopping Cart Item",
-  "level": "L2",
-  "duration": "9 min",
-  "story": "You're building an online store checkout. Each item in the cart has a product name, a unit price, and a quantity. The cart needs to calculate line totals (price \u00d7 quantity) and display each item in a receipt format.",
-  "why": "Multiplying fields inside a struct method is the universal pattern for line-item calculations.",
-  "narrative": "## Modeling a Shopping Cart\n\nEvery item in a cart needs three things: what you're buying, how much it costs per unit, and how many you want.\n\n### The CartItem Struct\n\n```xiom\ntype CartItem = {\n  product: Str;\n  price: Float64;\n  quantity: Int;\n}\n```\n\n### Creating Cart Items\n\n```xiom\nlet milk = CartItem{ product: \"Whole Milk\"; price: 3.49; quantity: 2; };\nlet bread = CartItem{ product: \"Sourdough Bread\"; price: 5.99; quantity: 1; };\nlet eggs = CartItem{ product: \"Free-Range Eggs\"; price: 4.50; quantity: 3; };\n```\n\n### Computing the Line Total\n\n```xiom\nfn CartItem.total(self) -> Float64 {\n  return price * (quantity as Float64);\n}\n```\n\nThe `as Float64` cast converts the integer quantity so the multiplication produces a Float64 result.\n\n### Formatting for a Receipt\n\n```xiom\nfn CartItem.format(self) -> Str {\n  return product + \" x\" + quantity + \" = $\" + self.total();\n}\n```\n\n### Building the Full Cart\n\n```xiom\nfn cart_total(items: CartItem, items: CartItem, items: CartItem) -> Float64 {\n  return items.total() + items.total() + items.total();\n}\n```\n\nCalling `self.total()` inside `format` shows how methods can call other methods on the same value.",
-  "analogy": "A CartItem is like a line on a grocery receipt. The product is the item name, the price is what's on the shelf tag, and the quantity is how many you tossed in the cart. The total is the cash register doing the math.",
-  "code_template": "type CartItem = {\n  product: Str;\n  price: Float64;\n  quantity: Int;\n}\n\n// TODO: write a method 'CartItem.total' that returns price * quantity (cast quantity to Float64)\n\n// TODO: write a method 'CartItem.format' that returns \"product xQ = $TOTAL\"\n\nfn main() -> Int {\n  // TODO: create 3 cart items, return the sum of all totals as Int (multiply by 100)\n  return 0;\n}",
-  "solution": "type CartItem = {\n  product: Str;\n  price: Float64;\n  quantity: Int;\n}\n\nfn CartItem.total(self) -> Float64 {\n  return price * (quantity as Float64);\n}\n\nfn CartItem.format(self) -> Str {\n  return product + \" x\" + quantity + \" = $\" + self.total();\n}\n\nfn main() -> Int {\n  let milk = CartItem{ product: \"Whole Milk\"; price: 3.49; quantity: 2; };\n  let bread = CartItem{ product: \"Sourdough Bread\"; price: 5.99; quantity: 1; };\n  let eggs = CartItem{ product: \"Free-Range Eggs\"; price: 4.50; quantity: 3; };\n  let grand = milk.total() + bread.total() + eggs.total();\n  return (grand * 100.0) as Int;\n}",
-  "try_it": "Add a `tax` field to CartItem (e.g., 0.08 for 8% tax). Add a `CartItem.total_with_tax(self) -> Float64` method that adds tax to the total. Add a discount field and a method that applies a percentage discount to the price.",
-  "concepts": ["struct", "method", "Float64", "type cast", "arithmetic"],
-  "tips": [
-    "Cast `Int` to `Float64` with `(quantity as Float64)` before multiplying by a Float64 price",
-    "Methods can call other methods on `self` \u2014 `format` calls `self.total()` for clean code",
-    "Use `Float64` for money to handle cents; multiply by 100 and cast to Int for the return value"
-  ],
-  "common_mistakes": [
-    "Multiplying `price * quantity` without the cast \u2014 Int and Float64 can't be multiplied directly in XIOM",
-    "Writing `total` instead of `self.total()` in the format method \u2014 you need `self.` to call methods"
-  ],
-  "next_lesson": "L2-44",
-  "related": ["L2-03", "L2-27", "L2-04"]
+    "id":  "L2-43",
+    "title":  "Shopping Cart Item",
+    "level":  "L2",
+    "duration":  "9 min",
+    "story":  "You\u0027re building an online store checkout. Each item in the cart has a product name, a unit price, and a quantity. The cart needs to calculate line totals (price × quantity) and display each item in a receipt format.",
+    "why":  "Multiplying fields inside a struct method is the universal pattern for line-item calculations.",
+    "narrative":  "## Modeling a Shopping Cart\n\nEvery item in a cart needs three things: what you\u0027re buying, how much it costs per unit, and how many you want.\n\n### The CartItem Struct\n\n```xiom\ntype CartItem = {\n  product: Str;\n  price: Float64;\n  quantity: Int;\n}\n```\n\n### Creating Cart Items\n\n```xiom\nlet milk = CartItem{ product: \"Whole Milk\"; price: 3.49; quantity: 2; };\nlet bread = CartItem{ product: \"Sourdough Bread\"; price: 5.99; quantity: 1; };\nlet eggs = CartItem{ product: \"Free-Range Eggs\"; price: 4.50; quantity: 3; };\n```\n\n### Computing the Line Total\n\n```xiom\nfn CartItem.total(self) -\u003e Float64 {\n  return price * (quantity as Float64);\n}\n```\n\nThe `as Float64` cast converts the integer quantity so the multiplication produces a Float64 result.\n\n### Formatting for a Receipt\n\n```xiom\nfn CartItem.format(self) -\u003e Str {\n  return product + \" x\" + quantity + \" = $\" + self.total();\n}\n```\n\n### Building the Full Cart\n\n```xiom\nfn cart_total(items: CartItem, items: CartItem, items: CartItem) -\u003e Float64 {\n  return items.total() + items.total() + items.total();\n}\n```\n\nCalling `self.total()` inside `format` shows how methods can call other methods on the same value.",
+    "analogy":  "A CartItem is like a line on a grocery receipt. The product is the item name, the price is what\u0027s on the shelf tag, and the quantity is how many you tossed in the cart. The total is the cash register doing the math.",
+    "code_template":  "use xiom.io;\n\ntype CartItem = {\n  product: Str;\n  price: Float64;\n  quantity: Int;\n}\n\n// TODO: write a method \u0027CartItem.total\u0027 that returns price * quantity (cast quantity to Float64)\n\n// TODO: write a method \u0027CartItem.format\u0027 that returns \"product xQ = $TOTAL\"\n\nfn main() -\u003e Int {\n  // TODO: create 3 cart items, return the sum of all totals as Int (multiply by 100)\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype CartItem = {\n  product: Str;\n  price: Float64;\n  quantity: Int;\n}\n\nfn CartItem.total(self) -\u003e Float64 {\n  return price * (quantity as Float64);\n}\n\nfn CartItem.format(self) -\u003e Str {\n  return product + \" x\" + quantity + \" = $\" + self.total();\n}\n\nfn main() -\u003e Int {\n  let milk = CartItem{ product: \"Whole Milk\"; price: 3.49; quantity: 2; };\n  let bread = CartItem{ product: \"Sourdough Bread\"; price: 5.99; quantity: 1; };\n  let eggs = CartItem{ product: \"Free-Range Eggs\"; price: 4.50; quantity: 3; };\n  let grand = milk.total() + bread.total() + eggs.total();\n  return (grand * 100.0) as Int;\n}",
+    "try_it":  "Add a `tax` field to CartItem (e.g., 0.08 for 8% tax). Add a `CartItem.total_with_tax(self) -\u003e Float64` method that adds tax to the total. Add a discount field and a method that applies a percentage discount to the price.",
+    "concepts":  [
+                     "struct",
+                     "method",
+                     "Float64",
+                     "type cast",
+                     "arithmetic"
+                 ],
+    "tips":  [
+                 "Cast `Int` to `Float64` with `(quantity as Float64)` before multiplying by a Float64 price",
+                 "Methods can call other methods on `self` — `format` calls `self.total()` for clean code",
+                 "Use `Float64` for money to handle cents; multiply by 100 and cast to Int for the return value"
+             ],
+    "common_mistakes":  [
+                            "Multiplying `price * quantity` without the cast — Int and Float64 can\u0027t be multiplied directly in XIOM",
+                            "Writing `total` instead of `self.total()` in the format method — you need `self.` to call methods"
+                        ],
+    "next_lesson":  "L2-44",
+    "related":  [
+                    "L2-03",
+                    "L2-27",
+                    "L2-04"
+                ]
 }

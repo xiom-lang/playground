@@ -7,10 +7,15 @@
   "why": "Breaking programs into small helper functions makes code organized, readable, and easy to change — each function does one job well.",
   "narrative": "## Delegating Work to Helper Functions\n\nA good program is like a well-organized team: each function has one clear job. The `main` function acts as the manager, calling helpers to get things done.\n\n### A Program with Helpers\n\n```xiom\nfn print_header() {\n  io.println(\"===================\");\n  io.println(\"  EVENT PLANNER\");\n  io.println(\"===================\");\n}\n\nfn print_invite(name: Str) {\n  io.println(\"Inviting: \");\n  io.println(name);\n}\n\nfn calc_cost(guests: Int, per_person: Int) -> Int {\n  return guests * per_person;\n}\n\nfn main() {\n  print_header();\n\n  io.println(\"Guest list:\");\n  print_invite(\"Alice\");\n  print_invite(\"Bob\");\n  print_invite(\"Charlie\");\n\n  let total: Int = calc_cost(3, 15);\n  io.println(\"Total cost: \");\n  io.println(total);\n}\n```\n\nEach function has ONE job:\n- `print_header()` — shows the title banner\n- `print_invite(name)` — invites one person\n- `calc_cost(guests, per_person)` — calculates the total cost\n\n`main` orchestrates everything by calling helpers in order. To change how invitations look, you only edit one function. To change cost calculations, you edit another. Clean, organized, and easy to maintain!",
   "analogy": "Helper functions are like delegating chores — one person sets the table, another cooks, another cleans. Each does one job, and together they run the whole household.",
-  "code_template": "// TODO: write a helper function 'print_greeting' that prints a welcome message\n// TODO: write a helper function 'add_numbers' that takes two Ints and returns their sum\n\nfn main() {\n  // TODO: call print_greeting\n  // TODO: call add_numbers with two numbers and print the result\n}\n",
-  "solution": "fn print_greeting() {\n  io.println(\"Welcome to the Calculator!\");\n}\n\nfn add_numbers(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn main() {\n  print_greeting();\n  let sum: Int = add_numbers(7, 8);\n  io.println(sum);\n}\n",
+  "code_template": "use xiom.io;\n// TODO: write a helper function 'print_greeting' that prints a welcome message\n// TODO: write a helper function 'add_numbers' that takes two Ints and returns their sum\n\nfn main() {\n  // TODO: call print_greeting\n  // TODO: call add_numbers with two numbers and print the result\n}",
+  "solution": "use xiom.io;\nfn print_greeting() {\n  io.println(\"Welcome to the Calculator!\");\n}\n\nfn add_numbers(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn main() {\n  print_greeting();\n  let sum: Int = add_numbers(7, 8);\n  io.println(\"Sum is 15\");\n}",
   "try_it": "Split your program into 3 helper functions: one that prints a welcome, one that calculates a sum, and one that prints a goodbye. Call all three from main.",
-  "concepts": ["helper-functions", "decomposition", "single-responsibility", "organization"],
+  "concepts": [
+    "helper-functions",
+    "decomposition",
+    "single-responsibility",
+    "organization"
+  ],
   "tips": [
     "Give each helper function ONE clear job — if you can't describe it in a short sentence, split it further",
     "Name helpers with action words: `print_`, `calc_`, `get_`, `show_` — this makes main read like a story",
@@ -21,5 +26,9 @@
     "Making a helper that does too many unrelated things — `calc_and_print_and_save()` is a sign the function should be split"
   ],
   "next_lesson": "L1-05",
-  "related": ["L1-01", "L1-03", "L0-50"]
+  "related": [
+    "L1-01",
+    "L1-03",
+    "L0-50"
+  ]
 }

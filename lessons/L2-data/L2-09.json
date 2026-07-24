@@ -1,26 +1,35 @@
 {
-  "id": "L2-09",
-  "title": "Bank Account Struct",
-  "level": "L2",
-  "duration": "9 min",
-  "story": "You're coding a banking app for a school project. Accounts need to accept deposits, process withdrawals, and — most importantly — never let the balance go below zero!",
-  "why": "Bank accounts are the perfect example of mutation methods — actions that read AND change the struct's internal data.",
-  "narrative": "## Building a Safe Money Manager\n\nA bank account holds an owner's name and a balance. The balance changes over time — deposits add money, withdrawals take it out.\n\n### The Account Struct\n\n```xiom\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn main() -> Int {\n  let my_account = Account{ owner: \"Quinn\", balance: 100.0 };\n  io.println(my_account.owner);\n  io.println(my_account.balance);\n  return 0;\n}\n```\n\n### Deposit and Withdraw Methods\n\n```xiom\nfn Account.deposit(self, amount: Float64) {\n  balance = balance + amount;\n}\n\nfn Account.withdraw(self, amount: Float64) -> Bool {\n  if balance >= amount {\n    balance = balance - amount;\n    return true;\n  }\n  return false;\n}\n\nfn main() -> Int {\n  let acc = Account{ owner: \"Quinn\", balance: 100.0 };\n  acc.deposit(50.0);\n  io.println(acc.balance);  // 150.0\n\n  let ok = acc.withdraw(30.0);\n  io.println(ok);            // true\n  io.println(acc.balance);   // 120.0\n\n  let bad = acc.withdraw(500.0);\n  io.println(bad);           // false — not enough money\n  return 0;\n}\n```\n\n### Why Withdraw Returns Bool\n\nBy returning `true` on success and `false` on failure, the caller can check whether the withdrawal worked:\n\n```xiom\nfn main() -> Int {\n  let acc = Account{ owner: \"Reese\", balance: 20.0 };\n  if acc.withdraw(30.0) {\n    io.println(\"Withdrawal successful!\");\n  } else {\n    io.println(\"Insufficient funds!\");\n  }\n  return 0;\n}\n```\n\n### Transfer Between Accounts\n\n```xiom\nfn Account.transfer(self, amount: Float64, other: Account) -> Bool {\n  if balance >= amount {\n    balance = balance - amount;\n    other.balance = other.balance + amount;\n    return true;\n  }\n  return false;\n}\n\nfn main() -> Int {\n  let a = Account{ owner: \"Skyler\", balance: 100.0 };\n  let b = Account{ owner: \"Taylor\", balance: 50.0 };\n  a.transfer(30.0, b);\n  io.println(a.balance);  // 70.0\n  io.println(b.balance);  // 80.0\n  return 0;\n}\n```",
-  "analogy": "A bank account is like a wallet. Deposit adds cash, withdraw takes cash out (but only if you have enough), and transfer moves cash from one wallet to another.",
-  "code_template": "type Account = {\n  owner: Str;\n  balance: Float64;\n}\n\n// TODO: Write 'deposit' method — adds amount to balance\n\n// TODO: Write 'withdraw' method — subtracts amount IF balance >= amount, returns Bool\n\nfn main() -> Int {\n  // TODO: Create an account with 100.0, deposit 25.0, withdraw 40.0, print final balance\n  return 0;\n}\n",
-  "solution": "type Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn Account.deposit(self, amount: Float64) {\n  balance = balance + amount;\n}\n\nfn Account.withdraw(self, amount: Float64) -> Bool {\n  if balance >= amount {\n    balance = balance - amount;\n    return true;\n  }\n  return false;\n}\n\nfn main() -> Int {\n  let acc = Account{ owner: \"Alex\", balance: 100.0 };\n  acc.deposit(25.0);\n  acc.withdraw(40.0);\n  io.println(acc.balance);\n  return 0;\n}\n",
-  "try_it": "Add a `transfer` method that moves money from one account to another. It should return `false` if the source doesn't have enough funds. Test it with two accounts.",
-  "concepts": ["mutation-methods", "guard-condition", "safe-withdrawal", "balance-management"],
-  "tips": [
-    "Always check the balance before withdrawing — guard against negative balances",
-    "Return `Bool` from withdrawal to let the caller know if it succeeded",
-    "Mutation methods don't need a return type — they change the struct's fields directly"
-  ],
-  "common_mistakes": [
-    "Allowing withdrawal even when balance is too low — always add the `if balance >= amount` check",
-    "Forgetting to use `balance = balance - amount` and writing `balance - amount` instead (no effect)",
-    "Confusing the caller by returning nothing from a failed withdrawal — return `false` so they can react"
-  ],
-  "next_lesson": "L2-10",
-  "related": ["L2-04", "L2-05", "L1-12"]
+    "id":  "L2-09",
+    "title":  "Bank Account Struct",
+    "level":  "L2",
+    "duration":  "9 min",
+    "story":  "You\u0027re coding a banking app for a school project. Accounts need to accept deposits, process withdrawals, and — most importantly — never let the balance go below zero!",
+    "why":  "Bank accounts are the perfect example of mutation methods — actions that read AND change the struct\u0027s internal data.",
+    "narrative":  "## Building a Safe Money Manager\n\nA bank account holds an owner\u0027s name and a balance. The balance changes over time — deposits add money, withdrawals take it out.\n\n### The Account Struct\n\n```xiom\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn main() -\u003e Int {\n  let my_account = Account{ owner: \"Quinn\", balance: 100.0 };\n  io.println(my_account.owner);\n  io.println(my_account.balance);\n  return 0;\n}\n```\n\n### Deposit and Withdraw Methods\n\n```xiom\nfn Account.deposit(self, amount: Float64) {\n  balance = balance + amount;\n}\n\nfn Account.withdraw(self, amount: Float64) -\u003e Bool {\n  if balance \u003e= amount {\n    balance = balance - amount;\n    return true;\n  }\n  return false;\n}\n\nfn main() -\u003e Int {\n  let acc = Account{ owner: \"Quinn\", balance: 100.0 };\n  acc.deposit(50.0);\n  io.println(acc.balance);  // 150.0\n\n  let ok = acc.withdraw(30.0);\n  io.println(ok);            // true\n  io.println(acc.balance);   // 120.0\n\n  let bad = acc.withdraw(500.0);\n  io.println(bad);           // false — not enough money\n  return 0;\n}\n```\n\n### Why Withdraw Returns Bool\n\nBy returning `true` on success and `false` on failure, the caller can check whether the withdrawal worked:\n\n```xiom\nfn main() -\u003e Int {\n  let acc = Account{ owner: \"Reese\", balance: 20.0 };\n  if acc.withdraw(30.0) {\n    io.println(\"Withdrawal successful!\");\n  } else {\n    io.println(\"Insufficient funds!\");\n  }\n  return 0;\n}\n```\n\n### Transfer Between Accounts\n\n```xiom\nfn Account.transfer(self, amount: Float64, other: Account) -\u003e Bool {\n  if balance \u003e= amount {\n    balance = balance - amount;\n    other.balance = other.balance + amount;\n    return true;\n  }\n  return false;\n}\n\nfn main() -\u003e Int {\n  let a = Account{ owner: \"Skyler\", balance: 100.0 };\n  let b = Account{ owner: \"Taylor\", balance: 50.0 };\n  a.transfer(30.0, b);\n  io.println(a.balance);  // 70.0\n  io.println(b.balance);  // 80.0\n  return 0;\n}\n```",
+    "analogy":  "A bank account is like a wallet. Deposit adds cash, withdraw takes cash out (but only if you have enough), and transfer moves cash from one wallet to another.",
+    "code_template":  "use xiom.io;\n\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\n// TODO: Write \u0027deposit\u0027 method — adds amount to balance\n\n// TODO: Write \u0027withdraw\u0027 method — subtracts amount IF balance \u003e= amount, returns Bool\n\nfn main() -\u003e Int {\n  // TODO: Create an account with 100.0, deposit 25.0, withdraw 40.0, print final balance\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn Account.deposit(self, amount: Float64) {\n  balance = balance + amount;\n}\n\nfn Account.withdraw(self, amount: Float64) -\u003e Bool {\n  if balance \u003e= amount {\n    balance = balance - amount;\n    return true;\n  }\n  return false;\n}\n\nfn main() -\u003e Int {\n  let acc = Account{ owner: \"Alex\", balance: 100.0 };\n  acc.deposit(25.0);\n  acc.withdraw(40.0);\n  io.println(acc.balance.to_str());\n  return 0;\n}\n",
+    "try_it":  "Add a `transfer` method that moves money from one account to another. It should return `false` if the source doesn\u0027t have enough funds. Test it with two accounts.",
+    "concepts":  [
+                     "mutation-methods",
+                     "guard-condition",
+                     "safe-withdrawal",
+                     "balance-management"
+                 ],
+    "tips":  [
+                 "Always check the balance before withdrawing — guard against negative balances",
+                 "Return `Bool` from withdrawal to let the caller know if it succeeded",
+                 "Mutation methods don\u0027t need a return type — they change the struct\u0027s fields directly"
+             ],
+    "common_mistakes":  [
+                            "Allowing withdrawal even when balance is too low — always add the `if balance \u003e= amount` check",
+                            "Forgetting to use `balance = balance - amount` and writing `balance - amount` instead (no effect)",
+                            "Confusing the caller by returning nothing from a failed withdrawal — return `false` so they can react"
+                        ],
+    "next_lesson":  "L2-10",
+    "related":  [
+                    "L2-04",
+                    "L2-05",
+                    "L1-12"
+                ]
 }

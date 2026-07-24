@@ -7,10 +7,19 @@
   "why": "Map[K,V] is doubly generic — recognizing this lets you model diverse real-world relationships: Int→Str, Str→Bool, Int→Float64, and custom types.",
   "narrative": "## The Two-Parameter Generic\n\n`Map[K,V]` has TWO type parameters: `K` for keys and `V` for values. This gives you enormous flexibility — you can pair any key type with any value type.\n\n### Common Map Variations\n\n```xiom\nlet name_to_score: Map[Str,Int] = Map[Str,Int].new();\nlet id_to_name: Map[Int,Str] = Map[Int,Str].new();\nlet product_in_stock: Map[Str,Bool] = Map[Str,Bool].new();\nlet price_list: Map[Str,Float64] = Map[Str,Float64].new();\n```\n\n### Using Different Key-Value Combinations\n\n```xiom\nid_to_name.insert(1001, \"Alice\");\nid_to_name.insert(1002, \"Bob\");\n\nproduct_in_stock.insert(\"SKU-001\", true);\nproduct_in_stock.insert(\"SKU-002\", false);\n\nprice_list.insert(\"apple\", 0.99);\nprice_list.insert(\"banana\", 0.59);\n```\n\n### Generic Functions on Any Map\n\n```xiom\nfn map_size[K,V](m: Map[K,V]) -> Int {\n  return m.len();\n}\n\nfn key_exists[K,V](m: Map[K,V], key: K) -> Bool {\n  return m.contains(key);\n}\n```\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let ids: Map[Int,Str] = Map[Int,Str].new();\n  ids.insert(100, \"Alice\");\n  ids.insert(200, \"Bob\");\n\n  let stock: Map[Str,Bool] = Map[Str,Bool].new();\n  stock.insert(\"potion\", true);\n  stock.insert(\"elixir\", false);\n\n  match ids.get(100) {\n    Some(name) -> io.println(\"ID 100: \" + name);\n    None -> io.println(\"Not found\");\n  }\n\n  match stock.get(\"potion\") {\n    Some(in_stock) -> io.println(in_stock);\n    None -> io.println(\"Unknown item\");\n  }\n\n  return 0;\n}\n```",
   "analogy": "A Map[K,V] is like a filing cabinet with customizable labels. You choose what goes on the tab (K — Int for numbered files, Str for alphabetical) and what goes inside (V — Str for names, Bool for yes/no flags). The cabinet works the same regardless of the labeling system you choose.",
-  "code_template": "fn main() -> Int {\n  // TODO: Create a Map[Int,Float64] for product prices by ID\n  let prices: Map[Int,Float64] = Map[Int,Float64].new();\n  // TODO: Insert 1 -> 9.99, 2 -> 14.50, 3 -> 2.75\n  // TODO: Create a Map[Str,Bool] for feature flags\n  // TODO: Print the price of product 2, check if \"dark_mode\" is enabled\n  return 0;\n}\n",
-  "solution": "fn main() -> Int {\n  let prices: Map[Int,Float64] = Map[Int,Float64].new();\n  prices.insert(1, 9.99);\n  prices.insert(2, 14.50);\n  prices.insert(3, 2.75);\n\n  let features: Map[Str,Bool] = Map[Str,Bool].new();\n  features.insert(\"dark_mode\", true);\n  features.insert(\"beta_tester\", false);\n\n  match prices.get(2) {\n    Some(p) -> io.println(\"Price: \" + string.float_to_str(p));\n    None -> io.println(\"Not found\");\n  }\n\n  match features.get(\"dark_mode\") {\n    Some(enabled) -> io.println(enabled);\n    None -> io.println(\"Unknown feature\");\n  }\n\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn main() -> Int {\n  // TODO: Create a Map[Int,Float64] for product prices by ID\n  let prices: Map[Int,Float64] = Map[Int,Float64].new();\n  // TODO: Insert 1 -> 9.99, 2 -> 14.50, 3 -> 2.75\n  // TODO: Create a Map[Str,Bool] for feature flags\n  // TODO: Print the price of product 2, check if \"dark_mode\" is enabled\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  let prices: Map[Int,Float64] = Map[Int,Float64].new();\n  prices.insert(1, 9.99);\n  prices.insert(2, 14.50);\n  prices.insert(3, 2.75);\n\n  let features: Map[Str,Bool] = Map[Str,Bool].new();\n  features.insert(\"dark_mode\", true);\n  features.insert(\"beta_tester\", false);\n\n  match prices.get(2) {\n    Some(p) -> io.println(\"Price: \" + string.float_to_str(p));\n    None -> io.println(\"Not found\");\n  }\n\n  match features.get(\"dark_mode\") {\n    Some(enabled) -> io.println(enabled.to_str());\n    None -> io.println(\"Unknown feature\");\n  }\n\n  return 0;\n}\n",
   "try_it": "Create a Map[Int,Float64] that maps student IDs to their GPA. Create a Map[Str,Vec[Str]] where each key (a category) maps to a Vec of items in that category. Write a generic `print_map[K,V]` function that takes a Map and a Vec of keys and prints each key-value pair.",
-  "concepts": ["Map", "generics", "K", "V", "key-value", "generic-container", "parameterized-type", "multiple-type-params"],
+  "concepts": [
+    "Map",
+    "generics",
+    "K",
+    "V",
+    "key-value",
+    "generic-container",
+    "parameterized-type",
+    "multiple-type-params"
+  ],
   "tips": [
     "`Map[K,V]` means K and V can be any types — they're independent of each other",
     "Common patterns: Map[Str,Int] for names to counts, Map[Int,Str] for IDs to names, Map[Str,Bool] for feature flags",
@@ -22,5 +31,10 @@
     "Expecting Map to iterate in key order — Map doesn't guarantee any particular order"
   ],
   "next_lesson": "L5-23",
-  "related": ["L5-09", "L5-10", "L5-21", "L5-18"]
+  "related": [
+    "L5-09",
+    "L5-10",
+    "L5-21",
+    "L5-18"
+  ]
 }

@@ -1,26 +1,36 @@
 {
-  "id": "L4-02",
-  "title": "Requires in Action",
-  "level": "L4",
-  "duration": "11 min",
-  "story": "You're tired of seeing 'square root of negative number' crashes in your math library. Instead of adding if-checks inside every function, you want to declare upfront: 'Callers must give me a non-negative number. If they don't, stop them at the door.' XIOM's `requires:` clause does exactly that — it validates inputs BEFORE your function body even runs.",
-  "why": "`requires:` catches invalid inputs at the call site, preventing bad data from propagating through your program where it causes confusing errors far from the source.",
-  "narrative": "## Preconditions: Guarding the Door\n\nA `requires:` clause declares what must be true BEFORE the function executes. It's the caller's contract — if the caller breaks it, the program traps immediately.\n\n### Safe Square Root\n\n```xiom\nfn sqrt(x: Float64) -> Float64\n  requires: x >= 0.0;\n{\n  return x / 2.0;\n}\n```\n\nThe `requires: x >= 0.0;` means: 'I will only compute sqrt if x is non-negative. If you pass -5.0, I will refuse.'\n\n### Safe Array Access\n\n```xiom\nfn get_item(index: Int, size: Int) -> Int\n  requires: index >= 0;\n  requires: index < size;\n{\n  return index;\n}\n```\n\nMultiple `requires:` clauses are all checked independently. Both must pass for the function to run.\n\n### Safe Withdrawal\n\n```xiom\nfn withdraw(balance: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= balance;\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  let bal = withdraw(100, 30);\n  io.println(string.int_to_str(bal));\n  return 0;\n}\n```\n\n### Requires with Struct Fields\n\n```xiom\ntype Player = {\n  health: Int;\n  max_health: Int;\n}\n\nfn heal(p: Player, amount: Int) -> Int\n  requires: amount > 0;\n  requires: p.health + amount <= p.max_health;\n{\n  return p.health + amount;\n}\n```\n\n### Order Matters\n\nChain requires from most fundamental to most specific:\n\n```xiom\nfn transfer(from: Int, to: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= from;\n{\n  return from - amount;\n}\n```\n\nFirst check the amount is positive (basic validity), then check sufficient funds (domain-specific).\n\n### What Requires CAN'T Do\n\n- Access global mutable state\n- Call functions with side effects  \n- Perform I/O operations\n\nRequires is for pure validation only — checking parameter values against conditions.",
-  "analogy": "`requires:` is like a bouncer at a club. Before you enter, the bouncer checks: are you over 21? (amount > 0) Do you have a valid ID? (amount <= balance). If you fail, you don't get in — the bouncer stops you at the velvet rope. The club (function body) never sees your invalid ID. Each `requires:` is another item on the bouncer's checklist.",
-  "code_template": "fn sqrt(x: Float64) -> Float64\n  // TODO: add requires: x >= 0.0;\n{\n  return x / 2.0;\n}\n\nfn withdraw(balance: Int, amount: Int) -> Int\n  // TODO: add requires: amount > 0;\n  // TODO: add requires: amount <= balance;\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  // TODO: call sqrt with 25.0\n  // TODO: call withdraw with balance=200, amount=50\n  return 0;\n}\n",
-  "solution": "fn sqrt(x: Float64) -> Float64\n  requires: x >= 0.0;\n{\n  return x / 2.0;\n}\n\nfn withdraw(balance: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= balance;\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  let s = sqrt(25.0);\n  io.println(string.float_to_str(s));\n  let b = withdraw(200, 50);\n  io.println(string.int_to_str(b));\n  return 0;\n}\n",
-  "try_it": "Test the contract by calling sqrt(-9.0) — the program should trap before the function body runs. Test withdraw(100, 200) — should trap on 'amount <= balance'. Add a `get_item` function with `requires: index >= 0;` and `requires: index < size;`. Call get_item with index=5, size=3 — the second requires should trap. Write a `set_age` function that requires age between 0 and 150. What happens if you pass age=200?",
-  "concepts": ["requires", "precondition", "contract-clause", "input-validation", "defensive-programming"],
-  "tips": [
-    "Chain requires from most basic (is it positive?) to most specific (is it within my budget?)",
-    "Each requires should be a simple boolean expression — complex logic belongs in the function body, not the contract",
-    "When a requires fails, XIOM shows which one failed and with what values — great for debugging"
-  ],
-  "common_mistakes": [
-    "Writing `requires: balance > amount` but the code never actually uses `balance` — the contract should reference real parameters",
-    "Putting the validation inside the function body with if/return Err — that defeats the purpose of contracts for simple cases",
-    "Forgetting that ALL requires are checked — even if the first one would fail, the compiler may show all violations"
-  ],
-  "next_lesson": "L4-03",
-  "related": ["L4-01", "L4-04", "L3-13"]
+    "id":  "L4-02",
+    "title":  "Requires in Action",
+    "level":  "L4",
+    "duration":  "11 min",
+    "story":  "You\u0027re tired of seeing \u0027square root of negative number\u0027 crashes in your math library. Instead of adding if-checks inside every function, you want to declare upfront: \u0027Callers must give me a non-negative number. If they don\u0027t, stop them at the door.\u0027 XIOM\u0027s `requires:` clause does exactly that — it validates inputs BEFORE your function body even runs.",
+    "why":  "`requires:` catches invalid inputs at the call site, preventing bad data from propagating through your program where it causes confusing errors far from the source.",
+    "narrative":  "## Preconditions: Guarding the Door\n\nA `requires:` clause declares what must be true BEFORE the function executes. It\u0027s the caller\u0027s contract — if the caller breaks it, the program traps immediately.\n\n### Safe Square Root\n\n```xiom\nfn sqrt(x: Float64) -\u003e Float64\n  requires: x \u003e= 0.0;\n{\n  return x / 2.0;\n}\n```\n\nThe `requires: x \u003e= 0.0;` means: \u0027I will only compute sqrt if x is non-negative. If you pass -5.0, I will refuse.\u0027\n\n### Safe Array Access\n\n```xiom\nfn get_item(index: Int, size: Int) -\u003e Int\n  requires: index \u003e= 0;\n  requires: index \u003c size;\n{\n  return index;\n}\n```\n\nMultiple `requires:` clauses are all checked independently. Both must pass for the function to run.\n\n### Safe Withdrawal\n\n```xiom\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= balance;\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  let bal = withdraw(100, 30);\n  io.println(string.int_to_str(bal));\n  return 0;\n}\n```\n\n### Requires with Struct Fields\n\n```xiom\ntype Player = {\n  health: Int;\n  max_health: Int;\n}\n\nfn heal(p: Player, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: p.health + amount \u003c= p.max_health;\n{\n  return p.health + amount;\n}\n```\n\n### Order Matters\n\nChain requires from most fundamental to most specific:\n\n```xiom\nfn transfer(from: Int, to: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= from;\n{\n  return from - amount;\n}\n```\n\nFirst check the amount is positive (basic validity), then check sufficient funds (domain-specific).\n\n### What Requires CAN\u0027T Do\n\n- Access global mutable state\n- Call functions with side effects  \n- Perform I/O operations\n\nRequires is for pure validation only — checking parameter values against conditions.",
+    "analogy":  "`requires:` is like a bouncer at a club. Before you enter, the bouncer checks: are you over 21? (amount \u003e 0) Do you have a valid ID? (amount \u003c= balance). If you fail, you don\u0027t get in — the bouncer stops you at the velvet rope. The club (function body) never sees your invalid ID. Each `requires:` is another item on the bouncer\u0027s checklist.",
+    "code_template":  "use xiom.io;\n\nfn sqrt(x: Float64) -\u003e Float64\n  // TODO: add requires: x \u003e= 0.0;\n{\n  return x / 2.0;\n}\n\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  // TODO: add requires: amount \u003e 0;\n  // TODO: add requires: amount \u003c= balance;\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  // TODO: call sqrt with 25.0\n  // TODO: call withdraw with balance=200, amount=50\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\nfn sqrt(x: Float64) -\u003e Float64\n  requires: x \u003e= 0.0;\n{\n  return x / 2.0;\n}\n\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= balance;\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  let s = sqrt(25.0);\n  io.println(string.float_to_str(s));\n  let b = withdraw(200, 50);\n  io.println(string.int_to_str(b));\n  return 0;\n}\n",
+    "try_it":  "Test the contract by calling sqrt(-9.0) — the program should trap before the function body runs. Test withdraw(100, 200) — should trap on \u0027amount \u003c= balance\u0027. Add a `get_item` function with `requires: index \u003e= 0;` and `requires: index \u003c size;`. Call get_item with index=5, size=3 — the second requires should trap. Write a `set_age` function that requires age between 0 and 150. What happens if you pass age=200?",
+    "concepts":  [
+                     "requires",
+                     "precondition",
+                     "contract-clause",
+                     "input-validation",
+                     "defensive-programming"
+                 ],
+    "tips":  [
+                 "Chain requires from most basic (is it positive?) to most specific (is it within my budget?)",
+                 "Each requires should be a simple boolean expression — complex logic belongs in the function body, not the contract",
+                 "When a requires fails, XIOM shows which one failed and with what values — great for debugging"
+             ],
+    "common_mistakes":  [
+                            "Writing `requires: balance \u003e amount` but the code never actually uses `balance` — the contract should reference real parameters",
+                            "Putting the validation inside the function body with if/return Err — that defeats the purpose of contracts for simple cases",
+                            "Forgetting that ALL requires are checked — even if the first one would fail, the compiler may show all violations"
+                        ],
+    "next_lesson":  "L4-03",
+    "related":  [
+                    "L4-01",
+                    "L4-04",
+                    "L3-13"
+                ]
 }

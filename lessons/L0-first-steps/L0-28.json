@@ -5,23 +5,36 @@
   "duration": "6 min",
   "story": "You wake up and check your phone for the weather before school. It says 25 degrees and sunny. Should you wear shorts or a jacket? Your brain checks two things: 'Is it warm?' AND 'Is it sunny?' Let's teach your program to make the same decision!",
   "why": "Real decisions combine multiple conditions. By checking temperature AND sunlight together, your program can give smarter advice than just looking at one thing.",
-  "narrative": "## Decisions with Multiple Conditions\n\nLast time you learned how `if`/`else` checks a single condition. But real life is messier \u2014 what to wear depends on temperature AND whether it's sunny AND whether it's raining. Your program can handle all of these at once.\n\n### Checking Temperature and Sunshine\n\nLet's build a program that looks at the weather and tells you what to wear:\n\n```xiom\nfn main() {\n  let temperature: Int = 25;\n  let is_sunny: Bool = true;\n\n  if temperature > 20 && is_sunny {\n    io.println(\"Wear shorts and a t-shirt \u2014 it's warm and sunny!\");\n  } else {\n    io.println(\"Better bring a jacket just in case.\");\n  }\n}\n```\n\nThe `&&` symbol means \"AND\" \u2014 both conditions must be true for the first branch to run. If the temperature is above 20 AND it's sunny, wear shorts. Otherwise, bring a jacket.\n\n### What If It's Raining?\n\nYou can add a check for rain using `||` which means \"OR\":\n\n```xiom\nfn main() {\n  let temperature: Int = 25;\n  let is_sunny: Bool = false;\n  let is_raining: Bool = true;\n\n  if temperature > 20 && is_sunny {\n    io.println(\"Shorts weather!\");\n  } elif is_raining {\n    io.println(\"Grab an umbrella and a raincoat!\");\n  } else {\n    io.println(\"A light jacket should be fine.\");\n  }\n}\n```\n\nThe computer checks: warm and sunny? No (it's not sunny). Then checks: raining? Yes \u2014 prints the umbrella message. The key insight: the `&&` combines two Booleans into one bigger condition.",
-  "analogy": "Using `&&` is like needing both a key AND a card to open a door \u2014 if either is missing, the door stays locked.",
-  "code_template": "fn main() {\n  // TODO: Create a variable 'temperature' and set it to a number\n  // TODO: Create a Boolean 'is_sunny' set to true or false\n  // TODO: Write an if statement: if temperature > 20 AND is_sunny, print \"Wear shorts!\"\n  // TODO: Else, print \"Wear a jacket!\"\n}\n",
-  "solution": "fn main() {\n  let temperature: Int = 25;\n  let is_sunny: Bool = true;\n\n  if temperature > 20 && is_sunny {\n    io.println(\"Wear shorts and a t-shirt!\");\n  } else {\n    io.println(\"Better wear a jacket.\");\n  }\n\n  let is_raining: Bool = false;\n\n  if is_raining {\n    io.println(\"Don't forget your umbrella!\");\n  } else {\n    io.println(\"No rain today \u2014 leave the umbrella at home.\");\n  }\n}\n",
-  "try_it": "Add a check for rain: create an `is_raining` Boolean and use `||` (OR) to print \"Stay inside and watch a movie!\" if it's cold OR raining. Try different combinations of temperature and weather \u2014 how does the output change?",
-  "concepts": ["if", "else", "elif", "Bool", "&&", "||", "multiple conditions", "weather logic"],
+  "narrative": "## Decisions with Multiple Conditions\n\nLast time you learned how `if`/`else` checks a single condition. But real life is messier � what to wear depends on temperature AND whether it's sunny AND whether it's raining. Your program can handle all of these at once.\n\n### Checking Temperature and Sunshine\n\nLet's build a program that looks at the weather and tells you what to wear:\n\n```xiom\nfn main() {\n  let temperature: Int = 25;\n  let is_sunny: Bool = true;\n\n  if temperature > 20 && is_sunny {\n    io.println(\"Wear shorts and a t-shirt � it's warm and sunny!\");\n  } else {\n    io.println(\"Better bring a jacket just in case.\");\n  }\n}\n```\n\nThe `&&` symbol means \"AND\" � both conditions must be true for the first branch to run. If the temperature is above 20 AND it's sunny, wear shorts. Otherwise, bring a jacket.\n\n### What If It's Raining?\n\nYou can add a check for rain using `||` which means \"OR\":\n\n```xiom\nfn main() {\n  let temperature: Int = 25;\n  let is_sunny: Bool = false;\n  let is_raining: Bool = true;\n\n  if temperature > 20 && is_sunny {\n    io.println(\"Shorts weather!\");\n  } elif is_raining {\n    io.println(\"Grab an umbrella and a raincoat!\");\n  } else {\n    io.println(\"A light jacket should be fine.\");\n  }\n}\n```\n\nThe computer checks: warm and sunny? No (it's not sunny). Then checks: raining? Yes � prints the umbrella message. The key insight: the `&&` combines two Booleans into one bigger condition.",
+  "analogy": "Using `&&` is like needing both a key AND a card to open a door � if either is missing, the door stays locked.",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable 'temperature' and set it to a number\n  // TODO: Create a Boolean 'is_sunny' set to true or false\n  // TODO: Write an if statement: if temperature > 20 AND is_sunny, print \"Wear shorts!\"\n  // TODO: Else, print \"Wear a jacket!\"\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let temperature: Int = 25;\n  let is_sunny: Bool = true;\n\n  if temperature > 20 && is_sunny {\n    io.println(\"Wear shorts and a t-shirt!\");\n  } else {\n    io.println(\"Better wear a jacket.\");\n  }\n\n  let is_raining: Bool = false;\n\n  if is_raining {\n    io.println(\"Don't forget your umbrella!\");\n  } else {\n    io.println(\"No rain today � leave the umbrella at home.\");\n  }\n}\n",
+  "try_it": "Add a check for rain: create an `is_raining` Boolean and use `||` (OR) to print \"Stay inside and watch a movie!\" if it's cold OR raining. Try different combinations of temperature and weather � how does the output change?",
+  "concepts": [
+    "if",
+    "else",
+    "elif",
+    "Bool",
+    "&&",
+    "||",
+    "multiple conditions",
+    "weather logic"
+  ],
   "tips": [
-    "`&&` means AND \u2014 both sides must be true for the whole thing to be true.",
-    "`||` means OR \u2014 if either side is true, the whole thing is true.",
+    "`&&` means AND � both sides must be true for the whole thing to be true.",
+    "`||` means OR � if either side is true, the whole thing is true.",
     "Use descriptive Boolean names starting with `is_` or `has_`: `is_sunny`, `is_raining`, `has_umbrella`.",
     "You can combine as many conditions as you need: `a > 5 && b < 10 && is_ready`."
   ],
   "common_mistakes": [
-    "Writing `and` or `or` instead of `&&` and `||` \u2014 XIOM uses the symbols, not the words.",
-    "Forgetting that `&&` needs both sides to be true \u2014 if either is false, the whole condition is false.",
-    "Putting a semicolon after the condition: `if temperature > 20; {` \u2014 no semicolon before the opening brace."
+    "Writing `and` or `or` instead of `&&` and `||` � XIOM uses the symbols, not the words.",
+    "Forgetting that `&&` needs both sides to be true � if either is false, the whole condition is false.",
+    "Putting a semicolon after the condition: `if temperature > 20; {` � no semicolon before the opening brace."
   ],
   "next_lesson": "L0-29",
-  "related": ["L0-07", "L0-08", "L0-09"]
+  "related": [
+    "L0-07",
+    "L0-08",
+    "L0-09"
+  ]
 }

@@ -7,10 +7,16 @@
   "why": "Loops with lists of strings introduce the powerful combination of iterating over collections of data — a pattern you'll use in nearly every program.",
   "narrative": "## Printing the Rainbow\n\nA `for` loop is perfect for going through a list of items one by one. Let's build a program that prints each color of the rainbow with a number.\n\n### The Rainbow Loop\n\n```xiom\nfn main() {\n  let colors = [\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\"];\n  var count: Int = 1;\n\n  io.println(\"The Colors of the Rainbow:\");\n  for color in colors {\n    io.println(count);\n    io.println(\". \");\n    io.println(color);\n    count = count + 1;\n  }\n}\n```\n\nLet's break it down:\n- `let colors = [...]` creates a list of strings — seven colors in order.\n- `var count: Int = 1` starts a counter. We use `var` because we'll update it.\n- `for color in colors` loops through each color. `color` becomes \"Red\" the first time, \"Orange\" the second, and so on.\n- Inside the loop, we print the number, then the color, then increase the count.\n\nThe output is a beautiful numbered list of every color in the rainbow!",
   "analogy": "A for loop over a list is like reading a shopping list — you go through each item one by one, handling it before moving to the next.",
-  "code_template": "fn main() {\n  // TODO: create a list (array) of rainbow colors\n  // TODO: use a 'for' loop to print each color with a number before it\n}\n",
-  "solution": "fn main() {\n  let colors = [\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\"];\n  var count: Int = 1;\n  for color in colors {\n    io.println(count);\n    io.println(\". \");\n    io.println(color);\n    count = count + 1;\n  }\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: create a list (array) of rainbow colors\n  // TODO: use a 'for' loop to print each color with a number before it\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let colors = [\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\"];\n  var count: Int = 1;\n  for color in colors {\n    io.println(\"1\");\n    io.println(\". \");\n    io.println(color);\n    count = count + 1;\n  }\n}\n",
   "try_it": "Add 'Pink' and 'Turquoise' to the list. Then create a list of your top 5 favorite foods and print them with a countdown from 5 to 1.",
-  "concepts": ["for-loop", "lists", "iteration", "collections", "strings"],
+  "concepts": [
+    "for-loop",
+    "lists",
+    "iteration",
+    "collections",
+    "strings"
+  ],
   "tips": [
     "Use `var` for the counter since it changes each loop — `let` would prevent you from updating it",
     "The loop variable (`color`) takes on each value from the list automatically — you don't need to index into the list manually",
@@ -21,5 +27,9 @@
     "Forgetting to increment the counter — without `count = count + 1`, every color prints as number 1"
   ],
   "next_lesson": "L0-50",
-  "related": ["L0-11", "L0-06", "L0-47"]
+  "related": [
+    "L0-11",
+    "L0-06",
+    "L0-47"
+  ]
 }

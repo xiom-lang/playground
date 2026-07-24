@@ -7,10 +7,16 @@
   "why": "Fibonacci generation teaches iterative accumulation — a fundamental pattern where each step depends on previous results, perfect for while loops and Vec.",
   "narrative": "## Generating Fibonacci Numbers\n\n### The Sequence\n\nF(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2)\n\n0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144...\n\n### Iterative Implementation\n\n```xiom\nfn fibonacci(count: Int) -> Vec[Int] {\n  let mut fibs: Vec[Int] = Vec[Int].new();\n  if count >= 1 { fibs.push(0); };\n  if count >= 2 { fibs.push(1); };\n\n  let mut i = 2;\n  while i < count {\n    let a = fibs.get(i - 2).unwrap();\n    let b = fibs.get(i - 1).unwrap();\n    fibs.push(a + b);\n    i += 1;\n  };\n  fibs\n}\n```\n\n### Why Iterative, Not Recursive\n\n```xiom\nfn fib_recursive(n: Int) -> Int {\n  if n <= 1 { return n; };\n  fib_recursive(n - 1) + fib_recursive(n - 2)\n}\n```\n\nThis recursive version recalculates the same values millions of times for n=50. The iterative version calculates each value once. For n=50, iterative takes microseconds; recursive takes hours.\n\n### The Golden Ratio\n\nAs n grows, F(n+1)/F(n) approaches approximately 1.618 — the golden ratio φ. Try computing this ratio for large n.",
   "analogy": "Fibonacci numbers are like a growing snowball rolling downhill — each new layer is the size of the previous two combined. The snowball starts tiny (0, 1) but grows exponentially. Your program tracks its growth at every step.",
-  "code_template": "fn generate_fibonacci(count: Int) -> Vec[Int] {\n  // TODO: generate first 'count' fibonacci numbers\n  // F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2)\n}\n\nfn main() -> Int {\n  // TODO: generate and print first 20 fibonacci numbers\n  return 0;\n}\n",
-  "solution": "fn generate_fibonacci(count: Int) -> Vec[Int] {\n  let mut fibs: Vec[Int] = Vec[Int].new();\n  if count >= 1 { fibs.push(0); };\n  if count >= 2 { fibs.push(1); };\n  let mut i = 2;\n  while i < count {\n    let a = fibs.get(i - 2).unwrap();\n    let b = fibs.get(i - 1).unwrap();\n    fibs.push(a + b);\n    i += 1;\n  };\n  fibs\n}\n\nfn main() -> Int {\n  let fibs = generate_fibonacci(20);\n  let mut i = 0;\n  while i < fibs.len() {\n    io.println(fibs.get(i).unwrap());\n    i += 1;\n  };\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn generate_fibonacci(count: Int) -> Vec[Int] {\n  // TODO: generate first 'count' fibonacci numbers\n  // F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2)\n}\n\nfn main() -> Int {\n  // TODO: generate and print first 20 fibonacci numbers\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn generate_fibonacci(count: Int) -> Vec[Int] {\n  let mut fibs: Vec[Int] = Vec[Int].new();\n  if count >= 1 { fibs.push(0); };\n  if count >= 2 { fibs.push(1); };\n  let mut i = 2;\n  while i < count {\n    let a = fibs.get(i - 2).unwrap();\n    let b = fibs.get(i - 1).unwrap();\n    fibs.push(a + b);\n    i += 1;\n  };\n  fibs\n}\n\nfn main() -> Int {\n  let fibs = generate_fibonacci(20);\n  let mut i = 0;\n  while i < fibs.len() {\n    io.println(fibs.get(i).unwrap().to_str());\n    i += 1;\n  };\n  return 0;\n}\n",
   "try_it": "Find the first Fibonacci number greater than 1 million. Calculate the ratio F(n+1)/F(n) for n=10, 20, 30 and see how it approaches the golden ratio. Try generating 50 terms — when do the numbers get too large for Int?",
-  "concepts": ["fibonacci", "iterative-algorithm", "Vec", "accumulation", "golden-ratio"],
+  "concepts": [
+    "fibonacci",
+    "iterative-algorithm",
+    "Vec",
+    "accumulation",
+    "golden-ratio"
+  ],
   "tips": [
     "Iterative is always faster than recursive for Fibonacci",
     "Store previous two values (a, b) and update: (a, b) = (b, a+b)",
@@ -22,5 +28,9 @@
     "Forgetting to handle count=0 or count=1 edge cases separately"
   ],
   "next_lesson": "L7-03",
-  "related": ["L7-01", "L1-18", "L2-36"]
+  "related": [
+    "L7-01",
+    "L1-18",
+    "L2-36"
+  ]
 }

@@ -7,12 +7,31 @@
   "why": "Wrapping each arithmetic operation in its own function creates a calculator where every button is a clean, independent piece of logic.",
   "narrative": "## Building a Modular Calculator\n\nInstead of writing `a + b` everywhere, wrap each operation in a named function. Your calculator becomes a collection of interchangeable tools.\n\n### The Four Core Operations\n\n```xiom\nfn add(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn subtract(a: Int, b: Int) -> Int {\n  return a - b;\n}\n\nfn multiply(a: Int, b: Int) -> Int {\n  return a * b;\n}\n\nfn divide(a: Int, b: Int) -> Int {\n  if b == 0 {\n    return 0;\n  }\n  return a / b;\n}\n```\n\n### Wiring Everything in main()\n\n```xiom\nfn main() -> Int {\n  let x = 24;\n  let y = 6;\n\n  let sum = add(x, y);\n  let diff = subtract(x, y);\n  let prod = multiply(x, y);\n  let quot = divide(x, y);\n\n  io.println(\"Results computed!\");\n\n  return sum;\n}\n```\n\n### Why This Pattern Matters\n\n- **Readability**: `add(10, 5)` is clearer than `10 + 5` in context\n- **Safety**: `divide()` includes the zero-check so you never forget it\n- **Testability**: You can test each operation independently\n- **Extensibility**: Want a `power()` function? Add it alongside the others",
   "analogy": "A calculator's keypad has separate buttons for +, -, x, and /. Each button is like a function — press it, give it two numbers, get a result. The buttons are independent; replacing the multiply button doesn't break the add button.",
-  "code_template": "// TODO: Write four functions: add, subtract, multiply, divide\n// Each takes two Int parameters and returns an Int\n// divide() should return 0 if b is 0\n// Call all four from main() with two numbers\n\nfn main() -> Int {\n  let a = 30;\n  let b = 5;\n  // TODO: Call your functions and print results\n  return 0;\n}",
-  "solution": "fn add(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn subtract(a: Int, b: Int) -> Int {\n  return a - b;\n}\n\nfn multiply(a: Int, b: Int) -> Int {\n  return a * b;\n}\n\nfn divide(a: Int, b: Int) -> Int {\n  if b == 0 {\n    return 0;\n  }\n  return a / b;\n}\n\nfn main() -> Int {\n  let a = 30;\n  let b = 5;\n  let sum = add(a, b);\n  let diff = subtract(a, b);\n  let prod = multiply(a, b);\n  let quot = divide(a, b);\n  io.println(\"All calculations complete!\");\n  return sum;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write four functions: add, subtract, multiply, divide\n// Each takes two Int parameters and returns an Int\n// divide() should return 0 if b is 0\n// Call all four from main() with two numbers\n\nfn main() {\n  let a = 30;\n  let b = 5;\n  // TODO: Call your functions and print results\n}",
+  "solution": "use xiom.io;\nfn add(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn subtract(a: Int, b: Int) -> Int {\n  return a - b;\n}\n\nfn multiply(a: Int, b: Int) -> Int {\n  return a * b;\n}\n\nfn divide(a: Int, b: Int) -> Int {\n  if b == 0 {\n  }\n  return a / b;\n}\n\nfn main() {\n  let a = 30;\n  let b = 5;\n  let sum = add(a, b);\n  let diff = subtract(a, b);\n  let prod = multiply(a, b);\n  let quot = divide(a, b);\n  io.println(\"All calculations complete!\");\n}",
   "try_it": "Add a fifth function `modulus(a, b)` that returns the remainder of a divided by b, and test it with different number pairs.",
-  "concepts": ["arithmetic functions", "return values", "parameter usage", "safe division"],
-  "tips": ["Give each function exactly one arithmetic job", "Handle edge cases inside the function — like divide by zero", "Use the same parameter names (a, b) across similar functions for consistency", "Call the functions with descriptive variable names: `let sum = add(x, y);`"],
-  "common_mistakes": ["Forgetting to handle division by zero — your program will crash", "Mixing up parameter order: `subtract(b, a)` instead of `subtract(a, b)`", "Not returning a value from a function that declares a return type"],
+  "concepts": [
+    "arithmetic functions",
+    "return values",
+    "parameter usage",
+    "safe division"
+  ],
+  "tips": [
+    "Give each function exactly one arithmetic job",
+    "Handle edge cases inside the function — like divide by zero",
+    "Use the same parameter names (a, b) across similar functions for consistency",
+    "Call the functions with descriptive variable names: `let sum = add(x, y);`"
+  ],
+  "common_mistakes": [
+    "Forgetting to handle division by zero — your program will crash",
+    "Mixing up parameter order: `subtract(b, a)` instead of `subtract(a, b)`",
+    "Not returning a value from a function that declares a return type"
+  ],
   "next_lesson": "L1-23",
-  "related": ["L1-01", "L1-02", "L1-03", "L1-50"]
+  "related": [
+    "L1-01",
+    "L1-02",
+    "L1-03",
+    "L1-50"
+  ]
 }

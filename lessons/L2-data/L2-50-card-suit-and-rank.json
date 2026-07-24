@@ -7,19 +7,31 @@
   "why": "Two enums combined in one struct is the canonical card-deck pattern used in every card game.",
   "narrative": "## Modeling a Deck of Cards\n\nA standard playing card has two independent dimensions: suit and rank. Both are enums.\n\n### The Suit Enum\n\n```xiom\nenum Suit {\n  Hearts,\n  Diamonds,\n  Clubs,\n  Spades,\n}\n```\n\n### The Rank Enum\n\n```xiom\nenum Rank {\n  Ace,\n  Two,\n  Three,\n  Four,\n  Five,\n  Six,\n  Seven,\n  Eight,\n  Nine,\n  Ten,\n  Jack,\n  Queen,\n  King,\n}\n```\n\n### The Card Struct\n\n```xiom\ntype Card = {\n  suit: Suit;\n  rank: Rank;\n}\n```\n\n### Creating Cards\n\n```xiom\nlet ace_spades = Card{ suit: Suit.Spades; rank: Rank.Ace; };\nlet king_hearts = Card{ suit: Suit.Hearts; rank: Rank.King; };\nlet two_clubs = Card{ suit: Suit.Clubs; rank: Rank.Two; };\n```\n\n### Describing a Card\n\nConvert the rank to a display name, then build a full description:\n\n```xiom\nfn rank_name(r: Rank) -> Str {\n  match r {\n    Ace => { return \"Ace\"; }\n    Two => { return \"2\"; }\n    Jack => { return \"Jack\"; }\n    Queen => { return \"Queen\"; }\n    King => { return \"King\"; }\n    _ => { return \"?\"; }\n  }\n}\n\nfn suit_symbol(s: Suit) -> Str {\n  match s {\n    Hearts => { return \"\\u2665\"; }\n    Diamonds => { return \"\\u2666\"; }\n    Clubs => { return \"\\u2663\"; }\n    Spades => { return \"\\u2660\"; }\n  }\n}\n\nfn Card.describe(self) -> Str {\n  return rank_name(rank) + \" of \" + suit_symbol(suit);\n}\n```\n\n### Building a Hand\n\n```xiom\nlet hand = Card{\n  suit: Suit.Hearts;\n  rank: Rank.Ace;\n};\n```\n\n### Checking for Pairs\n\n```xiom\nfn is_pair(a: Card, b: Card) -> Bool {\n  return a.rank == b.rank;\n}\n```\n\nA pair means same rank, regardless of suit.",
   "analogy": "A Card is a marriage of two independent choices: the suit (the symbol in the corner) and the rank (Ace through King). The deck is all 52 possible combinations. describe reads the card aloud like a dealer at a casino table.",
-  "code_template": "enum Suit {\n  Hearts,\n  Diamonds,\n  Clubs,\n  Spades,\n}\n\nenum Rank {\n  Ace,\n  Two,\n  Three,\n  Four,\n  Five,\n  Six,\n  Seven,\n  Eight,\n  Nine,\n  Ten,\n  Jack,\n  Queen,\n  King,\n}\n\ntype Card = {\n  suit: Suit;\n  rank: Rank;\n}\n\n// TODO: write 'Card.describe' that returns \"Rank of Suit\"\n\n// TODO: write 'is_pair' that returns true if two cards share the same rank\n\nfn main() -> Int {\n  // TODO: create Ace of Spades and Ace of Hearts, return 1 if they form a pair\n  return 0;\n}",
-  "solution": "enum Suit {\n  Hearts,\n  Diamonds,\n  Clubs,\n  Spades,\n}\n\nenum Rank {\n  Ace,\n  Two,\n  Three,\n  Four,\n  Five,\n  Six,\n  Seven,\n  Eight,\n  Nine,\n  Ten,\n  Jack,\n  Queen,\n  King,\n}\n\ntype Card = {\n  suit: Suit;\n  rank: Rank;\n}\n\nfn suit_name(s: Suit) -> Str {\n  match s {\n    Hearts => { return \"Hearts\"; }\n    Diamonds => { return \"Diamonds\"; }\n    Clubs => { return \"Clubs\"; }\n    Spades => { return \"Spades\"; }\n  }\n}\n\nfn rank_name(r: Rank) -> Str {\n  match r {\n    Ace => { return \"Ace\"; }\n    Two => { return \"Two\"; }\n    Three => { return \"Three\"; }\n    Four => { return \"Four\"; }\n    Five => { return \"Five\"; }\n    Six => { return \"Six\"; }\n    Seven => { return \"Seven\"; }\n    Eight => { return \"Eight\"; }\n    Nine => { return \"Nine\"; }\n    Ten => { return \"Ten\"; }\n    Jack => { return \"Jack\"; }\n    Queen => { return \"Queen\"; }\n    King => { return \"King\"; }\n  }\n}\n\nfn Card.describe(self) -> Str {\n  return rank_name(rank) + \" of \" + suit_name(suit);\n}\n\nfn is_pair(a: Card, b: Card) -> Bool {\n  return a.rank == b.rank;\n}\n\nfn main() -> Int {\n  let ace_spades = Card{ suit: Suit.Spades; rank: Rank.Ace; };\n  let ace_hearts = Card{ suit: Suit.Hearts; rank: Rank.Ace; };\n  if is_pair(ace_spades, ace_hearts) { return 1; }\n  return 0;\n}",
+  "code_template": "use xiom.io;\n\nenum Suit {\n  Hearts,\n  Diamonds,\n  Clubs,\n  Spades,\n}\n\nenum Rank {\n  Ace,\n  Two,\n  Three,\n  Four,\n  Five,\n  Six,\n  Seven,\n  Eight,\n  Nine,\n  Ten,\n  Jack,\n  Queen,\n  King,\n}\n\ntype Card = {\n  suit: Suit;\n  rank: Rank;\n}\n\n// TODO: write 'Card.describe' that returns \"Rank of Suit\"\n\n// TODO: write 'is_pair' that returns true if two cards share the same rank\n\nfn main() -> Int {\n  // TODO: create Ace of Spades and Ace of Hearts, return 1 if they form a pair\n  return 0;\n}",
+  "solution": "use xiom.io;\n\nenum Suit {\n  Hearts,\n  Diamonds,\n  Clubs,\n  Spades,\n}\n\nenum Rank {\n  Ace,\n  Two,\n  Three,\n  Four,\n  Five,\n  Six,\n  Seven,\n  Eight,\n  Nine,\n  Ten,\n  Jack,\n  Queen,\n  King,\n}\n\ntype Card = {\n  suit: Suit;\n  rank: Rank;\n}\n\nfn suit_name(s: Suit) -> Str {\n  match s {\n    Hearts => { return \"Hearts\"; }\n    Diamonds => { return \"Diamonds\"; }\n    Clubs => { return \"Clubs\"; }\n    Spades => { return \"Spades\"; }\n  }\n}\n\nfn rank_name(r: Rank) -> Str {\n  match r {\n    Ace => { return \"Ace\"; }\n    Two => { return \"Two\"; }\n    Three => { return \"Three\"; }\n    Four => { return \"Four\"; }\n    Five => { return \"Five\"; }\n    Six => { return \"Six\"; }\n    Seven => { return \"Seven\"; }\n    Eight => { return \"Eight\"; }\n    Nine => { return \"Nine\"; }\n    Ten => { return \"Ten\"; }\n    Jack => { return \"Jack\"; }\n    Queen => { return \"Queen\"; }\n    King => { return \"King\"; }\n  }\n}\n\nfn Card.describe(self) -> Str {\n  return rank_name(rank) + \" of \" + suit_name(suit);\n}\n\nfn is_pair(a: Card, b: Card) -> Bool {\n  return a.rank == b.rank;\n}\n\nfn main() -> Int {\n  let ace_spades = Card{ suit: Suit.Spades; rank: Rank.Ace; };\n  let ace_hearts = Card{ suit: Suit.Hearts; rank: Rank.Ace; };\n  if is_pair(ace_spades, ace_hearts) { return 1; }\n  return 0;\n}",
   "try_it": "Add a `Card.value(self) -> Int` method for blackjack (Ace=11, face=10, others=pip value). Create a full hand of 5 cards. Add a `has_flush(cards...) -> Bool` function that checks if all 5 cards share the same suit.",
-  "concepts": ["enum", "struct", "match", "card-game", "pair", "rank", "suit"],
+  "concepts": [
+    "enum",
+    "struct",
+    "match",
+    "card-game",
+    "pair",
+    "rank",
+    "suit"
+  ],
   "tips": [
     "Use two helper functions (rank_name, suit_name) instead of putting all logic inside describe",
-    "`a.rank == b.rank` compares the rank enum \u2014 enum variants support `==` comparison",
-    "Define enums before the struct that uses them \u2014 Suit and Rank must exist before Card references them"
+    "`a.rank == b.rank` compares the rank enum � enum variants support `==` comparison",
+    "Define enums before the struct that uses them � Suit and Rank must exist before Card references them"
   ],
   "common_mistakes": [
-    "Comparing cards with `a == b` to check for a pair \u2014 this only returns true if both suit AND rank match",
-    "Defining Card before Suit or Rank \u2014 the compiler reads top-to-bottom, so dependencies must come first"
+    "Comparing cards with `a == b` to check for a pair � this only returns true if both suit AND rank match",
+    "Defining Card before Suit or Rank � the compiler reads top-to-bottom, so dependencies must come first"
   ],
   "next_lesson": "L2-51",
-  "related": ["L2-15", "L2-14", "L2-46"]
+  "related": [
+    "L2-15",
+    "L2-14",
+    "L2-46"
+  ]
 }

@@ -46,11 +46,13 @@
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
+  position: relative;
 }
 
 .editor-container {
   flex: 1;
   min-height: 0;
+  background: #111217;
 }
 
 .lessons-screen .output-panel {
@@ -58,6 +60,22 @@
   min-height: 140px;
   flex-shrink: 0;
 }
+
+/* ---- Stdlib Persistent Panel (right of editor) ---- */
+.stdlib-panel {
+  width: 340px;
+  min-width: 280px;
+  max-width: 420px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-left: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.2s ease;
+}
+.stdlib-panel.hidden { display: none; }
+.stdlib-panel.pinned { border-left-color: var(--indigo); }
 
 /* ---- Playground Screen ---- */
 .playground-screen {
@@ -70,15 +88,26 @@
 .playground-layout {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   overflow: hidden;
 }
 
+.playground-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.playground-main .editor-container,
 .playground-layout .editor-container {
   flex: 1;
   min-height: 0;
+  background: #111217;
 }
 
+.playground-main .output-panel,
 .playground-layout .output-panel {
   height: 35%;
   min-height: 150px;
@@ -94,31 +123,65 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .main-layout {
     flex-direction: column;
   }
 
   .sidebar {
     width: 100% !important;
-    max-height: 200px;
+    max-height: 140px;
     flex-shrink: 0;
     border-right: none;
     border-bottom: 1px solid var(--border-soft);
   }
 
   .lessons-screen .narrative-panel {
-    width: 100%;
+    width: 100% !important;
     min-width: 0;
     max-width: none;
-    max-height: 35%;
+    max-height: 30%;
     flex-shrink: 0;
     border-right: none;
     border-bottom: 1px solid var(--border-soft);
   }
 
+  .resize-handle {
+    display: none !important;
+  }
+
   .editor-section {
     flex: 1;
-    min-height: 300px;
+    min-height: 50vh;
+  }
+
+  .header {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+  }
+
+  .header-site-link {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .header-actions {
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+
+  .lesson-header-title {
+    display: none;
+  }
+
+  .back-btn {
+    font-size: 13px;
+    padding: 6px;
   }
 }

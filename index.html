@@ -12,6 +12,21 @@
 </head>
 <body>
 
+<div id="confettiContainer" style="position:fixed;inset:0;pointer-events:none;z-index:998"></div>
+
+<div id="onboardingModal" class="onboarding-modal hidden">
+  <div class="onboarding-content">
+    <div class="onboarding-hero">XIOM</div>
+    <h2>Welcome to the XIOM Playground</h2>
+    <p>Learn systems programming from scratch &mdash; 410 interactive lessons, from "Hello World" to building real programs.</p>
+    <div class="onboarding-actions">
+      <button class="btn-primary onboarding-start" onclick="dismissOnboarding(); startLearning();">Start Learning &rarr;</button>
+      <button class="btn-secondary" onclick="dismissOnboarding(); openPlayground();">Try Playground</button>
+    </div>
+    <div class="onboarding-footer">No account needed. Free forever. Everything runs in your browser.</div>
+  </div>
+</div>
+
 <!-- LANDING SCREEN -->
 <div id="landing" class="landing-screen">
   <div class="landing-hero">
@@ -73,19 +88,16 @@
     <button class="back-btn" onclick="showLanding()" aria-label="Back to home">&#x2190; XIOM</button>
     <span id="lessonTitle" class="lesson-header-title">Lessons</span>
     <a href="https://xiom-lang.org" target="_blank" rel="noopener" class="header-site-link">xiom-lang.org &#x2197;</a>
-    <select id="exampleSelect" class="example-select" onchange="loadQuickExample(this.value)" aria-label="Quick example selector">
-      <option value="">Quick Examples...</option>
-      <option value="hello">Hello World</option>
-      <option value="vars">Variables</option>
-      <option value="math">Simple Math</option>
-    </select>
+    <button class="nav-btn hamburger-btn" onclick="toggleHamburger()" aria-label="Menu">&#x2630;</button>
     <div class="header-actions">
-      <button id="btnSyntax" class="nav-btn" onclick="toggleSyntax()" aria-label="Open concepts panel">Concepts</button>
-      <button id="btnCompiler" class="nav-btn" onclick="toggleCompilerRef()" aria-label="Open compiler reference">Compiler</button>
-      <button id="btnPlayground" class="nav-btn" onclick="openPlayground()" aria-label="Open playground mode">Playground</button>
-      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts" aria-label="Keyboard shortcuts">?</button>
-      <button id="btnRun" class="nav-btn run-btn" onclick="compile()" aria-label="Compile and run code">Run &#x25B8;</button>
+      <button id="btnSyntax" class="nav-btn" data-mobile-label="&#x1F4DA;" onclick="toggleSyntax()" aria-label="Open concepts panel">Concepts</button>
+      <button id="btnCompiler" class="nav-btn" data-mobile-label="&#x2699;" onclick="toggleCompilerRef()" aria-label="Open compiler reference">Compiler</button>
+      <button id="btnStdlib" class="nav-btn" data-mobile-label="&#x1F4D6;" onclick="toggleStdlibPanel()" aria-label="Open standard library reference">Standard Library</button>
+      <button id="btnPlayground" class="nav-btn" data-mobile-label="&#x25B6;" onclick="openPlayground()" aria-label="Open playground mode">Playground</button>
+      <button class="nav-btn theme-toggle" onclick="toggleEditorTheme()" title="Toggle editor theme" aria-label="Toggle editor theme">??</button>
+      <button class="nav-btn shortcut-btn" data-mobile-label="?" onclick="toggleShortcuts()" title="Shortcuts" aria-label="Keyboard shortcuts">?</button>
     </div>
+    <button id="btnRun" class="nav-btn run-btn" onclick="compile()" aria-label="Compile and run code">Run &#x25B8;</button>
   </header>
 
   <div class="main-layout">
@@ -93,7 +105,10 @@
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <span>Lessons</span>
-        <span id="progressSummary" class="progress-summary">0/410</span>
+        <div class="sidebar-progress">
+          <div class="sidebar-progress-bar"><div id="progressFill" class="sidebar-progress-fill"></div></div>
+          <span id="progressSummary" class="progress-summary">0/410</span>
+        </div>
       </div>
       <input type="text" id="lessonSearch" class="lesson-search" placeholder="Search lessons..." oninput="filterLessons(this.value)" aria-label="Search lessons">
       <div id="lessonList" class="lesson-list"></div>
@@ -101,6 +116,7 @@
 
     <!-- NARRATIVE PANEL (lesson content) -->
     <div id="narrativePanel" class="narrative-panel">
+      <button id="narrativeToggle" class="narrative-toggle" onclick="toggleNarrative()" aria-label="Toggle lesson content">&#x25BC;</button>
       <div id="narrativeContent" class="narrative-content">
         <div class="welcome-message">
           <h2>Welcome to XIOM</h2>
@@ -135,10 +151,17 @@
           <pre id="contracts" class="hidden"></pre>
         </div>
       </div>
-      <div class="completion-bar hidden" id="completionBar">
-        <span>&#x2713; Lesson complete!</span>
-        <button id="btnNextLesson" class="btn-primary" onclick="nextLesson()">Next Lesson &#x2192;</button>
+    </div>
+
+    <!-- STDLIB PERSISTENT PANEL (right of editor, resizes editor) -->
+    <div id="stdlibPanel" class="stdlib-panel hidden">
+      <div class="stdlib-panel-header">
+        <h3>Standard Library</h3>
+        <input type="text" class="concept-search" placeholder="Search all modules..." oninput="filterStdlibPanel(this.value)">
+        <button class="stdlib-pin-btn" onclick="pinStdlib()" title="Pin open">📌</button>
+        <button onclick="closeStdlibPanel()" aria-label="Close">✕</button>
       </div>
+      <div id="stdlibPanelContent" class="stdlib-panel-content"></div>
     </div>
   </div>
 
@@ -183,34 +206,47 @@
     <button class="back-btn" onclick="showLanding()" aria-label="Back to home">&#x2190; XIOM</button>
     <span>Playground</span>
     <a href="https://xiom-lang.org" target="_blank" rel="noopener" class="header-site-link">xiom-lang.org &#x2197;</a>
+    <button class="nav-btn hamburger-btn" onclick="toggleHamburger()" aria-label="Menu">&#x2630;</button>
     <div class="header-actions">
-      <button id="btnSyntaxPlay" class="nav-btn" onclick="toggleSyntax()" aria-label="Open concepts panel">Concepts</button>
-      <button id="btnCompilerPlay" class="nav-btn" onclick="toggleCompilerRef()" aria-label="Open compiler reference">Compiler</button>
-      <button id="btnFormat" class="nav-btn" onclick="formatCode()" aria-label="Format code">Format</button>
-      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts" aria-label="Keyboard shortcuts">?</button>
-      <button id="btnRun2" class="nav-btn run-btn" onclick="compile()" aria-label="Compile and run code">Run &#x25B8;</button>
+      <button id="btnSyntaxPlay" class="nav-btn" data-mobile-label="&#x1F4DA;" onclick="toggleSyntax()" aria-label="Open concepts panel">Concepts</button>
+      <button id="btnCompilerPlay" class="nav-btn" data-mobile-label="&#x2699;" onclick="toggleCompilerRef()" aria-label="Open compiler reference">Compiler</button>
+      <button id="btnStdlibPlay" class="nav-btn" data-mobile-label="&#x1F4D6;" onclick="toggleStdlibPanel()" aria-label="Open standard library reference">Standard Library</button>
+      <button class="nav-btn theme-toggle" onclick="toggleEditorTheme()" title="Toggle editor theme" aria-label="Toggle editor theme">??</button>
+      <button class="nav-btn shortcut-btn" data-mobile-label="?" onclick="toggleShortcuts()" title="Shortcuts" aria-label="Keyboard shortcuts">?</button>
     </div>
+    <button id="btnRun2" class="nav-btn run-btn" onclick="compile()" aria-label="Compile and run code">Run &#x25B8;</button>
   </header>
   <div class="playground-layout">
-    <div id="pgEditorContainer" class="editor-container"></div>
-    <div class="ln-col-bar">
-      <span id="pgLineCol">Ln 1, Col 1</span>
+    <div class="playground-main">
+      <div id="pgEditorContainer" class="editor-container"></div>
+      <div class="ln-col-bar">
+        <span id="pgLineCol">Ln 1, Col 1</span>
+      </div>
+      <div class="output-panel">
+        <div class="output-tabs">
+          <button class="tab active" data-tab="output">Output</button>
+          <button class="tab" data-tab="ir">LLVM IR</button>
+          <button class="tab" data-tab="diag">Diagnostics</button>
+          <button class="tab" data-tab="tokens">Tokens</button>
+          <button class="tab" data-tab="contracts">Contracts</button>
+        </div>
+        <div class="output-content">
+          <pre id="pgOutput">Press Run &#x25B8; or Ctrl+Enter.</pre>
+          <pre id="pgIR" class="hidden"></pre>
+          <div id="pgDiag" class="hidden"></div>
+          <pre id="pgTokens" class="hidden"></pre>
+          <pre id="pgContracts" class="hidden"></pre>
+        </div>
+      </div>
     </div>
-    <div class="output-panel">
-      <div class="output-tabs">
-        <button class="tab active" data-tab="output">Output</button>
-        <button class="tab" data-tab="ir">LLVM IR</button>
-        <button class="tab" data-tab="diag">Diagnostics</button>
-        <button class="tab" data-tab="tokens">Tokens</button>
-        <button class="tab" data-tab="contracts">Contracts</button>
+    <div id="stdlibPanelPlay" class="stdlib-panel hidden">
+      <div class="stdlib-panel-header">
+        <h3>Standard Library</h3>
+        <input type="text" class="concept-search" placeholder="Search all modules..." oninput="filterStdlibPanel(this.value)">
+        <button class="stdlib-pin-btn" onclick="pinStdlib()" title="Pin open">📌</button>
+        <button onclick="closeStdlibPanel()" aria-label="Close">✕</button>
       </div>
-      <div class="output-content">
-        <pre id="pgOutput">Press Run &#x25B8; or Ctrl+Enter.</pre>
-        <pre id="pgIR" class="hidden"></pre>
-        <div id="pgDiag" class="hidden"></div>
-        <pre id="pgTokens" class="hidden"></pre>
-        <pre id="pgContracts" class="hidden"></pre>
-      </div>
+      <div id="stdlibPanelContentPlay" class="stdlib-panel-content"></div>
     </div>
   </div>
   <div id="pgStatus" class="status-bar">Playground — v0.49.9</div>
@@ -229,5 +265,6 @@
 <script src="js/lessons.js"></script>
 <script src="js/syntax.js"></script>
 <script src="js/compiler-ref.js"></script>
+<script src="js/stdlib-ref.js"></script>
 </body>
 </html>

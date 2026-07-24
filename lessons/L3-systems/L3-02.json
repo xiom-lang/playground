@@ -7,10 +7,15 @@
   "why": ".unwrap_or(default) provides a clean one-liner to extract a value from an Option or fall back to a safe default — no match boilerplate needed.",
   "narrative": "## The Shortcut: .unwrap_or()\n\nMatching is powerful, but sometimes you just want \"give me the value, or use this backup.\" That's exactly what `.unwrap_or(default)` does.\n\n### Basic Usage\n\n```xiom\nfn main() -> Int {\n  let username: Option[Str] = None;\n  let display = username.unwrap_or(\"Guest\");\n  io.println(\"Welcome, \" + display + \"!\");   // Welcome, Guest!\n  return 0;\n}\n```\n\n### With a Real Value\n\n```xiom\nfn main() -> Int {\n  let username = Some(\"Luna\");\n  let display = username.unwrap_or(\"Guest\");\n  io.println(\"Welcome, \" + display + \"!\");   // Welcome, Luna!\n  return 0;\n}\n```\n\n### How It Works\n\n`.unwrap_or(default)` looks inside the Option:\n- If it's `Some(value)`, it gives you `value` back\n- If it's `None`, it gives you the `default` you provided\n\nThis is equivalent to writing:\n\n```xiom\nlet display = match username {\n  Some(name) => name,\n  None => \"Guest\",\n};\n```\n\n### Why Use .unwrap_or?\n\nIt's shorter, clearer, and expresses intent immediately: \"Use this value or fall back to this default.\" Perfect for configuration settings, user display names, or any place where a sensible default exists.\n\n### Multiple Uses\n\n```xiom\nfn main() -> Int {\n  let theme: Option[Str] = None;\n  let font: Option[Str] = Some(\"monospace\");\n\n  io.println(theme.unwrap_or(\"light\"));    // light\n  io.println(font.unwrap_or(\"sans-serif\")); // monospace\n  return 0;\n}\n```",
   "analogy": ".unwrap_or is like having a backup plan — \"I'll use my umbrella, but if I can't find it, I'll grab the spare one by the door.\"",
-  "code_template": "fn main() -> Int {\n  // TODO: Create an Option[Str] that is None (represents no player name)\n\n  // TODO: Use .unwrap_or(\"Player1\") to get a fallback name\n\n  // TODO: Print the final name\n\n  // TODO: Change the Option to Some(\"DragonSlayer\") and print again\n  return 0;\n}\n",
-  "solution": "fn main() -> Int {\n  let player_name: Option[Str] = None;\n  let final_name = player_name.unwrap_or(\"Player1\");\n  io.println(final_name);\n\n  let player_name2 = Some(\"DragonSlayer\");\n  let final_name2 = player_name2.unwrap_or(\"Player1\");\n  io.println(final_name2);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() -> Int {\n  // TODO: Create an Option[Str] that is None (represents no player name)\n\n  // TODO: Use .unwrap_or(\"Player1\") to get a fallback name\n\n  // TODO: Print the final name\n\n  // TODO: Change the Option to Some(\"DragonSlayer\") and print again\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nfn main() -> Int {\n  let player_name: Option[Str] = None;\n  let final_name = player_name.unwrap_or(\"Player1\");\n  io.println(final_name.to_str());\n\n  let player_name2 = Some(\"DragonSlayer\");\n  let final_name2 = player_name2.unwrap_or(\"Player1\");\n  io.println(final_name2.to_str());\n  return 0;\n}\n",
   "try_it": "Try different defaults: unwrap to 0, unwrap to an empty string \"\", unwrap to \"Unknown\". What happens when you call .unwrap_or on a Some value? Does it ever use the default?",
-  "concepts": ["unwrap_or", "Option-methods", "default-value", "fallback"],
+  "concepts": [
+    "unwrap_or",
+    "Option-methods",
+    "default-value",
+    "fallback"
+  ],
   "tips": [
     ".unwrap_or() works on any Option[T] — the default must be the same type as T",
     "Use .unwrap_or when you have a sensible fallback — it's cleaner than a full match",
@@ -22,5 +27,9 @@
     "Confusing .unwrap_or with .unwrap — .unwrap() crashes on None, .unwrap_or() safely provides a fallback"
   ],
   "next_lesson": "L3-03",
-  "related": ["L3-01", "L3-04", "L3-08"]
+  "related": [
+    "L3-01",
+    "L3-04",
+    "L3-08"
+  ]
 }

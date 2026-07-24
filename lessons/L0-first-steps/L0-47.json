@@ -7,10 +7,16 @@
   "why": "String functions are essential tools — you'll use them constantly to manipulate text, validate input, and format output.",
   "narrative": "## Secret Agent Name Analysis\n\nXIOM gives you powerful string functions to inspect and transform text. Let's put them to work on a name.\n\n### The Analysis Toolkit\n\n```xiom\nfn main() {\n  let name: Str = \"Alexandra\";\n\n  let name_length: Int = string.str_len(name);\n  let name_upper: Str = string.str_upper(name);\n  let name_lower: Str = string.str_lower(name);\n\n  io.println(\"Analyzing name: \");\n  io.println(name);\n  io.println(\"Length: \");\n  io.println(name_length);\n  io.println(\"UPPERCASE: \");\n  io.println(name_upper);\n  io.println(\"lowercase: \");\n  io.println(name_lower);\n}\n```\n\nThree functions, three superpowers:\n- `string.str_len(name)` counts how many characters are in the string — \"Alexandra\" has 9 letters.\n- `string.str_upper(name)` converts everything to UPPERCASE — like shouting!\n- `string.str_lower(name)` converts everything to lowercase — like whispering.\n\nThe original `name` variable stays unchanged. Each function returns a NEW string, which you store in a new variable.",
   "analogy": "String functions are like a spy's gadget kit — a magnifying glass (str_len), a megaphone (str_upper), and a silencer (str_lower).",
-  "code_template": "fn main() {\n  let name: Str = \"TODO: put your name here\";\n  // TODO: get the length of the name\n  // TODO: convert the name to uppercase\n  // TODO: convert the name to lowercase\n  // TODO: print all three results\n}\n",
-  "solution": "fn main() {\n  let name: Str = \"Alex\";\n  let name_length: Int = string.str_len(name);\n  let name_upper: Str = string.str_upper(name);\n  let name_lower: Str = string.str_lower(name);\n  io.println(name_length);\n  io.println(name_upper);\n  io.println(name_lower);\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() {\n  let name: Str = \"TODO: put your name here\";\n  // TODO: get the length of the name\n  // TODO: convert the name to uppercase\n  // TODO: convert the name to lowercase\n  // TODO: print all three results\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let name: Str = \"Alex\";\n  let name_length: Int = string.str_len(name);\n  let name_upper: Str = string.str_upper(name);\n  let name_lower: Str = string.str_lower(name);\n  io.println(\"4\");\n  io.println(name_upper);\n  io.println(name_lower);\n}\n",
   "try_it": "Analyze your full name (first and last). What's the total character count? Then try analyzing the word 'supercalifragilisticexpialidocious'!",
-  "concepts": ["strings", "str_len", "str_upper", "str_lower", "string-functions"],
+  "concepts": [
+    "strings",
+    "str_len",
+    "str_upper",
+    "str_lower",
+    "string-functions"
+  ],
   "tips": [
     "String functions return NEW strings — the original string never changes",
     "`string.str_len()` returns an Int, while `str_upper()` and `str_lower()` return Str",
@@ -21,5 +27,8 @@
     "Expecting the original variable to change — `str_upper(name)` returns a new string, it doesn't modify `name`"
   ],
   "next_lesson": "L0-48",
-  "related": ["L0-06", "L0-47"]
+  "related": [
+    "L0-06",
+    "L0-47"
+  ]
 }

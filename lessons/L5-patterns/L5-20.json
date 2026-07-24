@@ -7,10 +7,19 @@
   "why": "Generic types like `Pair[T,U]` let you create reusable data structures — define the shape once, use it with any combination of types.",
   "narrative": "## A Reusable Two-Item Container\n\nA **generic type** has type parameters just like a generic function. `Pair[T,U]` is a struct that holds two values of potentially different types.\n\n### Defining a Generic Pair\n\n```xiom\ntype Pair[T,U] = {\n  first: T;\n  second: U;\n}\n```\n\n`T` and `U` are type parameters. When you create a Pair, you specify what types they should be.\n\n### Creating Pairs\n\n```xiom\nlet name_score: Pair[Str,Int] = Pair[Str,Int]{ first: \"Alice\", second: 95 };\nlet coords: Pair[Float64,Float64] = Pair[Float64,Float64]{ first: 3.5, second: -2.1 };\nlet equipped: Pair[Str,Bool] = Pair[Str,Bool]{ first: \"Sword\", second: true };\n```\n\nEach Pair uses the same struct definition but with different types plugged in.\n\n### Accessing Fields\n\n```xiom\nio.println(name_score.first);\nio.println(name_score.second);\n```\n\n### Methods on Generic Types\n\n```xiom\nfn Pair.swap[T,U](self) -> Pair[U,T] {\n  return Pair[U,T]{ first: self.second, second: self.first };\n}\n```\n\nThis method swaps the two elements. Notice how the return type becomes `Pair[U,T]` — the type parameters flip.\n\n### Full Program\n\n```xiom\ntype Pair[T,U] = {\n  first: T;\n  second: U;\n}\n\nfn main() -> Int {\n  let player: Pair[Str,Int] = Pair[Str,Int]{ first: \"Alice\", second: 95 };\n  io.println(player.first);\n  io.println(player.second);\n\n  let pos: Pair[Float64,Float64] = Pair[Float64,Float64]{ first: 10.0, second: 20.0 };\n  io.println(string.float_to_str(pos.first));\n\n  return 0;\n}\n```",
   "analogy": "A generic Pair is like a two-pocket folder. One pocket is labeled 'first' and the other 'second.' You decide what goes in each pocket: money and receipts (Int, Str), photos and dates (Str, Str), or tickets and stubs (Str, Bool). The folder structure is always the same — two pockets — but the contents can be anything.",
-  "code_template": "type Pair[T,U] = {\n  first: T;\n  second: U;\n}\n\nfn main() -> Int {\n  // TODO: Create a Pair[Str,Str] with first=\"Hello\" and second=\"World\"\n  // TODO: Create a Pair[Int,Bool] with first=42 and second=true\n  // TODO: Print the fields of both pairs\n  return 0;\n}\n",
-  "solution": "type Pair[T,U] = {\n  first: T;\n  second: U;\n}\n\nfn main() -> Int {\n  let greeting: Pair[Str,Str] = Pair[Str,Str]{ first: \"Hello\", second: \"World\" };\n  io.println(greeting.first);\n  io.println(greeting.second);\n\n  let data: Pair[Int,Bool] = Pair[Int,Bool]{ first: 42, second: true };\n  io.println(data.first);\n  io.println(data.second);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype Pair[T,U] = {\n  first: T;\n  second: U;\n}\n\nfn main() -> Int {\n  // TODO: Create a Pair[Str,Str] with first=\"Hello\" and second=\"World\"\n  // TODO: Create a Pair[Int,Bool] with first=42 and second=true\n  // TODO: Print the fields of both pairs\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ntype Pair[T,U] = {\n  first: T;\n  second: U;\n}\n\nfn main() -> Int {\n  let greeting: Pair[Str,Str] = Pair[Str,Str]{ first: \"Hello\", second: \"World\" };\n  io.println(greeting.first.to_str());\n  io.println(greeting.second.to_str());\n\n  let data: Pair[Int,Bool] = Pair[Int,Bool]{ first: 42, second: true };\n  io.println(data.first.to_str());\n  io.println(data.second.to_str());\n  return 0;\n}\n",
   "try_it": "Create a Pair of Str and Bool for a feature toggle: name and enabled status. Add a `describe` method on Pair[Str,Bool] that returns a descriptive string. Create a `Triple[T,U,V]` type with three fields. Write a function that takes a Vec of Pairs and returns a Pair of Vecs (separating firsts from seconds).",
-  "concepts": ["generics", "generic-type", "Pair", "type-parameter", "T", "U", "struct", "polymorphism"],
+  "concepts": [
+    "generics",
+    "generic-type",
+    "Pair",
+    "type-parameter",
+    "T",
+    "U",
+    "struct",
+    "polymorphism"
+  ],
   "tips": [
     "Use different letters for different type parameters: `Pair[T,U]` means two possibly-different types, `Pair[T,T]` means both must be the same",
     "Type parameters on types go in brackets after the type NAME: `type Pair[T,U] = { ... }`",
@@ -22,5 +31,10 @@
     "Accessing `.third` on a Pair — it only has `.first` and `.second`"
   ],
   "next_lesson": "L5-21",
-  "related": ["L5-18", "L5-19", "L2-01", "L2-05"]
+  "related": [
+    "L5-18",
+    "L5-19",
+    "L2-01",
+    "L2-05"
+  ]
 }

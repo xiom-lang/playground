@@ -7,12 +7,32 @@
   "why": "Character-level encryption combines if/elif chains, Char parameters, and function composition — each letter transforms through a function, and an entire word transforms by looping through its characters.",
   "narrative": "## Building a Letter Shifter\n\nThe core idea: shift each letter forward by one position. 'a' → 'b', 'm' → 'n', but 'z' wraps to 'a'.\n\n### Shifting a Single Character\n\n```xiom\nfn encrypt(ch: Char) -> Char {\n  if ch == 'z' {\n    return 'a';\n  } elif ch == 'Z' {\n    return 'A';\n  } elif ch >= 'a' and ch <= 'y' {\n    return ch + 1;\n  } elif ch >= 'A' and ch <= 'Y' {\n    return ch + 1;\n  } else {\n    return ch;\n  }\n}\n```\n\nNon-letter characters (spaces, punctuation, numbers) pass through unchanged.\n\n### Encrypting an Entire Word\n\n```xiom\nfn encrypt_word(word: Str) -> Str {\n  let len = string.str_len(word);\n  var result = \"\";\n  var i = 0;\n  while i < len {\n    let shifted = encrypt(word[i]);\n    result = string.str_concat(result, shifted);\n    i = i + 1;\n  }\n  return result;\n}\n```\n\n### Putting It Together\n\n```xiom\nfn main() -> Int {\n  let secret = encrypt_word(\"hello\");\n  let name_enc = encrypt_word(\"zoe\");\n\n  io.println(\"Encryption complete!\");\n\n  return 0;\n}\n```\n\n### Tracing \"zoe\"\n\n- 'z' → wraps to 'a'\n- 'o' → 'p'\n- 'e' → 'f'\n- Result: \"apf\"\n\nTwo functions working together: `encrypt` handles single-character logic, `encrypt_word` handles the loop. Separation of concerns.",
   "analogy": "Encrypting a word is like passing each letter through a secret tunnel. Inside the tunnel (`encrypt`), each letter gets one push forward. 'z' hits a trap door that loops it back to 'a'. Non-letters take a bypass lane and emerge unchanged. The `encrypt_word` function sends the whole word through, letter by letter.",
-  "code_template": "// TODO: Write encrypt(ch: Char) -> Char\n// If ch is 'z' return 'a', if 'Z' return 'A'\n// If ch is between 'a'-'y' or 'A'-'Y', shift forward by 1\n// Otherwise return ch unchanged\n\n// TODO: Write encrypt_word(word: Str) -> Str\n// Loop through each character using string.str_len and while\n// Call encrypt on each character, build result string\n\nfn main() -> Int {\n  // TODO: Encrypt \"hello\" and your name\n  // Print the encrypted results\n  return 0;\n}",
-  "solution": "fn encrypt(ch: Char) -> Char {\n  if ch == 'z' {\n    return 'a';\n  } elif ch == 'Z' {\n    return 'A';\n  } elif ch >= 'a' and ch <= 'y' {\n    return ch + 1;\n  } elif ch >= 'A' and ch <= 'Y' {\n    return ch + 1;\n  } else {\n    return ch;\n  }\n}\n\nfn encrypt_word(word: Str) -> Str {\n  let len = string.str_len(word);\n  var result = \"\";\n  var i = 0;\n  while i < len {\n    let shifted = encrypt(word[i]);\n    result = string.str_concat(result, shifted);\n    i = i + 1;\n  }\n  return result;\n}\n\nfn main() -> Int {\n  let secret = encrypt_word(\"hello\");\n  io.println(\"Encryption complete!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\nuse xiom.string;\n// TODO: Write encrypt(ch: Char) -> Char\n// If ch is 'z' return 'a', if 'Z' return 'A'\n// If ch is between 'a'-'y' or 'A'-'Y', shift forward by 1\n// Otherwise return ch unchanged\n\n// TODO: Write encrypt_word(word: Str) -> Str\n// Loop through each character using string.str_len and while\n// Call encrypt on each character, build result string\n\nfn main() {\n  // TODO: Encrypt \"hello\" and your name\n  // Print the encrypted results\n}",
+  "solution": "use xiom.io;\nuse xiom.string;\nfn encrypt(ch: Char) -> Char {\n  if ch == 'z' {\n    return 'a';\n  } elif ch == 'Z' {\n    return 'A';\n  } elif ch >= 'a' and ch <= 'y' {\n    return ch + 1;\n  } elif ch >= 'A' and ch <= 'Y' {\n    return ch + 1;\n  } else {\n  }\n}\n\nfn encrypt_word(word: Str) -> Str {\n  let len = string.str_len(word);\n  var result = \"\";\n  var i = 0;\n  while i < len {\n    let shifted = encrypt(word[i]);\n    result = string.str_concat(result, shifted);\n    i = i + 1;\n  }\n}\nfn main() {\n  let secret = encrypt_word(\"hello\");\n  io.println(\"Encryption complete!\");\n}",
   "try_it": "Write the matching `decrypt(ch: Char) -> Char` function that shifts backwards (b→a, a→z) and `decrypt_word(word: Str) -> Str`. Verify that decrypting an encrypted word gives back the original.",
-  "concepts": ["character manipulation", "if/elif chains", "wrap-around logic", "function composition"],
-  "tips": ["Handle 'z' and 'Z' as special cases before the general shift — otherwise 'z'+1 wouldn't wrap", "Non-letters (spaces, digits) should pass through unchanged", "encrypt_word uses a while loop to process one character at a time", "Use string.str_concat() to build the result string character by character"],
-  "common_mistakes": ["Forgetting to handle 'z' wrap-around — 'z' + 1 is not 'a'", "Treating uppercase and lowercase the same — 'Z' wraps to 'A', not 'a'", "Modifying the original word instead of building a new result string", "Forgetting non-letter characters — spaces and punctuation should not shift"],
+  "concepts": [
+    "character manipulation",
+    "if/elif chains",
+    "wrap-around logic",
+    "function composition"
+  ],
+  "tips": [
+    "Handle 'z' and 'Z' as special cases before the general shift — otherwise 'z'+1 wouldn't wrap",
+    "Non-letters (spaces, digits) should pass through unchanged",
+    "encrypt_word uses a while loop to process one character at a time",
+    "Use string.str_concat() to build the result string character by character"
+  ],
+  "common_mistakes": [
+    "Forgetting to handle 'z' wrap-around — 'z' + 1 is not 'a'",
+    "Treating uppercase and lowercase the same — 'Z' wraps to 'A', not 'a'",
+    "Modifying the original word instead of building a new result string",
+    "Forgetting non-letter characters — spaces and punctuation should not shift"
+  ],
   "next_lesson": "L1-40",
-  "related": ["L1-17", "L1-29", "L1-36", "L1-47"]
+  "related": [
+    "L1-17",
+    "L1-29",
+    "L1-36",
+    "L1-47"
+  ]
 }

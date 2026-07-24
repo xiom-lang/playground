@@ -7,10 +7,15 @@
   "why": "`string.str_to_int()` is your first encounter with a built-in function returning Result — it's the bridge between user text input and numeric computation.",
   "narrative": "## Parsing Text into Numbers\n\nUser input is always text. Before you can do math, you must convert. `string.str_to_int(s)` returns a `Result[Int, Str]` — either the parsed number or an error message.\n\n### Basic Parsing\n\n```xiom\nfn main() -> Int {\n  let ok_result = string.str_to_int(\"42\");\n  let err_result = string.str_to_int(\"hello\");\n\n  // Ok result\n  match ok_result {\n    Ok(num) => io.println(string.int_to_str(num * 2)),  // 84\n    Err(e) => io.println(\"Parse error: \" + e),\n  };\n\n  // Err result\n  match err_result {\n    Ok(num) => io.println(string.int_to_str(num)),\n    Err(e) => io.println(\"Parse error: \" + e),\n  };\n  return 0;\n}\n```\n\n### What Strings Parse Successfully?\n\n- `\"42\"` → `Ok(42)` — standard integer\n- `\"0\"` → `Ok(0)` — zero is valid\n- `\"-7\"` → `Ok(-7)` — negative numbers work\n- `\"hello\"` → `Err(...)` — not a number\n- `\"\"` → `Err(...)` — empty string\n- `\"3.14\"` → `Err(...)` — only integers, not floats\n- `\"  5  \"` → `Err(...)` — no spaces allowed\n\n### Building a Simple Input Handler\n\n```xiom\nfn get_age_input(input: Str) -> Str {\n  let parsed = string.str_to_int(input);\n  return match parsed {\n    Ok(age) => {\n      if age >= 0 && age <= 120 {\n        return \"Age is \" + string.int_to_str(age);\n      }\n      return \"Age out of range: \" + string.int_to_str(age);\n    },\n    Err(e) => \"Invalid number: \" + e,\n  };\n}\n\nfn main() -> Int {\n  io.println(get_age_input(\"25\"));     // Age is 25\n  io.println(get_age_input(\"abc\"));    // Invalid number: ...\n  io.println(get_age_input(\"200\"));    // Age out of range: 200\n  return 0;\n}\n```\n\n### Chaining Parsing with .unwrap_or\n\n```xiom\nfn main() -> Int {\n  let a = string.str_to_int(\"10\").unwrap_or(0);\n  let b = string.str_to_int(\"20\").unwrap_or(0);\n  let c = string.str_to_int(\"bad\").unwrap_or(0);\n\n  io.println(string.int_to_str(a + b + c));  // 30 (10 + 20 + 0)\n  return 0;\n}\n```",
   "analogy": "string.str_to_int is like a currency exchange booth — you hand over paper with numbers written on it (Str), and the cashier either gives you real coins (Ok(Int)) or rejects your fake bill (Err).",
-  "code_template": "fn main() -> Int {\n  // TODO: Parse \"100\" with string.str_to_int — match and print \"Got: X\" or error\n\n  // TODO: Parse \"notanumber\" — match and print \"Failed: X\"\n\n  // TODO: Parse \"-50\" — match and print the absolute value (multiply by -1 if negative)\n\n  // TODO: Parse three numbers \"5\", \"10\", \"15\" — use .unwrap_or(0) and sum them\n  return 0;\n}\n",
-  "solution": "fn main() -> Int {\n  match string.str_to_int(\"100\") {\n    Ok(n) => io.println(\"Got: \" + string.int_to_str(n)),\n    Err(e) => io.println(\"Parse error\"),\n  };\n\n  match string.str_to_int(\"notanumber\") {\n    Ok(n) => io.println(\"Got: \" + string.int_to_str(n)),\n    Err(e) => io.println(\"Failed: \" + e),\n  };\n\n  match string.str_to_int(\"-50\") {\n    Ok(n) => {\n      if n < 0 { io.println(string.int_to_str(n * -1)); }\n      else { io.println(string.int_to_str(n)); }\n    },\n    Err(e) => io.println(\"Parse error\"),\n  };\n\n  let s1 = string.str_to_int(\"5\").unwrap_or(0);\n  let s2 = string.str_to_int(\"10\").unwrap_or(0);\n  let s3 = string.str_to_int(\"15\").unwrap_or(0);\n  io.println(string.int_to_str(s1 + s2 + s3));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  // TODO: Parse \"100\" with string.str_to_int — match and print \"Got: X\" or error\n\n  // TODO: Parse \"notanumber\" — match and print \"Failed: X\"\n\n  // TODO: Parse \"-50\" — match and print the absolute value (multiply by -1 if negative)\n\n  // TODO: Parse three numbers \"5\", \"10\", \"15\" — use .unwrap_or(0) and sum them\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  match string.str_to_int(\"100\") {\n    Ok(n) => io.println(\"Got: \" + string.int_to_str(n)),\n    Err(e) => io.println(\"Parse error\"),\n  };\n\n  match string.str_to_int(\"notanumber\") {\n    Ok(n) => io.println(\"Got: \" + string.int_to_str(n)),\n    Err(e) => io.println(\"Failed: \" + e.to_str()),\n  };\n\n  match string.str_to_int(\"-50\") {\n    Ok(n) => {\n      if n < 0 { io.println(string.int_to_str(n * -1)); }\n      else { io.println(string.int_to_str(n)); }\n    },\n    Err(e) => io.println(\"Parse error\"),\n  };\n\n  let s1 = string.str_to_int(\"5\").unwrap_or(0);\n  let s2 = string.str_to_int(\"10\").unwrap_or(0);\n  let s3 = string.str_to_int(\"15\").unwrap_or(0);\n  io.println(string.int_to_str(s1 + s2 + s3));\n  return 0;\n}\n",
   "try_it": "Try parsing these strings: \"007\", \"+42\", \"3.5\", \"1_000\". Which ones work? Can you write a function that strips whitespace before parsing? (Hint: you can't yet — but think about what you'd need.)",
-  "concepts": ["string.str_to_int", "parsing", "input-validation", "text-to-number"],
+  "concepts": [
+    "string.str_to_int",
+    "parsing",
+    "input-validation",
+    "text-to-number"
+  ],
   "tips": [
     "`string.str_to_int()` returns `Result[Int, Str]` — always handle both Ok and Err",
     "Only pure integer strings parse — no commas, dots, spaces, or special characters",
@@ -22,5 +27,9 @@
     "Calling string.str_to_int on an already-integer value — the function takes Str, not Int"
   ],
   "next_lesson": "L3-11",
-  "related": ["L3-07", "L3-08", "L3-09"]
+  "related": [
+    "L3-07",
+    "L3-08",
+    "L3-09"
+  ]
 }

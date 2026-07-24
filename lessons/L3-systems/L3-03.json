@@ -1,26 +1,35 @@
 {
-  "id": "L3-03",
-  "title": "Option in Functions",
-  "level": "L3",
-  "duration": "10 min",
-  "story": "You're writing a math library. Division by zero is the enemy — it crashes programs. Instead of letting it happen, your function needs to say 'I can't do that' without exploding. Option to the rescue!",
-  "why": "Functions that return Option[T] explicitly signal that they might fail — callers must handle the 'nothing' case, making code safer by design.",
-  "narrative": "## Functions That Might Not Return a Value\n\nSometimes a function can't produce a meaningful result. Instead of returning a sentinel like `-1` and hoping callers check, return `Option[T]`.\n\n### Safe Division\n\n```xiom\nfn divide_safely(a: Int, b: Int) -> Option[Int] {\n  if b == 0 {\n    return None;\n  }\n  return Some(a / b);\n}\n\nfn main() -> Int {\n  let result1 = divide_safely(10, 2);  // Some(5)\n  let result2 = divide_safely(10, 0);  // None\n\n  let msg1 = match result1 {\n    Some(val) => \"Result: \" + string.int_to_str(val),\n    None => \"Cannot divide by zero!\",\n  };\n  let msg2 = match result2 {\n    Some(val) => \"Result: \" + string.int_to_str(val),\n    None => \"Cannot divide by zero!\",\n  };\n\n  io.println(msg1);\n  io.println(msg2);\n  return 0;\n}\n```\n\n### Find First Even Number\n\n```xiom\nfn first_even(a: Int, b: Int, c: Int) -> Option[Int] {\n  if a % 2 == 0 { return Some(a); }\n  if b % 2 == 0 { return Some(b); }\n  if c % 2 == 0 { return Some(c); }\n  return None;\n}\n\nfn main() -> Int {\n  let found = first_even(3, 5, 7);  // all odd — None\n  let msg = found.unwrap_or(-1);\n  io.println(string.int_to_str(msg));  // -1\n  return 0;\n}\n```\n\n### The Pattern\n\nFunctions returning Option follow a clear pattern:\n1. Check if the operation is valid\n2. If invalid, `return None`\n3. If valid, compute and `return Some(result)`\n\nThis makes the function's contract explicit: \"I'll give you a value if I can, and nothing if I can't.\"",
-  "analogy": "A function returning Option is like a vending machine — you put in money and press a button. If the item is in stock, it drops (Some). If it's sold out, nothing comes out (None).",
-  "code_template": "// TODO: Write divide_safely(a, b) -> Option[Int]\n// If b is 0, return None. Otherwise, return Some(a / b).\n\n// TODO: Write safe_max(a, b, c) -> Option[Int]\n// Return Some of the largest number, UNLESS all three are negative.\n// If all are negative, return None.\n\nfn main() -> Int {\n  // TODO: Test divide_safely with 20 / 4 and 20 / 0, print results\n\n  // TODO: Test safe_max with (1, 5, 3) and (-1, -2, -3), print results\n  return 0;\n}\n",
-  "solution": "fn divide_safely(a: Int, b: Int) -> Option[Int] {\n  if b == 0 {\n    return None;\n  }\n  return Some(a / b);\n}\n\nfn safe_max(a: Int, b: Int, c: Int) -> Option[Int] {\n  let max_val = a;\n  let max_val = if b > max_val { b } else { max_val };\n  let max_val = if c > max_val { c } else { max_val };\n  if max_val < 0 { return None; }\n  return Some(max_val);\n}\n\nfn main() -> Int {\n  let d1 = divide_safely(20, 4);\n  let d2 = divide_safely(20, 0);\n  io.println(d1.unwrap_or(0));\n  io.println(d2.unwrap_or(0));\n\n  let m1 = safe_max(1, 5, 3);\n  let m2 = safe_max(-1, -2, -3);\n  io.println(m1.unwrap_or(0));\n  io.println(m2.unwrap_or(0));\n  return 0;\n}\n",
-  "try_it": "Write a `safe_average(a, b, c)` function that returns Option[Int]. Return None if the sum is 0 (to avoid a trivial average). Otherwise return Some(sum / 3). Test with all positive, all zero, and mixed values.",
-  "concepts": ["Option-return", "Option-signature", "safe-functions", "sentinel-avoidance"],
-  "tips": [
-    "Return `None` early when validation fails — this keeps the happy path clean at the bottom",
-    "The return type `Option[Int]` documents that callers must handle the 'no result' case",
-    "Use `.unwrap_or()` at the call site if you have a good default — but match when you need different logic per case"
-  ],
-  "common_mistakes": [
-    "Returning `None` from a function whose signature says `-> Int` — the return type must be `-> Option[Int]`",
-    "Wrapping everything in Some without checking conditions — defeats the purpose of Option",
-    "Forgetting that `a / b` when b is 0 crashes even inside a function returning Option — you must check BEFORE dividing"
-  ],
-  "next_lesson": "L3-04",
-  "related": ["L3-01", "L3-02", "L1-18"]
+    "id":  "L3-03",
+    "title":  "Option in Functions",
+    "level":  "L3",
+    "duration":  "10 min",
+    "story":  "You\u0027re writing a math library. Division by zero is the enemy — it crashes programs. Instead of letting it happen, your function needs to say \u0027I can\u0027t do that\u0027 without exploding. Option to the rescue!",
+    "why":  "Functions that return Option[T] explicitly signal that they might fail — callers must handle the \u0027nothing\u0027 case, making code safer by design.",
+    "narrative":  "## Functions That Might Not Return a Value\n\nSometimes a function can\u0027t produce a meaningful result. Instead of returning a sentinel like `-1` and hoping callers check, return `Option[T]`.\n\n### Safe Division\n\n```xiom\nfn divide_safely(a: Int, b: Int) -\u003e Option[Int] {\n  if b == 0 {\n    return None;\n  }\n  return Some(a / b);\n}\n\nfn main() -\u003e Int {\n  let result1 = divide_safely(10, 2);  // Some(5)\n  let result2 = divide_safely(10, 0);  // None\n\n  let msg1 = match result1 {\n    Some(val) =\u003e \"Result: \" + string.int_to_str(val),\n    None =\u003e \"Cannot divide by zero!\",\n  };\n  let msg2 = match result2 {\n    Some(val) =\u003e \"Result: \" + string.int_to_str(val),\n    None =\u003e \"Cannot divide by zero!\",\n  };\n\n  io.println(msg1);\n  io.println(msg2);\n  return 0;\n}\n```\n\n### Find First Even Number\n\n```xiom\nfn first_even(a: Int, b: Int, c: Int) -\u003e Option[Int] {\n  if a % 2 == 0 { return Some(a); }\n  if b % 2 == 0 { return Some(b); }\n  if c % 2 == 0 { return Some(c); }\n  return None;\n}\n\nfn main() -\u003e Int {\n  let found = first_even(3, 5, 7);  // all odd — None\n  let msg = found.unwrap_or(-1);\n  io.println(string.int_to_str(msg));  // -1\n  return 0;\n}\n```\n\n### The Pattern\n\nFunctions returning Option follow a clear pattern:\n1. Check if the operation is valid\n2. If invalid, `return None`\n3. If valid, compute and `return Some(result)`\n\nThis makes the function\u0027s contract explicit: \"I\u0027ll give you a value if I can, and nothing if I can\u0027t.\"",
+    "analogy":  "A function returning Option is like a vending machine — you put in money and press a button. If the item is in stock, it drops (Some). If it\u0027s sold out, nothing comes out (None).",
+    "code_template":  "use xiom.io;\n\n// TODO: Write divide_safely(a, b) -\u003e Option[Int]\n// If b is 0, return None. Otherwise, return Some(a / b).\n\n// TODO: Write safe_max(a, b, c) -\u003e Option[Int]\n// Return Some of the largest number, UNLESS all three are negative.\n// If all are negative, return None.\n\nfn main() -\u003e Int {\n  // TODO: Test divide_safely with 20 / 4 and 20 / 0, print results\n\n  // TODO: Test safe_max with (1, 5, 3) and (-1, -2, -3), print results\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\nfn divide_safely(a: Int, b: Int) -\u003e Option[Int] {\n  if b == 0 {\n    return None;\n  }\n  return Some(a / b);\n}\n\nfn safe_max(a: Int, b: Int, c: Int) -\u003e Option[Int] {\n  let max_val = a;\n  let max_val = if b \u003e max_val { b } else { max_val };\n  let max_val = if c \u003e max_val { c } else { max_val };\n  if max_val \u003c 0 { return None; }\n  return Some(max_val);\n}\n\nfn main() -\u003e Int {\n  let d1 = divide_safely(20, 4);\n  let d2 = divide_safely(20, 0);\n  io.println(d1.unwrap_or(0).to_str());\n  io.println(d2.unwrap_or(0).to_str());\n\n  let m1 = safe_max(1, 5, 3);\n  let m2 = safe_max(-1, -2, -3);\n  io.println(m1.unwrap_or(0).to_str());\n  io.println(m2.unwrap_or(0).to_str());\n  return 0;\n}\n",
+    "try_it":  "Write a `safe_average(a, b, c)` function that returns Option[Int]. Return None if the sum is 0 (to avoid a trivial average). Otherwise return Some(sum / 3). Test with all positive, all zero, and mixed values.",
+    "concepts":  [
+                     "Option-return",
+                     "Option-signature",
+                     "safe-functions",
+                     "sentinel-avoidance"
+                 ],
+    "tips":  [
+                 "Return `None` early when validation fails — this keeps the happy path clean at the bottom",
+                 "The return type `Option[Int]` documents that callers must handle the \u0027no result\u0027 case",
+                 "Use `.unwrap_or()` at the call site if you have a good default — but match when you need different logic per case"
+             ],
+    "common_mistakes":  [
+                            "Returning `None` from a function whose signature says `-\u003e Int` — the return type must be `-\u003e Option[Int]`",
+                            "Wrapping everything in Some without checking conditions — defeats the purpose of Option",
+                            "Forgetting that `a / b` when b is 0 crashes even inside a function returning Option — you must check BEFORE dividing"
+                        ],
+    "next_lesson":  "L3-04",
+    "related":  [
+                    "L3-01",
+                    "L3-02",
+                    "L1-18"
+                ]
 }

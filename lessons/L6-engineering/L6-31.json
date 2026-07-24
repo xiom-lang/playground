@@ -7,10 +7,16 @@
   "why": "Submodules let you nest modules inside modules, creating a hierarchical organization that mirrors your application's logical structure.",
   "narrative": "## Building a Module Hierarchy\n\n### The Tree Structure\n\n```xiom\nmod game {\n  pub mod player {\n    pub type Character {\n      name: Str;\n      health: Int;\n    }\n\n    pub fn create(name: Str) -> Character {\n      Character{ name: name, health: 100 }\n    }\n\n    pub fn heal(c: &mut Character, amount: Int) {\n      c.health += amount;\n      if c.health > 100 { c.health = 100; };\n    }\n  }\n\n  pub mod world {\n    pub type Location {\n      name: Str;\n      danger_level: Int;\n    }\n\n    pub fn describe(loc: &Location) -> Str {\n      loc.name.clone()\n    }\n  }\n\n  pub mod combat {\n    pub fn attack_damage(attacker_level: Int, weapon_power: Int) -> Int {\n      attacker_level * weapon_power\n    }\n  }\n}\n```\n\n### Accessing Deep Modules\n\n```xiom\nfn main() -> Int {\n  use game;\n  let mut hero = game.player.create(\"Aria\");\n  game.player.heal(&mut hero, 20);\n  io.println(hero.health);\n  return 0;\n}\n```\n\n### Module Re-exports for Clean API\n\n```xiom\nmod game {\n  pub mod player { /* ... */ }\n  pub mod world { /* ... */ }\n\n  pub use player::create as create_player;\n  pub use world::Location;\n}\n\n// Now: game.create_player(\"Aria\") — no submodule path needed!\n```",
   "analogy": "A filing cabinet has drawers (modules), each drawer has folders (submodules), each folder has documents (functions and types). You don't dump everything in one drawer — you organize by category and subcategory. Submodules give you that filing cabinet structure.",
-  "code_template": "mod school {\n  pub mod students {\n    // TODO: type Student with name and grade\n    // TODO: pub fn promote that increases grade\n  }\n\n  pub mod courses {\n    // TODO: type Course with name and credits\n    // TODO: pub fn is_full with capacity check\n  }\n}\n\nfn main() -> Int {\n  use school;\n  // TODO: create a student and promote them; create a course\n  return 0;\n}\n",
-  "solution": "mod school {\n  pub mod students {\n    pub type Student {\n      name: Str;\n      grade: Int;\n    }\n\n    pub fn promote(s: &mut Student) {\n      s.grade += 1;\n    }\n  }\n\n  pub mod courses {\n    pub type Course {\n      name: Str;\n      enrolled: Int;\n      capacity: Int;\n    }\n\n    pub fn is_full(c: &Course) -> Bool {\n      c.enrolled >= c.capacity\n    }\n  }\n}\n\nfn main() -> Int {\n  use school;\n  let mut s = school.students.Student{ name: \"Alex\", grade: 9 };\n  school.students.promote(&mut s);\n  io.println(s.grade);\n  let c = school.courses.Course{ name: \"Math\", enrolled: 25, capacity: 30 };\n  io.println(school.courses.is_full(&c));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nmod school {\n  pub mod students {\n    // TODO: type Student with name and grade\n    // TODO: pub fn promote that increases grade\n  }\n\n  pub mod courses {\n    // TODO: type Course with name and credits\n    // TODO: pub fn is_full with capacity check\n  }\n}\n\nfn main() -> Int {\n  use school;\n  // TODO: create a student and promote them; create a course\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nmod school {\n  pub mod students {\n    pub type Student {\n      name: Str;\n      grade: Int;\n    }\n\n    pub fn promote(s: &mut Student) {\n      s.grade += 1;\n    }\n  }\n\n  pub mod courses {\n    pub type Course {\n      name: Str;\n      enrolled: Int;\n      capacity: Int;\n    }\n\n    pub fn is_full(c: &Course) -> Bool {\n      c.enrolled >= c.capacity\n    }\n  }\n}\n\nfn main() -> Int {\n  use school;\n  let mut s = school.students.Student{ name: \"Alex\", grade: 9 };\n  school.students.promote(&mut s);\n  io.println(s.grade.to_str());\n  let c = school.courses.Course{ name: \"Math\", enrolled: 25, capacity: 30 };\n  io.println(school.courses.is_full(&c).to_str());\n  return 0;\n}\n",
   "try_it": "Add a third submodule `staff` with `Teacher` type and `assign_course` function. Add re-exports in the parent `school` module so users can do `school.promote(...)` directly. Try accessing a private item in a submodule to see the visibility rules in action.",
-  "concepts": ["submodules", "nested-modules", "module-hierarchy", "pub-mod", "organization"],
+  "concepts": [
+    "submodules",
+    "nested-modules",
+    "module-hierarchy",
+    "pub-mod",
+    "organization"
+  ],
   "tips": [
     "Submodules must be marked `pub mod` to be visible outside the parent",
     "Each submodule can have its own types, functions, constants",
@@ -22,5 +28,9 @@
     "Putting unrelated things in the same submodule just because they're small"
   ],
   "next_lesson": "L6-32",
-  "related": ["L6-19", "L6-20", "L6-05"]
+  "related": [
+    "L6-19",
+    "L6-20",
+    "L6-05"
+  ]
 }

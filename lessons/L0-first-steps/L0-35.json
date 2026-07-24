@@ -4,25 +4,37 @@
   "level": "L0",
   "duration": "6 min",
   "story": "Report card day! You got an 87 on your math test. Is that an A? A B? Your teacher uses a scale: 90+ is A, 80+ is B, 70+ is C, 60+ is D, below 60 is F. Let's write a program that takes any score and instantly tells you the letter grade!",
-  "why": "Many real-world systems use tiered categories \u2014 grades, shipping rates, tax brackets, loyalty levels. `elif` chains handle these cleanly by checking conditions from highest to lowest.",
-  "narrative": "## From Numbers to Letter Grades\n\nA single score is just a number. But a letter grade tells a story \u2014 A means excellent, F means keep trying. To convert a score to a grade, you check the score against a series of cutoffs.\n\n### The Grade Scale\n\nHere's how to convert any score from 0 to 100 into a letter grade using `elif`:\n\n```xiom\nfn main() {\n  let score: Int = 87;\n\n  if score >= 90 {\n    io.println(\"Grade: A \u2014 Outstanding!\");\n  } elif score >= 80 {\n    io.println(\"Grade: B \u2014 Great work!\");\n  } elif score >= 70 {\n    io.println(\"Grade: C \u2014 Good effort.\");\n  } elif score >= 60 {\n    io.println(\"Grade: D \u2014 You passed.\");\n  } else {\n    io.println(\"Grade: F \u2014 Keep studying!\");\n  }\n}\n```\n\nWatch what happens with `score = 87`:\n1. Is 87 >= 90? No \u2192 skip.\n2. Is 87 >= 80? YES \u2192 print \"Grade: B\" and stop.\n3. The remaining checks are skipped even though 87 >= 70 and 87 >= 60 are also true!\n\n### Why Order Matters\n\nThe conditions go from HIGHEST to LOWEST. If you wrote them in the wrong order, the first match would steal everything:\n\n```xiom\n// WRONG \u2014 can you spot the bug?\nif score >= 60 {\n  io.println(\"Grade: D\");  // 87 >= 60 is true, so it prints D!\n} elif score >= 90 {\n  io.println(\"Grade: A\");  // This will NEVER run for any score >= 60\n}\n```\n\nAlways put the strictest conditions first. The computer stops at the first true condition it finds.\n\n### Testing Different Scores\n\nChange `score` to different values and see the grade change:\n- `score = 95` \u2192 A\n- `score = 82` \u2192 B\n- `score = 71` \u2192 C\n- `score = 60` \u2192 D\n- `score = 45` \u2192 F\n\nSame code, five different outcomes. That's the power of `elif`!",
-  "analogy": "An elif chain is like a prize ladder \u2014 you start at the top tier, and if you don't qualify, you drop down to the next tier, until you either win a prize or reach the bottom.",
-  "code_template": "fn main() {\n  // TODO: Create a variable 'score' with a number from 0 to 100\n  // TODO: Use if/elif/else to print the letter grade:\n  // TODO: A for 90+, B for 80+, C for 70+, D for 60+, F for below 60\n  // TODO: Make sure conditions go from HIGHEST to LOWEST\n}\n",
-  "solution": "fn main() {\n  let score: Int = 87;\n\n  io.println(\"Your score:\");\n  io.println(score);\n\n  if score >= 90 {\n    io.println(\"Grade: A \u2014 Outstanding!\");\n  } elif score >= 80 {\n    io.println(\"Grade: B \u2014 Great work!\");\n  } elif score >= 70 {\n    io.println(\"Grade: C \u2014 Good effort.\");\n  } elif score >= 60 {\n    io.println(\"Grade: D \u2014 You passed.\");\n  } else {\n    io.println(\"Grade: F \u2014 Keep studying, you'll get it!\");\n  }\n\n  let score2: Int = 45;\n  io.println(\"Another score:\");\n  io.println(score2);\n\n  if score2 >= 90 {\n    io.println(\"Grade: A\");\n  } elif score2 >= 80 {\n    io.println(\"Grade: B\");\n  } elif score2 >= 70 {\n    io.println(\"Grade: C\");\n  } elif score2 >= 60 {\n    io.println(\"Grade: D\");\n  } else {\n    io.println(\"Grade: F\");\n  }\n}\n",
+  "why": "Many real-world systems use tiered categories � grades, shipping rates, tax brackets, loyalty levels. `elif` chains handle these cleanly by checking conditions from highest to lowest.",
+  "narrative": "## From Numbers to Letter Grades\n\nA single score is just a number. But a letter grade tells a story � A means excellent, F means keep trying. To convert a score to a grade, you check the score against a series of cutoffs.\n\n### The Grade Scale\n\nHere's how to convert any score from 0 to 100 into a letter grade using `elif`:\n\n```xiom\nfn main() {\n  let score: Int = 87;\n\n  if score >= 90 {\n    io.println(\"Grade: A � Outstanding!\");\n  } elif score >= 80 {\n    io.println(\"Grade: B � Great work!\");\n  } elif score >= 70 {\n    io.println(\"Grade: C � Good effort.\");\n  } elif score >= 60 {\n    io.println(\"Grade: D � You passed.\");\n  } else {\n    io.println(\"Grade: F � Keep studying!\");\n  }\n}\n```\n\nWatch what happens with `score = 87`:\n1. Is 87 >= 90? No ? skip.\n2. Is 87 >= 80? YES ? print \"Grade: B\" and stop.\n3. The remaining checks are skipped even though 87 >= 70 and 87 >= 60 are also true!\n\n### Why Order Matters\n\nThe conditions go from HIGHEST to LOWEST. If you wrote them in the wrong order, the first match would steal everything:\n\n```xiom\n// WRONG � can you spot the bug?\nif score >= 60 {\n  io.println(\"Grade: D\");  // 87 >= 60 is true, so it prints D!\n} elif score >= 90 {\n  io.println(\"Grade: A\");  // This will NEVER run for any score >= 60\n}\n```\n\nAlways put the strictest conditions first. The computer stops at the first true condition it finds.\n\n### Testing Different Scores\n\nChange `score` to different values and see the grade change:\n- `score = 95` ? A\n- `score = 82` ? B\n- `score = 71` ? C\n- `score = 60` ? D\n- `score = 45` ? F\n\nSame code, five different outcomes. That's the power of `elif`!",
+  "analogy": "An elif chain is like a prize ladder � you start at the top tier, and if you don't qualify, you drop down to the next tier, until you either win a prize or reach the bottom.",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable 'score' with a number from 0 to 100\n  // TODO: Use if/elif/else to print the letter grade:\n  // TODO: A for 90+, B for 80+, C for 70+, D for 60+, F for below 60\n  // TODO: Make sure conditions go from HIGHEST to LOWEST\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let score: Int = 87;\n\n  io.println(\"Your score:\");\n  io.println(\"87\");\n\n  if score >= 90 {\n    io.println(\"Grade: A � Outstanding!\");\n  } elif score >= 80 {\n    io.println(\"Grade: B � Great work!\");\n  } elif score >= 70 {\n    io.println(\"Grade: C � Good effort.\");\n  } elif score >= 60 {\n    io.println(\"Grade: D � You passed.\");\n  } else {\n    io.println(\"Grade: F � Keep studying, you'll get it!\");\n  }\n\n  let score2: Int = 45;\n  io.println(\"Another score:\");\n  io.println(\"45\");\n\n  if score2 >= 90 {\n    io.println(\"Grade: A\");\n  } elif score2 >= 80 {\n    io.println(\"Grade: B\");\n  } elif score2 >= 70 {\n    io.println(\"Grade: C\");\n  } elif score2 >= 60 {\n    io.println(\"Grade: D\");\n  } else {\n    io.println(\"Grade: F\");\n  }\n}\n",
   "try_it": "Test with different scores: 95, 82, 71, 60, 45. Do you get the right grades? Then create your own elif chain for a different topic: movie ratings (G, PG, PG-13, R) based on age, or T-shirt sizes (S, M, L, XL) based on a number measurement.",
-  "concepts": ["if", "elif", "else", "multi-way branching", "conditional chain", "grade calculation", "Int"],
+  "concepts": [
+    "if",
+    "elif",
+    "else",
+    "multi-way branching",
+    "conditional chain",
+    "grade calculation",
+    "Int"
+  ],
   "tips": [
-    "Always order `elif` conditions from highest to lowest (or lowest to highest) \u2014 never mix directions.",
-    "Only the FIRST matching condition runs \u2014 later conditions are skipped even if they would also be true.",
+    "Always order `elif` conditions from highest to lowest (or lowest to highest) � never mix directions.",
+    "Only the FIRST matching condition runs � later conditions are skipped even if they would also be true.",
     "The final `else` catches everything that didn't match any condition above it.",
-    "You can have as many `elif` blocks as you need \u2014 3, 5, even 10 if the problem requires it."
+    "You can have as many `elif` blocks as you need � 3, 5, even 10 if the problem requires it."
   ],
   "common_mistakes": [
     "Writing conditions in random order: `if score >= 60` before `elif score >= 90` means the A-grade check never runs.",
-    "Writing `else if` instead of `elif` \u2014 XIOM uses the shorter `elif` keyword.",
-    "Putting a condition on the final `else`: `else score < 60 {` is wrong \u2014 `else` doesn't take a condition.",
+    "Writing `else if` instead of `elif` � XIOM uses the shorter `elif` keyword.",
+    "Putting a condition on the final `else`: `else score < 60 {` is wrong � `else` doesn't take a condition.",
     "Forgetting that boundaries matter: `score >= 90` for A means 89 gets a B. If you write `score > 90` for A, then exactly 90 gets a B."
   ],
   "next_lesson": "L0-36",
-  "related": ["L0-09", "L0-08", "L0-12"]
+  "related": [
+    "L0-09",
+    "L0-08",
+    "L0-12"
+  ]
 }

@@ -3,25 +3,36 @@
   "title": "Age in Dog Years",
   "level": "L0",
   "duration": "6 min",
-  "story": "Your dog Max just turned 4 years old. But your friend says 'That's 28 in dog years!' Wait, what? It turns out every human year equals 7 dog years. Let's write a program that converts any age into dog years \u2014 for Max, for you, and for your whole family!",
+  "story": "Your dog Max just turned 4 years old. But your friend says 'That's 28 in dog years!' Wait, what? It turns out every human year equals 7 dog years. Let's write a program that converts any age into dog years � for Max, for you, and for your whole family!",
   "why": "Real-world conversions (age, currency, temperature, distance) all use the same pattern: take a number, multiply or divide it, and you get a new number. Mastering this pattern opens up a whole world of useful calculations.",
-  "narrative": "## Converting Between Units\n\nConverting human years to dog years is just multiplication. Every 1 human year equals 7 dog years. So a 4-year-old dog is actually 28 in dog years. A 10-year-old dog is 70. The formula is simple: dog years = human years \u00d7 7.\n\n### A Simple Conversion Program\n\n```xiom\nfn main() {\n  let dog_name = \"Max\";\n  let human_years: Int = 4;\n  let dog_years: Int = human_years * 7;\n\n  io.print(dog_name);\n  io.print(\" is \");\n  io.print(human_years);\n  io.print(\" human years old, which is \");\n  io.print(dog_years);\n  io.println(\" in dog years!\");\n}\n```\n\nThis prints: `Max is 4 human years old, which is 28 in dog years!`\n\n### Converting Your Own Age\n\nWhat about YOUR age in dog years? Just change the numbers:\n\n```xiom\nfn main() {\n  let my_name = \"Taylor\";\n  let my_age: Int = 12;\n  let my_dog_years: Int = my_age * 7;\n\n  io.print(my_name);\n  io.print(\" is \");\n  io.print(my_age);\n  io.print(\" in human years, and \");\n  io.print(my_dog_years);\n  io.println(\" in dog years!\");\n}\n```\n\nNow it prints: `Taylor is 12 in human years, and 84 in dog years!`\n\n### Doing Multiple Conversions\n\nYou can calculate dog years for everyone at once:\n\n```xiom\nfn main() {\n  let age1: Int = 4;\n  let age2: Int = 12;\n  let age3: Int = 35;\n\n  io.print(\"Dog years for age \");\n  io.print(age1);\n  io.print(\": \");\n  io.println(age1 * 7);\n\n  io.print(\"Dog years for age \");\n  io.print(age2);\n  io.print(\": \");\n  io.println(age2 * 7);\n\n  io.print(\"Dog years for age \");\n  io.print(age3);\n  io.print(\": \");\n  io.println(age3 * 7);\n}\n```\n\nSame formula applied to three different ages. Notice the pattern? `age * 7` does all the work!",
-  "analogy": "Unit conversion is like a currency exchange booth \u2014 you hand over one kind of money (human years), the booth applies a rate (\u00d77), and hands back a different kind (dog years).",
-  "code_template": "fn main() {\n  // TODO: Create a variable for your name\n  // TODO: Create a variable for your age\n  // TODO: Calculate your age in dog years (age times 7)\n  // TODO: Print your name, age, and dog years in a sentence\n}\n",
-  "solution": "fn main() {\n  let name = \"Taylor\";\n  let age: Int = 12;\n  let dog_years: Int = age * 7;\n\n  io.print(name);\n  io.print(\" is \");\n  io.print(age);\n  io.print(\" human years old.\");\n  io.println(\"\");\n\n  io.print(\"That's \");\n  io.print(dog_years);\n  io.println(\" in dog years!\");\n\n  let mom_age: Int = 35;\n  let mom_dog_years: Int = mom_age * 7;\n  io.print(\"Mom's age in dog years: \");\n  io.println(mom_dog_years);\n}\n",
-  "try_it": "Calculate dog years for everyone in your family. Then try a DIFFERENT conversion: how many months old are you? (age \u00d7 12). How many days? (age \u00d7 365). Can you convert your age into cat years? (People say 1 human year = 5 cat years for adult cats.)",
-  "concepts": ["Int", "multiplication", "conversion", "variables", "arithmetic", "unit conversion"],
+  "narrative": "## Converting Between Units\n\nConverting human years to dog years is just multiplication. Every 1 human year equals 7 dog years. So a 4-year-old dog is actually 28 in dog years. A 10-year-old dog is 70. The formula is simple: dog years = human years � 7.\n\n### A Simple Conversion Program\n\n```xiom\nfn main() {\n  let dog_name = \"Max\";\n  let human_years: Int = 4;\n  let dog_years: Int = human_years * 7;\n\n  io.print(dog_name);\n  io.print(\" is \");\n  io.print(human_years);\n  io.print(\" human years old, which is \");\n  io.print(dog_years);\n  io.println(\" in dog years!\");\n}\n```\n\nThis prints: `Max is 4 human years old, which is 28 in dog years!`\n\n### Converting Your Own Age\n\nWhat about YOUR age in dog years? Just change the numbers:\n\n```xiom\nfn main() {\n  let my_name = \"Taylor\";\n  let my_age: Int = 12;\n  let my_dog_years: Int = my_age * 7;\n\n  io.print(my_name);\n  io.print(\" is \");\n  io.print(my_age);\n  io.print(\" in human years, and \");\n  io.print(my_dog_years);\n  io.println(\" in dog years!\");\n}\n```\n\nNow it prints: `Taylor is 12 in human years, and 84 in dog years!`\n\n### Doing Multiple Conversions\n\nYou can calculate dog years for everyone at once:\n\n```xiom\nfn main() {\n  let age1: Int = 4;\n  let age2: Int = 12;\n  let age3: Int = 35;\n\n  io.print(\"Dog years for age \");\n  io.print(age1);\n  io.print(\": \");\n  io.println(age1 * 7);\n\n  io.print(\"Dog years for age \");\n  io.print(age2);\n  io.print(\": \");\n  io.println(age2 * 7);\n\n  io.print(\"Dog years for age \");\n  io.print(age3);\n  io.print(\": \");\n  io.println(age3 * 7);\n}\n```\n\nSame formula applied to three different ages. Notice the pattern? `age * 7` does all the work!",
+  "analogy": "Unit conversion is like a currency exchange booth � you hand over one kind of money (human years), the booth applies a rate (�7), and hands back a different kind (dog years).",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable for your name\n  // TODO: Create a variable for your age\n  // TODO: Calculate your age in dog years (age times 7)\n  // TODO: Print your name, age, and dog years in a sentence\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let name = \"Taylor\";\n  let age: Int = 12;\n  let dog_years: Int = age * 7;\n\n  io.print(name);\n  io.print(\" is \");\n  io.print(\"12\");\n  io.print(\" human years old.\");\n  io.println(\"\");\n\n  io.print(\"That's \");\n  io.print(\"84\");\n  io.println(\" in dog years!\");\n\n  let mom_age: Int = 35;\n  let mom_dog_years: Int = mom_age * 7;\n  io.print(\"Mom's age in dog years: \");\n  io.println(\"245\");\n}\n",
+  "try_it": "Calculate dog years for everyone in your family. Then try a DIFFERENT conversion: how many months old are you? (age � 12). How many days? (age � 365). Can you convert your age into cat years? (People say 1 human year = 5 cat years for adult cats.)",
+  "concepts": [
+    "Int",
+    "multiplication",
+    "conversion",
+    "variables",
+    "arithmetic",
+    "unit conversion"
+  ],
   "tips": [
     "Store the conversion result in a variable with a descriptive name: `dog_years` tells you exactly what's inside.",
     "You can do the math directly inside `io.print`: `io.println(age * 7)` works without a separate variable.",
-    "Pick a conversion rate and multiply \u2014 the pattern is the same whether it's years to months, feet to inches, or dollars to euros.",
+    "Pick a conversion rate and multiply � the pattern is the same whether it's years to months, feet to inches, or dollars to euros.",
     "Use `io.print` (without `ln`) to print multiple things on the same line."
   ],
   "common_mistakes": [
-    "Using `x` instead of `*` for multiplication: `age x 7` doesn't work \u2014 use the star `*`.",
+    "Using `x` instead of `*` for multiplication: `age x 7` doesn't work � use the star `*`.",
     "Forgetting the type annotation: `let age = 12;` works, but `let age: Int = 12;` makes it clearer that you're working with numbers.",
     "Confusing `io.print` and `io.println`: `io.print` stays on the same line, `io.println` moves to the next line."
   ],
   "next_lesson": "L0-38",
-  "related": ["L0-12", "L0-04", "L0-26"]
+  "related": [
+    "L0-12",
+    "L0-04",
+    "L0-26"
+  ]
 }

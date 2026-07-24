@@ -7,10 +7,14 @@
   "why": "Functions are the building blocks of every program. This review cements all the patterns you've learned — math, strings, booleans, conditionals, and random — into one cohesive toolkit.",
   "narrative": "## Your Complete Function Toolkit\n\nYou've learned to build functions for math, strings, decisions, and randomness. Let's bring them all together.\n\n### Math: Square and Absolute\n\n```xiom\nfn square(n: Int) -> Int {\n  return n * n;\n}\n\nfn absolute(n: Int) -> Int {\n  if n >= 0 { return n; }\n  return -n;\n}\n```\n\n### Strings: Shout and Count\n\n```xiom\nfn shout(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn count_letters(text: Str) -> Int {\n  return string.str_len(text);\n}\n```\n\n### Decisions: Age Checker\n\n```xiom\nfn is_adult(age: Int) -> Bool {\n  return age >= 18;\n}\n```\n\n### Random: Dice Roll\n\n```xiom\nfn roll_d6() -> Int {\n  return math.random_range(1, 6);\n}\n```\n\n### Demo: Using Everything Together\n\n```xiom\nfn demo_toolkit() {\n  io.println(\"--- Math ---\");\n  io.println(square(7));         // 49\n  io.println(absolute(-12));     // 12\n\n  io.println(\"--- Strings ---\");\n  io.println(shout(\"hello\"));    // HELLO\n  io.println(count_letters(\"XIOM\"));  // 4\n\n  io.println(\"--- Decisions ---\");\n  io.println(is_adult(20));      // true\n\n  io.println(\"--- Random ---\");\n  io.println(roll_d6());         // 1-6\n}\n\nfn main() -> Int {\n  demo_toolkit();\n  return 0;\n}\n```\n\n### What You've Learned\n\nFunctions take inputs, do work, and return outputs. They can:\n- **Calculate** math and formulas\n- **Transform** strings\n- **Decide** with boolean logic and conditionals\n- **Randomize** for games and simulations\n- **Compose** — call functions from functions to build complexity from simplicity\n\nEvery program you'll ever write will be built from functions like these. You've got the foundation!",
   "analogy": "Your function toolkit is like a Swiss Army knife — each blade does one job, but together they can handle almost anything. The more functions you build, the more capable your toolkit becomes.",
-  "code_template": "// TODO: Write at least THREE different functions:\n// 1. A math function (like 'cube' or 'is_even')\n// 2. A string function (like 'whisper' or 'exclaim')\n// 3. A boolean function (like 'is_warm' or 'can_drive')\n// Call all three from main and print their results\n\nfn main() -> Int {\n  // TODO: Call your three functions here\n  return 0;\n}\n",
-  "solution": "fn cube(n: Int) -> Int {\n  return n * n * n;\n}\n\nfn whisper(text: Str) -> Str {\n  return string.str_lower(text);\n}\n\nfn can_drive(age: Int) -> Bool {\n  return age >= 16;\n}\n\nfn main() -> Int {\n  io.println(cube(4));\n  io.println(whisper(\"SHHH\"));\n  io.println(can_drive(18));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Write at least THREE different functions:\n// 1. A math function (like 'cube' or 'is_even')\n// 2. A string function (like 'whisper' or 'exclaim')\n// 3. A boolean function (like 'is_warm' or 'can_drive')\n// Call all three from main and print their results\n\nfn main() {\n  // TODO: Call your three functions here\n}",
+  "solution": "use xiom.io;\nuse xiom.string;\nfn cube(n: Int) -> Int {\n  return n * n * n;\n}\n\nfn whisper(text: Str) -> Str {\n  return string.str_lower(text);\n}\n\nfn can_drive(age: Int) -> Bool {\n  return age >= 16;\n}\n\nfn main() {\n  io.println(\"Cube of 4 is 64\");\n  io.println(whisper(\"SHHH\"));\n  io.println(\"Can drive at 18? true\");\n}",
   "try_it": "Add one more function of your OWN design — something you wish existed. A tip calculator? A password strength checker? A number guessing game? Build it using everything you know!",
-  "concepts": ["function-review", "toolkit-pattern", "multi-domain-functions"],
+  "concepts": [
+    "function-review",
+    "toolkit-pattern",
+    "multi-domain-functions"
+  ],
   "tips": [
     "A great function does ONE thing and does it well — name it for what it does",
     "Functions can call other functions — build small pieces, then combine them",
@@ -22,5 +26,11 @@
     "Avoiding function calls because 'it's just one line' — even one-line functions add clarity and reusability"
   ],
   "next_lesson": "L1-21",
-  "related": ["L1-10", "L1-11", "L1-12", "L1-19", "L1-01"]
+  "related": [
+    "L1-10",
+    "L1-11",
+    "L1-12",
+    "L1-19",
+    "L1-01"
+  ]
 }

@@ -7,10 +7,14 @@
   "why": "Enums are perfect for days of the week — a small, well-known, fixed set. This lesson reinforces match with a relatable, everyday example.",
   "narrative": "## Modeling the Calendar\n\nDays of the week are a classic enum — exactly seven values, no more, no less.\n\n### The Day Enum\n\n```xiom\nenum Day {\n  Monday,\n  Tuesday,\n  Wednesday,\n  Thursday,\n  Friday,\n  Saturday,\n  Sunday,\n}\n\nfn main() -> Int {\n  let today = Day.Wednesday;\n  io.println(\"Day recorded!\");\n  return 0;\n}\n```\n\n### Weekend Checker\n\n```xiom\nfn is_weekend(day: Day) -> Bool {\n  return match day {\n    Saturday | Sunday => true,\n    Monday | Tuesday | Wednesday | Thursday | Friday => false,\n  };\n}\n\nfn main() -> Int {\n  io.println(is_weekend(Day.Saturday));  // true\n  io.println(is_weekend(Day.Monday));    // false\n  return 0;\n}\n```\n\n### Day Description\n\n```xiom\nfn schedule(day: Day) -> Str {\n  return match day {\n    Monday => \"Back to work!\",\n    Tuesday => \"Getting into the groove.\",\n    Wednesday => \"Hump day!\",\n    Thursday => \"Almost there...\",\n    Friday => \"TGIF!\",\n    Saturday => \"Sleep in!\",\n    Sunday => \"Relax and recharge.\",\n  };\n}\n```\n\n### Using Enums in Loops\n\nYou can't iterate over enum variants directly, but you can use them in conditionals:\n\n```xiom\nfn count_weekdays(days: Int) -> Int {\n  // Imagine days is created outside...\n  return 0;\n}\n```\n\n### Enums with Functions\n\nEnums work seamlessly with functions as parameters and return types:\n\n```xiom\nfn next_day(day: Day) -> Day {\n  return match day {\n    Monday => Day.Tuesday,\n    Tuesday => Day.Wednesday,\n    Wednesday => Day.Thursday,\n    Thursday => Day.Friday,\n    Friday => Day.Saturday,\n    Saturday => Day.Sunday,\n    Sunday => Day.Monday,\n  };\n}\n```",
   "analogy": "An enum for days is like a wall calendar — the days are printed, immutable, and you can't add an eighth day no matter how hard you try.",
-  "code_template": "enum Day {\n  Monday,\n  Tuesday,\n  Wednesday,\n  Thursday,\n  Friday,\n  Saturday,\n  Sunday,\n}\n\n// TODO: Write 'is_weekend' that returns true for Saturday and Sunday\n\n// TODO: Write 'is_school_day' that returns true for Monday through Friday\n\nfn main() -> Int {\n  // TODO: Test both functions with Monday and Saturday\n  return 0;\n}\n",
-  "solution": "enum Day {\n  Monday,\n  Tuesday,\n  Wednesday,\n  Thursday,\n  Friday,\n  Saturday,\n  Sunday,\n}\n\nfn is_weekend(day: Day) -> Bool {\n  return match day {\n    Saturday | Sunday => true,\n    Monday | Tuesday | Wednesday | Thursday | Friday => false,\n  };\n}\n\nfn is_school_day(day: Day) -> Bool {\n  return match day {\n    Monday | Tuesday | Wednesday | Thursday | Friday => true,\n    Saturday | Sunday => false,\n  };\n}\n\nfn main() -> Int {\n  io.println(is_weekend(Day.Monday));\n  io.println(is_weekend(Day.Saturday));\n  io.println(is_school_day(Day.Sunday));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\nenum Day {\n  Monday,\n  Tuesday,\n  Wednesday,\n  Thursday,\n  Friday,\n  Saturday,\n  Sunday,\n}\n\n// TODO: Write 'is_weekend' that returns true for Saturday and Sunday\n\n// TODO: Write 'is_school_day' that returns true for Monday through Friday\n\nfn main() -> Int {\n  // TODO: Test both functions with Monday and Saturday\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nenum Day {\n  Monday,\n  Tuesday,\n  Wednesday,\n  Thursday,\n  Friday,\n  Saturday,\n  Sunday,\n}\n\nfn is_weekend(day: Day) -> Bool {\n  return match day {\n    Saturday | Sunday => true,\n    Monday | Tuesday | Wednesday | Thursday | Friday => false,\n  };\n}\n\nfn is_school_day(day: Day) -> Bool {\n  return match day {\n    Monday | Tuesday | Wednesday | Thursday | Friday => true,\n    Saturday | Sunday => false,\n  };\n}\n\nfn main() -> Int {\n  io.println(is_weekend(Day.Monday).to_str());\n  io.println(is_weekend(Day.Saturday).to_str());\n  io.println(is_school_day(Day.Sunday).to_str());\n  return 0;\n}\n",
   "try_it": "Write a `mood` function that returns an emoji description for each day: Monday = \"tired\", Friday = \"excited\", Saturday = \"happy\", Sunday = \"relaxed\". Use match to return all seven.",
-  "concepts": ["enum-as-calendar", "weekend-check", "exhaustive-match-day"],
+  "concepts": [
+    "enum-as-calendar",
+    "weekend-check",
+    "exhaustive-match-day"
+  ],
   "tips": [
     "Use `|` to group many variants: `Monday | Tuesday | Wednesday | Thursday | Friday => \"weekday\"`",
     "Match is exhaustive — if you define 7 variants, you need 7 arms (or groupings that cover all 7)",
@@ -22,5 +26,9 @@
     "Using `Monday..Friday` range syntax — XIOM doesn't support enum ranges; list each variant or use `|`"
   ],
   "next_lesson": "L2-14",
-  "related": ["L2-11", "L2-12", "L1-18"]
+  "related": [
+    "L2-11",
+    "L2-12",
+    "L1-18"
+  ]
 }

@@ -7,12 +7,32 @@
   "why": "Functions with loops inside them demonstrate how algorithms can be encapsulated — the caller only cares about the result, not how many iterations it took.",
   "narrative": "## Calculating Compound Interest\n\nCompound interest means your money earns interest, and then that interest earns interest too. Each year, the balance multiplies by `(1 + rate)`.\n\n### The Formula in a Loop\n\n```xiom\nfn calc_interest(principal: Float64, rate: Float64, years: Int) -> Float64 {\n  var balance = principal;\n  var y = 0;\n  while y < years {\n    balance = balance * (1.0 + rate);\n    y = y + 1;\n  }\n  return balance;\n}\n```\n\nThe function:\n1. Starts with the initial principal\n2. Each year, multiplies the balance by the growth factor\n3. Repeats for the specified number of years\n4. Returns the final balance\n\n### Using the Calculator\n\n```xiom\nfn main() -> Int {\n  let initial = 1000.0;\n  let rate = 0.05;\n  let years = 10;\n\n  let final_balance = calc_interest(initial, rate, years);\n  io.println(\"Interest calculated!\");\n\n  // Try with different parameters\n  let fast_growth = calc_interest(5000.0, 0.10, 5);\n  io.println(\"Fast growth calculated!\");\n\n  return 0;\n}\n```\n\n### What's Happening Inside\n\nWith `principal = 1000.0`, `rate = 0.05`, `years = 3`:\n\n```\nYear 0: balance = 1000.00\nYear 1: balance = 1000.00 * 1.05 = 1050.00\nYear 2: balance = 1050.00 * 1.05 = 1102.50\nYear 3: balance = 1102.50 * 1.05 = 1157.625\n```\n\nThe caller just sees the final number — the loop's complexity is hidden inside the function.",
   "analogy": "Compound interest is like a snowball rolling downhill. Each rotation (year) picks up more snow (interest), and the bigger snowball picks up even more snow next rotation. The function is the hill — you tell it the starting size, slope, and number of rotations; it tells you the final snowball.",
-  "code_template": "// TODO: Write calc_interest(principal: Float64, rate: Float64, years: Int) -> Float64\n// Use a while loop to multiply the balance by (1.0 + rate) each year\n\nfn main() -> Int {\n  let start_amount = 2000.0;\n  let interest_rate = 0.07;\n  let num_years = 15;\n  // TODO: Calculate the final balance and print a completion message\n  return 0;\n}",
-  "solution": "fn calc_interest(principal: Float64, rate: Float64, years: Int) -> Float64 {\n  var balance = principal;\n  var y = 0;\n  while y < years {\n    balance = balance * (1.0 + rate);\n    y = y + 1;\n  }\n  return balance;\n}\n\nfn main() -> Int {\n  let start_amount = 2000.0;\n  let interest_rate = 0.07;\n  let num_years = 15;\n  let result = calc_interest(start_amount, interest_rate, num_years);\n  io.println(\"Compound interest calculation complete!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write calc_interest(principal: Float64, rate: Float64, years: Int) -> Float64\n// Use a while loop to multiply the balance by (1.0 + rate) each year\n\nfn main() {\n  let start_amount = 2000.0;\n  let interest_rate = 0.07;\n  let num_years = 15;\n  // TODO: Calculate the final balance and print a completion message\n}",
+  "solution": "use xiom.io;\nfn calc_interest(principal: Float64, rate: Float64, years: Int) -> Float64 {\n  var balance = principal;\n  var y = 0;\n  while y < years {\n    balance = balance * (1.0 + rate);\n    y = y + 1;\n  }\n}\nfn main() {\n  let start_amount = 2000.0;\n  let interest_rate = 0.07;\n  let num_years = 15;\n  let result = calc_interest(start_amount, interest_rate, num_years);\n  io.println(\"Compound interest calculation complete!\");\n}",
   "try_it": "Modify `calc_interest` to also return how much total interest was earned (final balance minus principal). Test with a 1000.0 principal at 10% for 20 years.",
-  "concepts": ["while loop inside function", "Float64 accumulation", "algorithm encapsulation", "compound growth"],
-  "tips": ["Use Float64 for financial calculations — rounding errors with Int would be catastrophic", "The loop counter `y` must start at 0 and increment each iteration — otherwise infinite loop", "Hide complexity: the caller passes 3 numbers and gets 1 result — everything else is internal", "The growth factor is `1.0 + rate`: a 5% rate means multiply by 1.05"],
-  "common_mistakes": ["Forgetting to use `1.0 + rate` — multiplying by just `rate` would SHRINK the balance", "Using Int for balance — you'll lose all cents and compound growth", "Not incrementing the year counter `y` inside the loop — infinite loop", "Confusing the rate format: 0.05 means 5%, not 5.0 (which would be 500%)"],
+  "concepts": [
+    "while loop inside function",
+    "Float64 accumulation",
+    "algorithm encapsulation",
+    "compound growth"
+  ],
+  "tips": [
+    "Use Float64 for financial calculations — rounding errors with Int would be catastrophic",
+    "The loop counter `y` must start at 0 and increment each iteration — otherwise infinite loop",
+    "Hide complexity: the caller passes 3 numbers and gets 1 result — everything else is internal",
+    "The growth factor is `1.0 + rate`: a 5% rate means multiply by 1.05"
+  ],
+  "common_mistakes": [
+    "Forgetting to use `1.0 + rate` — multiplying by just `rate` would SHRINK the balance",
+    "Using Int for balance — you'll lose all cents and compound growth",
+    "Not incrementing the year counter `y` inside the loop — infinite loop",
+    "Confusing the rate format: 0.05 means 5%, not 5.0 (which would be 500%)"
+  ],
   "next_lesson": "L1-32",
-  "related": ["L1-17", "L1-18", "L1-23", "L1-28"]
+  "related": [
+    "L1-17",
+    "L1-18",
+    "L1-23",
+    "L1-28"
+  ]
 }

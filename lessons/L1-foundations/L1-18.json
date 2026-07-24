@@ -7,10 +7,14 @@
   "why": "Conditional logic inside functions powers personalized experiences. Based on input, the function chooses different behavior — the foundation of smart programs.",
   "narrative": "## A Time-Aware Greeting Bot\n\nA great greeting changes with context. With `if/elif/else`, your function can pick the right greeting for any time of day.\n\n### Time-Based Greetings\n\n```xiom\nfn greet(name: Str, hour: Int) -> Str {\n  if hour >= 5 && hour < 12 {\n    return \"Good morning, \" + name + \"!\";\n  } else if hour >= 12 && hour < 17 {\n    return \"Good afternoon, \" + name + \"!\";\n  } else if hour >= 17 && hour < 21 {\n    return \"Good evening, \" + name + \"!\";\n  } else {\n    return \"Hello, \" + name + \" — it's late!\";\n  }\n}\n\nfn main() -> Int {\n  io.println(greet(\"Kilo\", 9));   // Good morning, Kilo!\n  io.println(greet(\"Kilo\", 14));  // Good afternoon, Kilo!\n  io.println(greet(\"Kilo\", 19));  // Good evening, Kilo!\n  io.println(greet(\"Kilo\", 23));  // Hello, Kilo — it's late!\n  return 0;\n}\n```\n\n### Adding Formality\n\n```xiom\nfn greet_formal(title: Str, last_name: Str, hour: Int) -> Str {\n  let full_name = title + \" \" + last_name;\n  if hour >= 5 && hour < 12 {\n    return \"Good morning, \" + full_name + \".\";\n  } else if hour >= 12 && hour < 17 {\n    return \"Good afternoon, \" + full_name + \".\";\n  } else {\n    return \"Good evening, \" + full_name + \".\";\n  }\n}\n\nfn main() -> Int {\n  io.println(greet_formal(\"Dr.\", \"Patel\", 10));\n  return 0;\n}\n```\n\n### How It Works\n\nThe function checks ranges of time using `&&` (AND):\n- Morning: hour is 5 or later AND before 12\n- Afternoon: hour is 12 or later AND before 17\n- Evening: hour is 17 or later AND before 21\n- Night: anything else (the `else` catch-all)\n\nUsing `&&` combines two conditions: `hour >= 5 && hour < 12` means hour must be at least 5 AND less than 12. Both must be true.",
   "analogy": "A greeting function is like a friendly doorman who checks their watch and adjusts their welcome — \"Good morning!\" at sunrise, \"Good evening!\" at sunset.",
-  "code_template": "// TODO: Write 'greet' that takes a name (Str) and hour (Int)\n// TODO: Return \"Good morning, NAME!\" if 5-11, \"Good afternoon, NAME!\" if 12-16,\n// TODO: \"Good evening, NAME!\" if 17-20, and \"Hello, NAME!\" otherwise\n\nfn main() -> Int {\n  // TODO: Print greet(\"Alex\", 8) and greet(\"Alex\", 22)\n  return 0;\n}\n",
-  "solution": "fn greet(name: Str, hour: Int) -> Str {\n  if hour >= 5 && hour < 12 {\n    return \"Good morning, \" + name + \"!\";\n  } else if hour >= 12 && hour < 17 {\n    return \"Good afternoon, \" + name + \"!\";\n  } else if hour >= 17 && hour < 21 {\n    return \"Good evening, \" + name + \"!\";\n  } else {\n    return \"Hello, \" + name + \"!\";\n  }\n}\n\nfn main() -> Int {\n  io.println(greet(\"Alex\", 8));\n  io.println(greet(\"Alex\", 22));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Write 'greet' that takes a name (Str) and hour (Int)\n// TODO: Return \"Good morning, NAME!\" if 5-11, \"Good afternoon, NAME!\" if 12-16,\n// TODO: \"Good evening, NAME!\" if 17-20, and \"Hello, NAME!\" otherwise\n\nfn main() {\n  // TODO: Print greet(\"Alex\", 8) and greet(\"Alex\", 22)\n}",
+  "solution": "use xiom.io;\nfn greet(name: Str, hour: Int) -> Str {\n  if hour >= 5 && hour < 12 {\n    return \"Good morning, \" + name + \"!\";\n  } else if hour >= 12 && hour < 17 {\n    return \"Good afternoon, \" + name + \"!\";\n  } else if hour >= 17 && hour < 21 {\n    return \"Good evening, \" + name + \"!\";\n  } else {\n    return \"Hello, \" + name + \"!\";\n  }\n}\n\nfn main() {\n  io.println(greet(\"Alex\", 8));\n  io.println(greet(\"Alex\", 22));\n}",
   "try_it": "Add a `get_time_emoji` function that returns a sun emoji \"(sun)\" for morning, \"(coffee)\" for afternoon, and \"(moon)\" for evening. Then combine it with your greet function!",
-  "concepts": ["time-based-logic", "conditional-greetings", "range-checks"],
+  "concepts": [
+    "time-based-logic",
+    "conditional-greetings",
+    "range-checks"
+  ],
   "tips": [
     "Use `&&` to combine two conditions: `hour >= 5 && hour < 12` means 'at least 5 AND less than 12'",
     "Ranges should NOT overlap: 5-11, 12-16, 17-20, then else catches 21-4",
@@ -22,5 +26,9 @@
     "Forgetting the `else` — what happens at 3 AM? Without `else`, the function might not return anything"
   ],
   "next_lesson": "L1-19",
-  "related": ["L1-12", "L1-14", "L1-06"]
+  "related": [
+    "L1-12",
+    "L1-14",
+    "L1-06"
+  ]
 }

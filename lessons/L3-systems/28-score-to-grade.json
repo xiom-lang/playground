@@ -1,26 +1,38 @@
 {
-  "id": "L3-28",
-  "title": "Score to Grade with Result",
-  "level": "L3",
-  "duration": "9 min",
-  "story": "Your professor enters scores into a spreadsheet, but someone typed 150 and -20 by mistake. The grade calculator happily assigned 'A' to both. You need a system that rejects impossible scores before converting them to letter grades.",
-  "why": "Validating numeric ranges with Result before mapping to categories is the standard pattern for input sanitization.",
-  "narrative": "## From Numbers to Letters, Safely\n\nA grade converter must answer two questions: is this score valid, and if so, what letter does it map to?\n\n### The Grade Scale\n\n| Score Range | Grade |\n|-------------|-------|\n| 90–100      | A     |\n| 80–89       | B     |\n| 70–79       | C     |\n| 60–69       | D     |\n| 0–59        | F     |\n\n### Step 1: Reject Invalid Input\n\n```xiom\nfn to_grade(score: Int) -> Result[Str, Str] {\n  if score < 0 || score > 100 {\n    return Err(\"Score must be between 0 and 100\");\n  }\n```\n\n### Step 2: Map to Letter Grade\n\nUse `if/elif/else` to check ranges from highest to lowest:\n\n```xiom\n  if score >= 90 {\n    return Ok(\"A\");\n  } elif score >= 80 {\n    return Ok(\"B\");\n  } elif score >= 70 {\n    return Ok(\"C\");\n  } elif score >= 60 {\n    return Ok(\"D\");\n  } else {\n    return Ok(\"F\");\n  }\n}\n```\n\n### Calling the Function\n\n```xiom\nmatch to_grade(85) {\n  Ok(grade) => { /* grade is \"B\" */ }\n  Err(msg) => { /* msg is the error */ }\n}\n```\n\n### Edge Cases\n\nThe boundary values 90, 80, 70, 60, 0, and 100 should all work correctly. Test them all:\n\n```xiom\nto_grade(100);  // Ok(\"A\")\nto_grade(0);    // Ok(\"F\")\nto_grade(-5);   // Err(\"Score must be between 0 and 100\")\nto_grade(101);  // Err(\"Score must be between 0 and 100\")\n```",
-  "analogy": "A grade converter is like a postal sorting machine. First, the machine checks if the package is a real parcel (score 0-100). If it's a brick wrapped in paper (-5 or 150), it gets rejected. If it's valid, the machine reads the weight and routes it to the correct bin (A through F).",
-  "code_template": "fn to_grade(score: Int) -> Result[Str, Str] {\n  // TODO: reject scores below 0 or above 100\n  // TODO: return Ok(\"A\") for 90+, Ok(\"B\") for 80-89, etc.\n  // TODO: use if/elif/else chain\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: convert score 85, return 300 if Ok(\"B\"), 400 if other Ok, 500 if Err\n  return 0;\n}",
-  "solution": "fn to_grade(score: Int) -> Result[Str, Str] {\n  if score < 0 || score > 100 {\n    return Err(\"Score must be between 0 and 100\");\n  }\n  if score >= 90 {\n    return Ok(\"A\");\n  } elif score >= 80 {\n    return Ok(\"B\");\n  } elif score >= 70 {\n    return Ok(\"C\");\n  } elif score >= 60 {\n    return Ok(\"D\");\n  } else {\n    return Ok(\"F\");\n  }\n}\n\nfn main() -> Int {\n  match to_grade(85) {\n    Ok(\"B\") => { return 300; }\n    Ok(_) => { return 400; }\n    Err(_) => { return 500; }\n  }\n}",
-  "try_it": "Test all boundary scores: 100 (A), 90 (A), 89 (B), 80 (B), 79 (C), 70 (C), 69 (D), 60 (D), 59 (F), 0 (F). Then test -1, 101, and 200. Add a plus/minus modifier: 97–100 is A+, 93–96 is A, 90–92 is A-. Apply this pattern to all letter grades.",
-  "concepts": ["Result", "Ok", "Err", "match", "if/elif/else", "range validation", "guard clause"],
-  "tips": [
-    "Check the invalid case FIRST — reject scores outside 0-100 before doing any grade mapping",
-    "Order your if/elif from highest to lowest (90, 80, 70...) so each condition naturally catches the right range",
-    "Use string literals in match patterns: `Ok(\"B\") =>` matches only when the grade is exactly \"B\""
-  ],
-  "common_mistakes": [
-    "Ordering conditions from lowest to highest — `if score >= 0` matches everything valid and you'll never reach higher grades",
-    "Using `return \"A\"` instead of `return Ok(\"A\")` — the return type is `Result[Str, Str]`, not plain `Str`",
-    "Forgetting the `else` branch — if you use `if/elif` without a final `else`, scores 0-59 would fall through with no return"
-  ],
-  "next_lesson": "L3-29",
-  "related": ["L2-30", "L1-12", "L1-28"]
+    "id":  "L3-28",
+    "title":  "Score to Grade with Result",
+    "level":  "L3",
+    "duration":  "9 min",
+    "story":  "Your professor enters scores into a spreadsheet, but someone typed 150 and -20 by mistake. The grade calculator happily assigned \u0027A\u0027 to both. You need a system that rejects impossible scores before converting them to letter grades.",
+    "why":  "Validating numeric ranges with Result before mapping to categories is the standard pattern for input sanitization.",
+    "narrative":  "## From Numbers to Letters, Safely\n\nA grade converter must answer two questions: is this score valid, and if so, what letter does it map to?\n\n### The Grade Scale\n\n| Score Range | Grade |\n|-------------|-------|\n| 90–100      | A     |\n| 80–89       | B     |\n| 70–79       | C     |\n| 60–69       | D     |\n| 0–59        | F     |\n\n### Step 1: Reject Invalid Input\n\n```xiom\nfn to_grade(score: Int) -\u003e Result[Str, Str] {\n  if score \u003c 0 || score \u003e 100 {\n    return Err(\"Score must be between 0 and 100\");\n  }\n```\n\n### Step 2: Map to Letter Grade\n\nUse `if/elif/else` to check ranges from highest to lowest:\n\n```xiom\n  if score \u003e= 90 {\n    return Ok(\"A\");\n  } elif score \u003e= 80 {\n    return Ok(\"B\");\n  } elif score \u003e= 70 {\n    return Ok(\"C\");\n  } elif score \u003e= 60 {\n    return Ok(\"D\");\n  } else {\n    return Ok(\"F\");\n  }\n}\n```\n\n### Calling the Function\n\n```xiom\nmatch to_grade(85) {\n  Ok(grade) =\u003e { /* grade is \"B\" */ }\n  Err(msg) =\u003e { /* msg is the error */ }\n}\n```\n\n### Edge Cases\n\nThe boundary values 90, 80, 70, 60, 0, and 100 should all work correctly. Test them all:\n\n```xiom\nto_grade(100);  // Ok(\"A\")\nto_grade(0);    // Ok(\"F\")\nto_grade(-5);   // Err(\"Score must be between 0 and 100\")\nto_grade(101);  // Err(\"Score must be between 0 and 100\")\n```",
+    "analogy":  "A grade converter is like a postal sorting machine. First, the machine checks if the package is a real parcel (score 0-100). If it\u0027s a brick wrapped in paper (-5 or 150), it gets rejected. If it\u0027s valid, the machine reads the weight and routes it to the correct bin (A through F).",
+    "code_template":  "use xiom.io;\n\nfn to_grade(score: Int) -\u003e Result[Str, Str] {\n  // TODO: reject scores below 0 or above 100\n  // TODO: return Ok(\"A\") for 90+, Ok(\"B\") for 80-89, etc.\n  // TODO: use if/elif/else chain\n  return Err(\"not implemented\");\n}\n\nfn main() -\u003e Int {\n  // TODO: convert score 85, return 300 if Ok(\"B\"), 400 if other Ok, 500 if Err\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn to_grade(score: Int) -\u003e Result[Str, Str] {\n  if score \u003c 0 || score \u003e 100 {\n    return Err(\"Score must be between 0 and 100\");\n  }\n  if score \u003e= 90 {\n    return Ok(\"A\");\n  } elif score \u003e= 80 {\n    return Ok(\"B\");\n  } elif score \u003e= 70 {\n    return Ok(\"C\");\n  } elif score \u003e= 60 {\n    return Ok(\"D\");\n  } else {\n    return Ok(\"F\");\n  }\n}\n\nfn main() -\u003e Int {\n  match to_grade(85) {\n    Ok(\"B\") =\u003e { return 300; }\n    Ok(_) =\u003e { return 400; }\n    Err(_) =\u003e { return 500; }\n  }\n}",
+    "try_it":  "Test all boundary scores: 100 (A), 90 (A), 89 (B), 80 (B), 79 (C), 70 (C), 69 (D), 60 (D), 59 (F), 0 (F). Then test -1, 101, and 200. Add a plus/minus modifier: 97–100 is A+, 93–96 is A, 90–92 is A-. Apply this pattern to all letter grades.",
+    "concepts":  [
+                     "Result",
+                     "Ok",
+                     "Err",
+                     "match",
+                     "if/elif/else",
+                     "range validation",
+                     "guard clause"
+                 ],
+    "tips":  [
+                 "Check the invalid case FIRST — reject scores outside 0-100 before doing any grade mapping",
+                 "Order your if/elif from highest to lowest (90, 80, 70...) so each condition naturally catches the right range",
+                 "Use string literals in match patterns: `Ok(\"B\") =\u003e` matches only when the grade is exactly \"B\""
+             ],
+    "common_mistakes":  [
+                            "Ordering conditions from lowest to highest — `if score \u003e= 0` matches everything valid and you\u0027ll never reach higher grades",
+                            "Using `return \"A\"` instead of `return Ok(\"A\")` — the return type is `Result[Str, Str]`, not plain `Str`",
+                            "Forgetting the `else` branch — if you use `if/elif` without a final `else`, scores 0-59 would fall through with no return"
+                        ],
+    "next_lesson":  "L3-29",
+    "related":  [
+                    "L2-30",
+                    "L1-12",
+                    "L1-28"
+                ]
 }

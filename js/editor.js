@@ -8,24 +8,9 @@ function registerXiomLanguage() {
 
   // ── Monarch tokeniser with state-based function-name highlighting ──
   monaco.languages.setMonarchTokensProvider('xiom', {
-    keywords: [
-      'fn','let','var','const','return',
-      'if','elif','else','match','while','for','in',
-      'type','enum','interface','derive','spawn','async','await','comptime',
-      'module','use','pub','as','unsafe','extern',
-      'true','false','self','result',
-      'Some','None','Ok','Err',
-      'is','and','or','not','where',
-    ],
-    typeKeywords: [
-      'Int','Int8','Int16','Int32','Int64',
-      'UInt','UInt8','UInt16','UInt32','UInt64',
-      'Float32','Float64','Bool','Str','Char','Unit',
-      'Option','Result','Vec','Map','Set',
-    ],
-    contractKeywords: [
-      'requires','ensures','invariant',
-    ],
+    // Monarch requires @references to be STRINGS (pipe-separated regex), NOT arrays
+    keywords: 'fn|let|var|const|return|if|elif|else|match|while|for|in|type|enum|interface|derive|spawn|async|await|comptime|module|use|pub|as|unsafe|extern|true|false|self|result|Some|None|Ok|Err|is|and|or|not|where',
+    typeKeywords: 'Int|Int8|Int16|Int32|Int64|UInt|UInt8|UInt16|UInt32|UInt64|Float32|Float64|Bool|Str|Char|Unit|Option|Result|Vec|Map|Set',
     operators: [
       '=','>','<','!','~','?',':','==','<=','>=','!=','&&','||',
       '++','--','+','-','*','/','&','|','^','%','<<','>>',
@@ -36,32 +21,18 @@ function registerXiomLanguage() {
 
     tokenizer: {
       root: [
-        // Whitespace & comments
         [/[ \t\r\n]+/, 'white'],
         [/\/\/.*$/, 'comment'],
-
-        // String literals
         [/"/, { token: 'string.quote', bracket: '@open', next: '@string' }],
-
-        // Contract keywords (indigo, bold)
-        [/@contractKeywords\b/, 'contract'],
-
-        // The 'fn' keyword transitions to capture the function name
+        // Contract keywords — inline regex (Monarch @contractKeywords needs string, not array)
+        [/\b(requires|ensures|invariant)\b/, 'contract'],
+        // 'fn' transitions to capture the function name
         [/\bfn\b/, { token: 'keyword', next: '@fnName' }],
-
-        // Regular keywords
+        // Keywords / types — @reference works for arrays in Monarch
         [/@keywords\b/, 'keyword'],
-
-        // Type names
         [/@typeKeywords\b/, 'type'],
-
-        // Numbers
         [/\b\d+(\.\d+)?\b/, 'number'],
-
-        // Identifiers
         [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier'],
-
-        // Operators
         [/@symbols/, { cases: { '@operators': 'operator', '@default': '' } }],
       ],
 
@@ -82,7 +53,7 @@ function registerXiomLanguage() {
     },
   });
 
-  // ── XIOM Dark Theme — mockup code colours ──
+  // ── XIOM Dark Theme ──
   monaco.editor.defineTheme('xiom-dark', {
     base: 'vs-dark',
     inherit: true,
@@ -97,6 +68,7 @@ function registerXiomLanguage() {
       { token: 'identifier', foreground: 'f2f3f6' },
       { token: 'operator',   foreground: 'f2f3f6' },
       { token: 'white',      foreground: 'f2f3f6' },
+      { token: '',           foreground: 'f2f3f6' },
     ],
     colors: {
       'editor.background':           '#111217',
@@ -110,6 +82,39 @@ function registerXiomLanguage() {
       'editor.inactiveSelectionBackground': 'rgba(92,107,255,0.08)',
       'editorIndentGuide.background':  '#1a1c22',
       'editorIndentGuide.activeBackground': '#25272e',
+      'editorWidget.background':       '#111217',
+      'editorWidget.border':           '#25272e',
+      'input.background':              '#08090b',
+      'input.foreground':              '#f2f3f6',
+      'input.border':                  '#25272e',
+      'focusBorder':                   '#5c6bff',
+      'scrollbar.shadow':              '#00000033',
+      'scrollbarSlider.background':    '#1a1c2266',
+      'scrollbarSlider.hoverBackground': '#25272e99',
+      'scrollbarSlider.activeBackground': '#5c6bff66',
+      'editorOverviewRuler.border':    '#1a1c22',
+      'editorGutter.background':       '#111217',
+    }
+  });
+
+  // Also define a light variant (for toggle)
+  monaco.editor.defineTheme('xiom-light', {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'keyword',    foreground: 'cf222e', fontStyle: 'bold' },
+      { token: 'type',       foreground: '116329' },
+      { token: 'function',   foreground: '6639ba' },
+      { token: 'contract',   foreground: '1f45b0', fontStyle: 'bold' },
+      { token: 'string',     foreground: '0a3069' },
+      { token: 'comment',    foreground: '6e7781', fontStyle: 'italic' },
+      { token: 'number',     foreground: '0550ae' },
+      { token: 'identifier', foreground: '24292f' },
+    ],
+    colors: {
+      'editor.background':           '#ffffff',
+      'editor.foreground':           '#24292f',
+      'editor.lineHighlightBackground': '#f6f8fa',
     }
   });
 }
@@ -120,10 +125,11 @@ function disposeAllEditors() {
 }
 
 function createEditor(containerId, initialValue) {
+  var theme = (window.currentAppTheme === 'light') ? 'xiom-light' : 'xiom-dark';
   return monaco.editor.create(document.getElementById(containerId), {
     value: initialValue || 'fn main() {\n  io.println("Hello!");\n}',
     language: 'xiom',
-    theme: 'xiom-dark',
+    theme: theme,
     fontSize: 13.5,
     fontFamily: "ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace",
     fontLigatures: true,
@@ -175,47 +181,46 @@ require(['vs/editor/editor.main'], function () {
 
 window.initLessonsEditor = function () {
   if (!window.monaco) {
-    require(['vs/editor/editor.main'], function () {
-      registerXiomLanguage();
-      if (window.pgEditor) { window.pgEditor.dispose(); window.pgEditor = null; }
-      window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
-      addCompileAction(window.editor);
-      window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
-      updateLineCount();
-    });
+    // Monaco loader still running — wait, don't double-require
+    var check = setInterval(function () {
+      if (window.monaco) {
+        clearInterval(check);
+        _createLessonsEditor();
+      }
+    }, 100);
     return;
   }
+  _createLessonsEditor();
+};
+
+function _createLessonsEditor() {
   registerXiomLanguage();
   if (window.pgEditor) { window.pgEditor.dispose(); window.pgEditor = null; }
   window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
   addCompileAction(window.editor);
   window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
   updateLineCount();
-};
+}
 
 window.initPlaygroundEditor = function () {
   if (window.pgEditor) return;
-
   if (!window.monaco) {
-    require(['vs/editor/editor.main'], function () {
-      registerXiomLanguage();
-      disposeAllEditors();
-      window.pgEditor = createEditor('pgEditorContainer', 'fn main() {\n  io.println("Hello!");\n}');
-      addCompileAction(window.pgEditor);
-      window.pgEditor.onDidChangeCursorPosition(function () {
-        updateLineCount();
-      });
-      updateLineCount();
-    });
+    var check = setInterval(function () {
+      if (window.monaco) {
+        clearInterval(check);
+        _createPlaygroundEditor();
+      }
+    }, 100);
     return;
   }
+  _createPlaygroundEditor();
+};
 
+function _createPlaygroundEditor() {
   registerXiomLanguage();
-  disposeAllEditors();
+  if (window.editor) { window.editor.dispose(); window.editor = null; }
   window.pgEditor = createEditor('pgEditorContainer', 'fn main() {\n  io.println("Hello!");\n}');
   addCompileAction(window.pgEditor);
-  window.pgEditor.onDidChangeCursorPosition(function () {
-    updateLineCount();
-  });
+  window.pgEditor.onDidChangeCursorPosition(function () { updateLineCount(); });
   updateLineCount();
-};
+}

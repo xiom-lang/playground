@@ -7,10 +7,14 @@
   "why": "Real-world functions rarely need just one input. Multiple parameters let you pass all the data a function needs in a single call.",
   "narrative": "## Functions with Multiple Inputs\n\nA function with only one parameter is like a recipe with a single ingredient — limited. Most functions need several inputs.\n\n### Two Parameters\n\n```xiom\nfn make_smoothie(fruit: Str, liquid: Str) -> Str {\n  return \"Blending \" + fruit + \" with \" + liquid + \"...\";\n}\n\nfn main() -> Int {\n  let result = make_smoothie(\"banana\", \"milk\");\n  io.println(result);\n  return 0;\n}\n```\n\n### Three or More Parameters\n\nJust keep adding them, separated by commas:\n\n```xiom\nfn calculate_total(price: Float64, tax: Float64, tip: Float64) -> Float64 {\n  return price + tax + tip;\n}\n\nfn main() -> Int {\n  let total = calculate_total(25.0, 2.5, 5.0);\n  io.println(total);\n  return 0;\n}\n```\n\n### Parameter Order Matters\n\nArguments match parameters by position: first argument goes to first parameter, second to second.\n\n```xiom\nfn describe_pet(name: Str, species: Str, age: Int) -> Str {\n  return name + \" is a \" + \"-year-old \" + species + \".\";\n}\n\nfn main() -> Int {\n  let pet = describe_pet(\"Luna\", \"cat\", 3);\n  io.println(pet);\n  return 0;\n}\n```\n\nSwap the arguments and you get nonsense. The function trusts you to pass them in the right order — good parameter names are your map.",
   "analogy": "Function parameters are like labeled slots in a vending machine — you must put the right thing in the right slot.",
-  "code_template": "// TODO: Write a function 'combine' that takes three strings: word1, word2, word3\n// TODO: It should return them joined with spaces: word1 + \" \" + word2 + \" \" + word3\n\nfn main() -> Int {\n  // TODO: Call combine with \"I\", \"love\", \"XIOM\" and print the result\n  return 0;\n}\n",
-  "solution": "fn combine(word1: Str, word2: Str, word3: Str) -> Str {\n  return word1 + \" \" + word2 + \" \" + word3;\n}\n\nfn main() -> Int {\n  let phrase = combine(\"I\", \"love\", \"XIOM\");\n  io.println(phrase);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Write a function 'combine' that takes three strings: word1, word2, word3\n// TODO: It should return them joined with spaces: word1 + \" \" + word2 + \" \" + word3\n\nfn main() {\n  // TODO: Call combine with \"I\", \"love\", \"XIOM\" and print the result\n}",
+  "solution": "use xiom.io;\nfn combine(word1: Str, word2: Str, word3: Str) -> Str {\n  return word1 + \" \" + word2 + \" \" + word3;\n}\n\nfn main() {\n  let phrase = combine(\"I\", \"love\", \"XIOM\");\n  io.println(phrase);\n}",
   "try_it": "Write a function with four parameters that builds a full address: street, city, state, and zip code. Call it with your own address (real or made up).",
-  "concepts": ["multiple-parameters", "parameter-order", "argument-matching"],
+  "concepts": [
+    "multiple-parameters",
+    "parameter-order",
+    "argument-matching"
+  ],
   "tips": [
     "Arguments match parameters by position — first to first, second to second",
     "Use descriptive parameter names so callers know what goes where",
@@ -22,5 +26,9 @@
     "Forgetting to type each parameter individually — only the last one gets the annotation"
   ],
   "next_lesson": "L1-07",
-  "related": ["L1-01", "L1-02", "L1-05"]
+  "related": [
+    "L1-01",
+    "L1-02",
+    "L1-05"
+  ]
 }

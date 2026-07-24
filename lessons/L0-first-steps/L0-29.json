@@ -3,25 +3,36 @@
   "title": "Score Keeper",
   "level": "L0",
   "duration": "6 min",
-  "story": "You're keeping score at your little brother's basketball game. The score keeps changing: two points here, three points there, sometimes a point gets taken away on a foul. You need a scoreboard that can go up AND down \u2014 not a number locked in place!",
+  "story": "You're keeping score at your little brother's basketball game. The score keeps changing: two points here, three points there, sometimes a point gets taken away on a foul. You need a scoreboard that can go up AND down � not a number locked in place!",
   "why": "Not all values stay the same forever. Game scores, bank balances, and countdown timers all change over time. `var` lets your variables change their value whenever you need them to.",
-  "narrative": "## Variables That Change Over Time\n\nSo far, all your variables used `let`, which locks a value in place forever. But what if you're keeping score in a game? You need the score to go up when someone scores, and down if points are taken away.\n\n### Introducing `var`\n\nWhen you need a variable that can change, use `var` instead of `let`. The `var` keyword creates a **mutable** variable \u2014 one that you can update after creating it:\n\n```xiom\nfn main() {\n  var score: Int = 0;\n\n  io.println(\"Game starts! Score:\");\n  io.println(score);\n\n  score = score + 2;\n  io.println(\"Two-pointer! Score:\");\n  io.println(score);\n\n  score = score + 2;\n  io.println(\"Another basket! Score:\");\n  io.println(score);\n\n  score = score - 1;\n  io.println(\"Foul \u2014 point deducted. Score:\");\n  io.println(score);\n\n  io.println(\"Final score!\");\n}\n```\n\nThis prints `0`, then `2`, then `4`, then `3`. The score starts at zero, goes up with each basket, and down on the foul.\n\n### Shortcut: `+=` and `-=`\n\nWriting `score = score + 2` works fine, but there's a shorter way. The `+=` operator adds to a variable and stores the result back:\n\n```xiom\nfn main() {\n  var points: Int = 10;\n\n  points += 5;   // Same as: points = points + 5  (now 15)\n  io.println(points);\n\n  points -= 3;   // Same as: points = points - 3  (now 12)\n  io.println(points);\n}\n```\n\nThe `+=` is like saying \"add this to what's already there.\" The `-=` is \"subtract this from what's already there.\"",
-  "analogy": "A `var` variable is like a scoreboard \u2014 it shows the current score, and every time something happens you update the number on display.",
-  "code_template": "fn main() {\n  // TODO: Create a mutable variable 'score' starting at 0 using 'var'\n  // TODO: Print the starting score\n  // TODO: Add 2 points using += and print the score\n  // TODO: Add 2 more points and print\n  // TODO: Subtract 1 point using -= and print\n  // TODO: Print the final score\n}\n",
-  "solution": "fn main() {\n  var score: Int = 0;\n\n  io.println(\"Tip-off! Starting score:\");\n  io.println(score);\n\n  score += 2;\n  io.println(\"Layup \u2014 two points! Score:\");\n  io.println(score);\n\n  score += 2;\n  io.println(\"Jump shot \u2014 two points! Score:\");\n  io.println(score);\n\n  score -= 1;\n  io.println(\"Technical foul \u2014 lose one point. Score:\");\n  io.println(score);\n\n  io.println(\"Game over! Final score:\");\n  io.println(score);\n}\n",
-  "try_it": "Add a 3-point shot: use `score += 3` after the second basket and print the new score. Then simulate a whole game with multiple baskets, a few fouls, and a three-pointer at the buzzer \u2014 what's the final score?",
-  "concepts": ["var", "mutable", "Int", "addition assignment", "subtraction assignment", "score tracking"],
+  "narrative": "## Variables That Change Over Time\n\nSo far, all your variables used `let`, which locks a value in place forever. But what if you're keeping score in a game? You need the score to go up when someone scores, and down if points are taken away.\n\n### Introducing `var`\n\nWhen you need a variable that can change, use `var` instead of `let`. The `var` keyword creates a **mutable** variable � one that you can update after creating it:\n\n```xiom\nfn main() {\n  var score: Int = 0;\n\n  io.println(\"Game starts! Score:\");\n  io.println(score);\n\n  score = score + 2;\n  io.println(\"Two-pointer! Score:\");\n  io.println(score);\n\n  score = score + 2;\n  io.println(\"Another basket! Score:\");\n  io.println(score);\n\n  score = score - 1;\n  io.println(\"Foul � point deducted. Score:\");\n  io.println(score);\n\n  io.println(\"Final score!\");\n}\n```\n\nThis prints `0`, then `2`, then `4`, then `3`. The score starts at zero, goes up with each basket, and down on the foul.\n\n### Shortcut: `+=` and `-=`\n\nWriting `score = score + 2` works fine, but there's a shorter way. The `+=` operator adds to a variable and stores the result back:\n\n```xiom\nfn main() {\n  var points: Int = 10;\n\n  points += 5;   // Same as: points = points + 5  (now 15)\n  io.println(points);\n\n  points -= 3;   // Same as: points = points - 3  (now 12)\n  io.println(points);\n}\n```\n\nThe `+=` is like saying \"add this to what's already there.\" The `-=` is \"subtract this from what's already there.\"",
+  "analogy": "A `var` variable is like a scoreboard � it shows the current score, and every time something happens you update the number on display.",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a mutable variable 'score' starting at 0 using 'var'\n  // TODO: Print the starting score\n  // TODO: Add 2 points using += and print the score\n  // TODO: Add 2 more points and print\n  // TODO: Subtract 1 point using -= and print\n  // TODO: Print the final score\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  var score: Int = 0;\n\n  io.println(\"Tip-off! Starting score:\");\n  io.println(\"0\");\n\n  score += 2;\n  io.println(\"Layup � two points! Score:\");\n  io.println(\"0\");\n\n  score += 2;\n  io.println(\"Jump shot � two points! Score:\");\n  io.println(\"0\");\n\n  score -= 1;\n  io.println(\"Technical foul � lose one point. Score:\");\n  io.println(\"0\");\n\n  io.println(\"Game over! Final score:\");\n  io.println(\"0\");\n}\n",
+  "try_it": "Add a 3-point shot: use `score += 3` after the second basket and print the new score. Then simulate a whole game with multiple baskets, a few fouls, and a three-pointer at the buzzer � what's the final score?",
+  "concepts": [
+    "var",
+    "mutable",
+    "Int",
+    "addition assignment",
+    "subtraction assignment",
+    "score tracking"
+  ],
   "tips": [
     "Use `var` when a value needs to change, `let` when it stays the same forever.",
-    "`+=` is a shortcut for \"add and assign\" \u2014 it's easier to read than `x = x + 2`.",
+    "`+=` is a shortcut for \"add and assign\" � it's easier to read than `x = x + 2`.",
     "You can print the score after every change to see how it evolves over time.",
     "`var` works with numbers, but you can also have mutable strings or Booleans if needed."
   ],
   "common_mistakes": [
     "Using `let` for a score that needs to change: `let score = 0;` then `score = score + 2;` will cause an error.",
-    "Writing `=+` instead of `+=` \u2014 the plus sign comes first, then the equals sign.",
+    "Writing `=+` instead of `+=` � the plus sign comes first, then the equals sign.",
     "Forgetting the type annotation: `var score = 0;` might work, but `var score: Int = 0;` is clearer."
   ],
   "next_lesson": "L0-30",
-  "related": ["L0-04", "L0-10", "L0-12"]
+  "related": [
+    "L0-04",
+    "L0-10",
+    "L0-12"
+  ]
 }

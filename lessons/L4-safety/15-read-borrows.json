@@ -1,27 +1,38 @@
 {
-  "id": "L4-15",
-  "title": "Read Borrows (&)",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "Instead of giving away your book, you let someone READ it while you still own it. `&` creates a read-only reference — you keep ownership, they get access.",
-  "why": "Read borrows let multiple parts of your program inspect the same data simultaneously without copying, transferring ownership, or risking data races.",
-  "narrative": "## Borrowing Without Giving Up Ownership\n\nUse `&` to create a read-only reference. The original owner keeps the value:\n\n```xiom\nfn read_vec(v: &Vec[Int]) {\n  io.println(v.len());\n  // Can read, can't modify\n}\n\nfn main() -> Int {\n  let my_vec = Vec[Int].new();\n  my_vec.push(10);\n  my_vec.push(20);\n  read_vec(&my_vec);    // Borrow — my_vec is still valid!\n  io.println(my_vec.len()); // Works! my_vec was never moved\n  return my_vec.len() as Int;\n}\n```\n\n### Multiple Read Borrows Are Allowed\n\n```xiom\nfn main() -> Int {\n  let data = Vec[Int].new();\n  data.push(1);\n  data.push(2);\n\n  let r1 = &data;  // First read borrow\n  let r2 = &data;  // Second read borrow — OK!\n  let r3 = &data;  // Third read borrow — also OK!\n\n  io.println(r1.len());\n  io.println(r2.len());\n  io.println(r3.len());\n  return data.len() as Int;\n}\n```\n\n### Read Borrows Are the Default Pattern\n\nUse `&` as your default way to pass data to functions. Only use owned parameters when the function truly needs to take ownership, and `&mut` when it needs to modify.",
-  "analogy": "& is like letting someone look at your book — they can read it, but they can't write in it, and you still own it.",
-  "code_template": "// TODO: Write a function 'sum' that takes &Vec[Int] and returns Int\n// In main, create a Vec, borrow it for sum(), then print the Vec again\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
-  "solution": "fn sum(v: &Vec[Int]) -> Int {\n  let total = 0;\n  for item in v {\n    total = total + item;\n  }\n  return total;\n}\n\nfn main() -> Int {\n  let data = Vec[Int].new();\n  data.push(5);\n  data.push(10);\n  data.push(15);\n  let result = sum(&data);\n  io.println(data.len());\n  return result;\n}",
-  "try_it": "Create three separate read borrows of the same Vec and pass each to a different function. All three work simultaneously.",
-  "concepts": ["read borrow", "reference", "&", "shared reference", "immutable borrow"],
-  "tips": [
-    "Use & when your function only needs to read, not modify",
-    "Multiple & borrows can exist at the same time — reading is safe for everyone",
-    "A read borrow prevents the owner from modifying until the borrow ends",
-    "Prefer & over cloning — borrows are zero-cost"
-  ],
-  "common_mistakes": [
-    "Forgetting the & when passing to a function that expects a borrow",
-    "Trying to modify through a & reference — it's read-only",
-    "Holding a & borrow while trying to move the original value"
-  ],
-  "next_lesson": "L4-16",
-  "related": ["L4-11", "L4-16", "L4-17", "L4-26"]
+    "id":  "L4-15",
+    "title":  "Read Borrows (\u0026)",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "Instead of giving away your book, you let someone READ it while you still own it. `\u0026` creates a read-only reference — you keep ownership, they get access.",
+    "why":  "Read borrows let multiple parts of your program inspect the same data simultaneously without copying, transferring ownership, or risking data races.",
+    "narrative":  "## Borrowing Without Giving Up Ownership\n\nUse `\u0026` to create a read-only reference. The original owner keeps the value:\n\n```xiom\nfn read_vec(v: \u0026Vec[Int]) {\n  io.println(v.len());\n  // Can read, can\u0027t modify\n}\n\nfn main() -\u003e Int {\n  let my_vec = Vec[Int].new();\n  my_vec.push(10);\n  my_vec.push(20);\n  read_vec(\u0026my_vec);    // Borrow — my_vec is still valid!\n  io.println(my_vec.len()); // Works! my_vec was never moved\n  return my_vec.len() as Int;\n}\n```\n\n### Multiple Read Borrows Are Allowed\n\n```xiom\nfn main() -\u003e Int {\n  let data = Vec[Int].new();\n  data.push(1);\n  data.push(2);\n\n  let r1 = \u0026data;  // First read borrow\n  let r2 = \u0026data;  // Second read borrow — OK!\n  let r3 = \u0026data;  // Third read borrow — also OK!\n\n  io.println(r1.len());\n  io.println(r2.len());\n  io.println(r3.len());\n  return data.len() as Int;\n}\n```\n\n### Read Borrows Are the Default Pattern\n\nUse `\u0026` as your default way to pass data to functions. Only use owned parameters when the function truly needs to take ownership, and `\u0026mut` when it needs to modify.",
+    "analogy":  "\u0026 is like letting someone look at your book — they can read it, but they can\u0027t write in it, and you still own it.",
+    "code_template":  "use xiom.io;\n\n// TODO: Write a function \u0027sum\u0027 that takes \u0026Vec[Int] and returns Int\n// In main, create a Vec, borrow it for sum(), then print the Vec again\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn sum(v: \u0026Vec[Int]) -\u003e Int {\n  let total = 0;\n  for item in v {\n    total = total + item;\n  }\n  return total;\n}\n\nfn main() -\u003e Int {\n  let data = Vec[Int].new();\n  data.push(5);\n  data.push(10);\n  data.push(15);\n  let result = sum(\u0026data);\n  io.println(data.len().to_str());\n  return result;\n}",
+    "try_it":  "Create three separate read borrows of the same Vec and pass each to a different function. All three work simultaneously.",
+    "concepts":  [
+                     "read borrow",
+                     "reference",
+                     "\u0026",
+                     "shared reference",
+                     "immutable borrow"
+                 ],
+    "tips":  [
+                 "Use \u0026 when your function only needs to read, not modify",
+                 "Multiple \u0026 borrows can exist at the same time — reading is safe for everyone",
+                 "A read borrow prevents the owner from modifying until the borrow ends",
+                 "Prefer \u0026 over cloning — borrows are zero-cost"
+             ],
+    "common_mistakes":  [
+                            "Forgetting the \u0026 when passing to a function that expects a borrow",
+                            "Trying to modify through a \u0026 reference — it\u0027s read-only",
+                            "Holding a \u0026 borrow while trying to move the original value"
+                        ],
+    "next_lesson":  "L4-16",
+    "related":  [
+                    "L4-11",
+                    "L4-16",
+                    "L4-17",
+                    "L4-26"
+                ]
 }

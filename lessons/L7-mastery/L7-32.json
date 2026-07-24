@@ -7,10 +7,16 @@
   "why": "A unit converter demonstrates conversion factors, category-based dispatch, and handling different conversion rules (linear vs formula-based) — practical applied math.",
   "narrative": "## Building a Unit Converter\n\n### Conversion Categories\n\n```xiom\nenum Category {\n  Length;\n  Weight;\n  Temperature;\n  Time;\n}\n```\n\n### Length Conversions\n\n```xiom\nfn convert_length(value: Float64, from: Str, to: Str) -> Float64 {\n  let meters = to_meters(value, from);\n  from_meters(meters, to)\n}\n\nfn to_meters(value: Float64, unit: Str) -> Float64 {\n  if unit == \"km\" { return value * 1000.0; };\n  if unit == \"m\" { return value; };\n  if unit == \"cm\" { return value * 0.01; };\n  if unit == \"mm\" { return value * 0.001; };\n  if unit == \"mile\" { return value * 1609.34; };\n  if unit == \"ft\" { return value * 0.3048; };\n  if unit == \"in\" { return value * 0.0254; };\n  value\n}\n\nfn from_meters(meters: Float64, unit: Str) -> Float64 {\n  if unit == \"km\" { return meters / 1000.0; };\n  if unit == \"m\" { return meters; };\n  if unit == \"cm\" { return meters / 0.01; };\n  if unit == \"mm\" { return meters / 0.001; };\n  if unit == \"mile\" { return meters / 1609.34; };\n  if unit == \"ft\" { return meters / 0.3048; };\n  if unit == \"in\" { return meters / 0.0254; };\n  meters\n}\n```\n\n### Temperature (Special Case)\n\nTemperature doesn't use simple multiplication — it uses formulas:\n\n```xiom\nfn convert_temperature(value: Float64, from: Str, to: Str) -> Float64 {\n  let celsius = to_celsius(value, from);\n  from_celsius(celsius, to)\n}\n\nfn to_celsius(value: Float64, unit: Str) -> Float64 {\n  if unit == \"C\" { return value; };\n  if unit == \"F\" { return (value - 32.0) * 5.0 / 9.0; };\n  if unit == \"K\" { return value - 273.15; };\n  value\n}\n\nfn from_celsius(celsius: Float64, unit: Str) -> Float64 {\n  if unit == \"C\" { return celsius; };\n  if unit == \"F\" { return celsius * 9.0 / 5.0 + 32.0; };\n  if unit == \"K\" { return celsius + 273.15; };\n  celsius\n}\n```\n\n### Generalized Convert\n\n```xiom\nfn convert(value: Float64, from: Str, to: Str, category: Int) -> Float64 {\n  if category == 0 { return convert_length(value as Int, from, to) as Float64; };\n  if category == 2 { return convert_temperature(value, from, to); };\n  value\n}\n```",
   "analogy": "An airport currency exchange booth: you hand over dollars, they hand back euros using a conversion rate. Each 'currency pair' has its rate. Your unit converter is the universal exchange: feet→meters (×0.3048), pounds→kilograms (×0.4536), F→C (subtract 32, ×5/9). Different formulas, same interface.",
-  "code_template": "fn convert_length(value: Int, from_unit: Int, to_unit: Int) -> Int {\n  // TODO: 0=m, 1=km, 2=cm. Convert via meters as intermediate\n  // km→m: *1000; m→cm: *100; etc.\n}\n\nfn main() -> Int {\n  // TODO: convert 5 km to m, 150 cm to m, 1 km to cm\n  return 0;\n}\n",
-  "solution": "fn to_meters(value: Int, unit: Int) -> Int {\n  if unit == 0 { return value; };\n  if unit == 1 { return value * 1000; };\n  if unit == 2 { return value / 100; };\n  value\n}\n\nfn from_meters(meters: Int, unit: Int) -> Int {\n  if unit == 0 { return meters; };\n  if unit == 1 { return meters / 1000; };\n  if unit == 2 { return meters * 100; };\n  meters\n}\n\nfn convert_length(value: Int, from_unit: Int, to_unit: Int) -> Int {\n  let meters = to_meters(value, from_unit);\n  from_meters(meters, to_unit)\n}\n\nfn main() -> Int {\n  io.println(convert_length(5, 1, 0));\n  io.println(convert_length(150, 2, 0));\n  io.println(convert_length(1, 1, 2));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn convert_length(value: Int, from_unit: Int, to_unit: Int) -> Int {\n  // TODO: 0=m, 1=km, 2=cm. Convert via meters as intermediate\n  // km→m: *1000; m→cm: *100; etc.\n}\n\nfn main() -> Int {\n  // TODO: convert 5 km to m, 150 cm to m, 1 km to cm\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn to_meters(value: Int, unit: Int) -> Int {\n  if unit == 0 { return value; };\n  if unit == 1 { return value * 1000; };\n  if unit == 2 { return value / 100; };\n  value\n}\n\nfn from_meters(meters: Int, unit: Int) -> Int {\n  if unit == 0 { return meters; };\n  if unit == 1 { return meters / 1000; };\n  if unit == 2 { return meters * 100; };\n  meters\n}\n\nfn convert_length(value: Int, from_unit: Int, to_unit: Int) -> Int {\n  let meters = to_meters(value, from_unit);\n  from_meters(meters, to_unit)\n}\n\nfn main() -> Int {\n  io.println(convert_length(5, 1, 0).to_str());\n  io.println(convert_length(150, 2, 0).to_str());\n  io.println(convert_length(1, 1, 2).to_str());\n  return 0;\n}\n",
   "try_it": "Add weight conversions (kg, g, lb, oz). Add time conversions (hours, minutes, seconds, days). Add volume (liters, gallons, cups). Add a `convert_any` function that takes a category enum and delegates to the right converter.",
-  "concepts": ["unit-conversion", "conversion-factors", "intermediate-representation", "dispatch", "formulas"],
+  "concepts": [
+    "unit-conversion",
+    "conversion-factors",
+    "intermediate-representation",
+    "dispatch",
+    "formulas"
+  ],
   "tips": [
     "Convert to a common unit first (meters, grams, seconds), then to target — clean two-step pattern",
     "Temperature is special — it has offset (32°F, 273.15K) not just multiplication",
@@ -22,5 +28,9 @@
     "Integer division for conversions that need fractions — use Float64 for km/mile etc."
   ],
   "next_lesson": "L7-33",
-  "related": ["L7-31", "L6-22", "L1-08"]
+  "related": [
+    "L7-31",
+    "L6-22",
+    "L1-08"
+  ]
 }

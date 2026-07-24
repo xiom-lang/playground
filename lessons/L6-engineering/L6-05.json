@@ -7,10 +7,17 @@
   "why": "Interfaces are compile-time contracts — they guarantee specific methods exist on a type, just like `requires` guarantees input conditions and `ensures` guarantees output conditions.",
   "narrative": "## Types Promising Capabilities\n\nIn L4, contracts were about VALUES: 'b != 0', 'result > 0'. Interfaces are contracts about TYPES: 'T must have these methods.'\n\n### The Parallel\n\n| Contract Type | Says | Enforced |\n|-------------|------|----------|\n| `requires: b != 0` | 'Caller guarantees this value condition' | At call site |\n| `ensures: result > 0` | 'Function guarantees this output condition' | At return |\n| `[T: Greetable]` | 'Caller guarantees T has greet()' | At call site |\n\n### Building a Math Interface Contract\n\n```xiom\ninterface Multipliable {\n  fn multiply(other: &Self) -> Self;\n}\n\ntype Point = {\n  x: Int;\n  y: Int;\n}\n\nfn Point.multiply(self, other: &Point) -> Point {\n  return Point{ x: self.x * other.x, y: self.y * other.y };\n}\n\nfn scale[T: Multipliable](item: T, factor: T) -> T {\n  return item.multiply(&factor);\n}\n\nfn main() -> Int {\n  let p1 = Point{ x: 2, y: 3 };\n  let p2 = Point{ x: 4, y: 5 };\n  let result = scale(p1, p2);\n  io.println(string.int_to_str(result.x));\n  return 0;\n}\n```\n\n### The Compiler as Contract Enforcer\n\nWhen you write `scale(some_int, other_int)`, the compiler checks: 'Does Int have multiply()?' If not, it refuses to compile. This is EXACTLY like `requires: b != 0` — the check happens before execution.\n\n### Multiple Type Constraints\n\n```xiom\nfn process[T: Greetable + Displayable + Comparable](thing: &T) {\n  // All three interface methods are available here\n  // The compiler guarantees they exist\n}\n```\n\nThe `+` combines contracts. T must satisfy ALL of them — like a requires clause with multiple conditions.\n\n### The Guarantee\n\nIf your code compiles, every call to `thing.greet()` WILL work. Not 'might work' or 'works if they remembered to implement it.' The compiler verified it. This is the fundamental promise of interface constraints.",
   "analogy": "An interface contract is like a rental car agreement — the contract says 'this car has brakes, steering, and an engine.' You don't check each time you drive; the contract (compiler) guarantees it. If the car were missing a steering wheel, the contract wouldn't have been signed (the code wouldn't compile).",
-  "code_template": "// TODO: Define interface Addable with fn add(other: &Self) -> Self\n\ntype Meter = {\n  value: Int;\n}\n\n// TODO: Write Meter.add(self, other: &Meter) -> Meter\n//   Return Meter with sum of values\n\n// TODO: Write total[T: Addable](items: &Vec[T]) -> T\n//   If empty, return first item; otherwise accumulate with add\n//   Use items.push + while loop or manual accumulation\n\nfn main() -> Int {\n  // TODO: Create Vec[Meter], call total, print result\n  return 0;\n}\n",
-  "solution": "interface Addable {\n  fn add(other: &Self) -> Self;\n}\n\ntype Meter = {\n  value: Int;\n}\n\nfn Meter.add(self, other: &Meter) -> Meter {\n  return Meter{ value: self.value + other.value };\n}\n\nfn total[T: Addable](items: &Vec[T]) -> T {\n  let result = match items.get(0) { Some(v) => v, None => return result };\n  let i = 1;\n  while i < items.len() {\n    let item = match items.get(i) { Some(v) => v, None => continue };\n    result = result.add(&item);\n    i = i + 1;\n  }\n  return result;\n}\n\nfn main() -> Int {\n  let meters: Vec[Meter] = Vec[Meter].new();\n  meters.push(Meter{ value: 5 });\n  meters.push(Meter{ value: 10 });\n  meters.push(Meter{ value: 15 });\n  let t = total(&meters);\n  io.println(string.int_to_str(t.value));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Define interface Addable with fn add(other: &Self) -> Self\n\ntype Meter = {\n  value: Int;\n}\n\n// TODO: Write Meter.add(self, other: &Meter) -> Meter\n//   Return Meter with sum of values\n\n// TODO: Write total[T: Addable](items: &Vec[T]) -> T\n//   If empty, return first item; otherwise accumulate with add\n//   Use items.push + while loop or manual accumulation\n\nfn main() -> Int {\n  // TODO: Create Vec[Meter], call total, print result\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\ninterface Addable {\n  fn add(other: &Self) -> Self;\n}\n\ntype Meter = {\n  value: Int;\n}\n\nfn Meter.add(self, other: &Meter) -> Meter {\n  return Meter{ value: self.value + other.value };\n}\n\nfn total[T: Addable](items: &Vec[T]) -> T {\n  let result = match items.get(0) { Some(v) => v, None => return result };\n  let i = 1;\n  while i < items.len() {\n    let item = match items.get(i) { Some(v) => v, None => continue };\n    result = result.add(&item);\n    i = i + 1;\n  }\n  return result;\n}\n\nfn main() -> Int {\n  let meters: Vec[Meter] = Vec[Meter].new();\n  meters.push(Meter{ value: 5 });\n  meters.push(Meter{ value: 10 });\n  meters.push(Meter{ value: 15 });\n  let t = total(&meters);\n  io.println(string.int_to_str(t.value));\n  return 0;\n}\n",
   "try_it": "Implement Addable for a `Money` type with `dollars: Int` and `cents: Int`. Make `add` handle cent overflow (100 cents = 1 dollar). Then write a function with TWO constraints: `[T: Addable + Displayable]` — the function sums items AND prints the running total. What happens if you call this function with Meter (which has Addable) — does Meter need Displayable to compile?",
-  "concepts": ["interface-as-contract", "type-level-guarantee", "compile-time-checking", "method-guarantee", "contract-parallel", "self-reference"],
+  "concepts": [
+    "interface-as-contract",
+    "type-level-guarantee",
+    "compile-time-checking",
+    "method-guarantee",
+    "contract-parallel",
+    "self-reference"
+  ],
   "tips": [
     "`[T: Greetable]` is a type-level contract — the compiler enforces it just like `requires:` enforces value contracts",
     "`Self` in interfaces refers to the implementing type — `fn add(other: &Self) -> Self` means 'takes same type, returns same type'",
@@ -22,5 +29,9 @@
     "Assuming interface methods can have contracts — some XIOM versions may support `requires` inside interfaces for even stronger guarantees"
   ],
   "next_lesson": "L6-06",
-  "related": ["L6-01", "L4-01", "L4-42"]
+  "related": [
+    "L6-01",
+    "L4-01",
+    "L4-42"
+  ]
 }

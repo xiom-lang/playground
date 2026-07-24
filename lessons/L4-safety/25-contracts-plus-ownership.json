@@ -1,27 +1,37 @@
 {
-  "id": "L4-25",
-  "title": "Contracts + Ownership",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "Contracts guarantee your logic is correct. Ownership guarantees your memory is safe. Together, they form the ultimate safety net — no crashes, no corruption, no surprises.",
-  "why": "Combining contracts with ownership creates functions that are both logically correct AND memory safe — two layers of compiler-enforced protection.",
-  "narrative": "## The Ultimate Safe Function\n\nCombine `requires`, `ensures`, `&`, and `&mut` for maximum safety:\n\n```xiom\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn transfer(from: &mut Account, to: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= from.balance;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n```\n\n### What This Guarantees\n\n- **Contracts**: Can't transfer negative amounts, can't overdraft, balances balance\n- **Ownership**: `&mut` ensures nobody else can read or write the accounts during transfer\n\n### Layered Safety\n\n```xiom\nfn withdraw(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= account.balance;\n{\n  account.balance = account.balance - amount;\n}\n\nfn deposit(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n{\n  account.balance = account.balance + amount;\n}\n```\n\n### Contracts + Ownership in Practice\n\nContracts validate LOGIC (is this operation valid?).\nOwnership validates MEMORY (can this value be accessed?).\nTogether: no logic bugs AND no memory bugs.",
-  "analogy": "Contracts are the rules of the road (don't speed, stop at red lights). Ownership is the seatbelt and airbags. Both keep you safe, but in different ways.",
-  "code_template": "// TODO: Write fn 'withdraw' for Account with requires and &mut\n// Write fn 'deposit' for Account with requires and &mut\n// In main, create two accounts, transfer between them\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
-  "solution": "type Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn transfer(from: &mut Account, to: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= from.balance;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n\nfn main() -> Int {\n  var alice = Account{ owner: \"Alice\", balance: 100.0 };\n  var bob = Account{ owner: \"Bob\", balance: 50.0 };\n  transfer(&mut alice, &mut bob, 30.0);\n  return alice.balance as Int;\n}",
-  "try_it": "Add `ensures: from.balance >= 0.0` and `ensures: to.balance >= 0.0` to the transfer function. Then try to transfer more than the sender has.",
-  "concepts": ["contracts + ownership", "layered safety", "&mut with requires", "safe transfer"],
-  "tips": [
-    "Use requires to validate business logic, &mut to ensure exclusive access",
-    "Contracts prevent logic errors; ownership prevents memory errors",
-    "A function with full contracts + correct ownership is provably safe",
-    "Write contracts BEFORE the body — they guide correct implementation"
-  ],
-  "common_mistakes": [
-    "Writing requires that duplicate what the type system already guarantees",
-    "Using owned parameters when &mut is sufficient — don't consume unnecessarily",
-    "Forgetting that &mut excludes other borrows — can't transfer between same account"
-  ],
-  "next_lesson": "L4-26",
-  "related": ["L4-02", "L4-03", "L4-16", "L4-30"]
+    "id":  "L4-25",
+    "title":  "Contracts + Ownership",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "Contracts guarantee your logic is correct. Ownership guarantees your memory is safe. Together, they form the ultimate safety net — no crashes, no corruption, no surprises.",
+    "why":  "Combining contracts with ownership creates functions that are both logically correct AND memory safe — two layers of compiler-enforced protection.",
+    "narrative":  "## The Ultimate Safe Function\n\nCombine `requires`, `ensures`, `\u0026`, and `\u0026mut` for maximum safety:\n\n```xiom\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn transfer(from: \u0026mut Account, to: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= from.balance;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n```\n\n### What This Guarantees\n\n- **Contracts**: Can\u0027t transfer negative amounts, can\u0027t overdraft, balances balance\n- **Ownership**: `\u0026mut` ensures nobody else can read or write the accounts during transfer\n\n### Layered Safety\n\n```xiom\nfn withdraw(account: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= account.balance;\n{\n  account.balance = account.balance - amount;\n}\n\nfn deposit(account: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n{\n  account.balance = account.balance + amount;\n}\n```\n\n### Contracts + Ownership in Practice\n\nContracts validate LOGIC (is this operation valid?).\nOwnership validates MEMORY (can this value be accessed?).\nTogether: no logic bugs AND no memory bugs.",
+    "analogy":  "Contracts are the rules of the road (don\u0027t speed, stop at red lights). Ownership is the seatbelt and airbags. Both keep you safe, but in different ways.",
+    "code_template":  "use xiom.io;\n\n// TODO: Write fn \u0027withdraw\u0027 for Account with requires and \u0026mut\n// Write fn \u0027deposit\u0027 for Account with requires and \u0026mut\n// In main, create two accounts, transfer between them\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn transfer(from: \u0026mut Account, to: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= from.balance;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n\nfn main() -\u003e Int {\n  var alice = Account{ owner: \"Alice\", balance: 100.0 };\n  var bob = Account{ owner: \"Bob\", balance: 50.0 };\n  transfer(\u0026mut alice, \u0026mut bob, 30.0);\n  return alice.balance as Int;\n}",
+    "try_it":  "Add `ensures: from.balance \u003e= 0.0` and `ensures: to.balance \u003e= 0.0` to the transfer function. Then try to transfer more than the sender has.",
+    "concepts":  [
+                     "contracts + ownership",
+                     "layered safety",
+                     "\u0026mut with requires",
+                     "safe transfer"
+                 ],
+    "tips":  [
+                 "Use requires to validate business logic, \u0026mut to ensure exclusive access",
+                 "Contracts prevent logic errors; ownership prevents memory errors",
+                 "A function with full contracts + correct ownership is provably safe",
+                 "Write contracts BEFORE the body — they guide correct implementation"
+             ],
+    "common_mistakes":  [
+                            "Writing requires that duplicate what the type system already guarantees",
+                            "Using owned parameters when \u0026mut is sufficient — don\u0027t consume unnecessarily",
+                            "Forgetting that \u0026mut excludes other borrows — can\u0027t transfer between same account"
+                        ],
+    "next_lesson":  "L4-26",
+    "related":  [
+                    "L4-02",
+                    "L4-03",
+                    "L4-16",
+                    "L4-30"
+                ]
 }

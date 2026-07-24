@@ -7,10 +7,17 @@
   "why": "Building a plugin framework synthesizes all L6 concepts into a single program: interfaces define contracts, modules organize code, generics provide flexibility, tests ensure correctness.",
   "narrative": "## Building a Plugin Framework\n\n### The Plugin Interface\n\n```xiom\ninterface Plugin {\n  fn name(&self) -> Str;\n  fn execute(&self, input: Str) -> Str;\n}\n```\n\n### Plugin Implementations\n\n```xiom\ntype UpperCasePlugin {}\nfn UpperCasePlugin.name(&self) -> Str { \"Uppercase\" }\nfn UpperCasePlugin.execute(&self, input: Str) -> Str { input.clone() }\n\ntype ReversePlugin {}\nfn ReversePlugin.name(&self) -> Str { \"Reverse\" }\nfn ReversePlugin.execute(&self, input: Str) -> Str {\n  let mut result = \"\";\n  let mut i = input.len();\n  while i > 0 { i -= 1; result = string.str_concat(result, string.from_char(input.get(i).unwrap())); };\n  result\n}\n\ntype WordCountPlugin {}\nfn WordCountPlugin.name(&self) -> Str { \"Word Counter\" }\nfn WordCountPlugin.execute(&self, input: Str) -> Int { ... }\n```\n\n### The Plugin Manager Module\n\n```xiom\nmod plugin_manager {\n  type Manager[T: Plugin] {\n    plugins: Vec[T];\n  }\n\n  pub fn create[T: Plugin]() -> Manager[T] { ... }\n  pub fn register[T: Plugin](m: &mut Manager[T], p: T) { ... }\n  pub fn list_plugins[T: Plugin](m: &Manager[T]) { ... }\n  pub fn run_plugin[T: Plugin](m: &Manager[T], idx: Int, input: Str) -> Str { ... }\n}\n```\n\n### Main — Putting It All Together\n\n```xiom\nfn main() -> Int {\n  use plugin_manager;\n  let mut pm = plugin_manager.create[UpperCasePlugin]();\n  pm.register(UpperCasePlugin{});\n  let names = pm.list_plugins();\n  io.println(names);\n  return 0;\n}\n```",
   "analogy": "A music studio has a rack of effects processors — compressor, reverb, delay, EQ. Each effect is a plugin implementing the 'AudioEffect' interface. You can swap them, chain them, bypass them — the rack (plugin manager) doesn't care about the internals, only that each plugin handles `process(audio)`.",
-  "code_template": "interface Plugin {\n  fn name(&self) -> Str;\n  fn execute(&self, input: Str) -> Str;\n}\n\ntype EchoPlugin {}\nfn EchoPlugin.name(&self) -> Str { \"Echo\" }\nfn EchoPlugin.execute(&self, input: Str) -> Str {\n  // TODO: return input + \"...\" + input (echo effect)\n}\n\nmod plugin_runner {\n  // TODO: type Runner[T: Plugin] with Vec of plugins\n  // TODO: fn create, fn add_plugin, fn run_all(input) -> Vec[Str]\n}\n\nfn main() -> Int {\n  // TODO: create runner, add EchoPlugin, run with \"Hello\"\n  return 0;\n}\n",
-  "solution": "interface Plugin {\n  fn name(&self) -> Str;\n  fn execute(&self, input: Str) -> Str;\n}\n\ntype EchoPlugin {}\nfn EchoPlugin.name(&self) -> Str { \"Echo\" }\nfn EchoPlugin.execute(&self, input: Str) -> Str {\n  string.str_concat(input.clone(), string.str_concat(\" ... \", input.clone()))\n}\n\nmod plugin_runner {\n  type Runner[T: Plugin] {\n    plugins: Vec[T];\n  }\n\n  pub fn create[T: Plugin]() -> Runner[T] {\n    Runner{ plugins: Vec[T].new() }\n  }\n\n  pub fn add_plugin[T: Plugin](r: &mut Runner[T], p: T) {\n    r.plugins.push(p);\n  }\n\n  pub fn run_all[T: Plugin](r: &Runner[T], input: Str) {\n    let mut i = 0;\n    while i < r.plugins.len() {\n      let p = r.plugins.get(i).unwrap();\n      let output = p.execute(input.clone());\n      io.println(p.name());\n      io.println(output);\n      i += 1;\n    };\n  }\n}\n\nfn main() -> Int {\n  use plugin_runner;\n  let mut runner: plugin_runner.Runner[EchoPlugin] = plugin_runner.create();\n  plugin_runner.add_plugin(&mut runner, EchoPlugin{});\n  plugin_runner.run_all(&runner, \"Hello\");\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ninterface Plugin {\n  fn name(&self) -> Str;\n  fn execute(&self, input: Str) -> Str;\n}\n\ntype EchoPlugin {}\nfn EchoPlugin.name(&self) -> Str { \"Echo\" }\nfn EchoPlugin.execute(&self, input: Str) -> Str {\n  // TODO: return input + \"...\" + input (echo effect)\n}\n\nmod plugin_runner {\n  // TODO: type Runner[T: Plugin] with Vec of plugins\n  // TODO: fn create, fn add_plugin, fn run_all(input) -> Vec[Str]\n}\n\nfn main() -> Int {\n  // TODO: create runner, add EchoPlugin, run with \"Hello\"\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\ninterface Plugin {\n  fn name(&self) -> Str;\n  fn execute(&self, input: Str) -> Str;\n}\n\ntype EchoPlugin {}\nfn EchoPlugin.name(&self) -> Str { \"Echo\" }\nfn EchoPlugin.execute(&self, input: Str) -> Str {\n  string.str_concat(input.clone(), string.str_concat(\" ... \", input.clone()))\n}\n\nmod plugin_runner {\n  type Runner[T: Plugin] {\n    plugins: Vec[T];\n  }\n\n  pub fn create[T: Plugin]() -> Runner[T] {\n    Runner{ plugins: Vec[T].new() }\n  }\n\n  pub fn add_plugin[T: Plugin](r: &mut Runner[T], p: T) {\n    r.plugins.push(p);\n  }\n\n  pub fn run_all[T: Plugin](r: &Runner[T], input: Str) {\n    let mut i = 0;\n    while i < r.plugins.len() {\n      let p = r.plugins.get(i).unwrap();\n      let output = p.execute(input.clone());\n      io.println(p.name());\n      io.println(output.to_str());\n      i += 1;\n    };\n  }\n}\n\nfn main() -> Int {\n  use plugin_runner;\n  let mut runner: plugin_runner.Runner[EchoPlugin] = plugin_runner.create();\n  plugin_runner.add_plugin(&mut runner, EchoPlugin{});\n  plugin_runner.run_all(&runner, \"Hello\");\n  return 0;\n}\n",
   "try_it": "Add `ShoutPlugin` (all caps), `WhisperPlugin` (all lowercase), and `CountPlugin` (returns character count as string). Add a `run_one` function that runs a specific plugin by index. Write a test that verifies each plugin's output.",
-  "concepts": ["plugin-framework", "interface", "modules", "generics", "architecture", "integration"],
+  "concepts": [
+    "plugin-framework",
+    "interface",
+    "modules",
+    "generics",
+    "architecture",
+    "integration"
+  ],
   "tips": [
     "The Plugin interface is the contract — every plugin must implement name() and execute()",
     "Keep the plugin manager generic so it works with any plugin type",
@@ -22,5 +29,10 @@
     "Making plugins do too much — each should do one transformation well"
   ],
   "next_lesson": "L7-01",
-  "related": ["L6-25", "L6-26", "L6-31", "L6-37"]
+  "related": [
+    "L6-25",
+    "L6-26",
+    "L6-31",
+    "L6-37"
+  ]
 }

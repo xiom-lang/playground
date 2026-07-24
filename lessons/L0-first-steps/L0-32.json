@@ -3,25 +3,34 @@
   "title": "Shout It Out",
   "level": "L0",
   "duration": "6 min",
-  "story": "You and your friends are playing the whisper-shout game. One person whispers a word, and the next person has to shout it as loud as they can. Your program can do the same thing: take quiet lowercase text and transform it into LOUD CAPITALS \u2014 or the other way around!",
-  "why": "Transforming text between uppercase and lowercase is one of the most common operations in programming \u2014 used everywhere from search bars to name tags to formatting titles.",
-  "narrative": "## Changing Text Case\n\nSometimes you need text to be LOUD (uppercase) and sometimes you need it to be quiet (lowercase). XIOM gives you two functions to flip between them: `string.str_upper` and `string.str_lower`.\n\n### Making Text LOUD with `string.str_upper`\n\n`string.str_upper` takes a string and returns a new version where every letter is uppercase:\n\n```xiom\nfn main() {\n  let whisper = \"hello there\";\n  let shout = string.str_upper(whisper);\n\n  io.println(\"Whisper:\");\n  io.println(whisper);\n  io.println(\"Shout:\");\n  io.println(shout);\n}\n```\n\nThis prints `hello there` and then `HELLO THERE`. Notice that the original `whisper` variable still holds `\"hello there\"` \u2014 `string.str_upper` creates a brand new string, it doesn't change the original.\n\n### Making Text Quiet with `string.str_lower`\n\nGoing the other direction, `string.str_lower` makes everything lowercase:\n\n```xiom\nfn main() {\n  let loud = \"STOP YELLING\";\n  let calm = string.str_lower(loud);\n\n  io.println(\"Before:\");\n  io.println(loud);\n  io.println(\"After:\");\n  io.println(calm);\n}\n```\n\nThis prints `STOP YELLING` and then `stop yelling`. Numbers and symbols like `!`, `?`, and `123` stay exactly the same \u2014 only letters change case.\n\n### The Whisper-Shout Game\n\nLet's combine both into a game that takes a message, whispers it, and then shouts it:\n\n```xiom\nfn main() {\n  let message = \"Programming is Fun\";\n\n  io.println(\"Original message:\");\n  io.println(message);\n\n  let whispered = string.str_lower(message);\n  io.println(\"Whispered:\");\n  io.println(whispered);\n\n  let shouted = string.str_upper(message);\n  io.println(\"SHOUTED:\");\n  io.println(shouted);\n}\n```",
-  "analogy": "`string.str_upper` and `string.str_lower` are like a volume knob for text \u2014 turn it up to SHOUT or down to whisper, and the original stays the same.",
-  "code_template": "fn main() {\n  // TODO: Create a variable 'message' with a sentence in mixed case\n  // TODO: Use string.str_upper to convert it to ALL CAPS\n  // TODO: Use string.str_lower to convert it to all lowercase\n  // TODO: Print the original message, the shouted version, and the whispered version\n}\n",
-  "solution": "fn main() {\n  let message = \"I Love Ice Cream\";\n\n  io.println(\"Original message:\");\n  io.println(message);\n\n  let shouted = string.str_upper(message);\n  io.println(\"Shouted:\");\n  io.println(shouted);\n\n  let whispered = string.str_lower(message);\n  io.println(\"Whispered:\");\n  io.println(whispered);\n\n  let name = \"alex\";\n  let loud_name = string.str_upper(name);\n  io.println(\"Friend's name in caps:\");\n  io.println(loud_name);\n}\n",
+  "story": "You and your friends are playing the whisper-shout game. One person whispers a word, and the next person has to shout it as loud as they can. Your program can do the same thing: take quiet lowercase text and transform it into LOUD CAPITALS � or the other way around!",
+  "why": "Transforming text between uppercase and lowercase is one of the most common operations in programming � used everywhere from search bars to name tags to formatting titles.",
+  "narrative": "## Changing Text Case\n\nSometimes you need text to be LOUD (uppercase) and sometimes you need it to be quiet (lowercase). XIOM gives you two functions to flip between them: `string.str_upper` and `string.str_lower`.\n\n### Making Text LOUD with `string.str_upper`\n\n`string.str_upper` takes a string and returns a new version where every letter is uppercase:\n\n```xiom\nfn main() {\n  let whisper = \"hello there\";\n  let shout = string.str_upper(whisper);\n\n  io.println(\"Whisper:\");\n  io.println(whisper);\n  io.println(\"Shout:\");\n  io.println(shout);\n}\n```\n\nThis prints `hello there` and then `HELLO THERE`. Notice that the original `whisper` variable still holds `\"hello there\"` � `string.str_upper` creates a brand new string, it doesn't change the original.\n\n### Making Text Quiet with `string.str_lower`\n\nGoing the other direction, `string.str_lower` makes everything lowercase:\n\n```xiom\nfn main() {\n  let loud = \"STOP YELLING\";\n  let calm = string.str_lower(loud);\n\n  io.println(\"Before:\");\n  io.println(loud);\n  io.println(\"After:\");\n  io.println(calm);\n}\n```\n\nThis prints `STOP YELLING` and then `stop yelling`. Numbers and symbols like `!`, `?`, and `123` stay exactly the same � only letters change case.\n\n### The Whisper-Shout Game\n\nLet's combine both into a game that takes a message, whispers it, and then shouts it:\n\n```xiom\nfn main() {\n  let message = \"Programming is Fun\";\n\n  io.println(\"Original message:\");\n  io.println(message);\n\n  let whispered = string.str_lower(message);\n  io.println(\"Whispered:\");\n  io.println(whispered);\n\n  let shouted = string.str_upper(message);\n  io.println(\"SHOUTED:\");\n  io.println(shouted);\n}\n```",
+  "analogy": "`string.str_upper` and `string.str_lower` are like a volume knob for text � turn it up to SHOUT or down to whisper, and the original stays the same.",
+  "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Create a variable 'message' with a sentence in mixed case\n  // TODO: Use string.str_upper to convert it to ALL CAPS\n  // TODO: Use string.str_lower to convert it to all lowercase\n  // TODO: Print the original message, the shouted version, and the whispered version\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let message = \"I Love Ice Cream\";\n\n  io.println(\"Original message:\");\n  io.println(message);\n\n  let shouted = string.str_upper(message);\n  io.println(\"Shouted:\");\n  io.println(shouted);\n\n  let whispered = string.str_lower(message);\n  io.println(\"Whispered:\");\n  io.println(whispered);\n\n  let name = \"alex\";\n  let loud_name = string.str_upper(name);\n  io.println(\"Friend's name in caps:\");\n  io.println(loud_name);\n}\n",
   "try_it": "Convert your friend's name to ALL CAPS. Then try a sentence with mixed case like 'ThE qUiCk BrOwN fOx'. What happens when you apply `string.str_upper` to it? What about `string.str_lower`? Can you whisper AND THEN shout the same message?",
-  "concepts": ["string.str_upper", "string.str_lower", "Str", "case transformation", "string manipulation"],
+  "concepts": [
+    "string.str_upper",
+    "string.str_lower",
+    "Str",
+    "case transformation",
+    "string manipulation"
+  ],
   "tips": [
-    "`string.str_upper` and `string.str_lower` return a NEW string \u2014 the original string is never changed.",
+    "`string.str_upper` and `string.str_lower` return a NEW string � the original string is never changed.",
     "Numbers and symbols like `123`, `!`, `?` are not letters, so they stay the same.",
     "You can chain transformations: pass the result of one function into another if you need to.",
-    "Use uppercase for emphasis in your output \u2014 like printing a warning or a title."
+    "Use uppercase for emphasis in your output � like printing a warning or a title."
   ],
   "common_mistakes": [
-    "Expecting the original to change: `string.str_upper(message);` by itself doesn't store the result \u2014 you need `let shout = string.str_upper(message);`.",
-    "Forgetting that these functions only work on strings \u2014 passing a number will cause an error.",
-    "Calling functions on a variable that doesn't exist yet \u2014 create the variable first, then transform it."
+    "Expecting the original to change: `string.str_upper(message);` by itself doesn't store the result � you need `let shout = string.str_upper(message);`.",
+    "Forgetting that these functions only work on strings � passing a number will cause an error.",
+    "Calling functions on a variable that doesn't exist yet � create the variable first, then transform it."
   ],
   "next_lesson": "L0-33",
-  "related": ["L0-06", "L0-04"]
+  "related": [
+    "L0-06",
+    "L0-04"
+  ]
 }

@@ -7,10 +7,17 @@
   "why": "A validation module with a shared interface makes adding new validators easy and keeps validation logic organized in one place.",
   "narrative": "## Building a Validation Module\n\n### The Validator Interface\n\n```xiom\ninterface Validator {\n  fn validate(&self, input: Str) -> Bool;\n  fn error_message(&self) -> Str;\n}\n```\n\nEvery validator answers: 'is this valid?' and 'what should I say if it fails?'\n\n### Email Validator\n\n```xiom\ntype EmailValidator {}\n\nfn EmailValidator.validate(&self, input: Str) -> Bool {\n  input.contains(\"@\") && input.contains(\".\")\n}\n\nfn EmailValidator.error_message(&self) -> Str {\n  \"Must be a valid email address\"\n}\n```\n\n### Age Validator\n\n```xiom\ntype AgeValidator { min_age: Int; }\n\nfn AgeValidator.validate(&self, input: Str) -> Bool {\n  let n = input.len();\n  n > 0 && n <= 3\n}\n\nfn AgeValidator.error_message(&self) -> Str {\n  \"Must be a valid age\"\n}\n```\n\n### Using the Module\n\n```xiom\nmod validators {\n  pub use email_validator::EmailValidator;\n  pub fn validate_all[T: Validator](v: &T, input: Str) {\n    if !v.validate(input) {\n      io.println(v.error_message());\n    } else {\n      io.println(\"Valid!\");\n    };\n  }\n}\n```",
   "analogy": "A security checkpoint has different scanners for different threats - metal detector, X-ray, badge reader - but they all follow the same protocol: scan the item, beep if something's wrong. The Validator interface is that universal scanning protocol.",
-  "code_template": "interface Validator {\n  fn validate(&self, input: Str) -> Bool;\n  fn error_message(&self) -> Str;\n}\n\ntype PasswordValidator { min_length: Int; }\n\nfn PasswordValidator.validate(&self, input: Str) -> Bool {\n  // TODO: return true if input.len() >= min_length\n}\n\nfn PasswordValidator.error_message(&self) -> Str {\n  // TODO: return error message\n}\n\nfn main() -> Int {\n  // TODO: create validator, test with \"abc\" and \"abcdefgh\"\n  return 0;\n}\n",
-  "solution": "interface Validator {\n  fn validate(&self, input: Str) -> Bool;\n  fn error_message(&self) -> Str;\n}\n\ntype PasswordValidator { min_length: Int; }\n\nfn PasswordValidator.validate(&self, input: Str) -> Bool {\n  input.len() >= self.min_length\n}\n\nfn PasswordValidator.error_message(&self) -> Str {\n  \"Password is too short\"\n}\n\nfn main() -> Int {\n  let pw_check = PasswordValidator{ min_length: 8 };\n  if pw_check.validate(\"abc\") {\n    io.println(\"Valid!\");\n  } else {\n    io.println(pw_check.error_message());\n  };\n  if pw_check.validate(\"abcdefgh\") {\n    io.println(\"Valid!\");\n  } else {\n    io.println(pw_check.error_message());\n  };\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ninterface Validator {\n  fn validate(&self, input: Str) -> Bool;\n  fn error_message(&self) -> Str;\n}\n\ntype PasswordValidator { min_length: Int; }\n\nfn PasswordValidator.validate(&self, input: Str) -> Bool {\n  // TODO: return true if input.len() >= min_length\n}\n\nfn PasswordValidator.error_message(&self) -> Str {\n  // TODO: return error message\n}\n\nfn main() -> Int {\n  // TODO: create validator, test with \"abc\" and \"abcdefgh\"\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ninterface Validator {\n  fn validate(&self, input: Str) -> Bool;\n  fn error_message(&self) -> Str;\n}\n\ntype PasswordValidator { min_length: Int; }\n\nfn PasswordValidator.validate(&self, input: Str) -> Bool {\n  input.len() >= self.min_length\n}\n\nfn PasswordValidator.error_message(&self) -> Str {\n  \"Password is too short\"\n}\n\nfn main() -> Int {\n  let pw_check = PasswordValidator{ min_length: 8 };\n  if pw_check.validate(\"abc\") {\n    io.println(\"Valid!\");\n  } else {\n    io.println(pw_check.error_message());\n  };\n  if pw_check.validate(\"abcdefgh\") {\n    io.println(\"Valid!\");\n  } else {\n    io.println(pw_check.error_message());\n  };\n  return 0;\n}\n",
   "try_it": "Add a `PhoneValidator` that requires exactly 10 digits and a `UsernameValidator` that requires 3-20 alphanumeric characters. Create a `run_validation` function that takes any Validator and a list of inputs, printing pass/fail for each.",
-  "concepts": ["validation", "interface", "module", "Validator", "error-message", "design-pattern"],
+  "concepts": [
+    "validation",
+    "interface",
+    "module",
+    "Validator",
+    "error-message",
+    "design-pattern"
+  ],
   "tips": [
     "Include an error_message method - it makes your validators self-documenting",
     "Keep validation logic simple: each validator checks ONE thing",
@@ -22,5 +29,9 @@
     "Validating but never checking the result - always handle the Bool"
   ],
   "next_lesson": "L6-22",
-  "related": ["L5-13", "L6-19", "L6-17"]
+  "related": [
+    "L5-13",
+    "L6-19",
+    "L6-17"
+  ]
 }

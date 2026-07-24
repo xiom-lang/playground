@@ -7,10 +7,17 @@
   "why": "A systematic contract audit catches missing preconditions, weak postconditions, and unprotected invariants before they become production incidents.",
   "narrative": "## The Contract Audit Checklist\n\nBefore declaring any function 'done', run through this checklist:\n\n### 1. Preconditions (requires)\nDoes the function assume anything about its inputs?\n```xiom\nfn withdraw(acc: &mut Account, amt: Float64)\n  requires: amt > 0.0;         // Was this missing?\n  requires: amt <= acc.balance; // Was this missing?\n```\nEvery assumption the function makes about parameters must be a `requires` clause.\n\n### 2. Postconditions (ensures)\nDoes the function guarantee anything about its outputs or side effects?\n```xiom\nfn deposit(acc: &mut Account, amt: Float64)\n  ensures: acc.balance == acc@pre.balance + amt; // Economy: money conserved\n```\nEvery guarantee the function makes to its callers must be an `ensures` clause.\n\n### 3. Type Invariants\nDoes every type maintain valid state at all times?\n```xiom\ntype Order = {\n  items: Int;\n  total: Float64;\n  invariant: items >= 0;\n  invariant: total >= 0.0;\n}\n```\nEvery type that represents a domain concept with validity rules needs invariants.\n\n### 4. Borrow Correctness\n```xiom\nfn inspect(acc: &Account) -> Float64 {  // & for read-only\nfn modify(acc: &mut Account) { }        // &mut for mutation\nfn transfer(from: &mut Account, to: &mut Account, amt: Float64) {\n  // Two &mut borrows OK — they target different variables\n}\n```\n\nRun this checklist on 5 of your functions right now. How many are missing contracts?",
   "analogy": "The contract checklist is like a pilot's pre-flight check — each item is simple, but skipping one can cause a catastrophe.",
-  "code_template": "type Product = {\n  name: Str;\n  price: Float64;\n  stock: Int;\n  // TODO: Check item 3 — add invariants!\n}\n\nfn sell(product: &mut Product, qty: Int)\n  // TODO: Check item 1 — add requires!\n  // TODO: Check item 2 — add ensures!\n{\n  product.stock = product.stock - qty;\n}\n\nfn show_product(product: &Product) -> Str\n  // TODO: Check item 4 — is the borrow correct?\n{\n  return product.name + \": $\" + product.price;\n}\n\nfn main() -> Int {\n  // TODO: Create a Product with invariants\n  // Sell 3, show the product\n  return 0;\n}",
-  "solution": "type Product = {\n  name: Str;\n  price: Float64;\n  stock: Int;\n  invariant: stock >= 0;\n  invariant: price > 0.0;\n}\n\nfn sell(product: &mut Product, qty: Int)\n  requires: qty > 0;\n  requires: qty <= product.stock;\n  ensures: product.stock == product@pre.stock - qty;\n{\n  product.stock = product.stock - qty;\n}\n\nfn show_product(product: &Product) -> Str {\n  return product.name + \": $\" + product.price;\n}\n\nfn main() -> Int {\n  var p: Product = Product{ name: \"Widget\", price: 9.99, stock: 100 };\n  sell(&mut p, 3);\n  io.println(show_product(&p));\n  return p.stock;\n}",
+  "code_template": "use xiom.io;\n\ntype Product = {\n  name: Str;\n  price: Float64;\n  stock: Int;\n  // TODO: Check item 3 — add invariants!\n}\n\nfn sell(product: &mut Product, qty: Int)\n  // TODO: Check item 1 — add requires!\n  // TODO: Check item 2 — add ensures!\n{\n  product.stock = product.stock - qty;\n}\n\nfn show_product(product: &Product) -> Str\n  // TODO: Check item 4 — is the borrow correct?\n{\n  return product.name + \": $\" + product.price;\n}\n\nfn main() -> Int {\n  // TODO: Create a Product with invariants\n  // Sell 3, show the product\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Product = {\n  name: Str;\n  price: Float64;\n  stock: Int;\n  invariant: stock >= 0;\n  invariant: price > 0.0;\n}\n\nfn sell(product: &mut Product, qty: Int)\n  requires: qty > 0;\n  requires: qty <= product.stock;\n  ensures: product.stock == product@pre.stock - qty;\n{\n  product.stock = product.stock - qty;\n}\n\nfn show_product(product: &Product) -> Str {\n  return product.name + \": $\" + product.price;\n}\n\nfn main() -> Int {\n  var p: Product = Product{ name: \"Widget\", price: 9.99, stock: 100 };\n  sell(&mut p, 3);\n  io.println(show_product(&p).to_str());\n  return p.stock;\n}",
   "try_it": "Audit your favorite function from L4-31 through L4-47. For each function: (1) list all preconditions — are they required? (2) list all guarantees — are they ensured? (3) check every type for invariants. Write down one contract you missed and add it.",
-  "concepts": ["audit", "code-review", "requires", "ensures", "invariant", "borrow"],
+  "concepts": [
+    "audit",
+    "code-review",
+    "requires",
+    "ensures",
+    "invariant",
+    "borrow"
+  ],
   "tips": [
     "Run this checklist during code reviews — it takes 30 seconds per function",
     "Every function that returns `Option` should have ensures documenting when it returns Some vs None",
@@ -22,5 +29,9 @@
     "Auditing only new code — existing code that works 'fine' is often missing critical contracts"
   ],
   "next_lesson": "L4-49",
-  "related": ["L4-41", "L4-42", "L4-06"]
+  "related": [
+    "L4-41",
+    "L4-42",
+    "L4-06"
+  ]
 }

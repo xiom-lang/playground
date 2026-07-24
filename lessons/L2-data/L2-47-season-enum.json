@@ -6,20 +6,30 @@
   "story": "Your weather app shows different UI themes depending on the season. Spring gets pastel green, Summer gets bright yellow, Autumn gets warm orange, Winter gets cool blue. You need an enum that cycles through seasons and returns season-specific data like weather descriptions and months.",
   "why": "An enum with a `next` method that cycles through variants teaches state transitions using match.",
   "narrative": "## Modeling the Four Seasons\n\nSeasons are a fixed set of four possibilities. Each has associated data: weather, months, and what comes next.\n\n### The Season Enum\n\n```xiom\nenum Season {\n  Spring,\n  Summer,\n  Autumn,\n  Winter,\n}\n```\n\n### Weather Descriptions\n\n```xiom\nfn Season.weather(self) -> Str {\n  match self {\n    Spring => { return \"Warm and rainy\"; }\n    Summer => { return \"Hot and sunny\"; }\n    Autumn => { return \"Cool and windy\"; }\n    Winter => { return \"Cold and snowy\"; }\n  }\n}\n```\n\n### Getting the Next Season\n\nMatch on the current season to return the next one in the cycle:\n\n```xiom\nfn Season.next(self) -> Season {\n  match self {\n    Spring => { return Season.Summer; }\n    Summer => { return Season.Autumn; }\n    Autumn => { return Season.Winter; }\n    Winter => { return Season.Spring; }\n  }\n}\n```\n\n### Season Months\n\n```xiom\nfn Season.months(self) -> Str {\n  match self {\n    Spring => { return \"March - May\"; }\n    Summer => { return \"June - August\"; }\n    Autumn => { return \"September - November\"; }\n    Winter => { return \"December - February\"; }\n  }\n}\n```\n\n### Using Season Methods\n\n```xiom\nlet current = Season.Summer;\ncurrent.weather();     // \"Hot and sunny\"\ncurrent.next();        // Season.Autumn\ncurrent.next().next(); // Season.Winter\n```\n\n### Cycling Through an Entire Year\n\n```xiom\nvar s = Season.Spring;\ns = s.next();  // Summer\ns = s.next();  // Autumn\ns = s.next();  // Winter\ns = s.next();  // Spring (wraps around)\n```",
-  "analogy": "Seasons are like a circular calendar. next is the arrow that moves the dial forward one quarter. weather reads the forecast for the current quarter. The cycle never ends \u2014 Winter wraps back to Spring, just like in real life.",
-  "code_template": "enum Season {\n  Spring,\n  Summer,\n  Autumn,\n  Winter,\n}\n\n// TODO: write a method 'Season.weather' that returns a season-specific description\n\n// TODO: write a method 'Season.next' that returns the next season (Winter -> Spring)\n\n// TODO: write a method 'Season.months' that returns the 3-month range\n\nfn main() -> Int {\n  // TODO: start at Summer, call next twice, return the number of letters in weather()\n  return 0;\n}",
-  "solution": "enum Season {\n  Spring,\n  Summer,\n  Autumn,\n  Winter,\n}\n\nfn Season.weather(self) -> Str {\n  match self {\n    Spring => { return \"Warm and rainy\"; }\n    Summer => { return \"Hot and sunny\"; }\n    Autumn => { return \"Cool and windy\"; }\n    Winter => { return \"Cold and snowy\"; }\n  }\n}\n\nfn Season.next(self) -> Season {\n  match self {\n    Spring => { return Season.Summer; }\n    Summer => { return Season.Autumn; }\n    Autumn => { return Season.Winter; }\n    Winter => { return Season.Spring; }\n  }\n}\n\nfn Season.months(self) -> Str {\n  match self {\n    Spring => { return \"March - May\"; }\n    Summer => { return \"June - August\"; }\n    Autumn => { return \"September - November\"; }\n    Winter => { return \"December - February\"; }\n  }\n}\n\nfn main() -> Int {\n  var s = Season.Summer;\n  s = s.next();\n  s = s.next();\n  if s == Season.Winter { return 4; }\n  return 0;\n}",
+  "analogy": "Seasons are like a circular calendar. next is the arrow that moves the dial forward one quarter. weather reads the forecast for the current quarter. The cycle never ends � Winter wraps back to Spring, just like in real life.",
+  "code_template": "use xiom.io;\n\nenum Season {\n  Spring,\n  Summer,\n  Autumn,\n  Winter,\n}\n\n// TODO: write a method 'Season.weather' that returns a season-specific description\n\n// TODO: write a method 'Season.next' that returns the next season (Winter -> Spring)\n\n// TODO: write a method 'Season.months' that returns the 3-month range\n\nfn main() -> Int {\n  // TODO: start at Summer, call next twice, return the number of letters in weather()\n  return 0;\n}",
+  "solution": "use xiom.io;\n\nenum Season {\n  Spring,\n  Summer,\n  Autumn,\n  Winter,\n}\n\nfn Season.weather(self) -> Str {\n  match self {\n    Spring => { return \"Warm and rainy\"; }\n    Summer => { return \"Hot and sunny\"; }\n    Autumn => { return \"Cool and windy\"; }\n    Winter => { return \"Cold and snowy\"; }\n  }\n}\n\nfn Season.next(self) -> Season {\n  match self {\n    Spring => { return Season.Summer; }\n    Summer => { return Season.Autumn; }\n    Autumn => { return Season.Winter; }\n    Winter => { return Season.Spring; }\n  }\n}\n\nfn Season.months(self) -> Str {\n  match self {\n    Spring => { return \"March - May\"; }\n    Summer => { return \"June - August\"; }\n    Autumn => { return \"September - November\"; }\n    Winter => { return \"December - February\"; }\n  }\n}\n\nfn main() -> Int {\n  var s = Season.Summer;\n  s = s.next();\n  s = s.next();\n  if s == Season.Winter { return 4; }\n  return 0;\n}",
   "try_it": "Add a `Season.emoji(self) -> Str` method that returns a season-appropriate emoji. Add a `Season.average_temp(self) -> Int` method for each season. Add a `Season.activities(self) -> Str` method listing 2-3 activities per season.",
-  "concepts": ["enum", "match", "method", "enum-returning-method", "cycle"],
+  "concepts": [
+    "enum",
+    "match",
+    "method",
+    "enum-returning-method",
+    "cycle"
+  ],
   "tips": [
-    "Methods can return enum values \u2014 `next` returns a `Season`, not a string",
+    "Methods can return enum values � `next` returns a `Season`, not a string",
     "The `next` method is a state machine: each input maps to exactly one output",
     "Chain `next()` calls: `s.next().next()` jumps two seasons ahead"
   ],
   "common_mistakes": [
-    "Forgetting the `Winter => Spring` mapping in `next` \u2014 without it, the cycle breaks in winter",
-    "Trying to set `s = Season.Winter` inside `next` instead of returning it \u2014 methods return values, they don't modify the receiver"
+    "Forgetting the `Winter => Spring` mapping in `next` � without it, the cycle breaks in winter",
+    "Trying to set `s = Season.Winter` inside `next` instead of returning it � methods return values, they don't modify the receiver"
   ],
   "next_lesson": "L2-48",
-  "related": ["L2-15", "L2-37", "L2-41"]
+  "related": [
+    "L2-15",
+    "L2-37",
+    "L2-41"
+  ]
 }

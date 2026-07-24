@@ -1,26 +1,40 @@
 {
-  "id": "L4-04",
-  "title": "Requires AND Ensures Together",
-  "level": "L4",
-  "duration": "11 min",
-  "story": "A function with only `requires` checks inputs but not outputs. A function with only `ensures` checks outputs but not inputs. But a truly safe function needs BOTH: validate what comes in AND verify what goes out. When you combine `requires` AND `ensures`, you create a complete contract — a function that can't be called wrong AND can't return wrong.",
-  "why": "Combining requires and ensures creates a complete specification — the function is guarded on both sides, catching bad inputs at the call site and bad outputs at the return site.",
-  "narrative": "## The Complete Contract\n\nA function with both `requires` and `ensures` has a full specification: what must be true before AND after.\n\n### Safe Division with Full Contract\n\n```xiom\nfn safe_divide(a: Int, b: Int) -> Int\n  requires: b != 0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n```\n\n**Before**: `b` must not be zero (caller's promise).\n**After**: `result * b` must equal `a` (function's promise).\n\nIf the caller passes `b = 0`, the `requires` traps. If the function somehow computes the wrong result, the `ensures` traps.\n\n### Modulo with Full Contract\n\n```xiom\nfn safe_modulo(a: Int, b: Int) -> Int\n  requires: b != 0;\n  ensures: result >= 0;\n  ensures: result < b || result > -b;\n{\n  let m = a % b;\n  if m < 0 { return m + b; }\n  else { return m; }\n}\n\nfn main() -> Int {\n  io.println(string.int_to_str(safe_modulo(10, 3)));\n  io.println(string.int_to_str(safe_modulo(-10, 3)));\n  return 0;\n}\n```\n\n### Temperature Converter\n\n```xiom\nfn celsius_to_fahrenheit(c: Float64) -> Float64\n  requires: c >= -273.15;\n  ensures: result >= -459.67;\n{\n  return c * 9.0 / 5.0 + 32.0;\n}\n```\n\nThe requires prevents non-physical temperatures (below absolute zero). The ensures guarantees the output is also physically valid.\n\n### Percentage Calculator\n\n```xiom\nfn percentage(value: Float64, percent: Float64) -> Float64\n  requires: percent >= 0.0;\n  requires: percent <= 100.0;\n  ensures: result >= 0.0;\n  ensures: result <= value;\n{\n  return value * percent / 100.0;\n}\n```\n\n### The Contract as Documentation\n\nReading this function signature tells you everything:\n\n```xiom\nfn withdraw(balance: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= balance;\n  ensures: result >= 0;\n  ensures: result == balance - amount;\n{\n  return balance - amount;\n}\n```\n\nYou know: amount must be positive and affordable, the result won't be negative, and the result equals balance minus amount. That's a complete specification — no need to read the one-line body.",
-  "analogy": "A full contract (requires + ensures) is like a bank's safe deposit box procedure. Before accessing the box, you must show valid ID (requires: id is valid). The bank verifies this at the entrance. When you return the box, the bank inspects it to confirm the contents are correct (ensures: box contents match log). Both sides of the transaction are verified. If either check fails, the process halts — no exceptions.",
-  "code_template": "fn safe_divide(a: Int, b: Int) -> Int\n  // TODO: add requires: b != 0;\n  // TODO: add ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn withdraw(balance: Int, amount: Int) -> Int\n  // TODO: add requires: amount > 0 && amount <= balance\n  // TODO: add ensures: result == balance - amount && result >= 0\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  // TODO: test safe_divide(15, 3) and withdraw(100, 40)\n  return 0;\n}\n",
-  "solution": "fn safe_divide(a: Int, b: Int) -> Int\n  requires: b != 0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn withdraw(balance: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= balance;\n  ensures: result >= 0;\n  ensures: result == balance - amount;\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  io.println(string.int_to_str(safe_divide(15, 3)));\n  io.println(string.int_to_str(withdraw(100, 40)));\n  return 0;\n}\n",
-  "try_it": "Write `safe_modulo(a: Int, b: Int) -> Int` with both requires and ensures. Add `requires: b != 0;` and `ensures: result >= 0;` and `ensures: result < b;` (assuming positive b). Then add `requires: b > 0;` to simplify the ensures. Write a `saturating_add(a: Int, b: Int) -> Int` that doesn't overflow — with `ensures: result >= a;` and `ensures: result >= b;`. Test with very large numbers. What ensures can you write for `saturating_sub`?",
-  "concepts": ["requires", "ensures", "complete-contract", "precondition", "postcondition", "specification", "result"],
-  "tips": [
-    "Write requires first (what must be true going in), then ensures (what must be true coming out)",
-    "The ensures often depends on the requires being true — you can assume requires holds when writing ensures",
-    "A complete contract often makes the function body trivial — the contract IS the documentation"
-  ],
-  "common_mistakes": [
-    "Writing `ensures: result > 0;` when the requires doesn't guarantee it — if balance can be 0, result could be 0",
-    "Making ensures too weak — `ensures: result >= 0;` is true but doesn't actually verify the withdrawal math",
-    "Forgetting that ensures uses `result`, NOT the variable name you assign the return value to inside the function"
-  ],
-  "next_lesson": "L4-05",
-  "related": ["L4-01", "L4-02", "L4-03", "L3-29", "L3-37"]
+    "id":  "L4-04",
+    "title":  "Requires AND Ensures Together",
+    "level":  "L4",
+    "duration":  "11 min",
+    "story":  "A function with only `requires` checks inputs but not outputs. A function with only `ensures` checks outputs but not inputs. But a truly safe function needs BOTH: validate what comes in AND verify what goes out. When you combine `requires` AND `ensures`, you create a complete contract — a function that can\u0027t be called wrong AND can\u0027t return wrong.",
+    "why":  "Combining requires and ensures creates a complete specification — the function is guarded on both sides, catching bad inputs at the call site and bad outputs at the return site.",
+    "narrative":  "## The Complete Contract\n\nA function with both `requires` and `ensures` has a full specification: what must be true before AND after.\n\n### Safe Division with Full Contract\n\n```xiom\nfn safe_divide(a: Int, b: Int) -\u003e Int\n  requires: b != 0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n```\n\n**Before**: `b` must not be zero (caller\u0027s promise).\n**After**: `result * b` must equal `a` (function\u0027s promise).\n\nIf the caller passes `b = 0`, the `requires` traps. If the function somehow computes the wrong result, the `ensures` traps.\n\n### Modulo with Full Contract\n\n```xiom\nfn safe_modulo(a: Int, b: Int) -\u003e Int\n  requires: b != 0;\n  ensures: result \u003e= 0;\n  ensures: result \u003c b || result \u003e -b;\n{\n  let m = a % b;\n  if m \u003c 0 { return m + b; }\n  else { return m; }\n}\n\nfn main() -\u003e Int {\n  io.println(string.int_to_str(safe_modulo(10, 3)));\n  io.println(string.int_to_str(safe_modulo(-10, 3)));\n  return 0;\n}\n```\n\n### Temperature Converter\n\n```xiom\nfn celsius_to_fahrenheit(c: Float64) -\u003e Float64\n  requires: c \u003e= -273.15;\n  ensures: result \u003e= -459.67;\n{\n  return c * 9.0 / 5.0 + 32.0;\n}\n```\n\nThe requires prevents non-physical temperatures (below absolute zero). The ensures guarantees the output is also physically valid.\n\n### Percentage Calculator\n\n```xiom\nfn percentage(value: Float64, percent: Float64) -\u003e Float64\n  requires: percent \u003e= 0.0;\n  requires: percent \u003c= 100.0;\n  ensures: result \u003e= 0.0;\n  ensures: result \u003c= value;\n{\n  return value * percent / 100.0;\n}\n```\n\n### The Contract as Documentation\n\nReading this function signature tells you everything:\n\n```xiom\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= balance;\n  ensures: result \u003e= 0;\n  ensures: result == balance - amount;\n{\n  return balance - amount;\n}\n```\n\nYou know: amount must be positive and affordable, the result won\u0027t be negative, and the result equals balance minus amount. That\u0027s a complete specification — no need to read the one-line body.",
+    "analogy":  "A full contract (requires + ensures) is like a bank\u0027s safe deposit box procedure. Before accessing the box, you must show valid ID (requires: id is valid). The bank verifies this at the entrance. When you return the box, the bank inspects it to confirm the contents are correct (ensures: box contents match log). Both sides of the transaction are verified. If either check fails, the process halts — no exceptions.",
+    "code_template":  "use xiom.io;\n\nfn safe_divide(a: Int, b: Int) -\u003e Int\n  // TODO: add requires: b != 0;\n  // TODO: add ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  // TODO: add requires: amount \u003e 0 \u0026\u0026 amount \u003c= balance\n  // TODO: add ensures: result == balance - amount \u0026\u0026 result \u003e= 0\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  // TODO: test safe_divide(15, 3) and withdraw(100, 40)\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\nfn safe_divide(a: Int, b: Int) -\u003e Int\n  requires: b != 0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= balance;\n  ensures: result \u003e= 0;\n  ensures: result == balance - amount;\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  io.println(string.int_to_str(safe_divide(15, 3)));\n  io.println(string.int_to_str(withdraw(100, 40)));\n  return 0;\n}\n",
+    "try_it":  "Write `safe_modulo(a: Int, b: Int) -\u003e Int` with both requires and ensures. Add `requires: b != 0;` and `ensures: result \u003e= 0;` and `ensures: result \u003c b;` (assuming positive b). Then add `requires: b \u003e 0;` to simplify the ensures. Write a `saturating_add(a: Int, b: Int) -\u003e Int` that doesn\u0027t overflow — with `ensures: result \u003e= a;` and `ensures: result \u003e= b;`. Test with very large numbers. What ensures can you write for `saturating_sub`?",
+    "concepts":  [
+                     "requires",
+                     "ensures",
+                     "complete-contract",
+                     "precondition",
+                     "postcondition",
+                     "specification",
+                     "result"
+                 ],
+    "tips":  [
+                 "Write requires first (what must be true going in), then ensures (what must be true coming out)",
+                 "The ensures often depends on the requires being true — you can assume requires holds when writing ensures",
+                 "A complete contract often makes the function body trivial — the contract IS the documentation"
+             ],
+    "common_mistakes":  [
+                            "Writing `ensures: result \u003e 0;` when the requires doesn\u0027t guarantee it — if balance can be 0, result could be 0",
+                            "Making ensures too weak — `ensures: result \u003e= 0;` is true but doesn\u0027t actually verify the withdrawal math",
+                            "Forgetting that ensures uses `result`, NOT the variable name you assign the return value to inside the function"
+                        ],
+    "next_lesson":  "L4-05",
+    "related":  [
+                    "L4-01",
+                    "L4-02",
+                    "L4-03",
+                    "L3-29",
+                    "L3-37"
+                ]
 }

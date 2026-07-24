@@ -7,10 +7,17 @@
   "why": "A string utility module centralizes common text operations, making them reusable across programs with a consistent interface.",
   "narrative": "## Building a String Utilities Module\n\n```xiom\nmod strutils {\n  pub fn reverse(s: Str) -> Str {\n    let mut result = \"\";\n    let mut i = s.len();\n    while i > 0 {\n      i -= 1;\n      let ch = s.get(i).unwrap();\n      result = string.str_concat(result, string.from_char(ch));\n    };\n    result\n  }\n\n  pub fn count_words(s: Str) -> Int {\n    if s.len() == 0 { return 0; };\n    let mut count = 0;\n    let mut in_word = false;\n    let mut i = 0;\n    while i < s.len() {\n      let ch = s.get(i).unwrap();\n      if ch == ' ' {\n        in_word = false;\n      } else if !in_word {\n        count += 1;\n        in_word = true;\n      };\n      i += 1;\n    };\n    count\n  }\n\n  pub fn capitalize(s: Str) -> Str {\n    if s.len() == 0 { return \"\"; };\n    let first = s.get(0).unwrap();\n    let rest = s.slice(1, s.len());\n    string.str_concat(string.from_char(first), rest)\n  }\n\n  pub fn truncate(s: Str, max_len: Int) -> Str {\n    if s.len() <= max_len { return s; };\n    s.slice(0, max_len)\n  }\n}\n```\n\n### Patterns Used\n\n- **reverse**: Build result backwards character by character\n- **count_words**: Track whether you're inside a word (non-space sequence)\n- **capitalize**: Take first char + rest of string\n- **truncate**: Slice to max length if too long",
   "analogy": "A kitchen has a spice rack with labeled jars: 'cinnamon', 'oregano', 'paprika'. Instead of grinding spices fresh every meal, you reach for the jar. A string utility module is your spice rack of text operations.",
-  "code_template": "mod strutils {\n  // TODO: pub fn reverse that returns reversed string\n  // TODO: pub fn count_words that counts space-separated words\n  // TODO: pub fn truncate that returns first max_len chars\n}\n\nfn main() -> Int {\n  use strutils;\n  // TODO: test reverse, count_words, and truncate\n  return 0;\n}\n",
-  "solution": "mod strutils {\n  pub fn reverse(s: Str) -> Str {\n    let mut result = \"\";\n    let mut i = s.len();\n    while i > 0 {\n      i -= 1;\n      let ch = s.get(i).unwrap();\n      result = string.str_concat(result, string.from_char(ch));\n    };\n    result\n  }\n\n  pub fn count_words(s: Str) -> Int {\n    if s.len() == 0 { return 0; };\n    let mut count = 0;\n    let mut in_word = false;\n    let mut i = 0;\n    while i < s.len() {\n      let ch = s.get(i).unwrap();\n      if ch == ' ' {\n        in_word = false;\n      } else if !in_word {\n        count += 1;\n        in_word = true;\n      };\n      i += 1;\n    };\n    count\n  }\n\n  pub fn truncate(s: Str, max_len: Int) -> Str {\n    if s.len() <= max_len { return s; };\n    s.slice(0, max_len)\n  }\n}\n\nfn main() -> Int {\n  use strutils;\n  let rev = strutils.reverse(\"hello\");\n  io.println(rev);\n  let words = strutils.count_words(\"hello world again\");\n  io.println(words);\n  let trun = strutils.truncate(\"abcdefghij\", 5);\n  io.println(trun);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nmod strutils {\n  // TODO: pub fn reverse that returns reversed string\n  // TODO: pub fn count_words that counts space-separated words\n  // TODO: pub fn truncate that returns first max_len chars\n}\n\nfn main() -> Int {\n  use strutils;\n  // TODO: test reverse, count_words, and truncate\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nmod strutils {\n  pub fn reverse(s: Str) -> Str {\n    let mut result = \"\";\n    let mut i = s.len();\n    while i > 0 {\n      i -= 1;\n      let ch = s.get(i).unwrap();\n      result = string.str_concat(result, string.from_char(ch));\n    };\n    result\n  }\n\n  pub fn count_words(s: Str) -> Int {\n    if s.len() == 0 { return 0; };\n    let mut count = 0;\n    let mut in_word = false;\n    let mut i = 0;\n    while i < s.len() {\n      let ch = s.get(i).unwrap();\n      if ch == ' ' {\n        in_word = false;\n      } else if !in_word {\n        count += 1;\n        in_word = true;\n      };\n      i += 1;\n    };\n    count\n  }\n\n  pub fn truncate(s: Str, max_len: Int) -> Str {\n    if s.len() <= max_len { return s; };\n    s.slice(0, max_len)\n  }\n}\n\nfn main() -> Int {\n  use strutils;\n  let rev = strutils.reverse(\"hello\");\n  io.println(rev.to_str());\n  let words = strutils.count_words(\"hello world again\");\n  io.println(words.to_str());\n  let trun = strutils.truncate(\"abcdefghij\", 5);\n  io.println(trun.to_str());\n  return 0;\n}\n",
   "try_it": "Add `to_title_case` that capitalizes the first letter of every word. Add `starts_with(s: Str, prefix: Str)` and `ends_with(s: Str, suffix: Str)`. Write a main function that tests all five functions with various inputs.",
-  "concepts": ["string-module", "Str", "reverse", "count-words", "truncate", "utility-module"],
+  "concepts": [
+    "string-module",
+    "Str",
+    "reverse",
+    "count-words",
+    "truncate",
+    "utility-module"
+  ],
   "tips": [
     "Build reverse by iterating backwards through the string",
     "Count words by tracking transitions from space to non-space",
@@ -22,5 +29,9 @@
     "Concatenating strings inefficiently in loops - build once, join at the end"
   ],
   "next_lesson": "L6-24",
-  "related": ["L6-19", "L6-22", "L2-52"]
+  "related": [
+    "L6-19",
+    "L6-22",
+    "L2-52"
+  ]
 }

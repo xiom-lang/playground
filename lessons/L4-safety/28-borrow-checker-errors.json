@@ -1,27 +1,38 @@
 {
-  "id": "L4-28",
-  "title": "Borrow Checker Errors",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "The borrow checker is like a strict teacher — it points out every mistake before it becomes a disaster. Learning to read its errors is learning to write safe code.",
-  "why": "Understanding common borrow checker errors is essential — they're the most frequent compile errors in XIOM and knowing how to fix them saves hours of frustration.",
-  "narrative": "## Common Borrow Errors and Fixes\n\n### Error 1: Use After Move\n\n```xiom\n// BAD:\nlet v = Vec[Int].new();\nlet v2 = v;\nv.push(1);  // ERROR: v was moved!\n\n// FIX: Clone if you need both\nlet v = Vec[Int].new();\nlet v2 = v.clone();\nv.push(1);\nv2.push(2);\n```\n\n### Error 2: Cannot Borrow as Mutable and Immutable\n\n```xiom\n// BAD:\nvar data = Vec[Int].new();\ndata.push(1);\nlet r = &data;\nlet w = &mut data;  // ERROR: & already exists!\n\n// FIX: End the read borrow first with a scope\nvar data = Vec[Int].new();\ndata.push(1);\n{ let r = &data; io.println(r.len()); }\nlet w = &mut data;  // OK: r is dead\n```\n\n### Error 3: Cannot Return Reference to Local\n\n```xiom\n// BAD:\nfn bad() -> &Vec[Int] {\n  let v = Vec[Int].new();\n  return &v;  // ERROR: v is destroyed on return!\n}\n\n// FIX: Return the owned value\nfn good() -> Vec[Int] {\n  let v = Vec[Int].new();\n  return v;  // OK: ownership moves to caller\n}\n```\n\n### Error 4: Move While Borrowed\n\n```xiom\n// BAD:\nlet v = Vec[Int].new();\nlet r = &v;\nlet v2 = v;  // ERROR: can't move v while borrowed!\n\n// FIX: End the borrow first\nlet v = Vec[Int].new();\n{ let r = &v; io.println(r.len()); }\nlet v2 = v;  // OK\n```",
-  "analogy": "The borrow checker is a proofreader that catches every grammatical error. Fix the errors, and your code is guaranteed to be well-formed.",
-  "code_template": "// TODO: Fix the borrow error:\n// var data = Vec[Int].new(); data.push(1);\n// let r = &data;\n// let w = &mut data; // ERROR:\n// w.push(2);\n\nfn main() -> Int {\n  // TODO: Fix by scoping the read borrow\n  return 0;\n}",
-  "solution": "fn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  {\n    let r = &data;\n    io.println(r.len());\n  }\n  let w = &mut data;\n  w.push(2);\n  return data.len() as Int;\n}",
-  "try_it": "Take the 'cannot borrow as mutable and immutable' error. Try three different fixes: (1) scope the borrows, (2) clone the data, (3) restructure to avoid the conflict.",
-  "concepts": ["borrow checker", "compile errors", "use after move", "borrow conflict", "lifetime"],
-  "tips": [
-    "Read borrow errors from the BOTTOM up — the last error is often the root cause",
-    "Add scope blocks { } to end borrows early when you need mixed access",
-    "Clone when you truly need independent copies for different operations",
-    "Restructure code to group reads together and writes together"
-  ],
-  "common_mistakes": [
-    "Ignoring borrow checker errors and adding .clone() everywhere — learn to restructure instead",
-    "Forgetting that loops extend borrow lifetimes — use scopes inside loops",
-    "Misreading error messages — the compiler tells you exactly which borrows conflict"
-  ],
-  "next_lesson": "L4-29",
-  "related": ["L4-17", "L4-22", "L4-12", "L4-16"]
+    "id":  "L4-28",
+    "title":  "Borrow Checker Errors",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "The borrow checker is like a strict teacher — it points out every mistake before it becomes a disaster. Learning to read its errors is learning to write safe code.",
+    "why":  "Understanding common borrow checker errors is essential — they\u0027re the most frequent compile errors in XIOM and knowing how to fix them saves hours of frustration.",
+    "narrative":  "## Common Borrow Errors and Fixes\n\n### Error 1: Use After Move\n\n```xiom\n// BAD:\nlet v = Vec[Int].new();\nlet v2 = v;\nv.push(1);  // ERROR: v was moved!\n\n// FIX: Clone if you need both\nlet v = Vec[Int].new();\nlet v2 = v.clone();\nv.push(1);\nv2.push(2);\n```\n\n### Error 2: Cannot Borrow as Mutable and Immutable\n\n```xiom\n// BAD:\nvar data = Vec[Int].new();\ndata.push(1);\nlet r = \u0026data;\nlet w = \u0026mut data;  // ERROR: \u0026 already exists!\n\n// FIX: End the read borrow first with a scope\nvar data = Vec[Int].new();\ndata.push(1);\n{ let r = \u0026data; io.println(r.len()); }\nlet w = \u0026mut data;  // OK: r is dead\n```\n\n### Error 3: Cannot Return Reference to Local\n\n```xiom\n// BAD:\nfn bad() -\u003e \u0026Vec[Int] {\n  let v = Vec[Int].new();\n  return \u0026v;  // ERROR: v is destroyed on return!\n}\n\n// FIX: Return the owned value\nfn good() -\u003e Vec[Int] {\n  let v = Vec[Int].new();\n  return v;  // OK: ownership moves to caller\n}\n```\n\n### Error 4: Move While Borrowed\n\n```xiom\n// BAD:\nlet v = Vec[Int].new();\nlet r = \u0026v;\nlet v2 = v;  // ERROR: can\u0027t move v while borrowed!\n\n// FIX: End the borrow first\nlet v = Vec[Int].new();\n{ let r = \u0026v; io.println(r.len()); }\nlet v2 = v;  // OK\n```",
+    "analogy":  "The borrow checker is a proofreader that catches every grammatical error. Fix the errors, and your code is guaranteed to be well-formed.",
+    "code_template":  "use xiom.io;\n\n// TODO: Fix the borrow error:\n// var data = Vec[Int].new(); data.push(1);\n// let r = \u0026data;\n// let w = \u0026mut data; // ERROR:\n// w.push(2);\n\nfn main() -\u003e Int {\n  // TODO: Fix by scoping the read borrow\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  {\n    let r = \u0026data;\n    io.println(r.len().to_str());\n  }\n  let w = \u0026mut data;\n  w.push(2);\n  return data.len() as Int;\n}",
+    "try_it":  "Take the \u0027cannot borrow as mutable and immutable\u0027 error. Try three different fixes: (1) scope the borrows, (2) clone the data, (3) restructure to avoid the conflict.",
+    "concepts":  [
+                     "borrow checker",
+                     "compile errors",
+                     "use after move",
+                     "borrow conflict",
+                     "lifetime"
+                 ],
+    "tips":  [
+                 "Read borrow errors from the BOTTOM up — the last error is often the root cause",
+                 "Add scope blocks { } to end borrows early when you need mixed access",
+                 "Clone when you truly need independent copies for different operations",
+                 "Restructure code to group reads together and writes together"
+             ],
+    "common_mistakes":  [
+                            "Ignoring borrow checker errors and adding .clone() everywhere — learn to restructure instead",
+                            "Forgetting that loops extend borrow lifetimes — use scopes inside loops",
+                            "Misreading error messages — the compiler tells you exactly which borrows conflict"
+                        ],
+    "next_lesson":  "L4-29",
+    "related":  [
+                    "L4-17",
+                    "L4-22",
+                    "L4-12",
+                    "L4-16"
+                ]
 }

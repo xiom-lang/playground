@@ -7,10 +7,19 @@
   "why": "Real applications use Vec, Map, and Set together — each collection solves a different data shape, and choosing correctly is the key skill.",
   "narrative": "## Choosing the Right Collection\n\nA library catalog needs all three collections working together:\n\n- **Vec** — to show books in order, like a shelf list\n- **Map** — to look up books by ISBN instantly\n- **Set** — to track genres without duplicates\n\n### The Data Model\n\n```xiom\nlet book_list: Vec[Str] = Vec[Str].new();\nlet isbn_lookup: Map[Str,Str] = Map[Str,Str].new();\nlet genres: Set[Str] = Set[Str].new();\n```\n\n### Adding a Book\n\n```xiom\nfn add_book(title: Str, isbn: Str, genre: Str) {\n  book_list.push(title);\n  isbn_lookup.insert(isbn, title);\n  genres.insert(genre);\n}\n```\n\nEach collection serves a different purpose:\n- `book_list` keeps the order books were added\n- `isbn_lookup` maps ISBN → title for fast search\n- `genres` tracks all unique genres in the library\n\n### Looking Up by ISBN\n\n```xiom\nfn find_by_isbn(isbn: Str) {\n  match isbn_lookup.get(isbn) {\n    Some(title) -> io.println(\"Found: \" + title);\n    None -> io.println(\"No book with that ISBN\");\n  }\n}\n```\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let books: Vec[Str] = Vec[Str].new();\n  let catalog: Map[Str,Str] = Map[Str,Str].new();\n  let tags: Set[Str] = Set[Str].new();\n\n  books.push(\"The Great Gatsby\");\n  catalog.insert(\"978-0743273565\", \"The Great Gatsby\");\n  tags.insert(\"Fiction\");\n\n  books.push(\"A Brief History of Time\");\n  catalog.insert(\"978-0553380163\", \"A Brief History of Time\");\n  tags.insert(\"Science\");\n\n  io.println(\"Books: \" + string.int_to_str(books.len()));\n  io.println(\"Genres: \" + string.int_to_str(tags.len()));\n\n  match catalog.get(\"978-0743273565\") {\n    Some(title) -> io.println(\"Found by ISBN: \" + title);\n    None -> io.println(\"Not found\");\n  }\n\n  return 0;\n}\n```",
   "analogy": "Using multiple collections is like organizing a physical library three ways: a numbered shelf (Vec) keeps books in order, a card catalog (Map) lets you find any book by its ID instantly, and a genre sticker system (Set) ensures you don't create duplicate categories. Each system serves a different need, and together they make the library work.",
-  "code_template": "fn main() -> Int {\n  // TODO: Create a Vec[Str] for items, a Map[Str,Float64] for prices, a Set[Str] for categories\n  // TODO: Add \"Widget\" ($9.99, hardware), \"Gadget\" ($14.99, electronics), \"Widget\" again ($9.99, hardware)\n  // TODO: Print total items (Vec length), total unique categories (Set length), and look up \"Gadget\" price\n  return 0;\n}\n",
-  "solution": "fn main() -> Int {\n  let items: Vec[Str] = Vec[Str].new();\n  let prices: Map[Str,Float64] = Map[Str,Float64].new();\n  let categories: Set[Str] = Set[Str].new();\n\n  items.push(\"Widget\");\n  prices.insert(\"Widget\", 9.99);\n  categories.insert(\"hardware\");\n\n  items.push(\"Gadget\");\n  prices.insert(\"Gadget\", 14.99);\n  categories.insert(\"electronics\");\n\n  items.push(\"Widget\");\n  categories.insert(\"hardware\");\n\n  io.println(\"Total items: \" + string.int_to_str(items.len()));\n  io.println(\"Categories: \" + string.int_to_str(categories.len()));\n\n  match prices.get(\"Gadget\") {\n    Some(p) -> io.println(\"Gadget: $\" + string.float_to_str(p));\n    None -> io.println(\"Gadget not found\");\n  }\n\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn main() -> Int {\n  // TODO: Create a Vec[Str] for items, a Map[Str,Float64] for prices, a Set[Str] for categories\n  // TODO: Add \"Widget\" ($9.99, hardware), \"Gadget\" ($14.99, electronics), \"Widget\" again ($9.99, hardware)\n  // TODO: Print total items (Vec length), total unique categories (Set length), and look up \"Gadget\" price\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  let items: Vec[Str] = Vec[Str].new();\n  let prices: Map[Str,Float64] = Map[Str,Float64].new();\n  let categories: Set[Str] = Set[Str].new();\n\n  items.push(\"Widget\");\n  prices.insert(\"Widget\", 9.99);\n  categories.insert(\"hardware\");\n\n  items.push(\"Gadget\");\n  prices.insert(\"Gadget\", 14.99);\n  categories.insert(\"electronics\");\n\n  items.push(\"Widget\");\n  categories.insert(\"hardware\");\n\n  io.println(\"Total items: \" + string.int_to_str(items.len()));\n  io.println(\"Categories: \" + string.int_to_str(categories.len()));\n\n  match prices.get(\"Gadget\") {\n    Some(p) -> io.println(\"Gadget: $\" + string.float_to_str(p));\n    None -> io.println(\"Gadget not found\");\n  }\n\n  return 0;\n}\n",
   "try_it": "Convert between collection types: collect all Map keys into a Vec, collect all Vec items into a Set to see unique values, build a Map from two Vecs (one for keys, one for values). Add a function that searches all three collections for a given string and reports where it was found.",
-  "concepts": ["Vec", "Map", "Set", "combined-collections", "data-modeling", "lookup", "deduplication", "ordering"],
+  "concepts": [
+    "Vec",
+    "Map",
+    "Set",
+    "combined-collections",
+    "data-modeling",
+    "lookup",
+    "deduplication",
+    "ordering"
+  ],
   "tips": [
     "Use Vec for ordered lists you iterate over, Map for key-based lookups, Set for uniqueness guarantees",
     "Each collection should answer ONE question about your data — don't use one collection for everything",
@@ -22,5 +31,11 @@
     "Using Set to count frequency — Set only tracks presence, not how many times something appeared"
   ],
   "next_lesson": "L5-18",
-  "related": ["L5-01", "L5-09", "L5-14", "L5-16", "L5-12"]
+  "related": [
+    "L5-01",
+    "L5-09",
+    "L5-14",
+    "L5-16",
+    "L5-12"
+  ]
 }

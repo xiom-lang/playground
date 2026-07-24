@@ -7,10 +7,14 @@
   "why": "Functions that take structs as parameters and return structs let you create and transform data with reusable, clean logic.",
   "narrative": "## Functions That Work with Structs\n\nRegular functions (not methods) can take structs as parameters and return structs as results. This separates data creation from data behavior.\n\n### Factory Functions\n\nA function that creates and returns a struct is called a *factory*:\n\n```xiom\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn create_person(name: Str, age: Int) -> Person {\n  return Person{ name: name, age: age };\n}\n\nfn main() -> Int {\n  let p1 = create_person(\"Dana\", 17);\n  let p2 = create_person(\"Eli\", 13);\n  io.println(p1.name);\n  io.println(p2.name);\n  return 0;\n}\n```\n\n### Functions That Take Structs as Input\n\n```xiom\nfn print_person(person: Person) {\n  io.println(person.name + \" is \" + \" years old.\");\n  io.println(person.age);\n}\n\nfn main() -> Int {\n  let p = create_person(\"Frankie\", 15);\n  print_person(p);\n  return 0;\n}\n```\n\n### Return Types Are Structs Too\n\nYou've returned `Int`, `Str`, and `Bool` — now you can return a whole struct:\n\n```xiom\nfn oldest(a: Person, b: Person) -> Person {\n  if a.age > b.age {\n    return a;\n  }\n  return b;\n}\n\nfn main() -> Int {\n  let young = Person{ name: \"Grace\", age: 11 };\n  let old = Person{ name: \"Henry\", age: 18 };\n  let winner = oldest(young, old);\n  io.println(winner.name);  // Henry\n  return 0;\n}\n```\n\nFunctions and structs work together naturally — functions do the heavy lifting, structs carry the data.",
   "analogy": "A factory function is like a 3D printer — you give it raw materials (parameters) and it prints a finished object (struct instance).",
-  "code_template": "type Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write 'create_person' that takes name and age, returns a Person\n\n// TODO: Write 'older_person' that takes two Persons, returns the one with higher age\n\nfn main() -> Int {\n  // TODO: Create two people using create_person, find the older one, print their name\n  return 0;\n}\n",
-  "solution": "type Person = {\n  name: Str;\n  age: Int;\n}\n\nfn create_person(name: Str, age: Int) -> Person {\n  return Person{ name: name, age: age };\n}\n\nfn older_person(a: Person, b: Person) -> Person {\n  if a.age > b.age {\n    return a;\n  }\n  return b;\n}\n\nfn main() -> Int {\n  let p1 = create_person(\"Ivy\", 14);\n  let p2 = create_person(\"Jack\", 19);\n  let older = older_person(p1, p2);\n  io.println(older.name);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write 'create_person' that takes name and age, returns a Person\n\n// TODO: Write 'older_person' that takes two Persons, returns the one with higher age\n\nfn main() -> Int {\n  // TODO: Create two people using create_person, find the older one, print their name\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn create_person(name: Str, age: Int) -> Person {\n  return Person{ name: name, age: age };\n}\n\nfn older_person(a: Person, b: Person) -> Person {\n  if a.age > b.age {\n    return a;\n  }\n  return b;\n}\n\nfn main() -> Int {\n  let p1 = create_person(\"Ivy\", 14);\n  let p2 = create_person(\"Jack\", 19);\n  let older = older_person(p1, p2);\n  io.println(older.name.to_str());\n  return 0;\n}\n",
   "try_it": "Write a `create_family` function that takes four names and ages, returns a Person for each, and prints the name of the oldest family member.",
-  "concepts": ["factory-function", "struct-parameters", "struct-return"],
+  "concepts": [
+    "factory-function",
+    "struct-parameters",
+    "struct-return"
+  ],
   "tips": [
     "A function's return type can be any type — including a struct you defined",
     "Use factory functions to centralize struct creation — if the struct changes, update one place",
@@ -22,5 +26,9 @@
     "Creating a struct inside the function but forgetting to `return` it"
   ],
   "next_lesson": "L2-07",
-  "related": ["L2-01", "L2-02", "L1-06"]
+  "related": [
+    "L2-01",
+    "L2-02",
+    "L1-06"
+  ]
 }

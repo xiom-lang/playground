@@ -7,12 +7,32 @@
   "why": "Building a word display function teaches character-by-character string construction with conditional logic — each letter either reveals itself or stays hidden based on what's been guessed.",
   "narrative": "## Building the Word Display\n\nIn Hangman, the word \"python\" starts as `_ _ _ _ _ _`. When the player guesses 'o', it becomes `_ _ _ _ o _`. When they also guess 'p', it becomes `p _ _ _ o _`.\n\n### The Display Function\n\n```xiom\nfn display_word(word: Str, guessed: Str) -> Str {\n  let len = string.str_len(word);\n  var result = \"\";\n  var i = 0;\n  while i < len {\n    let ch = word[i];\n    var found = false;\n    var j = 0;\n    let guess_len = string.str_len(guessed);\n    while j < guess_len {\n      if ch == guessed[j] {\n        found = true;\n      }\n      j = j + 1;\n    }\n    if found {\n      result = string.str_concat(result, ch);\n    } else {\n      result = string.str_concat(result, \"_\");\n    }\n    i = i + 1;\n  }\n  return result;\n}\n```\n\nTwo nested loops: the outer loop walks through each letter of the word, the inner loop checks if that letter is in the guessed string.\n\n### Simulating a Game\n\n```xiom\nfn main() -> Int {\n  let word = \"python\";\n\n  let after_no_guess = display_word(word, \"\");\n\n  let after_o = display_word(word, \"o\");\n\n  let after_op = display_word(word, \"op\");\n\n  io.println(\"Word display ready!\");\n\n  return 0;\n}\n```\n\n### How It Works\n\nFor each character in `word`:\n1. Assume it hasn't been guessed (`found = false`)\n2. Search through every character in `guessed`\n3. If there's a match, mark `found = true`\n4. Add either the actual letter or `_` to the result\n\nThe `found` flag is a classic pattern: set a default, then check everything, then act on the final result.",
   "analogy": "Hangman display is like a curtain covering a stage. Each guessed letter is a spotlight. When a spotlight hits a curtain panel (letter position), that panel drops to reveal the letter underneath. Unlit panels stay covered as underscores. The display function is the lighting technician — it checks each spotlight and each panel, deciding what the audience sees.",
-  "code_template": "// TODO: Write display_word(word: Str, guessed: Str) -> Str\n// Loop through each character in word\n// For each character, check if it exists anywhere in guessed\n// If found, add the character to result; otherwise add \"_\"\n// Use string.str_len, string.str_concat, and nested while loops\n\nfn main() -> Int {\n  // TODO: Call display_word with \"python\" and different guess strings: \"\", then \"o\", then \"op\"\n  // Print the display at each stage\n  return 0;\n}",
-  "solution": "fn display_word(word: Str, guessed: Str) -> Str {\n  let len = string.str_len(word);\n  var result = \"\";\n  var i = 0;\n  while i < len {\n    let ch = word[i];\n    var found = false;\n    var j = 0;\n    let guess_len = string.str_len(guessed);\n    while j < guess_len {\n      if ch == guessed[j] {\n        found = true;\n      }\n      j = j + 1;\n    }\n    if found {\n      result = string.str_concat(result, ch);\n    } else {\n      result = string.str_concat(result, \"_\");\n    }\n    i = i + 1;\n  }\n  return result;\n}\n\nfn main() -> Int {\n  let word = \"python\";\n  let display1 = display_word(word, \"\");\n  let display2 = display_word(word, \"o\");\n  let display3 = display_word(word, \"op\");\n  io.println(\"Hangman display updated!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\nuse xiom.string;\n// TODO: Write display_word(word: Str, guessed: Str) -> Str\n// Loop through each character in word\n// For each character, check if it exists anywhere in guessed\n// If found, add the character to result; otherwise add \"_\"\n// Use string.str_len, string.str_concat, and nested while loops\n\nfn main() {\n  // TODO: Call display_word with \"python\" and different guess strings: \"\", then \"o\", then \"op\"\n  // Print the display at each stage\n}",
+  "solution": "use xiom.io;\nuse xiom.string;\nfn display_word(word: Str, guessed: Str) -> Str {\n  let len = string.str_len(word);\n  var result = \"\";\n  var i = 0;\n  while i < len {\n    let ch = word[i];\n    var found = false;\n    var j = 0;\n    let guess_len = string.str_len(guessed);\n    while j < guess_len {\n      if ch == guessed[j] {\n        found = true;\n      }\n      j = j + 1;\n    }\n    if found {\n      result = string.str_concat(result, ch);\n    } else {\n      result = string.str_concat(result, \"_\");\n    }\n    i = i + 1;\n  }\n}\nfn main() {\n  let word = \"python\";\n  let display1 = display_word(word, \"\");\n  let display2 = display_word(word, \"o\");\n  let display3 = display_word(word, \"op\");\n  io.println(\"Hangman display updated!\");\n}",
   "try_it": "Add a `guess_letter(word: Str, guessed: Str, letter: Char) -> Str` function that adds a letter to the guessed string if it's not already there, then returns the updated display. Simulate a full game: start with \"elephant\" and guess 'e', 'a', 't', 'x' in sequence.",
-  "concepts": ["nested loops", "character matching", "string building", "flag pattern"],
-  "tips": ["Use a `found` flag: start false, set to true if any match occurs, then check the flag after the inner loop", "The outer loop iterates the word; the inner loop checks the guessed string for a match", "Build the result string with string.str_concat() one character at a time", "An empty guessed string means no letters revealed — every position shows '_'"],
-  "common_mistakes": ["Checking for exact string match instead of checking each guessed letter against each word letter", "Forgetting to reset the `found` flag for each new character of the word", "Using `=` instead of `==` inside the comparison condition", "Returning inside the inner loop — you'd only process one character of the word"],
+  "concepts": [
+    "nested loops",
+    "character matching",
+    "string building",
+    "flag pattern"
+  ],
+  "tips": [
+    "Use a `found` flag: start false, set to true if any match occurs, then check the flag after the inner loop",
+    "The outer loop iterates the word; the inner loop checks the guessed string for a match",
+    "Build the result string with string.str_concat() one character at a time",
+    "An empty guessed string means no letters revealed — every position shows '_'"
+  ],
+  "common_mistakes": [
+    "Checking for exact string match instead of checking each guessed letter against each word letter",
+    "Forgetting to reset the `found` flag for each new character of the word",
+    "Using `=` instead of `==` inside the comparison condition",
+    "Returning inside the inner loop — you'd only process one character of the word"
+  ],
   "next_lesson": "L1-41",
-  "related": ["L1-17", "L1-39", "L1-36", "L1-47"]
+  "related": [
+    "L1-17",
+    "L1-39",
+    "L1-36",
+    "L1-47"
+  ]
 }

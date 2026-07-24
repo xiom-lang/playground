@@ -7,10 +7,16 @@
   "why": "Roman numeral conversion teaches value-to-symbol mapping with arrays, descending-order greedy algorithms, and string building — all in one practical program.",
   "narrative": "## Converting Numbers to Roman Numerals\n\n### The Roman Numeral System\n\n| Value | 1000 | 900 | 500 | 400 | 100 | 90 | 50 | 40 | 10 | 9 | 5 | 4 | 1 |\n|-------|------|-----|-----|-----|-----|----|----|----|----|---|---|---|---|\n| Symbol| M | CM | D | CD | C | XC | L | XL | X | IX | V | IV | I |\n\n### The Greedy Algorithm\n\nStart with the largest value. While the number >= that value, append the symbol and subtract the value. Move to the next value.\n\n```xiom\nfn to_roman(n: Int) -> Str {\n  let values: Vec[Int] = Vec[Int].new();\n  values.push(1000); values.push(900); values.push(500); values.push(400);\n  values.push(100); values.push(90); values.push(50); values.push(40);\n  values.push(10); values.push(9); values.push(5); values.push(4); values.push(1);\n\n  let symbols: Vec[Str] = Vec[Str].new();\n  symbols.push(\"M\"); symbols.push(\"CM\"); symbols.push(\"D\"); symbols.push(\"CD\");\n  symbols.push(\"C\"); symbols.push(\"XC\"); symbols.push(\"L\"); symbols.push(\"XL\");\n  symbols.push(\"X\"); symbols.push(\"IX\"); symbols.push(\"V\"); symbols.push(\"IV\");\n  symbols.push(\"I\");\n\n  let mut result = \"\";\n  let mut num = n;\n  let mut i = 0;\n  while i < values.len() {\n    while num >= values.get(i).unwrap() {\n      result = string.str_concat(result, symbols.get(i).unwrap());\n      num -= values.get(i).unwrap();\n    };\n    i += 1;\n  };\n  result\n}\n```\n\n### Examples\n\n- 2024 = MMXXIV (1000+1000+10+10+4)\n- 1987 = MCMLXXXVII\n- 3999 = MMMCMXCIX (largest under 4000)",
   "analogy": "Making change with coins: to give $47, you start with the largest bill ($20), give two (now $40 left), then a $5 ($45 left), then two $1s. Roman numerals are 'making change' with symbol-values: start big, work down to I. Greedy and optimal.",
-  "code_template": "fn to_roman(n: Int) -> Str {\n  // TODO: create parallel arrays of values and symbols\n  // TODO: use greedy algorithm: while n >= value, append symbol, subtract value\n}\n\nfn main() -> Int {\n  // TODO: convert 2024, 58, and 1999 to roman numerals\n  return 0;\n}\n",
-  "solution": "fn to_roman(n: Int) -> Str {\n  let values: Vec[Int] = Vec[Int].new();\n  values.push(1000); values.push(900); values.push(500); values.push(400);\n  values.push(100); values.push(90); values.push(50); values.push(40);\n  values.push(10); values.push(9); values.push(5); values.push(4); values.push(1);\n\n  let symbols: Vec[Str] = Vec[Str].new();\n  symbols.push(\"M\"); symbols.push(\"CM\"); symbols.push(\"D\"); symbols.push(\"CD\");\n  symbols.push(\"C\"); symbols.push(\"XC\"); symbols.push(\"L\"); symbols.push(\"XL\");\n  symbols.push(\"X\"); symbols.push(\"IX\"); symbols.push(\"V\"); symbols.push(\"IV\");\n  symbols.push(\"I\");\n\n  let mut result = \"\";\n  let mut num = n;\n  let mut i = 0;\n  while i < values.len() {\n    while num >= values.get(i).unwrap() {\n      result = string.str_concat(result, symbols.get(i).unwrap());\n      num -= values.get(i).unwrap();\n    };\n    i += 1;\n  };\n  result\n}\n\nfn main() -> Int {\n  io.println(to_roman(2024));\n  io.println(to_roman(58));\n  io.println(to_roman(1999));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn to_roman(n: Int) -> Str {\n  // TODO: create parallel arrays of values and symbols\n  // TODO: use greedy algorithm: while n >= value, append symbol, subtract value\n}\n\nfn main() -> Int {\n  // TODO: convert 2024, 58, and 1999 to roman numerals\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn to_roman(n: Int) -> Str {\n  let values: Vec[Int] = Vec[Int].new();\n  values.push(1000); values.push(900); values.push(500); values.push(400);\n  values.push(100); values.push(90); values.push(50); values.push(40);\n  values.push(10); values.push(9); values.push(5); values.push(4); values.push(1);\n\n  let symbols: Vec[Str] = Vec[Str].new();\n  symbols.push(\"M\"); symbols.push(\"CM\"); symbols.push(\"D\"); symbols.push(\"CD\");\n  symbols.push(\"C\"); symbols.push(\"XC\"); symbols.push(\"L\"); symbols.push(\"XL\");\n  symbols.push(\"X\"); symbols.push(\"IX\"); symbols.push(\"V\"); symbols.push(\"IV\");\n  symbols.push(\"I\");\n\n  let mut result = \"\";\n  let mut num = n;\n  let mut i = 0;\n  while i < values.len() {\n    while num >= values.get(i).unwrap() {\n      result = string.str_concat(result, symbols.get(i).unwrap());\n      num -= values.get(i).unwrap();\n    };\n    i += 1;\n  };\n  result\n}\n\nfn main() -> Int {\n  io.println(to_roman(2024));\n  io.println(to_roman(58));\n  io.println(to_roman(1999));\n  return 0;\n}\n",
   "try_it": "Write the reverse: `from_roman(s: Str) -> Int` that parses a Roman numeral back to a number. Handle invalid numerals. Add a `requires` that input is 1-3999 (standard Roman range). Convert your birth year to Roman numerals.",
-  "concepts": ["roman-numerals", "greedy-algorithm", "parallel-arrays", "string-building", "mapping"],
+  "concepts": [
+    "roman-numerals",
+    "greedy-algorithm",
+    "parallel-arrays",
+    "string-building",
+    "mapping"
+  ],
   "tips": [
     "The 13 symbol-value pairs include subtractive forms (IV=4, IX=9, etc.)",
     "Greedy always works for Roman numerals because values are canonical",
@@ -22,5 +28,9 @@
     "Not subtracting the value after appending the symbol"
   ],
   "next_lesson": "L7-10",
-  "related": ["L7-01", "L2-52", "L2-36"]
+  "related": [
+    "L7-01",
+    "L2-52",
+    "L2-36"
+  ]
 }

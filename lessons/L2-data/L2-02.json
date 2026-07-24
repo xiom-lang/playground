@@ -7,10 +7,14 @@
   "why": "Once you define a struct type, you can create as many instances as you need — each one holds its own independent data.",
   "narrative": "## Creating Multiple Instances\n\nA struct type is like a blueprint. You define it once, then build as many copies as you need — each with its own values.\n\n### Two Friends, One Type\n\n```xiom\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let alice = Person{ name: \"Alice\", age: 14 };\n  let bob = Person{ name: \"Bob\", age: 12 };\n\n  io.println(alice.name);\n  io.println(alice.age);\n  io.println(bob.name);\n  io.println(bob.age);\n  return 0;\n}\n```\n\n### Each Instance Is Independent\n\nAlice and Bob are two separate `Person` values. Changing Alice's age doesn't affect Bob:\n\n```xiom\nfn main() -> Int {\n  let alice = Person{ name: \"Alice\", age: 14 };\n  let bob = Person{ name: \"Bob\", age: 12 };\n\n  io.println(bob.age);  // 12 — still unchanged\n  return 0;\n}\n```\n\n### Using Variables for Field Values\n\nYou can use variables when creating a struct:\n\n```xiom\nfn main() -> Int {\n  let name = \"Charlie\";\n  let age = 16;\n  let charlie = Person{ name: name, age: age };\n  io.println(charlie.name);\n  return 0;\n}\n```\n\nWhen the variable name matches the field name, it works smoothly. Each instance is a complete, independent snapshot of data.",
   "analogy": "A struct type is like a cookie cutter — one shape, but you can stamp out as many cookies as you want, each with different decorations.",
-  "code_template": "type Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create two Person instances — one for yourself, one for a friend\n\n  // TODO: Print the name and age of BOTH people\n\n  return 0;\n}\n",
-  "solution": "type Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Alex\", age: 15 };\n  let friend = Person{ name: \"Jordan\", age: 16 };\n  io.println(me.name);\n  io.println(me.age);\n  io.println(friend.name);\n  io.println(friend.age);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create two Person instances — one for yourself, one for a friend\n\n  // TODO: Print the name and age of BOTH people\n\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Alex\", age: 15 };\n  let friend = Person{ name: \"Jordan\", age: 16 };\n  io.println(me.name.to_str());\n  io.println(me.age.to_str());\n  io.println(friend.name.to_str());\n  io.println(friend.age.to_str());\n  return 0;\n}\n",
   "try_it": "Add a third person named \"Taylor\", age 13. Print all three names in a single sentence like \"Alice, Bob, and Taylor are friends!\"",
-  "concepts": ["multiple-instances", "independent-data", "blueprint-pattern"],
+  "concepts": [
+    "multiple-instances",
+    "independent-data",
+    "blueprint-pattern"
+  ],
   "tips": [
     "Each instance holds its own copy of every field — changing one does not affect another",
     "You can create as many instances from one type as you need — no limit",
@@ -21,5 +25,9 @@
     "Forgetting to print one person's data after focusing on the other — double-check both are displayed"
   ],
   "next_lesson": "L2-03",
-  "related": ["L2-01", "L2-03", "L1-04"]
+  "related": [
+    "L2-01",
+    "L2-03",
+    "L1-04"
+  ]
 }

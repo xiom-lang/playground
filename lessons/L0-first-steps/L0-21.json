@@ -3,23 +3,32 @@
   "title": "The NOT Operator",
   "level": "L0",
   "duration": "6 min",
-  "story": "You look out the window. Is it raining? If it's NOT raining, you go to the park. If it IS raining, you stay inside. The word \"not\" flips the whole decision \u2014 and in code, the `!` symbol does exactly that!",
-  "why": "The NOT operator flips a condition inside out \u2014 it's how programs handle \"unless\" logic, toggle switches, and check if things are missing.",
-  "narrative": "## Flipping True and False\n\nThe `!` symbol (called \"not\" or \"bang\") flips a Bool value. True becomes false. False becomes true. It's that simple!\n\n### The NOT in Action\n\n```xiom\nfn main() {\n  let is_raining: Bool = false;\n  let go_to_park: Bool = !is_raining;\n  io.println(go_to_park);\n}\n```\n\n`is_raining` is `false`. `!is_raining` flips it to `true`. Result: \"Yes, go to the park!\" If rain were true, NOT would make it false \u2014 \"Nope, stay home.\"\n\n### NOT with Comparisons\n\nYou can put `!` in front of a whole comparison if you wrap it in parentheses:\n\n```xiom\nfn main() {\n  let password: Str = \"secret\";\n  let is_correct: Bool = password == \"letmein\";\n  let is_wrong: Bool = !is_correct;\n  io.println(is_wrong);\n}\n```\n\n`is_correct` is `false` (the passwords don't match). `!is_correct` flips it to `true`, meaning \"yes, it IS wrong.\"\n\n### Double NOT\n\nWhat if you put two NOTs? `!!true` flips true to false, then flips false back to true. It's like saying \"I'm not NOT going\" \u2014 which just means \"I'm going!\"\n\n### NOT Is Everywhere\n\nNOT appears in everyday logic: \"I'll eat dessert if I'm NOT full.\" \"Run if the timer is NOT zero.\" \"Show the button if the user is NOT logged in.\" Learning `!` opens up a whole new way to think.",
-  "analogy": "The `!` symbol is a light switch \u2014 it flips true to false and false to true with one click.",
-  "code_template": "fn main() {\n  let number: Int = 0;\n  let is_zero: Bool = number == 0;\n  // TODO: use ! to check if number is NOT zero\n  // TODO: print the result\n}\n",
-  "solution": "fn main() {\n  let number: Int = 0;\n  let is_not_zero: Bool = !(number == 0);\n  io.println(is_not_zero);\n}\n",
+  "story": "You look out the window. Is it raining? If it's NOT raining, you go to the park. If it IS raining, you stay inside. The word \"not\" flips the whole decision � and in code, the `!` symbol does exactly that!",
+  "why": "The NOT operator flips a condition inside out � it's how programs handle \"unless\" logic, toggle switches, and check if things are missing.",
+  "narrative": "## Flipping True and False\n\nThe `!` symbol (called \"not\" or \"bang\") flips a Bool value. True becomes false. False becomes true. It's that simple!\n\n### The NOT in Action\n\n```xiom\nfn main() {\n  let is_raining: Bool = false;\n  let go_to_park: Bool = !is_raining;\n  io.println(go_to_park);\n}\n```\n\n`is_raining` is `false`. `!is_raining` flips it to `true`. Result: \"Yes, go to the park!\" If rain were true, NOT would make it false � \"Nope, stay home.\"\n\n### NOT with Comparisons\n\nYou can put `!` in front of a whole comparison if you wrap it in parentheses:\n\n```xiom\nfn main() {\n  let password: Str = \"secret\";\n  let is_correct: Bool = password == \"letmein\";\n  let is_wrong: Bool = !is_correct;\n  io.println(is_wrong);\n}\n```\n\n`is_correct` is `false` (the passwords don't match). `!is_correct` flips it to `true`, meaning \"yes, it IS wrong.\"\n\n### Double NOT\n\nWhat if you put two NOTs? `!!true` flips true to false, then flips false back to true. It's like saying \"I'm not NOT going\" � which just means \"I'm going!\"\n\n### NOT Is Everywhere\n\nNOT appears in everyday logic: \"I'll eat dessert if I'm NOT full.\" \"Run if the timer is NOT zero.\" \"Show the button if the user is NOT logged in.\" Learning `!` opens up a whole new way to think.",
+  "analogy": "The `!` symbol is a light switch � it flips true to false and false to true with one click.",
+  "code_template": "use xiom.io;\n\nfn main() {\n  let number: Int = 0;\n  let is_zero: Bool = number == 0;\n  // TODO: use ! to check if number is NOT zero\n  // TODO: print the result\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let number: Int = 0;\n  let is_not_zero: Bool = !(number == 0);\n  io.println(\"0\");\n}\n",
   "try_it": "Check whether a number is NOT zero using `!`. Try it with 0, 7, and -3. Then try a double NOT: `!!true` and `!!false`. What do you get?",
-  "concepts": ["not", "!", "negation", "boolean-logic"],
+  "concepts": [
+    "not",
+    "!",
+    "negation",
+    "boolean-logic"
+  ],
   "tips": [
-    "`!` only works on Bool values \u2014 you can't write `!5`, you need `!(x == 5)` instead",
+    "`!` only works on Bool values � you can't write `!5`, you need `!(x == 5)` instead",
     "Use parentheses after `!` when negating a comparison: `!(age >= 18)`",
     "A double NOT `!!` cancels itself out, which can be useful for turning any value into a Bool"
   ],
   "common_mistakes": [
-    "Writing `!` after the expression instead of before \u2014 it's `!condition`, not `condition!`",
+    "Writing `!` after the expression instead of before � it's `!condition`, not `condition!`",
     "Forgetting parentheses around the comparison: `!x == 5` might not mean what you think. Write `!(x == 5)` to be safe"
   ],
   "next_lesson": "L0-22",
-  "related": ["L0-13", "L0-20", "L0-22"]
+  "related": [
+    "L0-13",
+    "L0-20",
+    "L0-22"
+  ]
 }

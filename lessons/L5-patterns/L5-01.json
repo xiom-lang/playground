@@ -7,10 +7,18 @@
   "why": "Vec is XIOM's growable array — the fundamental collection for storing ordered sequences of items that change size at runtime.",
   "narrative": "## The Growable List\n\nA **Vec** (short for *vector*) is a list where you can keep adding items. Unlike a fixed-size array, a Vec starts empty and grows to fit whatever you put in it.\n\n### Creating a Vec\n\n```xiom\nlet numbers: Vec[Int] = Vec[Int].new();\n```\n\nThis creates an empty Vec that holds `Int` values. The `[Int]` tells XIOM what type of items the Vec stores.\n\n### Adding Items with .push()\n\n```xiom\nnumbers.push(1);\nnumbers.push(2);\nnumbers.push(3);\n```\n\nEach call to `.push()` adds an item to the end of the Vec — like writing a new entry at the bottom of a list.\n\n### Checking the Size with .len()\n\n```xiom\nio.println(numbers.len());\n```\n\n`.len()` returns how many items are in the Vec — zero when empty, growing with each push.\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let guests: Vec[Str] = Vec[Str].new();\n  guests.push(\"Alex\");\n  guests.push(\"Blake\");\n  guests.push(\"Casey\");\n  io.println(guests.len());\n  return 0;\n}\n```\n\n### When to Use Vec\n\n- You don't know how many items you'll have at compile time\n- Items need to stay in a specific order\n- You need to add or remove items frequently\n- You want to loop over items one by one",
   "analogy": "A Vec is like a grocery list on a whiteboard — you start with an empty board, write items one by one, and if you need more space, you just keep writing. The list grows to fit however many things you need to remember.",
-  "code_template": "fn main() -> Int {\n  // TODO: Create a Vec[Str] called colors\n  // TODO: Push \"red\", \"green\", \"blue\" into it\n  // TODO: Print how many colors are in the Vec using .len()\n  return 0;\n}\n",
-  "solution": "fn main() -> Int {\n  let colors: Vec[Str] = Vec[Str].new();\n  colors.push(\"red\");\n  colors.push(\"green\");\n  colors.push(\"blue\");\n  io.println(colors.len());\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn main() -> Int {\n  // TODO: Create a Vec[Str] called colors\n  // TODO: Push \"red\", \"green\", \"blue\" into it\n  // TODO: Print how many colors are in the Vec using .len()\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nfn main() -> Int {\n  let colors: Vec[Str] = Vec[Str].new();\n  colors.push(\"red\");\n  colors.push(\"green\");\n  colors.push(\"blue\");\n  io.println(colors.len().to_str());\n  return 0;\n}\n",
   "try_it": "Create a Vec[Int] and push the numbers 10, 20, 30, 40, 50 into it. Print the length after each push to watch it grow. Then create a second Vec[Float64] with three decimal numbers and print its length. What happens if you try to push a string into a Vec[Int]?",
-  "concepts": ["Vec", "new", "push", "len", "generic-type-parameter", "growable-array", "collection"],
+  "concepts": [
+    "Vec",
+    "new",
+    "push",
+    "len",
+    "generic-type-parameter",
+    "growable-array",
+    "collection"
+  ],
   "tips": [
     "Always declare the type: `Vec[Int].new()` — the `[Int]` tells XIOM what kind of items the Vec holds",
     "`.push()` adds to the END of the Vec — items stay in the order you added them",
@@ -22,5 +30,9 @@
     "Trying to push a different type: once a Vec is `Vec[Int]`, every item must be an Int"
   ],
   "next_lesson": "L5-02",
-  "related": ["L2-01", "L3-04", "L1-23"]
+  "related": [
+    "L2-01",
+    "L3-04",
+    "L1-23"
+  ]
 }

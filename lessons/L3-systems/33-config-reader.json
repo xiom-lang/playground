@@ -1,25 +1,41 @@
 {
-  "id": "L3-33",
-  "title": "Config File Reader",
-  "level": "L3",
-  "duration": "9 min",
-  "story": "Your app needs configuration values like a database URL and an API key. Some settings are required (the app won't start without them), others are optional with sensible defaults. You simulate a config store with `Option` and use `?` to enforce required keys.",
-  "why": "Combining `Option` for optional values with `?` for required values models real config systems where some keys are mandatory.",
-  "narrative": "## Reading Configuration, Handling Missing Keys\n\nA config system has two kinds of values: required (must exist) and optional (use a default if missing).\n\n### The Simulated Config Store\n\n```xiom\nfn get_config(key: Str) -> Option[Str] {\n  if key == \"db_url\" {\n    return Some(\"localhost:5432\");\n  } elif key == \"api_key\" {\n    return Some(\"sk-abc123\");\n  } elif key == \"app_name\" {\n    return Some(\"MyApp\");\n  } else {\n    return None;\n  }\n}\n```\n\nOnly three keys exist. Everything else returns `None`.\n\n### Reading Required Config with `?`\n\nFor required values, we need an actual string — `None` should be an error:\n\n```xiom\nfn get_required(key: Str) -> Result[Str, Str] {\n  match get_config(key) {\n    Some(val) => { return Ok(val); }\n    None => { return Err(\"Missing required config: \" + key); }\n  }\n}\n```\n\n### Chaining Required Configs\n\n```xiom\nfn start_app() -> Result[Str, Str] {\n  let db = get_required(\"db_url\")?;\n  let api = get_required(\"api_key\")?;\n  return Ok(\"Connected to \" + db + \" with key \" + api);\n}\n```\n\nIf `db_url` is missing, `start_app` returns `Err` immediately — `api_key` is never checked.\n\n### Optional Config with Defaults\n\nFor optional values, `unwrap_or` provides a fallback:\n\n```xiom\nlet port = get_config(\"port\").unwrap_or(\"8080\");\n// port is \"8080\" because \"port\" isn't a known key\n\nlet name = get_config(\"app_name\").unwrap_or(\"Unnamed\");\n// name is \"MyApp\" because the key exists\n```\n\n### if let for Conditional Logic\n\n```xiom\nif let Some(debug) = get_config(\"debug_mode\") {\n  // debug mode enabled — but it's None, so this block is skipped\n}\n```",
-  "analogy": "A config store is like a filing cabinet with labeled drawers. `get_config(\"api_key\")` opens the drawer labeled 'api_key' — some drawers have papers inside (`Some`), others are empty (`None`). Required configs are drawers that MUST have papers; if they're empty, work stops. Optional configs are nice-to-have drawers — if empty, you just use a sticky note with a default value.",
-  "code_template": "fn get_config(key: Str) -> Option[Str] {\n  // TODO: return Some(\"localhost:5432\") for \"db_url\"\n  // TODO: return Some(\"sk-abc123\") for \"api_key\"\n  // TODO: return Some(\"MyApp\") for \"app_name\"\n  // TODO: return None for anything else\n  return None;\n}\n\nfn get_required(key: Str) -> Result[Str, Str] {\n  // TODO: match get_config(key), return Ok(val) for Some, Err for None\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: get required \"db_url\" and \"api_key\", return 200 if Ok, 500 if Err\n  return 0;\n}",
-  "solution": "fn get_config(key: Str) -> Option[Str] {\n  if key == \"db_url\" {\n    return Some(\"localhost:5432\");\n  } elif key == \"api_key\" {\n    return Some(\"sk-abc123\");\n  } elif key == \"app_name\" {\n    return Some(\"MyApp\");\n  } else {\n    return None;\n  }\n}\n\nfn get_required(key: Str) -> Result[Str, Str] {\n  match get_config(key) {\n    Some(val) => { return Ok(val); }\n    None => { return Err(\"Missing required config: \" + key); }\n  }\n}\n\nfn main() -> Int {\n  let db = get_required(\"db_url\")?;\n  let api = get_required(\"api_key\")?;\n  match get_required(\"missing_key\") {\n    Ok(_) => { return 500; }\n    Err(_) => { return 200; }\n  }\n}",
-  "try_it": "Add more config keys: 'port' (8080), 'debug' (true), 'max_connections' (100). Try reading a required key that exists, one that's missing. Use `if let Some(val) = get_config(\"debug\")` to conditionally enable debug mode. Chain 4 required configs with `?` and see which failure stops the chain.",
-  "concepts": ["Option", "Some", "None", "Result", "?", "match", "unwrap_or", "if let", "config pattern"],
-  "tips": [
-    "Convert `Option` to `Result` with `match` — `Some(val) => Ok(val)` and `None => Err(...)` bridges the two worlds",
-    "`?` works on `Option` too — `let val = get_config(\"key\")?;` returns `None` from the function if the key is missing",
-    "Use `.unwrap_or(default)` on `Option` when a missing value has a reasonable fallback"
-  ],
-  "common_mistakes": [
-    "Using `?` on `Option` inside a function that returns `Result` — the types must match; convert `Option` to `Result` first",
-    "Forgetting that `get_config` returns `Option`, not `Str` — you can't concatenate an `Option[Str]` with `+`"
-  ],
-  "next_lesson": "L3-34",
-  "related": ["L2-23", "L2-24", "L2-28", "L2-30", "L2-34"]
+    "id":  "L3-33",
+    "title":  "Config File Reader",
+    "level":  "L3",
+    "duration":  "9 min",
+    "story":  "Your app needs configuration values like a database URL and an API key. Some settings are required (the app won\u0027t start without them), others are optional with sensible defaults. You simulate a config store with `Option` and use `?` to enforce required keys.",
+    "why":  "Combining `Option` for optional values with `?` for required values models real config systems where some keys are mandatory.",
+    "narrative":  "## Reading Configuration, Handling Missing Keys\n\nA config system has two kinds of values: required (must exist) and optional (use a default if missing).\n\n### The Simulated Config Store\n\n```xiom\nfn get_config(key: Str) -\u003e Option[Str] {\n  if key == \"db_url\" {\n    return Some(\"localhost:5432\");\n  } elif key == \"api_key\" {\n    return Some(\"sk-abc123\");\n  } elif key == \"app_name\" {\n    return Some(\"MyApp\");\n  } else {\n    return None;\n  }\n}\n```\n\nOnly three keys exist. Everything else returns `None`.\n\n### Reading Required Config with `?`\n\nFor required values, we need an actual string — `None` should be an error:\n\n```xiom\nfn get_required(key: Str) -\u003e Result[Str, Str] {\n  match get_config(key) {\n    Some(val) =\u003e { return Ok(val); }\n    None =\u003e { return Err(\"Missing required config: \" + key); }\n  }\n}\n```\n\n### Chaining Required Configs\n\n```xiom\nfn start_app() -\u003e Result[Str, Str] {\n  let db = get_required(\"db_url\")?;\n  let api = get_required(\"api_key\")?;\n  return Ok(\"Connected to \" + db + \" with key \" + api);\n}\n```\n\nIf `db_url` is missing, `start_app` returns `Err` immediately — `api_key` is never checked.\n\n### Optional Config with Defaults\n\nFor optional values, `unwrap_or` provides a fallback:\n\n```xiom\nlet port = get_config(\"port\").unwrap_or(\"8080\");\n// port is \"8080\" because \"port\" isn\u0027t a known key\n\nlet name = get_config(\"app_name\").unwrap_or(\"Unnamed\");\n// name is \"MyApp\" because the key exists\n```\n\n### if let for Conditional Logic\n\n```xiom\nif let Some(debug) = get_config(\"debug_mode\") {\n  // debug mode enabled — but it\u0027s None, so this block is skipped\n}\n```",
+    "analogy":  "A config store is like a filing cabinet with labeled drawers. `get_config(\"api_key\")` opens the drawer labeled \u0027api_key\u0027 — some drawers have papers inside (`Some`), others are empty (`None`). Required configs are drawers that MUST have papers; if they\u0027re empty, work stops. Optional configs are nice-to-have drawers — if empty, you just use a sticky note with a default value.",
+    "code_template":  "use xiom.io;\n\nfn get_config(key: Str) -\u003e Option[Str] {\n  // TODO: return Some(\"localhost:5432\") for \"db_url\"\n  // TODO: return Some(\"sk-abc123\") for \"api_key\"\n  // TODO: return Some(\"MyApp\") for \"app_name\"\n  // TODO: return None for anything else\n  return None;\n}\n\nfn get_required(key: Str) -\u003e Result[Str, Str] {\n  // TODO: match get_config(key), return Ok(val) for Some, Err for None\n  return Err(\"not implemented\");\n}\n\nfn main() -\u003e Int {\n  // TODO: get required \"db_url\" and \"api_key\", return 200 if Ok, 500 if Err\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn get_config(key: Str) -\u003e Option[Str] {\n  if key == \"db_url\" {\n    return Some(\"localhost:5432\");\n  } elif key == \"api_key\" {\n    return Some(\"sk-abc123\");\n  } elif key == \"app_name\" {\n    return Some(\"MyApp\");\n  } else {\n    return None;\n  }\n}\n\nfn get_required(key: Str) -\u003e Result[Str, Str] {\n  match get_config(key) {\n    Some(val) =\u003e { return Ok(val); }\n    None =\u003e { return Err(\"Missing required config: \" + key); }\n  }\n}\n\nfn main() -\u003e Int {\n  let db = get_required(\"db_url\")?;\n  let api = get_required(\"api_key\")?;\n  match get_required(\"missing_key\") {\n    Ok(_) =\u003e { return 500; }\n    Err(_) =\u003e { return 200; }\n  }\n}",
+    "try_it":  "Add more config keys: \u0027port\u0027 (8080), \u0027debug\u0027 (true), \u0027max_connections\u0027 (100). Try reading a required key that exists, one that\u0027s missing. Use `if let Some(val) = get_config(\"debug\")` to conditionally enable debug mode. Chain 4 required configs with `?` and see which failure stops the chain.",
+    "concepts":  [
+                     "Option",
+                     "Some",
+                     "None",
+                     "Result",
+                     "?",
+                     "match",
+                     "unwrap_or",
+                     "if let",
+                     "config pattern"
+                 ],
+    "tips":  [
+                 "Convert `Option` to `Result` with `match` — `Some(val) =\u003e Ok(val)` and `None =\u003e Err(...)` bridges the two worlds",
+                 "`?` works on `Option` too — `let val = get_config(\"key\")?;` returns `None` from the function if the key is missing",
+                 "Use `.unwrap_or(default)` on `Option` when a missing value has a reasonable fallback"
+             ],
+    "common_mistakes":  [
+                            "Using `?` on `Option` inside a function that returns `Result` — the types must match; convert `Option` to `Result` first",
+                            "Forgetting that `get_config` returns `Option`, not `Str` — you can\u0027t concatenate an `Option[Str]` with `+`"
+                        ],
+    "next_lesson":  "L3-34",
+    "related":  [
+                    "L2-23",
+                    "L2-24",
+                    "L2-28",
+                    "L2-30",
+                    "L2-34"
+                ]
 }

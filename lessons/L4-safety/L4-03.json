@@ -1,26 +1,37 @@
 {
-  "id": "L4-03",
-  "title": "Ensures in Action",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "You've written a 'double' function that's supposed to return x * 2. But late at night, a tired developer accidentally changes it to x + 2. The function still runs without crashing — it just silently returns wrong answers. You want the compiler to check: 'Does this function ACTUALLY return what it claims?' Enter `ensures:` — the compiler's lie detector for your return values.",
-  "why": "`ensures:` catches logic bugs by verifying the function's output matches its promises — even if the function runs without crashing, an incorrect result triggers a contract violation.",
-  "narrative": "## Postconditions: Verifying the Result\n\nAn `ensures:` clause declares what must be true AFTER the function executes. It references the special keyword `result` — whatever value the function returns.\n\n### Double Check\n\n```xiom\nfn double(x: Int) -> Int\n  ensures: result == x * 2;\n{\n  return x * 2;\n}\n```\n\nThe `ensures: result == x * 2;` means: 'I promise that whatever I return equals x * 2.' If someone changes `x * 2` to `x + 2` inside the body, the ensures catches it — `result` (which is `x + 2`) would NOT equal `x * 2`.\n\n### Absolute Value\n\n```xiom\nfn abs_val(x: Int) -> Int\n  ensures: result >= 0;\n{\n  if x < 0 {\n    return -x;\n  }\n  else {\n    return x;\n  }\n}\n```\n\nThe ensures guarantees the result is always non-negative, regardless of the input.\n\n### Multiple Ensures\n\n```xiom\nfn clamp(val: Int, min: Int, max: Int) -> Int\n  requires: min <= max;\n  ensures: result >= min;\n  ensures: result <= max;\n{\n  if val < min { return min; }\n  elif val > max { return max; }\n  else { return val; }\n}\n```\n\nBoth ensures are checked — the result must be both >= min AND <= max.\n\n### Ensures with Computation\n\n```xiom\nfn safe_divide(a: Int, b: Int) -> Int\n  requires: b != 0;\n  ensures: result * b + (a % b) == a;\n{\n  return a / b;\n}\n```\n\nThe ensures verifies the mathematical property of integer division: quotient * divisor + remainder = dividend.\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let d = double(7);\n  io.println(string.int_to_str(d));\n\n  let a = abs_val(-15);\n  io.println(string.int_to_str(a));\n\n  let c = clamp(100, 0, 50);\n  io.println(string.int_to_str(c));\n\n  return 0;\n}\n```",
-  "analogy": "`ensures:` is like a quality control inspector at the end of a factory line. The worker (function body) builds a product and puts it on the conveyor belt. Before the product ships, the inspector checks: 'Is this twice the original material? (result == x * 2) Is it non-negative? (result >= 0)' If the product passes, it ships. If not, the inspector sounds an alarm and stops the line. No defective product ever leaves the factory.",
-  "code_template": "fn double(x: Int) -> Int\n  // TODO: add ensures: result == x * 2;\n{\n  return x * 2;\n}\n\nfn abs_val(x: Int) -> Int\n  // TODO: add ensures: result >= 0;\n{\n  if x < 0 { return -x; }\n  else { return x; }\n}\n\nfn main() -> Int {\n  // TODO: test double(7) and abs_val(-15)\n  return 0;\n}\n",
-  "solution": "fn double(x: Int) -> Int\n  ensures: result == x * 2;\n{\n  return x * 2;\n}\n\nfn abs_val(x: Int) -> Int\n  ensures: result >= 0;\n{\n  if x < 0 { return -x; }\n  else { return x; }\n}\n\nfn main() -> Int {\n  io.println(string.int_to_str(double(7)));\n  io.println(string.int_to_str(abs_val(-15)));\n  return 0;\n}\n",
-  "try_it": "Write `triple(x: Int) -> Int` with `ensures: result == x * 3;`. Then deliberately break it: change the body to `x + 3` and see the contract violation. Write `square(x: Int) -> Int` with `ensures: result == x * x;`. Then add an `is_even` ensures: after doubling, the result should always be even. Write `ensures: result % 2 == 0;` for the double function. Now write `half(x: Int) -> Int` with `ensures: result * 2 <= x;` — the result times 2 should not exceed x (since integer division truncates).",
-  "concepts": ["ensures", "postcondition", "result-keyword", "contract-clause", "output-validation"],
-  "tips": [
-    "The `result` keyword in ensures refers to the value the function returns — it's a special variable only available in ensures clauses",
-    "ensures is checked AFTER the function body runs — if the function never returns (infinite loop), ensures is never checked",
-    "Use ensures to verify mathematical identities: `ensures: result * 2 == x * 2;` confirms doubling is correct"
-  ],
-  "common_mistakes": [
-    "Writing `ensures: result > 0;` when the function can legitimately return 0 — the ensures must be ALWAYS true",
-    "Forgetting that `result` refers to the return value, not a variable named `result` in your code",
-    "Using ensures to validate inputs — that's what `requires` is for. ensures is only for output validation"
-  ],
-  "next_lesson": "L4-04",
-  "related": ["L4-01", "L4-02", "L4-04", "L3-28"]
+    "id":  "L4-03",
+    "title":  "Ensures in Action",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "You\u0027ve written a \u0027double\u0027 function that\u0027s supposed to return x * 2. But late at night, a tired developer accidentally changes it to x + 2. The function still runs without crashing — it just silently returns wrong answers. You want the compiler to check: \u0027Does this function ACTUALLY return what it claims?\u0027 Enter `ensures:` — the compiler\u0027s lie detector for your return values.",
+    "why":  "`ensures:` catches logic bugs by verifying the function\u0027s output matches its promises — even if the function runs without crashing, an incorrect result triggers a contract violation.",
+    "narrative":  "## Postconditions: Verifying the Result\n\nAn `ensures:` clause declares what must be true AFTER the function executes. It references the special keyword `result` — whatever value the function returns.\n\n### Double Check\n\n```xiom\nfn double(x: Int) -\u003e Int\n  ensures: result == x * 2;\n{\n  return x * 2;\n}\n```\n\nThe `ensures: result == x * 2;` means: \u0027I promise that whatever I return equals x * 2.\u0027 If someone changes `x * 2` to `x + 2` inside the body, the ensures catches it — `result` (which is `x + 2`) would NOT equal `x * 2`.\n\n### Absolute Value\n\n```xiom\nfn abs_val(x: Int) -\u003e Int\n  ensures: result \u003e= 0;\n{\n  if x \u003c 0 {\n    return -x;\n  }\n  else {\n    return x;\n  }\n}\n```\n\nThe ensures guarantees the result is always non-negative, regardless of the input.\n\n### Multiple Ensures\n\n```xiom\nfn clamp(val: Int, min: Int, max: Int) -\u003e Int\n  requires: min \u003c= max;\n  ensures: result \u003e= min;\n  ensures: result \u003c= max;\n{\n  if val \u003c min { return min; }\n  elif val \u003e max { return max; }\n  else { return val; }\n}\n```\n\nBoth ensures are checked — the result must be both \u003e= min AND \u003c= max.\n\n### Ensures with Computation\n\n```xiom\nfn safe_divide(a: Int, b: Int) -\u003e Int\n  requires: b != 0;\n  ensures: result * b + (a % b) == a;\n{\n  return a / b;\n}\n```\n\nThe ensures verifies the mathematical property of integer division: quotient * divisor + remainder = dividend.\n\n### Full Program\n\n```xiom\nfn main() -\u003e Int {\n  let d = double(7);\n  io.println(string.int_to_str(d));\n\n  let a = abs_val(-15);\n  io.println(string.int_to_str(a));\n\n  let c = clamp(100, 0, 50);\n  io.println(string.int_to_str(c));\n\n  return 0;\n}\n```",
+    "analogy":  "`ensures:` is like a quality control inspector at the end of a factory line. The worker (function body) builds a product and puts it on the conveyor belt. Before the product ships, the inspector checks: \u0027Is this twice the original material? (result == x * 2) Is it non-negative? (result \u003e= 0)\u0027 If the product passes, it ships. If not, the inspector sounds an alarm and stops the line. No defective product ever leaves the factory.",
+    "code_template":  "use xiom.io;\n\nfn double(x: Int) -\u003e Int\n  // TODO: add ensures: result == x * 2;\n{\n  return x * 2;\n}\n\nfn abs_val(x: Int) -\u003e Int\n  // TODO: add ensures: result \u003e= 0;\n{\n  if x \u003c 0 { return -x; }\n  else { return x; }\n}\n\nfn main() -\u003e Int {\n  // TODO: test double(7) and abs_val(-15)\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\nfn double(x: Int) -\u003e Int\n  ensures: result == x * 2;\n{\n  return x * 2;\n}\n\nfn abs_val(x: Int) -\u003e Int\n  ensures: result \u003e= 0;\n{\n  if x \u003c 0 { return -x; }\n  else { return x; }\n}\n\nfn main() -\u003e Int {\n  io.println(string.int_to_str(double(7)));\n  io.println(string.int_to_str(abs_val(-15)));\n  return 0;\n}\n",
+    "try_it":  "Write `triple(x: Int) -\u003e Int` with `ensures: result == x * 3;`. Then deliberately break it: change the body to `x + 3` and see the contract violation. Write `square(x: Int) -\u003e Int` with `ensures: result == x * x;`. Then add an `is_even` ensures: after doubling, the result should always be even. Write `ensures: result % 2 == 0;` for the double function. Now write `half(x: Int) -\u003e Int` with `ensures: result * 2 \u003c= x;` — the result times 2 should not exceed x (since integer division truncates).",
+    "concepts":  [
+                     "ensures",
+                     "postcondition",
+                     "result-keyword",
+                     "contract-clause",
+                     "output-validation"
+                 ],
+    "tips":  [
+                 "The `result` keyword in ensures refers to the value the function returns — it\u0027s a special variable only available in ensures clauses",
+                 "ensures is checked AFTER the function body runs — if the function never returns (infinite loop), ensures is never checked",
+                 "Use ensures to verify mathematical identities: `ensures: result * 2 == x * 2;` confirms doubling is correct"
+             ],
+    "common_mistakes":  [
+                            "Writing `ensures: result \u003e 0;` when the function can legitimately return 0 — the ensures must be ALWAYS true",
+                            "Forgetting that `result` refers to the return value, not a variable named `result` in your code",
+                            "Using ensures to validate inputs — that\u0027s what `requires` is for. ensures is only for output validation"
+                        ],
+    "next_lesson":  "L4-04",
+    "related":  [
+                    "L4-01",
+                    "L4-02",
+                    "L4-04",
+                    "L3-28"
+                ]
 }

@@ -7,12 +7,32 @@
   "why": "Palindrome checking combines string length, while loops, and Boolean early returns — a compact real-world algorithm built from familiar pieces.",
   "narrative": "## Detecting Palindromes\n\nA palindrome reads the same forwards and backwards. \"racecar\", \"madam\", and \"noon\" are palindromes. \"hello\" is not.\n\n### The Two-Pointer Algorithm\n\nCompare the first character with the last, the second with the second-last, working inward until the pointers meet.\n\n```xiom\nfn is_palindrome(text: Str) -> Bool {\n  let len = string.str_len(text);\n  if len <= 1 {\n    return true;\n  }\n\n  var left = 0;\n  var right = len - 1;\n  while left < right {\n    if text[left] != text[right] {\n      return false;\n    }\n    left = left + 1;\n    right = right - 1;\n  }\n  return true;\n}\n```\n\n### Tracing \"racecar\"\n\n```\nr a c e c a r\n0 1 2 3 4 5 6\n\nleft=0 (r) vs right=6 (r) → match, move inward\nleft=1 (a) vs right=5 (a) → match, move inward\nleft=2 (c) vs right=4 (c) → match, move inward\nleft=3 (e) vs right=3 (e) → left == right, loop ends\n→ true! \"racecar\" is a palindrome\n```\n\n### Tracing \"hello\"\n\n```\nh e l l o\n0 1 2 3 4\n\nleft=0 (h) vs right=4 (o) → MISMATCH! Early return false\n```\n\nThe early return is key: the moment a mismatch is found, you know it's not a palindrome and can stop.\n\n### Testing Multiple Words\n\n```xiom\nfn main() -> Int {\n  if is_palindrome(\"racecar\") {\n    io.println(\"racecar is a palindrome!\");\n  }\n  if is_palindrome(\"hello\") {\n    io.println(\"hello is a palindrome!\");\n  } else {\n    io.println(\"hello is NOT a palindrome!\");\n  }\n  return 0;\n}\n```",
   "analogy": "A palindrome check is like folding a piece of paper in half. When you fold 'racecar' down the middle, the 'r' touches 'r', the 'a' touches 'a', and the 'c' touches 'c'. If every pair matches at the fold, the word is a palindrome. A mismatch is like a torn edge — the fold doesn't line up.",
-  "code_template": "// TODO: Write is_palindrome(text: Str) -> Bool\n// Get length with string.str_len(text)\n// Use two pointers (left starting at 0, right at len - 1)\n// Compare characters while left < right\n// Return false on first mismatch, true if loop completes\n\nfn main() -> Int {\n  // TODO: Test is_palindrome with \"racecar\" and \"hello\"\n  // Print whether each is a palindrome\n  return 0;\n}",
-  "solution": "fn is_palindrome(text: Str) -> Bool {\n  let len = string.str_len(text);\n  if len <= 1 {\n    return true;\n  }\n  var left = 0;\n  var right = len - 1;\n  while left < right {\n    if text[left] != text[right] {\n      return false;\n    }\n    left = left + 1;\n    right = right - 1;\n  }\n  return true;\n}\n\nfn main() -> Int {\n  if is_palindrome(\"racecar\") {\n    io.println(\"racecar is a palindrome!\");\n  }\n  if is_palindrome(\"hello\") {\n    io.println(\"hello is a palindrome!\");\n  } else {\n    io.println(\"hello is NOT a palindrome!\");\n  }\n  return 0;\n}",
+  "code_template": "use xiom.io;\nuse xiom.string;\n// TODO: Write is_palindrome(text: Str) -> Bool\n// Get length with string.str_len(text)\n// Use two pointers (left starting at 0, right at len - 1)\n// Compare characters while left < right\n// Return false on first mismatch, true if loop completes\n\nfn main() {\n  // TODO: Test is_palindrome with \"racecar\" and \"hello\"\n  // Print whether each is a palindrome\n}",
+  "solution": "use xiom.io;\nuse xiom.string;\nfn is_palindrome(text: Str) -> Bool {\n  let len = string.str_len(text);\n  if len <= 1 {\n  }\n  var left = 0;\n  var right = len - 1;\n  while left < right {\n    if text[left] != text[right] {\n    }\n    left = left + 1;\n    right = right - 1;\n  }\n}\nfn main() {\n  if is_palindrome(\"racecar\") {\n    io.println(\"racecar is a palindrome!\");\n  }\n  if is_palindrome(\"hello\") {\n    io.println(\"hello is a palindrome!\");\n  } else {\n    io.println(\"hello is NOT a palindrome!\");\n  }\n}",
   "try_it": "Test is_palindrome with \"madam\", \"kayak\", \"palindrome\", and your own name. Then modify the function to ignore case by using string.str_lower() on the input before comparing.",
-  "concepts": ["two-pointer algorithm", "string comparison", "early return", "Boolean logic"],
-  "tips": ["Start both pointers at opposite ends: left=0 and right=len-1", "The loop condition `left < right` naturally handles odd and even length strings", "Early return inside the loop is efficient — stop checking the moment you find a mismatch", "Use string.str_len() to get the length before setting up pointers"],
-  "common_mistakes": ["Setting right = len instead of len - 1 — strings are 0-indexed", "Using <= instead of < in the loop condition — you'd compare the middle char with itself", "Forgetting to update both left and right pointers inside the loop", "Returning true inside the loop on a match — you must check ALL pairs first"],
+  "concepts": [
+    "two-pointer algorithm",
+    "string comparison",
+    "early return",
+    "Boolean logic"
+  ],
+  "tips": [
+    "Start both pointers at opposite ends: left=0 and right=len-1",
+    "The loop condition `left < right` naturally handles odd and even length strings",
+    "Early return inside the loop is efficient — stop checking the moment you find a mismatch",
+    "Use string.str_len() to get the length before setting up pointers"
+  ],
+  "common_mistakes": [
+    "Setting right = len instead of len - 1 — strings are 0-indexed",
+    "Using <= instead of < in the loop condition — you'd compare the middle char with itself",
+    "Forgetting to update both left and right pointers inside the loop",
+    "Returning true inside the loop on a match — you must check ALL pairs first"
+  ],
   "next_lesson": "L1-37",
-  "related": ["L1-17", "L1-33", "L1-13", "L1-24"]
+  "related": [
+    "L1-17",
+    "L1-33",
+    "L1-13",
+    "L1-24"
+  ]
 }

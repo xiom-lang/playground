@@ -7,10 +7,16 @@
   "why": "Module-level tests verify that functions work correctly in isolation and together, creating a safety net for future changes.",
   "narrative": "## Testing Modules Systematically\n\n### The Module\n\n```xiom\nmod calculator {\n  pub fn add(a: Int, b: Int) -> Int { a + b }\n  pub fn divide(a: Int, b: Int) -> Option[Int] {\n    if b == 0 { return Option.None; };\n    Option.Some(a / b)\n  }\n  pub fn power(base: Int, exp: Int) -> Int {\n    let mut result = 1;\n    let mut i = 0;\n    while i < exp { result *= base; i += 1; };\n    result\n  }\n}\n```\n\n### Test Suite\n\n```xiom\nfn test_add() -> Bool {\n  use calculator;\n  assert(calculator.add(2, 3) == 5);\n  assert(calculator.add(0, 0) == 0);\n  assert(calculator.add(-1, 1) == 0);\n  true\n}\n\nfn test_divide() -> Bool {\n  use calculator;\n  assert(calculator.divide(10, 2).unwrap() == 5);\n  assert(calculator.divide(10, 0).is_none());\n  assert(calculator.divide(0, 5).unwrap() == 0);\n  true\n}\n\nfn test_power() -> Bool {\n  use calculator;\n  assert(calculator.power(2, 3) == 8);\n  assert(calculator.power(5, 0) == 1);\n  assert(calculator.power(1, 100) == 1);\n  true\n}\n```\n\n### Running All Tests\n\n```xiom\nfn main() -> Int {\n  let mut passed = 0;\n  if test_add() { passed += 1; };\n  if test_divide() { passed += 1; };\n  if test_power() { passed += 1; };\n  io.println(passed);\n  return 0;\n}\n```",
   "analogy": "Before a bridge opens, engineers test every beam, bolt, and cable individually, then test the whole structure under load. Module tests are your bridge inspection: test each function alone (unit), then test them working together (integration).",
-  "code_template": "mod geometry {\n  // TODO: pub fn area_rectangle(w: Int, h: Int) -> Int\n  // TODO: pub fn perimeter_rectangle(w: Int, h: Int) -> Int\n  // TODO: pub fn is_square(w: Int, h: Int) -> Bool\n}\n\n// TODO: write test_geometry that tests all three functions\n\nfn main() -> Int {\n  // TODO: run tests\n  return 0;\n}\n",
-  "solution": "mod geometry {\n  pub fn area_rectangle(w: Int, h: Int) -> Int { w * h }\n  pub fn perimeter_rectangle(w: Int, h: Int) -> Int { 2 * (w + h) }\n  pub fn is_square(w: Int, h: Int) -> Bool { w == h }\n}\n\nfn test_geometry() -> Bool {\n  use geometry;\n  assert(geometry.area_rectangle(4, 5) == 20);\n  assert(geometry.perimeter_rectangle(4, 5) == 18);\n  assert(geometry.is_square(4, 4) == true);\n  assert(geometry.is_square(4, 5) == false);\n  true\n}\n\nfn main() -> Int {\n  if test_geometry() { io.println(\"Passed!\"); };\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nmod geometry {\n  // TODO: pub fn area_rectangle(w: Int, h: Int) -> Int\n  // TODO: pub fn perimeter_rectangle(w: Int, h: Int) -> Int\n  // TODO: pub fn is_square(w: Int, h: Int) -> Bool\n}\n\n// TODO: write test_geometry that tests all three functions\n\nfn main() -> Int {\n  // TODO: run tests\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nmod geometry {\n  pub fn area_rectangle(w: Int, h: Int) -> Int { w * h }\n  pub fn perimeter_rectangle(w: Int, h: Int) -> Int { 2 * (w + h) }\n  pub fn is_square(w: Int, h: Int) -> Bool { w == h }\n}\n\nfn test_geometry() -> Bool {\n  use geometry;\n  assert(geometry.area_rectangle(4, 5) == 20);\n  assert(geometry.perimeter_rectangle(4, 5) == 18);\n  assert(geometry.is_square(4, 4) == true);\n  assert(geometry.is_square(4, 5) == false);\n  true\n}\n\nfn main() -> Int {\n  if test_geometry() { io.println(\"Passed!\"); };\n  return 0;\n}\n",
   "try_it": "Add `area_circle(radius: Float64)` and `circumference(radius: Float64)` to geometry. Write tests using approximate comparison (tolerance of 0.01). Add tests for edge cases: zero dimensions, negative dimensions (should these be errors?).",
-  "concepts": ["testing", "module-testing", "unit-tests", "assert", "test-suite"],
+  "concepts": [
+    "testing",
+    "module-testing",
+    "unit-tests",
+    "assert",
+    "test-suite"
+  ],
   "tips": [
     "One test function per logical group (e.g., test_math, test_string)",
     "Test zero inputs, negative inputs, and maximum values — edge cases find bugs",
@@ -22,5 +28,9 @@
     "Writing tests that depend on each other — each test should be independent"
   ],
   "next_lesson": "L6-39",
-  "related": ["L6-11", "L6-24", "L6-19"]
+  "related": [
+    "L6-11",
+    "L6-24",
+    "L6-19"
+  ]
 }

@@ -1,27 +1,36 @@
 {
-  "id": "L4-22",
-  "title": "Scope and Lifetimes",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "Variables have a lifespan — they're born at declaration and die at the end of their scope. Borrows must always die before the values they reference.",
-  "why": "Understanding scope and lifetimes is essential for writing code that compiles — borrows cannot outlive the data they point to.",
-  "narrative": "## Values Live Until End of Scope\n\nA scope is a block `{ }`. Values die at the closing brace:\n\n```xiom\nfn main() -> Int {\n  let x = 5;\n  {\n    let y = &x;   // y borrows x\n    io.println(y); // OK — y is alive here\n  }  // y dies here — borrow ends\n  // x is still alive — y's borrow ended before x\n  return x;\n}\n```\n\n### Borrows Must Die Before Owners\n\n```xiom\nfn main() -> Int {\n  let outer = Vec[Int].new();\n  {\n    let inner = Vec[Int].new();\n    // let r = &inner;  // OK — r dies before inner\n  }\n  // inner is dead — can't reference it anymore\n  return outer.len() as Int;\n}\n```\n\n### Non-Lexical Lifetimes\n\nXIOM is smart about borrow lifetimes. A borrow ends at its LAST USE, not at the scope end:\n\n```xiom\nfn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  let r = &data;\n  io.println(r.len());  // Last use of r\n  // r is dead here — even though the scope continues\n  let w = &mut data;    // OK! r is already dead\n  w.push(2);\n  return data.len() as Int;\n}\n```\n\nThis is called NLL (Non-Lexical Lifetimes). It makes writing safe code much easier.",
-  "analogy": "Scope is like a room. Variables live inside the room. When you leave the room, everything inside is cleaned up. You can't reference something in a room you've already left.",
-  "code_template": "// TODO: Create a value 'x', then inside a nested scope { }\n// create a read borrow of x, print it, let it die\n// After the scope, create a write borrow of x\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
-  "solution": "fn main() -> Int {\n  var x = Vec[Int].new();\n  x.push(42);\n  {\n    let r = &x;\n    io.println(r.len());\n  }\n  let w = &mut x;\n  w.push(99);\n  return x.len() as Int;\n}",
-  "try_it": "Try declaring a borrow in an inner scope and using it in the outer scope. The compiler will tell you the borrow doesn't live long enough.",
-  "concepts": ["scope", "lifetime", "non-lexical lifetimes", "NLL"],
-  "tips": [
-    "Values are dropped at the end of their scope, in reverse order of declaration",
-    "Borrows must ALWAYS end before the owned value they reference",
-    "Use nested scopes { } to limit how long borrows live",
-    "Non-lexical lifetimes mean borrows end at last use, not scope end"
-  ],
-  "common_mistakes": [
-    "Returning a reference to a local variable — the local is destroyed on return",
-    "Holding a borrow across a scope boundary where the owner is dropped",
-    "Assuming borrows live until the end of scope — they end at last use"
-  ],
-  "next_lesson": "L4-23",
-  "related": ["L4-11", "L4-17", "L4-28"]
+    "id":  "L4-22",
+    "title":  "Scope and Lifetimes",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "Variables have a lifespan — they\u0027re born at declaration and die at the end of their scope. Borrows must always die before the values they reference.",
+    "why":  "Understanding scope and lifetimes is essential for writing code that compiles — borrows cannot outlive the data they point to.",
+    "narrative":  "## Values Live Until End of Scope\n\nA scope is a block `{ }`. Values die at the closing brace:\n\n```xiom\nfn main() -\u003e Int {\n  let x = 5;\n  {\n    let y = \u0026x;   // y borrows x\n    io.println(y); // OK — y is alive here\n  }  // y dies here — borrow ends\n  // x is still alive — y\u0027s borrow ended before x\n  return x;\n}\n```\n\n### Borrows Must Die Before Owners\n\n```xiom\nfn main() -\u003e Int {\n  let outer = Vec[Int].new();\n  {\n    let inner = Vec[Int].new();\n    // let r = \u0026inner;  // OK — r dies before inner\n  }\n  // inner is dead — can\u0027t reference it anymore\n  return outer.len() as Int;\n}\n```\n\n### Non-Lexical Lifetimes\n\nXIOM is smart about borrow lifetimes. A borrow ends at its LAST USE, not at the scope end:\n\n```xiom\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  let r = \u0026data;\n  io.println(r.len());  // Last use of r\n  // r is dead here — even though the scope continues\n  let w = \u0026mut data;    // OK! r is already dead\n  w.push(2);\n  return data.len() as Int;\n}\n```\n\nThis is called NLL (Non-Lexical Lifetimes). It makes writing safe code much easier.",
+    "analogy":  "Scope is like a room. Variables live inside the room. When you leave the room, everything inside is cleaned up. You can\u0027t reference something in a room you\u0027ve already left.",
+    "code_template":  "use xiom.io;\n\n// TODO: Create a value \u0027x\u0027, then inside a nested scope { }\n// create a read borrow of x, print it, let it die\n// After the scope, create a write borrow of x\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn main() -\u003e Int {\n  var x = Vec[Int].new();\n  x.push(42);\n  {\n    let r = \u0026x;\n    io.println(r.len().to_str());\n  }\n  let w = \u0026mut x;\n  w.push(99);\n  return x.len() as Int;\n}",
+    "try_it":  "Try declaring a borrow in an inner scope and using it in the outer scope. The compiler will tell you the borrow doesn\u0027t live long enough.",
+    "concepts":  [
+                     "scope",
+                     "lifetime",
+                     "non-lexical lifetimes",
+                     "NLL"
+                 ],
+    "tips":  [
+                 "Values are dropped at the end of their scope, in reverse order of declaration",
+                 "Borrows must ALWAYS end before the owned value they reference",
+                 "Use nested scopes { } to limit how long borrows live",
+                 "Non-lexical lifetimes mean borrows end at last use, not scope end"
+             ],
+    "common_mistakes":  [
+                            "Returning a reference to a local variable — the local is destroyed on return",
+                            "Holding a borrow across a scope boundary where the owner is dropped",
+                            "Assuming borrows live until the end of scope — they end at last use"
+                        ],
+    "next_lesson":  "L4-23",
+    "related":  [
+                    "L4-11",
+                    "L4-17",
+                    "L4-28"
+                ]
 }

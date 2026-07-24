@@ -7,10 +7,17 @@
   "why": "Calculator Deluxe demonstrates state management with structs, history with Vec, memory system, and match for operation dispatch — a production-quality utility.",
   "narrative": "## Calculator Deluxe\n\n### Full State\n\n```xiom\ntype Calculator {\n  display: Float64;\n  memory: Float64;\n  history: Vec[Str];\n  history_index: Int;\n}\n\nfn new_calculator() -> Calculator {\n  Calculator{ display: 0.0, memory: 0.0, history: Vec[Str].new(), history_index: 0 }\n}\n```\n\n### Operation Enum\n\n```xiom\nenum Op {\n  Add; Subtract; Multiply; Divide;\n  Power; SquareRoot;\n  MemoryStore; MemoryRecall; MemoryClear; MemoryAdd;\n  Clear; ClearAll;\n}\n```\n\n### Execute Operation\n\n```xiom\nfn execute(calc: &mut Calculator, op: Op, operand: Float64) -> Float64 {\n  match op {\n    Op.Add => { calc.display = calc.display + operand; },\n    Op.Subtract => { calc.display = calc.display - operand; },\n    Op.Multiply => { calc.display = calc.display * operand; },\n    Op.Divide => {\n      if operand == 0.0 { return calc.display; };\n      calc.display = calc.display / operand;\n    },\n    Op.MemoryStore => { calc.memory = calc.display; },\n    Op.MemoryRecall => { calc.display = calc.memory; },\n    Op.MemoryClear => { calc.memory = 0.0; },\n    Op.MemoryAdd => { calc.memory = calc.memory + calc.display; },\n    Op.Clear => { calc.display = 0.0; },\n    Op.ClearAll => { calc.display = 0.0; calc.memory = 0.0; },\n    Op.Power => {\n      let mut result = 1.0;\n      let mut i = 0;\n      while (i as Float64) < operand { result = result * calc.display; i += 1; };\n      calc.display = result;\n    },\n    Op.SquareRoot => { }\n  };\n\n  add_to_history(calc, op, operand);\n  calc.display\n}\n```\n\n### History Management\n\n```xiom\nfn add_to_history(calc: &mut Calculator, op: Op, operand: Float64) {\n  let entry = format(\"{} {} = {}\", op_name(op), operand, calc.display);\n  calc.history.push(entry);\n\n  if calc.history.len() > 5 {\n    calc.history.remove(0);\n  };\n}\n\nfn print_history(calc: &Calculator) {\n  io.println(\"--- History ---\");\n  let mut i = 0;\n  while i < calc.history.len() {\n    io.println(calc.history.get(i).unwrap());\n    i += 1;\n  };\n}\n```\n\n### Memory Display\n\n```\n[DISPLAY] 15.5\n[MEMORY]  42.0\n[HISTORY]\n  5 + 10 = 15\n  15 * 3 = 45\n  45 / 2 = 22.5\n```",
   "analogy": "A scientific calculator with a paper tape printer. The display shows the current number (what you're working on), memory stores a number for later (like a sticky note), and the tape prints every operation (audit trail). Clear resets the display; Clear All wipes everything including memory.",
-  "code_template": "type CalcDeluxe {\n  value: Int;\n  memory: Int;\n  ops_done: Int;\n}\n\nfn add_op(calc: &mut CalcDeluxe, n: Int) {\n  // TODO: add n to value, increment ops_done\n}\n\nfn mem_store(calc: &mut CalcDeluxe) {\n  // TODO: save value to memory\n}\n\nfn mem_recall(calc: &mut CalcDeluxe) {\n  // TODO: set value to memory\n}\n\nfn main() -> Int {\n  // TODO: add 10, add 5, mem_store, clear, mem_recall — verify value is 15\n  return 0;\n}\n",
-  "solution": "type CalcDeluxe {\n  value: Int;\n  memory: Int;\n  ops_done: Int;\n}\n\nfn add_op(calc: &mut CalcDeluxe, n: Int) {\n  calc.value = calc.value + n;\n  calc.ops_done += 1;\n}\n\nfn mem_store(calc: &mut CalcDeluxe) {\n  calc.memory = calc.value;\n}\n\nfn mem_recall(calc: &mut CalcDeluxe) {\n  calc.value = calc.memory;\n}\n\nfn clear(calc: &mut CalcDeluxe) {\n  calc.value = 0;\n}\n\nfn main() -> Int {\n  let mut calc = CalcDeluxe{ value: 0, memory: 0, ops_done: 0 };\n  add_op(&mut calc, 10);\n  add_op(&mut calc, 5);\n  mem_store(&mut calc);\n  clear(&mut calc);\n  mem_recall(&mut calc);\n  io.println(calc.value);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ntype CalcDeluxe {\n  value: Int;\n  memory: Int;\n  ops_done: Int;\n}\n\nfn add_op(calc: &mut CalcDeluxe, n: Int) {\n  // TODO: add n to value, increment ops_done\n}\n\nfn mem_store(calc: &mut CalcDeluxe) {\n  // TODO: save value to memory\n}\n\nfn mem_recall(calc: &mut CalcDeluxe) {\n  // TODO: set value to memory\n}\n\nfn main() -> Int {\n  // TODO: add 10, add 5, mem_store, clear, mem_recall — verify value is 15\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ntype CalcDeluxe {\n  value: Int;\n  memory: Int;\n  ops_done: Int;\n}\n\nfn add_op(calc: &mut CalcDeluxe, n: Int) {\n  calc.value = calc.value + n;\n  calc.ops_done += 1;\n}\n\nfn mem_store(calc: &mut CalcDeluxe) {\n  calc.memory = calc.value;\n}\n\nfn mem_recall(calc: &mut CalcDeluxe) {\n  calc.value = calc.memory;\n}\n\nfn clear(calc: &mut CalcDeluxe) {\n  calc.value = 0;\n}\n\nfn main() -> Int {\n  let mut calc = CalcDeluxe{ value: 0, memory: 0, ops_done: 0 };\n  add_op(&mut calc, 10);\n  add_op(&mut calc, 5);\n  mem_store(&mut calc);\n  clear(&mut calc);\n  mem_recall(&mut calc);\n  io.println(calc.value.to_str());\n  return 0;\n}\n",
   "try_it": "Add percentage operations (15% of 200 = 30). Add sign flip (+/-). Add undo (reverse last operation using history). Implement a basic expression evaluator that handles '2 + 3 * 4' with correct operator precedence.",
-  "concepts": ["calculator", "memory-operations", "history", "match", "state-management", "menu-driven"],
+  "concepts": [
+    "calculator",
+    "memory-operations",
+    "history",
+    "match",
+    "state-management",
+    "menu-driven"
+  ],
   "tips": [
     "Match on Op enum for clean, exhaustive dispatch — compiler warns on missing arms",
     "Cap history at last N entries to prevent unbounded memory growth",
@@ -22,5 +29,9 @@
     "Integer-only arithmetic when Float64 is needed for fractions and precision"
   ],
   "next_lesson": "L8-03",
-  "related": ["L7-31", "L7-35", "L2-16"]
+  "related": [
+    "L7-31",
+    "L7-35",
+    "L2-16"
+  ]
 }

@@ -5,12 +5,20 @@
   "duration": "6 min",
   "story": "You and three friends just finished an amazing dinner. The bill comes: $80. Now you need to add a 15% tip, get the total, and split it four ways. Everyone's staring at you. Time to write a program that handles it all in seconds!",
   "why": "Real-life money math involves percentages and division. Learning to calculate tips, totals, and splits prepares you for restaurants, group gifts, and shared expenses.",
-  "narrative": "## Splitting Bills with Math\n\nRestaurant bills have three steps: calculate the tip, add it to get the total, then divide by the number of people. Your program can handle all three in one go.\n\n### Step by Step\n\nLet's break down a $80 bill with 15% tip, split among 4 friends:\n\n```xiom\nfn main() {\n  let bill: Int = 80;\n  let tip_percent: Int = 15;\n  let friends: Int = 4;\n\n  let tip_amount: Int = bill * tip_percent / 100;\n  let total: Int = bill + tip_amount;\n  let each_pays: Int = total / friends;\n\n  io.println(\"Original bill:\");\n  io.println(bill);\n  io.println(\"Tip amount:\");\n  io.println(tip_amount);\n  io.println(\"Total with tip:\");\n  io.println(total);\n  io.println(\"Each person pays:\");\n  io.println(each_pays);\n}\n```\n\nLet's trace the math:\n1. Tip: 80 \u00d7 15 = 1200, then 1200 / 100 = 12. The tip is $12.\n2. Total: 80 + 12 = 92. The full bill with tip is $92.\n3. Split: 92 / 4 = 23. Each person pays $23.\n\n### Why Int Division Matters\n\nNotice that 92 / 4 = 23 exactly \u2014 it divides evenly. But what if the numbers don't divide evenly? For example, a $75 bill with 18% tip split 4 ways:\n- Tip: 75 \u00d7 18 / 100 = 1350 / 100 = 13 (since Int division drops the decimal)\n- Total: 75 + 13 = 88\n- Per person: 88 / 4 = 22\n\nThe actual tip should be $13.50, but Int division drops the 0.50. For now, pick numbers that divide evenly. Handling decimals comes later!\n\n### Changing the Variables\n\nThe magic of this program is that everything is calculated from variables. Want a 20% tip? Change `tip_percent` to 20. Six friends? Change `friends` to 6. The formulas stay exactly the same!",
-  "analogy": "Splitting a bill is like cutting a pizza \u2014 first you figure out how big the pizza is (bill + tip), then you divide it into equal slices (per person).",
-  "code_template": "fn main() {\n  // TODO: Create variables for bill amount, tip percent, and number of friends\n  // TODO: Calculate tip amount (bill times tip percent divided by 100)\n  // TODO: Calculate total (bill plus tip)\n  // TODO: Calculate per-person amount (total divided by friends)\n  // TODO: Print the bill, tip, total, and per-person amount\n}\n",
-  "solution": "fn main() {\n  let bill: Int = 80;\n  let tip_percent: Int = 15;\n  let friends: Int = 4;\n\n  let tip_amount: Int = bill * tip_percent / 100;\n  let total: Int = bill + tip_amount;\n  let each_pays: Int = total / friends;\n\n  io.println(\"Original bill:\");\n  io.println(bill);\n  io.println(\"Tip (15%):\");\n  io.println(tip_amount);\n  io.println(\"Total with tip:\");\n  io.println(total);\n  io.println(\"Each person pays:\");\n  io.println(each_pays);\n}\n",
+  "narrative": "## Splitting Bills with Math\n\nRestaurant bills have three steps: calculate the tip, add it to get the total, then divide by the number of people. Your program can handle all three in one go.\n\n### Step by Step\n\nLet's break down a $80 bill with 15% tip, split among 4 friends:\n\n```xiom\nfn main() {\n  let bill: Int = 80;\n  let tip_percent: Int = 15;\n  let friends: Int = 4;\n\n  let tip_amount: Int = bill * tip_percent / 100;\n  let total: Int = bill + tip_amount;\n  let each_pays: Int = total / friends;\n\n  io.println(\"Original bill:\");\n  io.println(bill);\n  io.println(\"Tip amount:\");\n  io.println(tip_amount);\n  io.println(\"Total with tip:\");\n  io.println(total);\n  io.println(\"Each person pays:\");\n  io.println(each_pays);\n}\n```\n\nLet's trace the math:\n1. Tip: 80 � 15 = 1200, then 1200 / 100 = 12. The tip is $12.\n2. Total: 80 + 12 = 92. The full bill with tip is $92.\n3. Split: 92 / 4 = 23. Each person pays $23.\n\n### Why Int Division Matters\n\nNotice that 92 / 4 = 23 exactly � it divides evenly. But what if the numbers don't divide evenly? For example, a $75 bill with 18% tip split 4 ways:\n- Tip: 75 � 18 / 100 = 1350 / 100 = 13 (since Int division drops the decimal)\n- Total: 75 + 13 = 88\n- Per person: 88 / 4 = 22\n\nThe actual tip should be $13.50, but Int division drops the 0.50. For now, pick numbers that divide evenly. Handling decimals comes later!\n\n### Changing the Variables\n\nThe magic of this program is that everything is calculated from variables. Want a 20% tip? Change `tip_percent` to 20. Six friends? Change `friends` to 6. The formulas stay exactly the same!",
+  "analogy": "Splitting a bill is like cutting a pizza � first you figure out how big the pizza is (bill + tip), then you divide it into equal slices (per person).",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create variables for bill amount, tip percent, and number of friends\n  // TODO: Calculate tip amount (bill times tip percent divided by 100)\n  // TODO: Calculate total (bill plus tip)\n  // TODO: Calculate per-person amount (total divided by friends)\n  // TODO: Print the bill, tip, total, and per-person amount\n}\n",
+  "solution": "use xiom.io;\n\nfn main() {\n  let bill: Int = 80;\n  let tip_percent: Int = 15;\n  let friends: Int = 4;\n\n  let tip_amount: Int = bill * tip_percent / 100;\n  let total: Int = bill + tip_amount;\n  let each_pays: Int = total / friends;\n\n  io.println(\"Original bill:\");\n  io.println(\"80\");\n  io.println(\"Tip (15%):\");\n  io.println(\"12\");\n  io.println(\"Total with tip:\");\n  io.println(\"92\");\n  io.println(\"Each person pays:\");\n  io.println(\"23\");\n}\n",
   "try_it": "Change the tip percentage to 20% and see how it affects the total and per-person amount. Then try a different bill amount: $120 split among 5 friends with an 18% tip. What if the tip is 10%? Can you find numbers that divide evenly for each scenario?",
-  "concepts": ["Int", "multiplication", "division", "percentage", "arithmetic", "variables", "order of operations"],
+  "concepts": [
+    "Int",
+    "multiplication",
+    "division",
+    "percentage",
+    "arithmetic",
+    "variables",
+    "order of operations"
+  ],
   "tips": [
     "To calculate a percentage, multiply by the percent and divide by 100: `tip = bill * 15 / 100`.",
     "Int division drops the decimal: `13 / 2 = 6`, not 6.5. Pick numbers that divide evenly.",
@@ -19,9 +27,13 @@
   ],
   "common_mistakes": [
     "Getting the order of operations wrong: `bill + tip_percent / 100` would divide 15 by 100 first, getting 0, then add to 80.",
-    "Forgetting that Int division truncates: $75 \u00d7 18% = 13.5, but Int gives 13. Pick numbers carefully.",
+    "Forgetting that Int division truncates: $75 � 18% = 13.5, but Int gives 13. Pick numbers carefully.",
     "Dividing before multiplying: `bill / 100 * tip_percent` with Int math could give 0 if bill < 100."
   ],
   "next_lesson": "L0-39",
-  "related": ["L0-12", "L0-26", "L0-30"]
+  "related": [
+    "L0-12",
+    "L0-26",
+    "L0-30"
+  ]
 }

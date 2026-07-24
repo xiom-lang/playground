@@ -7,10 +7,16 @@
   "why": "Extending your math module with specialized functions builds a comprehensive toolkit you'll reach for in future projects.",
   "narrative": "## Advanced Math Module\n\n### Number Theory Functions\n\n```xiom\nmod math_ext {\n  pub fn prime_factors(n: Int) -> Vec[Int] {\n    let mut factors: Vec[Int] = Vec[Int].new();\n    let mut num = n;\n    let mut d = 2;\n    while d * d <= num {\n      while num % d == 0 {\n        factors.push(d);\n        num = num / d;\n      };\n      d += 1;\n    };\n    if num > 1 {\n      factors.push(num);\n    };\n    factors\n  }\n\n  pub fn is_perfect(n: Int) -> Bool {\n    if n <= 1 { return false; };\n    let mut sum = 0;\n    let mut i = 1;\n    while i < n {\n      if n % i == 0 {\n        sum += i;\n      };\n      i += 1;\n    };\n    sum == n\n  }\n\n  pub fn digit_sum(n: Int) -> Int {\n    let mut total = 0;\n    let mut num = n;\n    while num > 0 {\n      total += num % 10;\n      num = num / 10;\n    };\n    total\n  }\n\n  pub fn is_armstrong(n: Int) -> Bool {\n    let digits = digit_count(n);\n    let mut sum = 0;\n    let mut num = n;\n    while num > 0 {\n      let d = num % 10;\n      sum += power(d, digits);\n      num = num / 10;\n    };\n    sum == n\n  }\n\n  fn digit_count(n: Int) -> Int { ... }\n  fn power(base: Int, exp: Int) -> Int { ... }\n}\n```\n\n### Key Patterns\n\n- **Prime factors**: Repeatedly divide by smallest divisor\n- **Perfect number**: Sum of proper divisors equals the number\n- **Digit sum**: Extract each digit using modulo 10\n- **Armstrong number**: Each digit raised to the power of digit count sums to the number",
   "analogy": "A chef's knife set starts with a chef's knife (basic math). Over time, they add a paring knife, bread knife, boning knife (extensions). Each has a specific purpose but belongs in the same block. Math extensions are your specialty knives.",
-  "code_template": "mod math_ext {\n  // TODO: pub fn count_digits(n: Int) -> Int\n  // TODO: pub fn reverse_number(n: Int) -> Int\n  // TODO: pub fn sum_of_squares(n: Int) -> Int — sum of squares from 1 to n\n}\n\nfn main() -> Int {\n  use math_ext;\n  // TODO: test each function\n  return 0;\n}\n",
-  "solution": "mod math_ext {\n  pub fn count_digits(n: Int) -> Int {\n    if n == 0 { return 1; };\n    let mut count = 0;\n    let mut num = n;\n    while num > 0 {\n      count += 1;\n      num = num / 10;\n    };\n    count\n  }\n\n  pub fn reverse_number(n: Int) -> Int {\n    let mut result = 0;\n    let mut num = n;\n    while num > 0 {\n      result = result * 10 + (num % 10);\n      num = num / 10;\n    };\n    result\n  }\n\n  pub fn sum_of_squares(n: Int) -> Int {\n    let mut total = 0;\n    let mut i = 1;\n    while i <= n {\n      total += i * i;\n      i += 1;\n    };\n    total\n  }\n}\n\nfn main() -> Int {\n  use math_ext;\n  io.println(math_ext.count_digits(12345));\n  io.println(math_ext.reverse_number(1234));\n  io.println(math_ext.sum_of_squares(5));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nmod math_ext {\n  // TODO: pub fn count_digits(n: Int) -> Int\n  // TODO: pub fn reverse_number(n: Int) -> Int\n  // TODO: pub fn sum_of_squares(n: Int) -> Int — sum of squares from 1 to n\n}\n\nfn main() -> Int {\n  use math_ext;\n  // TODO: test each function\n  return 0;\n}\n",
+  "solution": "use xiom.io;\nmod math_ext {\n  pub fn count_digits(n: Int) -> Int {\n    if n == 0 { return 1; };\n    let mut count = 0;\n    let mut num = n;\n    while num > 0 {\n      count += 1;\n      num = num / 10;\n    };\n    count\n  }\n\n  pub fn reverse_number(n: Int) -> Int {\n    let mut result = 0;\n    let mut num = n;\n    while num > 0 {\n      result = result * 10 + (num % 10);\n      num = num / 10;\n    };\n    result\n  }\n\n  pub fn sum_of_squares(n: Int) -> Int {\n    let mut total = 0;\n    let mut i = 1;\n    while i <= n {\n      total += i * i;\n      i += 1;\n    };\n    total\n  }\n}\n\nfn main() -> Int {\n  use math_ext;\n  io.println(math_ext.count_digits(12345).to_str());\n  io.println(math_ext.reverse_number(1234).to_str());\n  io.println(math_ext.sum_of_squares(5).to_str());\n  return 0;\n}\n",
   "try_it": "Add `is_happy(n)` — a number is happy if repeatedly replacing it with the sum of squares of its digits eventually reaches 1. Add `nth_triangular(n)` that returns the nth triangular number. Test edge cases: 0, 1, and negative numbers.",
-  "concepts": ["math-module", "number-theory", "prime-factors", "perfect-numbers", "digit-operations"],
+  "concepts": [
+    "math-module",
+    "number-theory",
+    "prime-factors",
+    "perfect-numbers",
+    "digit-operations"
+  ],
   "tips": [
     "Prime factorization: keep dividing by the smallest factor you find",
     "Digit operations use `% 10` to get the last digit and `/ 10` to remove it",
@@ -22,5 +28,9 @@
     "Forgetting to handle negative inputs — add requires or early returns"
   ],
   "next_lesson": "L6-36",
-  "related": ["L6-22", "L6-23", "L6-19"]
+  "related": [
+    "L6-22",
+    "L6-23",
+    "L6-19"
+  ]
 }

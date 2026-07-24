@@ -7,10 +7,16 @@
   "why": "Multiple interface bounds (T: A + B + C) express complex type requirements precisely, ensuring functions only accept types with all needed capabilities.",
   "narrative": "## Combining Multiple Interface Requirements\n\n### Three Interfaces\n\n```xiom\ninterface Cloneable {\n  fn duplicate(&self) -> Self;\n}\n\ninterface Printable {\n  fn to_text(&self) -> Str;\n}\n\ninterface Sortable {\n  fn comes_before(&self, other: &Self) -> Bool;\n}\n```\n\n### Requiring All Three\n\n```xiom\nfn export_data[T: Cloneable + Printable + Sortable](items: &Vec[T]) {\n  let mut sorted = items.clone();  // needs Cloneable\n  sort_by_interface(&mut sorted);   // needs Sortable\n  let mut i = 0;\n  while i < sorted.len() {\n    io.println(sorted.get(i).unwrap().to_text());  // needs Printable\n    i += 1;\n  };\n}\n```\n\n`T: Cloneable + Printable + Sortable` means: every T passed to this function MUST implement all three interfaces. The compiler enforces this.\n\n### A Type That Satisfies All Three\n\n```xiom\ntype DataPoint {\n  value: Int;\n  label: Str;\n}\n\nfn DataPoint.duplicate(&self) -> DataPoint {\n  DataPoint{ value: self.value, label: self.label.clone() }\n}\n\nfn DataPoint.to_text(&self) -> Str {\n  self.label.clone()\n}\n\nfn DataPoint.comes_before(&self, other: &DataPoint) -> Bool {\n  self.value < other.value\n}\n```",
   "analogy": "A job posting requires: 'Must have a degree AND 3 years experience AND a driver's license.' All three are mandatory — meeting just two won't get you hired. Multiple interface bounds are the same: the type must satisfy ALL constraints, not just some.",
-  "code_template": "interface Identifiable {\n  fn id(&self) -> Int;\n}\n\ninterface Summarizable {\n  fn summary(&self) -> Str;\n}\n\ntype Record {\n  record_id: Int;\n  data: Str;\n}\n\n// TODO: implement Identifiable for Record\n// TODO: implement Summarizable for Record\n\n// TODO: function that requires BOTH interfaces\nfn archive[T: Identifiable + Summarizable](item: &T) {\n  // print id and summary\n}\n\nfn main() -> Int {\n  // TODO: test with Record\n  return 0;\n}\n",
-  "solution": "interface Identifiable {\n  fn id(&self) -> Int;\n}\n\ninterface Summarizable {\n  fn summary(&self) -> Str;\n}\n\ntype Record {\n  record_id: Int;\n  data: Str;\n}\n\nfn Record.id(&self) -> Int {\n  self.record_id\n}\n\nfn Record.summary(&self) -> Str {\n  self.data.clone()\n}\n\nfn archive[T: Identifiable + Summarizable](item: &T) {\n  io.println(item.id());\n  io.println(item.summary());\n}\n\nfn main() -> Int {\n  let r = Record{ record_id: 1, data: \"Important note\" };\n  archive(&r);\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\ninterface Identifiable {\n  fn id(&self) -> Int;\n}\n\ninterface Summarizable {\n  fn summary(&self) -> Str;\n}\n\ntype Record {\n  record_id: Int;\n  data: Str;\n}\n\n// TODO: implement Identifiable for Record\n// TODO: implement Summarizable for Record\n\n// TODO: function that requires BOTH interfaces\nfn archive[T: Identifiable + Summarizable](item: &T) {\n  // print id and summary\n}\n\nfn main() -> Int {\n  // TODO: test with Record\n  return 0;\n}\n",
+  "solution": "use xiom.io;\ninterface Identifiable {\n  fn id(&self) -> Int;\n}\n\ninterface Summarizable {\n  fn summary(&self) -> Str;\n}\n\ntype Record {\n  record_id: Int;\n  data: Str;\n}\n\nfn Record.id(&self) -> Int {\n  self.record_id\n}\n\nfn Record.summary(&self) -> Str {\n  self.data.clone()\n}\n\nfn archive[T: Identifiable + Summarizable](item: &T) {\n  io.println(item.id().to_str());\n  io.println(item.summary());\n}\n\nfn main() -> Int {\n  let r = Record{ record_id: 1, data: \"Important note\" };\n  archive(&r);\n  return 0;\n}\n",
   "try_it": "Add a third interface `Timestamped` with `fn created_at(&self) -> Int`. Make Record implement it. Update `archive` to require all three interfaces. Create a second type that implements only two and try passing it to archive — observe the compiler error.",
-  "concepts": ["multiple-bounds", "interface-composition", "+", "type-constraints", "compile-time-checks"],
+  "concepts": [
+    "multiple-bounds",
+    "interface-composition",
+    "+",
+    "type-constraints",
+    "compile-time-checks"
+  ],
   "tips": [
     "Use `+` between interface names: `T: A + B + C`",
     "The compiler checks ALL bounds — if any are missing, it won't compile",
@@ -22,5 +28,9 @@
     "Adding unnecessary bounds — only require what the function actually uses"
   ],
   "next_lesson": "L6-31",
-  "related": ["L6-16", "L6-17", "L5-07"]
+  "related": [
+    "L6-16",
+    "L6-17",
+    "L5-07"
+  ]
 }

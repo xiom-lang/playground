@@ -7,10 +7,15 @@
   "why": "Combining random numbers with if/elif creates interactive programs that respond differently depending on chance.",
   "narrative": "## Building a Digital Fortune Teller\n\nNow you know both random numbers AND if/elif statements. It's time to combine them into something fun! Your fortune teller will randomly pick from a list of fortunes and display one.\n\n### How It Works\n\n```xiom\nfn main() {\n  let roll: Int = math.random_range(1, 3);\n  io.println(\"Your fortune cookie says...\");\n\n  if roll == 1 {\n    io.println(\"An exciting adventure is coming your way!\");\n  } elif roll == 2 {\n    io.println(\"A surprise gift will arrive soon.\");\n  } else {\n    io.println(\"Today is your lucky day — take a chance!\");\n  }\n}\n```\n\nThe program generates a random number 1 to 3, then uses `if/elif/else` to pick the matching fortune. The `elif` (else-if) checks a second condition if the first one is false. The `else` at the end catches anything that didn't match — in this case, when `roll` is 3.\n\nRun it a few times. You'll get different fortunes each time. You've just built your own fortune cookie!",
   "analogy": "A fortune teller is like a choose-your-own-adventure book — the random number picks which page (fortune) you land on.",
-  "code_template": "fn main() {\n  // TODO: generate a random number from 1 to 3\n  // TODO: use if/elif/else to print a different fortune for each number\n}\n",
-  "solution": "fn main() {\n  let roll: Int = math.random_range(1, 3);\n  io.println(\"Your fortune: \");\n  if roll == 1 {\n    io.println(\"An exciting adventure is coming your way!\");\n  } elif roll == 2 {\n    io.println(\"A surprise gift will arrive soon.\");\n  } else {\n    io.println(\"Today is your lucky day — take a chance!\");\n  }\n}\n",
+  "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: generate a random number from 1 to 3\n  // TODO: use if/elif/else to print a different fortune for each number\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.math;\nfn main() {\n  let roll: Int = math.random_range(1, 3);\n  io.println(\"Your fortune: \");\n  if roll == 1 {\n    io.println(\"An exciting adventure is coming your way!\");\n  } elif roll == 2 {\n    io.println(\"A surprise gift will arrive soon.\");\n  } else {\n    io.println(\"Today is your lucky day — take a chance!\");\n  }\n}\n",
   "try_it": "Add two more fortunes by changing the range to 1-5 and adding more `elif` branches. Make them creative!",
-  "concepts": ["if-elif-else", "random", "conditional-logic", "branching"],
+  "concepts": [
+    "if-elif-else",
+    "random",
+    "conditional-logic",
+    "branching"
+  ],
   "tips": [
     "Use `elif` to check additional conditions after the first `if` — you can chain as many as you need",
     "The `else` branch is your safety net — it catches anything that didn't match earlier conditions",
@@ -21,5 +26,9 @@
     "Forgetting to update the random range when adding more fortunes — if range is 1-3 but you have 5 fortunes, the last two never run"
   ],
   "next_lesson": "L0-44",
-  "related": ["L0-41", "L0-09", "L0-08"]
+  "related": [
+    "L0-41",
+    "L0-09",
+    "L0-08"
+  ]
 }

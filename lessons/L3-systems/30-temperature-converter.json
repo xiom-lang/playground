@@ -1,26 +1,38 @@
 {
-  "id": "L3-30",
-  "title": "Temperature Converter with Validation",
-  "level": "L3",
-  "duration": "9 min",
-  "story": "Your weather app reads temperatures from sensors as raw text like '100' or '0', but sometimes the sensor glitches and sends 'hot' or '99999'. You need to parse the string, validate it's a real temperature, and convert Celsius to Fahrenheit — all without crashing.",
-  "why": "Parsing, validating, and transforming data is a three-step pipeline that appears in nearly every real-world program.",
-  "narrative": "## From Raw Text to Converted Temperature\n\nConverting temperatures involves three distinct operations, each of which can fail. We'll chain them with `?` for clean, readable code.\n\n### Step 1: Parse the String\n\n```xiom\nfn c_to_f(c_str: Str) -> Result[Float64, Str] {\n  let celsius = string.str_to_float(c_str)?;\n```\n\n`string.str_to_float` returns `Result[Float64, Str]`. The `?` unwraps the float or returns the error immediately.\n\n### Step 2: Validate the Range\n\nAbsolute zero is -273.15°C. Anything below that is physically impossible. We'll also cap at 1000°C:\n\n```xiom\n  if celsius < -273.15 {\n    return Err(\"Temperature below absolute zero\");\n  }\n  if celsius > 1000.0 {\n    return Err(\"Temperature exceeds maximum\");\n  }\n```\n\n### Step 3: Convert\n\nCelsius to Fahrenheit formula: `F = C × 9/5 + 32`\n\n```xiom\n  let fahrenheit = celsius * 9.0 / 5.0 + 32.0;\n  return Ok(fahrenheit);\n}\n```\n\n### The Full Pipeline\n\nAll three steps in one function, connected by `?` and guard clauses:\n\n```xiom\nfn c_to_f(c_str: Str) -> Result[Float64, Str] {\n  let celsius = string.str_to_float(c_str)?;\n  if celsius < -273.15 { return Err(\"Below absolute zero\"); }\n  if celsius > 1000.0 { return Err(\"Above 1000 C\"); }\n  return Ok(celsius * 9.0 / 5.0 + 32.0);\n}\n```\n\n### Testing Known Values\n\n```xiom\nc_to_f(\"0\");     // Ok(32.0) — freezing point\nc_to_f(\"100\");   // Ok(212.0) — boiling point\nc_to_f(\"-40\");   // Ok(-40.0) — the magic point where C = F\nc_to_f(\"abc\");   // Err — not a number\nc_to_f(\"-300\");  // Err — below absolute zero\n```",
-  "analogy": "The temperature converter is like a three-stage security checkpoint at an airport. Stage 1: ID check (parse the string into a number). Stage 2: metal detector (validate the range — is this a physically possible temperature?). Stage 3: boarding pass scan (convert to Fahrenheit). Fail any stage and you don't fly.",
-  "code_template": "fn c_to_f(c_str: Str) -> Result[Float64, Str] {\n  // TODO: parse the string with string.str_to_float and ?\n  // TODO: validate celsius is >= -273.15 and <= 1000.0\n  // TODO: convert using F = C * 9/5 + 32\n  // TODO: return Ok(fahrenheit)\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: convert \"100\" to Fahrenheit, return (result * 10) as Int if Ok, -1 if Err\n  return 0;\n}",
-  "solution": "fn c_to_f(c_str: Str) -> Result[Float64, Str] {\n  let celsius = string.str_to_float(c_str)?;\n  if celsius < -273.15 {\n    return Err(\"Temperature below absolute zero\");\n  }\n  if celsius > 1000.0 {\n    return Err(\"Temperature exceeds maximum\");\n  }\n  let fahrenheit = celsius * 9.0 / 5.0 + 32.0;\n  return Ok(fahrenheit);\n}\n\nfn main() -> Int {\n  match c_to_f(\"100\") {\n    Ok(f) => { return (f * 10.0) as Int; }\n    Err(_) => { return -1; }\n  }\n}",
-  "try_it": "Test the boiling point (100°C → 212°F) and freezing point (0°C → 32°F). Then test invalid inputs: 'abc' (parse error), '-300' (below absolute zero), '2000' (above maximum). Try converting -40°C — it equals -40°F. Add a Fahrenheit-to-Celsius converter `f_to_c` that does the reverse.",
-  "concepts": ["Result", "string.str_to_float", "?", "Float64", "validation", "conversion", "guard clause"],
-  "tips": [
-    "`string.str_to_float(\"0\")` returns `Ok(0.0)` — it handles integer-looking strings as floats",
-    "Chain parsing with `?` first, then validate ranges — you can't validate a value you haven't parsed yet",
-    "Use Float64 literals (`9.0`, `5.0`, `32.0`) in calculations to avoid integer division truncation"
-  ],
-  "common_mistakes": [
-    "Writing `9 / 5` instead of `9.0 / 5.0` — integer division truncates, so 9/5 = 1 instead of 1.8",
-    "Using `string.str_to_int` for temperatures — you'd lose decimal precision for values like 36.6°C",
-    "Validating range before parsing — if `str_to_float` fails, there's nothing to validate"
-  ],
-  "next_lesson": "L3-31",
-  "related": ["L2-30", "L2-34", "L3-29"]
+    "id":  "L3-30",
+    "title":  "Temperature Converter with Validation",
+    "level":  "L3",
+    "duration":  "9 min",
+    "story":  "Your weather app reads temperatures from sensors as raw text like \u0027100\u0027 or \u00270\u0027, but sometimes the sensor glitches and sends \u0027hot\u0027 or \u002799999\u0027. You need to parse the string, validate it\u0027s a real temperature, and convert Celsius to Fahrenheit — all without crashing.",
+    "why":  "Parsing, validating, and transforming data is a three-step pipeline that appears in nearly every real-world program.",
+    "narrative":  "## From Raw Text to Converted Temperature\n\nConverting temperatures involves three distinct operations, each of which can fail. We\u0027ll chain them with `?` for clean, readable code.\n\n### Step 1: Parse the String\n\n```xiom\nfn c_to_f(c_str: Str) -\u003e Result[Float64, Str] {\n  let celsius = string.str_to_float(c_str)?;\n```\n\n`string.str_to_float` returns `Result[Float64, Str]`. The `?` unwraps the float or returns the error immediately.\n\n### Step 2: Validate the Range\n\nAbsolute zero is -273.15°C. Anything below that is physically impossible. We\u0027ll also cap at 1000°C:\n\n```xiom\n  if celsius \u003c -273.15 {\n    return Err(\"Temperature below absolute zero\");\n  }\n  if celsius \u003e 1000.0 {\n    return Err(\"Temperature exceeds maximum\");\n  }\n```\n\n### Step 3: Convert\n\nCelsius to Fahrenheit formula: `F = C × 9/5 + 32`\n\n```xiom\n  let fahrenheit = celsius * 9.0 / 5.0 + 32.0;\n  return Ok(fahrenheit);\n}\n```\n\n### The Full Pipeline\n\nAll three steps in one function, connected by `?` and guard clauses:\n\n```xiom\nfn c_to_f(c_str: Str) -\u003e Result[Float64, Str] {\n  let celsius = string.str_to_float(c_str)?;\n  if celsius \u003c -273.15 { return Err(\"Below absolute zero\"); }\n  if celsius \u003e 1000.0 { return Err(\"Above 1000 C\"); }\n  return Ok(celsius * 9.0 / 5.0 + 32.0);\n}\n```\n\n### Testing Known Values\n\n```xiom\nc_to_f(\"0\");     // Ok(32.0) — freezing point\nc_to_f(\"100\");   // Ok(212.0) — boiling point\nc_to_f(\"-40\");   // Ok(-40.0) — the magic point where C = F\nc_to_f(\"abc\");   // Err — not a number\nc_to_f(\"-300\");  // Err — below absolute zero\n```",
+    "analogy":  "The temperature converter is like a three-stage security checkpoint at an airport. Stage 1: ID check (parse the string into a number). Stage 2: metal detector (validate the range — is this a physically possible temperature?). Stage 3: boarding pass scan (convert to Fahrenheit). Fail any stage and you don\u0027t fly.",
+    "code_template":  "use xiom.io;\n\nuse xiom.string;\nfn c_to_f(c_str: Str) -\u003e Result[Float64, Str] {\n  // TODO: parse the string with string.str_to_float and ?\n  // TODO: validate celsius is \u003e= -273.15 and \u003c= 1000.0\n  // TODO: convert using F = C * 9/5 + 32\n  // TODO: return Ok(fahrenheit)\n  return Err(\"not implemented\");\n}\n\nfn main() -\u003e Int {\n  // TODO: convert \"100\" to Fahrenheit, return (result * 10) as Int if Ok, -1 if Err\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\nfn c_to_f(c_str: Str) -\u003e Result[Float64, Str] {\n  let celsius = string.str_to_float(c_str)?;\n  if celsius \u003c -273.15 {\n    return Err(\"Temperature below absolute zero\");\n  }\n  if celsius \u003e 1000.0 {\n    return Err(\"Temperature exceeds maximum\");\n  }\n  let fahrenheit = celsius * 9.0 / 5.0 + 32.0;\n  return Ok(fahrenheit);\n}\n\nfn main() -\u003e Int {\n  match c_to_f(\"100\") {\n    Ok(f) =\u003e { return (f * 10.0) as Int; }\n    Err(_) =\u003e { return -1; }\n  }\n}",
+    "try_it":  "Test the boiling point (100°C → 212°F) and freezing point (0°C → 32°F). Then test invalid inputs: \u0027abc\u0027 (parse error), \u0027-300\u0027 (below absolute zero), \u00272000\u0027 (above maximum). Try converting -40°C — it equals -40°F. Add a Fahrenheit-to-Celsius converter `f_to_c` that does the reverse.",
+    "concepts":  [
+                     "Result",
+                     "string.str_to_float",
+                     "?",
+                     "Float64",
+                     "validation",
+                     "conversion",
+                     "guard clause"
+                 ],
+    "tips":  [
+                 "`string.str_to_float(\"0\")` returns `Ok(0.0)` — it handles integer-looking strings as floats",
+                 "Chain parsing with `?` first, then validate ranges — you can\u0027t validate a value you haven\u0027t parsed yet",
+                 "Use Float64 literals (`9.0`, `5.0`, `32.0`) in calculations to avoid integer division truncation"
+             ],
+    "common_mistakes":  [
+                            "Writing `9 / 5` instead of `9.0 / 5.0` — integer division truncates, so 9/5 = 1 instead of 1.8",
+                            "Using `string.str_to_int` for temperatures — you\u0027d lose decimal precision for values like 36.6°C",
+                            "Validating range before parsing — if `str_to_float` fails, there\u0027s nothing to validate"
+                        ],
+    "next_lesson":  "L3-31",
+    "related":  [
+                    "L2-30",
+                    "L2-34",
+                    "L3-29"
+                ]
 }

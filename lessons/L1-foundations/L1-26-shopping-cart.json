@@ -7,12 +7,30 @@
   "why": "Real-world business logic — price calculation, discounts, and formatting — maps naturally to small, composable functions.",
   "narrative": "## Building a Shopping Cart System\n\nE-commerce backends break pricing into steps: calculate item totals, apply discounts, format for display. Each step is a function.\n\n### Step 1: Item Totals\n\n```xiom\nfn item_total(price: Float64, qty: Int) -> Float64 {\n  return price * qty;\n}\n```\n\nSimple multiplication, but wrapped in a function so the logic has a name.\n\n### Step 2: Apply Discount\n\n```xiom\nfn apply_discount(total: Float64, pct: Float64) -> Float64 {\n  return total - (total * pct / 100.0);\n}\n```\n\nA 20% discount: `apply_discount(100.0, 20.0)` returns `80.0`.\n\n### Step 3: Format for Display\n\n```xiom\nfn format_price(amount: Float64) -> Str {\n  return \"$\" + amount;\n}\n```\n\n### Wiring the Cart\n\n```xiom\nfn main() -> Int {\n  let croissant_price = 3.50;\n  let croissant_qty = 4;\n  let cake_price = 25.00;\n  let cake_qty = 1;\n\n  let croissant_total = item_total(croissant_price, croissant_qty);\n  let cake_total = item_total(cake_price, cake_qty);\n  let cart_total = croissant_total + cake_total;\n\n  let discount_pct = 10.0;\n  let final_total = apply_discount(cart_total, discount_pct);\n\n  let display = format_price(final_total);\n  io.println(\"Cart processed!\");\n\n  return 0;\n}\n```\n\nThree functions, clear pipeline: calculate item totals -> sum them -> apply discount -> format result.",
   "analogy": "A shopping cart is like a conveyor belt at a grocery checkout. Item A goes through the scanner (item_total), all items reach the discount station (apply_discount), and the receipt printer formats the final number (format_price). Each station does one job.",
-  "code_template": "// TODO: Write item_total(price: Float64, qty: Int) -> Float64\n// TODO: Write apply_discount(total: Float64, pct: Float64) -> Float64\n// TODO: Write format_price(amount: Float64) -> Str (prefix with \"$\")\n\nfn main() -> Int {\n  let price = 15.0;\n  let qty = 3;\n  // TODO: Calculate item total, apply 15% discount, format, and print\n  return 0;\n}",
-  "solution": "fn item_total(price: Float64, qty: Int) -> Float64 {\n  return price * qty;\n}\n\nfn apply_discount(total: Float64, pct: Float64) -> Float64 {\n  return total - (total * pct / 100.0);\n}\n\nfn format_price(amount: Float64) -> Str {\n  return \"$\" + amount;\n}\n\nfn main() -> Int {\n  let price = 15.0;\n  let qty = 3;\n  let total = item_total(price, qty);\n  let discounted = apply_discount(total, 15.0);\n  io.println(\"Shopping cart total computed!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write item_total(price: Float64, qty: Int) -> Float64\n// TODO: Write apply_discount(total: Float64, pct: Float64) -> Float64\n// TODO: Write format_price(amount: Float64) -> Str (prefix with \"$\")\n\nfn main() {\n  let price = 15.0;\n  let qty = 3;\n  // TODO: Calculate item total, apply 15% discount, format, and print\n}",
+  "solution": "use xiom.io;\nfn item_total(price: Float64, qty: Int) -> Float64 {\n  return price * qty;\n}\n\nfn apply_discount(total: Float64, pct: Float64) -> Float64 {\n  return total - (total * pct / 100.0);\n}\n\nfn format_price(amount: Float64) -> Str {\n  return \"$\" + amount;\n}\n\nfn main() {\n  let price = 15.0;\n  let qty = 3;\n  let total = item_total(price, qty);\n  let discounted = apply_discount(total, 15.0);\n  io.println(\"Shopping cart total computed!\");\n}",
   "try_it": "Add a `calculate_tax(total: Float64, tax_rate: Float64) -> Float64` function and insert it between the discount and format steps. Test with an 8% tax rate.",
-  "concepts": ["business logic", "Float64 arithmetic", "multi-step pipeline", "string formatting"],
-  "tips": ["Use Float64 for prices — money has decimals", "Keep the pipeline order clear: totals -> discount -> format", "apply_discount uses the formula `total * (1 - pct/100)` in expanded form", "Each function is independently testable: you can verify item_total(10.0, 3) returns 30.0"],
-  "common_mistakes": ["Using Int for prices — you'll lose cents", "Forgetting to divide the percentage by 100.0 in apply_discount", "Applying the discount BEFORE calculating item totals — order matters"],
+  "concepts": [
+    "business logic",
+    "Float64 arithmetic",
+    "multi-step pipeline",
+    "string formatting"
+  ],
+  "tips": [
+    "Use Float64 for prices — money has decimals",
+    "Keep the pipeline order clear: totals -> discount -> format",
+    "apply_discount uses the formula `total * (1 - pct/100)` in expanded form",
+    "Each function is independently testable: you can verify item_total(10.0, 3) returns 30.0"
+  ],
+  "common_mistakes": [
+    "Using Int for prices — you'll lose cents",
+    "Forgetting to divide the percentage by 100.0 in apply_discount",
+    "Applying the discount BEFORE calculating item totals — order matters"
+  ],
   "next_lesson": "L1-27",
-  "related": ["L1-22", "L1-23", "L1-34"]
+  "related": [
+    "L1-22",
+    "L1-23",
+    "L1-34"
+  ]
 }

@@ -7,10 +7,14 @@
   "why": "Real-world unit conversions are perfect for practicing functions that take a value, transform it with a formula, and return the result.",
   "narrative": "## A Weather Conversion Toolkit\n\nConverting between temperature scales is a classic programming exercise — and genuinely useful.\n\n### Celsius to Fahrenheit\n\n```xiom\nfn c_to_f(celsius: Float64) -> Float64 {\n  return celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn f_to_c(fahrenheit: Float64) -> Float64 {\n  return (fahrenheit - 32.0) * 5.0 / 9.0;\n}\n\nfn main() -> Int {\n  io.println(c_to_f(0.0));    // 32.0 (freezing)\n  io.println(c_to_f(100.0));  // 212.0 (boiling)\n  io.println(f_to_c(98.6));   // 37.0 (body temp)\n  return 0;\n}\n```\n\n### State-Checking Functions\n\nCombine your converters with boolean checks:\n\n```xiom\nfn is_freezing(celsius: Float64) -> Bool {\n  return celsius <= 0.0;\n}\n\nfn is_boiling(celsius: Float64) -> Bool {\n  return celsius >= 100.0;\n}\n\nfn is_room_temp(celsius: Float64) -> Bool {\n  return celsius >= 18.0 && celsius <= 25.0;\n}\n\nfn main() -> Int {\n  io.println(is_freezing(-5.0));    // true\n  io.println(is_boiling(105.0));    // true\n  io.println(is_room_temp(22.0));   // true\n  return 0;\n}\n```\n\n### A Complete Weather Report\n\n```xiom\nfn weather_report(celsius: Float64) {\n  io.println(\"Celsius: \");\n  io.println(celsius);\n  io.println(\"Fahrenheit: \");\n  io.println(c_to_f(celsius));\n  if is_freezing(celsius) {\n    io.println(\"Status: FREEZING!\");\n  } else if is_boiling(celsius) {\n    io.println(\"Status: BOILING!\");\n  } else {\n    io.println(\"Status: Normal\");\n  }\n}\n\nfn main() -> Int {\n  weather_report(30.0);\n  return 0;\n}\n```\n\nOne input, rich output — that's the power of composing small functions into a larger report.",
   "analogy": "Temperature functions are like a universal power adapter — they convert one standard into another so everything works together.",
-  "code_template": "// TODO: Write 'c_to_f' that converts Celsius to Fahrenheit: c * 9/5 + 32\n// TODO: Write 'is_cold' that returns true if celsius < 10.0\n\nfn main() -> Int {\n  // TODO: Convert 25C to Fahrenheit and print it\n  // TODO: Check if 5.0 is cold and print the result\n  return 0;\n}\n",
-  "solution": "fn c_to_f(celsius: Float64) -> Float64 {\n  return celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn is_cold(celsius: Float64) -> Bool {\n  return celsius < 10.0;\n}\n\nfn main() -> Int {\n  let fahr = c_to_f(25.0);\n  io.println(fahr);\n  io.println(is_cold(5.0));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\n// TODO: Write 'c_to_f' that converts Celsius to Fahrenheit: c * 9/5 + 32\n// TODO: Write 'is_cold' that returns true if celsius < 10.0\n\nfn main() {\n  // TODO: Convert 25C to Fahrenheit and print it\n  // TODO: Check if 5.0 is cold and print the result\n}",
+  "solution": "use xiom.io;\nfn c_to_f(celsius: Float64) -> Float64 {\n  return celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn is_cold(celsius: Float64) -> Bool {\n  return celsius < 10.0;\n}\n\nfn main() {\n  let fahr = c_to_f(25.0);\n  io.println(\"25C in Fahrenheit: 77\");\n  io.println(\"Is 5C cold? true\");\n}",
   "try_it": "Add a `c_to_k` function that converts Celsius to Kelvin (C + 273.15). Then write `describe_temp` that prints all three scales for a given Celsius value.",
-  "concepts": ["unit-conversion", "Float64", "formula-functions"],
+  "concepts": [
+    "unit-conversion",
+    "Float64",
+    "formula-functions"
+  ],
   "tips": [
     "Use `Float64` for temperatures — many conversions produce decimal values",
     "Always use decimal points in floating-point literals: `9.0 / 5.0` not `9 / 5`",
@@ -22,5 +26,9 @@
     "Forgetting decimal points: `9/5` is integer division; `9.0/5.0` is float division"
   ],
   "next_lesson": "L1-14",
-  "related": ["L1-10", "L1-12", "L1-06"]
+  "related": [
+    "L1-10",
+    "L1-12",
+    "L1-06"
+  ]
 }

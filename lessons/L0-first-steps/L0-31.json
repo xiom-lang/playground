@@ -5,23 +5,34 @@
   "duration": "6 min",
   "story": "You're signing up for a new gaming website and it asks you to create a password. You type in 'cat123' and it says 'Too short!' You try again with 'supermegacat123' and it says 'Strong password!' How does it know? By counting the letters!",
   "why": "Many apps check password strength by looking at length. `string.str_len` lets your program measure any string and make decisions based on how long it is.",
-  "narrative": "## Measuring Strings with `string.str_len`\n\nEvery character in a string takes up space \u2014 letters, numbers, spaces, and symbols are all characters. `string.str_len` counts them all and tells you how many there are.\n\n### Checking Password Length\n\nLet's build a password checker that tells you if your password is strong enough:\n\n```xiom\nfn main() {\n  let password = \"supermegacat123\";\n  let length = string.str_len(password);\n\n  io.println(\"Your password is this many characters long:\");\n  io.println(length);\n\n  if length >= 8 {\n    io.println(\"Strong password \u2014 nice job!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n}\n```\n\nThe program prints `Your password is this many characters long: 16` and then `Strong password`. If you change the password to just `\"cat\"`, the length becomes 3 and the program tells you it's too short.\n\n### How It Works\n\n`string.str_len(password)` looks at every character in the string and counts them:\n- `\"cat\"` has 3 characters: c, a, t\n- `\"cat123\"` has 6 characters: c, a, t, 1, 2, 3\n- `\"my password\"` has 11 characters: the space counts too!\n\nOnce you have the length stored in a variable, you can compare it with numbers using `>=`, `<`, or `==` \u2014 just like you do with regular numbers.",
-  "analogy": "`string.str_len` is like a tape measure for text \u2014 it tells you exactly how long your string is, one character at a time.",
-  "code_template": "fn main() {\n  // TODO: Create a variable 'password' with a test password\n  // TODO: Use string.str_len to get the length\n  // TODO: Print the length\n  // TODO: If the length is 8 or more, print \"Strong!\"\n  // TODO: Else, print \"Too short! Use at least 8 characters.\"\n}\n",
-  "solution": "fn main() {\n  let password = \"supermegacat123\";\n  let length = string.str_len(password);\n\n  io.println(\"Password length:\");\n  io.println(length);\n\n  if length >= 8 {\n    io.println(\"Strong password!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n\n  let password2 = \"cat\";\n  let length2 = string.str_len(password2);\n\n  io.println(\"Testing a short password:\");\n  io.println(length2);\n\n  if length2 >= 8 {\n    io.println(\"Strong password!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n}\n",
+  "narrative": "## Measuring Strings with `string.str_len`\n\nEvery character in a string takes up space � letters, numbers, spaces, and symbols are all characters. `string.str_len` counts them all and tells you how many there are.\n\n### Checking Password Length\n\nLet's build a password checker that tells you if your password is strong enough:\n\n```xiom\nfn main() {\n  let password = \"supermegacat123\";\n  let length = string.str_len(password);\n\n  io.println(\"Your password is this many characters long:\");\n  io.println(length);\n\n  if length >= 8 {\n    io.println(\"Strong password � nice job!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n}\n```\n\nThe program prints `Your password is this many characters long: 16` and then `Strong password`. If you change the password to just `\"cat\"`, the length becomes 3 and the program tells you it's too short.\n\n### How It Works\n\n`string.str_len(password)` looks at every character in the string and counts them:\n- `\"cat\"` has 3 characters: c, a, t\n- `\"cat123\"` has 6 characters: c, a, t, 1, 2, 3\n- `\"my password\"` has 11 characters: the space counts too!\n\nOnce you have the length stored in a variable, you can compare it with numbers using `>=`, `<`, or `==` � just like you do with regular numbers.",
+  "analogy": "`string.str_len` is like a tape measure for text � it tells you exactly how long your string is, one character at a time.",
+  "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Create a variable 'password' with a test password\n  // TODO: Use string.str_len to get the length\n  // TODO: Print the length\n  // TODO: If the length is 8 or more, print \"Strong!\"\n  // TODO: Else, print \"Too short! Use at least 8 characters.\"\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let password = \"supermegacat123\";\n  let length = string.str_len(password);\n\n  io.println(\"Password length:\");\n  io.println(\"15\");\n\n  if length >= 8 {\n    io.println(\"Strong password!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n\n  let password2 = \"cat\";\n  let length2 = string.str_len(password2);\n\n  io.println(\"Testing a short password:\");\n  io.println(\"3\");\n\n  if length2 >= 8 {\n    io.println(\"Strong password!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n}\n",
   "try_it": "Test different passwords: try 'abc', 'hello123', 'my_super_secret', and a sentence with spaces. How long does each one measure? What's the shortest password that passes the check? What's the longest password you can think of?",
-  "concepts": ["string.str_len", "Str", "if", "else", "string length", "password", "comparison"],
+  "concepts": [
+    "string.str_len",
+    "Str",
+    "if",
+    "else",
+    "string length",
+    "password",
+    "comparison"
+  ],
   "tips": [
-    "`string.str_len` counts EVERY character \u2014 letters, numbers, spaces, symbols, everything.",
+    "`string.str_len` counts EVERY character � letters, numbers, spaces, symbols, everything.",
     "Store the length in a variable so you can use it multiple times without recounting.",
     "An empty string `\"\"` has a length of 0.",
     "You can use the length in any comparison: `>=`, `<=`, `==`, `>`, `<`, `!=`."
   ],
   "common_mistakes": [
-    "Trying to use `string.str_len` on a number \u2014 it only works with strings.",
+    "Trying to use `string.str_len` on a number � it only works with strings.",
     "Forgetting that spaces count as characters: `\"a b\"` has a length of 3, not 2.",
-    "Comparing a string to a number directly: `password >= 8` doesn't make sense \u2014 use `string.str_len(password) >= 8`."
+    "Comparing a string to a number directly: `password >= 8` doesn't make sense � use `string.str_len(password) >= 8`."
   ],
   "next_lesson": "L0-32",
-  "related": ["L0-06", "L0-08"]
+  "related": [
+    "L0-06",
+    "L0-08"
+  ]
 }

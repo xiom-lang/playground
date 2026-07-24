@@ -7,10 +7,15 @@
   "why": "Parameters let you customize what a function does each time you call it, making functions flexible instead of one-size-fits-all.",
   "narrative": "## Passing Information to Functions\n\nLast lesson's `greet()` function was nice, but it always said the same thing. What if you want to greet different people? That's where **parameters** come in.\n\n### Adding a Parameter\n\n```xiom\nfn greet(name: Str) {\n  io.println(\"Hello, \");\n  io.println(name);\n  io.println(\"!\");\n}\n\nfn main() {\n  greet(\"Alice\");\n  greet(\"Bob\");\n  greet(\"Charlie\");\n}\n```\n\nNow `greet` has a parameter: `name: Str`. Inside the parentheses, you declare what information the function needs. When you call `greet(\"Alice\")`, the string \"Alice\" flows into the `name` parameter, and the function uses it.\n\nRun this program and you'll see personalized greetings for all three friends. One function, infinite names!\n\n### Multiple Parameters\n\nYou can add more parameters with commas:\n\n```xiom\nfn introduce(name: Str, age: Int) {\n  io.println(name);\n  io.println(\" is \");\n  io.println(age);\n  io.println(\" years old.\");\n}\n\nfn main() {\n  introduce(\"Dana\", 22);\n}\n```\n\n`introduce` takes TWO ingredients: a name (Str) and an age (Int). Order matters — the first argument goes to `name`, the second to `age`.",
   "analogy": "Parameters are like ingredients you give to a recipe — 'make me a cake WITH chocolate' vs 'make me a cake WITH vanilla'. Same recipe, different result!",
-  "code_template": "// TODO: define a function 'greet' that takes a name parameter (Str)\n// TODO: the function should print a personalized greeting using the name\n\nfn main() {\n  // TODO: call greet with at least two different names\n}\n",
-  "solution": "fn greet(name: Str) {\n  io.println(\"Hello, \");\n  io.println(name);\n  io.println(\"!\");\n}\n\nfn main() {\n  greet(\"Alice\");\n  greet(\"Bob\");\n}\n",
+  "code_template": "use xiom.io;\n// TODO: define a function 'greet' that takes a name parameter (Str)\n// TODO: the function should print a personalized greeting using the name\n\nfn main() {\n  // TODO: call greet with at least two different names\n}",
+  "solution": "use xiom.io;\nfn greet(name: Str) {\n  io.println(\"Hello, \");\n  io.println(name);\n  io.println(\"!\");\n}\n\nfn main() {\n  greet(\"Alice\");\n  greet(\"Bob\");\n}",
   "try_it": "Add an `age: Int` parameter to `greet` so it prints both the name AND age. Call it like `greet(\"Emma\", 15)`.",
-  "concepts": ["parameters", "arguments", "function-inputs", "customization"],
+  "concepts": [
+    "parameters",
+    "arguments",
+    "function-inputs",
+    "customization"
+  ],
   "tips": [
     "Parameters go inside the parentheses `( )` when defining the function — each needs a name and a type",
     "Arguments are the actual values you pass when calling — `greet(\"Alice\")` passes \"Alice\" as the argument",
@@ -21,5 +26,9 @@
     "Passing the wrong type — `greet(42)` fails because the parameter expects Str, not Int"
   ],
   "next_lesson": "L1-03",
-  "related": ["L1-01", "L1-03", "L0-06"]
+  "related": [
+    "L1-01",
+    "L1-03",
+    "L0-06"
+  ]
 }

@@ -7,10 +7,15 @@
   "why": "Functions are the building blocks of every real program — they let you write code once and reuse it forever.",
   "narrative": "## Writing Your First Function\n\nA function is a named block of code that you can call whenever you need it. Think of it like saving a recipe — write it once, use it a hundred times!\n\n### Creating a Simple Function\n\n```xiom\nfn greet() {\n  io.println(\"Hello, friend!\");\n  io.println(\"Welcome to XIOM!\");\n}\n\nfn main() {\n  io.println(\"Program starting...\");\n  greet();\n  io.println(\"Program done!\");\n}\n```\n\nLet's break it down:\n- `fn greet() { }` defines a new function named `greet`. The empty `()` means it takes no inputs.\n- `greet();` inside `main()` calls the function — this tells XIOM: \"Go run the code inside greet, then come back here.\"\n- The output shows \"Program starting...\", then the greeting, then \"Program done!\".\n\nYou can call `greet()` as many times as you want. Add a second `greet();` and watch the greeting print twice!\n\n### Why Functions Matter\n\nWithout functions, you'd have to copy and paste the same code over and over. Functions let you name a piece of logic once and reuse it everywhere — cleaner, shorter, and easier to change.",
   "analogy": "A function is like a named recipe — write it once, use it many times. You don't rewrite the pancake recipe every morning; you just follow the one you already have.",
-  "code_template": "// TODO: define a function called 'greet' that prints a welcome message\n\nfn main() {\n  // TODO: call the greet function\n}\n",
-  "solution": "fn greet() {\n  io.println(\"Hello, friend!\");\n  io.println(\"Welcome to XIOM!\");\n}\n\nfn main() {\n  greet();\n}\n",
+  "code_template": "use xiom.io;\n// TODO: define a function called 'greet' that prints a welcome message\n\nfn main() {\n  // TODO: call the greet function\n}",
+  "solution": "use xiom.io;\nfn greet() {\n  io.println(\"Hello, friend!\");\n  io.println(\"Welcome to XIOM!\");\n}\n\nfn main() {\n  greet();\n}",
   "try_it": "Add a second function called `say_bye()` that prints a goodbye message. Call both `greet()` and `say_bye()` from main.",
-  "concepts": ["functions", "fn", "function-calls", "code-reuse"],
+  "concepts": [
+    "functions",
+    "fn",
+    "function-calls",
+    "code-reuse"
+  ],
   "tips": [
     "Define your function BEFORE calling it — XIOM reads top to bottom",
     "The empty parentheses `()` after the function name mean 'this function takes no inputs'",
@@ -21,5 +26,9 @@
     "Defining a function inside main — functions are defined at the top level, not nested inside other functions"
   ],
   "next_lesson": "L1-02",
-  "related": ["L0-01", "L1-02", "L1-04"]
+  "related": [
+    "L0-01",
+    "L1-02",
+    "L1-04"
+  ]
 }

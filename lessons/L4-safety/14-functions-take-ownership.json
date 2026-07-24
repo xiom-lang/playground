@@ -1,27 +1,35 @@
 {
-  "id": "L4-14",
-  "title": "Functions Take Ownership",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "You give a gift to a friend — it's theirs now. In XIOM, passing a value to a function is like giving a gift — the function now owns it.",
-  "why": "Functions taking ownership enables zero-cost abstractions — the compiler knows exactly when to free memory without a garbage collector.",
-  "narrative": "## Passing Values Transfers Ownership\n\nWhen you pass a value to a function that takes an owned parameter, ownership moves:\n\n```xiom\nfn consume(v: Vec[Int]) {\n  io.println(v.len());\n  // v is dropped here when function ends\n}\n\nfn main() -> Int {\n  let my_vec = Vec[Int].new();\n  my_vec.push(1);\n  my_vec.push(2);\n  consume(my_vec);       // Ownership moves into consume\n  // io.println(my_vec.len());  // ERROR: my_vec was moved!\n  return 0;\n}\n```\n\n### Why Functions Take Ownership\n\n```xiom\nfn process_and_discard(data: Vec[Int]) {\n  // Do heavy work with data...\n  // No need to free — compiler does it at end of scope\n}\n```\n\nThis pattern is essential for writing functions that take responsibility for cleaning up resources. The function that OWNS the value decides when to free it.\n\n### Ownership Is a Contract\n\nThe function signature `fn consume(v: Vec[Int])` says:\n- \"I need this Vec, and I'm taking full responsibility for it\"\n- \"After you call me, you can't use it anymore\"\n- \"I'll clean it up when I'm done\"\n\nThis is checked at compile time. No runtime overhead.",
-  "analogy": "Passing a value to a function is like giving a gift — once you hand it over, it belongs to the recipient. You can't use a gift you already gave away.",
-  "code_template": "// TODO: Write a function 'print_and_drop' that takes Vec[Int]\n// Print the length and let it drop\n// In main, create a Vec, pass it, verify you can't use it after\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
-  "solution": "fn print_and_drop(v: Vec[Int]) {\n  io.println(v.len());\n}\n\nfn main() -> Int {\n  let my_vec = Vec[Int].new();\n  my_vec.push(10);\n  my_vec.push(20);\n  let len = my_vec.len();\n  print_and_drop(my_vec);\n  return len as Int;\n}",
-  "try_it": "Try adding `io.println(my_vec.len());` after the call to `print_and_drop`. See the compiler error about using a moved value.",
-  "concepts": ["ownership transfer", "function parameters", "resource cleanup"],
-  "tips": [
-    "A function signature without & means 'I take ownership'",
-    "Functions that own values automatically free them at end of scope",
-    "Returning a value from a function also transfers ownership to the caller",
-    "Use owned parameters when the function should decide the value's lifetime"
-  ],
-  "common_mistakes": [
-    "Forgetting that passing without & moves ownership — use & to borrow instead",
-    "Trying to use the same value in multiple function calls without cloning",
-    "Confusing 'taking ownership' with 'modifying' — you can take ownership of an immutable value"
-  ],
-  "next_lesson": "L4-15",
-  "related": ["L4-11", "L4-15", "L4-19"]
+    "id":  "L4-14",
+    "title":  "Functions Take Ownership",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "You give a gift to a friend — it\u0027s theirs now. In XIOM, passing a value to a function is like giving a gift — the function now owns it.",
+    "why":  "Functions taking ownership enables zero-cost abstractions — the compiler knows exactly when to free memory without a garbage collector.",
+    "narrative":  "## Passing Values Transfers Ownership\n\nWhen you pass a value to a function that takes an owned parameter, ownership moves:\n\n```xiom\nfn consume(v: Vec[Int]) {\n  io.println(v.len());\n  // v is dropped here when function ends\n}\n\nfn main() -\u003e Int {\n  let my_vec = Vec[Int].new();\n  my_vec.push(1);\n  my_vec.push(2);\n  consume(my_vec);       // Ownership moves into consume\n  // io.println(my_vec.len());  // ERROR: my_vec was moved!\n  return 0;\n}\n```\n\n### Why Functions Take Ownership\n\n```xiom\nfn process_and_discard(data: Vec[Int]) {\n  // Do heavy work with data...\n  // No need to free — compiler does it at end of scope\n}\n```\n\nThis pattern is essential for writing functions that take responsibility for cleaning up resources. The function that OWNS the value decides when to free it.\n\n### Ownership Is a Contract\n\nThe function signature `fn consume(v: Vec[Int])` says:\n- \"I need this Vec, and I\u0027m taking full responsibility for it\"\n- \"After you call me, you can\u0027t use it anymore\"\n- \"I\u0027ll clean it up when I\u0027m done\"\n\nThis is checked at compile time. No runtime overhead.",
+    "analogy":  "Passing a value to a function is like giving a gift — once you hand it over, it belongs to the recipient. You can\u0027t use a gift you already gave away.",
+    "code_template":  "use xiom.io;\n\n// TODO: Write a function \u0027print_and_drop\u0027 that takes Vec[Int]\n// Print the length and let it drop\n// In main, create a Vec, pass it, verify you can\u0027t use it after\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\nfn print_and_drop(v: Vec[Int]) {\n  io.println(v.len().to_str());\n}\n\nfn main() -\u003e Int {\n  let my_vec = Vec[Int].new();\n  my_vec.push(10);\n  my_vec.push(20);\n  let len = my_vec.len();\n  print_and_drop(my_vec);\n  return len as Int;\n}",
+    "try_it":  "Try adding `io.println(my_vec.len());` after the call to `print_and_drop`. See the compiler error about using a moved value.",
+    "concepts":  [
+                     "ownership transfer",
+                     "function parameters",
+                     "resource cleanup"
+                 ],
+    "tips":  [
+                 "A function signature without \u0026 means \u0027I take ownership\u0027",
+                 "Functions that own values automatically free them at end of scope",
+                 "Returning a value from a function also transfers ownership to the caller",
+                 "Use owned parameters when the function should decide the value\u0027s lifetime"
+             ],
+    "common_mistakes":  [
+                            "Forgetting that passing without \u0026 moves ownership — use \u0026 to borrow instead",
+                            "Trying to use the same value in multiple function calls without cloning",
+                            "Confusing \u0027taking ownership\u0027 with \u0027modifying\u0027 — you can take ownership of an immutable value"
+                        ],
+    "next_lesson":  "L4-15",
+    "related":  [
+                    "L4-11",
+                    "L4-15",
+                    "L4-19"
+                ]
 }

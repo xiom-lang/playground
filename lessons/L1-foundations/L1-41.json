@@ -7,12 +7,32 @@
   "why": "Factorial calculation with a while loop inside a function demonstrates accumulator patterns — keeping a running product that grows with each iteration.",
   "narrative": "## Computing Factorials\n\nThe factorial of n (written n!) is the product of all positive integers from 1 to n.\n\n- 5! = 5 × 4 × 3 × 2 × 1 = 120\n- 3! = 3 × 2 × 1 = 6\n- 1! = 1\n- 0! = 1 (by definition)\n\n### The Factorial Function\n\n```xiom\nfn factorial(n: Int) -> Int {\n  if n < 0 {\n    return 0;\n  }\n  var result = 1;\n  var i = 1;\n  while i <= n {\n    result = result * i;\n    i = i + 1;\n  }\n  return result;\n}\n```\n\n### Tracing factorial(5)\n\n| i | result | calculation |\n|---|--------|-------------|\n| 1 | 1      | 1 × 1 = 1  |\n| 2 | 2      | 1 × 2 = 2  |\n| 3 | 6      | 2 × 3 = 6  |\n| 4 | 24     | 6 × 4 = 24 |\n| 5 | 120    | 24 × 5 = 120|\n\nThe accumulator `result` starts at 1 and grows by multiplying with each `i` from 1 to n.\n\n### Calling the Function\n\n```xiom\nfn main() -> Int {\n  let f5 = factorial(5);\n  let f7 = factorial(7);\n  let f0 = factorial(0);\n\n  io.println(\"Factorials computed!\");\n\n  return 0;\n}\n```\n\n### Why Start at 1?\n\nStarting `result = 1` is the multiplicative identity. Starting at 0 would make every factorial 0 (anything × 0 = 0). This is the same reason `i` starts at 1 — multiplying by 0 would ruin the product.",
   "analogy": "Computing factorial is like stacking dominoes in a line and multiplying their values. You start with one domino (result=1). Each step, you pick up the next domino (i) and multiply it into the growing product. After n steps, you've multiplied all dominoes from 1 to n, and the final product is n!.",
-  "code_template": "// TODO: Write factorial(n: Int) -> Int\n// Handle n < 0 (return 0)\n// Start result at 1, use a while loop from 1 to n\n// Multiply result by i each iteration\n\nfn main() -> Int {\n  // TODO: Call factorial(5) and factorial(7)\n  // Print both results\n  return 0;\n}",
-  "solution": "fn factorial(n: Int) -> Int {\n  if n < 0 {\n    return 0;\n  }\n  var result = 1;\n  var i = 1;\n  while i <= n {\n    result = result * i;\n    i = i + 1;\n  }\n  return result;\n}\n\nfn main() -> Int {\n  let f5 = factorial(5);\n  let f7 = factorial(7);\n  io.println(\"Factorials ready!\");\n  return 0;\n}",
+  "code_template": "use xiom.io;\n// TODO: Write factorial(n: Int) -> Int\n// Handle n < 0 (return 0)\n// Start result at 1, use a while loop from 1 to n\n// Multiply result by i each iteration\n\nfn main() {\n  // TODO: Call factorial(5) and factorial(7)\n  // Print both results\n}",
+  "solution": "use xiom.io;\nfn factorial(n: Int) -> Int {\n  if n < 0 {\n  }\n  var result = 1;\n  var i = 1;\n  while i <= n {\n    result = result * i;\n    i = i + 1;\n  }\n}\nfn main() {\n  let f5 = factorial(5);\n  let f7 = factorial(7);\n  io.println(\"Factorials ready!\");\n}",
   "try_it": "Calculate factorial(10) and factorial(0). Then write a `factorial_range(start: Int, end: Int)` function that prints the factorial of every number from start to end using your factorial function in a loop.",
-  "concepts": ["accumulator pattern", "while loop in function", "multiplicative identity", "edge case handling"],
-  "tips": ["Start `result` at 1 (not 0) — 0 multiplied by anything is still 0", "Handle n < 0 as an edge case before the loop", "The loop runs from 1 to n inclusive — use `<=` not `<`", "factorial grows extremely fast — even 10! is already 3,628,800"],
-  "common_mistakes": ["Starting result at 0 instead of 1 — every factorial would be 0", "Starting the loop at 0 instead of 1 — multiplying by 0 ruins the product", "Using an exclusive bound (i < n) instead of inclusive (i <= n) — misses the last multiplication", "Forgetting to handle n < 0 — factorial is undefined for negative numbers"],
+  "concepts": [
+    "accumulator pattern",
+    "while loop in function",
+    "multiplicative identity",
+    "edge case handling"
+  ],
+  "tips": [
+    "Start `result` at 1 (not 0) — 0 multiplied by anything is still 0",
+    "Handle n < 0 as an edge case before the loop",
+    "The loop runs from 1 to n inclusive — use `<=` not `<`",
+    "factorial grows extremely fast — even 10! is already 3,628,800"
+  ],
+  "common_mistakes": [
+    "Starting result at 0 instead of 1 — every factorial would be 0",
+    "Starting the loop at 0 instead of 1 — multiplying by 0 ruins the product",
+    "Using an exclusive bound (i < n) instead of inclusive (i <= n) — misses the last multiplication",
+    "Forgetting to handle n < 0 — factorial is undefined for negative numbers"
+  ],
   "next_lesson": "L1-42",
-  "related": ["L1-17", "L1-32", "L1-22", "L1-07"]
+  "related": [
+    "L1-17",
+    "L1-32",
+    "L1-22",
+    "L1-07"
+  ]
 }

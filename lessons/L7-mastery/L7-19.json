@@ -7,10 +7,16 @@
   "why": "Password generation teaches random selection from character sets, configurable composition rules, and building strings from randomized components.",
   "narrative": "## Building a Password Generator\n\n### Character Sets\n\n```xiom\nfn get_lowers() -> Str { \"abcdefghijklmnopqrstuvwxyz\" }\nfn get_uppers() -> Str { \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" }\nfn get_digits() -> Str { \"0123456789\" }\nfn get_symbols() -> Str { \"!@#$%^&*()-_=+\" }\n```\n\n### Building the Character Pool\n\n```xiom\nfn build_pool(use_upper: Bool, use_digits: Bool, use_symbols: Bool) -> Str {\n  let mut pool = get_lowers();\n  if use_upper { pool = string.str_concat(pool, get_uppers()); };\n  if use_digits { pool = string.str_concat(pool, get_digits()); };\n  if use_symbols { pool = string.str_concat(pool, get_symbols()); };\n  pool\n}\n```\n\n### Generating the Password\n\n```xiom\nfn generate_password(length: Int, pool: Str, seed: Int) -> Str {\n  let mut password = \"\";\n  let mut state = seed;\n  let mut i = 0;\n  while i < length {\n    state = (state * 1103515245 + 12345) % 2147483648;\n    let idx = state % pool.len();\n    password = string.str_concat(password, string.from_char(pool.get(idx).unwrap()));\n    i += 1;\n  };\n  password\n}\n```\n\n### Validating Password Strength\n\n```xiom\nfn has_upper(s: Str) -> Bool { /* check for A-Z */ }\nfn has_digit(s: Str) -> Bool { /* check for 0-9 */ }\nfn has_symbol(s: Str) -> Bool { /* check for special chars */ }\n\nfn is_strong_password(s: Str) -> Bool {\n  s.len() >= 8 && has_upper(s) && has_digit(s) && has_symbol(s)\n}\n```\n\n### Example Output\n\n- `aB3$xK9m` (8 chars, mixed)\n- `Tr7#pQz2@wL5` (12 chars, strong)\n- `k9*Mf4` (too short — needs 8+ chars)",
   "analogy": "Mixing paint colors: lowercase letters are blue, uppercase are red, digits are yellow, symbols are green. Your password generator dips from each can randomly, creating a unique, unpredictable color blend every time. No two passwords are ever the same.",
-  "code_template": "fn generate_password(length: Int, include_digits: Bool, include_symbols: Bool) -> Str {\n  // TODO: build character pool (always include lowercase)\n  // TODO: pick random characters from pool to build password of given length\n  // TODO: use a simple LCG: state = (state * 1103515245 + 12345) % 2^31\n}\n\nfn main() -> Int {\n  // TODO: generate 3 passwords: basic (8, no digits/symbols), medium (10, digits), strong (12, digits+symbols)\n  return 0;\n}\n",
-  "solution": "fn generate_password(length: Int, include_digits: Bool, include_symbols: Bool) -> Str {\n  let mut pool = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\n  if include_digits { pool = string.str_concat(pool, \"0123456789\"); };\n  if include_symbols { pool = string.str_concat(pool, \"!@#$%^&*\"); };\n\n  let mut password = \"\";\n  let mut state = 12345;\n  let mut i = 0;\n  while i < length {\n    state = (state * 1103515245 + 12345) % 2147483648;\n    let idx = state % pool.len();\n    password = string.str_concat(password, string.from_char(pool.get(idx).unwrap()));\n    i += 1;\n  };\n  password\n}\n\nfn main() -> Int {\n  io.println(generate_password(8, false, false));\n  io.println(generate_password(10, true, false));\n  io.println(generate_password(12, true, true));\n  return 0;\n}\n",
+  "code_template": "use xiom.io;\nfn generate_password(length: Int, include_digits: Bool, include_symbols: Bool) -> Str {\n  // TODO: build character pool (always include lowercase)\n  // TODO: pick random characters from pool to build password of given length\n  // TODO: use a simple LCG: state = (state * 1103515245 + 12345) % 2^31\n}\n\nfn main() -> Int {\n  // TODO: generate 3 passwords: basic (8, no digits/symbols), medium (10, digits), strong (12, digits+symbols)\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn generate_password(length: Int, include_digits: Bool, include_symbols: Bool) -> Str {\n  let mut pool = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\n  if include_digits { pool = string.str_concat(pool, \"0123456789\"); };\n  if include_symbols { pool = string.str_concat(pool, \"!@#$%^&*\"); };\n\n  let mut password = \"\";\n  let mut state = 12345;\n  let mut i = 0;\n  while i < length {\n    state = (state * 1103515245 + 12345) % 2147483648;\n    let idx = state % pool.len();\n    password = string.str_concat(password, string.from_char(pool.get(idx).unwrap()));\n    i += 1;\n  };\n  password\n}\n\nfn main() -> Int {\n  io.println(generate_password(8, false, false));\n  io.println(generate_password(10, true, false));\n  io.println(generate_password(12, true, true));\n  return 0;\n}\n",
   "try_it": "Add a guarantee that the password contains at least one of each selected character type (upper, digit, symbol). Re-generate until the guarantee is met. Add a password strength meter that rates passwords 'Weak', 'Medium', 'Strong' based on length and character variety.",
-  "concepts": ["password-generation", "random-sampling", "character-sets", "LCG", "string-building"],
+  "concepts": [
+    "password-generation",
+    "random-sampling",
+    "character-sets",
+    "LCG",
+    "string-building"
+  ],
   "tips": [
     "Always include lowercase — it's the baseline",
     "Use a simple LCG (Linear Congruential Generator) for random numbers",
@@ -22,5 +28,9 @@
     "Making passwords too short — 8 chars minimum, 12+ recommended"
   ],
   "next_lesson": "L7-20",
-  "related": ["L7-13", "L6-23", "L2-52"]
+  "related": [
+    "L7-13",
+    "L6-23",
+    "L2-52"
+  ]
 }

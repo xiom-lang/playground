@@ -1,26 +1,35 @@
 {
-  "id": "L4-45",
-  "title": "Contract Debugging",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "A team spent hours chasing a bug that manifested as 'unexpected NaN in calculation.' When they enabled runtime contracts, the error appeared instantly at the source: 'Contract violation: divisor != 0 at math.xi:42'. Twelve hours of debugging reduced to two seconds.",
-  "why": "Contract violations produce precise, actionable error messages that pinpoint the exact precondition failure — turning mystery crashes into instant diagnoses.",
-  "narrative": "## Reading Contract Violation Output\n\nWhen a contract fails, XIOM produces a structured error message. Learning to read it is a debugging superpower:\n\n### Example: Division by Zero\n```xiom\nfn divide(a: Int, b: Int) -> Int\n  requires: b != 0;\n{\n  return a / b;\n}\n\nfn main() -> Int {\n  let x = 10;\n  let y = 0;\n  return divide(x, y); // Contract violation!\n}\n```\n\nOutput:\n```\nCONTRACT VIOLATION: requires clause failed\n  Function: divide (L4-45:divide)\n  Condition: b != 0\n  At: divide(b=0)\n  Location: main.xi:10\n  Trace: main -> divide\n```\n\n### Example: Invariant Failure\n```xiom\ntype PositiveBal = {\n  amount: Float64;\n  invariant: amount > 0.0;\n}\n\nfn withdraw(acc: &mut PositiveBal, amt: Float64)\n  requires: amt <= acc.amount;\n{\n  acc.amount = acc.amount - amt;\n  // If amt > acc.amount, the invariant: amount > 0.0 FAILS\n}\n```\n\nOutput:\n```\nINVARIANT VIOLATION: type PositiveBal\n  Condition: amount > 0.0\n  Field: amount = -10.0\n  After: withdraw (L4-45:withdraw)\n  Location: main.xi:15\n```\n\n### The Key Insight\n\nThe error tells you WHAT failed, WHERE it failed, and the VALUES that caused the failure. No guesswork.",
-  "analogy": "Contract violations are like a surgeon's scalpel — they make a precise incision exactly where the problem is, instead of leaving you to diagnose symptoms.",
-  "code_template": "type SafeAmount = {\n  value: Int;\n  invariant: value >= 0;\n}\n\nfn decrement(a: &mut SafeAmount, by: Int)\n  requires: by > 0;\n  requires: by <= a.value;\n  ensures: a.value == a@pre.value - by;\n{\n  a.value = a.value - by;\n}\n\nfn main() -> Int {\n  // TODO: Create SafeAmount{ value: 5 }\n  // First, decrement by 3 (should work)\n  // Then, decrement by 10 — this WILL trigger a contract violation\n  // Read and interpret the error message\n  // FIX the bug: ensure by <= a.value before calling\n  return 0;\n}",
-  "solution": "type SafeAmount = {\n  value: Int;\n  invariant: value >= 0;\n}\n\nfn decrement(a: &mut SafeAmount, by: Int)\n  requires: by > 0;\n  requires: by <= a.value;\n  ensures: a.value == a@pre.value - by;\n{\n  a.value = a.value - by;\n}\n\nfn main() -> Int {\n  var a: SafeAmount = SafeAmount{ value: 5 };\n  if 3 <= a.value {\n    decrement(&mut a, 3);\n  }\n  return a.value;\n}",
-  "try_it": "Deliberately break a contract: create a `Temperature{ celsius: -300.0 }` and observe the error message. Then create a Stack and call `pop()` without pushing anything first. Notice how the error messages differ between invariant violations and requires violations. Which gives you more context?",
-  "concepts": ["contract-violation", "error-messages", "debugging", "invariant-failure"],
-  "tips": [
-    "Always read the full contract violation trace — the call stack tells you WHICH CALLER violated the contract",
-    "Invariant violations tell you the field values at failure — use this to trace how the bad state was reached",
-    "Enable runtime contracts during development — the overhead is worth the instant bug detection"
-  ],
-  "common_mistakes": [
-    "Ignoring contract violation output and adding print statements instead — the output already tells you everything",
-    "Not reading the location field — 'main.xi:10' tells you exactly which line to fix",
-    "Disabling contracts in development because they 'slow things down' — the slowdown is negligible compared to debugging time saved"
-  ],
-  "next_lesson": "L4-46",
-  "related": ["L4-07", "L4-10", "L4-30"]
+    "id":  "L4-45",
+    "title":  "Contract Debugging",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "A team spent hours chasing a bug that manifested as \u0027unexpected NaN in calculation.\u0027 When they enabled runtime contracts, the error appeared instantly at the source: \u0027Contract violation: divisor != 0 at math.xi:42\u0027. Twelve hours of debugging reduced to two seconds.",
+    "why":  "Contract violations produce precise, actionable error messages that pinpoint the exact precondition failure — turning mystery crashes into instant diagnoses.",
+    "narrative":  "## Reading Contract Violation Output\n\nWhen a contract fails, XIOM produces a structured error message. Learning to read it is a debugging superpower:\n\n### Example: Division by Zero\n```xiom\nfn divide(a: Int, b: Int) -\u003e Int\n  requires: b != 0;\n{\n  return a / b;\n}\n\nfn main() -\u003e Int {\n  let x = 10;\n  let y = 0;\n  return divide(x, y); // Contract violation!\n}\n```\n\nOutput:\n```\nCONTRACT VIOLATION: requires clause failed\n  Function: divide (L4-45:divide)\n  Condition: b != 0\n  At: divide(b=0)\n  Location: main.xi:10\n  Trace: main -\u003e divide\n```\n\n### Example: Invariant Failure\n```xiom\ntype PositiveBal = {\n  amount: Float64;\n  invariant: amount \u003e 0.0;\n}\n\nfn withdraw(acc: \u0026mut PositiveBal, amt: Float64)\n  requires: amt \u003c= acc.amount;\n{\n  acc.amount = acc.amount - amt;\n  // If amt \u003e acc.amount, the invariant: amount \u003e 0.0 FAILS\n}\n```\n\nOutput:\n```\nINVARIANT VIOLATION: type PositiveBal\n  Condition: amount \u003e 0.0\n  Field: amount = -10.0\n  After: withdraw (L4-45:withdraw)\n  Location: main.xi:15\n```\n\n### The Key Insight\n\nThe error tells you WHAT failed, WHERE it failed, and the VALUES that caused the failure. No guesswork.",
+    "analogy":  "Contract violations are like a surgeon\u0027s scalpel — they make a precise incision exactly where the problem is, instead of leaving you to diagnose symptoms.",
+    "code_template":  "use xiom.io;\n\ntype SafeAmount = {\n  value: Int;\n  invariant: value \u003e= 0;\n}\n\nfn decrement(a: \u0026mut SafeAmount, by: Int)\n  requires: by \u003e 0;\n  requires: by \u003c= a.value;\n  ensures: a.value == a@pre.value - by;\n{\n  a.value = a.value - by;\n}\n\nfn main() -\u003e Int {\n  // TODO: Create SafeAmount{ value: 5 }\n  // First, decrement by 3 (should work)\n  // Then, decrement by 10 — this WILL trigger a contract violation\n  // Read and interpret the error message\n  // FIX the bug: ensure by \u003c= a.value before calling\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype SafeAmount = {\n  value: Int;\n  invariant: value \u003e= 0;\n}\n\nfn decrement(a: \u0026mut SafeAmount, by: Int)\n  requires: by \u003e 0;\n  requires: by \u003c= a.value;\n  ensures: a.value == a@pre.value - by;\n{\n  a.value = a.value - by;\n}\n\nfn main() -\u003e Int {\n  var a: SafeAmount = SafeAmount{ value: 5 };\n  if 3 \u003c= a.value {\n    decrement(\u0026mut a, 3);\n  }\n  return a.value;\n}",
+    "try_it":  "Deliberately break a contract: create a `Temperature{ celsius: -300.0 }` and observe the error message. Then create a Stack and call `pop()` without pushing anything first. Notice how the error messages differ between invariant violations and requires violations. Which gives you more context?",
+    "concepts":  [
+                     "contract-violation",
+                     "error-messages",
+                     "debugging",
+                     "invariant-failure"
+                 ],
+    "tips":  [
+                 "Always read the full contract violation trace — the call stack tells you WHICH CALLER violated the contract",
+                 "Invariant violations tell you the field values at failure — use this to trace how the bad state was reached",
+                 "Enable runtime contracts during development — the overhead is worth the instant bug detection"
+             ],
+    "common_mistakes":  [
+                            "Ignoring contract violation output and adding print statements instead — the output already tells you everything",
+                            "Not reading the location field — \u0027main.xi:10\u0027 tells you exactly which line to fix",
+                            "Disabling contracts in development because they \u0027slow things down\u0027 — the slowdown is negligible compared to debugging time saved"
+                        ],
+    "next_lesson":  "L4-46",
+    "related":  [
+                    "L4-07",
+                    "L4-10",
+                    "L4-30"
+                ]
 }

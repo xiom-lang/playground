@@ -1,26 +1,38 @@
 {
-  "id": "L4-08",
-  "title": "Contract Violations",
-  "level": "L4",
-  "duration": "10 min",
-  "story": "Contracts sound great — but what ACTUALLY happens when you break one? Does the program silently continue with bad data? Does it crash with a cryptic segfault? In XIOM, contract violations produce clear, immediate traps with detailed messages. You need to see what happens when contracts are violated so you can recognize and fix these errors during development.",
-  "why": "Understanding exactly how contract violations manifest — with clear trap messages at the exact violation site — teaches you to trust contracts as your first line of defense against bugs.",
-  "narrative": "## When Promises Are Broken\n\nContracts are enforced. When you break one, XIOM stops execution immediately and tells you what went wrong, where, and with what values.\n\n### Violating a requires\n\n```xiom\nfn withdraw(balance: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= balance;\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  let result = withdraw(100, 150);\n  return 0;\n}\n```\n\nWhen `withdraw(100, 150)` is called, the requires `amount <= balance` fails because `150 <= 100` is false. XIOM traps with:\n\n```\nCONTRACT VIOLATION: requires 'amount <= balance' failed\n  in function 'withdraw' at line 3\n  amount = 150\n  balance = 100\n```\n\nThe program stops. The trap message tells you:\n- **Which contract** violated: `amount <= balance`\n- **Which function**: `withdraw`\n- **The values**: `amount = 150`, `balance = 100`\n\n### Violating an ensures\n\n```xiom\nfn double(x: Int) -> Int\n  ensures: result == x * 2;\n{\n  return x + 2;\n}\n\nfn main() -> Int {\n  let d = double(7);\n  return 0;\n}\n```\n\nWhen `double(7)` returns `9` (because of the bug: `x + 2` instead of `x * 2`), the ensures `result == x * 2` fails because `9 != 14`. XIOM traps:\n\n```\nCONTRACT VIOLATION: ensures 'result == x * 2' failed\n  in function 'double' at line 2\n  result = 9\n  x = 7\n  expected: result == 14\n```\n\n### Violating an Invariant\n\n```xiom\ntype Score = {\n  value: Int;\n  invariant: value >= 0;\n}\n\nfn bad_deduct(self: Score, points: Int) -> Int\n  requires: points >= 0;\n{\n  return self.value - points;\n}\n\nfn main() -> Int {\n  let s = Score { value: 10 };\n  let result = s.bad_deduct(20);\n  return 0;\n}\n```\n\nWhen `bad_deduct(20)` returns `-10`, the invariant `value >= 0` is checked. `-10 >= 0` is false. XIOM traps:\n\n```\nCONTRACT VIOLATION: invariant 'value >= 0' failed\n  in type 'Score'\n  after method 'bad_deduct'\n  value = -10\n```\n\n### What Violations Teach You\n\n- **requires violations**: The CALLER passed bad data. Fix the caller or add validation before the call.\n- **ensures violations**: The FUNCTION has a bug. The body doesn't produce what it promises.\n- **invariant violations**: A METHOD put the struct in an invalid state. The method needs to clamp or validate its result.",
-  "analogy": "Contract violations are like a referee blowing the whistle in sports. The players (your code) are running the play, and suddenly — TWEET! The referee stops everything. 'Foul! amount <= balance violated at the withdraw function. amount was 150, balance was 100.' The game doesn't continue with the foul uncalled. The referee (XIOM's contract checker) stops play, announces what happened, and everyone knows exactly what to fix — no guessing, no 'well, it crashed somewhere in production.'",
-  "code_template": "fn withdraw(balance: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= balance;\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  // TODO: call withdraw(100, 150) and observe the violation\n  // TODO: then fix the call to withdraw(100, 50)\n  return 0;\n}\n",
-  "solution": "fn withdraw(balance: Int, amount: Int) -> Int\n  requires: amount > 0;\n  requires: amount <= balance;\n{\n  return balance - amount;\n}\n\nfn main() -> Int {\n  let result = withdraw(100, 50);\n  io.println(string.int_to_str(result));\n  return 0;\n}\n",
-  "try_it": "Deliberately break each kind of contract one at a time: (1) Write `divide` with `requires: b != 0;` and call it with `b = 0`. Read the trap message. (2) Write `square` with `ensures: result == x * x;` but return `x + x`. Read the trap message. (3) Create a `PositiveInt` type with `invariant: value > 0;` and write a method that can return 0 or negative. Compare the three trap messages — how do they differ? Which gives you the most information to find the bug?",
-  "concepts": ["contract-violations", "traps", "debugging", "requires-violation", "ensures-violation", "invariant-violation"],
-  "tips": [
-    "Read the trap message CAREFULLY — it tells you the exact contract, function, and values involved",
-    "requires violations are the CALLER'S bug; ensures violations are the FUNCTION'S bug",
-    "Contract traps happen at the EXACT line where the violation occurs, not later when the bad data is used"
-  ],
-  "common_mistakes": [
-    "Ignoring a contract violation and trying to 'fix' something else — the trap message tells you exactly what's wrong",
-    "Adding empty catch handlers that swallow contract violations — contracts are meant to STOP execution, not be caught",
-    "Assuming contracts will catch ALL bugs — contracts check what you DECLARE, not what you forget to declare"
-  ],
-  "next_lesson": "L4-09",
-  "related": ["L4-01", "L4-02", "L4-03", "L4-06"]
+    "id":  "L4-08",
+    "title":  "Contract Violations",
+    "level":  "L4",
+    "duration":  "10 min",
+    "story":  "Contracts sound great — but what ACTUALLY happens when you break one? Does the program silently continue with bad data? Does it crash with a cryptic segfault? In XIOM, contract violations produce clear, immediate traps with detailed messages. You need to see what happens when contracts are violated so you can recognize and fix these errors during development.",
+    "why":  "Understanding exactly how contract violations manifest — with clear trap messages at the exact violation site — teaches you to trust contracts as your first line of defense against bugs.",
+    "narrative":  "## When Promises Are Broken\n\nContracts are enforced. When you break one, XIOM stops execution immediately and tells you what went wrong, where, and with what values.\n\n### Violating a requires\n\n```xiom\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= balance;\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  let result = withdraw(100, 150);\n  return 0;\n}\n```\n\nWhen `withdraw(100, 150)` is called, the requires `amount \u003c= balance` fails because `150 \u003c= 100` is false. XIOM traps with:\n\n```\nCONTRACT VIOLATION: requires \u0027amount \u003c= balance\u0027 failed\n  in function \u0027withdraw\u0027 at line 3\n  amount = 150\n  balance = 100\n```\n\nThe program stops. The trap message tells you:\n- **Which contract** violated: `amount \u003c= balance`\n- **Which function**: `withdraw`\n- **The values**: `amount = 150`, `balance = 100`\n\n### Violating an ensures\n\n```xiom\nfn double(x: Int) -\u003e Int\n  ensures: result == x * 2;\n{\n  return x + 2;\n}\n\nfn main() -\u003e Int {\n  let d = double(7);\n  return 0;\n}\n```\n\nWhen `double(7)` returns `9` (because of the bug: `x + 2` instead of `x * 2`), the ensures `result == x * 2` fails because `9 != 14`. XIOM traps:\n\n```\nCONTRACT VIOLATION: ensures \u0027result == x * 2\u0027 failed\n  in function \u0027double\u0027 at line 2\n  result = 9\n  x = 7\n  expected: result == 14\n```\n\n### Violating an Invariant\n\n```xiom\ntype Score = {\n  value: Int;\n  invariant: value \u003e= 0;\n}\n\nfn bad_deduct(self: Score, points: Int) -\u003e Int\n  requires: points \u003e= 0;\n{\n  return self.value - points;\n}\n\nfn main() -\u003e Int {\n  let s = Score { value: 10 };\n  let result = s.bad_deduct(20);\n  return 0;\n}\n```\n\nWhen `bad_deduct(20)` returns `-10`, the invariant `value \u003e= 0` is checked. `-10 \u003e= 0` is false. XIOM traps:\n\n```\nCONTRACT VIOLATION: invariant \u0027value \u003e= 0\u0027 failed\n  in type \u0027Score\u0027\n  after method \u0027bad_deduct\u0027\n  value = -10\n```\n\n### What Violations Teach You\n\n- **requires violations**: The CALLER passed bad data. Fix the caller or add validation before the call.\n- **ensures violations**: The FUNCTION has a bug. The body doesn\u0027t produce what it promises.\n- **invariant violations**: A METHOD put the struct in an invalid state. The method needs to clamp or validate its result.",
+    "analogy":  "Contract violations are like a referee blowing the whistle in sports. The players (your code) are running the play, and suddenly — TWEET! The referee stops everything. \u0027Foul! amount \u003c= balance violated at the withdraw function. amount was 150, balance was 100.\u0027 The game doesn\u0027t continue with the foul uncalled. The referee (XIOM\u0027s contract checker) stops play, announces what happened, and everyone knows exactly what to fix — no guessing, no \u0027well, it crashed somewhere in production.\u0027",
+    "code_template":  "use xiom.io;\n\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= balance;\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  // TODO: call withdraw(100, 150) and observe the violation\n  // TODO: then fix the call to withdraw(100, 50)\n  return 0;\n}\n",
+    "solution":  "use xiom.io;\n\nuse xiom.string;\nfn withdraw(balance: Int, amount: Int) -\u003e Int\n  requires: amount \u003e 0;\n  requires: amount \u003c= balance;\n{\n  return balance - amount;\n}\n\nfn main() -\u003e Int {\n  let result = withdraw(100, 50);\n  io.println(string.int_to_str(result));\n  return 0;\n}\n",
+    "try_it":  "Deliberately break each kind of contract one at a time: (1) Write `divide` with `requires: b != 0;` and call it with `b = 0`. Read the trap message. (2) Write `square` with `ensures: result == x * x;` but return `x + x`. Read the trap message. (3) Create a `PositiveInt` type with `invariant: value \u003e 0;` and write a method that can return 0 or negative. Compare the three trap messages — how do they differ? Which gives you the most information to find the bug?",
+    "concepts":  [
+                     "contract-violations",
+                     "traps",
+                     "debugging",
+                     "requires-violation",
+                     "ensures-violation",
+                     "invariant-violation"
+                 ],
+    "tips":  [
+                 "Read the trap message CAREFULLY — it tells you the exact contract, function, and values involved",
+                 "requires violations are the CALLER\u0027S bug; ensures violations are the FUNCTION\u0027S bug",
+                 "Contract traps happen at the EXACT line where the violation occurs, not later when the bad data is used"
+             ],
+    "common_mistakes":  [
+                            "Ignoring a contract violation and trying to \u0027fix\u0027 something else — the trap message tells you exactly what\u0027s wrong",
+                            "Adding empty catch handlers that swallow contract violations — contracts are meant to STOP execution, not be caught",
+                            "Assuming contracts will catch ALL bugs — contracts check what you DECLARE, not what you forget to declare"
+                        ],
+    "next_lesson":  "L4-09",
+    "related":  [
+                    "L4-01",
+                    "L4-02",
+                    "L4-03",
+                    "L4-06"
+                ]
 }

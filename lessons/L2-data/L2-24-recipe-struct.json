@@ -1,25 +1,33 @@
 {
-  "id": "L2-24",
-  "title": "Recipe Struct",
-  "level": "L2",
-  "duration": "8 min",
-  "story": "Your friend keeps losing their grandmother's recipes. You decide to digitize them. Each recipe has ingredients (name, amount, unit) and serving info. Structs are a perfect fit for this structured data.",
-  "why": "Not everything needs methods \u2014 sometimes structs are just for organizing and carrying data.",
-  "narrative": "## Modeling a Recipe\n\nA recipe has a title, servings, and ingredients. Each ingredient has a name, amount, and unit. Structs let you capture this hierarchy.\n\n### The Ingredient Struct\n\n```xiom\ntype Ingredient = {\n  name: Str;\n  amount: Float64;\n  unit: Str;\n}\n```\n\n### The Recipe Struct\n\n```xiom\ntype Recipe = {\n  title: Str;\n  servings: Int;\n  main_ingredient: Ingredient;\n}\n```\n\nFor now, we store one ingredient directly in the recipe (in later lessons you'll learn collections for multiple ingredients).\n\n### Creating Recipes\n\n```xiom\nlet flour = Ingredient{ name: \"Flour\"; amount: 2.5; unit: \"cups\"; };\n\nlet pancakes = Recipe{\n  title: \"Pancakes\";\n  servings: 4;\n  main_ingredient: flour;\n};\n```\n\n### Structs as Pure Data\n\nNot every struct needs methods. Some exist just to group related data together \u2014 a **data-only struct**. You create them, pass them around, and access their fields.\n\n```xiom\nlet recipe_name = pancakes.title;           // \"Pancakes\"\nlet ingredient_name = flour.name;           // \"Flour\"\nlet total_flour = flour.amount * 2.0;       // 5.0 (double batch)\n```\n\n### When to Add Methods\n\nIf you later need to scale a recipe (multiply all amounts by a factor), you'd add a method. But start simple \u2014 data-only structs are valid and common.",
-  "analogy": "A recipe card has sections (title, servings, ingredients). A struct is the digital version of that card \u2014 each field is a line on the card.",
-  "code_template": "type Ingredient = {\n  name: Str;\n  amount: Float64;\n  unit: Str;\n}\n\ntype Recipe = {\n  title: Str;\n  servings: Int;\n  main_ingredient: Ingredient;\n}\n\n// TODO: write a function 'scale_recipe' that takes a Recipe and a factor (Float64),\n//       returns a new Recipe with the ingredient amount multiplied by the factor\n\nfn main() -> Int {\n  // TODO: create a recipe, scale it by 2.0, return the new amount as Int\n  return 0;\n}",
-  "solution": "type Ingredient = {\n  name: Str;\n  amount: Float64;\n  unit: Str;\n}\n\ntype Recipe = {\n  title: Str;\n  servings: Int;\n  main_ingredient: Ingredient;\n}\n\nfn scale_recipe(recipe: Recipe, factor: Float64) -> Recipe {\n  let scaled = Ingredient{\n    name: recipe.main_ingredient.name;\n    amount: recipe.main_ingredient.amount * factor;\n    unit: recipe.main_ingredient.unit;\n  };\n  return Recipe{\n    title: recipe.title;\n    servings: recipe.servings;\n    main_ingredient: scaled;\n  };\n}\n\nfn main() -> Int {\n  let butter = Ingredient{ name: \"Butter\"; amount: 0.5; unit: \"cups\"; };\n  let cookies = Recipe{ title: \"Cookies\"; servings: 12; main_ingredient: butter; };\n  let doubled = scale_recipe(cookies, 2.0);\n  return doubled.main_ingredient.amount as Int;\n}",
-  "try_it": "Create 3 different recipes (pancakes, cookies, smoothie). Write a function that takes a list of recipes and returns the one with the most servings. No collections needed \u2014 just compare them with if/else.",
-  "concepts": ["struct", "data-only struct", "nested struct", "Float64"],
-  "tips": [
-    "Data-only structs are perfectly valid \u2014 not every type needs methods",
-    "Name your structs after real-world nouns: `Ingredient`, `Recipe`, `Invoice`",
-    "Use `Float64` for measurements that need decimals (grams, cups, liters)"
-  ],
-  "common_mistakes": [
-    "Creating every struct as mutable \u2014 use `let` for values that don't change",
-    "Forgetting to copy all fields when creating a modified version of a struct"
-  ],
-  "next_lesson": "L2-25",
-  "related": ["L2-01", "L2-21"]
+    "id":  "L2-24",
+    "title":  "Recipe Struct",
+    "level":  "L2",
+    "duration":  "8 min",
+    "story":  "Your friend keeps losing their grandmother\u0027s recipes. You decide to digitize them. Each recipe has ingredients (name, amount, unit) and serving info. Structs are a perfect fit for this structured data.",
+    "why":  "Not everything needs methods — sometimes structs are just for organizing and carrying data.",
+    "narrative":  "## Modeling a Recipe\n\nA recipe has a title, servings, and ingredients. Each ingredient has a name, amount, and unit. Structs let you capture this hierarchy.\n\n### The Ingredient Struct\n\n```xiom\ntype Ingredient = {\n  name: Str;\n  amount: Float64;\n  unit: Str;\n}\n```\n\n### The Recipe Struct\n\n```xiom\ntype Recipe = {\n  title: Str;\n  servings: Int;\n  main_ingredient: Ingredient;\n}\n```\n\nFor now, we store one ingredient directly in the recipe (in later lessons you\u0027ll learn collections for multiple ingredients).\n\n### Creating Recipes\n\n```xiom\nlet flour = Ingredient{ name: \"Flour\"; amount: 2.5; unit: \"cups\"; };\n\nlet pancakes = Recipe{\n  title: \"Pancakes\";\n  servings: 4;\n  main_ingredient: flour;\n};\n```\n\n### Structs as Pure Data\n\nNot every struct needs methods. Some exist just to group related data together — a **data-only struct**. You create them, pass them around, and access their fields.\n\n```xiom\nlet recipe_name = pancakes.title;           // \"Pancakes\"\nlet ingredient_name = flour.name;           // \"Flour\"\nlet total_flour = flour.amount * 2.0;       // 5.0 (double batch)\n```\n\n### When to Add Methods\n\nIf you later need to scale a recipe (multiply all amounts by a factor), you\u0027d add a method. But start simple — data-only structs are valid and common.",
+    "analogy":  "A recipe card has sections (title, servings, ingredients). A struct is the digital version of that card — each field is a line on the card.",
+    "code_template":  "use xiom.io;\n\ntype Ingredient = {\n  name: Str;\n  amount: Float64;\n  unit: Str;\n}\n\ntype Recipe = {\n  title: Str;\n  servings: Int;\n  main_ingredient: Ingredient;\n}\n\n// TODO: write a function \u0027scale_recipe\u0027 that takes a Recipe and a factor (Float64),\n//       returns a new Recipe with the ingredient amount multiplied by the factor\n\nfn main() -\u003e Int {\n  // TODO: create a recipe, scale it by 2.0, return the new amount as Int\n  return 0;\n}",
+    "solution":  "use xiom.io;\n\ntype Ingredient = {\n  name: Str;\n  amount: Float64;\n  unit: Str;\n}\n\ntype Recipe = {\n  title: Str;\n  servings: Int;\n  main_ingredient: Ingredient;\n}\n\nfn scale_recipe(recipe: Recipe, factor: Float64) -\u003e Recipe {\n  let scaled = Ingredient{\n    name: recipe.main_ingredient.name;\n    amount: recipe.main_ingredient.amount * factor;\n    unit: recipe.main_ingredient.unit;\n  };\n  return Recipe{\n    title: recipe.title;\n    servings: recipe.servings;\n    main_ingredient: scaled;\n  };\n}\n\nfn main() -\u003e Int {\n  let butter = Ingredient{ name: \"Butter\"; amount: 0.5; unit: \"cups\"; };\n  let cookies = Recipe{ title: \"Cookies\"; servings: 12; main_ingredient: butter; };\n  let doubled = scale_recipe(cookies, 2.0);\n  return doubled.main_ingredient.amount as Int;\n}",
+    "try_it":  "Create 3 different recipes (pancakes, cookies, smoothie). Write a function that takes a list of recipes and returns the one with the most servings. No collections needed — just compare them with if/else.",
+    "concepts":  [
+                     "struct",
+                     "data-only struct",
+                     "nested struct",
+                     "Float64"
+                 ],
+    "tips":  [
+                 "Data-only structs are perfectly valid — not every type needs methods",
+                 "Name your structs after real-world nouns: `Ingredient`, `Recipe`, `Invoice`",
+                 "Use `Float64` for measurements that need decimals (grams, cups, liters)"
+             ],
+    "common_mistakes":  [
+                            "Creating every struct as mutable — use `let` for values that don\u0027t change",
+                            "Forgetting to copy all fields when creating a modified version of a struct"
+                        ],
+    "next_lesson":  "L2-25",
+    "related":  [
+                    "L2-01",
+                    "L2-21"
+                ]
 }
