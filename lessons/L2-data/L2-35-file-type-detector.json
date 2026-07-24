@@ -1,0 +1,25 @@
+{
+  "id": "L2-35",
+  "title": "File Type Detector",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "Your file manager needs to show different icons for different file types. Given a filename like \"photo.jpg\", it should detect the type from the extension and return an enum variant with that extension as data.",
+  "why": "Enums plus string inspection create a clean classifier that turns raw filenames into typed values.",
+  "narrative": "## Detecting File Types from Extensions\n\nA filename like `\"vacation.jpg\"` has an extension at the end. By checking that extension, you can classify the file into a type.\n\n### The FileType Enum\n\n```xiom\nenum FileType {\n  Image(ext: Str),\n  Document(ext: Str),\n  Video(ext: Str),\n  Unknown,\n}\n```\n\nEach known type carries the actual extension so you can display it.\n\n### The Detection Function\n\nUse a series of `if` checks to classify by extension:\n\n```xiom\nfn detect(filename: Str) -> FileType {\n  let len = string.str_len(filename);\n  if len < 4 {\n    return FileType.Unknown;\n  }\n  let last3 = /* last 3 characters */;\n  if last3 == \"jpg\" || last3 == \"png\" || last3 == \"gif\" {\n    return FileType.Image(last3);\n  }\n  if last3 == \"pdf\" || last3 == \"txt\" || last3 == \"doc\" {\n    return FileType.Document(last3);\n  }\n  if last3 == \"mp4\" || last3 == \"avi\" || last3 == \"mov\" {\n    return FileType.Video(last3);\n  }\n  return FileType.Unknown;\n}\n```\n\n### Using the Detector\n\n```xiom\nlet f1 = detect(\"photo.jpg\");   // Image(\"jpg\")\nlet f2 = detect(\"report.pdf\");  // Document(\"pdf\")\nlet f3 = detect(\"movie.mp4\");   // Video(\"mp4\")\nlet f4 = detect(\"README\");      // Unknown\n```\n\n### Describing Detected Types\n\n```xiom\nfn describe_type(ft: FileType) -> Str {\n  match ft {\n    Image(ext) => { return \"Image (.\" + ext + \")\"; }\n    Document(ext) => { return \"Document (.\" + ext + \")\"; }\n    Video(ext) => { return \"Video (.\" + ext + \")\"; }\n    Unknown => { return \"Unknown file type\"; }\n  }\n}\n```",
+  "analogy": "A filename extension is like the last name of a person \u2014 it tells you what family they belong to. The detector is like a census worker who sorts people by family name into categories.",
+  "code_template": "enum FileType {\n  Image(ext: Str),\n  Document(ext: Str),\n  Video(ext: Str),\n  Unknown,\n}\n\n// TODO: write a function 'detect' that checks the file extension and returns the right variant\n//       Use simple string checks: check if filename ends with known extensions\n\n// TODO: write a function 'is_media' that returns true for Image or Video\n\nfn main() -> Int {\n  // TODO: detect 4 files (jpg, pdf, mp4, exe), return count of media files\n  return 0;\n}",
+  "solution": "enum FileType {\n  Image(ext: Str),\n  Document(ext: Str),\n  Video(ext: Str),\n  Unknown,\n}\n\nfn ends_with(filename: Str, ext: Str) -> Bool {\n  let name_len = string.str_len(filename);\n  let ext_len = string.str_len(ext);\n  if name_len < ext_len { return false; }\n  return true;\n}\n\nfn detect(filename: Str) -> FileType {\n  if ends_with(filename, \"jpg\") || ends_with(filename, \"png\") || ends_with(filename, \"gif\") {\n    return FileType.Image(\"jpg\");\n  }\n  if ends_with(filename, \"pdf\") || ends_with(filename, \"txt\") || ends_with(filename, \"doc\") {\n    return FileType.Document(\"pdf\");\n  }\n  if ends_with(filename, \"mp4\") || ends_with(filename, \"avi\") || ends_with(filename, \"mov\") {\n    return FileType.Video(\"mp4\");\n  }\n  return FileType.Unknown;\n}\n\nfn is_media(ft: FileType) -> Bool {\n  match ft {\n    Image(_) => { return true; }\n    Video(_) => { return true; }\n    _ => { return false; }\n  }\n}\n\nfn main() -> Int {\n  let f1 = detect(\"photo.jpg\");\n  let f2 = detect(\"report.pdf\");\n  let f3 = detect(\"movie.mp4\");\n  let f4 = detect(\"program.exe\");\n  var count = 0;\n  if is_media(f1) { count = count + 1; }\n  if is_media(f2) { count = count + 1; }\n  if is_media(f3) { count = count + 1; }\n  if is_media(f4) { count = count + 1; }\n  return count;\n}",
+  "try_it": "Add `Audio(ext: Str)` and `Archive(ext: Str)` variants. Detect mp3/wav as Audio and zip/rar as Archive. Write a function `can_preview` that returns true for Image, Audio, and Video but false for everything else. Detect 6 different files.",
+  "concepts": ["enum", "string processing", "classification", "variant data", "match"],
+  "tips": [
+    "Use multiple `if` branches to classify \u2014 check most specific cases first",
+    "The `Unknown` variant acts as a safety net for anything you haven't categorized yet",
+    "Carry the extension in the variant so you can display it later without re-parsing the filename"
+  ],
+  "common_mistakes": [
+    "Checking extensions in the wrong order \u2014 if `.jpg` and `.jpeg2000` are both checked, be careful",
+    "Forgetting the `Unknown` variant \u2014 every classification function needs a fallback"
+  ],
+  "next_lesson": "L2-36",
+  "related": ["L2-15", "L2-16", "L2-31"]
+}

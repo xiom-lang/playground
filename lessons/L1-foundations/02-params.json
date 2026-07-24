@@ -1,17 +1,25 @@
 {
   "id": "L1-02",
-  "title": "Function Parameters",
+  "title": "Functions with Ingredients (Parameters)",
   "level": "L1",
-  "duration": "10 min",
-  "concepts": ["parameters", "multiple params", "argument", "fn"],
-  "concept": "Functions can accept multiple parameters — each with its own name and type — to receive all the data they need.",
-  "why": "Most functions need more than one input. Multiple parameters let you pass all necessary data in a single call.",
-  "theory": "## Multiple Parameters\n\nFunctions often need more than one input. Just list them separated by commas:\n\n```xiom\nfn rectangle_area(width: Int, height: Int) -> Int {\n  return width * height;\n}\n\nfn main() -> Int {\n  let area = rectangle_area(10, 5);  // 50\n  return area;\n}\n```\n\n### Parameter Rules\n\n1. Each parameter has a name and a type: `name: Type`\n2. Parameters are separated by commas\n3. When calling, provide values in the same order\n4. The values you pass are called **arguments**\n\n```xiom\n// Definition: parameters are 'a' and 'b'\nfn subtract(a: Int, b: Int) -> Int {\n  return a - b;\n}\n\n// Call: arguments are 10 and 3\nlet result = subtract(10, 3);  // a=10, b=3, result=7\n```\n\n### Different Types as Parameters\n\nParameters can be different types:\n\n```xiom\nfn describe_person(name: Str, age: Int, height: Float64) -> Str {\n  return name + \" is \" + \"years old\";\n}\n\nfn main() -> Int {\n  let description = describe_person(\"Kilo\", 2, 1.75);\n  return 0;\n}\n```\n\n### Parameter Names Matter\n\nGood parameter names make functions self-documenting:\n\n```xiom\n// Clear — you know what each parameter means\nfn send_email(to: Str, subject: Str, body: Str) -> Unit {\n  // ...\n}\n\n// Unclear — what are x, y, z?\nfn send_email(x: Str, y: Str, z: Str) -> Unit {\n  // ...\n}\n```\n\n### How Many Parameters?\n\n- 0-2: Common and good\n- 3-4: Acceptable if they're all essential\n- 5+: Consider grouping related data into a struct (later lesson!)",
-  "syntax_ref": "fn name(p1: Type1, p2: Type2, p3: Type3) -> ReturnType {\n  // use p1, p2, p3\n}",
-  "code_template": "// TODO: Write a function 'power' that takes base: Int and exp: Int\n// TODO: It should return base * exp (just multiplication for now)\n\nfn main() -> Int {\n  // TODO: Call power(3, 4) and return the result\n  return 0;\n}",
-  "solution": "fn power(base: Int, exp: Int) -> Int {\n  return base * exp;\n}\n\nfn main() -> Int {\n  let result = power(3, 4);\n  return result;\n}",
-  "tips": ["Parameters are like function-specific variables — they only exist inside the function", "The order of arguments in a call must match the order of parameters", "Each parameter needs its OWN type annotation: `(x: Int, y: Int)` not `(x, y: Int)`", "Give parameters descriptive names: `width` and `height` not `a` and `b`"],
-  "common_mistakes": ["Swapping argument order: `subtract(3, 10)` instead of `subtract(10, 3)`", "Forgetting the type on each parameter: `(x, y: Int)` only types y", "Passing the wrong type: `add(\"5\", 3)` when it expects Int, Int"],
-  "related": ["L1-01", "L1-03", "L1-05"],
-  "next_lesson": "L1-03"
+  "duration": "7 min",
+  "story": "You wrote a `greet()` function, but it always says 'Hello, friend!' What if you want to greet different people by name — Alice, Bob, your cousin? You need to send information INTO your function.",
+  "why": "Parameters let you customize what a function does each time you call it, making functions flexible instead of one-size-fits-all.",
+  "narrative": "## Passing Information to Functions\n\nLast lesson's `greet()` function was nice, but it always said the same thing. What if you want to greet different people? That's where **parameters** come in.\n\n### Adding a Parameter\n\n```xiom\nfn greet(name: Str) {\n  io.println(\"Hello, \");\n  io.println(name);\n  io.println(\"!\");\n}\n\nfn main() {\n  greet(\"Alice\");\n  greet(\"Bob\");\n  greet(\"Charlie\");\n}\n```\n\nNow `greet` has a parameter: `name: Str`. Inside the parentheses, you declare what information the function needs. When you call `greet(\"Alice\")`, the string \"Alice\" flows into the `name` parameter, and the function uses it.\n\nRun this program and you'll see personalized greetings for all three friends. One function, infinite names!\n\n### Multiple Parameters\n\nYou can add more parameters with commas:\n\n```xiom\nfn introduce(name: Str, age: Int) {\n  io.println(name);\n  io.println(\" is \");\n  io.println(age);\n  io.println(\" years old.\");\n}\n\nfn main() {\n  introduce(\"Dana\", 22);\n}\n```\n\n`introduce` takes TWO ingredients: a name (Str) and an age (Int). Order matters — the first argument goes to `name`, the second to `age`.",
+  "analogy": "Parameters are like ingredients you give to a recipe — 'make me a cake WITH chocolate' vs 'make me a cake WITH vanilla'. Same recipe, different result!",
+  "code_template": "// TODO: define a function 'greet' that takes a name parameter (Str)\n// TODO: the function should print a personalized greeting using the name\n\nfn main() {\n  // TODO: call greet with at least two different names\n}\n",
+  "solution": "fn greet(name: Str) {\n  io.println(\"Hello, \");\n  io.println(name);\n  io.println(\"!\");\n}\n\nfn main() {\n  greet(\"Alice\");\n  greet(\"Bob\");\n}\n",
+  "try_it": "Add an `age: Int` parameter to `greet` so it prints both the name AND age. Call it like `greet(\"Emma\", 15)`.",
+  "concepts": ["parameters", "arguments", "function-inputs", "customization"],
+  "tips": [
+    "Parameters go inside the parentheses `( )` when defining the function — each needs a name and a type",
+    "Arguments are the actual values you pass when calling — `greet(\"Alice\")` passes \"Alice\" as the argument",
+    "Parameter order matters — the first argument fills the first parameter, the second fills the second, and so on"
+  ],
+  "common_mistakes": [
+    "Forgetting the type annotation on parameters — `fn greet(name)` is missing `: Str`",
+    "Passing the wrong type — `greet(42)` fails because the parameter expects Str, not Int"
+  ],
+  "next_lesson": "L1-03",
+  "related": ["L1-01", "L1-03", "L0-06"]
 }

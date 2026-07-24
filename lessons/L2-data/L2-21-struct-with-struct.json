@@ -1,0 +1,25 @@
+{
+  "id": "L2-21",
+  "title": "Struct with a Struct",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "You're building an address book app. A Person has a name, but they also have a home address \u2014 which itself has a street and city. How do you model this nested data?",
+  "why": "Real-world data is nested \u2014 structs inside structs let you model it directly.",
+  "narrative": "## Nesting Structs Inside Structs\n\nStruct fields can hold any type \u2014 including other structs. This lets you build complex data from simple pieces.\n\n### Defining Nested Structs\n\n```xiom\ntype Address = {\n  street: Str;\n  city: Str;\n}\n\ntype Person = {\n  name: Str;\n  home: Address;\n}\n```\n\nFirst define `Address`, then use it as a field type in `Person`.\n\n### Creating Nested Values\n\n```xiom\nlet addr = Address{ street: \"123 Main St\"; city: \"Springfield\"; };\nlet person = Person{ name: \"Alice\"; home: addr; };\n```\n\nOr inline:\n\n```xiom\nlet person = Person{\n  name: \"Bob\";\n  home: Address{ street: \"456 Oak Ave\"; city: \"Rivertown\"; };\n};\n```\n\n### Accessing Nested Fields\n\nUse dot notation to drill down:\n\n```xiom\nperson.name;        // \"Bob\"\nperson.home.city;   // \"Rivertown\"\nperson.home.street; // \"456 Oak Ave\"\n```\n\n### Why Nesting?\n\nNesting groups related sub-data together. Instead of `person_street` and `person_city`, you have `person.home.street` \u2014 the structure mirrors reality.",
+  "analogy": "A Person contains an Address like an envelope contains a mailing label \u2014 the label is a distinct thing attached to the envelope.",
+  "code_template": "type Address = {\n  street: Str;\n  city: Str;\n}\n\ntype Person = {\n  name: Str;\n  home: Address;\n}\n\n// TODO: write a function 'city_of' that returns the city from a Person\n\nfn main() -> Int {\n  // TODO: create a Person with a home Address, call city_of, return 0\n  return 0;\n}",
+  "solution": "type Address = {\n  street: Str;\n  city: Str;\n}\n\ntype Person = {\n  name: Str;\n  home: Address;\n}\n\nfn city_of(person: Person) -> Str {\n  return person.home.city;\n}\n\nfn main() -> Int {\n  let addr = Address{ street: \"10 Downing St\"; city: \"London\"; };\n  let pm = Person{ name: \"Prime Minister\"; home: addr; };\n  let city = pm.home.city;\n  return 0;\n}",
+  "try_it": "Add a `work: Address` field to Person. Create someone with both a home and work address, then write a function that returns the full address as a single string.",
+  "concepts": ["struct", "nested struct", "field access", "dot notation"],
+  "tips": [
+    "Define inner structs BEFORE the outer struct that uses them \u2014 the compiler reads top to bottom",
+    "Use dot notation to drill down: `person.home.city` reads left to right",
+    "You can create nested structs inline instead of using a separate variable for the inner value"
+  ],
+  "common_mistakes": [
+    "Forgetting to define the inner struct before using it as a field type in the outer struct",
+    "Using commas instead of semicolons between struct fields"
+  ],
+  "next_lesson": "L2-22",
+  "related": ["L2-01", "L2-03"]
+}

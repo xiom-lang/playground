@@ -1,0 +1,25 @@
+{
+  "id": "L0-48",
+  "title": "Decision Maker",
+  "level": "L0",
+  "duration": "7 min",
+  "story": "It's morning and you're staring at your to-do list. Should you work hard or take it easy? Your mood depends on what day it is. Let's build a program that plans your week based on the day!",
+  "why": "Using if/elif/else with string comparisons shows how programs make decisions based on different kinds of data, not just numbers.",
+  "narrative": "## Your Weekly Planner\n\nPrograms can make decisions based on any type of data — including strings. Let's build a planner that gives advice depending on the day of the week.\n\n### The Day Planner\n\n```xiom\nfn main() {\n  let day: Str = \"Friday\";\n\n  io.println(\"Today is: \");\n  io.println(day);\n\n  if day == \"Monday\" {\n    io.println(\"Start the week strong — make a plan!\");\n  } elif day == \"Tuesday\" {\n    io.println(\"Keep the momentum going — tackle a big task.\");\n  } elif day == \"Wednesday\" {\n    io.println(\"Halfway there! Treat yourself to something nice.\");\n  } elif day == \"Thursday\" {\n    io.println(\"Almost done — finish what you started.\");\n  } elif day == \"Friday\" {\n    io.println(\"Last push! The weekend is almost here.\");\n  } elif day == \"Saturday\" {\n    io.println(\"Relax and recharge — you earned it!\");\n  } elif day == \"Sunday\" {\n    io.println(\"Get ready for the week ahead — plan tomorrow.\");\n  } else {\n    io.println(\"That's not a day of the week!\");\n  }\n}\n```\n\nChange the `day` variable and see how the output changes. The `else` at the end catches anything that isn't a valid day — a nice safety net!",
+  "analogy": "A day planner is like a traffic light for your week — green for weekends (go relax!), yellow for weekdays (keep going!), red for invalid days (stop and fix the input).",
+  "code_template": "fn main() {\n  let day: Str = \"TODO: pick a day\";\n  // TODO: use if/elif/else to print a message for each day of the week\n  // TODO: include an else for invalid days\n}\n",
+  "solution": "fn main() {\n  let day: Str = \"Friday\";\n  if day == \"Monday\" {\n    io.println(\"Start the week strong!\");\n  } elif day == \"Friday\" {\n    io.println(\"Almost weekend!\");\n  } elif day == \"Saturday\" {\n    io.println(\"Relax!\");\n  } elif day == \"Sunday\" {\n    io.println(\"Relax!\");\n  } else {\n    io.println(\"Keep going!\");\n  }\n}\n",
+  "try_it": "Add a suggestion for Wednesday. Then try combining Saturday and Sunday into one condition: change the Sunday `elif` to `elif day == \"Sunday\"` and make both weekend days print the same relaxing message.",
+  "concepts": ["if-elif-else", "string-comparison", "branching", "conditions"],
+  "tips": [
+    "Use `==` to compare strings — `day == \"Monday\"` checks if the day variable contains exactly 'Monday'",
+    "String comparisons are case-sensitive — \"monday\" and \"Monday\" are different",
+    "The `else` branch is your fallback — use it to handle unexpected input gracefully"
+  ],
+  "common_mistakes": [
+    "Using a single `=` instead of `==` for comparison — `=` is for assignment, `==` is for checking equality",
+    "Forgetting the `else` branch — without it, using an invalid day like \"Funday\" prints nothing at all"
+  ],
+  "next_lesson": "L0-49",
+  "related": ["L0-08", "L0-09", "L0-43"]
+}

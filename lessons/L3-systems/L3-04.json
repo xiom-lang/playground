@@ -1,0 +1,26 @@
+{
+  "id": "L3-04",
+  "title": "If Let Pattern",
+  "level": "L3",
+  "duration": "8 min",
+  "story": "You're logging into a game. If your save file exists, load it. If not, start a new game. Writing a full `match` every time feels wordy — there's a shorter way.",
+  "why": "`if let` is a concise alternative to match when you care about only one pattern — it's a clean one-branch extract for the common 'if something exists, use it' pattern.",
+  "narrative": "## A Cleaner Way: if let\n\n`match` requires both arms every time (Some and None). But what if you only have logic for the Some case? `if let` gives you a single branch.\n\n### The Syntax\n\n```xiom\nfn main() -> Int {\n  let config: Option[Str] = Some(\"dark_mode\");\n\n  if let Some(setting) = config {\n    io.println(\"Theme: \" + setting);\n  } else {\n    io.println(\"Using default theme\");\n  }\n  return 0;\n}\n```\n\n### Without the Else\n\nThe else branch is optional:\n\n```xiom\nfn main() -> Int {\n  let power_up: Option[Str] = Some(\"Double Jump\");\n\n  if let Some(ability) = power_up {\n    io.println(\"You got: \" + ability + \"!\");\n  }\n  // Nothing happens if power_up is None\n  return 0;\n}\n```\n\n### if let vs match\n\nThese two are equivalent:\n\n```xiom\n// if let version\nif let Some(x) = opt {\n  io.println(x);\n} else {\n  io.println(\"Nothing!\");\n}\n\n// match version\nmatch opt {\n  Some(x) => io.println(x),\n  None => io.println(\"Nothing!\"),\n}\n```\n\n### When to Use Each\n\n- Use `match` when you need to handle **both** cases with different logic\n- Use `if let` when you only need to do something for **one** specific pattern\n- Use `.unwrap_or()` when you just want a value-or-default in one expression\n\n### Practical Example\n\n```xiom\nfn greet(name: Option[Str]) -> Str {\n  if let Some(n) = name {\n    return \"Hello, \" + n + \"!\";\n  }\n  return \"Hello, stranger!\";\n}\n\nfn main() -> Int {\n  io.println(greet(Some(\"Kai\")));  // Hello, Kai!\n  io.println(greet(None));          // Hello, stranger!\n  return 0;\n}\n```",
+  "analogy": "`if let` is like checking your mailbox — if there's a letter, you read it. If not, you just walk away (or do something else). You don't need a formal ceremony for an empty mailbox.",
+  "code_template": "fn main() -> Int {\n  let item: Option[Str] = Some(\"Magic Sword\");\n\n  // TODO: Use if let to check if item is Some — print \"Equipped: X\"\n\n  // TODO: Add an else branch to print \"No item equipped\"\n\n  // TODO: Change item to None and run again\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let item: Option[Str] = Some(\"Magic Sword\");\n\n  if let Some(equipment) = item {\n    io.println(\"Equipped: \" + equipment);\n  } else {\n    io.println(\"No item equipped\");\n  }\n\n  let item2: Option[Str] = None;\n  if let Some(equipment) = item2 {\n    io.println(\"Equipped: \" + equipment);\n  } else {\n    io.println(\"No item equipped\");\n  }\n  return 0;\n}\n",
+  "try_it": "Rewrite the greet function from the narrative using `match` instead of `if let`. Then add a third case where you greet VIPs differently — is `if let` or `match` better now?",
+  "concepts": ["if-let", "pattern-destructuring", "single-branch-match", "Option-extraction"],
+  "tips": [
+    "`if let Some(x) = opt` reads like 'if opt is a Some, bind its value to x'",
+    "The else branch in `if let` is optional — omit it when you don't need to handle the other case",
+    "Use `if let` for quick value extraction, `match` when you need full case coverage"
+  ],
+  "common_mistakes": [
+    "Trying to use `if let Some(x) =` with a non-Option value — if let only works with types that have patterns",
+    "Using `return` inside if let thinking it returns from the function — it does! But the code after if let won't run",
+    "Forgetting that `if let` and `match` are interchangeable — pick the one that's clearer for your specific case"
+  ],
+  "next_lesson": "L3-05",
+  "related": ["L3-01", "L3-02", "L2-16"]
+}

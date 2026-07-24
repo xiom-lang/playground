@@ -1,0 +1,25 @@
+{
+  "id": "L2-34",
+  "title": "Login System",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "Your app needs a login function. When someone tries to sign in, three things can happen: they succeed (you need their username for a welcome message), the password is wrong, or the user doesn't exist. An enum with data captures all three outcomes.",
+  "why": "Multiple failure modes with different meanings are perfectly captured by multiple error variants.",
+  "narrative": "## Modeling Login Attempts\n\nA login attempt can succeed or fail in different ways. An enum with two error variants and one success variant handles this cleanly.\n\n### The LoginResult Enum\n\n```xiom\nenum LoginResult {\n  Success(username: Str),\n  WrongPassword,\n  UserNotFound,\n}\n```\n\n`Success` carries the username so you can greet them. `WrongPassword` and `UserNotFound` need no extra data.\n\n### The Login Function\n\nA simple function that checks credentials against a hardcoded test user:\n\n```xiom\nfn try_login(user: Str, pass: Str) -> LoginResult {\n  if user != \"admin\" {\n    return LoginResult.UserNotFound;\n  }\n  if pass != \"secret123\" {\n    return LoginResult.WrongPassword;\n  }\n  return LoginResult.Success(user);\n}\n```\n\n### Handling the Result\n\n```xiom\nlet result = try_login(\"admin\", \"wrong\");\nmatch result {\n  Success(username) => {\n    // Show dashboard for username\n  }\n  WrongPassword => {\n    // Show \"Incorrect password\" message\n  }\n  UserNotFound => {\n    // Show \"No account found\" message\n  }\n}\n```\n\n### Testing Multiple Attempts\n\n```xiom\nlet r1 = try_login(\"admin\", \"secret123\");  // Success(\"admin\")\nlet r2 = try_login(\"admin\", \"badpass\");    // WrongPassword\nlet r3 = try_login(\"stranger\", \"anything\"); // UserNotFound\n```\n\n### Why Enums Beat Error Codes\n\nWithout enums, you'd return integers (`0 = success, 1 = wrong password, 2 = not found`) and hope everyone remembers the mapping. Enums make the meaning self-documenting.",
+  "analogy": "A login attempt is like knocking on a door. You either get welcomed in (Success with your name), told the key doesn't fit (WrongPassword), or told nobody lives there (UserNotFound).",
+  "code_template": "enum LoginResult {\n  Success(username: Str),\n  WrongPassword,\n  UserNotFound,\n}\n\n// TODO: write a function 'try_login' that checks user==\"admin\" and pass==\"secret123\"\n\n// TODO: write a function 'is_success' that returns true only for Success variants\n\nfn main() -> Int {\n  // TODO: try 3 login attempts (one success, two failures), return 1 if any succeeded\n  return 0;\n}",
+  "solution": "enum LoginResult {\n  Success(username: Str),\n  WrongPassword,\n  UserNotFound,\n}\n\nfn try_login(user: Str, pass: Str) -> LoginResult {\n  if user != \"admin\" {\n    return LoginResult.UserNotFound;\n  }\n  if pass != \"secret123\" {\n    return LoginResult.WrongPassword;\n  }\n  return LoginResult.Success(user);\n}\n\nfn is_success(r: LoginResult) -> Bool {\n  match r {\n    Success(_) => { return true; }\n    _ => { return false; }\n  }\n}\n\nfn main() -> Int {\n  let r1 = try_login(\"admin\", \"secret123\");\n  let r2 = try_login(\"admin\", \"badpass\");\n  let r3 = try_login(\"stranger\", \"x\");\n  var count = 0;\n  if is_success(r1) { count = count + 1; }\n  if is_success(r2) { count = count + 1; }\n  if is_success(r3) { count = count + 1; }\n  return count;\n}",
+  "try_it": "Add a `LockedOut(remaining_minutes: Int)` variant for users who've tried too many times. Update `try_login` so that user \"bob\" always gets LockedOut with 15 minutes. Test all four possible outcomes.",
+  "concepts": ["enum", "variant data", "authentication", "error handling", "match"],
+  "tips": [
+    "Check the user first, then the password \u2014 this prevents leaking whether a user exists (security best practice says check both anyway, but for learning, order logically)",
+    "Carry useful data in success variants (like username) so the caller doesn't need to look it up again",
+    "Name error variants after what went wrong, not what to do: `WrongPassword`, not `ShowError`"
+  ],
+  "common_mistakes": [
+    "Using `==` to compare `LoginResult` values directly \u2014 use `match` instead, it's clearer",
+    "Forgetting to handle all three variants after calling `try_login` \u2014 you might miss the error cases"
+  ],
+  "next_lesson": "L2-35",
+  "related": ["L2-15", "L2-16", "L2-33"]
+}

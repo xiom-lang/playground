@@ -1,0 +1,26 @@
+{
+  "id": "L1-08",
+  "title": "Calling Functions from Functions",
+  "level": "L1",
+  "duration": "8 min",
+  "story": "A master chef doesn't do everything from scratch — they call on sous-chefs to chop vegetables, boil water, and prepare sauces. Your functions can call helper functions the same way!",
+  "why": "Breaking complex tasks into smaller functions makes code readable and reusable. One function can delegate work to many others.",
+  "narrative": "## Functions Calling Functions\n\nA function can call another function — just like `main` calls your functions, your functions can call each other. This lets you build a chain of operations.\n\n### One Function Calling Another\n\n```xiom\nfn double(n: Int) -> Int {\n  return n * 2;\n}\n\nfn quadruple(n: Int) -> Int {\n  let doubled = double(n);\n  return double(doubled);\n}\n\nfn main() -> Int {\n  let result = quadruple(5);  // 5 -> 10 -> 20\n  io.println(result);\n  return 0;\n}\n```\n\n`quadruple` calls `double` twice — once on the input, then again on the result.\n\n### Building a Chain\n\n```xiom\nfn add_tax(price: Float64) -> Float64 {\n  return price * 1.08;\n}\n\nfn apply_discount(price: Float64) -> Float64 {\n  return price * 0.9;\n}\n\nfn calculate_final(price: Float64) -> Float64 {\n  let after_discount = apply_discount(price);\n  let final_price = add_tax(after_discount);\n  return final_price;\n}\n\nfn main() -> Int {\n  let total = calculate_final(100.0);  // 100 -> 90 -> 97.2\n  io.println(total);\n  return 0;\n}\n```\n\nEach function does one small job. `calculate_final` orchestrates them by calling both in sequence.\n\n### Direct Nesting (Shorthand)\n\nYou can skip the intermediate variable:\n\n```xiom\nfn calculate_final(price: Float64) -> Float64 {\n  return add_tax(apply_discount(price));\n}\n```\n\nThe inner call `apply_discount(price)` runs first, then its result feeds into `add_tax`. This is called **function composition** — stacking functions like building blocks.",
+  "analogy": "Functions calling functions is like a head chef delegating to sous-chefs — each person does one task, and the head chef coordinates them all.",
+  "code_template": "fn square(n: Int) -> Int {\n  return n * n;\n}\n\n// TODO: Write 'sum_of_squares' that takes two Ints, squares each one\n// TODO: using the square() function above, then returns their sum\n\nfn main() -> Int {\n  // TODO: Call sum_of_squares(3, 4) and print the result (should be 25)\n  return 0;\n}\n",
+  "solution": "fn square(n: Int) -> Int {\n  return n * n;\n}\n\nfn sum_of_squares(a: Int, b: Int) -> Int {\n  let a_squared = square(a);\n  let b_squared = square(b);\n  return a_squared + b_squared;\n}\n\nfn main() -> Int {\n  let result = sum_of_squares(3, 4);\n  io.println(result);\n  return 0;\n}\n",
+  "try_it": "Write a `format_name` function that calls `string.str_upper` on the last name and `string.str_lower` on the first name, then combines them with a comma.",
+  "concepts": ["function-composition", "delegation", "chain-calls"],
+  "tips": [
+    "Functions can call any other function defined in the file — not just from main",
+    "Break big tasks into small functions, then have a coordinator function call them in order",
+    "Nesting calls like `f(g(x))` reads from inside out: g runs first, then f"
+  ],
+  "common_mistakes": [
+    "Calling a function before it's defined — define helper functions above the functions that use them",
+    "Creating functions that are too similar but not reusing them — if two functions both need to double a number, make `double` a shared helper",
+    "Over-nesting: `a(b(c(d(e(x)))))` is hard to read — use variables for clarity beyond 2 levels"
+  ],
+  "next_lesson": "L1-09",
+  "related": ["L1-01", "L1-05", "L1-06"]
+}

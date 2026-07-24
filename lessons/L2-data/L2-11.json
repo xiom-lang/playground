@@ -1,0 +1,26 @@
+{
+  "id": "L2-11",
+  "title": "Your First Enum",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "You're programming a traffic light for a school project. A light can only be Red, Yellow, or Green — never \"purple\" or \"blinking orange.\" You need a type that enforces these exact options.",
+  "why": "Enums define a fixed set of possible values, preventing bugs from invalid inputs and making your code safer.",
+  "narrative": "## Defining a Closed Set of Options\n\nAn **enum** (short for *enumeration*) is a type that can be exactly one of several named **variants**. Unlike `Str` or `Int` (which can hold millions of values), an enum only allows the options you list.\n\n### Defining a TrafficLight Enum\n\n```xiom\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn main() -> Int {\n  let light = TrafficLight.Red;\n  io.println(\"Light is set!\");\n  return 0;\n}\n```\n\n### Creating Enum Values\n\nUse `TypeName.Variant` — DOT syntax, like accessing a field:\n\n```xiom\nlet stop = TrafficLight.Red;\nlet caution = TrafficLight.Yellow;\nlet go = TrafficLight.Green;\n```\n\n### Using Enums with if\n\n```xiom\nfn action(light: TrafficLight) -> Str {\n  if light == TrafficLight.Red {\n    return \"Stop!\";\n  }\n  if light == TrafficLight.Yellow {\n    return \"Slow down!\";\n  }\n  return \"Go!\";\n}\n\nfn main() -> Int {\n  let light = TrafficLight.Green;\n  io.println(action(light));  // Go!\n  return 0;\n}\n```\n\n### Why Enums?\n\nIf you used `Str` for traffic lights, someone could accidentally write `\"Rad\"` or `\"green\"` (lowercase). An enum catches these mistakes at compile time — the code won't run if you use an invalid variant.\n\nEnums turn \"this value should be one of these options\" from a comment into a rule enforced by the language.",
+  "analogy": "An enum is like a multiple-choice question — you can only pick one option from the list. No writing in the margins, no inventing a new answer.",
+  "code_template": "enum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\n// TODO: Write 'action' function — returns \"Stop\" for Red, \"Slow\" for Yellow, \"Go\" for Green\n\nfn main() -> Int {\n  // TODO: Create a TrafficLight value and print what action to take\n  return 0;\n}\n",
+  "solution": "enum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn action(light: TrafficLight) -> Str {\n  if light == TrafficLight.Red {\n    return \"Stop\";\n  }\n  if light == TrafficLight.Yellow {\n    return \"Slow\";\n  }\n  return \"Go\";\n}\n\nfn main() -> Int {\n  let light = TrafficLight.Red;\n  io.println(action(light));\n  return 0;\n}\n",
+  "try_it": "Add a 'Flashing' variant to the TrafficLight enum. Update the action function to return \"Proceed with caution\" for Flashing.",
+  "concepts": ["enum", "variant", "traffic-light", "closed-set"],
+  "tips": [
+    "Create enum values with `TypeName.Variant` — DOT syntax, like TrafficLight.Red",
+    "Variant names use PascalCase: Red, Yellow, Green — same convention as type names",
+    "Enums prevent invalid states at compile time — you can't accidentally use TrafficLight.Purple"
+  ],
+  "common_mistakes": [
+    "Writing `TrafficLight.Red()` with parentheses — simple variants don't have data, so no `()` needed",
+    "Comparing with `== \"Red\"` instead of `== TrafficLight.Red` — enum variants are NOT strings",
+    "Forgetting the enum name prefix: `Red` alone won't compile — use `TrafficLight.Red`"
+  ],
+  "next_lesson": "L2-12",
+  "related": ["L2-12", "L2-13", "L1-10"]
+}

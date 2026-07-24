@@ -1,0 +1,25 @@
+{
+  "id": "L2-49",
+  "title": "Coffee Order",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You work at a hipster coffee shop. Every order has a size (S/M/L), a milk choice (none, regular, oat, almond), and a number of espresso shots. The register needs to compute the price based on all three choices \u2014 a large oat milk latte with 3 shots costs more than a small black coffee.",
+  "why": "Combining two enums with a struct and a price method demonstrates real-world business logic.",
+  "narrative": "## The Hipster Coffee Shop\n\nA coffee order has three dimensions: how big, what milk, and how many shots of espresso. Each dimension affects the price.\n\n### The Size Enum\n\n```xiom\nenum Size {\n  Small,\n  Medium,\n  Large,\n}\n```\n\n### The Milk Enum\n\n```xiom\nenum Milk {\n  None,\n  Regular,\n  Oat,\n  Almond,\n}\n```\n\n### The Coffee Struct\n\n```xiom\ntype Coffee = {\n  size: Size;\n  milk: Milk;\n  shots: Int;\n}\n```\n\n### Computing the Price\n\nBase price depends on size. Milk and extra shots each add a surcharge:\n\n```xiom\nfn Coffee.price(self) -> Float64 {\n  var total = 3.00;\n\n  if size == Size.Medium { total = total + 1.00; }\n  if size == Size.Large { total = total + 2.00; }\n\n  if milk != Milk.None { total = total + 0.50; }\n  if milk == Milk.Oat || milk == Milk.Almond { total = total + 0.25; }\n\n  if shots > 2 {\n    total = total + ((shots - 2) as Float64) * 0.75;\n  }\n\n  return total;\n}\n```\n\n### Creating Orders\n\n```xiom\nlet black = Coffee{ size: Size.Small; milk: Milk.None; shots: 1; };\nlet latte = Coffee{ size: Size.Large; milk: Milk.Oat; shots: 3; };\nlet mocha = Coffee{ size: Size.Medium; milk: Milk.Almond; shots: 2; };\n\nblack.price();  // $3.00\nlatte.price();  // $5.75\nmocha.price();  // $4.75\n```\n\n### Formatting the Order\n\n```xiom\nfn Coffee.receipt(self) -> Str {\n  return \"Coffee: $\" + self.price();\n}\n```",
+  "analogy": "A coffee order is like building a custom sandwich. Size is footlong or 6-inch. Milk is cheese type (none/cheddar/swiss/vegan). Shots are extra meat portions. The price method is the cashier scanning each add-on and punching it into the register.",
+  "code_template": "enum Size {\n  Small,\n  Medium,\n  Large,\n}\n\nenum Milk {\n  None,\n  Regular,\n  Oat,\n  Almond,\n}\n\ntype Coffee = {\n  size: Size;\n  milk: Milk;\n  shots: Int;\n}\n\n// TODO: write a method 'Coffee.price' that computes price based on size, milk, shots\n\nfn main() -> Int {\n  // TODO: create a Large Oat milk coffee with 3 shots, return price * 100 as Int\n  return 0;\n}",
+  "solution": "enum Size {\n  Small,\n  Medium,\n  Large,\n}\n\nenum Milk {\n  None,\n  Regular,\n  Oat,\n  Almond,\n}\n\ntype Coffee = {\n  size: Size;\n  milk: Milk;\n  shots: Int;\n}\n\nfn Coffee.price(self) -> Float64 {\n  var total = 3.00;\n  if size == Size.Medium { total = total + 1.00; }\n  if size == Size.Large { total = total + 2.00; }\n  if milk != Milk.None { total = total + 0.50; }\n  if milk == Milk.Oat || milk == Milk.Almond { total = total + 0.25; }\n  if shots > 2 {\n    total = total + ((shots - 2) as Float64) * 0.75;\n  }\n  return total;\n}\n\nfn main() -> Int {\n  let latte = Coffee{ size: Size.Large; milk: Milk.Oat; shots: 3; };\n  return (latte.price() * 100.0) as Int;\n}",
+  "try_it": "Add a `WhippedCream: Bool` field to Coffee that adds $0.75. Add decaf option (enum). Add a loyalty discount: if this is the 10th coffee, subtract $2.00. Create your actual coffee order.",
+  "concepts": ["enum", "struct", "method", "pricing", "Float64", "business-logic"],
+  "tips": [
+    "Build price incrementally: start with the base, then add each modifier one at a time",
+    "Use `!=` to check for \"not none\" \u2014 `milk != Milk.None` means any milk type adds a charge",
+    "Extra shots beyond 2 cost money: `(shots - 2) as Float64 * 0.75`"
+  ],
+  "common_mistakes": [
+    "Forgetting to cast `(shots - 2)` to Float64 before multiplying by 0.75",
+    "Charging for extra shots even when shots <= 2 \u2014 use `if shots > 2` to guard the surcharge"
+  ],
+  "next_lesson": "L2-50",
+  "related": ["L2-14", "L2-27", "L2-43"]
+}

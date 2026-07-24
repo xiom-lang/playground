@@ -1,0 +1,26 @@
+{
+  "id": "L2-04",
+  "title": "Struct Methods",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "Your profile app needs each person to introduce themselves. Instead of writing a separate function for each person, you want the Person itself to know how to say hello!",
+  "why": "Methods attach behavior directly to a struct, so every instance can perform actions on its own data.",
+  "narrative": "## Teaching Structs to Do Things\n\nA **method** is a function that belongs to a specific struct type. It can access the struct's fields and perform actions with them.\n\n### Defining a Method\n\n```xiom\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn Person.introduce(self) {\n  io.println(\"Hi, I'm \" + name + \"!\");\n}\n\nfn main() -> Int {\n  let alice = Person{ name: \"Alice\", age: 14 };\n  alice.introduce();\n  return 0;\n}\n```\n\n### How Methods Work\n\n- `fn Person.introduce(self)` — the method belongs to `Person` and uses `self` as the first parameter\n- Inside the method, field names like `name` and `age` refer to the current instance's fields\n- `alice.introduce()` — call the method on an instance using dot notation\n\n### Methods That Compute\n\n```xiom\nfn Person.age_next_year(self) -> Int {\n  return age + 1;\n}\n\nfn main() -> Int {\n  let bob = Person{ name: \"Bob\", age: 12 };\n  let next = bob.age_next_year();\n  io.println(next);  // 13\n  return 0;\n}\n```\n\nMethods can return values just like regular functions. They use the instance's data to compute results.\n\n### Methods That Modify\n\n```xiom\nfn Person.birthday(self) {\n  age = age + 1;\n}\n\nfn main() -> Int {\n  let charlie = Person{ name: \"Charlie\", age: 15 };\n  charlie.birthday();\n  io.println(charlie.age);  // 16\n  return 0;\n}\n```\n\nThe `birthday` method changes the `age` field directly. After calling it, the instance's data is updated.",
+  "analogy": "A method is like a skill attached to a character in a game — a Warrior can 'attack', a Healer can 'heal'. The skill belongs to the character type.",
+  "code_template": "type Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write an 'introduce' method that prints \"Hi, I'm [name]!\"\n\n// TODO: Write a 'birthday' method that increases age by 1\n\nfn main() -> Int {\n  // TODO: Create a Person, call introduce, call birthday, then print the new age\n  return 0;\n}\n",
+  "solution": "type Person = {\n  name: Str;\n  age: Int;\n}\n\nfn Person.introduce(self) {\n  io.println(\"Hi, I'm \" + name + \"!\");\n}\n\nfn Person.birthday(self) {\n  age = age + 1;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Sam\", age: 14 };\n  me.introduce();\n  me.birthday();\n  io.println(me.age);\n  return 0;\n}\n",
+  "try_it": "Add a `greet_friend` method that takes another Person's name as a parameter and prints \"Hi [friend], I'm [name]!\"",
+  "concepts": ["method", "self", "dot-notation-method", "mutation"],
+  "tips": [
+    "Method names follow snake_case: `introduce`, `calculate_area`, `get_name`",
+    "The first parameter of every method is `self` — it represents the instance the method is called on",
+    "Inside a method, you can access fields directly by name — no `self.name` needed, just `name`"
+  ],
+  "common_mistakes": [
+    "Forgetting `self` as the first parameter — every method needs it",
+    "Trying to call a method like a function: `introduce(alice)` is wrong, use `alice.introduce()`",
+    "Using `self.name` inside the method body — fields are implicit, just write `name`"
+  ],
+  "next_lesson": "L2-05",
+  "related": ["L2-01", "L2-05", "L1-01"]
+}

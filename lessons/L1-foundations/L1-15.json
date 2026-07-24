@@ -1,0 +1,26 @@
+{
+  "id": "L1-15",
+  "title": "Geometry Functions",
+  "level": "L1",
+  "duration": "8 min",
+  "story": "Your geometry homework asks you to calculate the area of 20 different shapes. Instead of doing each by hand, you write functions that solve ALL of them instantly.",
+  "why": "Geometry formulas are ideal function candidates: well-defined inputs produce well-defined outputs. A great way to practice math-to-code translation.",
+  "narrative": "## A Geometry Homework Helper\n\nGeometry is full of formulas — each one maps perfectly to a function.\n\n### Rectangles\n\n```xiom\nfn area_of_rectangle(width: Float64, height: Float64) -> Float64 {\n  return width * height;\n}\n\nfn perimeter_of_rectangle(width: Float64, height: Float64) -> Float64 {\n  return 2.0 * (width + height);\n}\n\nfn main() -> Int {\n  io.println(area_of_rectangle(5.0, 3.0));       // 15.0\n  io.println(perimeter_of_rectangle(5.0, 3.0));  // 16.0\n  return 0;\n}\n```\n\n### Circles\n\n```xiom\nfn area_of_circle(radius: Float64) -> Float64 {\n  return 3.14159 * radius * radius;\n}\n\nfn circumference_of_circle(radius: Float64) -> Float64 {\n  return 2.0 * 3.14159 * radius;\n}\n\nfn main() -> Int {\n  io.println(area_of_circle(3.0));          // ~28.27\n  io.println(circumference_of_circle(3.0)); // ~18.85\n  return 0;\n}\n```\n\n### Triangles\n\n```xiom\nfn area_of_triangle(base: Float64, height: Float64) -> Float64 {\n  return 0.5 * base * height;\n}\n\nfn main() -> Int {\n  io.println(area_of_triangle(6.0, 4.0));  // 12.0\n  return 0;\n}\n```\n\n### A Shape Analyzer\n\n```xiom\nfn analyze_rectangle(width: Float64, height: Float64) {\n  io.println(\"Rectangle \" + \"x: \");\n  io.println(width);\n  io.println(height);\n  io.println(\"Area: \");\n  io.println(area_of_rectangle(width, height));\n  io.println(\"Perimeter: \");\n  io.println(perimeter_of_rectangle(width, height));\n}\n\nfn main() -> Int {\n  analyze_rectangle(4.0, 7.0);\n  return 0;\n}\n```\n\nNow you have a reusable math toolkit — never calculate by hand again!",
+  "analogy": "Geometry functions are like a formula cheat sheet that does the math for you — plug in the numbers, get the answer.",
+  "code_template": "// TODO: Write 'area_of_rectangle(width, height)' that returns width * height\n// TODO: Write 'perimeter_of_rectangle(width, height)' that returns 2*(w + h)\n// TODO: Write 'area_of_circle(radius)' that returns 3.14159 * r * r\n\nfn main() -> Int {\n  // TODO: Print area of a 4x6 rectangle and area of a circle with radius 5\n  return 0;\n}\n",
+  "solution": "fn area_of_rectangle(width: Float64, height: Float64) -> Float64 {\n  return width * height;\n}\n\nfn perimeter_of_rectangle(width: Float64, height: Float64) -> Float64 {\n  return 2.0 * (width + height);\n}\n\nfn area_of_circle(radius: Float64) -> Float64 {\n  return 3.14159 * radius * radius;\n}\n\nfn main() -> Int {\n  io.println(area_of_rectangle(4.0, 6.0));\n  io.println(area_of_circle(5.0));\n  return 0;\n}\n",
+  "try_it": "Add a `volume_of_box` function that takes length, width, and height and returns the volume. Then write `surface_area_of_box` for the total surface area (six sides).",
+  "concepts": ["geometry-functions", "formula-translation", "Float64-math"],
+  "tips": [
+    "Use `Float64` for geometry — measurements often have decimals",
+    "Multiply by `2.0` not `2` when working with floats: `2.0 * width` keeps the type consistent",
+    "Name functions with `of_` to be explicit: `area_of_circle` says exactly what it calculates"
+  ],
+  "common_mistakes": [
+    "Using `3.14` for pi — it's close but not precise enough for many problems; use at least `3.14159`",
+    "Confusing radius and diameter — circle formulas use radius (half the diameter)",
+    "Forgetting to square: `3.14159 * radius` is wrong; it should be `3.14159 * radius * radius`"
+  ],
+  "next_lesson": "L1-16",
+  "related": ["L1-10", "L1-13", "L1-06"]
+}

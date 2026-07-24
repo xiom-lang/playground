@@ -1,0 +1,25 @@
+{
+  "id": "L0-44",
+  "title": "Temperature Converter",
+  "level": "L0",
+  "duration": "6 min",
+  "story": "You're packing for a trip to Canada and the weather forecast says 20 degrees. But wait — 20 Celsius feels very different from 20 Fahrenheit! You need a converter so you know whether to pack shorts or a parka.",
+  "why": "Converting between units is a practical programming skill — and the Celsius-to-Fahrenheit formula is a perfect use of variables and arithmetic.",
+  "narrative": "## Converting Celsius to Fahrenheit\n\nDifferent countries use different temperature scales. The U.S. uses Fahrenheit while most of the world uses Celsius. The conversion formula is:\n\n**F = C × 9/5 + 32**\n\nLet's build a converter that takes a Celsius temperature and shows the Fahrenheit equivalent.\n\n### The Converter Program\n\n```xiom\nfn main() {\n  let celsius: Int = 20;\n  io.println(\"Celsius: \");\n  io.println(celsius);\n\n  let fahrenheit: Int = celsius * 9 / 5 + 32;\n  io.println(\"Fahrenheit: \");\n  io.println(fahrenheit);\n}\n```\n\nRun it and you'll see 20°C = 68°F. That's room temperature — no parka needed!\n\n### Try Other Temperatures\n\nChange `celsius` to 0 (freezing point: 32°F) or 100 (boiling point: 212°F). The math is always the same — multiply by 9, divide by 5, add 32. Variables make it easy to convert any temperature just by changing one number.",
+  "analogy": "A temperature converter is like a translator — it takes a number in one 'language' (Celsius) and speaks it in another (Fahrenheit).",
+  "code_template": "fn main() {\n  // TODO: create a variable 'celsius' with a starting temperature\n  // TODO: calculate fahrenheit using the formula: C * 9 / 5 + 32\n  // TODO: print both celsius and fahrenheit\n}\n",
+  "solution": "fn main() {\n  let celsius: Int = 20;\n  let fahrenheit: Int = celsius * 9 / 5 + 32;\n  io.println(\"Celsius: \");\n  io.println(celsius);\n  io.println(\"Fahrenheit: \");\n  io.println(fahrenheit);\n}\n",
+  "try_it": "Convert 0 degrees (freezing), 20 degrees (room temp), and 100 degrees (boiling). Then try -10 for a really cold day!",
+  "concepts": ["variables", "arithmetic", "formulas", "unit-conversion"],
+  "tips": [
+    "The formula is C × 9/5 + 32 — multiply first, then divide, then add (XIOM follows math order rules)",
+    "Use Int for whole-number temperatures — the division may drop decimals but it's close enough for weather",
+    "Naming variables clearly (`celsius`, `fahrenheit`) makes your code read like a sentence"
+  ],
+  "common_mistakes": [
+    "Writing the formula as `9/5 * celsius + 32` — `9/5` in Int division gives 1, not 1.8, so the result is wrong. Always multiply first!",
+    "Forgetting the `+ 32` — without it, you just get the scaled value, not the actual Fahrenheit temperature"
+  ],
+  "next_lesson": "L0-45",
+  "related": ["L0-12", "L0-03"]
+}

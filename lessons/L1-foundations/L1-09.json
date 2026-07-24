@@ -1,0 +1,26 @@
+{
+  "id": "L1-09",
+  "title": "Default Values Pattern",
+  "level": "L1",
+  "duration": "7 min",
+  "story": "You're building a greeting app. Most users just want \"Hello!\" — but sometimes they want a personalized greeting with their name. You need both options without rewriting code.",
+  "why": "Default values make functions flexible. Provide a sensible default for common use cases, but let callers override it when needed.",
+  "narrative": "## Simulating Default Values\n\nXIOM doesn't have built-in default parameter values, but you can create the same effect by writing two functions: one with a parameter, and a simpler one that calls it with a default.\n\n### The Pattern\n\n```xiom\nfn greet_person(name: Str) -> Str {\n  return \"Hello, \" + name + \"!\";\n}\n\nfn greet() -> Str {\n  return greet_person(\"friend\");\n}\n\nfn main() -> Int {\n  io.println(greet());              // Hello, friend!\n  io.println(greet_person(\"Kilo\")); // Hello, Kilo!\n  return 0;\n}\n```\n\n`greet()` is the shortcut — it calls `greet_person` with \"friend\" as the default name. `greet_person(\"Kilo\")` is the full version when you want a specific name.\n\n### Why This Pattern?\n\n```xiom\nfn set_volume(level: Int) {\n  io.println(\"Volume set to: \");\n  io.println(level);\n}\n\nfn set_default_volume() {\n  set_volume(50);  // 50 is the default\n}\n\nfn main() -> Int {\n  set_default_volume();  // Volume: 50\n  set_volume(75);        // Volume: 75\n  return 0;\n}\n```\n\n### Multiple Defaults\n\nYou can have a function with multiple parameters and provide a default version that fills in ALL the common values:\n\n```xiom\nfn create_profile(name: Str, age: Int, country: Str) {\n  io.println(\"Profile: \" + name + \", \" + \" years old, from \" + country);\n}\n\nfn create_default_profile() {\n  create_profile(\"Anonymous\", 0, \"Unknown\");\n}\n\nfn main() -> Int {\n  create_default_profile();\n  create_profile(\"Kilo\", 2, \"XIOM Land\");\n  return 0;\n}\n```\n\nThis pattern keeps your code DRY (Don't Repeat Yourself). The logic lives in one place — the parameterized function — and the shortcut version just calls it with defaults.",
+  "analogy": "Default values are like a coffee shop's \"usual\" order — the barista knows what you want unless you specify otherwise.",
+  "code_template": "// TODO: Write 'make_pizza' that takes 'topping: Str' and returns \"Pizza with X\"\n// TODO: Write 'make_cheese_pizza' with no params that calls make_pizza(\"cheese\")\n\nfn main() -> Int {\n  // TODO: Call both and print the results\n  return 0;\n}\n",
+  "solution": "fn make_pizza(topping: Str) -> Str {\n  return \"Pizza with \" + topping;\n}\n\nfn make_cheese_pizza() -> Str {\n  return make_pizza(\"cheese\");\n}\n\nfn main() -> Int {\n  io.println(make_cheese_pizza());\n  io.println(make_pizza(\"pepperoni\"));\n  return 0;\n}\n",
+  "try_it": "Create a `draw_line` function that takes a length (Int) and a symbol (Str). Then make `draw_short_line()` that draws 10 dashes by default. Call both.",
+  "concepts": ["default-values", "function-overloading-pattern", "dry"],
+  "tips": [
+    "Write the full-featured function first, then the shortcut version that calls it with defaults",
+    "Name the shortcut version clearly: `greet()` vs `greet_person(name)`",
+    "This pattern is called the 'facade pattern' — a simple face on a more complex function"
+  ],
+  "common_mistakes": [
+    "Duplicating logic in both functions — the shortcut should CALL the full version, not reimplement it",
+    "Trying to use `= default` syntax in parameters — XIOM doesn't support that; use the two-function pattern instead",
+    "Forgetting that the shortcut function still needs `()` even with no parameters"
+  ],
+  "next_lesson": "L1-10",
+  "related": ["L1-01", "L1-06", "L1-08"]
+}

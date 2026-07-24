@@ -1,0 +1,26 @@
+{
+  "id": "L2-16",
+  "title": "Shape Enum",
+  "level": "L2",
+  "duration": "10 min",
+  "story": "You're building a geometry calculator. Circles need radius, rectangles need width and height, triangles need base and height — but they all share one thing: you can compute their area!",
+  "why": "The Shape enum shows how different variants can carry different numbers of fields, yet one function can handle them all with match.",
+  "narrative": "## One Type, Many Shapes\n\nDifferent shapes need different measurements: a circle has a radius, a rectangle has two dimensions. An enum with varied payloads handles this naturally.\n\n### The Shape Enum\n\n```xiom\nenum Shape {\n  Circle(radius: Float64),\n  Rectangle(width: Float64, height: Float64),\n  Triangle(base: Float64, height: Float64),\n}\n```\n\n### Creating Shapes\n\n```xiom\nfn main() -> Int {\n  let c = Shape.Circle(5.0);\n  let r = Shape.Rectangle(4.0, 6.0);\n  let t = Shape.Triangle(3.0, 8.0);\n  io.println(\"Shapes created!\");\n  return 0;\n}\n```\n\n### Computing Area with Match\n\n```xiom\nfn area(shape: Shape) -> Float64 {\n  return match shape {\n    Circle(radius) => 3.14159 * radius * radius,\n    Rectangle(width, height) => width * height,\n    Triangle(base, height) => 0.5 * base * height,\n  };\n}\n\nfn main() -> Int {\n  let c = Shape.Circle(5.0);\n  let r = Shape.Rectangle(4.0, 6.0);\n  let t = Shape.Triangle(3.0, 8.0);\n\n  io.println(area(c));  // ~78.54\n  io.println(area(r));  // 24.0\n  io.println(area(t));  // 12.0\n  return 0;\n}\n```\n\n### Multiple Payload Fields\n\nSome variants need one field, others need two:\n\n```xiom\nfn describe(shape: Shape) -> Str {\n  return match shape {\n    Circle(radius) => \"Circle with radius \" + \" units\",\n    Rectangle(width, height) => \"Rectangle \" + \" by \" + \" units\",\n    Triangle(base, height) => \"Triangle: base=\" + \" height=\" + \" units\",\n  };\n}\n```\n\n### Type Safety\n\nBecause shapes live under one `Shape` type, you can put them all together logically. A function like `area` handles any shape without needing separate functions for each.\n\nThis pattern — one enum type, one function, match to dispatch — is called **polymorphism** (one interface, many forms).",
+  "analogy": "The Shape enum is like a toolbox — you pull out the circle tool for circles, the rectangle tool for rectangles. Same toolbox, different tools for different jobs.",
+  "code_template": "enum Shape {\n  Circle(radius: Float64),\n  Rectangle(width: Float64, height: Float64),\n  Triangle(base: Float64, height: Float64),\n}\n\n// TODO: Write 'area' function — compute area based on shape type\n// Circle: pi * r * r (use 3.14 for pi)\n// Rectangle: width * height\n// Triangle: 0.5 * base * height\n\nfn main() -> Int {\n  // TODO: Create one of each shape and print all three areas\n  return 0;\n}\n",
+  "solution": "enum Shape {\n  Circle(radius: Float64),\n  Rectangle(width: Float64, height: Float64),\n  Triangle(base: Float64, height: Float64),\n}\n\nfn area(shape: Shape) -> Float64 {\n  return match shape {\n    Circle(radius) => 3.14 * radius * radius,\n    Rectangle(width, height) => width * height,\n    Triangle(base, height) => 0.5 * base * height,\n  };\n}\n\nfn main() -> Int {\n  let c = Shape.Circle(3.0);\n  let r = Shape.Rectangle(5.0, 2.0);\n  let t = Shape.Triangle(4.0, 6.0);\n  io.println(area(c));\n  io.println(area(r));\n  io.println(area(t));\n  return 0;\n}\n",
+  "try_it": "Add a `Square(side: Float64)` variant. Its area is `side * side`. Update `area` and `describe`, then test with all four shapes.",
+  "concepts": ["polymorphism", "multi-payload-variants", "geometry-enum"],
+  "tips": [
+    "Different variants can have different numbers of payload fields — Circle has 1, Rectangle has 2",
+    "Use `3.14159` or `3.14` for pi — there's no built-in pi constant at this level",
+    "Match arms receive all payload fields: `Rectangle(width, height)` grabs both values"
+  ],
+  "common_mistakes": [
+    "Using `Circle(r)` then `Rectangle(r)` — each pattern creates local variables; use distinct names or reuse safely per arm",
+    "Putting the wrong number of fields in the pattern: `Rectangle(w)` won't compile — must match the definition's field count",
+    "Forgetting `0.5` for triangle area — `base * height` alone gives the area of a rectangle, not a triangle"
+  ],
+  "next_lesson": "L2-17",
+  "related": ["L2-14", "L2-15", "L2-12"]
+}

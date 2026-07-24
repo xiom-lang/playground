@@ -1,0 +1,26 @@
+{
+  "id": "L2-15",
+  "title": "Payment Methods",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "Your online store needs to accept different payment types — cash, credit cards, and cryptocurrency. Each one has different info: cards have numbers, crypto has coin names.",
+  "why": "Payment methods showcase enums with varied data — some variants carry one value, others carry different types, all under one unified type.",
+  "narrative": "## Modeling Real-World Choices\n\nA `Payment` can be cash (no data), a credit card (has a number), or crypto (has a coin name). An enum captures this perfectly.\n\n### The Payment Enum\n\n```xiom\nenum Payment {\n  Cash,\n  CreditCard(number: Str),\n  Crypto(coin: Str),\n}\n\nfn main() -> Int {\n  let p1 = Payment.Cash;\n  let p2 = Payment.CreditCard(\"4532-8765-1234\");\n  let p3 = Payment.Crypto(\"Bitcoin\");\n  io.println(\"Payments ready!\");\n  return 0;\n}\n```\n\n### Processing Payments\n\n```xiom\nfn process(payment: Payment) -> Str {\n  return match payment {\n    Cash => \"Processing cash payment.\",\n    CreditCard(number) => \"Charging card ending in \" + number,\n    Crypto(coin) => \"Transferring \" + coin,\n  };\n}\n\nfn main() -> Int {\n  io.println(process(Payment.CreditCard(\"1234\")));\n  io.println(process(Payment.Crypto(\"Ethereum\")));\n  return 0;\n}\n```\n\n### Checking Payment Type\n\n```xiom\nfn is_digital(payment: Payment) -> Bool {\n  return match payment {\n    Cash => false,\n    CreditCard(_) => true,\n    Crypto(_) => true,\n  };\n}\n\nfn main() -> Int {\n  io.println(is_digital(Payment.Cash));        // false\n  io.println(is_digital(Payment.Crypto(\"DOGE\")));  // true\n  return 0;\n}\n```\n\n### Ignoring Data with `_`\n\nWhen you don't need the payload, use `_`:\n\n```xiom\nfn payment_method_name(payment: Payment) -> Str {\n  return match payment {\n    Cash => \"Cash\",\n    CreditCard(_) => \"Card\",\n    Crypto(_) => \"Crypto\",\n  };\n}\n```\n\n### Masking Sensitive Data\n\n```xiom\nfn display_safe(payment: Payment) -> Str {\n  return match payment {\n    Cash => \"Cash payment\",\n    CreditCard(number) => \"Card: ****\" + number,\n    Crypto(coin) => \"Crypto: \" + coin,\n  };\n}\n```\n\nEnums with data let each variant carry exactly the information it needs — no wasted fields, no confusing empty values.",
+  "analogy": "Payment types are like different checkout lanes: the cash lane is simple, the card lane needs a card reader, and the crypto lane needs a wallet address. Each lane has different equipment (data).",
+  "code_template": "enum Payment {\n  Cash,\n  CreditCard(number: Str),\n  Crypto(coin: Str),\n}\n\n// TODO: Write 'describe_payment' that returns a description for each variant\n\n// TODO: Write 'get_identifier' that returns the card number or coin name, or \"N/A\" for Cash\n\nfn main() -> Int {\n  // TODO: Test with one of each payment type\n  return 0;\n}\n",
+  "solution": "enum Payment {\n  Cash,\n  CreditCard(number: Str),\n  Crypto(coin: Str),\n}\n\nfn describe_payment(payment: Payment) -> Str {\n  return match payment {\n    Cash => \"Paid with cash\",\n    CreditCard(number) => \"Paid with card: \" + number,\n    Crypto(coin) => \"Paid with crypto: \" + coin,\n  };\n}\n\nfn get_identifier(payment: Payment) -> Str {\n  return match payment {\n    Cash => \"N/A\",\n    CreditCard(number) => number,\n    Crypto(coin) => coin,\n  };\n}\n\nfn main() -> Int {\n  io.println(describe_payment(Payment.Cash));\n  io.println(get_identifier(Payment.CreditCard(\"7890\")));\n  io.println(get_identifier(Payment.Crypto(\"Solana\")));\n  return 0;\n}\n",
+  "try_it": "Add a `PayPal(email: Str)` variant to the Payment enum. Update both functions to handle it. Test with a PayPal payment.",
+  "concepts": ["varied-payloads", "payment-model", "pattern-ignore", "sensitive-data-pattern"],
+  "tips": [
+    "Use `_` when you don't need the payload value — `CreditCard(_) => \"Card\"` is cleaner than `CreditCard(number) => \"Card\"`",
+    "Different variants can have different payload types — Cash has none, CreditCard has Str",
+    "Name payload fields clearly: `CreditCard(number: Str)` tells you the field holds the card number"
+  ],
+  "common_mistakes": [
+    "Creating a variant with an unused payload — if a field stores the card number, use it somewhere",
+    "Using `_` when you DO need the value — you can't print `_`; name the field if you need the data",
+    "Trying to access `payment.number` — payloads are only accessible through match patterns"
+  ],
+  "next_lesson": "L2-16",
+  "related": ["L2-14", "L2-16", "L2-20"]
+}

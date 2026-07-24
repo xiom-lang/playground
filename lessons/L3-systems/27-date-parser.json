@@ -1,0 +1,25 @@
+{
+  "id": "L3-27",
+  "title": "Date Parser",
+  "level": "L3",
+  "duration": "9 min",
+  "story": "Your app receives dates from a form in 'DD/MM/YYYY' format, but users sometimes type garbage like '99/99/9999' or 'hello/there/world'. Instead of crashing, you need to parse safely and return either a valid date tuple or a clear error.",
+  "why": "Parsing structured text into typed data with Result is the foundation of every data pipeline.",
+  "narrative": "## Parsing Dates Safely\n\nRaw strings from user input are unreliable. We'll use `string.str_slice` to extract parts, `string.str_to_int` to convert them, and `Result` to handle every possible failure.\n\n### The Format: DD/MM/YYYY\n\nThe string must be exactly 10 characters: two digits, a slash, two digits, a slash, four digits.\n\n### Step 1: Validate Length\n\n```xiom\nif string.str_len(date) != 10 {\n  return Err(\"Date must be exactly DD/MM/YYYY\");\n}\n```\n\n### Step 2: Check Separators\n\n```xiom\nlet slash1 = string.str_slice(date, 2, 3);\nlet slash2 = string.str_slice(date, 5, 6);\nif slash1 != \"/\" || slash2 != \"/\" {\n  return Err(\"Date must use / separators\");\n}\n```\n\n### Step 3: Extract and Parse Parts\n\n```xiom\nlet day_str = string.str_slice(date, 0, 2);\nlet month_str = string.str_slice(date, 3, 5);\nlet year_str = string.str_slice(date, 6, 10);\n\nlet day = string.str_to_int(day_str)?;\nlet month = string.str_to_int(month_str)?;\nlet year = string.str_to_int(year_str)?;\n```\n\nThe `?` operator propagates errors automatically. If any `str_to_int` fails, the function returns `Err` immediately.\n\n### Step 4: Validate Ranges\n\n```xiom\nif day < 1 || day > 31 { return Err(\"Day out of range\"); }\nif month < 1 || month > 12 { return Err(\"Month out of range\"); }\nif year < 1900 || year > 2100 { return Err(\"Year out of range\"); }\n```\n\n### Return the Tuple\n\n```xiom\nreturn Ok((day, month, year));\n```",
+  "analogy": "Parsing a date string is like opening a letter with three compartments. First you check the envelope is the right size (length 10), then verify the dividers are in the right places (slashes at position 2 and 5), then read each compartment's number — if any compartment has scribbles instead of digits, you return the letter unread.",
+  "code_template": "fn parse_date(date: Str) -> Result[(Int, Int, Int), Str] {\n  // TODO: check length is 10\n  // TODO: check slashes at positions 2 and 5\n  // TODO: extract day_str (0-2), month_str (3-5), year_str (6-10)\n  // TODO: convert each with string.str_to_int and ?\n  // TODO: validate ranges (day 1-31, month 1-12, year 1900-2100)\n  // TODO: return Ok((day, month, year))\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: parse \"25/12/2024\", return year if Ok, -1 if Err\n  return 0;\n}",
+  "solution": "fn parse_date(date: Str) -> Result[(Int, Int, Int), Str] {\n  if string.str_len(date) != 10 {\n    return Err(\"Date must be exactly DD/MM/YYYY\");\n  }\n  let slash1 = string.str_slice(date, 2, 3);\n  let slash2 = string.str_slice(date, 5, 6);\n  if slash1 != \"/\" || slash2 != \"/\" {\n    return Err(\"Date must use / separators\");\n  }\n  let day_str = string.str_slice(date, 0, 2);\n  let month_str = string.str_slice(date, 3, 5);\n  let year_str = string.str_slice(date, 6, 10);\n  let day = string.str_to_int(day_str)?;\n  let month = string.str_to_int(month_str)?;\n  let year = string.str_to_int(year_str)?;\n  if day < 1 || day > 31 { return Err(\"Day out of range\"); }\n  if month < 1 || month > 12 { return Err(\"Month out of range\"); }\n  if year < 1900 || year > 2100 { return Err(\"Year out of range\"); }\n  return Ok((day, month, year));\n}\n\nfn main() -> Int {\n  match parse_date(\"25/12/2024\") {\n    Ok((d, m, y)) => { return y; }\n    Err(_) => { return -1; }\n  }\n}",
+  "try_it": "Parse these dates and observe the errors: '01/01/2025' (valid), '1/1/2025' (too short), '01-01-2025' (wrong separators), '99/99/2025' (out of range). Add a check for month-specific day limits (e.g., February max 29, April max 30).",
+  "concepts": ["Result", "tuple", "string.str_slice", "string.str_to_int", "?", "pattern matching", "destructuring"],
+  "tips": [
+    "`string.str_slice(s, start, end)` takes inclusive start and exclusive end — slice(2, 3) gives character at index 2",
+    "The `?` operator on `string.str_to_int` automatically returns `Err` if parsing fails — no manual match needed",
+    "Destructure tuples in `match` with `Ok((d, m, y)) =>` to extract all three values at once"
+  ],
+  "common_mistakes": [
+    "Forgetting to check the slashes — '01-01-2025' would parse as valid numbers but the format is wrong",
+    "Using `string.str_to_int()` without `?` — the function returns `Result[Int, Str]`, not a plain `Int`"
+  ],
+  "next_lesson": "L3-28",
+  "related": ["L2-30", "L2-34", "L2-49", "L2-54"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L3-08",
+  "title": "Result with Match",
+  "level": "L3",
+  "duration": "10 min",
+  "story": "You're writing a file uploader. Uploads can succeed (file saved) or fail (disk full, permission denied, network timeout). Each outcome needs different handling — match gives you the power to handle every scenario.",
+  "why": "Match on Result gives you complete control over both success and failure paths — you can print, retry, log, or transform based on which outcome you get.",
+  "narrative": "## Handling Both Paths with Match\n\nEvery Result operation has two possible outcomes. Match lets you handle each one with dedicated logic.\n\n### Basic Result Matching\n\n```xiom\nfn check_number(n: Int) -> Result[Int, Str] {\n  if n > 0 { return Ok(n); }\n  return Err(\"Number must be positive\");\n}\n\nfn main() -> Int {\n  let r1 = check_number(42);\n  let r2 = check_number(-5);\n\n  match r1 {\n    Ok(val) => io.println(\"Valid: \" + string.int_to_str(val)),\n    Err(msg) => io.println(\"Error: \" + msg),\n  };\n\n  match r2 {\n    Ok(val) => io.println(\"Valid: \" + string.int_to_str(val)),\n    Err(msg) => io.println(\"Error: \" + msg),\n  };\n  return 0;\n}\n```\n\n### Different Actions per Outcome\n\n```xiom\nfn process_login(result: Result[Str, Str]) {\n  match result {\n    Ok(token) => {\n      io.println(\"Login successful!\");\n      io.println(\"Token: \" + token);\n    },\n    Err(reason) => {\n      io.println(\"Login failed.\");\n      io.println(\"Reason: \" + reason);\n      io.println(\"Please try again.\");\n    },\n  }\n}\n\nfn main() -> Int {\n  process_login(Ok(\"abc123\"));\n  process_login(Err(\"Wrong password\"));\n  return 0;\n}\n```\n\n### Transforming Results\n\nUse match to convert a Result into a different value:\n\n```xiom\nfn get_grade_label(result: Result[Int, Str]) -> Str {\n  return match result {\n    Ok(score) => {\n      if score >= 90 { return \"Grade: A\"; }\n      if score >= 80 { return \"Grade: B\"; }\n      return \"Grade: C\";\n    },\n    Err(e) => \"Could not calculate: \" + e,\n  };\n}\n\nfn main() -> Int {\n  io.println(get_grade_label(Ok(95)));   // Grade: A\n  io.println(get_grade_label(Ok(72)));   // Grade: C\n  io.println(get_grade_label(Err(\"No data\")));  // Could not calculate: No data\n  return 0;\n}\n```",
+  "analogy": "Match on Result is like a fork in the road — one path leads to the celebration (Ok), the other to the repair shop (Err). You're prepared for either destination.",
+  "code_template": "// TODO: Write validate_email(email: Str) -> Result[Str, Str]\n// If email contains \"@\" -> Ok(email)\n// Otherwise -> Err(\"Invalid email: must contain @\")\n\n// TODO: Write send_welcome function that matches on the validation result\n// On Ok: print \"Welcome email sent to X\"\n// On Err: print the error message\n\nfn main() -> Int {\n  // TODO: Test with \"alice@mail.com\" and \"bob\" and \"\" (empty string)\n  return 0;\n}\n",
+  "solution": "fn validate_email(email: Str) -> Result[Str, Str] {\n  let i = 0;\n  let found = false;\n  while i < string.str_length(email) {\n    if string.str_slice(email, i, i + 1) == \"@\" { found = true; }\n    i = i + 1;\n  }\n  if found { return Ok(email); }\n  return Err(\"Invalid email: must contain @\");\n}\n\nfn send_welcome(email: Str) {\n  let result = validate_email(email);\n  match result {\n    Ok(valid) => io.println(\"Welcome email sent to \" + valid),\n    Err(e) => io.println(e),\n  }\n}\n\nfn main() -> Int {\n  send_welcome(\"alice@mail.com\");\n  send_welcome(\"bob\");\n  send_welcome(\"\");\n  return 0;\n}\n",
+  "try_it": "Add another validation rule: reject emails shorter than 5 characters with Err(\"Email too short\"). Does your match still handle all cases correctly? Test with \"a@b\" and \"user@site.com\".",
+  "concepts": ["Result-match", "validation", "error-handling", "multi-branch"],
+  "tips": [
+    "Match branches can contain multiple statements — use braces `{ }` for multi-line arms",
+    "Return early from inside a match arm if needed — it returns from the enclosing function",
+    "Name your error strings thoughtfully — they're for humans to read and understand what went wrong"
+  ],
+  "common_mistakes": [
+    "Only checking Ok and ignoring Err — the compiler won't let you, but conceptually you should have meaningful error handling",
+    "Returning from one match arm but not the other when the match is the last expression of a function",
+    "Using match when an `if let` would be cleaner — if you only handle Ok, consider if let Ok(x) = result"
+  ],
+  "next_lesson": "L3-09",
+  "related": ["L3-07", "L3-04", "L2-16"]
+}

@@ -1,17 +1,25 @@
 {
   "id": "L1-03",
-  "title": "Return Values",
+  "title": "Functions That Give Back (Return Values)",
   "level": "L1",
-  "duration": "10 min",
-  "concepts": ["return", "return type", "expression", "early return"],
-  "concept": "The return statement sends a value back from a function. A function's return type declares what kind of value it produces.",
-  "why": "Functions compute and give back results. Without return values, functions would be one-way — they couldn't produce output.",
-  "theory": "## The `return` Statement\n\nThe `return` keyword does two things:\n1. **Produces** a value to send back to the caller\n2. **Exits** the function immediately\n\n```xiom\nfn square(x: Int) -> Int {\n  return x * x;  // sends x*x back, then exits\n}\n\nfn main() -> Int {\n  let nine = square(3);  // 9\n  return nine;\n}\n```\n\n### Return Type Mismatch\n\nThe value you return must match the declared return type:\n\n```xiom\nfn get_score() -> Int {\n  return 100;  // OK: 100 is Int\n  // return \"great\";  // ERROR: \"great\" is Str, not Int!\n}\n```\n\n### Complex Return Expressions\n\nYou can return the result of any expression:\n\n```xiom\nfn max_of_three(a: Int, b: Int, c: Int) -> Int {\n  let max_ab = a;\n  if b > max_ab {\n    max_ab = b;  \n  }\n  // ... but let's keep it simple:\n  return a + b + c;\n}\n```\n\n### Returning a Variable\n\n```xiom\nfn make_greeting(name: Str) -> Str {\n  let result = \"Hello, \" + name + \"!\";\n  return result;\n}\n```\n\n### Using Return Values\n\nThe caller can use the returned value however they want:\n\n```xiom\nfn main() -> Int {\n  // Store it\n  let answer = square(6);\n\n  // Use it directly\n  io.println(\"Calculation complete!\");\n\n  // Pass it to another function\n  let total = square(2) + square(3);  // 4 + 9 = 13\n\n  return answer;\n}\n```\n\n### Functions That \"Do Things\"\n\nNot all functions need to compute a value. Some just perform an action — we'll cover those next.",
-  "syntax_ref": "return value;  // sends value back and exits function",
-  "code_template": "// TODO: Write a function 'cube' that takes an Int and returns n*n*n\n\nfn main() -> Int {\n  // TODO: Call cube(3) and return the result\n  return 0;\n}",
-  "solution": "fn cube(n: Int) -> Int {\n  return n * n * n;\n}\n\nfn main() -> Int {\n  let result = cube(3);\n  return result;\n}",
-  "tips": ["`return` both produces a value AND exits the function immediately", "The return type (`-> Int`) is a PROMISE — the function must deliver", "You can return any expression: `return a + b * c;`", "A function with `-> Int` must return an Int on EVERY code path"],
-  "common_mistakes": ["Forgetting `return` — just writing `x + y;` doesn't send the value back", "Return type mismatch: declaring `-> Int` but returning a Str", "Having code after `return` that never executes (dead code)"],
-  "related": ["L1-01", "L1-02", "L1-04"],
-  "next_lesson": "L1-04"
+  "duration": "7 min",
+  "story": "So far your functions just print things. But what if you want a function to calculate something and hand you the answer? Like a vending machine — you put money in, it gives you a snack back!",
+  "why": "Return values turn functions into reusable calculators — they compute a result and send it back to wherever they were called.",
+  "narrative": "## Functions That Return Answers\n\nPrinting is great for showing things, but most functions need to compute a value and give it back. That's what **return values** do.\n\n### Your First Return Function\n\n```xiom\nfn double(x: Int) -> Int {\n  return x * 2;\n}\n\nfn main() {\n  let result: Int = double(5);\n  io.println(\"Double of 5 is: \");\n  io.println(result);\n\n  let big_result: Int = double(100);\n  io.println(\"Double of 100 is: \");\n  io.println(big_result);\n}\n```\n\nLet's break it down:\n- `-> Int` after the parameters declares the **return type** — this function gives back an Int.\n- `return x * 2;` sends the result back to whoever called the function.\n- `let result: Int = double(5);` captures the return value in a variable.\n\nThe function is like a vending machine: you put 5 in (parameter), it computes `5 * 2`, and gives you 10 back (return value).\n\n### Functions That Decide\n\n```xiom\nfn is_even(n: Int) -> Bool {\n  if n % 2 == 0 {\n    return true;\n  } else {\n    return false;\n  }\n}\n\nfn main() {\n  let check: Bool = is_even(7);\n  io.println(check);\n}\n```\n\n`is_even` takes an Int and returns a Bool — true if even, false if odd. Return values can be any type!",
+  "analogy": "A function that returns a value is like a vending machine: you put money in (parameters), it gives you a snack back (return value). No return = a machine that eats your money!",
+  "code_template": "// TODO: define a function 'double' that takes an Int and returns Int\n// TODO: inside double, return x * 2\n\nfn main() {\n  // TODO: call double(5) and store the result in a variable\n  // TODO: print the result\n}\n",
+  "solution": "fn double(x: Int) -> Int {\n  return x * 2;\n}\n\nfn main() {\n  let result: Int = double(5);\n  io.println(result);\n}\n",
+  "try_it": "Create a `triple(x: Int) -> Int` function that returns `x * 3`. Then create a `square(x: Int) -> Int` that returns `x * x`. Call both from main!",
+  "concepts": ["return-values", "return-type", "function-output", "calculations"],
+  "tips": [
+    "The `-> Type` declares what the function returns — it's a promise: 'I will give you back an Int'",
+    "Capture return values with `let` — `let result = double(5);` saves the answer for later use",
+    "A function can only return ONE value, but that value can be used wherever you need it"
+  ],
+  "common_mistakes": [
+    "Declaring `-> Int` but forgetting the `return` statement — the function promises a value but never delivers",
+    "Trying to use the return value without storing it — `double(5);` runs but the result is lost; use `let x = double(5);` instead"
+  ],
+  "next_lesson": "L1-04",
+  "related": ["L1-02", "L1-04", "L0-12"]
 }

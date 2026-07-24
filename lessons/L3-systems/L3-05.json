@@ -1,0 +1,26 @@
+{
+  "id": "L3-05",
+  "title": "Finding Things",
+  "level": "L3",
+  "duration": "10 min",
+  "story": "You're building a search feature for a contact list. A user types a name — your code needs to find it in the list or report 'not found.' No crashes, no cryptic numbers — just a clean answer.",
+  "why": "Search operations are the classic use case for Option — you either find what you're looking for (Some) or you don't (None), and the type system enforces handling both cases.",
+  "narrative": "## Search with Option\n\nFinding something in a collection is the perfect real-world use of Option. The result is binary: found or not found.\n\n### Find a Name in a List\n\n```xiom\nfn find_name(name: Str) -> Option[Str] {\n  if name == \"Alice\" { return Some(\"Found: Alice\"); }\n  if name == \"Bob\"   { return Some(\"Found: Bob\"); }\n  if name == \"Carol\" { return Some(\"Found: Carol\"); }\n  return None;\n}\n\nfn main() -> Int {\n  let result1 = find_name(\"Bob\");\n  let result2 = find_name(\"Dave\");\n\n  io.println(result1.unwrap_or(\"Not found\"));\n  io.println(result2.unwrap_or(\"Not found\"));\n  return 0;\n}\n```\n\n### Search with Extra Information\n\nInstead of just returning a match message, return the actual data:\n\n```xiom\nfn get_age(name: Str) -> Option[Int] {\n  if name == \"Alice\" { return Some(14); }\n  if name == \"Bob\"   { return Some(16); }\n  if name == \"Carol\" { return Some(15); }\n  return None;\n}\n\nfn main() -> Int {\n  if let Some(age) = get_age(\"Alice\") {\n    io.println(\"Alice is \" + string.int_to_str(age));\n  } else {\n    io.println(\"Person not found\");\n  }\n  return 0;\n}\n```\n\n### Search with Validation\n\nCombine multiple checks — find a value and then validate it:\n\n```xiom\nfn find_valid_score(name: Str) -> Option[Int] {\n  let score = if name == \"Alice\" { Some(85) }\n    else if name == \"Bob\" { Some(105) }  // invalid!\n    else { None };\n\n  if let Some(s) = score {\n    if s >= 0 && s <= 100 {\n      return Some(s);\n    }\n  }\n  return None;\n}\n\nfn main() -> Int {\n  io.println(find_valid_score(\"Alice\").unwrap_or(-1));  // 85\n  io.println(find_valid_score(\"Bob\").unwrap_or(-1));    // -1 (score 105 was invalid)\n  io.println(find_valid_score(\"Dave\").unwrap_or(-1));   // -1 (not found)\n  return 0;\n}\n```",
+  "analogy": "Finding with Option is like asking a librarian for a book — they either come back with the book in hand (Some) or tell you 'we don't have it' (None).",
+  "code_template": "// TODO: Write find_grade function\n// Takes a student name (Str), returns Option[Str]\n// \"Alex\" -> Some(\"A\"), \"Bailey\" -> Some(\"B\"), \"Casey\" -> Some(\"C\")\n// Anyone else -> None\n\n// TODO: Write get_grade_message function\n// Uses find_grade, returns a nice sentence or \"Student not found\"\n\nfn main() -> Int {\n  // TODO: Test with \"Alex\", \"Bailey\", and \"Unknown\", print results\n  return 0;\n}\n",
+  "solution": "fn find_grade(name: Str) -> Option[Str] {\n  if name == \"Alex\"   { return Some(\"A\"); }\n  if name == \"Bailey\" { return Some(\"B\"); }\n  if name == \"Casey\"  { return Some(\"C\"); }\n  return None;\n}\n\nfn get_grade_message(name: Str) -> Str {\n  if let Some(grade) = find_grade(name) {\n    return name + \" got a \" + grade + \"!\";\n  }\n  return \"Student \" + name + \" not found.\";\n}\n\nfn main() -> Int {\n  io.println(get_grade_message(\"Alex\"));\n  io.println(get_grade_message(\"Bailey\"));\n  io.println(get_grade_message(\"Unknown\"));\n  return 0;\n}\n",
+  "try_it": "Add two more students to find_grade. Then create a `find_honor_roll` function that returns Option[Str] — only return Some(name) for students with A or B. Returns None for C or not found. Test all cases.",
+  "concepts": ["search-pattern", "Option-return", "lookup-table", "data-retrieval"],
+  "tips": [
+    "Return Some early when you find a match — the rest of the function becomes the 'not found' path",
+    "Chain multiple if-checks for a simple lookup table without needing arrays or maps",
+    "Use if let when you need special handling for found vs. not found, .unwrap_or for simple defaults"
+  ],
+  "common_mistakes": [
+    "Continuing to check after returning Some — `return Some(x)` exits the function immediately",
+    "Returning `Some(\"Not found\")` — defeats the purpose! Use None for 'not found' so callers can distinguish",
+    "Hardcoding a single match check when multiple items could match — consider which result should take priority"
+  ],
+  "next_lesson": "L3-06",
+  "related": ["L3-03", "L3-04", "L1-18"]
+}

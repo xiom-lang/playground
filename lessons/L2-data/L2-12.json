@@ -1,0 +1,26 @@
+{
+  "id": "L2-12",
+  "title": "Enums with Match",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You're building a text adventure game. The player types a direction — North, South, East, or West — and expects to see what's there. A long chain of if/elif works... but there's a cleaner way.",
+  "why": "The `match` expression is purpose-built for enums — it's cleaner than chained if/elif and the compiler guarantees you handle every variant.",
+  "narrative": "## Pattern Matching with Match\n\nWhen you need different behavior for each enum variant, `match` is the right tool. It's like `if/elif` but designed specifically for enums.\n\n### The Direction Enum\n\n```xiom\nenum Direction {\n  North,\n  South,\n  East,\n  West,\n}\n```\n\n### Matching on Direction\n\n```xiom\nfn go(dir: Direction) -> Str {\n  match dir {\n    North => { return \"You see a snowy mountain.\"; }\n    South => { return \"You see a sunny beach.\"; }\n    East => { return \"You see a dense forest.\"; }\n    West => { return \"You see a vast desert.\"; }\n  }\n}\n\nfn main() -> Int {\n  io.println(go(Direction.North));\n  io.println(go(Direction.South));\n  return 0;\n}\n```\n\n### Match as an Expression\n\nMatch can return a value directly — no need for `return` inside each arm:\n\n```xiom\nfn describe(dir: Direction) -> Str {\n  return match dir {\n    North => \"Cold\",\n    South => \"Warm\",\n    East => \"Mild\",\n    West => \"Dry\",\n  };\n}\n```\n\n### Exhaustiveness: Every Variant Required\n\nThe compiler checks that ALL variants are covered. This won't compile:\n\n```xiom\nmatch dir {\n  North => { return \"Mountains\"; }\n  South => { return \"Beach\"; }\n  // ERROR: East and West not handled!\n}\n```\n\n### Combining Variants\n\nIf multiple variants should do the same thing, use `|`:\n\n```xiom\nfn is_north_south(dir: Direction) -> Bool {\n  return match dir {\n    North | South => true,\n    East | West => false,\n  };\n}\n```\n\nMatch is the cleanest way to handle enums — one block, one arm per variant, no accidentally skipped cases.",
+  "analogy": "Match is like a train track switch. The train (your code) approaches, and depending on which track is selected (the enum variant), it goes to a completely different destination.",
+  "code_template": "enum Direction {\n  North,\n  South,\n  East,\n  West,\n}\n\n// TODO: Write 'go' function using match — return a description for each direction\n\nfn main() -> Int {\n  // TODO: Test go with two different directions\n  return 0;\n}\n",
+  "solution": "enum Direction {\n  North,\n  South,\n  East,\n  West,\n}\n\nfn go(dir: Direction) -> Str {\n  return match dir {\n    North => \"Snowy mountains ahead\",\n    South => \"Sunny beach ahead\",\n    East => \"Dense forest ahead\",\n    West => \"Vast desert ahead\",\n  };\n}\n\nfn main() -> Int {\n  io.println(go(Direction.North));\n  io.println(go(Direction.East));\n  return 0;\n}\n",
+  "try_it": "Add Northeast, Southeast, Southwest, and Northwest directions. Use `|` to pair them: Northeast|North => \"Cold\". Test all eight directions.",
+  "concepts": ["match", "exhaustive-matching", "pattern-matching", "or-patterns"],
+  "tips": [
+    "Match is exhaustive — the compiler forces you to handle every variant",
+    "Use `|` to combine variants that share the same handler: `North | South => \"Vertical\"`",
+    "Match can be used as an expression that returns a value — assign it to a variable or return it"
+  ],
+  "common_mistakes": [
+    "Using `:` instead of `=>` in match arms — match uses arrows: `North => { ... }` not `North: { ... }`",
+    "Forgetting to handle every variant — the compiler will catch this, but it's a common surprise",
+    "Writing `Direction.North` inside match patterns — use bare variant names: `North` not `Direction.North`"
+  ],
+  "next_lesson": "L2-13",
+  "related": ["L2-11", "L2-13", "L1-10"]
+}

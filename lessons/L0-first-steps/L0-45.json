@@ -1,0 +1,25 @@
+{
+  "id": "L0-45",
+  "title": "Seconds Calculator",
+  "level": "L0",
+  "duration": "6 min",
+  "story": "Your friend says they've been alive for about 15 years. You pause, do some quick mental math, and say: 'That's over 473 million seconds!' Their jaw drops. Let's build a program that does this instantly.",
+  "why": "Chaining multiplication with variables is a practical way to understand how compound calculations work — from seconds to days to years.",
+  "narrative": "## How Many Seconds?\n\nTime adds up fast. Let's calculate exactly how many seconds are in a minute, an hour, a day, and a week — all in one program.\n\n### The Time Calculator\n\n```xiom\nfn main() {\n  let sec_per_min: Int = 60;\n  let min_per_hour: Int = 60;\n  let hour_per_day: Int = 24;\n  let day_per_week: Int = 7;\n\n  let sec_per_hour: Int = sec_per_min * min_per_hour;\n  let sec_per_day: Int = sec_per_hour * hour_per_day;\n  let sec_per_week: Int = sec_per_day * day_per_week;\n\n  io.println(\"Seconds in a minute: \");\n  io.println(sec_per_min);\n  io.println(\"Seconds in an hour: \");\n  io.println(sec_per_hour);\n  io.println(\"Seconds in a day: \");\n  io.println(sec_per_day);\n  io.println(\"Seconds in a week: \");\n  io.println(sec_per_week);\n}\n```\n\nEach calculation builds on the previous one. `sec_per_hour` uses `sec_per_min`, `sec_per_day` uses `sec_per_hour`, and so on. This chain of variables shows how big numbers grow from simple multiplications!\n\n60 seconds per minute × 60 minutes per hour × 24 hours per day = 86,400 seconds in a single day. Multiply by 7 and you get over 600,000 seconds in a week!",
+  "analogy": "Time calculations are like stacking building blocks — each layer (minutes, hours, days) builds on top of the one before it.",
+  "code_template": "fn main() {\n  // TODO: create variables for seconds per minute, minutes per hour, hours per day, days per week\n  // TODO: calculate seconds per hour, per day, and per week using multiplication\n  // TODO: print all the results\n}\n",
+  "solution": "fn main() {\n  let sec_per_min: Int = 60;\n  let min_per_hour: Int = 60;\n  let hour_per_day: Int = 24;\n  let day_per_week: Int = 7;\n  let sec_per_hour: Int = sec_per_min * min_per_hour;\n  let sec_per_day: Int = sec_per_hour * hour_per_day;\n  let sec_per_week: Int = sec_per_day * day_per_week;\n  io.println(sec_per_min);\n  io.println(sec_per_hour);\n  io.println(sec_per_day);\n  io.println(sec_per_week);\n}\n",
+  "try_it": "Add `day_per_year: Int = 365` and calculate seconds in a year. Then try calculating how many seconds YOU have been alive!",
+  "concepts": ["multiplication", "chained-calculations", "units", "time"],
+  "tips": [
+    "Chain your calculations — each result feeds into the next, making your code clean and logical",
+    "Use descriptive variable names like `sec_per_day` so anyone reading your code instantly understands",
+    "Print every step so you can verify each calculation is correct"
+  ],
+  "common_mistakes": [
+    "Forgetting to multiply ALL the factors — seconds in a day is 60 × 60 × 24, not just 60 × 24",
+    "Using the wrong unit — make sure you're multiplying seconds by minutes, not seconds by seconds"
+  ],
+  "next_lesson": "L0-46",
+  "related": ["L0-12", "L0-03", "L0-42"]
+}

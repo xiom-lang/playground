@@ -1,0 +1,26 @@
+{
+  "id": "L1-19",
+  "title": "Random Functions Practice",
+  "level": "L1",
+  "duration": "8 min",
+  "story": "Game night! You need a dice roller and a coin flipper. Instead of finding physical dice, you build digital ones that never get lost under the couch.",
+  "why": "Randomness makes programs feel alive. Functions that return random values power games, simulations, and any program that needs unpredictability.",
+  "narrative": "## Building Digital Dice and Coins\n\n`math.random_range(min, max)` picks a random integer between `min` and `max` (inclusive). Wrap it in your own functions for clean, reusable random tools.\n\n### Dice Roller\n\n```xiom\nfn roll_d6() -> Int {\n  return math.random_range(1, 6);\n}\n\nfn roll_d20() -> Int {\n  return math.random_range(1, 20);\n}\n\nfn main() -> Int {\n  io.println(roll_d6());   // 1-6\n  io.println(roll_d20());  // 1-20\n  return 0;\n}\n```\n\nRun it multiple times — the numbers change! Each call to `math.random_range` produces a fresh random value.\n\n### Coin Flipper\n\n```xiom\nfn flip_coin() -> Str {\n  let result = math.random_range(0, 1);\n  if result == 0 {\n    return \"Heads\";\n  } else {\n    return \"Tails\";\n  }\n}\n\nfn main() -> Int {\n  io.println(flip_coin());\n  io.println(flip_coin());\n  io.println(flip_coin());\n  return 0;\n}\n```\n\n### Simulating Multiple Rolls\n\n```xiom\nfn roll_two_dice() -> Int {\n  let die1 = roll_d6();\n  let die2 = roll_d6();\n  return die1 + die2;\n}\n\nfn roll_until_six() {\n  let mut rolls = 0;\n  let mut result = 0;\n  while result != 6 {\n    result = roll_d6();\n    rolls = rolls + 1;\n  }\n  io.println(\"Took \" + \" rolls to get a 6!\");\n  io.println(rolls);\n}\n\nfn main() -> Int {\n  io.println(roll_two_dice());\n  return 0;\n}\n```\n\n### Why Wrap Random in Functions?\n\n`flip_coin()` is much clearer than `math.random_range(0, 1)` with a manual if/else. Your function name tells the story. Plus, if you want to change how the coin works (weighted coin, anyone?), you change ONE function.",
+  "analogy": "Random functions are like shaking a magic 8-ball — you ask a question, give it a shake, and a random answer appears.",
+  "code_template": "// TODO: Write 'roll_d6' that returns math.random_range(1, 6)\n// TODO: Write 'flip_coin' that randomly returns \"Heads\" or \"Tails\"\n\nfn main() -> Int {\n  // TODO: Call roll_d6() and flip_coin() and print the results\n  return 0;\n}\n",
+  "solution": "fn roll_d6() -> Int {\n  return math.random_range(1, 6);\n}\n\nfn flip_coin() -> Str {\n  let result = math.random_range(0, 1);\n  if result == 0 {\n    return \"Heads\";\n  } else {\n    return \"Tails\";\n  }\n}\n\nfn main() -> Int {\n  io.println(roll_d6());\n  io.println(flip_coin());\n  return 0;\n}\n",
+  "try_it": "Write a `roll_custom_dice(sides)` function that takes a number of sides and returns a random roll. Test it with a 4-sided, 8-sided, and 100-sided die!",
+  "concepts": ["random", "math.random_range", "dice-roller"],
+  "tips": [
+    "`math.random_range(min, max)` includes BOTH ends — `(1, 6)` can return 1 AND 6",
+    "Each call to `math.random_range` gives a fresh random number — call it every time you need a new roll",
+    "Wrap random calls in named functions: `roll_d6()` is more readable than `math.random_range(1, 6)`"
+  ],
+  "common_mistakes": [
+    "Storing one random result and reusing it: `let roll = math.random_range(1, 6);` and then printing `roll` three times — it'll be the same number each time",
+    "Using `math.random_range(0, 1)` expecting 0 or 1 — that's correct, but `math.random_range(1, 2)` also gives two options (just different values)",
+    "Forgetting to call the function inside a loop for multiple random results"
+  ],
+  "next_lesson": "L1-20",
+  "related": ["L1-10", "L1-12", "L1-01"]
+}

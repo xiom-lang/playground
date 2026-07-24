@@ -1,0 +1,26 @@
+{
+  "id": "L3-06",
+  "title": "Option Practice: Safe Math",
+  "level": "L3",
+  "duration": "12 min",
+  "story": "Your calculator app needs a 'safe mode.' Square roots of negative numbers don't exist. Logarithms of zero are undefined. Instead of showing errors, the calculator says 'N/A' — and you decide when something is computable.",
+  "why": "Safe math functions that return Option let you chain computations without worrying about invalid inputs at each step — each function guards its own domain.",
+  "narrative": "## Mathematical Safety Nets\n\nReal math has constraints: you can't take the square root of a negative number, and log(0) is undefined. Option makes these constraints explicit.\n\n### Safe Square Root\n\n```xiom\nfn safe_sqrt(n: Int) -> Option[Int] {\n  if n < 0 { return None; }\n  let root = 0;\n  while root * root <= n {\n    if root * root == n { return Some(root); }\n    root = root + 1;\n  }\n  return None;\n}\n\nfn main() -> Int {\n  io.println(safe_sqrt(25).unwrap_or(-1));   // 5\n  io.println(safe_sqrt(7).unwrap_or(-1));    // -1 (not a perfect square)\n  io.println(safe_sqrt(-4).unwrap_or(-1));   // -1 (negative)\n  return 0;\n}\n```\n\n### Safe Logarithm (Power Check)\n\n```xiom\nfn safe_log(value: Int, base: Int) -> Option[Int] {\n  if value <= 0 || base <= 1 { return None; }\n  let power = 0;\n  let result = 1;\n  while result < value {\n    result = result * base;\n    power = power + 1;\n  }\n  if result == value { return Some(power); }\n  return None;\n}\n\nfn main() -> Int {\n  io.println(safe_log(8, 2).unwrap_or(-1));   // 3 (2^3 = 8)\n  io.println(safe_log(10, 2).unwrap_or(-1));  // -1 (not exact)\n  io.println(safe_log(0, 2).unwrap_or(-1));   // -1 (invalid)\n  return 0;\n}\n```\n\n### Chaining Safe Operations\n\n```xiom\nfn compute(a: Int, b: Int) -> Option[Int] {\n  let sqrt_a = safe_sqrt(a);\n  if let Some(sa) = sqrt_a {\n    let log_b = safe_log(b, 2);\n    if let Some(lb) = log_b {\n      return Some(sa + lb);\n    }\n  }\n  return None;\n}\n```",
+  "analogy": "Safe math functions are like bouncers at a club — they check your input at the door. If you meet the criteria, you're in. If not, you're turned away with 'None.'",
+  "code_template": "// TODO: Write safe_sqrt(n: Int) -> Option[Int]\n// Return Some(root) if n is a perfect square (0, 1, 4, 9, 16, ...)\n// Return None if n < 0 OR n is not a perfect square\n\n// TODO: Write safe_divide(a: Int, b: Int) -> Option[Int]\n// Return Some(a / b) if b != 0, else None\n\n// TODO: Write safe_power(base: Int, exp: Int) -> Option[Int]\n// Return Some(base ^ exp), but None if exp < 0\n// Use a loop to multiply base by itself exp times\n\nfn main() -> Int {\n  // TODO: Test all three functions with valid and invalid inputs\n  return 0;\n}\n",
+  "solution": "fn safe_sqrt(n: Int) -> Option[Int] {\n  if n < 0 { return None; }\n  let i = 0;\n  while i * i <= n {\n    if i * i == n { return Some(i); }\n    i = i + 1;\n  }\n  return None;\n}\n\nfn safe_divide(a: Int, b: Int) -> Option[Int] {\n  if b == 0 { return None; }\n  return Some(a / b);\n}\n\nfn safe_power(base: Int, exp: Int) -> Option[Int] {\n  if exp < 0 { return None; }\n  let result = 1;\n  let i = 0;\n  while i < exp {\n    result = result * base;\n    i = i + 1;\n  }\n  return Some(result);\n}\n\nfn main() -> Int {\n  io.println(safe_sqrt(16).unwrap_or(-1));\n  io.println(safe_sqrt(-9).unwrap_or(-1));\n  io.println(safe_divide(20, 4).unwrap_or(-1));\n  io.println(safe_divide(20, 0).unwrap_or(-1));\n  io.println(safe_power(2, 3).unwrap_or(-1));\n  io.println(safe_power(2, -1).unwrap_or(-1));\n  return 0;\n}\n",
+  "try_it": "Write a `safe_hypotenuse(a: Int, b: Int)` that returns Option[Int]. Find the hypotenuse: search for a whole number c where c*c == a*a + b*b. Test with (3,4) → Some(5) and (2,3) → None.",
+  "concepts": ["safe-math", "Option-chaining", "domain-validation", "perfect-square"],
+  "tips": [
+    "Validate input first — return None immediately if the input is outside the function's domain",
+    "Each safe math function is self-contained: it only worries about its own constraints",
+    "Chain operations by checking each step: extract with if let, compute the next step, repeat"
+  ],
+  "common_mistakes": [
+    "Computing sqrt by division instead of multiplication — integer sqrt is `while i*i <= n`, not `n / i`",
+    "Returning Some(0) for sqrt(0) — 0 is a valid perfect square (0*0=0), so it's correct!",
+    "Forgetting to handle negative exponents in power — the loop crashes with a negative counter"
+  ],
+  "next_lesson": "L3-07",
+  "related": ["L3-03", "L3-04", "L1-32"]
+}

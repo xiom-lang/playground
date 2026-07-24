@@ -1,0 +1,25 @@
+{
+  "id": "L2-27",
+  "title": "Restaurant Menu",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "You're designing a digital menu for a cafe. Each item has a name, price, and size (Small, Medium, Large). You need to format the price nicely \u2014 \"$4.50\" instead of just `4.5`.",
+  "why": "Combining enums and structs models real products where choices (like size) affect the final item.",
+  "narrative": "## Building a Cafe Menu\n\nA menu item has a name, price, and size. The size is an enum so only valid options are used.\n\n### The Size Enum\n\n```xiom\nenum Size {\n  Small,\n  Medium,\n  Large,\n}\n```\n\n### The MenuItem Struct\n\n```xiom\ntype MenuItem = {\n  name: Str;\n  price: Float64;\n  size: Size;\n}\n```\n\n### Creating Menu Items\n\n```xiom\nlet latte = MenuItem{\n  name: \"Latte\";\n  price: 4.50;\n  size: Size.Medium;\n};\n\nlet espresso = MenuItem{\n  name: \"Espresso\";\n  price: 2.75;\n  size: Size.Small;\n};\n```\n\n### Formatting the Price\n\nA function that produces a readable string from a MenuItem:\n\n```xiom\nfn format_price(item: MenuItem) -> Str {\n  return item.name + \" ($\" + item.price + \")\";\n}\n```\n\n### Using Size in Logic\n\nCheck the size to adjust pricing:\n\n```xiom\nfn price_for_size(item: MenuItem, desired: Size) -> Float64 {\n  let base = item.price;\n  if desired == Size.Large {\n    return base * 1.5;\n  }\n  if desired == Size.Small {\n    return base * 0.8;\n  }\n  return base;\n}\n```",
+  "analogy": "A menu item is like a configurable product online \u2014 you pick the product (name), see the base price, then choose a size option from a fixed list.",
+  "code_template": "enum Size {\n  Small,\n  Medium,\n  Large,\n}\n\ntype MenuItem = {\n  name: Str;\n  price: Float64;\n  size: Size;\n}\n\n// TODO: write a function 'format_price' that returns \"Name - $X.XX (Size)\"\n\n// TODO: write a function 'upsize' that takes a MenuItem and returns a new one with size one step larger\n\nfn main() -> Int {\n  // TODO: create a medium latte ($4.50), upsize it, return the new price * 100 as Int\n  return 0;\n}",
+  "solution": "enum Size {\n  Small,\n  Medium,\n  Large,\n}\n\ntype MenuItem = {\n  name: Str;\n  price: Float64;\n  size: Size;\n}\n\nfn format_price(item: MenuItem) -> Str {\n  return item.name + \" - $\" + item.price + \" (\" + item.size + \")\";\n}\n\nfn upsize(item: MenuItem) -> MenuItem {\n  var new_size = item.size;\n  if item.size == Size.Small {\n    new_size = Size.Medium;\n  }\n  if item.size == Size.Medium {\n    new_size = Size.Large;\n  }\n  return MenuItem{\n    name: item.name;\n    price: item.price * 1.3;\n    size: new_size;\n  };\n}\n\nfn main() -> Int {\n  let latte = MenuItem{ name: \"Latte\"; price: 4.50; size: Size.Medium; };\n  let large_latte = upsize(latte);\n  return (large_latte.price * 100.0) as Int;\n}",
+  "try_it": "Add an `IceBlended` variant to the Size enum (it costs 2x the base price). Add a `category` enum with Coffee, Tea, Food variants and attach it to MenuItem. Create a breakfast menu with 4 items.",
+  "concepts": ["enum", "struct", "string formatting", "Float64", "size"],
+  "tips": [
+    "Use `if item.size == Size.Large` to compare enum values \u2014 simple equality check",
+    "When creating a modified copy, list all fields explicitly \u2014 it makes the transformation clear",
+    "Float64 values display as numbers; concatenate with strings to format them as text"
+  ],
+  "common_mistakes": [
+    "Comparing `item.size == \"Large\"` instead of `item.size == Size.Large` \u2014 Size is not a string",
+    "Forgetting to copy unchanged fields when creating a modified MenuItem (name stays the same)"
+  ],
+  "next_lesson": "L2-28",
+  "related": ["L2-14", "L2-26"]
+}

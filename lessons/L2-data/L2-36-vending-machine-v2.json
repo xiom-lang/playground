@@ -1,0 +1,25 @@
+{
+  "id": "L2-36",
+  "title": "Vending Machine v2",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "The vending machine in your office is unreliable. You insert money, but sometimes the snack is sold out, and sometimes you didn't put in enough. You need a system that combines a product catalog (struct) with clear result messages (enum).",
+  "why": "Real systems combine structs for data and enums for outcomes \u2014 they work together, not in isolation.",
+  "narrative": "## Building a Smarter Vending Machine\n\nA vending machine has items in stock. When someone buys something, the result can be success with change, out of stock, or insufficient funds.\n\n### The Item Struct\n\n```xiom\ntype Item = {\n  name: Str;\n  price: Float64;\n  stock: Int;\n}\n```\n\n### The VendResult Enum\n\n```xiom\nenum VendResult {\n  Success(item: Str, change: Float64),\n  OutOfStock,\n  InsufficientFunds,\n}\n```\n\n`Success` carries the item name and any change. The error variants carry no data \u2014 the meaning is in the variant name.\n\n### The Vend Function\n\n```xiom\nfn vend(item: Item, money: Float64) -> VendResult {\n  if item.stock <= 0 {\n    return VendResult.OutOfStock;\n  }\n  if money < item.price {\n    return VendResult.InsufficientFunds;\n  }\n  let change = money - item.price;\n  return VendResult.Success(item.name, change);\n}\n```\n\n### Using the Machine\n\n```xiom\nlet chips = Item{ name: \"Chips\"; price: 1.50; stock: 3; };\n\nlet r1 = vend(chips, 2.00);  // Success(\"Chips\", 0.50)\nlet r2 = vend(chips, 1.00);  // InsufficientFunds\n\nmatch r1 {\n  Success(name, change) => {\n    // Dispense item, return change\n  }\n  OutOfStock => {\n    // Show \"Sold out\" on screen\n  }\n  InsufficientFunds => {\n    // Show \"Insert more money\"\n  }\n}\n```\n\n### Why Combine Structs and Enums?\n\nStructs model the static data (what's in the machine). Enums model the dynamic outcomes (what happened during the transaction). Together they cover the full system.",
+  "analogy": "The vending machine's item list is a menu (struct). The result of pressing a button is either getting your snack with change, seeing a red \"sold out\" light, or hearing a beep telling you to add more coins (enum).",
+  "code_template": "type Item = {\n  name: Str;\n  price: Float64;\n  stock: Int;\n}\n\nenum VendResult {\n  Success(item: Str, change: Float64),\n  OutOfStock,\n  InsufficientFunds,\n}\n\n// TODO: write a function 'vend' that checks stock, then price, then returns success with change\n\n// TODO: write a function 'describe_vend' that returns a user-friendly message for each result\n\nfn main() -> Int {\n  // TODO: create an item with stock=2, vend 3 times with enough money, return 1 if any sold out\n  return 0;\n}",
+  "solution": "type Item = {\n  name: Str;\n  price: Float64;\n  stock: Int;\n}\n\nenum VendResult {\n  Success(item: Str, change: Float64),\n  OutOfStock,\n  InsufficientFunds,\n}\n\nfn vend(item: Item, money: Float64) -> VendResult {\n  if item.stock <= 0 {\n    return VendResult.OutOfStock;\n  }\n  if money < item.price {\n    return VendResult.InsufficientFunds;\n  }\n  let change = money - item.price;\n  return VendResult.Success(item.name, change);\n}\n\nfn describe_vend(r: VendResult) -> Str {\n  match r {\n    Success(name, change) => { return \"Enjoy your \" + name + \"! Change: $\" + change; }\n    OutOfStock => { return \"Sorry, out of stock.\"; }\n    InsufficientFunds => { return \"Please insert $\" + /* more needed */ \" more.\"; }\n  }\n}\n\nfn main() -> Int {\n  var item = Item{ name: \"Cookie\"; price: 1.00; stock: 2; };\n  let r1 = vend(item, 1.00);\n  item.stock = item.stock - 1;\n  let r2 = vend(item, 1.00);\n  item.stock = item.stock - 1;\n  let r3 = vend(item, 1.00);\n  var sold_out = 0;\n  match r3 { OutOfStock => { sold_out = 1; } _ => {} }\n  return sold_out;\n}",
+  "try_it": "Add more items to the machine: Candy ($0.75, stock 5), Soda ($1.25, stock 3). Write a function `restock` that resets an item's stock to a given number. Simulate buying 2 candies and 1 soda with a $5 bill and print the total change.",
+  "concepts": ["struct", "enum", "Result pattern", "Float64", "stock management"],
+  "tips": [
+    "Check the most permanent conditions first: stock (won't change during purchase) before price",
+    "Use `Float64` for money \u2014 whole dollars are rare in real transactions",
+    "Match arms can destructure multiple fields: `Success(name, change)` gives you both at once"
+  ],
+  "common_mistakes": [
+    "Checking price before stock \u2014 a sold-out item shouldn't even consider the buyer's money",
+    "Forgetting to decrement stock after a successful vend \u2014 the machine must track inventory"
+  ],
+  "next_lesson": "L2-37",
+  "related": ["L2-15", "L2-16", "L2-33"]
+}

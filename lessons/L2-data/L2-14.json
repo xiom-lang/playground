@@ -1,0 +1,26 @@
+{
+  "id": "L2-14",
+  "title": "Enum with Data",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "Your weather app needs to report more than just \"Rainy\" — how much rain? And \"Snowy\" needs the snow depth. You need variants that carry data with them!",
+  "why": "Enum variants with data let each option carry its own relevant information — millimeters of rain, centimeters of snow, or nothing at all for Sunny.",
+  "narrative": "## Variants That Carry Information\n\nSo far, our enum variants have been simple labels. But some variants naturally carry data — rainfall in millimeters, snowfall in centimeters.\n\n### The Weather Enum with Data\n\n```xiom\nenum Weather {\n  Sunny,\n  Cloudy,\n  Rainy(mm: Float64),\n  Snowy(cm: Float64),\n}\n\nfn main() -> Int {\n  let today = Weather.Rainy(12.5);\n  let tomorrow = Weather.Sunny;\n  let winter = Weather.Snowy(8.0);\n  io.println(\"Weather data stored!\");\n  return 0;\n}\n```\n\n### Creating Variants with Data\n\nVariants with data use parentheses: `Weather.Rainy(12.5)`. The data inside is called the **payload**.\n\nSimple variants like `Sunny` and `Cloudy` have no payload — no parentheses needed.\n\n### Extracting Data with Match\n\n```xiom\nfn describe(weather: Weather) -> Str {\n  return match weather {\n    Sunny => \"Clear skies!\",\n    Cloudy => \"Overcast today.\",\n    Rainy(mm) => \"Rainfall: \" + \" mm\",\n    Snowy(cm) => \"Snow depth: \" + \" cm\",\n  };\n}\n\nfn main() -> Int {\n  io.println(describe(Weather.Rainy(5.3)));\n  return 0;\n}\n```\n\n### Using the Payload\n\n```xiom\nfn is_heavy_rain(weather: Weather) -> Bool {\n  return match weather {\n    Rainy(mm) => mm > 10.0,\n    _ => false,\n  };\n}\n\nfn main() -> Int {\n  io.println(is_heavy_rain(Weather.Rainy(15.0)));  // true\n  io.println(is_heavy_rain(Weather.Rainy(3.0)));   // false\n  io.println(is_heavy_rain(Weather.Sunny));         // false\n  return 0;\n}\n```\n\n### The Wildcard `_`\n\n`_` means \"any other variant\" — useful when you only care about one or two cases:\n\n```xiom\nfn needs_umbrella(weather: Weather) -> Bool {\n  return match weather {\n    Rainy(mm) => mm > 0.0,\n    _ => false,\n  };\n}\n```",
+  "analogy": "Enums with data are like labeled boxes — the label says what's inside (Rainy), and when you open the box (match), you find the payload (millimeters of rain).",
+  "code_template": "enum Weather {\n  Sunny,\n  Cloudy,\n  Rainy(mm: Float64),\n  Snowy(cm: Float64),\n}\n\n// TODO: Write 'report' function — match each variant and return a string describing the weather with its data\n\nfn main() -> Int {\n  // TODO: Create a Rainy day with 4.2mm and print its report\n  return 0;\n}\n",
+  "solution": "enum Weather {\n  Sunny,\n  Cloudy,\n  Rainy(mm: Float64),\n  Snowy(cm: Float64),\n}\n\nfn report(weather: Weather) -> Str {\n  return match weather {\n    Sunny => \"Clear and bright\",\n    Cloudy => \"Gray skies\",\n    Rainy(mm) => \"Rain: \" + \" mm expected\",\n    Snowy(cm) => \"Snow: \" + \" cm accumulated\",\n  };\n}\n\nfn main() -> Int {\n  let today = Weather.Rainy(4.2);\n  io.println(report(today));\n  return 0;\n}\n",
+  "try_it": "Add a `Windy(kph: Float64)` variant to the Weather enum. Update `report` to handle it. Test with Windy(45.0) and Windy(10.0).",
+  "concepts": ["enum-with-data", "payload", "variant-extraction", "wildcard-pattern"],
+  "tips": [
+    "Variants with data use `()` after the name with typed fields: `Rainy(mm: Float64)`",
+    "In match, the pattern variable grabs the payload: `Rainy(mm) => ...` — then you use `mm` like any variable",
+    "Use `_` as a catch-all: `_ => false` means \"for every variant I didn't explicitly list\""
+  ],
+  "common_mistakes": [
+    "Using parentheses on simple variants: `Weather.Sunny()` is wrong — only data variants need `()`",
+    "Forgetting to name the payload field in match: `Rainy => ...` won't let you access the mm value",
+    "Treating the payload like a struct field: `weather.mm` doesn't work — you must use match to extract it"
+  ],
+  "next_lesson": "L2-15",
+  "related": ["L2-11", "L2-12", "L2-16"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "L0-25",
+  "title": "L0 Review: Show What You Know",
+  "level": "L0",
+  "duration": "10 min",
+  "story": "You've come so far! From printing \"Hello World\" to loops, strings, math, and decisions. Now it's time to combine everything you've learned into one awesome showcase program \u2014 a personal profile builder that uses variables, math, strings, conditions, AND loops!",
+  "why": "Real programs combine many concepts at once \u2014 this review proves you can think like a real programmer and piece everything together.",
+  "narrative": "## Your L0 Showcase\n\nThis lesson has nothing new to learn. Instead, you'll use EVERY concept from L0 in one program:\n\n- Variables (`let` and `var`)\n- Types (Int, Bool, Str)\n- Math operations (`+`, `-`, `*`, `/`, `+=`, parentheses)\n- Comparisons (`==`, `!=`, `<`, `>`, `<=`, `>=`)\n- Strings (concat, length, uppercase, lowercase)\n- Conditions (`if`, `elif`, `else`, `&&`, `||`, `!`)\n- Loops (`while` and `for`)\n\n### The Showcase Program\n\n```xiom\nfn main() {\n  let name: Str = \"Morgan\";\n  var score: Int = 0;\n  let target: Int = 100;\n\n  let greeting: Str = string.str_concat(\"Welcome, \", string.str_upper(name));\n  io.println(greeting);\n\n  let name_len: Int = string.str_len(name);\n  let bonus: Int = name_len * 2;\n  score += bonus;\n\n  io.print(\"Starting score: \");\n  io.println(score);\n\n  var round: Int = 1;\n  while round <= 3 {\n    io.print(\"Round \");\n    io.print(round);\n    io.print(\": +10 points! \");\n    score += 10;\n    io.print(\"Score: \");\n    io.println(score);\n    round += 1;\n  }\n\n  if score >= target && score % 2 == 0 {\n    io.println(\"Amazing! You hit the target with an even score!\");\n  } elif score >= target {\n    io.println(\"Great job! You hit the target!\");\n  } else {\n    io.println(\"Keep practicing \u2014 you're getting closer!\");\n  }\n\n  let is_winner: Bool = score >= target;\n  io.print(\"Winner status: \");\n  io.println(is_winner);\n}\n```\n\nThis program uses strings, math, `var`, `let`, `while`, `if/elif/else`, comparisons, and logical operators \u2014 all working together!\n\n### You Built This!\n\nEvery concept in this program is something you learned in L0. Variables hold your data. Math transforms it. Strings display it. Conditions make decisions. Loops repeat. You now speak the language of programming!",
+  "analogy": "Building a program that uses everything is like cooking a meal with all the skills you learned \u2014 chopping, mixing, baking, and seasoning all come together on one plate.",
+  "code_template": "fn main() {\n  let name: Str = \"YOUR_NAME\";\n  var points: Int = 0;\n\n  // TODO: print a greeting with your name in uppercase\n\n  // TODO: use a while loop to add points for 5 rounds\n\n  // TODO: use if/else to check if you passed (points > 50)\n\n  // TODO: use string.str_len to print how long your name is\n}\n",
+  "solution": "fn main() {\n  let name: Str = \"Alex\";\n  var points: Int = 0;\n\n  let greeting: Str = string.str_concat(\"Player: \", string.str_upper(name));\n  io.println(greeting);\n\n  var round: Int = 1;\n  while round <= 5 {\n    points += 10;\n    round += 1;\n  }\n\n  if points > 50 {\n    io.println(\"You passed!\");\n  } else {\n    io.println(\"Try again!\");\n  }\n\n  let name_len: Int = string.str_len(name);\n  io.print(\"Your name has \");\n  io.print(name_len);\n  io.println(\" letters.\");\n}\n",
+  "try_it": "Add one more variable to the showcase (like `let lucky_number: Int = 7;`) and one more calculation (multiply your score by your lucky number at the end). Make it YOUR program!",
+  "concepts": ["review", "variables", "loops", "conditions", "strings", "math"],
+  "tips": [
+    "If something doesn't work, check your curly braces `{}` \u2014 every `{` needs a matching `}`",
+    "Re-read code you wrote earlier in L0 \u2014 your own past solutions are the best reference!",
+    "Experiment fearlessly! Change numbers, add variables, combine concepts. Breaking things teaches you more than playing it safe"
+  ],
+  "common_mistakes": [
+    "Trying to use a variable before creating it \u2014 always declare with `let` or `var` first!",
+    "Forgetting that `let` variables can't change \u2014 if you need to update something in a loop, use `var`"
+  ],
+  "next_lesson": "L1-01",
+  "related": ["L0-12", "L0-15", "L0-17", "L0-18", "L0-22", "L0-23", "L0-24"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L2-17",
+  "title": "Result Type Intro",
+  "level": "L2",
+  "duration": "10 min",
+  "story": "Your calculator app needs to handle division — but dividing by zero crashes everything! Instead of crashing, you need a way to say 'this worked' OR 'this failed, here's why.'",
+  "why": "The Result pattern is one of the most important enum patterns — it lets functions succeed with a value OR fail with an error message, all in one return type.",
+  "narrative": "## Success or Failure — Pick One\n\nSometimes a function can't do its job. Division by zero. File not found. Invalid input. Instead of crashing, return a **Result**: either `Success` with the answer, or `Failure` with an explanation.\n\n### Defining a Result Enum\n\n```xiom\nenum MyResult {\n  Success(value: Int),\n  Failure(reason: Str),\n}\n\nfn main() -> Int {\n  let good = MyResult.Success(42);\n  let bad = MyResult.Failure(\"Something went wrong\");\n  io.println(\"Results created!\");\n  return 0;\n}\n```\n\n### Safe Division\n\n```xiom\nfn divide_safely(a: Int, b: Int) -> MyResult {\n  if b == 0 {\n    return MyResult.Failure(\"Cannot divide by zero!\");\n  }\n  return MyResult.Success(a / b);\n}\n\nfn main() -> Int {\n  let result1 = divide_safely(10, 2);\n  let result2 = divide_safely(10, 0);\n\n  match result1 {\n    Success(value) => io.println(value),\n    Failure(reason) => io.println(reason),\n  }\n\n  match result2 {\n    Success(value) => io.println(value),\n    Failure(reason) => io.println(reason),\n  }\n  return 0;\n}\n```\n\n### Handling Both Cases\n\n```xiom\nfn print_division(a: Int, b: Int) {\n  let result = divide_safely(a, b);\n  match result {\n    Success(value) => io.println(value),\n    Failure(reason) => io.println(\"Error: \" + reason),\n  }\n}\n\nfn main() -> Int {\n  print_division(20, 4);  // prints 5\n  print_division(20, 0);  // prints Error: Cannot divide by zero!\n  return 0;\n}\n```\n\n### Why Result Is Powerful\n\nThe caller of `divide_safely` is FORCED to handle both `Success` and `Failure`. You can't accidentally forget to check for errors — the match must cover both variants.\n\nThis is the fundamental idea: **make errors impossible to ignore**.",
+  "analogy": "Result is like ordering at a restaurant. Either you get your food (Success with the meal) or you get an apology (Failure with the reason — 'we're out of that dish'). You never get nothing with no explanation.",
+  "code_template": "enum MyResult {\n  Success(value: Int),\n  Failure(reason: Str),\n}\n\n// TODO: Write 'divide_safely' — returns Failure if b == 0, otherwise Success(a / b)\n\n// TODO: Write 'parse_age' — takes a Str, returns Failure if negative, otherwise Success\n\nfn main() -> Int {\n  // TODO: Test divide_safely with 15/3 and 15/0\n  return 0;\n}\n",
+  "solution": "enum MyResult {\n  Success(value: Int),\n  Failure(reason: Str),\n}\n\nfn divide_safely(a: Int, b: Int) -> MyResult {\n  if b == 0 {\n    return MyResult.Failure(\"Cannot divide by zero\");\n  }\n  return MyResult.Success(a / b);\n}\n\nfn parse_age(input: Str) -> MyResult {\n  if string.str_len(input) == 0 {\n    return MyResult.Failure(\"Empty age\");\n  }\n  return MyResult.Success(0);\n}\n\nfn main() -> Int {\n  let r1 = divide_safely(15, 3);\n  let r2 = divide_safely(15, 0);\n  match r1 {\n    Success(v) => io.println(v),\n    Failure(msg) => io.println(msg),\n  }\n  match r2 {\n    Success(v) => io.println(v),\n    Failure(msg) => io.println(msg),\n  }\n  return 0;\n}\n",
+  "try_it": "Write a `validate_password` function that returns `MyResult.Success(length)` if the password is 8+ characters, or `MyResult.Failure(\"Too short!\")` otherwise. Use `string.str_len()` to check.",
+  "concepts": ["result-pattern", "success-failure", "safe-error-handling", "exhaustive-error-check"],
+  "tips": [
+    "Return `Failure` immediately when something is wrong — don't compute the success case first",
+    "Every match on a Result must handle both Success and Failure — the compiler enforces this",
+    "Name payload fields clearly: `Success(value)` and `Failure(reason)` are the idiomatic names"
+  ],
+  "common_mistakes": [
+    "Returning `Failure` but forgetting to wrap it: `return \"Error\"` instead of `return MyResult.Failure(\"Error\")`",
+    "Matching only `Success` and ignoring `Failure` — the compiler will catch this, but it's the most common surprise",
+    "Using different field names: `Success(result)` then matching with `Success(value)` — the pattern name must match the definition"
+  ],
+  "next_lesson": "L2-18",
+  "related": ["L2-11", "L2-14", "L2-18"]
+}

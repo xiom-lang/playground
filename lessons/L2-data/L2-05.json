@@ -1,0 +1,26 @@
+{
+  "id": "L2-05",
+  "title": "More Methods",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "You're designing a floor-planning tool. Users draw rectangles, and you need to instantly calculate the area and perimeter — because nobody wants to multiply width by height manually!",
+  "why": "Methods that compute values from fields make your structs self-sufficient — ask a rectangle for its area instead of calculating it yourself.",
+  "narrative": "## Building a Smart Rectangle\n\nSome structs model geometric shapes. Let's give `Rectangle` methods that compute useful information.\n\n### The Rectangle Struct\n\n```xiom\ntype Rectangle = {\n  width: Float64;\n  height: Float64;\n}\n\nfn Rectangle.area(self) -> Float64 {\n  return width * height;\n}\n\nfn Rectangle.perimeter(self) -> Float64 {\n  return 2.0 * (width + height);\n}\n\nfn main() -> Int {\n  let room = Rectangle{ width: 5.0, height: 4.0 };\n  io.println(room.area());       // 20.0\n  io.println(room.perimeter());  // 18.0\n  return 0;\n}\n```\n\n### Methods That Answer Questions\n\nMethods can return `Bool` to answer yes/no questions about the instance:\n\n```xiom\nfn Rectangle.is_square(self) -> Bool {\n  return width == height;\n}\n\nfn Rectangle.is_wide(self) -> Bool {\n  return width > height;\n}\n\nfn main() -> Int {\n  let shape1 = Rectangle{ width: 3.0, height: 3.0 };\n  let shape2 = Rectangle{ width: 8.0, height: 5.0 };\n  io.println(shape1.is_square());  // true\n  io.println(shape2.is_wide());    // true\n  return 0;\n}\n```\n\n### Chaining Method Calls\n\nMethods return values, so you can use them anywhere a value is expected:\n\n```xiom\nfn main() -> Int {\n  let painting = Rectangle{ width: 2.0, height: 3.0 };\n  let total = painting.area() + painting.perimeter();\n  io.println(total);  // 16.0\n  return 0;\n}\n```\n\nEach method does one clear job. Together they make your Rectangle smart and self-describing.",
+  "analogy": "Methods on a Rectangle are like asking a room questions — \"What's your floor area?\" or \"How much baseboard do you need?\" — the room knows the answer.",
+  "code_template": "type Rectangle = {\n  width: Float64;\n  height: Float64;\n}\n\n// TODO: Write an 'area' method that returns width * height\n\n// TODO: Write a 'perimeter' method that returns 2 * (width + height)\n\nfn main() -> Int {\n  // TODO: Create a Rectangle with width 7.0 and height 3.0\n  // TODO: Print its area and perimeter\n  return 0;\n}\n",
+  "solution": "type Rectangle = {\n  width: Float64;\n  height: Float64;\n}\n\nfn Rectangle.area(self) -> Float64 {\n  return width * height;\n}\n\nfn Rectangle.perimeter(self) -> Float64 {\n  return 2.0 * (width + height);\n}\n\nfn main() -> Int {\n  let rect = Rectangle{ width: 7.0, height: 3.0 };\n  io.println(rect.area());\n  io.println(rect.perimeter());\n  return 0;\n}\n",
+  "try_it": "Add an `is_tall` method that returns true if the height is greater than the width. Test it with a tall rectangle and a wide rectangle.",
+  "concepts": ["computed-methods", "Bool-return-methods", "method-chaining"],
+  "tips": [
+    "Methods that compute something should return a value — don't just print inside the method",
+    "Name methods that return Bool like questions: `is_square`, `is_wide`, `can_fit`",
+    "Use `2.0` not `2` when multiplying Float64 values to keep the type consistent"
+  ],
+  "common_mistakes": [
+    "Accidentally writing `2 * (width + height)` instead of `2.0 * (...)` — mixing Int and Float64 gives a type error",
+    "Forgetting the return type annotation — `fn Rectangle.area(self) -> Float64` needs the `-> Float64`",
+    "Printing inside the method instead of returning the value — let the caller decide what to do with the result"
+  ],
+  "next_lesson": "L2-06",
+  "related": ["L2-04", "L2-08", "L1-12"]
+}

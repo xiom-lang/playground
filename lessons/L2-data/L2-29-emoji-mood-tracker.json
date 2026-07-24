@@ -1,0 +1,25 @@
+{
+  "id": "L2-29",
+  "title": "Emoji Mood Tracker",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "You're building a mood journal app. Instead of typing \"I feel happy today,\" users pick a mood from a list, and the app shows a matching emoji. An enum with a custom method makes this intuitive.",
+  "why": "Enum methods let each variant carry its own behavior \u2014 each mood knows its own emoji.",
+  "narrative": "## Enums with Custom Methods\n\nAn enum can have methods just like structs. Each variant can return different data through a method that uses `match`.\n\n### The Mood Enum\n\n```xiom\nenum Mood {\n  Happy,\n  Sad,\n  Excited,\n  Tired,\n  Hungry,\n}\n```\n\n### Adding an Emoji Method\n\nA method on the Mood type that returns an emoji string:\n\n```xiom\nfn Mood.emoji(self) -> Str {\n  match self {\n    Happy => { return \"\\xF0\\x9F\\x98\\x8A\"; }\n    Sad => { return \"\\xF0\\x9F\\x98\\xA2\"; }\n    Excited => { return \"\\xF0\\x9F\\xA4\\xA9\"; }\n    Tired => { return \"\\xF0\\x9F\\x98\\xB4\"; }\n    Hungry => { return \"\\xF0\\x9F\\x8D\\x94\"; }\n  }\n}\n```\n\n`match` is how you branch on which variant `self` currently holds.\n\n### Using Mood\n\n```xiom\nlet current = Mood.Excited;\ncurrent.emoji();  // returns the emoji for Excited\n\nlet feeling = Mood.Hungry;\nfeeling.emoji();  // returns the emoji for Hungry\n```\n\n### Adding a Label Method\n\nEach mood also has a text label:\n\n```xiom\nfn Mood.label(self) -> Str {\n  match self {\n    Happy => { return \"Feeling great\"; }\n    Sad => { return \"Feeling down\"; }\n    Excited => { return \"Can't wait\"; }\n    Tired => { return \"Need rest\"; }\n    Hungry => { return \"Need food\"; }\n  }\n}\n```\n\n### Method Chaining\n\n```xiom\nlet mood = Mood.Happy;\nlet display = mood.emoji() + \" \" + mood.label();\n```",
+  "analogy": "An enum method is like asking each variant a question: \"What's your emoji?\" Happy answers with a smile, Sad answers with a frown. Each variant has its own answer.",
+  "code_template": "enum Mood {\n  Happy,\n  Sad,\n  Excited,\n  Tired,\n  Hungry,\n}\n\n// TODO: add method 'emoji' that returns an emoji string for each mood\n\n// TODO: add method 'label' that returns a text description for each mood\n\n// TODO: add method 'energy_level' that returns: Happy=7, Sad=2, Excited=10, Tired=1, Hungry=3\n\nfn main() -> Int {\n  // TODO: create each mood, sum their energy levels, return the total\n  return 0;\n}",
+  "solution": "enum Mood {\n  Happy,\n  Sad,\n  Excited,\n  Tired,\n  Hungry,\n}\n\nfn Mood.emoji(self) -> Str {\n  match self {\n    Happy => { return \"\\xF0\\x9F\\x98\\x8A\"; }\n    Sad => { return \"\\xF0\\x9F\\x98\\xA2\"; }\n    Excited => { return \"\\xF0\\x9F\\xA4\\xA9\"; }\n    Tired => { return \"\\xF0\\x9F\\x98\\xB4\"; }\n    Hungry => { return \"\\xF0\\x9F\\x8D\\x94\"; }\n  }\n}\n\nfn Mood.label(self) -> Str {\n  match self {\n    Happy => { return \"Feeling great\"; }\n    Sad => { return \"Feeling down\"; }\n    Excited => { return \"Can't wait\"; }\n    Tired => { return \"Need rest\"; }\n    Hungry => { return \"Need food\"; }\n  }\n}\n\nfn Mood.energy_level(self) -> Int {\n  match self {\n    Happy => { return 7; }\n    Sad => { return 2; }\n    Excited => { return 10; }\n    Tired => { return 1; }\n    Hungry => { return 3; }\n  }\n}\n\nfn main() -> Int {\n  let m1 = Mood.Happy;\n  let m2 = Mood.Sad;\n  let m3 = Mood.Excited;\n  let m4 = Mood.Tired;\n  let m5 = Mood.Hungry;\n  return m1.energy_level() + m2.energy_level() + m3.energy_level() + m4.energy_level() + m5.energy_level();\n}",
+  "try_it": "Add three more moods: Anxious, Calm, and Grumpy. Give each an emoji, a label, and an energy level. Create a function that takes two moods and returns the one with higher energy.",
+  "concepts": ["enum", "method", "match", "self", "emoji"],
+  "tips": [
+    "Method signatures use `fn TypeName.method(self)` \u2014 the type comes before the dot",
+    "Inside a method, use `match self` to branch on which variant the instance holds",
+    "Match arms must be exhaustive \u2014 every variant needs an arm (the compiler checks this)"
+  ],
+  "common_mistakes": [
+    "Forgetting a variant in `match` \u2014 the compiler will tell you which ones are missing",
+    "Using ellipsis `...` or `_` in match without understanding it matches ALL remaining variants"
+  ],
+  "next_lesson": "L2-30",
+  "related": ["L2-16", "L2-22", "L2-14"]
+}

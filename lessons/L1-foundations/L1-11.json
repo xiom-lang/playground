@@ -1,0 +1,26 @@
+{
+  "id": "L1-11",
+  "title": "String Functions",
+  "level": "L1",
+  "duration": "8 min",
+  "story": "You're building a text messaging app. Users want to SHOUT, whisper, and count characters. You need a set of text-transformation tools!",
+  "why": "Text is everywhere in programs — names, messages, passwords. String functions let you transform, measure, and manipulate text programmatically.",
+  "narrative": "## Building String Transformation Tools\n\nString functions take text in one form and return it in another. Let's build a toolkit for common text operations.\n\n### Shout and Whisper\n\n```xiom\nfn shout(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn whisper(text: Str) -> Str {\n  return string.str_lower(text);\n}\n\nfn main() -> Int {\n  io.println(shout(\"hello world\"));   // HELLO WORLD\n  io.println(whisper(\"HELLO WORLD\")); // hello world\n  return 0;\n}\n```\n\n`string.str_upper()` and `string.str_lower()` do the heavy lifting — your functions just give them friendlier names.\n\n### Counting Letters\n\n```xiom\nfn count_letters(text: Str) -> Int {\n  return string.str_len(text);\n}\n\nfn is_long_password(password: Str) -> Bool {\n  return string.str_len(password) >= 8;\n}\n\nfn main() -> Int {\n  io.println(count_letters(\"butterfly\"));  // 9\n  io.println(is_long_password(\"abc123\"));   // false\n  return 0;\n}\n```\n\n### Combining for a Bigger Function\n\n```xiom\nfn analyze_text(text: Str) {\n  io.println(\"Original: \" + text);\n  io.println(\"Uppercase: \" + shout(text));\n  io.println(\"Lowercase: \" + whisper(text));\n  io.println(\"Length: \");\n  io.println(count_letters(text));\n}\n\nfn main() -> Int {\n  analyze_text(\"Hello XIOM!\");\n  return 0;\n}\n```\n\n`analyze_text` calls all three string functions to produce a full text report. Each small function stays simple — `analyze_text` does the orchestration.",
+  "analogy": "String functions are like a text factory conveyor belt — raw text goes in one end, and transformed text comes out the other.",
+  "code_template": "// TODO: Write 'shout' that returns uppercase of text using string.str_upper\n// TODO: Write 'count_letters' that returns length of text using string.str_len\n// TODO: Write 'is_empty_text' that returns true if count_letters(text) == 0\n\nfn main() -> Int {\n  // TODO: Test shout(\"quiet\"), count_letters(\"hello\"), and is_empty_text(\"\")\n  return 0;\n}\n",
+  "solution": "fn shout(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn count_letters(text: Str) -> Int {\n  return string.str_len(text);\n}\n\nfn is_empty_text(text: Str) -> Bool {\n  return count_letters(text) == 0;\n}\n\nfn main() -> Int {\n  io.println(shout(\"quiet\"));\n  io.println(count_letters(\"hello\"));\n  io.println(is_empty_text(\"\"));\n  return 0;\n}\n",
+  "try_it": "Write an `exclaim` function that takes text and returns it with three exclamation marks added. Then write `whisper_exclaim` that whisper-fies it first, then adds the exclamation marks.",
+  "concepts": ["string-functions", "str_upper", "str_lower", "str_len"],
+  "tips": [
+    "`string.str_upper()` and `string.str_lower()` return NEW strings — they don't change the original",
+    "`string.str_len()` counts EVERY character: letters, spaces, punctuation, and numbers",
+    "Chain string operations by calling one function inside another: `string.str_upper(whisper(text))`"
+  ],
+  "common_mistakes": [
+    "Writing `str_upper` without `string.` — the full name is `string.str_upper(text)`",
+    "Expecting the original variable to change — `string.str_upper(name)` returns a new string, leaving `name` unchanged",
+    "Using string.len() instead of string.str_len() — different languages use different names"
+  ],
+  "next_lesson": "L1-12",
+  "related": ["L1-01", "L1-03", "L1-10"]
+}

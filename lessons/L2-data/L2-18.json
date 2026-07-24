@@ -1,0 +1,26 @@
+{
+  "id": "L2-18",
+  "title": "Option Type Intro",
+  "level": "L2",
+  "duration": "10 min",
+  "story": "You're building a contact search for your phone app. When someone searches for a name, sometimes you find a match — and sometimes there's nothing. You need a type that says 'I have something' or 'I have nothing.'",
+  "why": "The Option pattern handles 'maybe there's a value' situations — it's safer than using a special number (like -1) to mean 'not found.'",
+  "narrative": "## Handling the 'Maybe' Case\n\nSometimes a search succeeds, sometimes it doesn't. An `Option` enum has exactly two variants: `Some(value)` when you found something, and `None` when you didn't.\n\n### Defining MyOption\n\n```xiom\nenum MyOption {\n  Some(value: Int),\n  None,\n}\n\nfn main() -> Int {\n  let found = MyOption.Some(42);\n  let missing = MyOption.None;\n  io.println(\"Options created!\");\n  return 0;\n}\n```\n\n### Searching with Option\n\n```xiom\nfn find_item(id: Int) -> MyOption {\n  if id == 1 {\n    return MyOption.Some(100);\n  }\n  if id == 2 {\n    return MyOption.Some(200);\n  }\n  return MyOption.None;\n}\n\nfn main() -> Int {\n  let result1 = find_item(1);\n  let result2 = find_item(99);\n\n  match result1 {\n    Some(value) => io.println(value),\n    None => io.println(\"Not found!\"),\n  }\n\n  match result2 {\n    Some(value) => io.println(value),\n    None => io.println(\"Not found!\"),\n  }\n  return 0;\n}\n```\n\n### Default Values with Option\n\nWhen you need a fallback for `None`:\n\n```xiom\nfn get_or_default(option: MyOption, default: Int) -> Int {\n  return match option {\n    Some(value) => value,\n    None => default,\n  };\n}\n\nfn main() -> Int {\n  let result = find_item(99);\n  let safe = get_or_default(result, 0);\n  io.println(safe);  // 0 (default, since item wasn't found)\n  return 0;\n}\n```\n\n### Why Not Use -1?\n\nYou could return `-1` to mean \"not found,\" but what if `-1` is a valid result? With `Option`, there's no ambiguity: `Some(-1)` means \"found, and the value is -1,\" while `None` means \"nothing found.\"\n\nOption eliminates the \"magic number\" problem — every meaning is explicit.",
+  "analogy": "Option is like looking in a drawer — either you find something (Some with the item) or the drawer is empty (None). There's no confusing a real found item with the absence of an item.",
+  "code_template": "enum MyOption {\n  Some(value: Int),\n  None,\n}\n\n// TODO: Write 'find_score' that takes a player name and returns Some(score) or None\n// If name is \"Alice\" return Some(95), if \"Bob\" return Some(88), otherwise None\n\n// TODO: Write 'describe_result' that prints \"Score: X\" for Some, or \"No score\" for None\n\nfn main() -> Int {\n  // TODO: Test with \"Alice\", \"Charlie\", and \"Bob\"\n  return 0;\n}\n",
+  "solution": "enum MyOption {\n  Some(value: Int),\n  None,\n}\n\nfn find_score(name: Str) -> MyOption {\n  if name == \"Alice\" {\n    return MyOption.Some(95);\n  }\n  if name == \"Bob\" {\n    return MyOption.Some(88);\n  }\n  return MyOption.None;\n}\n\nfn describe_result(option: MyOption) {\n  match option {\n    Some(value) => io.println(value),\n    None => io.println(\"No score found\"),\n  }\n}\n\nfn main() -> Int {\n  let r1 = find_score(\"Alice\");\n  let r2 = find_score(\"Charlie\");\n  let r3 = find_score(\"Bob\");\n  describe_result(r1);\n  describe_result(r2);\n  describe_result(r3);\n  return 0;\n}\n",
+  "try_it": "Add a third player \"Dana\" with score 72. Test finding Dana. Then write a `best_score` function that takes two MyOptions and returns the higher score (or 0 if both are None).",
+  "concepts": ["option-pattern", "some-none", "maybe-value", "default-value"],
+  "tips": [
+    "`None` has no parentheses — it's a simple variant like `Sunny`",
+    "Always match both `Some` and `None` — the compiler won't let you forget the empty case",
+    "Use Option instead of special values like -1 to mean 'not found' — it's clearer and safer"
+  ],
+  "common_mistakes": [
+    "Writing `MyOption.Some()` with no argument — `Some` requires a value: `MyOption.Some(42)`",
+    "Forgetting that `None` has its own arm in match — it's a variant like any other",
+    "Returning just `Some(value)` without the enum prefix — must write `MyOption.Some(value)`"
+  ],
+  "next_lesson": "L2-19",
+  "related": ["L2-11", "L2-17", "L2-14"]
+}

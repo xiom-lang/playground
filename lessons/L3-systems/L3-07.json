@@ -1,0 +1,26 @@
+{
+  "id": "L3-07",
+  "title": "The Real Result Type",
+  "level": "L3",
+  "duration": "8 min",
+  "story": "You ordered a package online. The delivery person arrives — and either hands you the box (success) or gives you a reason why not (error). Result[T, E] captures exactly this: both the outcome and the why.",
+  "why": "Result[T, E] is XIOM's built-in error handling type — it forces you to handle both success and failure paths, replacing fragile error codes and silent crashes with explicit, type-safe handling.",
+  "narrative": "## Result[T, E]: Success or Failure, with Details\n\nOption tells you **if** something exists. Result tells you **what happened** and **why**. It has two variants:\n\n- `Ok(value)` — everything worked, here's the result\n- `Err(error)` — something went wrong, here's why\n\n### Creating Results\n\n```xiom\nfn main() -> Int {\n  let good: Result[Int, Str] = Ok(42);\n  let bad: Result[Int, Str] = Err(\"Database connection failed\");\n\n  io.println(\"Results created!\");\n  return 0;\n}\n```\n\n### Matching on Result\n\nJust like Option, you use `match` to handle both cases:\n\n```xiom\nfn main() -> Int {\n  let payment = Ok(100);\n\n  let message = match payment {\n    Ok(amount) => \"Paid $\" + string.int_to_str(amount),\n    Err(reason) => \"Payment failed: \" + reason,\n  };\n\n  io.println(message);\n  return 0;\n}\n```\n\n### Result vs Option — When to Use Which\n\n| Situation | Use |\n|---|---|\n| Something might be missing | `Option[T]` |\n| Something might fail with a reason | `Result[T, E]` |\n| Need to know WHY it failed | `Result[T, E]` |\n| Just yes/no presence | `Option[T]` |\n\n### Type Parameters\n\n`Result[T, E]` has two type parameters:\n- `T` — the type of the success value\n- `E` — the type of the error (usually `Str` for a message)\n\n```xiom\nfn main() -> Int {\n  let r1: Result[Int, Str] = Ok(42);\n  let r2: Result[Str, Int] = Err(404);\n\n  io.println(\"Both are valid Result types!\");\n  return 0;\n}\n```",
+  "analogy": "Result is like a delivery — either you get the package (Ok) or a note explaining why not (Err). You always know what happened AND why.",
+  "code_template": "fn main() -> Int {\n  // TODO: Create a Result[Int, Str] with Ok(200) — HTTP success code\n\n  // TODO: Create a Result[Int, Str] with Err(\"Server error\") — failure\n\n  // TODO: Match on the success case and print \"Status: X\" or \"Error: X\"\n\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let success: Result[Int, Str] = Ok(200);\n  let failure: Result[Int, Str] = Err(\"Server error\");\n\n  let msg1 = match success {\n    Ok(code) => \"Status: \" + string.int_to_str(code),\n    Err(e) => \"Error: \" + e,\n  };\n  let msg2 = match failure {\n    Ok(code) => \"Status: \" + string.int_to_str(code),\n    Err(e) => \"Error: \" + e,\n  };\n\n  io.println(msg1);\n  io.println(msg2);\n  return 0;\n}\n",
+  "try_it": "Create a Result with a different error type — make `Result[Str, Int]` where Ok contains a message and Err contains an error code. Match on it and handle both cases differently.",
+  "concepts": ["Result", "Ok", "Err", "type-parameters", "error-handling"],
+  "tips": [
+    "Result[T, E] always needs two type parameters — T for success, E for error",
+    "Use `Str` as the error type when you want readable error messages",
+    "Match handles both Ok and Err — the compiler ensures you never forget the failure case"
+  ],
+  "common_mistakes": [
+    "Using Option for error cases — if you need to say WHY something failed, use Result",
+    "Writing `Result[Int]` with only one type parameter — Result always needs T AND E",
+    "Swapping Ok and Err — `Ok` means success, `Err` means failure; don't return `Err(\"Everything worked!\")`"
+  ],
+  "next_lesson": "L3-08",
+  "related": ["L3-01", "L3-09", "L2-16"]
+}

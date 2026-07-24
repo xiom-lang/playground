@@ -1,0 +1,26 @@
+{
+  "id": "L2-08",
+  "title": "Point and Distance",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You're building a map app! Two friends are at different locations — you need to calculate the distance between them so they can meet up.",
+  "why": "Point structs are a classic use case — they model coordinates, and distance methods teach you to work with multiple struct instances in one method.",
+  "narrative": "## Modeling 2D Space with Points\n\nA `Point` represents a location on a 2D grid — it has an `x` coordinate and a `y` coordinate.\n\n### The Point Struct\n\n```xiom\ntype Point = {\n  x: Float64;\n  y: Float64;\n}\n\nfn main() -> Int {\n  let home = Point{ x: 0.0, y: 0.0 };\n  let school = Point{ x: 3.0, y: 4.0 };\n  io.println(home.x);\n  io.println(school.y);\n  return 0;\n}\n```\n\n### Distance Between Two Points\n\nA method that takes another Point and computes the distance:\n\n```xiom\nfn Point.distance_to(self, other: Point) -> Float64 {\n  let dx = x - other.x;\n  let dy = y - other.y;\n  return math.sqrt(dx * dx + dy * dy);\n}\n\nfn main() -> Int {\n  let home = Point{ x: 0.0, y: 0.0 };\n  let school = Point{ x: 3.0, y: 4.0 };\n  let dist = home.distance_to(school);\n  io.println(dist);  // 5.0\n  return 0;\n}\n```\n\n### How the Math Works\n\nThe distance formula comes from the Pythagorean theorem: take the difference in x, square it; take the difference in y, square it; add them; take the square root.\n\nFor points (0,0) and (3,4): `dx = 3, dy = 4 → sqrt(9 + 16) → sqrt(25) → 5.0`\n\n### Manhattan Distance (Simpler Alternative)\n\nIf `math.sqrt` seems intimidating, try Manhattan distance — just add the absolute differences:\n\n```xiom\nfn Point.manhattan_distance(self, other: Point) -> Float64 {\n  let dx = x - other.x;\n  let dy = y - other.y;\n  if dx < 0.0 { dx = -dx; }\n  if dy < 0.0 { dy = -dy; }\n  return dx + dy;\n}\n```\n\nBoth approaches teach the same key idea: methods can compare one instance to another.",
+  "analogy": "A Point is like a pin on a map. The distance method is like stretching a measuring tape between two pins to see how far apart they are.",
+  "code_template": "type Point = {\n  x: Float64;\n  y: Float64;\n}\n\n// TODO: Write a 'distance_to' method using the formula: sqrt(dx*dx + dy*dy)\n\nfn main() -> Int {\n  // TODO: Create two Points and print the distance between them\n  return 0;\n}\n",
+  "solution": "type Point = {\n  x: Float64;\n  y: Float64;\n}\n\nfn Point.distance_to(self, other: Point) -> Float64 {\n  let dx = x - other.x;\n  let dy = y - other.y;\n  return math.sqrt(dx * dx + dy * dy);\n}\n\nfn main() -> Int {\n  let a = Point{ x: 1.0, y: 2.0 };\n  let b = Point{ x: 4.0, y: 6.0 };\n  let dist = a.distance_to(b);\n  io.println(dist);\n  return 0;\n}\n",
+  "try_it": "Create a third Point for a friend's house. Find the distance from home to friend, and from school to friend. Which one is closer?",
+  "concepts": ["coordinate-struct", "distance-calculation", "math.sqrt", "self-and-other"],
+  "tips": [
+    "Use `math.sqrt()` for square roots — you pass one Float64 number and get a Float64 back",
+    "The `dx` and `dy` variables keep the formula readable — compute them first, then combine",
+    "Methods can take other instances of the same type: `fn Point.distance_to(self, other: Point)`"
+  ],
+  "common_mistakes": [
+    "Subtracting in the wrong order: `other.x - x` instead of `x - other.x` — squaring makes either work, but be consistent",
+    "Using `^` for exponent — in XIOM, `dx * dx` is the correct way to square, not `dx ^ 2`",
+    "Forgetting to use `math.sqrt` — just `sqrt(...)` won't work without the `math.` prefix"
+  ],
+  "next_lesson": "L2-09",
+  "related": ["L2-05", "L2-06", "L0-03"]
+}

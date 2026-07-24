@@ -1,0 +1,25 @@
+{
+  "id": "L2-22",
+  "title": "Library System",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "A small community library needs a simple system to track books. When someone borrows a book, it's marked checked out. When they return it, it's available again. You can build this with one struct and two methods.",
+  "why": "Methods that mutate struct fields let you model real-world state changes like checking out a book.",
+  "narrative": "## Modeling a Library Book\n\nA book has a title, author, and a checkout status. With methods, you can change its state just like a real library.\n\n### The Book Struct\n\n```xiom\ntype Book = {\n  title: Str;\n  author: Str;\n  checked_out: Bool;\n}\n```\n\n### Checking Out a Book\n\nMethods on structs can mutate fields. Here `checkout` sets `checked_out` to `true`:\n\n```xiom\nfn Book.checkout(self) {\n  checked_out = true;\n}\n```\n\nNote: inside a method, `self` is implicit \u2014 you access fields directly, no `self.` prefix.\n\n### Checking Availability\n\n```xiom\nfn Book.is_available(self) -> Bool {\n  return !checked_out;\n}\n```\n\n### Using the Library\n\n```xiom\nvar book = Book{\n  title: \"The Hobbit\";\n  author: \"J.R.R. Tolkien\";\n  checked_out: false;\n};\n\nbook.is_available();  // true\nbook.checkout();\nbook.is_available();  // false\n```\n\n### Returning a Book\n\nAdd a `return_book` method that sets `checked_out` back to `false`:\n\n```xiom\nfn Book.return_book(self) {\n  checked_out = false;\n}\n```",
+  "analogy": "A library book is like a light switch \u2014 it can be either ON (checked out) or OFF (available). The `checkout` and `return_book` methods flip the switch.",
+  "code_template": "type Book = {\n  title: Str;\n  author: Str;\n  checked_out: Bool;\n}\n\n// TODO: add method 'checkout' that sets checked_out to true\n\n// TODO: add method 'is_available' that returns true when NOT checked out\n\n// TODO: add method 'return_book' that sets checked_out back to false\n\nfn main() -> Int {\n  // TODO: create a book, checkout, check availability, return, return 0\n  return 0;\n}",
+  "solution": "type Book = {\n  title: Str;\n  author: Str;\n  checked_out: Bool;\n}\n\nfn Book.checkout(self) {\n  checked_out = true;\n}\n\nfn Book.is_available(self) -> Bool {\n  return !checked_out;\n}\n\nfn Book.return_book(self) {\n  checked_out = false;\n}\n\nfn main() -> Int {\n  var book = Book{\n    title: \"The Hobbit\";\n    author: \"J.R.R. Tolkien\";\n    checked_out: false;\n  };\n  book.checkout();\n  let avail = book.is_available();\n  book.return_book();\n  let avail_after = book.is_available();\n  return 0;\n}",
+  "try_it": "Add a `due_date: Str` field to Book (e.g., \"2026-08-01\"). Modify `checkout` to set the due date to 14 days from now. Add a method `is_overdue` that always returns false for now.",
+  "concepts": ["struct", "method", "mutation", "Bool", "self"],
+  "tips": [
+    "Methods that mutate use `self` without `&mut` \u2014 the compiler handles the borrowing",
+    "Inside a method, field access is direct: write `checked_out`, not `self.checked_out`",
+    "A method that only reads fields still uses `self` as the first parameter"
+  ],
+  "common_mistakes": [
+    "Writing `self.checked_out` inside the method \u2014 XIOM fields are accessed directly without `self.`",
+    "Forgetting the `self` parameter in the method signature entirely"
+  ],
+  "next_lesson": "L2-23",
+  "related": ["L2-04", "L2-01"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L2-10",
+  "title": "Student Grades Struct",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "Report card season! You want to calculate your average grade and figure out which subject you crushed. No more manual math — your code will analyze the scores for you.",
+  "why": "Computing statistics from multiple fields teaches you to write methods that aggregate data and return meaningful summaries.",
+  "narrative": "## Analyzing Student Performance\n\nA `Student` struct holds grades across multiple subjects. Methods can compute averages and find the strongest subject.\n\n### The Student Struct\n\n```xiom\ntype Student = {\n  name: Str;\n  math: Int;\n  science: Int;\n  english: Int;\n}\n\nfn main() -> Int {\n  let student = Student{ name: \"Vivian\", math: 92, science: 88, english: 95 };\n  io.println(student.name);\n  io.println(student.math);\n  return 0;\n}\n```\n\n### Computing the Average\n\n```xiom\nfn Student.average(self) -> Float64 {\n  let total = math + science + english;\n  return total as Float64 / 3.0;\n}\n\nfn main() -> Int {\n  let s = Student{ name: \"Vivian\", math: 92, science: 88, english: 95 };\n  let avg = s.average();\n  io.println(avg);  // 91.666666...\n  return 0;\n}\n```\n\nNote: `total as Float64` converts the Int sum to Float64 so division produces a precise decimal.\n\n### Finding the Highest Grade\n\n```xiom\nfn Student.highest_subject(self) -> Str {\n  if math >= science && math >= english {\n    return \"Math\";\n  }\n  if science >= math && science >= english {\n    return \"Science\";\n  }\n  return \"English\";\n}\n\nfn main() -> Int {\n  let s = Student{ name: \"Wyatt\", math: 78, science: 85, english: 82 };\n  let best = s.highest_subject();\n  io.println(best);  // Science\n  return 0;\n}\n```\n\n### Letter Grade Method\n\n```xiom\nfn Student.letter_grade(self) -> Str {\n  let avg = average();\n  if avg >= 90.0 {\n    return \"A\";\n  }\n  if avg >= 80.0 {\n    return \"B\";\n  }\n  if avg >= 70.0 {\n    return \"C\";\n  }\n  return \"F\";\n}\n```\n\nNotice how `letter_grade` calls `average()` — methods can call other methods on the same struct!",
+  "analogy": "A Student struct is like a report card. Methods are like the summary section — they compute GPA, find the best subject, and assign letter grades without you doing the math.",
+  "code_template": "type Student = {\n  name: Str;\n  math: Int;\n  science: Int;\n  english: Int;\n}\n\n// TODO: Write 'average' method — returns (math + science + english) / 3.0 as Float64\n\n// TODO: Write 'highest_subject' method — returns the name of the subject with the highest score\n\nfn main() -> Int {\n  // TODO: Create a Student, print average, print highest subject\n  return 0;\n}\n",
+  "solution": "type Student = {\n  name: Str;\n  math: Int;\n  science: Int;\n  english: Int;\n}\n\nfn Student.average(self) -> Float64 {\n  let total = math + science + english;\n  return total as Float64 / 3.0;\n}\n\nfn Student.highest_subject(self) -> Str {\n  if math >= science && math >= english {\n    return \"Math\";\n  }\n  if science >= math && science >= english {\n    return \"Science\";\n  }\n  return \"English\";\n}\n\nfn main() -> Int {\n  let s = Student{ name: \"Zara\", math: 88, science: 92, english: 85 };\n  io.println(s.average());\n  io.println(s.highest_subject());\n  return 0;\n}\n",
+  "try_it": "Add a `history` subject to the Student struct. Update `average` and `highest_subject` to include it. Test with all four subjects.",
+  "concepts": ["data-aggregation", "type-casting", "multi-field-comparison"],
+  "tips": [
+    "Use `as Float64` to convert Int to Float64 before dividing — otherwise division truncates",
+    "Methods can call other methods on the same struct — `average()` inside `letter_grade()`",
+    "When finding the max of multiple fields, compare each one against all others with `>=`"
+  ],
+  "common_mistakes": [
+    "Dividing Int by Int and expecting a decimal — `(math + science + english) / 3` gives integer division; use `/ 3.0` after casting",
+    "Using `>` instead of `>=` when comparing for highest — if two subjects tie, `>=` ensures one is selected",
+    "Hardcoding a return value and forgetting to return the full range — every path through `if/elif` must lead to a return"
+  ],
+  "next_lesson": "L2-11",
+  "related": ["L2-04", "L2-05", "L1-20"]
+}

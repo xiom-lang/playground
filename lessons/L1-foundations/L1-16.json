@@ -1,0 +1,26 @@
+{
+  "id": "L1-16",
+  "title": "Time Functions",
+  "level": "L1",
+  "duration": "7 min",
+  "story": "You're planning a road trip and need to convert hours to minutes for the GPS, minutes to seconds for the playlist, and days to hours for the itinerary. A conversion app would save so much mental math!",
+  "why": "Time conversions are universal — every program that deals with durations, countdowns, or scheduling needs them. They're also perfect function practice: clean inputs, clean outputs.",
+  "narrative": "## A Time Conversion Toolkit\n\nTime units follow fixed ratios: 60 seconds per minute, 60 minutes per hour, 24 hours per day. These constants make time functions predictable and testable.\n\n### Small to Large\n\n```xiom\nfn minutes_to_seconds(minutes: Int) -> Int {\n  return minutes * 60;\n}\n\nfn hours_to_minutes(hours: Int) -> Int {\n  return hours * 60;\n}\n\nfn days_to_hours(days: Int) -> Int {\n  return days * 24;\n}\n\nfn main() -> Int {\n  io.println(minutes_to_seconds(5));   // 300\n  io.println(hours_to_minutes(2));      // 120\n  io.println(days_to_hours(3));         // 72\n  return 0;\n}\n```\n\n### Large to Small (Reverse)\n\n```xiom\nfn seconds_to_minutes(seconds: Int) -> Int {\n  return seconds / 60;\n}\n\nfn minutes_to_hours(minutes: Int) -> Int {\n  return minutes / 60;\n}\n\nfn main() -> Int {\n  io.println(seconds_to_minutes(180));  // 3\n  io.println(minutes_to_hours(150));    // 2\n  return 0;\n}\n```\n\n### Duration Description\n\n```xiom\nfn describe_duration(minutes: Int) {\n  let seconds = minutes_to_seconds(minutes);\n  let hours = minutes_to_hours(minutes);\n  io.println(\"Minutes: \");\n  io.println(minutes);\n  io.println(\"Seconds: \");\n  io.println(seconds);\n  io.println(\"Hours (approx): \");\n  io.println(hours);\n}\n\nfn main() -> Int {\n  describe_duration(90);\n  return 0;\n}\n```\n\n### Why Use Functions for This?\n\nYou could write `60` everywhere, but `minutes_to_seconds(5)` is self-documenting. Anyone reading your code instantly knows you're converting 5 minutes to seconds — no mental math required.",
+  "analogy": "Time conversion functions are like a unit translator — \"5 minutes\" goes in, \"300 seconds\" comes out, no thinking required.",
+  "code_template": "// TODO: Write 'minutes_to_seconds' that multiplies by 60\n// TODO: Write 'hours_to_minutes' that multiplies by 60\n// TODO: Write 'days_to_minutes' that first converts days -> hours, then hours -> minutes (call your other functions!)\n\nfn main() -> Int {\n  // TODO: Print the number of minutes in 2 days using days_to_minutes(2)\n  return 0;\n}\n",
+  "solution": "fn minutes_to_seconds(minutes: Int) -> Int {\n  return minutes * 60;\n}\n\nfn hours_to_minutes(hours: Int) -> Int {\n  return hours * 60;\n}\n\nfn days_to_minutes(days: Int) -> Int {\n  let hours = days * 24;\n  return hours_to_minutes(hours);\n}\n\nfn main() -> Int {\n  io.println(days_to_minutes(2));\n  return 0;\n}\n",
+  "try_it": "Write a `weeks_to_minutes` function that chains through `days_to_hours` and `hours_to_minutes`. Calculate how many minutes are in a week!",
+  "concepts": ["time-conversion", "chaining-functions", "unit-ratios"],
+  "tips": [
+    "Chain your functions: `days_to_minutes` can call `hours_to_minutes` instead of repeating `* 60`",
+    "Use `Int` for time units — whole numbers make sense for seconds, minutes, hours",
+    "Name the direction clearly: `minutes_to_seconds` vs `seconds_to_minutes`"
+  ],
+  "common_mistakes": [
+    "Using the wrong multiplier: `minutes * 100` instead of `minutes * 60`",
+    "Integer division losing precision: `75 / 60` is `1` in Int division, not `1.25`",
+    "Writing every conversion from scratch instead of chaining: `days_to_seconds` = `hours_to_seconds(days_to_hours(days))`"
+  ],
+  "next_lesson": "L1-17",
+  "related": ["L1-08", "L1-10", "L1-15"]
+}

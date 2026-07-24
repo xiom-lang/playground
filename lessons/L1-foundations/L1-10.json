@@ -1,0 +1,26 @@
+{
+  "id": "L1-10",
+  "title": "Math Functions",
+  "level": "L1",
+  "duration": "8 min",
+  "story": "Your friend is struggling with algebra homework. You decide to build a pocket calculator of reusable math functions so they can check their answers instantly!",
+  "why": "Mathematical operations are the most natural use of functions — one input in, one output out. They're perfect for practicing function design.",
+  "narrative": "## Building a Math Toolkit\n\nMath functions are the purest form of functions: take a number, transform it, return the result. Let's build several.\n\n### Square and Cube\n\n```xiom\nfn square(n: Int) -> Int {\n  return n * n;\n}\n\nfn cube(n: Int) -> Int {\n  return n * n * n;\n}\n\nfn main() -> Int {\n  io.println(square(5));  // 25\n  io.println(cube(3));    // 27\n  return 0;\n}\n```\n\n### Even and Odd Checking\n\nFunctions that return `Bool` are perfect for yes/no questions:\n\n```xiom\nfn is_even(n: Int) -> Bool {\n  return n % 2 == 0;\n}\n\nfn is_odd(n: Int) -> Bool {\n  return n % 2 != 0;\n}\n\nfn main() -> Int {\n  io.println(is_even(10));  // true\n  io.println(is_odd(7));    // true\n  return 0;\n}\n```\n\n### Putting Them Together\n\n```xiom\nfn describe_number(n: Int) {\n  io.println(\"Number: \");\n  io.println(n);\n  io.println(\"Squared: \");\n  io.println(square(n));\n  io.println(\"Cubed: \");\n  io.println(cube(n));\n  if is_even(n) {\n    io.println(\"It's even!\");\n  } else {\n    io.println(\"It's odd!\");\n  }\n}\n\nfn main() -> Int {\n  describe_number(7);\n  return 0;\n}\n```\n\nEach function does ONE thing well. `describe_number` uses them all — that's the power of composition!",
+  "analogy": "Math functions are like a Swiss Army knife of numbers — each blade does one specific cut, but together they handle any job.",
+  "code_template": "// TODO: Write 'square' that returns n * n\n// TODO: Write 'is_positive' that returns true if n > 0\n// TODO: Write 'absolute' that returns n if n >= 0, otherwise -n\n\nfn main() -> Int {\n  // TODO: Test square(6), is_positive(-3), and absolute(-15)\n  return 0;\n}\n",
+  "solution": "fn square(n: Int) -> Int {\n  return n * n;\n}\n\nfn is_positive(n: Int) -> Bool {\n  return n > 0;\n}\n\nfn absolute(n: Int) -> Int {\n  if n >= 0 {\n    return n;\n  } else {\n    return -n;\n  }\n}\n\nfn main() -> Int {\n  io.println(square(6));\n  io.println(is_positive(-3));\n  io.println(absolute(-15));\n  return 0;\n}\n",
+  "try_it": "Add an `is_multiple_of` function that checks if one number is divisible by another (hint: use `%`). Then test `is_multiple_of(15, 5)` — should be true.",
+  "concepts": ["math-functions", "Bool-return", "modulo"],
+  "tips": [
+    "`%` (modulo) gives the remainder: `10 % 3` is 1, `10 % 2` is 0",
+    "Functions that return `Bool` should be named like questions: `is_even`, `is_positive`",
+    "Each math function should do ONE operation — square, cube, absolute — not everything at once"
+  ],
+  "common_mistakes": [
+    "Using `=` instead of `==` for comparison: `if n = 0` is wrong; use `if n == 0`",
+    "Forgetting `return` in an `if/else` — both branches must return a value",
+    "Writing `-n` when n is positive thinking it'll work — `-(-5)` correctly gives `5`, but double-check your logic"
+  ],
+  "next_lesson": "L1-11",
+  "related": ["L1-01", "L1-03", "L1-06"]
+}

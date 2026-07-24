@@ -1,0 +1,26 @@
+{
+  "id": "L1-14",
+  "title": "Score Functions",
+  "level": "L1",
+  "duration": "8 min",
+  "story": "Your teacher just graded 200 exams by hand — and made mistakes on five of them. You build an automatic grading system that never gets tired, never makes errors, and works instantly.",
+  "why": "Conditional logic inside functions is a powerful pattern. Functions can make decisions (if/elif/else) and return different results based on input.",
+  "narrative": "## Building an Automatic Grader\n\nFunctions with `if/elif/else` inside them can map any input to a category — perfect for grading.\n\n### Letter Grade Converter\n\n```xiom\nfn letter_grade(score: Int) -> Str {\n  if score >= 90 {\n    return \"A\";\n  } else if score >= 80 {\n    return \"B\";\n  } else if score >= 70 {\n    return \"C\";\n  } else if score >= 60 {\n    return \"D\";\n  } else {\n    return \"F\";\n  }\n}\n\nfn main() -> Int {\n  io.println(letter_grade(95));  // A\n  io.println(letter_grade(83));  // B\n  io.println(letter_grade(55));  // F\n  return 0;\n}\n```\n\n### Pass/Fail Check\n\n```xiom\nfn is_passing(score: Int) -> Bool {\n  return score >= 60;\n}\n\nfn is_honors(score: Int) -> Bool {\n  return score >= 90;\n}\n\nfn main() -> Int {\n  io.println(is_passing(72));   // true\n  io.println(is_honors(88));    // false\n  return 0;\n}\n```\n\n### Full Grade Report\n\n```xiom\nfn grade_report(name: Str, score: Int) {\n  io.println(\"Student: \" + name);\n  io.println(\"Score: \");\n  io.println(score);\n  io.println(\"Grade: \" + letter_grade(score));\n  if is_passing(score) {\n    io.println(\"Status: PASS\");\n  } else {\n    io.println(\"Status: FAIL\");\n  }\n}\n\nfn main() -> Int {\n  grade_report(\"Kilo\", 87);\n  return 0;\n}\n```\n\nNotice the order of `if/elif` checks in `letter_grade`: checking `>= 90` BEFORE `>= 80` ensures scores like 95 don't accidentally get a B. Always check the highest threshold first!",
+  "analogy": "A grading function is like a coin sorter — coins go in, and the machine routes each one to the right slot based on its value.",
+  "code_template": "// TODO: Write 'letter_grade' that returns \"A\" for 90+, \"B\" for 80+, \"C\" for 70+, \"D\" for 60+, \"F\" otherwise\n// TODO: Write 'is_passing' that returns true if score >= 60\n\nfn main() -> Int {\n  // TODO: Print letter_grade(85) and is_passing(85)\n  return 0;\n}\n",
+  "solution": "fn letter_grade(score: Int) -> Str {\n  if score >= 90 {\n    return \"A\";\n  } else if score >= 80 {\n    return \"B\";\n  } else if score >= 70 {\n    return \"C\";\n  } else if score >= 60 {\n    return \"D\";\n  } else {\n    return \"F\";\n  }\n}\n\nfn is_passing(score: Int) -> Bool {\n  return score >= 60;\n}\n\nfn main() -> Int {\n  io.println(letter_grade(85));\n  io.println(is_passing(85));\n  return 0;\n}\n",
+  "try_it": "Add a `grade_comment` function that returns \"Excellent!\" for A, \"Good job!\" for B, \"Keep trying!\" for C, and \"Study more!\" for D/F. Have it call `letter_grade` inside.",
+  "concepts": ["conditional-returns", "grading-logic", "if-elif-chain"],
+  "tips": [
+    "Check the highest threshold first in `if/elif` chains: `>= 90` before `>= 80`",
+    "Use `else` as the final fallback — it catches everything that didn't match earlier conditions",
+    "Return a `Str` for categorical results and `Bool` for yes/no results — match the return type to the question"
+  ],
+  "common_mistakes": [
+    "Ordering `if/elif` from low to high — `if >= 60` first catches ALL passing grades before the higher checks run",
+    "Using `if` when you should use `else if` — each `if` is independent, so multiple can trigger",
+    "Forgetting the final `else` — what if someone enters a negative score? Handle it gracefully"
+  ],
+  "next_lesson": "L1-15",
+  "related": ["L1-10", "L1-12", "L1-06"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "L0-22",
+  "title": "Nested If Statements",
+  "level": "L0",
+  "duration": "7 min",
+  "story": "You wake up and need to decide what to wear. First question: is it cold outside? If yes, do you need a heavy coat or just a jacket? If no, is it sunny enough for shorts? Decisions inside decisions \u2014 that's what nested ifs are for!",
+  "why": "Nested conditions let programs handle complex, multi-step decisions \u2014 from game AI to recommendation engines to form validation.",
+  "narrative": "## Decisions Inside Decisions\n\nSometimes one if-statement isn't enough. You need to ask a second question only after answering the first. That's called \"nesting\" \u2014 putting an if inside another if.\n\n### What to Wear?\n\n```xiom\nfn main() {\n  let is_cold: Bool = true;\n  let is_raining: Bool = true;\n\n  if is_cold {\n    if is_raining {\n      io.println(\"Wear a warm raincoat!\");\n    } else {\n      io.println(\"Wear a cozy jacket.\");\n    }\n  } else {\n    io.println(\"T-shirt weather!\");\n  }\n}\n```\n\nThe outer if checks the temperature. If it's cold, we go INSIDE and check rain. If it's warm, we skip everything inside and just print \"T-shirt weather!\"\n\n### Indentation Shows the Structure\n\nSpacing matters for reading! Each inner block gets pushed further to the right. This makes it easy to see what belongs to what. The code reads like an outline:\n\n- Is it cold?\n  - Yes \u2192 Is it raining?\n    - Yes \u2192 Raincoat\n    - No \u2192 Jacket\n  - No \u2192 T-shirt\n\n### Using elif for Cleaner Code\n\n```xiom\nfn main() {\n  let temperature: Int = 25;\n\n  if temperature < 10 {\n    io.println(\"Heavy coat\");\n  } elif temperature < 20 {\n    io.println(\"Light jacket\");\n  } else {\n    io.println(\"Shorts and t-shirt!\");\n  }\n}\n```\n\n`elif` chains multiple conditions without deep nesting. Each condition is checked in order, and only the first matching branch runs.",
+  "analogy": "Nested ifs are like a choose-your-own-adventure book \u2014 each decision leads to a new set of choices.",
+  "code_template": "fn main() {\n  let is_weekend: Bool = true;\n  let is_sunny: Bool = false;\n\n  // TODO: if it's the weekend, check if it's sunny\n  // TODO: print \"Park day!\" if weekend AND sunny\n  // TODO: print \"Movie day!\" if weekend but NOT sunny\n  // TODO: print \"School day\" if not weekend\n}\n",
+  "solution": "fn main() {\n  let is_weekend: Bool = true;\n  let is_sunny: Bool = false;\n\n  if is_weekend {\n    if is_sunny {\n      io.println(\"Park day!\");\n    } else {\n      io.println(\"Movie day!\");\n    }\n  } else {\n    io.println(\"School day\");\n  }\n}\n",
+  "try_it": "Create a two-level decision tree about your evening plans. First check if you have homework. If yes, check the subject. If no, check if it's nice outside. Print different activities for each path!",
+  "concepts": ["nested-if", "elif", "decision-tree", "indentation"],
+  "tips": [
+    "Keep nesting to 2-3 levels deep \u2014 any deeper and the code gets hard to read. Consider using `elif` instead.",
+    "Indent each inner block by the same amount \u2014 consistency makes nested code readable!",
+    "When both conditions must be true, `&&` can sometimes replace nesting: `if a && b` instead of two nested ifs"
+  ],
+  "common_mistakes": [
+    "Getting lost in curly braces \u2014 count them! Every `{` needs a matching `}`. If the count is off, the compiler gets confused.",
+    "Putting code in the wrong block because of incorrect indentation \u2014 the code after an if only runs if the condition is true"
+  ],
+  "next_lesson": "L0-23",
+  "related": ["L0-10", "L0-11", "L0-20", "L0-21"]
+}

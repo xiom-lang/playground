@@ -1,0 +1,25 @@
+{
+  "id": "L2-32",
+  "title": "Event RSVP",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "You're hosting a party and sent out 50 invitations. Replies are trickling in: some say yes, some no, and some say maybe with an excuse. You need a program to tally responses and identify who needs a follow-up message.",
+  "why": "Enums model real-world choices where some options carry extra context (like a reason for maybe).",
+  "narrative": "## Tracking Invitation Responses\n\nAn RSVP can be Yes, No, or Maybe with a reason. An enum with one data-carrying variant models this perfectly.\n\n### The Response Enum\n\n```xiom\nenum Response {\n  Yes,\n  No,\n  Maybe(reason: Str),\n}\n```\n\n`Yes` and `No` are plain variants. `Maybe` carries a reason string explaining the hesitation.\n\n### Creating Responses\n\n```xiom\nlet r1 = Response.Yes;\nlet r2 = Response.No;\nlet r3 = Response.Maybe(\"Working late\");\nlet r4 = Response.Maybe(\"Out of town\");\n```\n\n### Counting Yes Responses\n\nA function that returns 1 for Yes and 0 for everything else:\n\n```xiom\nfn count_yes(r: Response) -> Int {\n  match r {\n    Yes => { return 1; }\n    _ => { return 0; }\n  }\n}\n```\n\n### Identifying Follow-Ups\n\nA `Maybe` response needs a follow-up call or message:\n\n```xiom\nfn needs_followup(r: Response) -> Bool {\n  match r {\n    Maybe(reason) => { return true; }\n    _ => { return false; }\n  }\n}\n```\n\n### Processing a Batch\n\n```xiom\nlet total_yes = count_yes(r1) + count_yes(r2) + count_yes(r3);  // 1\n\nif needs_followup(r3) {\n  // Send a reminder to the person who said \"Working late\"\n}\n```",
+  "analogy": "RSVP responses are like three different colored envelopes: Green (Yes), Red (No), and Yellow with a sticky note (Maybe + reason). You sort them into piles and read the notes only on the yellow ones.",
+  "code_template": "enum Response {\n  Yes,\n  No,\n  Maybe(reason: Str),\n}\n\n// TODO: write a function 'count_yes' that returns 1 for Yes, 0 otherwise\n\n// TODO: write a function 'needs_followup' that returns true for Maybe variants\n\n// TODO: write a function 'get_reason' that returns the reason for Maybe or \"N/A\" for others\n\nfn main() -> Int {\n  // TODO: process 5 responses, return number of yes + number needing followup\n  return 0;\n}",
+  "solution": "enum Response {\n  Yes,\n  No,\n  Maybe(reason: Str),\n}\n\nfn count_yes(r: Response) -> Int {\n  match r {\n    Yes => { return 1; }\n    _ => { return 0; }\n  }\n}\n\nfn needs_followup(r: Response) -> Bool {\n  match r {\n    Maybe(_) => { return true; }\n    _ => { return false; }\n  }\n}\n\nfn get_reason(r: Response) -> Str {\n  match r {\n    Maybe(reason) => { return reason; }\n    _ => { return \"N/A\"; }\n  }\n}\n\nfn main() -> Int {\n  let r1 = Response.Yes;\n  let r2 = Response.No;\n  let r3 = Response.Maybe(\"Working late\");\n  let r4 = Response.Yes;\n  let r5 = Response.Maybe(\"Sick\");\n  let yes_count = count_yes(r1) + count_yes(r2) + count_yes(r3) + count_yes(r4) + count_yes(r5);\n  var follow = 0;\n  if needs_followup(r1) { follow = follow + 1; }\n  if needs_followup(r2) { follow = follow + 1; }\n  if needs_followup(r3) { follow = follow + 1; }\n  if needs_followup(r4) { follow = follow + 1; }\n  if needs_followup(r5) { follow = follow + 1; }\n  return yes_count + follow;\n}",
+  "try_it": "Add a `Declined(reason: Str)` variant for people who say no with a reason. Update `needs_followup` to exclude Declined (they've already explained). Process 5 responses and print the count of people saying yes.",
+  "concepts": ["enum", "variant data", "match", "wildcard", "Bool"],
+  "tips": [
+    "Use `_` in match arms when you don't need the variant's data and want a catch-all",
+    "Data-carrying variants use parentheses with named fields: `Maybe(reason: Str)`",
+    "Only destructure data you actually need \u2014 `Maybe(_)` matches Maybe without binding the reason"
+  ],
+  "common_mistakes": [
+    "Trying to access `reason` on a `Yes` or `No` variant \u2014 those variants don't carry data",
+    "Forgetting that `match` must be exhaustive \u2014 the `_` wildcard is your escape hatch"
+  ],
+  "next_lesson": "L2-33",
+  "related": ["L2-15", "L2-16", "L2-31"]
+}

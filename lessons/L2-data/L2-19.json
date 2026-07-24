@@ -1,0 +1,26 @@
+{
+  "id": "L2-19",
+  "title": "Enum Methods",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "The traffic light at the intersection cycles Red → Green → Yellow → Red. You want the TrafficLight itself to know how to advance to the next color — no separate function needed!",
+  "why": "Enums can have methods, just like structs. This keeps behavior close to the type, making your code more organized and intuitive.",
+  "narrative": "## Giving Enums Their Own Behavior\n\nMethods aren't just for structs — enums can have them too. An enum method uses `self` and match to behave differently for each variant.\n\n### TrafficLight with a Next Method\n\n```xiom\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn TrafficLight.next(self) -> TrafficLight {\n  return match self {\n    Red => TrafficLight.Green,\n    Green => TrafficLight.Yellow,\n    Yellow => TrafficLight.Red,\n  };\n}\n\nfn main() -> Int {\n  let light = TrafficLight.Red;\n  io.println(\"Starting at Red\");\n\n  let light = light.next();\n  io.println(\"Now Green!\");\n\n  let light = light.next();\n  io.println(\"Now Yellow!\");\n\n  let light = light.next();\n  io.println(\"Back to Red!\");\n  return 0;\n}\n```\n\n### Cycling Multiple Times\n\n```xiom\nfn main() -> Int {\n  let light = TrafficLight.Red;\n  let count = 0;\n  while count < 5 {\n    light = light.next();\n    count = count + 1;\n  }\n  io.println(\"Cycled 5 times!\");\n  return 0;\n}\n```\n\n### Methods on Enums with Data\n\nEnums with data can have methods too:\n\n```xiom\nenum Weather {\n  Sunny,\n  Rainy(mm: Float64),\n}\n\nfn Weather.is_wet(self) -> Bool {\n  return match self {\n    Sunny => false,\n    Rainy(mm) => mm > 0.0,\n  };\n}\n\nfn main() -> Int {\n  let today = Weather.Rainy(5.0);\n  let tomorrow = Weather.Sunny;\n  io.println(today.is_wet());     // true\n  io.println(tomorrow.is_wet());  // false\n  return 0;\n}\n```\n\n### Summary Methods\n\n```xiom\nfn TrafficLight.instruction(self) -> Str {\n  return match self {\n    Red => \"Stop\",\n    Yellow => \"Slow down\",\n    Green => \"Go\",\n  };\n}\n```\n\nEnum methods combine the best of both worlds: the structure of enums (fixed set of options) with the behavior of methods (each instance can do things).",
+  "analogy": "Enum methods are like buttons on a remote control. Each button (variant) does something different when pressed, and the remote knows which button was pressed and what to do next.",
+  "code_template": "enum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\n// TODO: Write 'next' method — Red becomes Green, Green becomes Yellow, Yellow becomes Red\n\n// TODO: Write 'instruction' method — returns \"Stop\", \"Slow\", or \"Go\"\n\nfn main() -> Int {\n  // TODO: Start at Red, cycle 3 times with next(), print instruction each time\n  return 0;\n}\n",
+  "solution": "enum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn TrafficLight.next(self) -> TrafficLight {\n  return match self {\n    Red => TrafficLight.Green,\n    Green => TrafficLight.Yellow,\n    Yellow => TrafficLight.Red,\n  };\n}\n\nfn TrafficLight.instruction(self) -> Str {\n  return match self {\n    Red => \"Stop\",\n    Yellow => \"Slow\",\n    Green => \"Go\",\n  };\n}\n\nfn main() -> Int {\n  let light = TrafficLight.Red;\n  let count = 0;\n  while count < 3 {\n    io.println(light.instruction());\n    light = light.next();\n    count = count + 1;\n  }\n  return 0;\n}\n",
+  "try_it": "Add a `cycles_until_red` method that takes a starting color and counts how many `next()` calls it takes to reach Red. Test starting from Green (should take 1), Yellow (should take 2), and Red (should take 0).",
+  "concepts": ["enum-methods", "state-machine", "method-on-self", "cycling-pattern"],
+  "tips": [
+    "Enum methods use `self` just like struct methods — the first parameter is always `self`",
+    "Match on `self` inside the method to determine which variant you are",
+    "Methods can return a different variant — `next()` goes from Red to Green, changing the state"
+  ],
+  "common_mistakes": [
+    "Forgetting the enum prefix when returning: `return Green` is wrong — must be `return TrafficLight.Green`",
+    "Using `self` in match but writing `TrafficLight.Red` in the pattern — use bare names: `Red => { ... }`",
+    "Calling `next()` without reassigning: `light.next()` alone doesn't change `light`; you need `light = light.next()`"
+  ],
+  "next_lesson": "L2-20",
+  "related": ["L2-11", "L2-04", "L2-12"]
+}

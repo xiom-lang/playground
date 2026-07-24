@@ -1,0 +1,25 @@
+{
+  "id": "L2-48",
+  "title": "Game Difficulty",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You're building a puzzle game and need configurable difficulty levels. Easy mode gives 10 attempts, Medium gives 5, Hard gives 3, Expert gives 1. The settings screen needs to show descriptions like \"For beginners\" or \"You will cry\" based on the selected level.",
+  "why": "Difficulty enums with numeric thresholds and string descriptions are the foundation of every game's settings system.",
+  "narrative": "## Modeling Game Difficulty Levels\n\nDifficulty levels form a clear progression: easier modes give more help, harder modes give less.\n\n### The Difficulty Enum\n\n```xiom\nenum Difficulty {\n  Easy,\n  Medium,\n  Hard,\n  Expert,\n}\n```\n\n### Maximum Attempts Per Level\n\nEasier modes allow more attempts before game over:\n\n```xiom\nfn Difficulty.max_attempts(self) -> Int {\n  match self {\n    Easy => { return 10; }\n    Medium => { return 5; }\n    Hard => { return 3; }\n    Expert => { return 1; }\n  }\n}\n```\n\n### Describing Each Level\n\n```xiom\nfn Difficulty.description(self) -> Str {\n  match self {\n    Easy => { return \"Relaxed \u2014 plenty of chances to learn\"; }\n    Medium => { return \"Standard \u2014 a fair challenge\"; }\n    Hard => { return \"Tough \u2014 mistakes are costly\"; }\n    Expert => { return \"Brutal \u2014 one error and you're done\"; }\n  }\n}\n```\n\n### Selecting Difficulty\n\n```xiom\nlet difficulty = Difficulty.Hard;\ndifficulty.max_attempts();   // 3\ndifficulty.description();    // \"Tough \u2014 mistakes are costly\"\n```\n\n### Comparing Difficulty Levels\n\n```xiom\nfn attempts_remaining(d: Difficulty, used: Int) -> Int {\n  let max = d.max_attempts();\n  if used >= max {\n    return 0;\n  }\n  return max - used;\n}\n```\n\n### Using Difficulty in Game Logic\n\n```xiom\nlet level = Difficulty.Medium;\nvar used = 3;\nattempts_remaining(level, 3);  // 2 (5 max - 3 used)\nattempts_remaining(level, 6);  // 0 (used exceeds max)\n```",
+  "analogy": "Difficulty is the \"game slider\" in the settings menu. Easy is training wheels \u2014 lots of tries. Expert is the tightrope with no net \u2014 one attempt. The description is the warning label under each level.",
+  "code_template": "enum Difficulty {\n  Easy,\n  Medium,\n  Hard,\n  Expert,\n}\n\n// TODO: write a method 'Difficulty.max_attempts' that returns attempts per level\n\n// TODO: write a method 'Difficulty.description' that returns a flavorful description\n\nfn main() -> Int {\n  // TODO: create Expert difficulty, check attempts, return number of attempts\n  return 0;\n}",
+  "solution": "enum Difficulty {\n  Easy,\n  Medium,\n  Hard,\n  Expert,\n}\n\nfn Difficulty.max_attempts(self) -> Int {\n  match self {\n    Easy => { return 10; }\n    Medium => { return 5; }\n    Hard => { return 3; }\n    Expert => { return 1; }\n  }\n}\n\nfn Difficulty.description(self) -> Str {\n  match self {\n    Easy => { return \"Plenty of chances to learn\"; }\n    Medium => { return \"A fair challenge\"; }\n    Hard => { return \"Mistakes are costly\"; }\n    Expert => { return \"One error and you are done\"; }\n  }\n}\n\nfn main() -> Int {\n  let level = Difficulty.Expert;\n  return level.max_attempts();\n}",
+  "try_it": "Add a `Nightmare` difficulty mode with 0 attempts (instant game over on error). Add a `Difficulty.score_multiplier(self) -> Float64` method (Easy = 0.5x, Medium = 1.0x, Hard = 2.0x, Expert = 5.0x).",
+  "concepts": ["enum", "match", "method", "difficulty", "thresholds"],
+  "tips": [
+    "Each match arm returns a different constant \u2014 no shared calculation needed",
+    "Keep descriptions flavorful \u2014 they're player-facing text, not just variable names",
+    "Use numeric values that feel right: Easy(10), Medium(5), Hard(3), Expert(1) has a satisfying curve"
+  ],
+  "common_mistakes": [
+    "Mixing up the order of match arms \u2014 the enum order in match must follow the definition order",
+    "Forgetting to make `Expert` the hardest (fewest attempts) \u2014 the progression should get harder"
+  ],
+  "next_lesson": "L2-49",
+  "related": ["L2-15", "L2-37", "L2-47"]
+}

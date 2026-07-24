@@ -1,0 +1,26 @@
+{
+  "id": "L1-07",
+  "title": "Functions with No Return (Void)",
+  "level": "L1",
+  "duration": "7 min",
+  "story": "Your smart home assistant just needs to announce things — \"Dinner's ready!\" or \"Door is locked!\" It doesn't need to calculate anything, just speak up.",
+  "why": "Not every function needs to produce a value. Some functions exist purely to perform actions — print messages, log events, or trigger effects.",
+  "narrative": "## Functions That Do, Not Return\n\nSome functions exist to perform an action, not compute a value. When you omit the `-> ReturnType`, the function returns nothing — it just does its job and finishes.\n\n### Your First Void Function\n\n```xiom\nfn announce(message: Str) {\n  io.println(\"ANNOUNCEMENT: \" + message);\n}\n\nfn main() -> Int {\n  announce(\"Dinner is served!\");\n  announce(\"Homework is done!\");\n  return 0;\n}\n```\n\nNo `->` arrow means no return value. The function prints something and that's it.\n\n### Void Functions with Multiple Parameters\n\n```xiom\nfn print_player_stats(name: Str, score: Int, level: Int) {\n  io.println(\"Player: \" + name);\n  io.println(\"Score: \");\n  io.println(score);\n  io.println(\"Level: \");\n  io.println(level);\n}\n\nfn main() -> Int {\n  print_player_stats(\"Kilo\", 950, 12);\n  return 0;\n}\n```\n\n### Void vs Value-Returning\n\n```xiom\n// Returns a value — you can store the result\nfn double(n: Int) -> Int {\n  return n * 2;\n}\n\n// Just does something — no result to capture\nfn log(message: Str) {\n  io.println(\"[LOG] \" + message);\n}\n\nfn main() -> Int {\n  let x = double(5);   // x is 10 — useful!\n  log(\"Processing...\"); // prints, but nothing to store\n  return 0;\n}\n```\n\n### When to Use Void Functions\n\n- **Output**: Printing messages, logging events\n- **Commands**: \"Save this,\" \"Send that,\" \"Refresh display\"\n- **Procedures**: Step-by-step operations that don't need a final answer",
+  "analogy": "A void function is like a megaphone announcement — it broadcasts a message but doesn't hand you anything back.",
+  "code_template": "// TODO: Write a void function 'print_banner' that prints three lines:\n// \"==================\", \"    WELCOME!\", \"==================\"\n\nfn main() -> Int {\n  // TODO: Call print_banner()\n  return 0;\n}\n",
+  "solution": "fn print_banner() {\n  io.println(\"==================\");\n  io.println(\"    WELCOME!\");\n  io.println(\"==================\");\n}\n\nfn main() -> Int {\n  print_banner();\n  return 0;\n}\n",
+  "try_it": "Create a void function called `weather_report` that takes temperature (Int) and condition (Str) and prints a nicely formatted weather summary.",
+  "concepts": ["void-function", "no-return", "side-effect"],
+  "tips": [
+    "Omit the `-> ReturnType` and the function returns nothing — it just runs its body",
+    "Void functions are all about SIDE EFFECTS — things they do to the world (printing, logging)",
+    "You can still pass parameters to void functions — they just don't produce a result"
+  ],
+  "common_mistakes": [
+    "Trying to assign a void function's result: `let x = announce(\"hi\");` — there's nothing to assign",
+    "Adding `-> Unit` unnecessarily — it's the default, so you can just leave it off",
+    "Forgetting that void functions can still be useful — not every function needs to return a number"
+  ],
+  "next_lesson": "L1-08",
+  "related": ["L1-01", "L1-04", "L1-06"]
+}

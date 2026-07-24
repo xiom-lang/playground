@@ -1,0 +1,25 @@
+{
+  "id": "L2-28",
+  "title": "Task Tracker",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "Your to-do list is a mess of sticky notes. You need a system where each task has a priority (Low to Urgent) and a done status. You want to see descriptions like \"[URGENT] Submit report \u2014 INCOMPLETE\" at a glance.",
+  "why": "Enums make status and priority self-documenting \u2014 `Priority.Urgent` is clearer than a magic number like `4`.",
+  "narrative": "## A Structured To-Do List\n\nEach task has a title, priority level, and completion status. An enum for priority keeps labels consistent.\n\n### The Priority Enum\n\n```xiom\nenum Priority {\n  Low,\n  Medium,\n  High,\n  Urgent,\n}\n```\n\n### The Task Struct\n\n```xiom\ntype Task = {\n  title: Str;\n  priority: Priority;\n  done: Bool;\n}\n```\n\n### Creating Tasks\n\n```xiom\nlet fix_bug = Task{\n  title: \"Fix login crash\";\n  priority: Priority.Urgent;\n  done: false;\n};\n\nlet water_plants = Task{\n  title: \"Water the plants\";\n  priority: Priority.Low;\n  done: true;\n};\n```\n\n### Describing a Task\n\nA function that turns a task into a human-readable string by checking its priority and status:\n\n```xiom\nfn describe(t: Task) -> Str {\n  let status = \"INCOMPLETE\";\n  if t.done {\n    status = \"DONE\";\n  }\n  let label = \"[LOW]\";\n  if t.priority == Priority.Medium { label = \"[MEDIUM]\"; }\n  if t.priority == Priority.High { label = \"[HIGH]\"; }\n  if t.priority == Priority.Urgent { label = \"[URGENT]\"; }\n  return label + \" \" + t.title + \" \u2014 \" + status;\n}\n```\n\nUsing it:\n\n```xiom\ndescribe(fix_bug);       // \"[URGENT] Fix login crash \u2014 INCOMPLETE\"\ndescribe(water_plants);  // \"[LOW] Water the plants \u2014 DONE\"\n```",
+  "analogy": "Priority is like a traffic light for your tasks: Low is green (no rush), Medium is yellow (pay attention), High is red (act soon), and Urgent is flashing red (drop everything).",
+  "code_template": "enum Priority {\n  Low,\n  Medium,\n  High,\n  Urgent,\n}\n\ntype Task = {\n  title: Str;\n  priority: Priority;\n  done: Bool;\n}\n\n// TODO: write a function 'describe' that formats a task as \"[PRIORITY] Title \u2014 STATUS\"\n\n// TODO: write a method 'complete' that marks a task as done\n\nfn main() -> Int {\n  // TODO: create 3 tasks with different priorities, complete one, return count of urgent incomplete tasks\n  return 0;\n}",
+  "solution": "enum Priority {\n  Low,\n  Medium,\n  High,\n  Urgent,\n}\n\ntype Task = {\n  title: Str;\n  priority: Priority;\n  done: Bool;\n}\n\nfn describe(t: Task) -> Str {\n  let status = \"INCOMPLETE\";\n  if t.done { status = \"DONE\"; }\n  let label = \"[LOW]\";\n  if t.priority == Priority.Medium { label = \"[MEDIUM]\"; }\n  if t.priority == Priority.High { label = \"[HIGH]\"; }\n  if t.priority == Priority.Urgent { label = \"[URGENT]\"; }\n  return label + \" \" + t.title + \" \u2014 \" + status;\n}\n\nfn Task.complete(self) {\n  done = true;\n}\n\nfn main() -> Int {\n  var t1 = Task{ title: \"Fix crash\"; priority: Priority.Urgent; done: false; };\n  var t2 = Task{ title: \"Refactor\"; priority: Priority.High; done: false; };\n  var t3 = Task{ title: \"Read docs\"; priority: Priority.Low; done: false; };\n  t1.complete();\n  var count = 0;\n  if !t1.done && t1.priority == Priority.Urgent { count = count + 1; }\n  if !t2.done && t2.priority == Priority.Urgent { count = count + 1; }\n  if !t3.done && t3.priority == Priority.Urgent { count = count + 1; }\n  return count;\n}",
+  "try_it": "Add a `due_in_days: Int` field to Task. Write a function `is_overdue` that returns true if due_in_days is less than 0. Create your actual to-do list for today with 5 tasks at different priorities.",
+  "concepts": ["enum", "struct", "description", "status", "priority queue"],
+  "tips": [
+    "Chain `if` statements for priority labels \u2014 start with the most common or most important case",
+    "Use `!t.done` to check if a task is NOT done \u2014 the `!` flips the boolean",
+    "Keep the describe function separate from the struct so you can change the format without changing the data"
+  ],
+  "common_mistakes": [
+    "Ordering priority checks backwards \u2014 if you check `Low` first, the else-if chain may not reach `Urgent`",
+    "Using a string for priority instead of the enum \u2014 you lose compiler safety"
+  ],
+  "next_lesson": "L2-29",
+  "related": ["L2-14", "L2-26"]
+}
