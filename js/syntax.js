@@ -1,191 +1,54 @@
 var concepts = [
-  {
-    id: "program",
-    name: "What is a Program?",
-    icon: "📝",
-    section: "getting-started",
-    metaphor: "A program is like a recipe. You write steps, the computer follows them in order.",
-    example: '// A program runs from top to bottom\nio.println("Step 1: Hello!");\nio.println("Step 2: Goodbye!");',
-    keywords: ["io.println", "comments"]
-  },
-  {
-    id: "output",
-    name: "Showing Output",
-    icon: "💬",
-    section: "getting-started",
-    metaphor: "`io.println` is how your program talks to you. It prints text on the screen, like writing a note.",
-    example: 'io.println("I can print anything!");\nio.println("Numbers too:");\nio.println(42);',
-    keywords: ["io.println", "Str"]
-  },
-  {
-    id: "variables",
-    name: "Named Boxes",
-    icon: "📦",
-    section: "getting-started",
-    metaphor: "A variable is like a labeled box. `let` creates a box and puts something inside. The name helps you find it later.",
-    example: 'let myName = "Alex";\nlet myAge = 25;\nio.println(myName);\nio.println(myAge);',
-    keywords: ["let", "Str", "Int"]
-  },
-  {
-    id: "numbers",
-    name: "Working with Numbers",
-    icon: "🔢",
-    section: "getting-started",
-    metaphor: "Computers are number-crunching machines. You can add, subtract, multiply, and divide with ease.",
-    example: 'let price = 10;\nlet quantity = 3;\nlet total = price * quantity;\nio.println(total);',
-    keywords: ["Int", "+", "-", "*", "/"]
-  },
-  {
-    id: "text",
-    name: "Working with Text",
-    icon: "📝",
-    section: "making-decisions",
-    metaphor: "Text in programming is called a 'string' — like beads on a string of letters. Wrap text in double quotes.",
-    example: 'let greeting = "Hello";\nlet name = "World";\nio.println(greeting + " " + name + "!");',
-    keywords: ["Str", "+"]
-  },
-  {
-    id: "booleans",
-    name: "True or False",
-    icon: "💡",
-    section: "making-decisions",
-    metaphor: "Computers think in true and false — like a light switch that is either on or off. XIOM calls this a `Bool`.",
-    example: 'let isRaining = true;\nlet isSunny = false;\nio.println(isRaining);\nio.println(5 > 3);\nio.println(2 == 3);',
-    keywords: ["Bool", "true", "false", "==", ">"]
-  },
-  {
-    id: "decisions",
-    name: "Making Decisions",
-    icon: "🔀",
-    section: "making-decisions",
-    metaphor: "Your program can make choices. 'If it is raining, take an umbrella.' In code: `if` and `else`.",
-    example: 'let temperature = 30;\nif temperature > 25 {\n  io.println("It is hot!");\n} else {\n  io.println("It is cool.");\n}',
-    keywords: ["if", "else", "Bool", ">"]
-  },
-  {
-    id: "repetition",
-    name: "Doing Things Repeatedly",
-    icon: "🔁",
-    section: "making-decisions",
-    metaphor: "Need something done 10 times? Use a `while` loop. It is like saying 'while there is coffee, keep drinking.'",
-    example: 'var count = 1;\nwhile count <= 5 {\n  io.println(count);\n  count += 1;\n}',
-    keywords: ["while", "var", "+="]
-  },
-  {
-    id: "functions",
-    name: "Reusable Recipes",
-    icon: "📋",
-    section: "building-blocks",
-    metaphor: "A function is a named recipe. Write it once, use it many times. Feed it ingredients (parameters) and it does the work.",
-    example: 'fn greet(name: Str) {\n  io.println("Hello, " + name + "!");\n}\n\ngreet("Alice");\ngreet("Bob");',
-    keywords: ["fn", "parameters"]
-  },
-  {
-    id: "return-values",
-    name: "Functions That Return Values",
-    icon: "📤",
-    section: "building-blocks",
-    metaphor: "Functions can cook up a result and hand it back. The `return` keyword sends a value back to whoever called the function.",
-    example: 'fn double(x: Int) -> Int {\n  return x * 2;\n}\n\nlet result = double(5);\nio.println(result);',
-    keywords: ["fn", "return", "->"]
-  },
-  {
-    id: "type-annotations",
-    name: "Type Labels",
-    icon: "🏷️",
-    section: "building-blocks",
-    metaphor: "Every box has a label saying what kind of thing belongs inside. `let name: Str` means 'this box holds text'. The compiler double-checks you.",
-    example: 'let name: Str = "XIOM";\nlet year: Int = 2026;\nlet pi: Float64 = 3.14159;\nlet active: Bool = true;\nio.println(name);',
-    keywords: ["Str", "Int", "Bool", "Float64", "type"]
-  },
-  {
-    id: "lists",
-    name: "Lists of Things",
-    icon: "📋",
-    section: "building-blocks",
-    metaphor: "A `Vec` is like a shopping list. You can add items, remove them, and walk through them one by one.",
-    example: 'var fruits: Vec[Str] = Vec[Str].new();\nfruits.push("Apple");\nfruits.push("Banana");\nfor fruit in fruits {\n  io.println(fruit);\n}',
-    keywords: ["Vec", "push", "for", "in"]
-  },
-  {
-    id: "structs",
-    name: "Custom Blueprints",
-    icon: "🏗️",
-    section: "building-blocks",
-    metaphor: "A `struct` is a blueprint for a custom box. You decide what goes inside. A Point has an x and a y.",
-    example: 'struct Point {\n  x: Int,\n  y: Int,\n}\n\nlet p = Point { x: 10, y: 20 };\nio.println(p.x);',
-    keywords: ["struct", "let"]
-  },
-  {
-    id: "enums",
-    name: "This or That",
-    icon: "🎯",
-    section: "building-blocks",
-    metaphor: "An `enum` lets you pick from a fixed set of choices. A traffic light is Red, Yellow, or Green — nothing else.",
-    example: 'enum Color {\n  Red,\n  Green,\n  Blue,\n}\n\nlet favorite = Color.Blue;',
-    keywords: ["enum", "let"]
-  },
-  {
-    id: "errors",
-    name: "When Things Go Wrong",
-    icon: "⚠️",
-    section: "handling-complexity",
-    metaphor: "Sometimes things fail — a file is missing, a number cannot be parsed. XIOM's `Result` lets you handle failure gracefully instead of crashing.",
-    example: 'let result = string.str_to_int("abc");\nmatch result {\n  Ok(value) => io.println(value),\n  Err(msg) => io.println("Error: " + msg),\n}',
-    keywords: ["Result", "Ok", "Err", "match"]
-  },
-  {
-    id: "pattern-matching",
-    name: "Pattern Matching",
-    icon: "🔍",
-    section: "handling-complexity",
-    metaphor: "`match` is like a multi-way fork in the road. You describe each possible pattern and the code to run for it.",
-    example: 'let score = 85;\nmatch score {\n  s if s >= 90 => io.println("A"),\n  s if s >= 80 => io.println("B"),\n  _ => io.println("Keep trying!"),\n}',
-    keywords: ["match", "=>", "_"]
-  },
-  {
-    id: "option",
-    name: "Something or Nothing",
-    icon: "🎁",
-    section: "handling-complexity",
-    metaphor: "`Option` answers 'do you have one?' — `Some(value)` means 'yes, here it is', `None` means 'no, sorry'. No more null crashes.",
-    example: 'let found: Option[Int] = Some(42);\nmatch found {\n  Some(x) => io.println("Got: "),\n  None => io.println("Nothing there"),\n}',
-    keywords: ["Option", "Some", "None", "match"]
-  },
-  {
-    id: "modules",
-    name: "Organizing Code",
-    icon: "📁",
-    section: "handling-complexity",
-    metaphor: "As your program grows, split it into modules like chapters in a book. Each module has its own purpose.",
-    example: 'module math {\n  pub fn add(a: Int, b: Int) -> Int {\n    return a + b;\n  }\n}\n\nuse math;\nio.println(math.add(3, 4));',
-    keywords: ["module", "pub", "use"]
-  },
-  {
-    id: "references",
-    name: "Borrowing, Not Copying",
-    icon: "🔗",
-    section: "handling-complexity",
-    metaphor: "Instead of photocopying a whole book, just point to it. `&` creates a reference — you borrow access without making a copy.",
-    example: 'fn print_name(name: &Str) {\n  io.println(name);\n}\n\nlet myName = "XIOM";\nprint_name(&myName);',
-    keywords: ["&", "fn", "references"]
-  },
-  {
-    id: "contracts",
-    name: "Promises to the Compiler",
-    icon: "📜",
-    section: "handling-complexity",
-    metaphor: "`requires` and `ensures` are promises you make. 'I need b not to be zero' and 'I guarantee the result is correct.' The compiler holds you to them.",
-    example: 'fn divide(a: Int, b: Int) -> Int\n  requires: b != 0\n{\n  return a / b;\n}\n\nio.println(divide(10, 2));',
-    keywords: ["requires", "ensures", "fn"]
-  }
+  // ── First Steps ──
+  { id: "program", name: "What is a Program?", icon: "\uD83D\uDCDD", section: "first-steps", metaphor: "A program is like a recipe. You write steps, the computer follows them in order.", example: "fn main() {\n  io.println(\"Step 1: Hello!\");\n  io.println(\"Step 2: Goodbye!\");\n}", keywords: ["fn", "main", "io.println"], lessonId: "L0-01" },
+  { id: "printing", name: "Showing Output", icon: "\uD83D\uDDA8\uFE0F", section: "first-steps", metaphor: "`io.println` is how your program talks to you — like writing a note on the screen.", example: "fn main() {\n  io.println(\"Welcome!\");\n  io.println(42);\n  io.println(\"Nice to meet you!\");\n}", keywords: ["io.println", "io.print", "strings"], lessonId: "L0-02" },
+  { id: "variables", name: "Named Boxes", icon: "\uD83D\uDCE6", section: "first-steps", metaphor: "A variable is like a labeled box — `let` creates it, you put something inside, and the name helps you find it later.", example: "fn main() {\n  let name = \"Alex\";\n  let age = 14;\n  io.println(name);\n  io.println(age);\n}", keywords: ["let", "var", "type inference"], lessonId: "L0-04" },
+  { id: "numbers", name: "Working with Numbers", icon: "\uD83D\uDD22", section: "first-steps", metaphor: "The computer is a super-fast calculator — you can add, subtract, multiply, and divide with ease.", example: "fn main() {\n  let price = 12;\n  let quantity = 3;\n  let total = price * quantity;\n  io.println(total);\n}", keywords: ["Int", "Float64", "arithmetic"], lessonId: "L0-03" },
+  { id: "booleans", name: "True or False", icon: "\uD83D\uDCA1", section: "first-steps", metaphor: "A boolean is like a light switch — it is either ON (true) or OFF (false), nothing in between.", example: "fn main() {\n  let is_raining = true;\n  let age = 14;\n  io.println(age > 10);\n  io.println(is_raining);\n}", keywords: ["Bool", "true", "false", "=="], lessonId: "L0-07" },
+  { id: "strings", name: "Working with Text", icon: "\uD83D\uDD24", section: "first-steps", metaphor: "Text in programming is called a string — like beads on a string of letters. Use quotes to wrap them.", example: "fn main() {\n  let greeting = \"Hello\";\n  let name = \"World\";\n  let message = string.str_concat(greeting, \" \");\n  message = string.str_concat(message, name);\n  io.println(message);\n}", keywords: ["Str", "string.str_len", "string.str_concat"], lessonId: "L0-06" },
+
+  // ── Functions ──
+  { id: "functions", name: "Reusable Recipes", icon: "\uD83C\uDF73", section: "functions", metaphor: "A function is a named recipe — write it once, call it many times with different ingredients (parameters).", example: "fn greet(name: Str) {\n  io.println(\"Hi, \" + name + \"!\");\n}\nfn main() {\n  greet(\"Alice\");\n  greet(\"Bob\");\n}", keywords: ["fn", "parameters", "call"], lessonId: "L1-01" },
+  { id: "return-values", name: "Functions That Return", icon: "\uD83C\uDF6A", section: "functions", metaphor: "A function with a return value is like a vending machine — you put something in (parameters), it gives something back.", example: "fn double(x: Int) -> Int {\n  return x * 2;\n}\nfn main() {\n  let result = double(5);\n  io.println(result);\n}", keywords: ["return", "->", "Int"], lessonId: "L1-03" },
+  { id: "void-functions", name: "Functions With No Return", icon: "\uD83D\uDCE3", section: "functions", metaphor: "Some functions just do things without handing back a value — like a bell that rings but doesn't give you anything.", example: "fn announce(message: Str) {\n  io.println(\"ANNOUNCEMENT: \" + string.str_upper(message));\n}\nfn main() {\n  announce(\"lunch time\");\n}", keywords: ["void", "side effect", "fn"], lessonId: "L1-07" },
+  { id: "composition", name: "Calling Functions from Functions", icon: "\uD83D\uDD17", section: "functions", metaphor: "Functions can call other functions — like a head chef delegating tasks to sous chefs.", example: "fn add(a: Int, b: Int) -> Int { return a + b; }\nfn double_sum(x: Int, y: Int) -> Int { return add(x, y) * 2; }\nfn main() { io.println(double_sum(3, 4)); }", keywords: ["composition", "delegation", "helper"], lessonId: "L1-08" },
+  { id: "function-patterns", name: "Common Function Patterns", icon: "\uD83E\uDDE9", section: "functions", metaphor: "Function patterns are like kitchen techniques — once you know them, you can cook anything.", example: "fn is_even(n: Int) -> Bool { return n % 2 == 0; }\nfn classify(n: Int) -> Str {\n  if n > 0 { return \"positive\"; }\n  elif n < 0 { return \"negative\"; }\n  else { return \"zero\"; }\n}\nfn main() { io.println(classify(-5)); }", keywords: ["patterns", "Bool return", "classification"], lessonId: "L1-37" },
+
+  // ── Data & Types ──
+  { id: "structs", name: "Custom Blueprints", icon: "\uD83C\uDFD7\uFE0F", section: "data-types", metaphor: "A struct is a blueprint for a custom box — you decide what fields go inside, like designing a form.", example: "type Person = {\n  name: Str;\n  age: Int;\n}\nfn main() {\n  let me = Person{ name: \"Alex\"; age: 14; };\n  io.println(me.name);\n}", keywords: ["type", "struct", "fields"], lessonId: "L2-01" },
+  { id: "enums", name: "This or That", icon: "\uD83D\uDEA6", section: "data-types", metaphor: "An enum lets you pick from a fixed set of choices — like a traffic light that can only be Red, Yellow, or Green.", example: "enum TrafficLight { Red, Yellow, Green }\nfn describe(light: TrafficLight) -> Str {\n  if light == TrafficLight.Red { return \"Stop!\"; }\n  elif light == TrafficLight.Green { return \"Go!\"; }\n  else { return \"Slow down.\"; }\n}\nfn main() { io.println(describe(TrafficLight.Green)); }", keywords: ["enum", "variant", "choice"], lessonId: "L2-11" },
+  { id: "option", name: "Something or Nothing", icon: "\uD83C\uDF81", section: "data-types", metaphor: "Option is like looking in a drawer — either you find something (Some) or it is empty (None). No more null.", example: "fn divide_safely(a: Int, b: Int) -> Option[Int] {\n  if b == 0 { return None; }\n  else { return Some(a / b); }\n}\nfn main() {\n  let result = divide_safely(10, 2).unwrap_or(0);\n  io.println(result);\n}", keywords: ["Option", "Some", "None", "unwrap_or"], lessonId: "L3-01" },
+  { id: "result", name: "Success or Failure", icon: "\uD83C\uDFC6", section: "data-types", metaphor: "Result is like a delivery — either you get the package (Ok) or an explanation of why not (Err).", example: "fn parse_age(s: Str) -> Result[Int, Str] {\n  let val = string.str_to_int(s);\n  match val {\n    Ok(n) => { return Ok(n); },\n    Err(_) => { return Err(\"Not a number!\"); },\n  }\n}\nfn main() {\n  let age = parse_age(\"14\").unwrap_or(0);\n  io.println(age);\n}", keywords: ["Result", "Ok", "Err", "?"], lessonId: "L3-07" },
+  { id: "vec", name: "Lists of Things", icon: "\uD83D\uDCD1", section: "data-types", metaphor: "A Vec is like a shopping list that can grow — you add items one by one, and it expands to fit.", example: "fn main() {\n  let items: Vec[Str] = Vec[Str].new();\n  items.push(\"apples\");\n  items.push(\"bananas\");\n  io.println(items.len());\n}", keywords: ["Vec", "push", "pop", "len"], lessonId: "L5-01" },
+  { id: "map-set", name: "Dictionaries & Sets", icon: "\uD83D\uDCC7", section: "data-types", metaphor: "A Map is like a phone book (name → number). A Set is like a stamp collection (no duplicates allowed).", example: "fn main() {\n  let scores: Map[Str,Int] = Map[Str,Int].new();\n  scores.insert(\"Alice\", 95);\n  let alice_score = scores.get(&\"Alice\").unwrap_or(0);\n  io.println(alice_score);\n}", keywords: ["Map", "Set", "insert", "get"], lessonId: "L5-09" },
+
+  // ── Pattern Power ──
+  { id: "match", name: "Pattern Matching", icon: "\uD83D\uDD0E", section: "pattern-power", metaphor: "Match is like a multi-way fork in the road — you describe each possible path, and the compiler makes sure you covered them all.", example: "fn grade(score: Int) -> Str {\n  match score {\n    s if s >= 90 => \"A\",\n    s if s >= 80 => \"B\",\n    s if s >= 70 => \"C\",\n    _ => \"F\",\n  }\n}\nfn main() { io.println(grade(85)); }", keywords: ["match", "=>", "exhaustive", "guard"], lessonId: "L3-20" },
+  { id: "if-let", name: "If Let Pattern", icon: "\uD83C\uDFAF", section: "pattern-power", metaphor: "If let is a shortcut — 'if this box has something inside, use it, otherwise do something else.'", example: "fn main() {\n  let maybe_name: Option[Str] = Some(\"Alex\");\n  if let Some(name) = maybe_name {\n    io.println(\"Hello, \" + name);\n  } else {\n    io.println(\"No name found.\");\n  }\n}", keywords: ["if let", "Some", "pattern"], lessonId: "L3-04" },
+  { id: "error-handling", name: "Handling Errors Gracefully", icon: "\uD83D\uDEE0\uFE0F", section: "pattern-power", metaphor: "The ? operator is like a trapdoor — if something goes wrong, you exit immediately with the error instead of crashing.", example: "fn process(value: Str) -> Result[Int, Str] {\n  let num = string.str_to_int(value)?;\n  if num < 0 { return Err(\"Negative numbers not allowed.\"); }\n  return Ok(num * 2);\n}\nfn main() {\n  let result = process(\"5\").unwrap_or(0);\n  io.println(result);\n}", keywords: ["?", "Result", "error propagation"], lessonId: "L3-12" },
+  { id: "decisions", name: "Making Decisions", icon: "\uD83E\uDDE0", section: "pattern-power", metaphor: "if/elif/else is like choosing what to wear — check the weather, pick the right outfit.", example: "fn main() {\n  let temperature = 15;\n  let is_raining = false;\n  if temperature > 25 { io.println(\"Wear shorts!\"); }\n  elif temperature > 10 { io.println(\"Wear a jacket.\"); }\n  else { io.println(\"Wear a coat!\"); }\n}", keywords: ["if", "elif", "else", "while"], lessonId: "L0-08" },
+
+  // ── XIOM Magic ──
+  { id: "contracts", name: "Promises to the Compiler", icon: "\uD83E\uDD1D", section: "xiom-magic", metaphor: "Contracts are pinky promises to the compiler — 'I need b not to be zero' and 'I guarantee the result is correct.' The compiler holds you to them.", example: "fn divide(a: Float64, b: Float64) -> Float64\n  requires: b != 0.0\n  ensures: result * b == a\n{\n  return a / b;\n}\nfn main() { io.println(divide(12.0, 4.0)); }", keywords: ["requires", "ensures", "contract"], lessonId: "L4-01" },
+  { id: "invariants", name: "Rules That Never Break", icon: "\uD83D\uDEE1\uFE0F", section: "xiom-magic", metaphor: "An invariant is like a safety railing — no matter what happens to your data, this rule must always be true.", example: "type Health = {\n  current: Int;\n  maximum: Int;\n  invariant: current >= 0;\n  invariant: current <= maximum;\n}\nfn main() { let hp = Health{ current: 100; maximum: 100; }; io.println(hp.current); }", keywords: ["invariant", "type", "safety"], lessonId: "L4-06" },
+  { id: "ownership", name: "Who Owns What", icon: "\uD83D\uDCD6", section: "xiom-magic", metaphor: "Ownership is like a library book — only one person can have it at a time. When you give it away, you no longer have it.", example: "fn consume(v: Vec[Int]) { /* v is gone after this */ }\nfn main() {\n  let a = 42;\n  let b = a;  // a moves to b\n  io.println(b);\n}", keywords: ["ownership", "move", "scope"], lessonId: "L4-11" },
+  { id: "borrowing", name: "Borrowing, Not Copying", icon: "\uD83D\uDC49", section: "xiom-magic", metaphor: "Instead of photocopying a whole book, just point to it. & creates a reference — you borrow access without making a copy.", example: "fn print_vec(v: &Vec[Int]) {\n  io.println(v.len());\n}\nfn main() {\n  let numbers: Vec[Int] = Vec[Int].new();\n  numbers.push(1);\n  print_vec(&numbers);\n  io.println(numbers.len());\n}", keywords: ["&", "&mut", "borrow", "reference"], lessonId: "L4-15" },
+  { id: "safety", name: "Why XIOM is Safe", icon: "\uD83D\uDEE1\uFE0F", section: "xiom-magic", metaphor: "XIOM catches bugs at compile time — no null crashes, no use-after-free, no data races. Fast AND safe, with zero runtime cost.", example: "fn main() {\n  // XIOM prevents:\n  // - Using a variable after it was moved\n  // - Writing to borrowed data\n  // - Breaking your contracts\n  // All checked before the program runs!\n  io.println(\"Safety by design.\");\n}", keywords: ["safety", "compile-time", "no-gc"], lessonId: "L4-21" },
+
+  // ── Advanced ──
+  { id: "generics", name: "Write Once, Use Any Type", icon: "\uD83D\uDD04", section: "advanced", metaphor: "A generic is like a universal charger — write one function that works with any type, not a different one for each.", example: "fn first[T](items: &Vec[T]) -> Option[T] {\n  if items.len() > 0 { return items.get(0); }\n  return None;\n}\nfn main() {\n  let names: Vec[Str] = Vec[Str].new();\n  names.push(\"Alice\");\n  io.println(first(&names).unwrap_or(\"None\"));\n}", keywords: ["generics", "[T]", "type parameter"], lessonId: "L5-18" },
+  { id: "interfaces", name: "What a Type Can Do", icon: "\uD83E\uDD1D", section: "advanced", metaphor: "An interface is like a job description — any type that can do the job qualifies, no matter what it actually is.", example: "interface Greetable { fn greet() -> Str; }\ntype Person = { name: Str; }\nfn Person.greet(self) -> Str { return \"Hi, I'm \" + name; }\nfn say_hello[T: Greetable](thing: &T) { io.println(thing.greet()); }\nfn main() { let p = Person{ name: \"Alex\"; }; say_hello(&p); }", keywords: ["interface", "trait", "implementation"], lessonId: "L6-01" },
+  { id: "modules", name: "Organizing Code", icon: "\uD83D\uDCC2", section: "advanced", metaphor: "As your program grows, split it into modules — like chapters in a book, each with its own purpose.", example: "module math_utils {\n  pub fn add(a: Int, b: Int) -> Int { return a + b; }\n}\nfn main() {\n  let result = math_utils.add(3, 4);\n  io.println(result);\n}", keywords: ["module", "pub", "use"], lessonId: "L6-08" },
+  { id: "collections-advanced", name: "Advanced Collections", icon: "\uD83D\uDCCA", section: "advanced", metaphor: "With Vec, Map, and Set together, you can build almost any data structure — like having a full workshop of tools.", example: "fn main() {\n  let scores: Map[Str,Int] = Map[Str,Int].new();\n  scores.insert(\"math\", 90);\n  scores.insert(\"science\", 85);\n  let tags: Set[Str] = Set[Str].new();\n  tags.insert(\"reviewed\");\n  io.println(scores.get(&\"math\").unwrap_or(0));\n}", keywords: ["Vec", "Map", "Set", "generics"], lessonId: "L5-17" }
 ];
 
 var conceptSections = [
-  { id: "getting-started", title: "Getting Started", icon: "🚀" },
-  { id: "making-decisions", title: "Making Decisions", icon: "🧠" },
-  { id: "building-blocks", title: "Building Blocks", icon: "🧱" },
-  { id: "handling-complexity", title: "Handling Complexity", icon: "🔧" }
+  { id: "first-steps", title: "First Steps", icon: "\uD83C\uDF31" },
+  { id: "functions", title: "Functions", icon: "\uD83C\uDF7D\uFE0F" },
+  { id: "data-types", title: "Data & Types", icon: "\uD83D\uDCE6" },
+  { id: "pattern-power", title: "Pattern Power", icon: "\uD83D\uDD0D" },
+  { id: "xiom-magic", title: "XIOM Magic", icon: "\uD83D\uDEE1\uFE0F" },
+  { id: "advanced", title: "Advanced", icon: "\uD83D\uDD27" }
 ];
 
 var expandedCardId = null;
