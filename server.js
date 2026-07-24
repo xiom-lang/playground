@@ -44,7 +44,7 @@ function parseDiagnostics(stderr) {
 
 function runXiom(args, stdin) {
   try {
-    const proc = spawnSync(XIOM_BIN, args, { timeout:15000, encoding:'utf-8', input: stdin || undefined });
+    const proc = spawnSync(XIOM_BIN, args, { timeout:15000, encoding:'utf-8', env: process.env, input: stdin || undefined });
     return { success: proc.status === 0, stdout: proc.stdout?.trim() || '', stderr: proc.stderr?.trim() || '' };
   } catch(e) {
     return { success: false, stdout: '', stderr: e.message };
