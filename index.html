@@ -42,7 +42,7 @@
     <div class="feature-card">
       <div class="feature-icon">&#x1F4DA;</div>
       <h3>Learn by Doing</h3>
-      <p>370+ interactive lessons. Write code, see results instantly. From zero to expert.</p>
+      <p>410 interactive lessons. Write code, see results instantly. From zero to confident.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">&#x1F393;</div>
@@ -58,25 +58,29 @@
     <div class="stat"><strong>40</strong> stdlib modules</div>
     <div class="stat">v0.49.9</div>
   </div>
+  <div class="landing-footer-link">
+    <a href="https://xiom-lang.org" target="_blank" rel="noopener">xiom-lang.org &#x2197;</a>
+  </div>
 </div>
 
 <!-- LESSONS SCREEN (hidden initially) -->
 <div id="lessonsScreen" class="lessons-screen hidden">
   <header class="header">
-    <button class="back-btn" onclick="showLanding()">&#x2190; XIOM</button>
+    <button class="back-btn" onclick="showLanding()" aria-label="Back to home">&#x2190; XIOM</button>
     <span id="lessonTitle" class="lesson-header-title">Lessons</span>
-    <select id="exampleSelect" class="example-select" onchange="loadQuickExample(this.value)">
+    <a href="https://xiom-lang.org" target="_blank" rel="noopener" class="header-site-link">xiom-lang.org &#x2197;</a>
+    <select id="exampleSelect" class="example-select" onchange="loadQuickExample(this.value)" aria-label="Quick example selector">
       <option value="">Quick Examples...</option>
       <option value="hello">Hello World</option>
       <option value="vars">Variables</option>
       <option value="math">Simple Math</option>
     </select>
     <div class="header-actions">
-      <button id="btnSyntax" class="nav-btn" onclick="toggleSyntax()">Concepts</button>
-      <button id="btnCompiler" class="nav-btn" onclick="toggleCompilerRef()">Compiler</button>
-      <button id="btnPlayground" class="nav-btn" onclick="openPlayground()">Playground</button>
-      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts">?</button>
-      <button id="btnRun" class="nav-btn run-btn" onclick="compile()">Run &#x25B8;</button>
+      <button id="btnSyntax" class="nav-btn" onclick="toggleSyntax()" aria-label="Open concepts panel">Concepts</button>
+      <button id="btnCompiler" class="nav-btn" onclick="toggleCompilerRef()" aria-label="Open compiler reference">Compiler</button>
+      <button id="btnPlayground" class="nav-btn" onclick="openPlayground()" aria-label="Open playground mode">Playground</button>
+      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts" aria-label="Keyboard shortcuts">?</button>
+      <button id="btnRun" class="nav-btn run-btn" onclick="compile()" aria-label="Compile and run code">Run &#x25B8;</button>
     </div>
   </header>
 
@@ -87,7 +91,7 @@
         <span>Lessons</span>
         <span id="progressSummary" class="progress-summary">0/410</span>
       </div>
-      <input type="text" id="lessonSearch" class="lesson-search" placeholder="Search lessons..." oninput="filterLessons(this.value)">
+      <input type="text" id="lessonSearch" class="lesson-search" placeholder="Search lessons..." oninput="filterLessons(this.value)" aria-label="Search lessons">
       <div id="lessonList" class="lesson-list"></div>
     </aside>
 
@@ -172,14 +176,15 @@
 <!-- PLAYGROUND MODE (full-width editor, no sidebar) -->
 <div id="playgroundScreen" class="playground-screen hidden">
   <header class="header">
-    <button class="back-btn" onclick="showLanding()">&#x2190; XIOM</button>
+    <button class="back-btn" onclick="showLanding()" aria-label="Back to home">&#x2190; XIOM</button>
     <span>Playground</span>
+    <a href="https://xiom-lang.org" target="_blank" rel="noopener" class="header-site-link">xiom-lang.org &#x2197;</a>
     <div class="header-actions">
-      <button id="btnSyntaxPlay" class="nav-btn" onclick="toggleSyntax()">Concepts</button>
-      <button id="btnCompilerPlay" class="nav-btn" onclick="toggleCompilerRef()">Compiler</button>
-      <button id="btnFormat" class="nav-btn" onclick="formatCode()">Format</button>
-      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts">?</button>
-      <button id="btnRun2" class="nav-btn run-btn" onclick="compile()">Run &#x25B8;</button>
+      <button id="btnSyntaxPlay" class="nav-btn" onclick="toggleSyntax()" aria-label="Open concepts panel">Concepts</button>
+      <button id="btnCompilerPlay" class="nav-btn" onclick="toggleCompilerRef()" aria-label="Open compiler reference">Compiler</button>
+      <button id="btnFormat" class="nav-btn" onclick="formatCode()" aria-label="Format code">Format</button>
+      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts" aria-label="Keyboard shortcuts">?</button>
+      <button id="btnRun2" class="nav-btn run-btn" onclick="compile()" aria-label="Compile and run code">Run &#x25B8;</button>
     </div>
   </header>
   <div class="playground-layout">

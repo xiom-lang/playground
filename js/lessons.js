@@ -63,13 +63,35 @@ function renderLessonList(catalog) {
         '<span class="lesson-title">' + lesson.title + '</span>' +
         '<span class="lesson-duration">' + lesson.duration + '</span>';
 
+      item.setAttribute('role', 'option');
+      item.setAttribute('aria-selected', lesson.id === currentLessonId ? 'true' : 'false');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('aria-label', lesson.title + ' — ' + lesson.duration);
+
+      item.addEventListener('click', function () {
+        selectLesson(lesson.id, lesson.file);
+      });
+
+      item.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectLesson(lesson.id, lesson.file);
+        }
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          var next = item.nextElementSibling;
+          if (next && next.classList.contains('lesson-item')) next.focus();
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          var prev = item.previousElementSibling;
+          if (prev && prev.classList.contains('lesson-item')) prev.focus();
+        }
+      });
+
       if (lesson.id === currentLessonId) {
         item.classList.add('active');
       }
-
-      item.addEventListener('click', function () {
-        selectLesson(this.dataset.lessonId, this.dataset.lessonFile);
-      });
 
       container.appendChild(item);
     });

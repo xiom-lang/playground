@@ -196,6 +196,21 @@ body {
   padding: 10px 22px;
 }
 
+/* ---- Landing Footer Link ---- */
+.landing-footer-link {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--low);
+  animation: fadeInUp 1.4s ease-out;
+}
+.landing-footer-link a {
+  color: var(--low);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.landing-footer-link a:hover { color: var(--indigo); }
+
 /* ---- Feature Grid ---- */
 .feature-grid {
   display: grid;
@@ -311,6 +326,18 @@ body {
 }
 
 .back-btn:hover { color: var(--hi); }
+
+.header-site-link {
+  font-size: 11px;
+  color: var(--low);
+  text-decoration: none;
+  font-family: var(--mono);
+  transition: color 0.2s ease;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+.header-site-link:hover { color: var(--indigo); background: var(--panel-2); }
 
 .lesson-header-title {
   font-weight: 600;
