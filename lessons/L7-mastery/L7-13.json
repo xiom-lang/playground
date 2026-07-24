@@ -1,0 +1,26 @@
+{
+  "id": "L7-13",
+  "title": "Caesar Cipher",
+  "level": "L7",
+  "duration": "9 min",
+  "story": "Julius Caesar sent secret military messages by shifting each letter three positions: A→D, B→E, C→F. Two thousand years later, it's still the most famous cipher in history. Build an encoder AND decoder — learn how cryptography begins.",
+  "why": "The Caesar cipher teaches character manipulation, modulo arithmetic for wrapping, and the fundamental concept of reversible transformations.",
+  "narrative": "## Building a Caesar Cipher\n\n### How It Works\n\nShift each letter by a fixed number of positions. 'A' + 3 = 'D', 'X' + 3 wraps to 'A'. Non-letters stay unchanged.\n\n### Encryption\n\n```xiom\nfn caesar_encrypt(text: Str, shift: Int) -> Str {\n  let mut result = \"\";\n  let mut i = 0;\n  while i < text.len() {\n    let c = text.get(i).unwrap();\n    if c >= 'A' && c <= 'Z' {\n      let pos = c as Int - 'A' as Int;\n      let new_pos = (pos + shift) % 26;\n      let new_char = ('A' as Int + new_pos) as Char;\n      result = string.str_concat(result, string.from_char(new_char));\n    } else if c >= 'a' && c <= 'z' {\n      let pos = c as Int - 'a' as Int;\n      let new_pos = (pos + shift) % 26;\n      let new_char = ('a' as Int + new_pos) as Char;\n      result = string.str_concat(result, string.from_char(new_char));\n    } else {\n      result = string.str_concat(result, string.from_char(c));\n    };\n    i += 1;\n  };\n  result\n}\n```\n\n### Decryption\n\nDecryption is encryption with the negative shift:\n\n```xiom\nfn caesar_decrypt(text: Str, shift: Int) -> Str {\n  caesar_encrypt(text, 26 - (shift % 26))\n}\n```\n\nOr simply call encrypt with `-shift` — but wrap to positive: `(26 - (shift % 26)) % 26`.\n\n### The Modulo Wrap Trick\n\n`(pos + shift) % 26` handles wrapping: Z(25) + 3 = 28, 28 % 26 = 2 → C. Perfect for alphabetic circular shift.",
+  "analogy": "A decoder ring from a cereal box: you rotate the outer ring (shift) and suddenly A maps to G, B to H. Your Caesar cipher function IS the decoder ring — set the shift, and the entire alphabet rotates. Crack one letter and you crack them all.",
+  "code_template": "fn caesar_encrypt(text: Str, shift: Int) -> Str {\n  // TODO: for each char in text, if it's a letter, shift it by 'shift' positions\n  // Wrap around alphabet using modulo: (pos + shift) % 26\n  // Keep non-letters unchanged\n}\n\nfn caesar_decrypt(text: Str, shift: Int) -> Str {\n  // TODO: decrypt by reversing the shift\n}\n\nfn main() -> Int {\n  // TODO: encrypt \"HELLO\" with shift 3, then decrypt the result\n  return 0;\n}\n",
+  "solution": "fn shift_char(c: Char, shift: Int) -> Char {\n  if c >= 'A' && c <= 'Z' {\n    let pos = c as Int - 'A' as Int;\n    let new_pos = (pos + shift + 26) % 26;\n    return ('A' as Int + new_pos) as Char;\n  };\n  if c >= 'a' && c <= 'z' {\n    let pos = c as Int - 'a' as Int;\n    let new_pos = (pos + shift + 26) % 26;\n    return ('a' as Int + new_pos) as Char;\n  };\n  c\n}\n\nfn caesar_encrypt(text: Str, shift: Int) -> Str {\n  let mut result = \"\";\n  let mut i = 0;\n  while i < text.len() {\n    result = string.str_concat(result, string.from_char(shift_char(text.get(i).unwrap(), shift)));\n    i += 1;\n  };\n  result\n}\n\nfn caesar_decrypt(text: Str, shift: Int) -> Str {\n  caesar_encrypt(text, -shift)\n}\n\nfn main() -> Int {\n  let encrypted = caesar_encrypt(\"HELLO\", 3);\n  io.println(encrypted);\n  io.println(caesar_decrypt(encrypted, 3));\n  return 0;\n}\n",
+  "try_it": "Encrypt a full sentence with punctuation and spaces. Try all 25 possible shifts and print each — you've built a brute-force cracker. What shift decodes 'Khoor Zruog'? Implement `crack_caesar` that tries all shifts and returns the most likely English-looking result.",
+  "concepts": ["caesar-cipher", "encryption", "modulo", "char-arithmetic", "cryptography"],
+  "tips": [
+    "`(pos + shift) % 26` wraps the alphabet cleanly",
+    "Decryption is just encryption with the negative shift",
+    "Handle both uppercase and lowercase separately — they wrap independently"
+  ],
+  "common_mistakes": [
+    "Not handling negative shifts properly — add 26 before modulo to fix: (pos + shift + 26) % 26",
+    "Forgetting that Char arithmetic produces Int — must cast back with `as Char`",
+    "Leaving non-alphabetic characters shifted — only letters should change"
+  ],
+  "next_lesson": "L7-14",
+  "related": ["L6-23", "L7-11", "L2-52"]
+}

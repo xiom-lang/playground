@@ -1,0 +1,26 @@
+{
+  "id": "L6-36",
+  "title": "Practical: Time Utilities Module",
+  "level": "L6",
+  "duration": "10 min",
+  "story": "Time calculations appear everywhere: countdown timers, age calculators, scheduling systems. Build a time utilities module with days-in-month, leap-year checks, and duration formatting — the foundation for any time-aware program.",
+  "why": "Time utility functions are surprisingly tricky (leap years, varying month lengths) and benefit from being centralized in a tested module.",
+  "narrative": "## Building a Time Utilities Module\n\n```xiom\nmod time_utils {\n  pub fn is_leap_year(year: Int) -> Bool {\n    if year % 400 == 0 { return true; };\n    if year % 100 == 0 { return false; };\n    year % 4 == 0\n  }\n\n  pub fn days_in_month(month: Int, year: Int) -> Int {\n    if month == 2 {\n      if is_leap_year(year) { return 29; };\n      return 28;\n    };\n    if month == 4 || month == 6 || month == 9 || month == 11 {\n      return 30;\n    };\n    31\n  }\n\n  pub fn format_duration(seconds: Int) -> Str {\n    let h = seconds / 3600;\n    let m = (seconds % 3600) / 60;\n    let s = seconds % 60;\n    \"00:00:00\"\n  }\n\n  pub fn is_valid_date(day: Int, month: Int, year: Int) -> Bool {\n    if month < 1 || month > 12 { return false; };\n    if day < 1 { return false; };\n    day <= days_in_month(month, year)\n  }\n\n  pub fn day_of_year(day: Int, month: Int, year: Int) -> Int {\n    let mut total = day;\n    let mut m = 1;\n    while m < month {\n      total += days_in_month(m, year);\n      m += 1;\n    };\n    total\n  }\n}\n```\n\n### The Leap Year Rule\n\nYears divisible by 400 are leap years. Years divisible by 100 but not 400 are NOT leap years. Years divisible by 4 are leap years. All others are not. This keeps our calendar aligned with Earth's orbit.",
+  "analogy": "A calendar on your wall already solved all the tricky date logic — you just flip to a month and trust it's right. A time utilities module is your programmatic calendar: it encodes the same rules once, correctly, so you never re-derive them.",
+  "code_template": "mod time_utils {\n  // TODO: pub fn is_leap_year(year: Int) -> Bool\n  // TODO: pub fn days_in_month(month: Int, year: Int) -> Int\n  // TODO: pub fn convert_to_seconds(hours: Int, minutes: Int, seconds: Int) -> Int\n}\n\nfn main() -> Int {\n  use time_utils;\n  // TODO: test whether 2024 is leap year\n  // TODO: print days in February 2024 and 2025\n  // TODO: convert 1h 30m 45s to seconds\n  return 0;\n}\n",
+  "solution": "mod time_utils {\n  pub fn is_leap_year(year: Int) -> Bool {\n    if year % 400 == 0 { return true; };\n    if year % 100 == 0 { return false; };\n    year % 4 == 0\n  }\n\n  pub fn days_in_month(month: Int, year: Int) -> Int {\n    if month == 2 {\n      if is_leap_year(year) { return 29; };\n      return 28;\n    };\n    if month == 4 || month == 6 || month == 9 || month == 11 {\n      return 30;\n    };\n    31\n  }\n\n  pub fn convert_to_seconds(hours: Int, minutes: Int, seconds: Int) -> Int {\n    hours * 3600 + minutes * 60 + seconds\n  }\n}\n\nfn main() -> Int {\n  use time_utils;\n  io.println(time_utils.is_leap_year(2024));\n  io.println(time_utils.days_in_month(2, 2024));\n  io.println(time_utils.days_in_month(2, 2025));\n  io.println(time_utils.convert_to_seconds(1, 30, 45));\n  return 0;\n}\n",
+  "try_it": "Add `day_of_week(day, month, year)` using Zeller's formula. Add `days_between` that calculates the number of days between two dates. Write tests for edge cases: Feb 29 in non-leap years, month 13, day 0.",
+  "concepts": ["time-utilities", "leap-year", "date-validation", "modular-arithmetic", "calendar-math"],
+  "tips": [
+    "Leap year rule is: divisible by 400 OR (divisible by 4 AND NOT divisible by 100)",
+    "30 days hath September, April, June, and November — all the rest have 31, except February",
+    "Use `is_valid_date` before any date operation to catch bad inputs early"
+  ],
+  "common_mistakes": [
+    "Getting the leap year rule wrong — 1900 was NOT a leap year, 2000 WAS",
+    "Forgetting that months are 1-indexed (January = 1, not 0)",
+    "Not validating month/day ranges before accessing arrays or doing calculations"
+  ],
+  "next_lesson": "L6-37",
+  "related": ["L6-22", "L6-24", "L6-19"]
+}

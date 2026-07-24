@@ -1,0 +1,26 @@
+{
+  "id": "L6-26",
+  "title": "Generic Stack Data Structure",
+  "level": "L6",
+  "duration": "10 min",
+  "story": "You need a stack for integers, then a stack for strings, then a stack for game items. Writing three separate stacks is wasteful. One generic Stack[T] serves them all - push, pop, peek for ANY type.",
+  "why": "Generic data structures let you write one implementation that works with any type, eliminating duplicate code and bugs.",
+  "narrative": "## Building Stack[T]\n\n### The Generic Type\n\n```xiom\ntype Stack[T] {\n  items: Vec[T];\n}\n```\n\n`Stack[T]` is a stack of any type T. The `[T]` makes it generic.\n\n### Generic Methods\n\n```xiom\nfn Stack.push[T](&mut self, item: T) {\n  self.items.push(item);\n}\n\nfn Stack.pop[T](&mut self) -> Option[T] {\n  if self.items.len() == 0 {\n    return Option.None;\n  };\n  let last = self.items.len() - 1;\n  let result = self.items.get(last).unwrap().clone();\n  self.items.remove(last);\n  Option.Some(result)\n}\n\nfn Stack.peek[T](&self) -> Option[&T] {\n  if self.items.len() == 0 {\n    return Option.None;\n  };\n  let last = self.items.len() - 1;\n  Option.Some(self.items.get(last).unwrap())\n}\n\nfn Stack.size[T](&self) -> Int {\n  self.items.len()\n}\n```\n\n### Using Different Types\n\n```xiom\nlet mut int_stack: Stack[Int] = Stack{ items: Vec[Int].new() };\nint_stack.push(1);\nint_stack.push(2);\n\nlet mut str_stack: Stack[Str] = Stack{ items: Vec[Str].new() };\nstr_stack.push(\"hello\");\nstr_stack.push(\"world\");\n```\n\nSame code, different types. The compiler generates type-specific versions automatically.",
+  "analogy": "A shelf bracket holds books, boxes, or toys - the bracket doesn't care what goes on it. Stack[T] is the bracket: same structure, holds anything. The T is just a placeholder for 'whatever you put here'.",
+  "code_template": "type Stack[T] {\n  items: Vec[T];\n}\n\nfn Stack.push[T](&mut self, item: T) {\n  // TODO: push item onto self.items\n}\n\nfn Stack.pop[T](&mut self) -> Option[T] {\n  // TODO: remove and return last item, or None if empty\n}\n\nfn main() -> Int {\n  // TODO: create Stack[Int], push 5, 10, 15, pop and print each\n  return 0;\n}\n",
+  "solution": "type Stack[T] {\n  items: Vec[T];\n}\n\nfn Stack.push[T](&mut self, item: T) {\n  self.items.push(item);\n}\n\nfn Stack.pop[T](&mut self) -> Option[T] {\n  if self.items.len() == 0 {\n    return Option.None;\n  };\n  let last = self.items.len() - 1;\n  let result = self.items.get(last).unwrap().clone();\n  self.items.remove(last);\n  Option.Some(result)\n}\n\nfn main() -> Int {\n  let mut s: Stack[Int] = Stack{ items: Vec[Int].new() };\n  s.push(5);\n  s.push(10);\n  s.push(15);\n  let v1 = s.pop().unwrap();\n  let v2 = s.pop().unwrap();\n  let v3 = s.pop().unwrap();\n  io.println(v1);\n  io.println(v2);\n  io.println(v3);\n  return 0;\n}\n",
+  "try_it": "Create a Stack[Float64] and push 1.1, 2.2, 3.3. Pop all three and print. Then create Stack[Bool] with true/false. Notice how pop() returns values in reverse order (LIFO).",
+  "concepts": ["generic-struct", "Stack", "LIFO", "Option", "push", "pop", "type-parameter"],
+  "tips": [
+    "The `[T]` after struct name declares the type parameter",
+    "Each method must also declare `[T]` to use the generic type",
+    "pop() returns Option - None if empty, Some(value) if there was an item"
+  ],
+  "common_mistakes": [
+    "Forgetting to add [T] to method definitions: `fn Stack.pop[T]` not `fn Stack.pop`",
+    "Returning the item without removing it from the Vec",
+    "Not handling the empty stack case - always check len() == 0 first"
+  ],
+  "next_lesson": "L6-27",
+  "related": ["L5-03", "L2-58", "L2-36", "L6-25"]
+}

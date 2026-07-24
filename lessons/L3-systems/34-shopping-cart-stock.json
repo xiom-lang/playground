@@ -1,0 +1,26 @@
+{
+  "id": "L3-34",
+  "title": "Shopping Cart with Stock Check",
+  "level": "L3",
+  "duration": "9 min",
+  "story": "Your online store has 5 laptops in stock. A customer clicks 'Add to Cart' and types quantity 3 — that works. Then another tries to order 10 — they should see an error, not a confirmation. Every add-to-cart must check inventory and return the remaining stock or an out-of-stock message.",
+  "why": "Inventory validation with Result is the same pattern used in e-commerce, ticket booking, and any system with limited resources.",
+  "narrative": "## Checking Stock Before Adding to Cart\n\nA shopping cart system must answer: is there enough stock for this order? If yes, how many are left?\n\n### The Stock Check Function\n\n```xiom\nfn add_to_cart(item: Str, qty: Int, stock: Int) -> Result[Int, Str] {\n  if qty <= 0 {\n    return Err(\"Quantity must be positive\");\n  }\n  if qty > stock {\n    return Err(\"Not enough stock for \" + item);\n  }\n  let remaining = stock - qty;\n  return Ok(remaining);\n}\n```\n\nThree outcomes: invalid quantity (≤ 0), insufficient stock, or success with remaining count.\n\n### Using the Function\n\n```xiom\nmatch add_to_cart(\"Laptop\", 3, 5) {\n  Ok(remaining) => {\n    // remaining is 2 — order confirmed!\n  }\n  Err(msg) => {\n    // msg explains what went wrong\n  }\n}\n```\n\n### Chaining Multiple Orders\n\nTrack remaining stock through multiple purchases:\n\n```xiom\nfn process_orders() -> Int {\n  let stock = add_to_cart(\"Laptop\", 2, 5)?;   // stock = 3\n  let stock = add_to_cart(\"Laptop\", 1, stock)?; // stock = 2\n  let stock = add_to_cart(\"Laptop\", 1, stock)?; // stock = 1\n  return stock;\n}\n```\n\nEach call consumes from the previous remaining stock. If any call fails, the whole chain stops.\n\n### Edge Cases\n\n```xiom\nadd_to_cart(\"Mouse\", 0, 10);   // Err — quantity must be positive\nadd_to_cart(\"Mouse\", -1, 10);  // Err — quantity must be positive\nadd_to_cart(\"Keyboard\", 5, 5); // Ok(0) — exactly the last item\nadd_to_cart(\"Monitor\", 1, 0);  // Err — nothing in stock\n```",
+  "analogy": "A stock check is like a warehouse worker with a clipboard. A customer asks 'can I have 3 laptops?' The worker checks the shelf (5 laptops), crosses out 3 on the clipboard, and says 'yes, 2 left.' But if someone asks for 10, the worker shakes their head — 'we only have 5.' And if someone asks for 0, the worker is confused — 'why are you even here?'",
+  "code_template": "fn add_to_cart(item: Str, qty: Int, stock: Int) -> Result[Int, Str] {\n  // TODO: reject qty <= 0\n  // TODO: reject qty > stock\n  // TODO: return Ok(stock - qty)\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: add 3 Laptops to a stock of 5, return remaining * 100 if Ok, -1 if Err\n  return 0;\n}",
+  "solution": "fn add_to_cart(item: Str, qty: Int, stock: Int) -> Result[Int, Str] {\n  if qty <= 0 {\n    return Err(\"Quantity must be positive\");\n  }\n  if qty > stock {\n    return Err(\"Not enough stock for \" + item);\n  }\n  return Ok(stock - qty);\n}\n\nfn main() -> Int {\n  match add_to_cart(\"Laptop\", 3, 5) {\n    Ok(remaining) => { return remaining * 100; }\n    Err(_) => { return -1; }\n  }\n}",
+  "try_it": "Test: add 3 to stock 5 → Ok(2), add 5 to stock 5 → Ok(0), add 6 to stock 5 → Err. Chain three purchases starting from stock 10: add 3 (stock now 7), add 4 (stock now 3), add 2 (stock now 1). Then try adding 5 to the remaining stock of 1 — the chain should fail. Add a `restock(item, qty, stock)` function that increases stock.",
+  "concepts": ["Result", "Int", "stock validation", "chaining", "?", "inventory", "error message"],
+  "tips": [
+    "Check `qty <= 0` BEFORE checking against stock — a negative quantity isn't a stock problem, it's an input problem",
+    "Chain purchases with `?` to thread the remaining stock through multiple calls — each call's Ok is the next call's stock parameter",
+    "Use `item` in the error message so the user knows WHICH product is out of stock"
+  ],
+  "common_mistakes": [
+    "Writing `qty < 0` instead of `qty <= 0` — ordering 0 items should also be an error",
+    "Returning `Ok(stock)` instead of `Ok(stock - qty)` — the caller needs REMAINING stock, not the original amount",
+    "Forgetting to update the `stock` variable when chaining — `let stock = add_to_cart(..., stock)?;` shadows the old stock with the new remaining"
+  ],
+  "next_lesson": "L3-35",
+  "related": ["L2-30", "L2-34", "L3-29"]
+}

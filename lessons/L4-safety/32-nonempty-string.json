@@ -1,0 +1,25 @@
+{
+  "id": "L4-32",
+  "title": "Non-Empty String",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "A payment processor once sent invoices with empty customer names because the UI allowed blank submissions. A single `NonEmptyStr` type would have prevented every blank invoice from entering the system.",
+  "why": "Domain types with invariants make invalid states impossible to represent, eliminating entire categories of bugs.",
+  "narrative": "## Guarding Against Empty Values\n\nEmpty strings are a constant source of bugs. A name, an email, a product SKU — none should ever be empty. With an invariant type, you enforce this at the type level:\n\n```xiom\ntype NonEmptyStr = {\n  value: Str;\n  invariant: string.str_len(value) > 0;\n}\n```\n\nNow the type system itself prevents emptiness. Functions that receive `NonEmptyStr` never need to check `is_empty()` — the invariant guarantees validity.\n\n### Safe Construction and Mutation\n```xiom\nfn NonEmptyStr.new(s: Str) -> Option[NonEmptyStr] {\n  if string.str_len(s) == 0 { return None; }\n  return Some(NonEmptyStr{ value: s });\n}\n\nfn NonEmptyStr.set(self: &mut Self, s: Str)\n  requires: string.str_len(s) > 0;\n{\n  self.value = s;\n}\n\nfn NonEmptyStr.greet(self) -> Str {\n  return \"Hello, \" + self.value + \"!\";\n}\n```\n\nThe constructor uses `Option` because raw strings might be empty. The setter uses `requires` because the caller must guarantee non-emptiness. Once a `NonEmptyStr` exists, you can freely call `.greet()` — it will never print \"Hello, !\".",
+  "analogy": "A `NonEmptyStr` is like a sealed envelope — you know it contains something before you open it, so you never handle empty mail.",
+  "code_template": "type NonEmptyStr = {\n  value: Str;\n  invariant: string.str_len(value) > 0;\n}\n\nfn NonEmptyStr.new(s: Str) -> Option[NonEmptyStr] {\n  if string.str_len(s) == 0 { return None; }\n  return Some(NonEmptyStr{ value: s });\n}\n\nfn NonEmptyStr.capitalize(self) -> NonEmptyStr {\n  // TODO: Return a new NonEmptyStr with the first character uppercased\n  // Use string functions to get first char, uppercase it, concatenate with rest\n  return self;\n}\n\nfn main() -> Int {\n  let name = NonEmptyStr.new(\"kilo\");\n  // TODO: Unwrap the Option, capitalize it, print the result\n  return 0;\n}",
+  "solution": "type NonEmptyStr = {\n  value: Str;\n  invariant: string.str_len(value) > 0;\n}\n\nfn NonEmptyStr.new(s: Str) -> Option[NonEmptyStr] {\n  if string.str_len(s) == 0 { return None; }\n  return Some(NonEmptyStr{ value: s });\n}\n\nfn NonEmptyStr.capitalize(self) -> NonEmptyStr {\n  let first = self.value[0];\n  let rest = string.str_slice(self.value, 1, string.str_len(self.value));\n  let uppered = string.str_upper(string.char_to_str(first));\n  return NonEmptyStr{ value: uppered + rest };\n}\n\nfn main() -> Int {\n  let name = NonEmptyStr.new(\"kilo\");\n  match name {\n    Some(n) => {\n      let capped = n.capitalize();\n      io.println(\"Hello, \" + capped.value + \"!\");\n    };\n    None => { io.println(\"Error: empty name\"); };\n  }\n  return 0;\n}",
+  "try_it": "Add a `NonEmptyStr.concat` method that takes `&self` and another `&NonEmptyStr`, returns a new `NonEmptyStr`. Since both inputs are guaranteed non-empty, the result is guaranteed non-empty — no check needed!",
+  "concepts": ["invariant", "Option", "domain-type", "constructor-pattern"],
+  "tips": [
+    "Use `Option` in constructors when input might be invalid — let the caller handle the failure case",
+    "Chain NonEmptyStr methods fearlessly — each method's output respects the invariant",
+    "The invariant eliminates defensive `if value == \"\"` checks everywhere downstream"
+  ],
+  "common_mistakes": [
+    "Returning `NonEmptyStr` from a constructor without actually building a valid one — the invariant check will catch it but the panic is confusing",
+    "Treating invariant types as 'optional checks' — if you bypass the constructor with a raw struct literal, the invariant is your last line of defense"
+  ],
+  "next_lesson": "L4-33",
+  "related": ["L4-20", "L4-31", "L4-25"]
+}

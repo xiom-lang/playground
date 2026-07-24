@@ -1,0 +1,26 @@
+{
+  "id": "L6-19",
+  "title": "Module Deep Dive",
+  "level": "L6",
+  "duration": "12 min",
+  "story": "Your math library has grown from 3 functions to 30 - spread across geometry, algebra, and statistics. One flat file is chaos. You need organized compartments that hide internal details and expose a clean public face. Modules to the rescue.",
+  "why": "Modules organize code into logical groups with controlled visibility - pub items are accessible externally, private items are hidden implementation details.",
+  "narrative": "## Building a Math Module\n\n### Module with Public and Private Items\n\n```xiom\nmod math_utils {\n  pub fn add(x: Int, y: Int) -> Int {\n    x + y\n  }\n\n  pub fn multiply(x: Int, y: Int) -> Int {\n    x * y\n  }\n\n  fn validate_positive(n: Int) -> Bool {\n    n > 0\n  }\n\n  pub fn factorial(n: Int) -> Int {\n    if !validate_positive(n) {\n      return 0;\n    };\n    let mut result = 1;\n    let mut i = 2;\n    while i <= n {\n      result = result * i;\n      i += 1;\n    };\n    result\n  }\n}\n```\n\n`validate_positive` is private - only used inside `math_utils`. `add`, `multiply`, `factorial` are public. Users of the module only see what's `pub`.\n\n### Using the Module\n\n```xiom\nuse math_utils;\n\nfn main() -> Int {\n  let sum = math_utils.add(3, 5);\n  io.println(sum);\n  return 0;\n}\n```\n\n### When to Make Things Private\n\n- Internal helper functions\n- Constants that are implementation details\n- Data structures that shouldn't be touched directly\n- Anything that might change in future versions",
+  "analogy": "A restaurant kitchen has a public dining area (pub functions) where customers interact, and a private kitchen (private functions) where only chefs work. Customers don't need to know about the vegetable chopper or the stock pot - they just see the finished dishes.",
+  "code_template": "mod stats {\n  // TODO: create pub fn average that returns the mean of two numbers\n  // TODO: create a private helper fn is_valid(n: Int) -> Bool\n  // TODO: create pub fn range(min: Int, max: Int) -> Int\n}\n\nfn main() -> Int {\n  use stats;\n  // TODO: call stats.average and stats.range and print results\n  return 0;\n}\n",
+  "solution": "mod stats {\n  fn is_valid(n: Int) -> Bool {\n    n >= 0\n  }\n\n  pub fn average(a: Int, b: Int) -> Int {\n    (a + b) / 2\n  }\n\n  pub fn range(min: Int, max: Int) -> Int {\n    if is_valid(min) && is_valid(max) && max >= min {\n      return max - min;\n    };\n    0\n  }\n}\n\nfn main() -> Int {\n  use stats;\n  let avg = stats.average(10, 20);\n  let rng = stats.range(5, 25);\n  io.println(avg);\n  io.println(rng);\n  return 0;\n}\n",
+  "try_it": "Add more functions to the stats module: `median_of_three(a, b, c)` that returns the middle value, and `pub fn standard_deviation` that uses private helpers. Try calling a private function from main - observe the compiler error.",
+  "concepts": ["module", "pub", "private", "use", "encapsulation", "visibility"],
+  "tips": [
+    "Default is private - you must explicitly mark everything you want to expose",
+    "Use `pub` on items you're willing to maintain as a stable API",
+    "Private helpers can change freely without breaking code outside the module"
+  ],
+  "common_mistakes": [
+    "Marking everything pub by default - only expose what's necessary",
+    "Forgetting `use module_name;` before accessing module items",
+    "Trying to access private items from outside the module"
+  ],
+  "next_lesson": "L6-20",
+  "related": ["L6-01", "L6-03", "L6-04"]
+}

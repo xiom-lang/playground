@@ -1,0 +1,27 @@
+{
+  "id": "L4-17",
+  "title": "Borrow Rules",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "At a library, many people can read the same book, but only one person can write in it — and nobody else can read while they're writing. XIOM enforces this at compile time.",
+  "why": "The borrow rules are the foundation of XIOM's memory safety — they guarantee no data races, no dangling pointers, and no iterator invalidation.",
+  "narrative": "## The Two Borrow Rules\n\nAt any given time, you may have:\n1. **Many read borrows (&)** — OR —\n2. **One write borrow (&mut)**\n\n**Never both at the same time.**\n\n### Rule 1: Many & Allowed\n\n```xiom\nfn main() -> Int {\n  let data = Vec[Int].new();\n  data.push(1);\n  let r1 = &data;\n  let r2 = &data;\n  let r3 = &data;  // Three read borrows — perfectly fine!\n  io.println(r1.len());\n  io.println(r2.len());\n  io.println(r3.len());\n  return data.len() as Int;\n}\n```\n\n### Rule 2: One &mut, No Others\n\n```xiom\nfn main() -> Int {\n  var data = Vec[Int].new();\n  let r = &mut data;  // Exclusive write access\n  r.push(10);\n  // No other borrows allowed while r is live\n  return data.len() as Int;\n}\n```\n\n### Rule Violations Are Compile-Time Errors\n\n```xiom\n// This WON'T COMPILE:\nvar data = Vec[Int].new();\nlet r1 = &data;\nlet r2 = &mut data;  // ERROR: can't borrow mutably while & exists\nr2.push(10);\n```\n\n### These Rules Prevent Real Bugs\n\n- **Data races**: Two threads can't write simultaneously\n- **Iterator invalidation**: Can't modify a collection while iterating\n- **Dangling pointers**: References can't outlive their data",
+  "analogy": "Borrow rules are like a library reading room — any number of people can quietly read, but if someone is updating the catalog, everyone else must wait outside.",
+  "code_template": "// TODO: Create a Vec, make a read borrow, then inside a new scope { }\n// create a write borrow to modify it after the read borrow ends\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  data.push(2);\n  {\n    let r = &data;  // Read borrow starts\n    io.println(r.len());\n  }  // Read borrow ends here\n  {\n    let w = &mut data;  // Write borrow starts (read borrow is dead)\n    w.push(3);\n  }  // Write borrow ends here\n  return data.len() as Int;\n}",
+  "try_it": "Try to hold a & borrow and create a &mut borrow at the same time. Observe the compiler error and fix it with scoping.",
+  "concepts": ["borrow rules", "shared xor mutable", "compile-time checking", "scoping"],
+  "tips": [
+    "The rule is: many & OR one &mut, never both simultaneously",
+    "Use scopes { } to control how long borrows live",
+    "The compiler error messages tell you exactly which borrows conflict",
+    "These rules are checked at compile time — zero runtime cost"
+  ],
+  "common_mistakes": [
+    "Trying to mutate through a & reference — use &mut for mutation",
+    "Holding a &mut too long — structure code so writes are quick and scoped",
+    "Thinking the rules apply at runtime — they're purely compile-time checks"
+  ],
+  "next_lesson": "L4-18",
+  "related": ["L4-15", "L4-16", "L4-22", "L4-28"]
+}

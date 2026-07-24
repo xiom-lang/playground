@@ -3958,317 +3958,178 @@
         },
         {
           "id": "L6-16",
-          "title": "Documentation",
-          "file": "L6-engineering/16-documentation.json",
+          "title": "Interface Composition",
+          "file": "L6-engineering/L6-16.json",
           "duration": "10 min",
-          "concepts": [
-            "documentation",
-            "xiom doc",
-            "generated docs",
-            "docs"
-          ]
+          "concepts": ["interface-composition", "multiple-bounds", "polymorphism"]
+        },
+        {
+          "id": "L6-17",
+          "title": "Generic Interface Functions",
+          "file": "L6-engineering/L6-17.json",
+          "duration": "10 min",
+          "concepts": ["generic-function", "interface-bound", "monomorphisation"]
         },
         {
           "id": "L6-18",
-          "title": "xiom fmt",
-          "file": "L6-engineering/18-xiom-fmt.json",
-          "duration": "8 min",
-          "concepts": [
-            "formatter",
-            "code style",
-            "xiom fmt",
-            "auto-format",
-            "consistency"
-          ]
+          "title": "Sorting with Interfaces",
+          "file": "L6-engineering/L6-18.json",
+          "duration": "11 min",
+          "concepts": ["Comparable", "bubble-sort", "generic-sort"]
         },
         {
           "id": "L6-19",
-          "title": "xiom lint",
-          "file": "L6-engineering/19-xiom-lint.json",
-          "duration": "10 min",
-          "concepts": [
-            "lint",
-            "static analysis",
-            "warnings",
-            "code quality",
-            "best practices"
-          ]
+          "title": "Module Deep Dive",
+          "file": "L6-engineering/L6-19.json",
+          "duration": "12 min",
+          "concepts": ["module", "pub", "private", "encapsulation"]
         },
         {
           "id": "L6-20",
-          "title": "Error Codes",
-          "file": "L6-engineering/20-error-codes.json",
+          "title": "Module Re-exports",
+          "file": "L6-engineering/L6-20.json",
           "duration": "10 min",
-          "concepts": [
-            "error codes",
-            "diagnostics",
-            "E001",
-            "compiler errors",
-            "troubleshooting"
-          ]
+          "concepts": ["re-export", "pub-use", "API-design"]
         },
         {
           "id": "L6-21",
-          "title": "xiom doctor",
-          "file": "L6-engineering/21-xiom-doctor.json",
-          "duration": "8 min",
-          "concepts": [
-            "doctor",
-            "diagnostics",
-            "troubleshooting",
-            "environment",
-            "setup check"
-          ]
+          "title": "Practical: Validation Library",
+          "file": "L6-engineering/L6-21.json",
+          "duration": "12 min",
+          "concepts": ["validation", "interface", "Validator"]
         },
         {
           "id": "L6-22",
-          "title": "Version Management",
-          "file": "L6-engineering/22-version-management.json",
-          "duration": "10 min",
-          "concepts": [
-            "xiom version",
-            "toolchain",
-            "update",
-            "channel",
-            "semver"
-          ]
+          "title": "Practical: Math Library",
+          "file": "L6-engineering/L6-22.json",
+          "duration": "11 min",
+          "concepts": ["math-module", "contracts", "prime-numbers"]
         },
         {
           "id": "L6-23",
-          "title": "Git & CI/CD",
-          "file": "L6-engineering/23-git-cicd.json",
-          "duration": "12 min",
-          "concepts": [
-            "git",
-            "CI/CD",
-            "continuous integration",
-            "automation",
-            "pipeline"
-          ]
+          "title": "Practical: String Library",
+          "file": "L6-engineering/L6-23.json",
+          "duration": "10 min",
+          "concepts": ["string-module", "reverse", "count-words"]
         },
         {
           "id": "L6-24",
-          "title": "GitHub Actions",
-          "file": "L6-engineering/24-github-actions.json",
-          "duration": "15 min",
-          "concepts": [
-            "GitHub Actions",
-            "workflow",
-            "YAML",
-            "automation",
-            "matrix build"
-          ]
+          "title": "Testing with Contracts",
+          "file": "L6-engineering/L6-24.json",
+          "duration": "10 min",
+          "concepts": ["testing", "contracts", "assert"]
         },
         {
           "id": "L6-25",
-          "title": "Release Process",
-          "file": "L6-engineering/25-release-process.json",
-          "duration": "12 min",
-          "concepts": [
-            "release",
-            "versioning",
-            "changelog",
-            "semver",
-            "publishing"
-          ]
+          "title": "L6 Capstone: Your Own Standard Library",
+          "file": "L6-engineering/L6-25.json",
+          "duration": "20 min",
+          "concepts": ["capstone", "modules", "interfaces", "generics"]
         },
         {
           "id": "L6-26",
-          "title": "Cross-Platform",
-          "file": "L6-engineering/26-cross-platform.json",
-          "duration": "12 min",
-          "concepts": [
-            "cross-platform",
-            "Windows",
-            "macOS",
-            "Linux",
-            "conditional compilation"
-          ]
+          "title": "Generic Stack Data Structure",
+          "file": "L6-engineering/L6-26.json",
+          "duration": "10 min",
+          "concepts": ["generic-struct", "Stack", "LIFO", "Option"]
         },
         {
           "id": "L6-27",
-          "title": "Build Profiles",
-          "file": "L6-engineering/27-build-profiles.json",
+          "title": "Generic Queue Data Structure",
+          "file": "L6-engineering/L6-27.json",
           "duration": "10 min",
-          "concepts": [
-            "build profiles",
-            "debug",
-            "release",
-            "optimization",
-            "profile config"
-          ]
+          "concepts": ["generic-struct", "Queue", "FIFO"]
         },
         {
           "id": "L6-28",
-          "title": "Compiler Flags",
-          "file": "L6-engineering/28-compiler-flags.json",
-          "duration": "12 min",
-          "concepts": [
-            "compiler flags",
-            "-O",
-            "--emit",
-            "--target",
-            "verbose",
-            "options"
-          ]
+          "title": "Interface-Based Priority Queue",
+          "file": "L6-engineering/L6-28.json",
+          "duration": "11 min",
+          "concepts": ["priority-queue", "interface-constraint", "generics"]
         },
         {
           "id": "L6-29",
-          "title": "Incremental Compilation",
-          "file": "L6-engineering/29-incremental.json",
-          "duration": "10 min",
-          "concepts": [
-            "incremental compilation",
-            "caching",
-            "rebuild",
-            "change detection",
-            "speed"
-          ]
+          "title": "Interface Default Methods",
+          "file": "L6-engineering/L6-29.json",
+          "duration": "9 min",
+          "concepts": ["default-methods", "interface", "override"]
         },
         {
           "id": "L6-30",
-          "title": "Dependency Graph",
-          "file": "L6-engineering/30-dependency-graph.json",
+          "title": "Multiple Interface Bounds",
+          "file": "L6-engineering/L6-30.json",
           "duration": "10 min",
-          "concepts": [
-            "dependency graph",
-            "modules",
-            "topological sort",
-            "import tree",
-            "build order"
-          ]
+          "concepts": ["multiple-bounds", "interface-composition"]
         },
         {
           "id": "L6-31",
-          "title": "Hot Reload",
-          "file": "L6-engineering/31-hot-reload.json",
-          "duration": "12 min",
-          "concepts": [
-            "hot reload",
-            "live update",
-            "DLL",
-            "dynamic linking",
-            "rapid iteration"
-          ]
+          "title": "Module with Submodules",
+          "file": "L6-engineering/L6-31.json",
+          "duration": "11 min",
+          "concepts": ["submodules", "nested-modules", "hierarchy"]
         },
         {
           "id": "L6-32",
-          "title": "Parallel Compilation",
-          "file": "L6-engineering/32-parallel.json",
+          "title": "Module Re-exports Advanced",
+          "file": "L6-engineering/L6-32.json",
           "duration": "10 min",
-          "concepts": [
-            "parallel compilation",
-            "multi-core",
-            "build speed",
-            "job server",
-            "throughput"
-          ]
+          "concepts": ["re-exports", "pub-use", "API-design"]
         },
         {
           "id": "L6-33",
-          "title": "WASM Target",
-          "file": "L6-engineering/33-wasm-target.json",
-          "duration": "15 min",
-          "concepts": [
-            "WebAssembly",
-            "WASM",
-            "browser",
-            "wasm-bindgen",
-            "web"
-          ]
+          "title": "Private Types in Modules",
+          "file": "L6-engineering/L6-33.json",
+          "duration": "9 min",
+          "concepts": ["private-types", "encapsulation", "opaque-types"]
         },
         {
           "id": "L6-34",
-          "title": "ARM Target",
-          "file": "L6-engineering/34-arm-target.json",
-          "duration": "12 min",
-          "concepts": [
-            "ARM",
-            "aarch64",
-            "cross-compile",
-            "embedded",
-            "mobile",
-            "Apple Silicon"
-          ]
+          "title": "Practical: Collection Utilities Module",
+          "file": "L6-engineering/L6-34.json",
+          "duration": "10 min",
+          "concepts": ["collection-utilities", "generic-functions", "Vec"]
         },
         {
           "id": "L6-35",
-          "title": "RISC-V Target",
-          "file": "L6-engineering/35-riscv-target.json",
-          "duration": "12 min",
-          "concepts": [
-            "RISC-V",
-            "open ISA",
-            "RV64GC",
-            "embedded",
-            "cross-compile"
-          ]
+          "title": "Practical: Math Extensions Module",
+          "file": "L6-engineering/L6-35.json",
+          "duration": "10 min",
+          "concepts": ["math-module", "number-theory", "digit-operations"]
         },
         {
           "id": "L6-36",
-          "title": "Compiler Architecture",
-          "file": "L6-engineering/36-compiler-arch.json",
-          "duration": "15 min",
-          "concepts": [
-            "compiler architecture",
-            "pipeline",
-            "phases",
-            "frontend",
-            "backend",
-            "LLVM"
-          ]
+          "title": "Practical: Time Utilities Module",
+          "file": "L6-engineering/L6-36.json",
+          "duration": "10 min",
+          "concepts": ["time-utilities", "leap-year", "date-validation"]
         },
         {
           "id": "L6-37",
-          "title": "Large Projects",
-          "file": "L6-engineering/37-large-projects.json",
-          "duration": "12 min",
-          "concepts": [
-            "workspace",
-            "monorepo",
-            "crate",
-            "large project",
-            "organization"
-          ]
+          "title": "Testing Interface Implementations",
+          "file": "L6-engineering/L6-37.json",
+          "duration": "9 min",
+          "concepts": ["testing", "interfaces", "assert"]
         },
         {
           "id": "L6-38",
-          "title": "Package Registry",
-          "file": "L6-engineering/38-package-registry.json",
-          "duration": "10 min",
-          "concepts": [
-            "registry",
-            "publish",
-            "package index",
-            "discovery",
-            "distribution"
-          ]
+          "title": "Testing Module Functions",
+          "file": "L6-engineering/L6-38.json",
+          "duration": "9 min",
+          "concepts": ["testing", "module-testing", "unit-tests"]
         },
         {
           "id": "L6-39",
-          "title": "Project Templates",
-          "file": "L6-engineering/39-project-templates.json",
-          "duration": "10 min",
-          "concepts": [
-            "scaffold",
-            "template",
-            "xiom init",
-            "project generation",
-            "boilerplate"
-          ]
+          "title": "Documenting Interfaces and Modules",
+          "file": "L6-engineering/L6-39.json",
+          "duration": "8 min",
+          "concepts": ["documentation", "interface-docs", "module-docs"]
         },
         {
           "id": "L6-40",
-          "title": "Final Project: Full Pipeline",
-          "file": "L6-engineering/40-final-project.json",
-          "duration": "45 min",
-          "concepts": [
-            "final project",
-            "build pipeline",
-            "CI/CD",
-            "multi-target",
-            "release"
-          ]
+          "title": "L6 Extended Capstone: Plugin Framework",
+          "file": "L6-engineering/L6-40.json",
+          "duration": "18 min",
+          "concepts": ["plugin-framework", "interface", "modules", "integration"]
         }
       ]
     },
@@ -4276,272 +4137,287 @@
       "id": "L7",
       "name": "Mastery",
       "icon": "🎓",
-      "description": "Compiler internals: lexer, parser, checker, codegen.",
+      "description": "Practice & Combining: 40 coding katas across math, text, games, and tools.",
       "lessons": [
         {
           "id": "L7-01",
-          "title": "Compiler Pipeline",
-          "file": "L7-mastery/01-pipeline.json",
-          "duration": "20 min",
-          "concepts": [
-            "lexer",
-            "parser",
-            "checker",
-            "codegen",
-            "LLVM",
-            "IR",
-            "AST"
-          ]
+          "title": "Prime Number Generator",
+          "file": "L7-mastery/L7-01.json",
+          "duration": "10 min",
+          "concepts": ["primes", "Vec", "while-loop", "algorithm"]
         },
         {
           "id": "L7-02",
-          "title": "Lexer Internals",
-          "file": "L7-mastery/02-lexer.json",
-          "duration": "20 min",
-          "concepts": [
-            "lexer",
-            "tokenizer",
-            "token",
-            "lexeme",
-            "DFA",
-            "finite automaton"
-          ]
+          "title": "Fibonacci Sequence",
+          "file": "L7-mastery/L7-02.json",
+          "duration": "9 min",
+          "concepts": ["fibonacci", "iterative", "Vec", "accumulation"]
         },
         {
           "id": "L7-03",
-          "title": "Parser Internals",
-          "file": "L7-mastery/03-parser.json",
-          "duration": "20 min",
-          "concepts": [
-            "parser",
-            "AST",
-            "recursive descent",
-            "grammar",
-            "syntax tree"
-          ]
+          "title": "Number Statistics",
+          "file": "L7-mastery/L7-03.json",
+          "duration": "10 min",
+          "concepts": ["statistics", "min", "max", "average", "median"]
         },
         {
           "id": "L7-04",
-          "title": "Type Checker Internals",
-          "file": "L7-mastery/04-type-checker.json",
-          "duration": "20 min",
-          "concepts": [
-            "type checker",
-            "type inference",
-            "unification",
-            "Hindley-Milner",
-            "subtyping"
-          ]
+          "title": "Multiplication Table Grid",
+          "file": "L7-mastery/L7-04.json",
+          "duration": "9 min",
+          "concepts": ["nested-loops", "grid", "multiplication"]
         },
         {
           "id": "L7-05",
-          "title": "Codegen Internals",
-          "file": "L7-mastery/05-codegen.json",
-          "duration": "20 min",
-          "concepts": [
-            "codegen",
-            "LLVM IR",
-            "instruction selection",
-            "register allocation",
-            "lowering"
-          ]
+          "title": "Factorial Calculator",
+          "file": "L7-mastery/L7-05.json",
+          "duration": "9 min",
+          "concepts": ["factorial", "requires", "overflow", "contract"]
         },
         {
           "id": "L7-06",
-          "title": "LLVM IR Deep Dive",
-          "file": "L7-mastery/06-llvm-ir.json",
-          "duration": "25 min",
-          "concepts": [
-            "LLVM IR",
-            "SSA",
-            "phi node",
-            "basic block",
-            "control flow graph"
-          ]
+          "title": "GCD and LCM Calculator",
+          "file": "L7-mastery/L7-06.json",
+          "duration": "9 min",
+          "concepts": ["gcd", "lcm", "euclidean-algorithm"]
         },
         {
           "id": "L7-07",
-          "title": "LLVM Optimizations",
-          "file": "L7-mastery/07-llvm-optimizations.json",
-          "duration": "20 min",
-          "concepts": [
-            "LLVM",
-            "optimization",
-            "pass",
-            "inlining",
-            "DCE",
-            "constant folding"
-          ]
+          "title": "Perfect Number Finder",
+          "file": "L7-mastery/L7-07.json",
+          "duration": "9 min",
+          "concepts": ["perfect-numbers", "divisors", "search"]
         },
         {
           "id": "L7-08",
-          "title": "Borrow Checker Internals",
-          "file": "L7-mastery/08-borrow-checker.json",
-          "duration": "25 min",
-          "concepts": [
-            "borrow checker",
-            "lifetimes",
-            "regions",
-            "NLL",
-            "polonius",
-            "aliasing"
-          ]
+          "title": "Digit Sum",
+          "file": "L7-mastery/L7-08.json",
+          "duration": "7 min",
+          "concepts": ["digit-operations", "modulo", "digital-root"]
         },
         {
           "id": "L7-09",
-          "title": "Z3 Integration",
-          "file": "L7-mastery/09-z3-integration.json",
-          "duration": "20 min",
-          "concepts": [
-            "Z3",
-            "SMT solver",
-            "contract verification",
-            "constraint solving",
-            "formal verification"
-          ]
+          "title": "Roman Numeral Converter",
+          "file": "L7-mastery/L7-09.json",
+          "duration": "11 min",
+          "concepts": ["roman-numerals", "greedy-algorithm"]
         },
         {
           "id": "L7-10",
-          "title": "Contract Verification Pipeline",
-          "file": "L7-mastery/10-contract-pipeline.json",
-          "duration": "15 min",
-          "concepts": [
-            "verification pipeline",
-            "xiom-verify",
-            "proof",
-            "counterexample",
-            "CI integration"
-          ]
+          "title": "Number Guessing Game",
+          "file": "L7-mastery/L7-10.json",
+          "duration": "11 min",
+          "concepts": ["game", "binary-search", "score-tracking"]
         },
         {
           "id": "L7-11",
-          "title": "Error Recovery",
-          "file": "L7-mastery/11-error-recovery.json",
-          "duration": "15 min",
-          "concepts": [
-            "error recovery",
-            "parse resilience",
-            "multiple errors",
-            "IDE support",
-            "diagnostics"
-          ]
+          "title": "Palindrome Checker",
+          "file": "L7-mastery/L7-11.json",
+          "duration": "8 min",
+          "concepts": ["palindrome", "two-pointer", "string"]
         },
         {
           "id": "L7-12",
-          "title": "Debug Info Generation",
-          "file": "L7-mastery/12-debug-info.json",
-          "duration": "15 min",
-          "concepts": [
-            "debug info",
-            "DWARF",
-            "PDB",
-            "source mapping",
-            "debugger support"
-          ]
+          "title": "Word Counter",
+          "file": "L7-mastery/L7-12.json",
+          "duration": "8 min",
+          "concepts": ["word-count", "state-machine", "text-analysis"]
         },
         {
           "id": "L7-13",
-          "title": "Self-Hosting",
-          "file": "L7-mastery/13-self-hosting.json",
-          "duration": "15 min",
-          "concepts": [
-            "self-hosting",
-            "bootstrapping",
-            "compiler",
-            "dogfooding",
-            "language design"
-          ]
+          "title": "Caesar Cipher",
+          "file": "L7-mastery/L7-13.json",
+          "duration": "9 min",
+          "concepts": ["caesar-cipher", "encryption", "modulo"]
         },
         {
           "id": "L7-14",
-          "title": "Compiler Hacking",
-          "file": "L7-mastery/14-compiler-hacking.json",
-          "duration": "25 min",
-          "concepts": [
-            "compiler hacking",
-            "contribution",
-            "plugin",
-            "pass",
-            "extension"
-          ]
+          "title": "Hangman Game",
+          "file": "L7-mastery/L7-14.json",
+          "duration": "11 min",
+          "concepts": ["hangman", "game-state", "Vec", "string-display"]
         },
         {
           "id": "L7-15",
-          "title": "Contributing to XIOM",
-          "file": "L7-mastery/15-contributing.json",
-          "duration": "15 min",
-          "concepts": [
-            "contribution",
-            "open source",
-            "PR",
-            "RFC",
-            "community"
-          ]
+          "title": "Mad Libs Generator",
+          "file": "L7-mastery/L7-15.json",
+          "duration": "8 min",
+          "concepts": ["mad-libs", "string-templating"]
         },
         {
           "id": "L7-16",
-          "title": "Test Suite Architecture",
-          "file": "L7-mastery/16-test-suite.json",
-          "duration": "15 min",
-          "concepts": [
-            "test suite",
-            "regression test",
-            "integration test",
-            "test harness",
-            "expect test"
-          ]
+          "title": "Text Analyzer",
+          "file": "L7-mastery/L7-16.json",
+          "duration": "10 min",
+          "concepts": ["frequency-analysis", "character-counting"]
         },
         {
           "id": "L7-17",
-          "title": "Fuzz Testing",
-          "file": "L7-mastery/17-fuzz-testing.json",
-          "duration": "15 min",
-          "concepts": [
-            "fuzz testing",
-            "random input",
-            "grammar fuzzing",
-            "differential testing",
-            "crash detection"
-          ]
+          "title": "Simple Search",
+          "file": "L7-mastery/L7-17.json",
+          "duration": "8 min",
+          "concepts": ["substring-search", "pattern-matching"]
         },
         {
           "id": "L7-18",
-          "title": "Performance Profiling",
-          "file": "L7-mastery/18-performance-profiling.json",
-          "duration": "15 min",
-          "concepts": [
-            "profiling",
-            "perf",
-            "flame graph",
-            "benchmarking",
-            "hot path"
-          ]
+          "title": "Acronym Generator",
+          "file": "L7-mastery/L7-18.json",
+          "duration": "7 min",
+          "concepts": ["acronym", "word-extraction", "filtering"]
         },
         {
           "id": "L7-19",
-          "title": "Code Generation Patterns",
-          "file": "L7-mastery/19-codegen-patterns.json",
-          "duration": "20 min",
-          "concepts": [
-            "codegen patterns",
-            "match compilation",
-            "closure lifting",
-            "vtable",
-            "enum layout"
-          ]
+          "title": "Password Generator",
+          "file": "L7-mastery/L7-19.json",
+          "duration": "9 min",
+          "concepts": ["password-generation", "random-sampling"]
         },
         {
           "id": "L7-20",
-          "title": "Final Project: Mini Compiler",
-          "file": "L7-mastery/20-final-project.json",
-          "duration": "60 min",
-          "concepts": [
-            "final project",
-            "mini compiler",
-            "codegen",
-            "end-to-end",
-            "integration"
-          ]
+          "title": "Text Adventure Room",
+          "file": "L7-mastery/L7-20.json",
+          "duration": "11 min",
+          "concepts": ["text-adventure", "game-state", "enums", "structs"]
+        },
+        {
+          "id": "L7-21",
+          "title": "Dice Roller",
+          "file": "L7-mastery/L7-21.json",
+          "duration": "8 min",
+          "concepts": ["dice-rolling", "random-generation", "simulation"]
+        },
+        {
+          "id": "L7-22",
+          "title": "Coin Flip Simulator",
+          "file": "L7-mastery/L7-22.json",
+          "duration": "7 min",
+          "concepts": ["coin-flip", "probability", "law-of-large-numbers"]
+        },
+        {
+          "id": "L7-23",
+          "title": "Card Deck",
+          "file": "L7-mastery/L7-23.json",
+          "duration": "10 min",
+          "concepts": ["card-deck", "enums", "shuffle", "fisher-yates"]
+        },
+        {
+          "id": "L7-24",
+          "title": "Rock Paper Scissors",
+          "file": "L7-mastery/L7-24.json",
+          "duration": "8 min",
+          "concepts": ["rock-paper-scissors", "enums", "match", "game-logic"]
+        },
+        {
+          "id": "L7-25",
+          "title": "Tic-Tac-Toe",
+          "file": "L7-mastery/L7-25.json",
+          "duration": "11 min",
+          "concepts": ["tic-tac-toe", "grid", "win-detection", "game-state"]
+        },
+        {
+          "id": "L7-26",
+          "title": "Simple RPG Battle",
+          "file": "L7-mastery/L7-26.json",
+          "duration": "10 min",
+          "concepts": ["rpg-battle", "structs", "random-damage", "turn-based"]
+        },
+        {
+          "id": "L7-27",
+          "title": "Quiz Game",
+          "file": "L7-mastery/L7-27.json",
+          "duration": "10 min",
+          "concepts": ["quiz", "question-bank", "scoring", "grading"]
+        },
+        {
+          "id": "L7-28",
+          "title": "Hangman Extended",
+          "file": "L7-mastery/L7-28.json",
+          "duration": "11 min",
+          "concepts": ["hangman", "word-categories", "scoring", "multi-round"]
+        },
+        {
+          "id": "L7-29",
+          "title": "Memory Game",
+          "file": "L7-mastery/L7-29.json",
+          "duration": "9 min",
+          "concepts": ["memory-game", "sequence-matching"]
+        },
+        {
+          "id": "L7-30",
+          "title": "Blackjack Simplified",
+          "file": "L7-mastery/L7-30.json",
+          "duration": "11 min",
+          "concepts": ["blackjack", "card-values", "ace-logic", "bust-detection"]
+        },
+        {
+          "id": "L7-31",
+          "title": "Calculator App",
+          "file": "L7-mastery/L7-31.json",
+          "duration": "11 min",
+          "concepts": ["calculator", "memory-operations", "history"]
+        },
+        {
+          "id": "L7-32",
+          "title": "Unit Converter",
+          "file": "L7-mastery/L7-32.json",
+          "duration": "10 min",
+          "concepts": ["unit-conversion", "conversion-factors"]
+        },
+        {
+          "id": "L7-33",
+          "title": "Budget Tracker",
+          "file": "L7-mastery/L7-33.json",
+          "duration": "10 min",
+          "concepts": ["budget", "tracking", "income", "expenses"]
+        },
+        {
+          "id": "L7-34",
+          "title": "Grade Calculator",
+          "file": "L7-mastery/L7-34.json",
+          "duration": "9 min",
+          "concepts": ["grades", "average", "weighted-average", "letter-grade"]
+        },
+        {
+          "id": "L7-35",
+          "title": "Tip Calculator",
+          "file": "L7-mastery/L7-35.json",
+          "duration": "8 min",
+          "concepts": ["tip", "percentage", "splitting", "rounding"]
+        },
+        {
+          "id": "L7-36",
+          "title": "Recipe Scaler",
+          "file": "L7-mastery/L7-36.json",
+          "duration": "9 min",
+          "concepts": ["scaling", "ratios", "recipe", "fractions"]
+        },
+        {
+          "id": "L7-37",
+          "title": "Calendar Helper",
+          "file": "L7-mastery/L7-37.json",
+          "duration": "10 min",
+          "concepts": ["calendar", "leap-year", "days-in-month", "day-of-week"]
+        },
+        {
+          "id": "L7-38",
+          "title": "Countdown Timer",
+          "file": "L7-mastery/L7-38.json",
+          "duration": "8 min",
+          "concepts": ["timer", "countdown", "time-formatting"]
+        },
+        {
+          "id": "L7-39",
+          "title": "To-Do List Manager",
+          "file": "L7-mastery/L7-39.json",
+          "duration": "10 min",
+          "concepts": ["todo-list", "CRUD", "Vec", "task-management"]
+        },
+        {
+          "id": "L7-40",
+          "title": "L7 Capstone: Mini App Suite",
+          "file": "L7-mastery/L7-40.json",
+          "duration": "18 min",
+          "concepts": ["menu-system", "app-suite", "composition", "architecture"]
         }
       ]
     },
@@ -4549,277 +4425,77 @@
       "id": "L8",
       "name": "Ecosystem",
       "icon": "🌐",
-      "description": "Real-world: HTTP, JSON, Vulkan, SQLite, WASM.",
+      "description": "Grand Showcase: complete, impressive single-file programs.",
       "lessons": [
         {
           "id": "L8-01",
-          "title": "Package Manager",
-          "file": "L8-ecosystem/01-pkg.json",
-          "duration": "10 min",
-          "concepts": [
-            "xiom pkg",
-            "install",
-            "packages",
-            "dependencies",
-            "package.xi"
-          ]
+          "title": "Number Guessing Game Deluxe",
+          "file": "L8-ecosystem/L8-01.json",
+          "duration": "15 min",
+          "concepts": ["game", "difficulty", "hints", "scoring", "leaderboard"]
         },
         {
           "id": "L8-02",
-          "title": "Vulkan Basics",
-          "file": "L8-ecosystem/02-vulkan.json",
-          "duration": "20 min",
-          "concepts": [
-            "Vulkan",
-            "GPU",
-            "graphics",
-            "compute",
-            "low-level",
-            "rendering"
-          ]
+          "title": "Calculator Deluxe",
+          "file": "L8-ecosystem/L8-02.json",
+          "duration": "14 min",
+          "concepts": ["calculator", "memory-operations", "history", "match"]
         },
         {
           "id": "L8-03",
-          "title": "GLFW Windowing",
-          "file": "L8-ecosystem/03-glfw.json",
-          "duration": "12 min",
-          "concepts": [
-            "GLFW",
-            "window",
-            "input",
-            "OpenGL",
-            "Vulkan",
-            "context"
-          ]
+          "title": "Text Adventure Game",
+          "file": "L8-ecosystem/L8-03.json",
+          "duration": "16 min",
+          "concepts": ["text-adventure", "rooms", "inventory", "command-parsing"]
         },
         {
           "id": "L8-04",
-          "title": "Dear ImGui",
-          "file": "L8-ecosystem/04-imgui.json",
-          "duration": "15 min",
-          "concepts": [
-            "ImGui",
-            "immediate mode",
-            "GUI",
-            "debug UI",
-            "tool windows"
-          ]
+          "title": "Hangman Deluxe",
+          "file": "L8-ecosystem/L8-04.json",
+          "duration": "14 min",
+          "concepts": ["hangman", "categories", "ascii-art", "hints", "scoring"]
         },
         {
           "id": "L8-05",
-          "title": "JSON Processing",
-          "file": "L8-ecosystem/05-json.json",
-          "duration": "12 min",
-          "concepts": [
-            "JSON",
-            "serialize",
-            "deserialize",
-            "data exchange",
-            "API"
-          ]
+          "title": "Quiz Master",
+          "file": "L8-ecosystem/L8-05.json",
+          "duration": "13 min",
+          "concepts": ["quiz", "multiple-choice", "categories", "scoring"]
         },
         {
           "id": "L8-06",
-          "title": "HTTP Client",
-          "file": "L8-ecosystem/06-http-client.json",
-          "duration": "15 min",
-          "concepts": [
-            "HTTP",
-            "client",
-            "REST API",
-            "request",
-            "response",
-            "networking"
-          ]
+          "title": "Bank Account Simulator",
+          "file": "L8-ecosystem/L8-06.json",
+          "duration": "14 min",
+          "concepts": ["banking", "contracts", "requires", "ensures", "invariant"]
         },
         {
           "id": "L8-07",
-          "title": "HTTP Server",
-          "file": "L8-ecosystem/07-http-server.json",
-          "duration": "20 min",
-          "concepts": [
-            "HTTP",
-            "server",
-            "routing",
-            "middleware",
-            "REST API"
-          ]
+          "title": "Library Catalog",
+          "file": "L8-ecosystem/L8-07.json",
+          "duration": "13 min",
+          "concepts": ["library", "catalog", "search", "checkout", "CRUD"]
         },
         {
           "id": "L8-08",
-          "title": "Redis Client",
-          "file": "L8-ecosystem/08-redis.json",
-          "duration": "12 min",
-          "concepts": [
-            "Redis",
-            "cache",
-            "key-value",
-            "pub-sub",
-            "data structures"
-          ]
+          "title": "Student Gradebook",
+          "file": "L8-ecosystem/L8-08.json",
+          "duration": "14 min",
+          "concepts": ["gradebook", "students", "averages", "contracts"]
         },
         {
           "id": "L8-09",
-          "title": "SQLite Database",
-          "file": "L8-ecosystem/09-sqlite.json",
-          "duration": "15 min",
-          "concepts": [
-            "SQLite",
-            "SQL",
-            "database",
-            "embedded",
-            "query",
-            "transaction"
-          ]
+          "title": "Recipe Book",
+          "file": "L8-ecosystem/L8-09.json",
+          "duration": "13 min",
+          "concepts": ["recipe-book", "ingredients", "search", "scaling"]
         },
         {
           "id": "L8-10",
-          "title": "WebSocket",
-          "file": "L8-ecosystem/10-websocket.json",
-          "duration": "15 min",
-          "concepts": [
-            "WebSocket",
-            "real-time",
-            "bidirectional",
-            "streaming",
-            "push"
-          ]
-        },
-        {
-          "id": "L8-11",
-          "title": "gRPC Services",
-          "file": "L8-ecosystem/11-grpc.json",
-          "duration": "15 min",
-          "concepts": [
-            "gRPC",
-            "RPC",
-            "protobuf",
-            "service",
-            "streaming",
-            "microservices"
-          ]
-        },
-        {
-          "id": "L8-12",
-          "title": "Protobuf Serialization",
-          "file": "L8-ecosystem/12-protobuf.json",
-          "duration": "12 min",
-          "concepts": [
-            "Protobuf",
-            "serialization",
-            "binary format",
-            "schema",
-            "compact encoding"
-          ]
-        },
-        {
-          "id": "L8-13",
-          "title": "FFmpeg Media",
-          "file": "L8-ecosystem/13-ffmpeg.json",
-          "duration": "15 min",
-          "concepts": [
-            "FFmpeg",
-            "video",
-            "audio",
-            "codec",
-            "media processing",
-            "transcoding"
-          ]
-        },
-        {
-          "id": "L8-14",
-          "title": "Game Engines",
-          "file": "L8-ecosystem/14-game-engines.json",
+          "title": "Your Masterpiece",
+          "file": "L8-ecosystem/L8-10.json",
           "duration": "20 min",
-          "concepts": [
-            "game engine",
-            "ECS",
-            "rendering",
-            "physics",
-            "game loop",
-            "asset pipeline"
-          ]
-        },
-        {
-          "id": "L8-15",
-          "title": "Embedded Systems",
-          "file": "L8-ecosystem/15-embedded.json",
-          "duration": "15 min",
-          "concepts": [
-            "embedded",
-            "no_std",
-            "bare metal",
-            "microcontroller",
-            "RTOS",
-            "IoT"
-          ]
-        },
-        {
-          "id": "L8-16",
-          "title": "WASM in Depth",
-          "file": "L8-ecosystem/16-wasm-deep.json",
-          "duration": "20 min",
-          "concepts": [
-            "WASM",
-            "WebAssembly",
-            "browser",
-            "wasm-bindgen",
-            "JS interop",
-            "wasm-pack"
-          ]
-        },
-        {
-          "id": "L8-17",
-          "title": "Microservices",
-          "file": "L8-ecosystem/17-microservices.json",
-          "duration": "15 min",
-          "concepts": [
-            "microservices",
-            "distributed",
-            "service mesh",
-            "observability",
-            "resilience"
-          ]
-        },
-        {
-          "id": "L8-18",
-          "title": "CLI Tools",
-          "file": "L8-ecosystem/18-cli-tools.json",
-          "duration": "12 min",
-          "concepts": [
-            "CLI",
-            "command-line",
-            "argparse",
-            "terminal",
-            "cross-platform"
-          ]
-        },
-        {
-          "id": "L8-19",
-          "title": "Community & Ecosystem",
-          "file": "L8-ecosystem/19-community.json",
-          "duration": "10 min",
-          "concepts": [
-            "community",
-            "open source",
-            "ecosystem",
-            "discord",
-            "forum",
-            "contribution"
-          ]
-        },
-        {
-          "id": "L8-20",
-          "title": "Final Project: Full-Stack App",
-          "file": "L8-ecosystem/20-final-project.json",
-          "duration": "60 min",
-          "concepts": [
-            "final project",
-            "full-stack",
-            "integration",
-            "production",
-            "deployment"
-          ]
+          "concepts": ["capstone", "final-project", "architecture", "all-concepts"]
         }
       ]
     }

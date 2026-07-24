@@ -1,0 +1,26 @@
+{
+  "id": "L7-05",
+  "title": "Factorial Calculator",
+  "level": "L7",
+  "duration": "9 min",
+  "story": "Factorials grow shockingly fast. 5! = 120. 10! = 3,628,800. 20! = 2.4 quintillion. This explosive growth breaks programs if unchecked. Build a factorial calculator with overflow protection — contracts guard against the impossible.",
+  "why": "Factorial calculations combine iteration with contract-based safety, demonstrating how contracts prevent silent failures from integer overflow.",
+  "narrative": "## Calculating Factorials Safely\n\n### Basic Factorial\n\n```xiom\nfn factorial(n: Int) -> Int {\n  let mut result = 1;\n  let mut i = 2;\n  while i <= n {\n    result = result * i;\n    i += 1;\n  };\n  result\n}\n```\n\n### The Overflow Problem\n\nInt has a maximum value of about 2.1 billion. 13! already exceeds this. The result wraps around to negative numbers silently — a catastrophic bug.\n\n### Adding Contract Protection\n\n```xiom\nrequires { n >= 0; }\nrequires { n <= 12; }\nfn factorial(n: Int) -> Int {\n  let mut result = 1;\n  let mut i = 2;\n  while i <= n {\n    result = result * i;\n    i += 1;\n  };\n  result\n}\n```\n\nNow calling `factorial(13)` triggers the contract. No silent overflow.\n\n### Factorial Table\n\n```xiom\nfn print_factorial_table(max: Int) {\n  let mut i = 0;\n  while i <= max {\n    let f = factorial(i);\n    io.println(f);\n    i += 1;\n  };\n}\n```\n\n| n | n! |\n|---|-----|\n| 0 | 1 |\n| 1 | 1 |\n| 5 | 120 |\n| 10 | 3,628,800 |\n| 12 | 479,001,600 |",
+  "analogy": "Population growth: 2 people have 4 children, those 4 have 8, those 8 have 16 — but Earth can only support so many. Factorial is even faster than exponential growth. The contract is the 'carrying capacity' limit: beyond this point, everything breaks.",
+  "code_template": "requires { n >= 0; }\nfn factorial(n: Int) -> Int {\n  // TODO: compute n! iteratively\n  // Hint: result starts at 1, multiply by 2,3,4...n\n}\n\nfn main() -> Int {\n  // TODO: print factorials from 0! to 10!\n  return 0;\n}\n",
+  "solution": "requires { n >= 0; }\nfn factorial(n: Int) -> Int {\n  let mut result = 1;\n  let mut i = 2;\n  while i <= n {\n    result = result * i;\n    i += 1;\n  };\n  result\n}\n\nfn main() -> Int {\n  let mut i = 0;\n  while i <= 10 {\n    io.println(factorial(i));\n    i += 1;\n  };\n  return 0;\n}\n",
+  "try_it": "Try factorial(13) — observe the contract violation (or overflow if no contract). Add a second contract checking that result > previous factorial to catch overflows. Compute factorials as Float64 for larger n, but notice the precision loss.",
+  "concepts": ["factorial", "requires", "overflow", "contract", "iteration"],
+  "tips": [
+    "0! = 1 by convention — this is the base case",
+    "Always bound factorial input — exponential growth breaks integers fast",
+    "Use contracts to catch impossible inputs at the call site, not inside the function"
+  ],
+  "common_mistakes": [
+    "Starting the loop at 1 instead of 2 — multiplying by 1 does nothing",
+    "Returning 0 instead of 1 for factorial(0)",
+    "Not adding overflow protection — silent bugs are the worst bugs"
+  ],
+  "next_lesson": "L7-06",
+  "related": ["L6-22", "L4-02", "L7-02"]
+}

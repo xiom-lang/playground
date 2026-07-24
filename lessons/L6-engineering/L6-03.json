@@ -1,0 +1,26 @@
+{
+  "id": "L6-03",
+  "title": "Display Interface",
+  "level": "L6",
+  "duration": "10 min",
+  "story": "Your debugger prints `[object]` for everything — useless! You want every type in your system to be printable. A Person shows their name, a Score shows the number, a Date shows the formatted string. Time to build a universal Display interface that makes ANY type printable.",
+  "why": "The Display interface pattern is universal — every language has a 'convert to string' mechanism, and understanding it teaches you how to design interfaces that make heterogeneous systems work together.",
+  "narrative": "## Making Everything Printable\n\nA `Display` interface lets any type produce a human-readable string. This is one of the most common interfaces in any programming language.\n\n### Defining Display\n\n```xiom\ninterface Displayable {\n  fn display() -> Str;\n}\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn Person.display(self) -> Str {\n  return self.name + \" (age \" + string.int_to_str(self.age) + \")\";\n}\n\ntype Score = {\n  points: Int;\n  max: Int;\n}\n\nfn Score.display(self) -> Str {\n  return string.int_to_str(self.points) + \"/\" + string.int_to_str(self.max);\n}\n```\n\n### A Generic Print Function\n\n```xiom\nfn print_item[T: Displayable](item: &T) {\n  io.println(item.display());\n}\n\nfn print_all[T: Displayable](items: &Vec[T]) {\n  io.println(\"--- Items ---\");\n  let i = 0;\n  while i < items.len() {\n    let item = match items.get(i) { Some(v) => v, None => continue };\n    io.println(item.display());\n    i = i + 1;\n  }\n}\n```\n\n### Using the Display System\n\n```xiom\nfn main() -> Int {\n  let person = Person{ name: \"Alex\", age: 25 };\n  print_item(&person);\n\n  let score = Score{ points: 85, max: 100 };\n  print_item(&score);\n\n  let people: Vec[Person] = Vec[Person].new();\n  people.push(Person{ name: \"Alice\", age: 30 });\n  people.push(Person{ name: \"Bob\", age: 22 });\n  print_all(&people);\n\n  return 0;\n}\n```\n\n### Why Display Matters\n\nWithout Display, every debug print needs a custom `io.println(person.name + \" is \" + string.int_to_str(person.age))` — repeated code, easy to get wrong. With Display, you call `.display()` and get the right format every time. Add a new type, implement display, and all your generic functions work immediately.\n\n### The Interface Design Rule\n\nA good interface has ONE clear purpose. Display means 'convert to human-readable text.' If you need 'convert to machine-readable format,' that's a different interface (e.g., Serializable). One interface, one responsibility.",
+  "analogy": "The Display interface is like a name tag at a conference — every attendee (type) wears one, but the tag shows different information: 'Alex, Engineer' for a person, 'RX-9000, Robot' for a machine. The tag format (method signature) is the same; the content is unique to each type.",
+  "code_template": "// TODO: Define interface Displayable with fn display() -> Str\n\ntype Book = {\n  title: Str;\n  author: Str;\n}\n\n// TODO: Write Book.display(self) -> Str that returns \"'title' by author\"\n\n// TODO: Write print_item[T: Displayable](item: &T) that prints item.display()\n\nfn main() -> Int {\n  // TODO: Create a Book, call print_item on it\n  return 0;\n}\n",
+  "solution": "interface Displayable {\n  fn display() -> Str;\n}\n\ntype Book = {\n  title: Str;\n  author: Str;\n}\n\nfn Book.display(self) -> Str {\n  return \"'\" + self.title + \"' by \" + self.author;\n}\n\nfn print_item[T: Displayable](item: &T) {\n  io.println(item.display());\n}\n\nfn main() -> Int {\n  let book = Book{ title: \"XIOM Guide\", author: \"Kai\" };\n  print_item(&book);\n  return 0;\n}\n",
+  "try_it": "Add Displayable to three more types: `Movie` (title + year), `Coordinate` (x, y), and `Event` (name + date). Create a Vec of each type and use `print_all` to display them. Then ask: what if you want to display the same type in different formats (short vs long)? You'd need either parameters (which interfaces don't allow) or multiple interfaces (DisplayShort, DisplayLong).",
+  "concepts": ["Displayable", "string-representation", "print-generic", "interface-design", "single-responsibility", "to-string-pattern"],
+  "tips": [
+    "One interface = one responsibility — Display means 'human-readable text,' not 'machine format' or 'debug info'",
+    "The `.display()` method typically uses string concatenation and conversion functions like `string.int_to_str`",
+    "Every type with display can be passed to ANY generic function constrained by Displayable — maximum reuse"
+  ],
+  "common_mistakes": [
+    "Building display logic into the main function instead of the type — display should live with the type, not the caller",
+    "Making one mega-interface instead of focused ones — 'Printable + Serializable + Comparable' should be three separate interfaces",
+    "Returning incomplete info from display — include enough fields to identify the value, not just one field"
+  ],
+  "next_lesson": "L6-04",
+  "related": ["L6-01", "L6-02", "L5-31"]
+}

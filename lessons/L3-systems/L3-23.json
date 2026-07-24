@@ -1,0 +1,26 @@
+{
+  "id": "L3-23",
+  "title": "Exhaustive Matching",
+  "level": "L3",
+  "duration": "10 min",
+  "story": "You add a new variant to your enum — 'Pending' — and suddenly your code won't compile! The compiler found every match statement you forgot to update. This is exhaustive matching: the compiler as your safety net.",
+  "why": "Exhaustive matching is XIOM's guarantee that you handle every possible case — the compiler rejects code with missing match arms, preventing runtime bugs at compile time.",
+  "narrative": "## The Compiler Won't Let You Forget\n\nXIOM's match is **exhaustive** — you MUST handle every possible value or variant. If you don't, the compiler refuses to build your program.\n\n### Exhaustive on Option\n\nOption has exactly two variants: `Some` and `None`. A match must cover both:\n\n```xiom\nfn describe(opt: Option[Int]) -> Str {\n  return match opt {\n    Some(n) => \"Got: \" + string.int_to_str(n),\n    None => \"Got nothing\",\n    // Remove the None arm and this WON'T COMPILE\n  };\n}\n\nfn main() -> Int {\n  io.println(describe(Some(42)));\n  io.println(describe(None));\n  return 0;\n}\n```\n\n### Exhaustive on Result\n\nResult has `Ok` and `Err` — both must be handled:\n\n```xiom\nfn process(res: Result[Int, Str]) -> Str {\n  return match res {\n    Ok(val) => \"Success: \" + string.int_to_str(val),\n    Err(e) => \"Failure: \" + e,\n  };\n}\n\nfn main() -> Int {\n  io.println(process(Ok(100)));\n  io.println(process(Err(\"timeout\")));\n  return 0;\n}\n```\n\n### Exhaustive on Integers\n\nIntegers have... infinite possibilities. You must use a catch-all:\n\n```xiom\nfn is_lucky(n: Int) -> Str {\n  return match n {\n    7 => \"Lucky!\",\n    13 => \"Unlucky...\",\n    // TODO: Without this, the compiler says \"non-exhaustive patterns\"\n    _ => \"Just a number\",\n  };\n}\n\nfn main() -> Int {\n  io.println(is_lucky(7));\n  io.println(is_lucky(5));\n  return 0;\n}\n```\n\n### What Happens When You Add a Variant\n\n```xiom\nenum Status {\n  Active,\n  Inactive,\n  // Banned,  // Uncomment this and ALL matches break until you add a Banned arm\n}\n\nfn status_label(s: Status) -> Str {\n  return match s {\n    Active => \"Account active\",\n    Inactive => \"Account inactive\",\n    // Compiler: \"non-exhaustive patterns: `Banned` not covered\"\n  };\n}\n\nfn main() -> Int {\n  io.println(status_label(Active));\n  return 0;\n}\n```\n\n### The Wildcard Pattern\n\n`_` means \"match anything\" — it's your exhaustiveness escape hatch:\n\n```xiom\nfn is_small(n: Int) -> Str {\n  return match n {\n    1 => \"One\",\n    2 => \"Two\",\n    3 => \"Three\",\n    _ => \"Not small\",  // Covers all other integers\n  };\n}\n```",
+  "analogy": "Exhaustive matching is like a customs checklist — every passenger (value) must go through a lane (arm). If a new country opens (new variant), the checklist is updated before any plane lands.",
+  "code_template": "// TODO: The enum below is missing one case in the match — fix it!\n\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn action(light: TrafficLight) -> Str {\n  return match light {\n    Red => \"Stop\",\n    Yellow => \"Slow down\",\n    // TODO: Add the missing Green arm\n    // TODO: What if you add a Blue variant? Add it and update the match.\n  };\n}\n\nfn main() -> Int {\n  io.println(action(Red));\n  io.println(action(Green));\n  return 0;\n}\n",
+  "solution": "enum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn action(light: TrafficLight) -> Str {\n  return match light {\n    Red => \"Stop\",\n    Yellow => \"Slow down\",\n    Green => \"Go\",\n  };\n}\n\nfn main() -> Int {\n  io.println(action(Red));\n  io.println(action(Yellow));\n  io.println(action(Green));\n  return 0;\n}\n",
+  "try_it": "Create an `enum Weather { Sunny, Rainy, Cloudy, Snowy }`. Write two functions that match on Weather: `needs_umbrella` and `needs_sunscreen`. Make sure both are exhaustive. Then add a new variant `Windy` — watch the compiler tell you exactly which functions need updating.",
+  "concepts": ["exhaustive-match", "compiler-safety", "catch-all", "wildcard-pattern"],
+  "tips": [
+    "The compiler is your friend — when it says 'non-exhaustive patterns,' it's preventing a future bug",
+    "Use `_` as the last arm for types with many possible values (integers, strings)",
+    "When you add a variant to an enum, let the compiler find all the match statements you need to update"
+  ],
+  "common_mistakes": [
+    "Adding a `_` catch-all early in the match — it eats all remaining cases, hiding missing specific patterns",
+    "Writing match arms after `_` — they'll never execute because `_` already matched everything",
+    "Assuming the compiler catches LOGIC errors — it only checks that all VARIANTS are covered, not that your logic is correct"
+  ],
+  "next_lesson": "L3-24",
+  "related": ["L3-01", "L3-07", "L2-16"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "L4-31",
+  "title": "Temperature Safety",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "In 1999, NASA's Mars Climate Orbiter burned up because one team used metric and another used imperial. A simple invariant — temperature can't drop below absolute zero — would have flagged the impossible value long before it hit production.",
+  "why": "Type invariants prevent physically impossible values from ever existing in your program.",
+  "narrative": "## Absolute Zero as a Type Constraint\n\nTemperature in Celsius cannot go below -273.15. That's a law of physics. By encoding this as a type invariant, you make impossible states unrepresentable:\n\n```xiom\ntype Temperature = {\n  celsius: Float64;\n  invariant: celsius >= -273.15;\n}\n```\n\nOnce defined, no function can ever hold a Temperature that violates the laws of thermodynamics. The invariant is checked at construction and after every mutation — it's a permanent guardrail:\n\n```xiom\nfn Temperature.to_fahrenheit(self) -> Float64 {\n  return self.celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn Temperature.set(self: &mut Self, value: Float64)\n  requires: value >= -273.15;\n{\n  self.celsius = value;\n}\n```\n\nThe `set` method uses `requires` because the caller must prove the input is valid before mutation. Once inside, the invariant watches over the mutation. Together they form a layered defense.\n\n### Why This Matters\n\nWithout invariants, you'd scatter `if temp < -273.15 { error }` checks in dozens of functions. With invariants, the check lives in one place — and the compiler ensures nothing escapes.",
+  "analogy": "An invariant is like a bouncer at a nightclub door — once you're inside, everyone knows you belong.",
+  "code_template": "type Temperature = {\n  celsius: Float64;\n  invariant: celsius >= -273.15;\n}\n\nfn Temperature.to_fahrenheit(self) -> Float64 {\n  return self.celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn Temperature.to_kelvin(self) -> Float64 {\n  // TODO: Convert celsius to kelvin (kelvin = celsius + 273.15)\n  return 0.0;\n}\n\nfn main() -> Int {\n  let boiling: Temperature = Temperature{ celsius: 100.0 };\n  // TODO: Print boiling in kelvin using to_kelvin, return 0\n  return 0;\n}",
+  "solution": "type Temperature = {\n  celsius: Float64;\n  invariant: celsius >= -273.15;\n}\n\nfn Temperature.to_fahrenheit(self) -> Float64 {\n  return self.celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn Temperature.to_kelvin(self) -> Float64 {\n  return self.celsius + 273.15;\n}\n\nfn main() -> Int {\n  let boiling: Temperature = Temperature{ celsius: 100.0 };\n  io.println(boiling.to_kelvin());\n  return 0;\n}",
+  "try_it": "Add a `Temperature.from_fahrenheit` constructor that accepts Fahrenheit and converts back to Celsius, with a `requires` clause that prevents values below -459.67°F (absolute zero in Fahrenheit).",
+  "concepts": ["invariant", "requires", "type-safety", "domain-type"],
+  "tips": [
+    "Invariants encode domain physics — if the real world says 'this can't be negative', your type should too",
+    "Use `requires` on setters when callers can control the input; let the invariant guard all mutations",
+    "Chain conversion methods: to_fahrenheit, to_kelvin, to_rankine — the invariant protects every result"
+  ],
+  "common_mistakes": [
+    "Writing a setter without `requires` — if the setter takes arbitrary values, the invariant will catch it at mutation time, but a `requires` gives a clearer error earlier",
+    "Forgetting that invariants are NOT checked on read-only access — `&self` methods skip invariant checks"
+  ],
+  "next_lesson": "L4-32",
+  "related": ["L4-20", "L4-21", "L4-24"]
+}

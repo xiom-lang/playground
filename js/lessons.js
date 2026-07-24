@@ -271,10 +271,32 @@ function updateProgressSummary() {
   var progress = getProgress();
   var el = document.getElementById('progressSummary');
   if (!el) return;
-  el.textContent = progress.length + '/378';
+  el.textContent = progress.length + '/410';
+}
+
+function filterLessons(query) {
+  var q = query.toLowerCase().trim();
+  var items = document.querySelectorAll('.lesson-item');
+  var headers = document.querySelectorAll('.lesson-level-header');
+
+  items.forEach(function (item) {
+    var text = (item.textContent || '').toLowerCase();
+    item.style.display = (q === '' || text.indexOf(q) >= 0) ? '' : 'none';
+  });
+
+  headers.forEach(function (header) {
+    var next = header.nextElementSibling;
+    var hasVisible = false;
+    while (next && !next.classList.contains('lesson-level-header')) {
+      if (next.style.display !== 'none') { hasVisible = true; break; }
+      next = next.nextElementSibling;
+    }
+    header.style.display = hasVisible ? '' : 'none';
+  });
 }
 
 window.loadLessonCatalog = loadLessonCatalog;
+window.filterLessons = filterLessons;
 window.renderLessonList = renderLessonList;
 window.selectLesson = selectLesson;
 window.loadLessonContent = loadLessonContent;

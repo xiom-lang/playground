@@ -1,0 +1,26 @@
+{
+  "id": "L5-09",
+  "title": "Your First Map",
+  "level": "L5",
+  "duration": "9 min",
+  "story": "Your teacher posted exam scores on the bulletin board: Alice got 95, Bob got 87, Charlie got 92. To find Bob's score, you scan the whole list. But what if there were 500 students? You need a way to jump straight to any name and see their score instantly.",
+  "why": "Map[K,V] pairs keys with values for O(1) lookups — unlike Vec where you must scan every element to find a match.",
+  "narrative": "## The Key-Value Dictionary\n\nA **Map** (hash map) stores pairs of keys and values. You give it a key, it instantly gives you the value — no scanning required.\n\n### Creating a Map\n\n```xiom\nlet scores: Map[Str,Int] = Map[Str,Int].new();\n```\n\nThis creates a Map where keys are `Str` (student names) and values are `Int` (their scores).\n\n### Inserting Key-Value Pairs\n\n```xiom\nscores.insert(\"Alice\", 95);\nscores.insert(\"Bob\", 87);\nscores.insert(\"Charlie\", 92);\n```\n\nEach `.insert(key, value)` adds a pair. If the key already exists, the old value is replaced — each key appears only once.\n\n### Looking Up a Value: .get()\n\n```xiom\nmatch scores.get(\"Alice\") {\n  Some(score) -> io.println(score);\n  None -> io.println(\"Student not found\");\n}\n```\n\n`.get()` returns `Option[V]` — `Some(value)` if the key exists, `None` if it doesn't.\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let scores: Map[Str,Int] = Map[Str,Int].new();\n  scores.insert(\"Alice\", 95);\n  scores.insert(\"Bob\", 87);\n\n  match scores.get(\"Alice\") {\n    Some(s) -> io.println(s);\n    None -> io.println(\"Not found\");\n  }\n\n  match scores.get(\"Eve\") {\n    Some(s) -> io.println(s);\n    None -> io.println(\"Not found\");\n  }\n\n  return 0;\n}\n```\n\n### Map vs Vec\n\n- Vec: you must know the position (index). Scanning is O(n).\n- Map: you use a meaningful key. Lookup is O(1) — instant, regardless of size.",
+  "analogy": "A Map is like a phone book. You look up a name (key) to find a phone number (value). You don't scan every page — you jump directly to the name. Unlike a Vec which is like a numbered list where you need to know the exact position.",
+  "code_template": "fn main() -> Int {\n  // TODO: Create a Map[Str,Str] called phonebook\n  // TODO: Insert \"Mom\" -> \"555-0100\", \"Dad\" -> \"555-0200\"\n  // TODO: Look up \"Mom\" with .get() and print the result\n  // TODO: Look up \"Stranger\" with .get() — what happens?\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let phonebook: Map[Str,Str] = Map[Str,Str].new();\n  phonebook.insert(\"Mom\", \"555-0100\");\n  phonebook.insert(\"Dad\", \"555-0200\");\n\n  match phonebook.get(\"Mom\") {\n    Some(num) -> io.println(num);\n    None -> io.println(\"Not found\");\n  }\n\n  match phonebook.get(\"Stranger\") {\n    Some(num) -> io.println(num);\n    None -> io.println(\"Not found\");\n  }\n\n  return 0;\n}\n",
+  "try_it": "Create a Map[Str,Int] of country populations. Add 5 countries. Look up one that exists and one that doesn't. What happens if you insert the same key twice with different values? Try creating a Map[Int,Str] where keys are ID numbers and values are names — reverse the key-value pattern.",
+  "concepts": ["Map", "insert", "get", "key-value", "hash-map", "dictionary", "Option"],
+  "tips": [
+    "Map keys must be unique — inserting the same key again replaces the old value",
+    "`.get()` always returns `Option[V]` — you must handle the case where the key doesn't exist",
+    "Choose meaningful keys: `Map[Str,Int]` for name-to-score is better than `Map[Int,Int]` where you'd need to memorize ID numbers"
+  ],
+  "common_mistakes": [
+    "Expecting `.get()` to return the value directly — it returns `Option[V]`, so you must unwrap with match",
+    "Using the wrong key type: `phonebook.get(42)` when the map is `Map[Str,Str]` — keys must match the declared type",
+    "Thinking Map preserves insertion order — like most hash maps, order is NOT guaranteed"
+  ],
+  "next_lesson": "L5-10",
+  "related": ["L5-01", "L2-23", "L1-28"]
+}

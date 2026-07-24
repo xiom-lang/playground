@@ -1,0 +1,26 @@
+{
+  "id": "L3-19",
+  "title": "Real-World: Simple Calculator Parser",
+  "level": "L3",
+  "duration": "14 min",
+  "story": "Someone types '5+3' into your calculator app. It's just text — but behind the scenes, your code must split it apart, identify the operator, convert both sides to numbers, and compute the answer — all without crashing on bad input.",
+  "why": "Parsing an expression combines string manipulation, Result, and match — it's a microcosm of how interpreters and compilers work.",
+  "narrative": "## The Calculator That Won't Crash\n\nParsing a math expression means extracting the operator and operands from a string.\n\n### Simple Two-Number Expression\n\n```xiom\nfn calculate(expr: Str) -> Result[Int, Str] {\n  // Find the operator\n  let plus_pos = -1;\n  let i = 0;\n  while i < string.str_length(expr) {\n    if string.str_slice(expr, i, i + 1) == \"+\" { plus_pos = i; }\n    i = i + 1;\n  }\n\n  if plus_pos == -1 {\n    return Err(\"No operator found in expression\");\n  }\n\n  let left_str = string.str_slice(expr, 0, plus_pos);\n  let right_str = string.str_slice(expr, plus_pos + 1, string.str_length(expr));\n\n  let left = string.str_to_int(left_str)?;\n  let right = string.str_to_int(right_str)?;\n\n  return Ok(left + right);\n}\n\nfn main() -> Int {\n  match calculate(\"5+3\") {\n    Ok(result) => io.println(\"5+3 = \" + string.int_to_str(result)),  // 8\n    Err(e) => io.println(\"Error: \" + e),\n  };\n  match calculate(\"42+58\") {\n    Ok(result) => io.println(\"42+58 = \" + string.int_to_str(result)),  // 100\n    Err(e) => io.println(\"Error: \" + e),\n  };\n  match calculate(\"hello\") {\n    Ok(result) => io.println(string.int_to_str(result)),\n    Err(e) => io.println(\"Error: \" + e),  // No operator found\n  };\n  match calculate(\"5+abc\") {\n    Ok(result) => io.println(string.int_to_str(result)),\n    Err(e) => io.println(\"Error: \" + e),  // Parse error\n  };\n  return 0;\n}\n```\n\n### Handling Subtraction Too\n\n```xiom\nfn find_operator(expr: Str, op: Str) -> Int {\n  let i = 0;\n  while i < string.str_length(expr) {\n    if string.str_slice(expr, i, i + 1) == op { return i; }\n    i = i + 1;\n  }\n  return -1;\n}\n\nfn calculate_v2(expr: Str) -> Result[Int, Str] {\n  let op_pos = find_operator(expr, \"+\");\n  let is_add = true;\n  if op_pos == -1 {\n    op_pos = find_operator(expr, \"-\");\n    is_add = false;\n  }\n  if op_pos == -1 {\n    return Err(\"No operator found\");\n  }\n\n  let left = string.str_to_int(string.str_slice(expr, 0, op_pos))?;\n  let right = string.str_to_int(string.str_slice(expr, op_pos + 1, string.str_length(expr)))?;\n\n  if is_add { return Ok(left + right); }\n  return Ok(left - right);\n}\n```",
+  "analogy": "Parsing a math expression is like unpacking a flat-pack box — you find the instruction manual (the operator), separate the parts (left and right numbers), and assemble the result.",
+  "code_template": "// TODO: Write calculate(expr: Str) -> Result[Int, Str]\n// Find \"+\" in the string, split into left and right, parse both, add them\n// Return Err if no \"+\" found or if parsing fails\n\nfn main() -> Int {\n  // TODO: Test calculate with \"10+20\", \"-5+3\", \"abc\", and \"1+2+3\"\n  return 0;\n}\n",
+  "solution": "fn calculate(expr: Str) -> Result[Int, Str] {\n  let pos = -1;\n  let i = 0;\n  while i < string.str_length(expr) {\n    if string.str_slice(expr, i, i + 1) == \"+\" { pos = i; }\n    i = i + 1;\n  }\n  if pos == -1 { return Err(\"No + operator found\"); }\n\n  let left_str = string.str_slice(expr, 0, pos);\n  let right_str = string.str_slice(expr, pos + 1, string.str_length(expr));\n\n  let left = string.str_to_int(left_str)?;\n  let right = string.str_to_int(right_str)?;\n\n  return Ok(left + right);\n}\n\nfn main() -> Int {\n  io.println(calculate(\"10+20\").unwrap_or(-1));\n  io.println(calculate(\"-5+3\").unwrap_or(-1));\n  io.println(calculate(\"abc\").unwrap_or(-1));\n  io.println(calculate(\"1+2+3\").unwrap_or(-1));\n  return 0;\n}\n",
+  "try_it": "Extend the calculator to handle multiplication (*) and division (/). Use `find_operator` for each symbol. For division, check that the right operand is not zero before dividing — return Err(\"Division by zero\") if it is. Test with \"8*7\" and \"10/0\".",
+  "concepts": ["expression-parsing", "string-manipulation", "operator-detection", "calculator"],
+  "tips": [
+    "`string.str_slice(s, start, end)` extracts a portion of a string — use it to split at the operator position",
+    "Pass `string.str_length(expr)` as the end to slice to the end of the string",
+    "Search for operators left to right — the first operator found is the one you split on"
+  ],
+  "common_mistakes": [
+    "Slicing with wrong indices — `str_slice(s, 0, pos)` stops BEFORE pos, which is correct for getting the left side",
+    "Forgetting to skip the operator character when slicing the right side — start at `pos + 1`",
+    "Assuming the expression has exactly one operator — \"1+2+3\" finds the first '+' at position 1, treating it as \"1\" + \"2+3\""
+  ],
+  "next_lesson": "L3-20",
+  "related": ["L3-10", "L3-13", "L3-14"]
+}

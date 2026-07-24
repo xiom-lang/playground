@@ -1,0 +1,27 @@
+{
+  "id": "L4-46",
+  "title": "Ownership + Contracts: The Power Couple",
+  "level": "L4",
+  "duration": "12 min",
+  "story": "A CTO once said: '90% of our production bugs are logic errors, not crashes. Contracts catch the logic errors. The borrow checker catches the crashes. Together, they cover almost everything.' That CTO's team went from 47 incidents/month to 2.",
+  "why": "Contracts catch LOGIC bugs (division by zero, invalid state). Ownership catches MEMORY bugs (use-after-free, data races). Together they make almost all bugs impossible.",
+  "narrative": "## Two Guards at Two Different Gates\n\nXIOM has two independent safety systems that work at different levels:\n\n### Ownership Prevents MEMORY Errors\n```xiom\nfn bad_move() -> Int {\n  let data = Vec::new();\n  data.push(42);\n  let stolen = data;  // 'data' moved to 'stolen'\n  return data.len();  // COMPILE ERROR: use after move\n}\n```\nThe borrow checker stops this BEFORE the program runs. No segfault, no garbage data, no silent corruption.\n\n### Contracts Prevent LOGIC Errors\n```xiom\ntype Account = {\n  balance: Float64;\n  invariant: balance >= 0.0;\n}\n\nfn bad_transfer(from: &mut Account, to: &mut Account, amt: Float64) {\n  from.balance = from.balance - amt;\n  to.balance = to.balance + amt;\n  // No requires — amt could be ANY value!\n}\n```\nIf `amt` is negative, you're stealing money. If `amt > from.balance`, `from` goes negative. Contracts catch these at runtime (or with Z3, at compile time).\n\n### The Beautiful Overlap\n```xiom\nfn safe_transfer(from: &mut Account, to: &mut Account, amt: Float64)\n  requires: amt > 0.0;\n  requires: amt <= from.balance;\n  ensures: from.balance == from@pre.balance - amt;\n  ensures: to.balance == to@pre.balance + amt;\n{\n  from.balance = from.balance - amt;\n  to.balance = to.balance + amt;\n}\n```\nOwnership guarantees no one can modify `from` or `to` during the transfer. Contracts guarantee the transfer is mathematically sound. Neither could catch all bugs alone — together, they're nearly airtight.\n\n### The Remaining Gap\nWhat contracts AND ownership can't catch: incorrect algorithms, off-by-one in loop logic, business rule misunderstandings. That's what testing is for.",
+  "analogy": "Ownership is the fence around the factory (keeps intruders out). Contracts are the quality inspectors at each station (catches defects before they ship). Both are needed for safe production.",
+  "code_template": "type Wallet = {\n  coins: Int;\n  invariant: coins >= 0;\n}\n\nfn steal(from: &mut Wallet, to: &mut Wallet, amount: Int) {\n  // BUG: No contract! Could steal negative amounts (giving money)\n  // BUG: No contract! Could steal more than 'from' has\n  from.coins = from.coins - amount;\n  to.coins = to.coins + amount;\n}\n\nfn safe_move(from: &mut Wallet, to: &mut Wallet, amount: Int)\n  // TODO: Add requires: amount > 0\n  // TODO: Add requires: amount <= from.coins\n  // TODO: Add ensures for both wallets' coins\n{\n  // TODO: Implement safe transfer\n}\n\nfn main() -> Int {\n  // TODO: Create two wallets (100 and 50 coins)\n  // Use safe_move to transfer 30 from first to second\n  // Return second wallet's coins\n  return 0;\n}",
+  "solution": "type Wallet = {\n  coins: Int;\n  invariant: coins >= 0;\n}\n\nfn safe_move(from: &mut Wallet, to: &mut Wallet, amount: Int)\n  requires: amount > 0;\n  requires: amount <= from.coins;\n  ensures: from.coins == from@pre.coins - amount;\n  ensures: to.coins == to@pre.coins + amount;\n{\n  from.coins = from.coins - amount;\n  to.coins = to.coins + amount;\n}\n\nfn main() -> Int {\n  var a: Wallet = Wallet{ coins: 100 };\n  var b: Wallet = Wallet{ coins: 50 };\n  safe_move(&mut a, &mut b, 30);\n  return b.coins;\n}",
+  "try_it": "List every type of bug you can think of: null pointer, buffer overflow, division by zero, race condition, use-after-free, integer overflow, logic error, infinite loop. For each, mark whether ownership or contracts catch it. What's left? Those are the bugs you must test for.",
+  "concepts": ["ownership", "contract", "memory-safety", "logic-safety", "defense-in-depth"],
+  "tips": [
+    "Ownership catches ~50% of typical C/C++ bugs (memory-related)",
+    "Contracts catch ~40% more (logic-related)",
+    "The remaining ~10% requires testing and formal verification",
+    "Together, ownership + contracts make XIOM one of the safest systems languages"
+  ],
+  "common_mistakes": [
+    "Thinking contracts replace ownership — they're complementary, not redundant",
+    "Writing contracts but ignoring borrow errors — the compiler is trying to help you",
+    "Assuming contracts catch ALL bugs — algorithms and business logic still need tests"
+  ],
+  "next_lesson": "L4-47",
+  "related": ["L4-40", "L4-01", "L4-38"]
+}

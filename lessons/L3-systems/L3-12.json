@@ -1,0 +1,26 @@
+{
+  "id": "L3-12",
+  "title": "The Question Mark Operator",
+  "level": "L3",
+  "duration": "10 min",
+  "story": "You're writing a function with five steps. Each step can fail. Writing `match` for every single one is exhausting — five nested matches make your code look like a staircase. There has to be a better way... and there is: `?`",
+  "why": "The `?` operator is the elegant shortcut for error propagation — it unwraps Ok or returns Err immediately, collapsing nested matches into clean, linear code.",
+  "narrative": "## The Shortcut That Changes Everything\n\n`?` is the most powerful operator in XIOM error handling. It says: \"If this is Ok, give me the value. If it's Err, return the error from this function RIGHT NOW.\"\n\n### Before ? (Painful)\n\n```xiom\nfn load_config() -> Result[Int, Str] {\n  let val_raw = string.str_to_int(\"42\");\n  let val = match val_raw {\n    Ok(n) => n,\n    Err(e) => return Err(e),\n  };\n  return Ok(val * 2);\n}\n```\n\n### After ? (Clean)\n\n```xiom\nfn load_config() -> Result[Int, Str] {\n  let val = string.str_to_int(\"42\")?;\n  return Ok(val * 2);\n}\n```\n\n### How ? Works\n\n```xiom\nfn process(input: Str) -> Result[Int, Str] {\n  let num1 = string.str_to_int(input)?;\n  let num2 = string.str_to_int(\"100\")?;\n\n  let sum = num1 + num2;\n  return Ok(sum);\n}\n\nfn main() -> Int {\n  match process(\"50\") {\n    Ok(result) => io.println(string.int_to_str(result)),  // 150\n    Err(e) => io.println(\"Failed: \" + e),\n  };\n\n  match process(\"bad\") {\n    Ok(result) => io.println(string.int_to_str(result)),\n    Err(e) => io.println(\"Failed: \" + e),\n  };\n  return 0;\n}\n```\n\n### The Rules of ?\n\n1. `?` only works inside functions that return `Result`\n2. `?` on `Ok(value)` → gives you `value`\n3. `?` on `Err(e)` → immediately returns `Err(e)` from the function\n4. The error type must match the function's return type\n\n### Building with ?\n\n```xiom\nfn double_parse(a: Str, b: Str) -> Result[Int, Str] {\n  let x = string.str_to_int(a)?;\n  let y = string.str_to_int(b)?;\n  return Ok(x + y);\n}\n```",
+  "analogy": "`?` is like a trapdoor in a video game level — if you step on a trap (Err), you fall straight to the exit. If you avoid it (Ok), you keep walking forward with the treasure.",
+  "code_template": "// TODO: Write multiply_from_strings(a: Str, b: Str) -> Result[Int, Str]\n// Parse both strings using ?, multiply them, return Ok(result)\n\n// TODO: Write add_three(a: Str, b: Str, c: Str) -> Result[Int, Str]\n// Parse all three with ?, sum them, return Ok(sum)\n\nfn main() -> Int {\n  // TODO: Test multiply with \"6\" and \"7\" — should get 42\n\n  // TODO: Test multiply with \"6\" and \"bad\" — should fail\n\n  // TODO: Test add_three with \"1\", \"2\", \"3\"\n  return 0;\n}\n",
+  "solution": "fn multiply_from_strings(a: Str, b: Str) -> Result[Int, Str] {\n  let x = string.str_to_int(a)?;\n  let y = string.str_to_int(b)?;\n  return Ok(x * y);\n}\n\nfn add_three(a: Str, b: Str, c: Str) -> Result[Int, Str] {\n  let x = string.str_to_int(a)?;\n  let y = string.str_to_int(b)?;\n  let z = string.str_to_int(c)?;\n  return Ok(x + y + z);\n}\n\nfn main() -> Int {\n  match multiply_from_strings(\"6\", \"7\") {\n    Ok(r) => io.println(string.int_to_str(r)),\n    Err(e) => io.println(\"Error: \" + e),\n  };\n  match multiply_from_strings(\"6\", \"bad\") {\n    Ok(r) => io.println(string.int_to_str(r)),\n    Err(e) => io.println(\"Error: \" + e),\n  };\n  match add_three(\"1\", \"2\", \"3\") {\n    Ok(r) => io.println(string.int_to_str(r)),\n    Err(e) => io.println(\"Error: \" + e),\n  };\n  return 0;\n}\n",
+  "try_it": "Write a function `compute(a, b, c, d)` that parses 4 numbers with ?, adds the first two, multiplies by the third, and subtracts the fourth. What happens if the second parse fails — do the third and fourth still get parsed?",
+  "concepts": ["question-mark-operator", "error-propagation", "early-return", "Result-chain"],
+  "tips": [
+    "`?` is syntactic sugar for 'unwrap or return the error' — it's exactly what you'd write with match",
+    "Every `?` is a potential early return — once one fails, the function exits immediately",
+    "Use `?` liberally inside Result-returning functions — it makes code linear and readable"
+  ],
+  "common_mistakes": [
+    "Using `?` inside a function that returns `Int` instead of `Result[Int, Str]` — won't compile",
+    "Chaining `?` on something that isn't a Result — `let x = 5?` makes no sense",
+    "Forgetting that `?` returns from the ENTIRE function, not just the current block"
+  ],
+  "next_lesson": "L3-13",
+  "related": ["L3-07", "L3-08", "L3-14"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L7-14",
+  "title": "Hangman Game",
+  "level": "L7",
+  "duration": "11 min",
+  "story": "_ _ _ _ _ — five blanks. You guess 'E'. _ E _ _ _. Then 'A' — wrong! One life gone. Six wrong guesses and the stick figure is fully drawn — game over. Hangman has taught spelling and vocabulary for generations. Build it.",
+  "why": "Hangman combines string iteration, Vec for tracking guesses, conditionals for game state, and loops for the game round — a complete interactive program.",
+  "narrative": "## Building Hangman\n\n### Game State\n\n```xiom\ntype Game {\n  word: Str;\n  guessed_letters: Vec[Char];\n  lives: Int;\n  display: Str;\n}\n```\n\n### Initializing the Display\n\n```xiom\nfn create_display(word: Str) -> Str {\n  let mut display = \"\";\n  let mut i = 0;\n  while i < word.len() {\n    display = string.str_concat(display, \"_\");\n    i += 1;\n  };\n  display\n}\n```\n\n### Making a Guess\n\n```xiom\nfn make_guess(game: &mut Game, letter: Char) -> Bool {\n  if already_guessed(game, letter) {\n    io.println(\"Already guessed!\");\n    return false;\n  };\n\n  game.guessed_letters.push(letter);\n\n  if word_contains(game.word, letter) {\n    update_display(game, letter);\n    return true;\n  };\n\n  game.lives -= 1;\n  false\n}\n\nfn word_contains(word: Str, letter: Char) -> Bool {\n  let mut i = 0;\n  while i < word.len() {\n    if word.get(i).unwrap() == letter { return true; };\n    i += 1;\n  };\n  false\n}\n\nfn update_display(game: &mut Game, letter: Char) {\n  let mut new_display = \"\";\n  let mut i = 0;\n  while i < game.word.len() {\n    if game.word.get(i).unwrap() == letter {\n      new_display = string.str_concat(new_display, string.from_char(letter));\n    } else {\n      new_display = string.str_concat(new_display, string.from_char(game.display.get(i).unwrap()));\n    };\n    i += 1;\n  };\n  game.display = new_display;\n}\n```",
+  "analogy": "A crossword puzzle where each revealed letter is a small victory. Every wrong guess draws one more part of the hangman — head, body, arms, legs. The tension builds with each empty blank. Your program is the hangman artist and the puzzle master, all in one.",
+  "code_template": "type HangmanGame {\n  word: Str;\n  guessed: Vec[Char];\n  lives: Int;\n  display: Str;\n}\n\nfn has_won(game: &HangmanGame) -> Bool {\n  // TODO: return true if display matches word (no underscores left)\n}\n\nfn has_lost(game: &HangmanGame) -> Bool {\n  // TODO: return true if lives <= 0\n}\n\nfn main() -> Int {\n  // TODO: create game, simulate guesses, print display after each\n  return 0;\n}\n",
+  "solution": "type HangmanGame {\n  word: Str;\n  guessed: Vec[Char];\n  lives: Int;\n  display: Str;\n}\n\nfn has_won(game: &HangmanGame) -> Bool {\n  let mut i = 0;\n  while i < game.display.len() {\n    if game.display.get(i).unwrap() == '_' { return false; };\n    i += 1;\n  };\n  true\n}\n\nfn has_lost(game: &HangmanGame) -> Bool {\n  game.lives <= 0\n}\n\nfn main() -> Int {\n  let mut game = HangmanGame{\n    word: \"PYTHON\",\n    guessed: Vec[Char].new(),\n    lives: 6,\n    display: \"______\"\n  };\n  io.println(game.display);\n  io.println(has_won(&game));\n  io.println(has_lost(&game));\n  return 0;\n}\n",
+  "try_it": "Add a function to check if a letter was already guessed. Implement full round simulation: guess P (correct), Y (correct), X (wrong), track display changes and lives. Add ASCII art for each life lost. Add a word bank with categories.",
+  "concepts": ["hangman", "game-state", "Vec", "string-display", "state-tracking", "conditional-logic"],
+  "tips": [
+    "Track the display as a parallel string: underscores become letters on correct guesses",
+    "Use a Vec[Char] for guessed letters — fast to check if already tried",
+    "Win condition: no underscores left in display. Lose condition: lives = 0"
+  ],
+  "common_mistakes": [
+    "Not checking if letter was already guessed — players shouldn't lose lives for repeats",
+    "Forgetting to update display on every correct guess",
+    "Case sensitivity: 'A' and 'a' should be treated as the same guess"
+  ],
+  "next_lesson": "L7-15",
+  "related": ["L7-10", "L7-12", "L2-36", "L2-15"]
+}

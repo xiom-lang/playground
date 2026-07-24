@@ -1,0 +1,26 @@
+{
+  "id": "L5-12",
+  "title": "Student Gradebook",
+  "level": "L5",
+  "duration": "11 min",
+  "story": "The semester ended and you need to calculate final grades. You have a roster of students, each with multiple assignment scores. You need to add grades, look up individual students, update scores for regrades, and calculate the class average.",
+  "why": "A complete Map-based mini-app — insert, get, update, and compute statistics — demonstrates real-world data management patterns.",
+  "narrative": "## Managing Student Records\n\nA gradebook is a perfect Map use case: student names are keys, grades are values. Let's build the full set of operations.\n\n### Setting Up the Gradebook\n\n```xiom\nlet gradebook: Map[Str,Int] = Map[Str,Int].new();\n```\n\n### Adding and Looking Up Grades\n\n```xiom\ngradebook.insert(\"Alice\", 95);\ngradebook.insert(\"Bob\", 87);\ngradebook.insert(\"Charlie\", 92);\n\nfn get_grade(gb: Map[Str,Int], name: Str) -> Str {\n  match gb.get(name) {\n    Some(grade) -> return string.int_to_str(grade);\n    None -> return \"No grade recorded\";\n  }\n}\n```\n\n### Updating a Grade (Regrade)\n\n```xiom\nfn update_grade(gb: Map[Str,Int], name: Str, new_grade: Int) -> Bool {\n  if gb.contains(name) {\n    gb.insert(name, new_grade);\n    return true;\n  }\n  else {\n    return false;\n  }\n}\n```\n\n### Calculating the Class Average\n\nSince Map doesn't iterate directly like Vec, we collect keys into a Vec first:\n\n```xiom\nfn class_average(gb: Map[Str,Int], names: Vec[Str]) -> Int {\n  let total: Int = 0;\n  let count: Int = 0;\n  for name in names {\n    match gb.get(name) {\n      Some(grade) -> { total = total + grade; count = count + 1; }\n      None -> {}\n    }\n  }\n  if count == 0 { return 0; }\n  return total / count;\n}\n```\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let gb: Map[Str,Int] = Map[Str,Int].new();\n  gb.insert(\"Alice\", 95);\n  gb.insert(\"Bob\", 87);\n  gb.insert(\"Charlie\", 92);\n\n  let students: Vec[Str] = Vec[Str].new();\n  students.push(\"Alice\");\n  students.push(\"Bob\");\n  students.push(\"Charlie\");\n\n  match gb.get(\"Alice\") {\n    Some(g) -> io.println(\"Alice: \" + string.int_to_str(g));\n    None -> io.println(\"Alice: not found\");\n  }\n\n  let avg = class_average(gb, students);\n  io.println(\"Average: \" + string.int_to_str(avg));\n  return 0;\n}\n```",
+  "analogy": "A gradebook Map is like a teacher's physical grade book. Each student has their own row (key) with their scores (value). To update a grade, you find the student's row and write in the new number. To calculate the average, you go down every row, add up the scores, and divide. The Map makes finding any student's row instantaneous.",
+  "code_template": "fn main() -> Int {\n  let grades: Map[Str,Int] = Map[Str,Int].new();\n  // TODO: Insert grades for \"Ana\" -> 88, \"Ben\" -> 76, \"Cara\" -> 94\n  // TODO: Look up \"Ben\" and print their grade\n  // TODO: Update \"Ben\" to 80 using .insert()\n  // TODO: Look up \"Ben\" again to confirm the update\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let grades: Map[Str,Int] = Map[Str,Int].new();\n  grades.insert(\"Ana\", 88);\n  grades.insert(\"Ben\", 76);\n  grades.insert(\"Cara\", 94);\n\n  match grades.get(\"Ben\") {\n    Some(g) -> io.println(\"Ben: \" + string.int_to_str(g));\n    None -> io.println(\"Ben: not found\");\n  }\n\n  grades.insert(\"Ben\", 80);\n\n  match grades.get(\"Ben\") {\n    Some(g) -> io.println(\"Ben updated: \" + string.int_to_str(g));\n    None -> io.println(\"Ben: not found\");\n  }\n\n  return 0;\n}\n",
+  "try_it": "Find the top student: loop through all names, track the highest grade and the student who earned it. Add a `letter_grade` function that converts numeric grades to letters (90+ = A, 80+ = B, etc.). Add a `remove_student` function and recalculate the average after removal.",
+  "concepts": ["Map", "insert", "get", "contains", "gradebook", "average", "update", "mini-app"],
+  "tips": [
+    "Use a companion Vec to track keys if you need to iterate — Map itself doesn't have a natural order",
+    "`.insert()` is both 'add' and 'update' — no separate method needed for updating existing entries",
+    "Wrap gradebook operations in functions so you can add validation later without changing calling code"
+  ],
+  "common_mistakes": [
+    "Trying to iterate over a Map directly — Map doesn't support for-in loops; collect keys into a Vec first",
+    "Using `.get()` to check existence when `.contains()` is cleaner — `.get()` gives you Option which is more than you need for a yes/no",
+    "Forgetting that Map averages need special handling when the Map is empty"
+  ],
+  "next_lesson": "L5-13",
+  "related": ["L5-10", "L5-11", "L5-06", "L2-23"]
+}

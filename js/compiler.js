@@ -9,6 +9,9 @@ async function compile() {
   statusEl.textContent = 'Compiling...';
   statusEl.className = 'status-bar busy';
 
+  // Show loading overlay
+  if (window.showLoading) window.showLoading();
+
   try {
     var resp = await fetch('/api/compile', {
       method: 'POST',
@@ -89,22 +92,19 @@ async function compile() {
     }
 
     var errCount = (r.diagnostics || []).filter(function (d) { return d.kind === 'error'; }).length;
-    if (r.success && r.runOutput !== undefined) {
-      statusEl.innerHTML = 'Ran successfully. &#x2713;';
-      statusEl.className = 'status-bar ok';
-    } else if (r.success) {
-      statusEl.innerHTML = 'Compiled successfully. &#x2713;';
-      statusEl.className = 'status-bar ok';
-    } else {
-      statusEl.innerHTML = 'Failed: ' + errCount + ' error(s)';
-      statusEl.className = errCount ? 'status-bar err' : 'status-bar ok';
-    }
+    statusEl.innerHTML = r.success && r.runOutput !== undefined ? 'Ran successfully. &#x2713;' : (r.success ? 'Compiled successfully. &#x2713;' : 'Failed: ' + errCount + ' error(s)');
+    statusEl.className = r.success ? 'status-bar ok' : (errCount ? 'status-bar err' : 'status-bar ok');
+    if (window.hideLoading) window.hideLoading();
+
+    // Update tab badge counts
+    updateTabBadges(r, source);
 
   } catch (e) {
     var outEl = document.getElementById(ids.output);
     outEl.textContent = 'Cannot reach compile server. Run: node server.js';
     statusEl.textContent = 'Server not running.';
     statusEl.className = 'status-bar err';
+    if (window.hideLoading) window.hideLoading();
   }
 }
 
@@ -119,4 +119,35 @@ function highlightIR(ir) {
     .replace(/\b(\d+)\b/g, '<span style="color:#e8c37a">$1</span>')
     .replace(/(%\\w+)/g, '<span style="color:#8fb3ff">$1</span>')
     .replace(/(@\\w+)/g, '<span style="color:#e8c37a">$1</span>');
+}
+
+function updateTabBadges(r, source) {
+  var tabs = document.querySelectorAll('.output-tabs .tab');
+  tabs.forEach(function (tab) {
+    // Remove existing badges
+    var existing = tab.querySelector('.tab-badge');
+    if (existing) existing.remove();
+    tab.style.position = '';
+  });
+
+  function addBadge(tabEl, count) {
+    if (!tabEl || count === 0) return;
+    var badge = document.createElement('span');
+    badge.className = 'tab-badge';
+    badge.textContent = count;
+    tabEl.style.position = 'relative';
+    tabEl.appendChild(badge);
+  }
+
+  var prefix = !document.getElementById('lessonsScreen').classList.contains('hidden') ? '' : 'pg';
+  var diagCount = (r.diagnostics || []).length;
+  var contractCount = source.indexOf('requires:') >= 0 || source.indexOf('ensures:') >= 0 ? 1 : 0;
+  var tokenCount = (r.tokens || []).length;
+
+  tabs.forEach(function (tab) {
+    var dt = tab.dataset.tab;
+    if (dt === 'diag' && diagCount > 0) addBadge(tab, diagCount);
+    if (dt === 'contracts' && contractCount > 0) addBadge(tab, contractCount);
+    if (dt === 'tokens' && tokenCount > 0) addBadge(tab, tokenCount);
+  });
 }

@@ -1,0 +1,26 @@
+{
+  "id": "L5-24",
+  "title": "Practical: Contact Manager",
+  "level": "L5",
+  "duration": "12 min",
+  "story": "Your phone has 200 contacts and scrolling is a nightmare. You decide to build a smarter contact manager: search by name instantly (Map), show all contacts alphabetically (Vec of names), and add new contacts without duplicates (Set for uniqueness checking).",
+  "why": "A real-world app combining Map for fast lookup and Vec for ordered display — this pattern appears in almost every application that manages records.",
+  "narrative": "## Building a Contact Manager\n\nContacts need two capabilities: instant lookup by name, and ordered display. That means two collections working together.\n\n### Data Model\n\n```xiom\nlet contacts: Map[Str,Str] = Map[Str,Str].new();\n```\n\nName → phone number. Simple. But we also need to list names alphabetically, so we maintain a Vec:\n\n```xiom\nlet name_list: Vec[Str] = Vec[Str].new();\n```\n\n### Adding a Contact\n\n```xiom\nfn add_contact(contacts: Map[Str,Str], name_list: Vec[Str], name: Str, phone: Str) -> Bool {\n  if contacts.contains(name) { return false; }\n  contacts.insert(name, phone);\n  name_list.push(name);\n  return true;\n}\n```\n\n### Looking Up a Contact\n\n```xiom\nfn find_contact(contacts: Map[Str,Str], name: Str) {\n  match contacts.get(name) {\n    Some(phone) -> io.println(name + \": \" + phone);\n    None -> io.println(\"Contact not found\");\n  }\n}\n```\n\n### Listing All Contacts\n\n```xiom\nfn list_contacts(contacts: Map[Str,Str], name_list: Vec[Str]) {\n  io.println(\"Contacts:\");\n  for name in name_list {\n    match contacts.get(name) {\n      Some(phone) -> io.println(\"  \" + name + \": \" + phone);\n      None -> {}\n    }\n  }\n}\n```\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let contacts: Map[Str,Str] = Map[Str,Str].new();\n  let name_list: Vec[Str] = Vec[Str].new();\n\n  contacts.insert(\"Alice\", \"555-0100\");\n  name_list.push(\"Alice\");\n\n  contacts.insert(\"Bob\", \"555-0200\");\n  name_list.push(\"Bob\");\n\n  find_contact(contacts, \"Alice\");\n  list_contacts(contacts, name_list);\n\n  io.println(\"Total contacts: \" + string.int_to_str(name_list.len()));\n  return 0;\n}\n```",
+  "analogy": "A contact manager with Map + Vec is like a phone book with both an index (Map) and page-by-page listings (Vec). The index lets you jump straight to 'Smith, John' instantly. The page-by-page listing lets you browse everyone in order. Both views of the same data, each serving a different purpose.",
+  "code_template": "fn main() -> Int {\n  let contacts: Map[Str,Str] = Map[Str,Str].new();\n  let names: Vec[Str] = Vec[Str].new();\n\n  // TODO: Insert \"Eve\" -> \"555-0300\" (add to both collections)\n  // TODO: Insert \"Dan\" -> \"555-0400\" (add to both collections)\n  // TODO: Look up \"Eve\" and print their number\n  // TODO: Loop through names Vec and print all contacts\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let contacts: Map[Str,Str] = Map[Str,Str].new();\n  let names: Vec[Str] = Vec[Str].new();\n\n  contacts.insert(\"Eve\", \"555-0300\");\n  names.push(\"Eve\");\n\n  contacts.insert(\"Dan\", \"555-0400\");\n  names.push(\"Dan\");\n\n  match contacts.get(\"Eve\") {\n    Some(phone) -> io.println(\"Eve: \" + phone);\n    None -> io.println(\"Not found\");\n  }\n\n  io.println(\"All contacts:\");\n  for name in names {\n    match contacts.get(name) {\n      Some(phone) -> io.println(\"  \" + name + \": \" + phone);\n      None -> {}\n    }\n  }\n\n  io.println(\"Total: \" + string.int_to_str(names.len()));\n  return 0;\n}\n",
+  "try_it": "Add an email field by making the Map value a struct with phone and email. Add a `remove_contact` function that removes from both the Map and the Vec. Add a `search` function that finds all contacts whose names contain a substring (loop through names Vec, check with string.contains).",
+  "concepts": ["Map", "Vec", "contact-manager", "combined-collections", "lookup", "ordered-display", "CRUD", "mini-app"],
+  "tips": [
+    "Maintain both collections in sync — every add/remove must update both the Map and the Vec",
+    "Use Map for O(1) lookup by name, Vec for ordered iteration and display",
+    "Extract repetitive patterns into helper functions (`add_contact`, `remove_contact`) to avoid bugs"
+  ],
+  "common_mistakes": [
+    "Updating one collection but not the other — the Map and Vec get out of sync and show different data",
+    "Using the Vec to find a contact — scanning a 200-item Vec when Map.get() is instant",
+    "Forgetting that removing from the middle of a Vec is expensive — if you remove contacts often, consider a different approach"
+  ],
+  "next_lesson": "L5-25",
+  "related": ["L5-17", "L5-12", "L5-09", "L5-01"]
+}

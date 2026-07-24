@@ -1,0 +1,25 @@
+{
+  "id": "L3-35",
+  "title": "Email Validator",
+  "level": "L3",
+  "duration": "9 min",
+  "story": "Your newsletter signup form accepts anything with an '@' symbol — including 'a@b', '@.', and empty strings. The marketing team is furious about bounce-backs. You need a validator that checks multiple rules and returns specific, actionable error messages.",
+  "why": "Multi-rule string validation with specific errors is the pattern behind every signup form, login page, and data entry system.",
+  "narrative": "## Validating Email Addresses with Helpful Errors\n\nA real email validator checks multiple structural rules. Each failed rule produces a different error so the user knows exactly what to fix.\n\n### The Rules\n\n1. **Minimum length**: at least 6 characters (\"a@b.co\" is the shortest realistic email)\n2. **Contains '@'**: every email must have exactly one @ sign\n3. **Contains '.' after '@'**: the domain needs a dot (\"user@gmail.com\", not \"user@gmail\")\n\n### Rule 1: Length Check\n\n```xiom\nfn validate_email(email: Str) -> Result[Str, Str] {\n  if string.str_len(email) < 6 {\n    return Err(\"Email too short — must be at least 6 characters\");\n  }\n```\n\n### Rule 2: Must Contain '@'\n\n```xiom\n  if !string.str_contains(email, \"@\") {\n    return Err(\"Email must contain '@'\");\n  }\n```\n\n### Rule 3: Must Contain '.'\n\n```xiom\n  if !string.str_contains(email, \".\") {\n    return Err(\"Email must contain a dot (.)\");\n  }\n  return Ok(\"Email is valid\");\n}\n```\n\n### Testing Different Failures\n\nEach error message tells a different story:\n\n```xiom\nvalidate_email(\"a@b\");     // Err: too short\nvalidate_email(\"abcdef\");   // Err: must contain '@'\nvalidate_email(\"a@bcom\");   // Err: must contain a dot\nvalidate_email(\"a@b.com\");  // Ok: valid\n```\n\n### Using `unwrap_or` for Quick Checks\n\n```xiom\nlet is_valid = validate_email(\"user@gmail.com\").unwrap_or(\"\") != \"\";\n// is_valid is true\n\nlet is_valid = validate_email(\"bad\").unwrap_or(\"\") != \"\";\n// is_valid is false\n```",
+  "analogy": "An email validator is like a postal worker sorting mail. A letter with no stamp (no '@'), a letter addressed to just 'John' (no domain/'.'), or a letter that's literally blank (too short) — each gets returned to sender with a different stamp: 'insufficient postage,' 'incomplete address,' or 'empty envelope.'",
+  "code_template": "fn validate_email(email: Str) -> Result[Str, Str] {\n  // TODO: check length >= 6, return Err if too short\n  // TODO: check contains \"@\", return Err if missing\n  // TODO: check contains \".\", return Err if missing\n  // TODO: return Ok(\"Email is valid\")\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: validate \"user@gmail.com\", return 200 if Ok, 400 if Err\n  return 0;\n}",
+  "solution": "fn validate_email(email: Str) -> Result[Str, Str] {\n  if string.str_len(email) < 6 {\n    return Err(\"Email too short — must be at least 6 characters\");\n  }\n  if !string.str_contains(email, \"@\") {\n    return Err(\"Email must contain '@'\");\n  }\n  if !string.str_contains(email, \".\") {\n    return Err(\"Email must contain a dot (.)\");\n  }\n  return Ok(\"Email is valid\");\n}\n\nfn main() -> Int {\n  match validate_email(\"user@gmail.com\") {\n    Ok(_) => { return 200; }\n    Err(_) => { return 400; }\n  }\n}",
+  "try_it": "Test these emails: 'a@b.c' (too short), 'user-name' (no @), 'user@gmailcom' (no dot), 'user@gmail.com' (valid). Add a rule: the '@' must not be the first character (reject '@gmail.com'). Add a rule: the '.' must appear after the '@' (reject 'user.@gmail'). Test real and fake emails from your inbox.",
+  "concepts": ["Result", "string.str_contains", "string.str_len", "guard clauses", "validation", "unwrap_or"],
+  "tips": [
+    "Check length first — it's the cheapest check and catches empty strings immediately",
+    "Use `!string.str_contains(...)` to check for MISSING characters — the `!` flips the boolean",
+    "Each `return Err(...)` acts as an early exit — the function stops right there, and no further checks run"
+  ],
+  "common_mistakes": [
+    "Checking for '.' before checking for '@' — an email like 'hello.world' would pass the dot check but fail '@' later; order doesn't matter logically, but '@' is the more fundamental requirement",
+    "Using `string.str_len(email)` without the `string.` prefix — `str_len` is in the `string` module"
+  ],
+  "next_lesson": "L3-36",
+  "related": ["L2-30", "L2-53", "L2-55", "L3-26"]
+}

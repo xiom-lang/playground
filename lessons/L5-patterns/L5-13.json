@@ -1,0 +1,26 @@
+{
+  "id": "L5-13",
+  "title": "Word Counter",
+  "level": "L5",
+  "duration": "10 min",
+  "story": "You're analyzing a famous speech: 'I have a dream that one day this nation will rise up.' Which words appear most often? How many unique words are there? You need to count every word in the sentence and tally the results.",
+  "why": "Word counting is the classic Map pattern — for each word, check if it's in the Map; if yes, increment; if no, insert with count 1.",
+  "narrative": "## Counting Words with Map\n\nCounting frequency is what Maps do best. For each word, the key is the word, the value is how many times you've seen it.\n\n### The Counting Pattern\n\n```xiom\nfn count_word(counts: Map[Str,Int], word: Str) {\n  match counts.get(word) {\n    Some(current) -> counts.insert(word, current + 1);\n    None -> counts.insert(word, 1);\n  }\n}\n```\n\nThis is the core algorithm: if the word already exists, add 1 to its count. If not, start at 1.\n\n### Processing a Whole Sentence\n\n```xiom\nlet words: Vec[Str] = Vec[Str].new();\nwords.push(\"the\");\nwords.push(\"cat\");\nwords.push(\"and\");\nwords.push(\"the\");\nwords.push(\"hat\");\n\nlet counts: Map[Str,Int] = Map[Str,Int].new();\nfor word in words {\n  count_word(counts, word);\n}\n```\n\nAfter processing, the Map contains: \"the\" → 2, \"cat\" → 1, \"and\" → 1, \"hat\" → 1.\n\n### Printing Results\n\n```xiom\nfn print_counts(counts: Map[Str,Int], word_list: Vec[Str]) {\n  for word in word_list {\n    match counts.get(word) {\n      Some(n) -> io.println(word + \": \" + string.int_to_str(n));\n      None -> {}\n    }\n  }\n}\n```\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let text: Vec[Str] = Vec[Str].new();\n  text.push(\"hello\");\n  text.push(\"world\");\n  text.push(\"hello\");\n\n  let counts: Map[Str,Int] = Map[Str,Int].new();\n  for word in text {\n    match counts.get(word) {\n      Some(n) -> counts.insert(word, n + 1);\n      None -> counts.insert(word, 1);\n    }\n  }\n\n  match counts.get(\"hello\") {\n    Some(n) -> io.println(\"hello: \" + string.int_to_str(n));\n    None -> {}\n  }\n  match counts.get(\"world\") {\n    Some(n) -> io.println(\"world: \" + string.int_to_str(n));\n    None -> {}\n  }\n\n  return 0;\n}\n```",
+  "analogy": "A word counter is like a tally sheet at a polling station. As each vote (word) comes in, you look for the candidate's (word's) row. If you find it, you add a tally mark. If you don't, you create a new row with one tally. At the end, each row shows how many votes that candidate got.",
+  "code_template": "fn main() -> Int {\n  let words: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"\n  let counts: Map[Str,Int] = Map[Str,Int].new();\n  // TODO: Loop through words, counting each one with the get-then-insert pattern\n  // TODO: Print the count for \"apple\", \"banana\", and \"cherry\"\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let words: Vec[Str] = Vec[Str].new();\n  words.push(\"apple\");\n  words.push(\"banana\");\n  words.push(\"apple\");\n  words.push(\"cherry\");\n  words.push(\"banana\");\n  words.push(\"apple\");\n\n  let counts: Map[Str,Int] = Map[Str,Int].new();\n  for word in words {\n    match counts.get(word) {\n      Some(n) -> counts.insert(word, n + 1);\n      None -> counts.insert(word, 1);\n    }\n  }\n\n  match counts.get(\"apple\") {\n    Some(n) -> io.println(\"apple: \" + string.int_to_str(n));\n    None -> {}\n  }\n  match counts.get(\"banana\") {\n    Some(n) -> io.println(\"banana: \" + string.int_to_str(n));\n    None -> {}\n  }\n  match counts.get(\"cherry\") {\n    Some(n) -> io.println(\"cherry: \" + string.int_to_str(n));\n    None -> {}\n  }\n  return 0;\n}\n",
+  "try_it": "Count letters instead of words: feed a string character by character into a Map[Char,Int]. Find the most frequent word by tracking the max count while iterating. Add a stop-word filter: words like 'the', 'a', 'and' are ignored and not counted.",
+  "concepts": ["Map", "word-count", "frequency", "get", "insert", "counting-pattern", "for-loop"],
+  "tips": [
+    "The get-then-insert pattern is the most common Map algorithm — memorize it: get → match → insert with updated value",
+    "Use a Vec to hold the words you want to report on — Map doesn't track which keys you've inserted in order",
+    "The first time you see a word, get returns None — insert(word, 1) to start the count"
+  ],
+  "common_mistakes": [
+    "Forgetting to start the count at 1 for new words — inserting with 0 gives wrong totals",
+    "Using `counts.insert(word, counts.get(word) + 1)` without matching — `.get()` returns Option, not Int",
+    "Only counting words that already exist — the None case (new word) must also be handled"
+  ],
+  "next_lesson": "L5-14",
+  "related": ["L5-12", "L5-10", "L5-04", "L2-23"]
+}

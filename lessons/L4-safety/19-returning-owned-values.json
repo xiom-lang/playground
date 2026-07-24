@@ -1,0 +1,27 @@
+{
+  "id": "L4-19",
+  "title": "Returning Owned Values",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "A factory takes raw materials, builds a product, and hands it to you. In XIOM, functions are factories — they create values and return ownership to the caller.",
+  "why": "Returning owned values is how data flows through your program — factories create, functions transform, and ownership chains keep everything clean and safe.",
+  "narrative": "## Functions That Give You Ownership\n\nFunctions can create values and return them. Ownership transfers from the function to the caller:\n\n```xiom\nfn create_greeting(name: Str) -> Str {\n  let greeting = \"Hello, \" + name + \"!\";\n  return greeting;  // Ownership moves to caller\n}\n\nfn main() -> Int {\n  let msg = create_greeting(\"XIOM\");  // We now own the string\n  io.println(msg);\n  return msg.len() as Int;\n}\n```\n\n### Factory Functions\n\n```xiom\nfn build_vec() -> Vec[Int] {\n  let v = Vec[Int].new();\n  v.push(1);\n  v.push(2);\n  v.push(3);\n  return v;  // Returns ownership to caller\n}\n\nfn main() -> Int {\n  let my_vec = build_vec();\n  io.println(my_vec.len());  // 3\n  return my_vec.len() as Int;\n}\n```\n\n### Ownership Chains\n\n```xiom\nfn make_vec() -> Vec[Int] { /* ... */ return v; }\nfn double_vec(v: Vec[Int]) -> Vec[Int] { /* ... */ return v; }\n\nfn main() -> Int {\n  let v = double_vec(make_vec());  // make_vec → double_vec → main\n  return v.len() as Int;\n}\n```\n\n### Return Values Are Moves\n\nWhen you return a local variable, its ownership moves to the caller. The compiler guarantees the value stays alive until it reaches its new owner.",
+  "analogy": "Returning an owned value is like a bakery handing you a fresh loaf of bread — they made it, now it's yours to take home and use.",
+  "code_template": "// TODO: Write fn 'make_message' that takes Str and returns a combined string\n// Like: \"Welcome, \" + name\n// In main, call make_message and print the result\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "fn make_message(name: Str) -> Str {\n  return \"Welcome, \" + name + \"!\";\n}\n\nfn main() -> Int {\n  let msg = make_message(\"Kilo\");\n  io.println(msg);\n  return msg.len() as Int;\n}",
+  "try_it": "Write a function that builds and returns a Vec[Int] with 5 elements. Chain it through another function that doubles each value and returns the modified Vec.",
+  "concepts": ["return ownership", "factory functions", "ownership chain", "move on return"],
+  "tips": [
+    "Returning a local variable moves ownership — the compiler handles cleanup automatically",
+    "Factory functions (that create and return) are a common and safe pattern",
+    "Chaining functions that take and return ownership creates clean data pipelines",
+    "Return values don't need clone — returning is always a move, never a copy"
+  ],
+  "common_mistakes": [
+    "Trying to return a reference (&) to a local variable — the local variable is destroyed",
+    "Forgetting that returning consumes the value — you can't use it in the function after return",
+    "Cloning a value just to return it — return already moves ownership safely"
+  ],
+  "next_lesson": "L4-20",
+  "related": ["L4-11", "L4-14", "L4-20"]
+}

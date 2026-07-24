@@ -1,0 +1,26 @@
+{
+  "id": "L4-39",
+  "title": "Borrow + Contract: Safe Queue",
+  "level": "L4",
+  "duration": "12 min",
+  "story": "A message broker silently dropped 10,000 messages because a consumer called dequeue on an empty queue inside a tight loop. The bug went unnoticed for weeks — contracts would have trapped instantly at the first violation.",
+  "why": "Combining borrow semantics with contracts creates data structures that are both memory-safe AND logically correct.",
+  "narrative": "## Borrows, Contracts, and Queues\n\nA queue has two operations: enqueue (add) and dequeue (remove). Both mutate the queue, so both need `&mut` borrows. Both have preconditions that contracts enforce:\n\n```xiom\ntype Queue = {\n  items: Vec[Int];\n  capacity: Int;\n  invariant: items.len() <= capacity;\n}\n\nfn enqueue(q: &mut Queue, item: Int)\n  requires: q.items.len() < q.capacity;\n  ensures: q.items.len() == q@pre.items.len() + 1;\n{\n  q.items.push(item);\n}\n\nfn dequeue(q: &mut Queue) -> Option[Int]\n  requires: q.items.len() > 0;\n  ensures: q.items.len() == q@pre.items.len() - 1;\n{\n  let first = q.items[0];\n  q.items.remove(0);\n  return Some(first);\n}\n```\n\n### How Borrows and Contracts Work Together\n\nThe borrow checker (`&mut`) guarantees no one else can read or write the queue during enqueue/dequeue. Contracts guarantee the queue is in a valid state for the operation. Together:\n\n1. **Borrows prevent TOCTOU races** — no other code can change `q.items.len()` between the requires check and the body\n2. **Contracts prevent LOGICAL errors** — you can't enqueue on a full queue, can't dequeue from an empty one\n\n```xiom\nfn is_full(q: &Queue) -> Bool {\n  return q.items.len() == q.capacity;\n}\n```\n\n`is_full` takes `&Queue` (immutable borrow) because it only reads. No contract needed — it's always safe to ask if a queue is full. The caller uses this to decide whether to enqueue or wait.",
+  "analogy": "Borrows are the lock on a door (mutual exclusion). Contracts are the sign on the door ('Occupancy limit: 50'). Both must be satisfied before you enter.",
+  "code_template": "type Queue = {\n  items: Vec[Int];\n  capacity: Int;\n  invariant: items.len() <= capacity;\n}\n\nfn enqueue(q: &mut Queue, item: Int)\n  requires: q.items.len() < q.capacity;\n  ensures: q.items.len() == q@pre.items.len() + 1;\n{\n  q.items.push(item);\n}\n\nfn dequeue(q: &mut Queue) -> Option[Int]\n  requires: q.items.len() > 0;\n  ensures: q.items.len() == q@pre.items.len() - 1;\n{\n  let first = q.items[0];\n  q.items.remove(0);\n  return Some(first);\n}\n\nfn is_full(q: &Queue) -> Bool {\n  // TODO: Return true if items.len() == capacity\n  return false;\n}\n\nfn main() -> Int {\n  // TODO: Create Queue with capacity 5\n  // Enqueue 3 items, check is_full (should be false), dequeue all, return count\n  return 0;\n}",
+  "solution": "type Queue = {\n  items: Vec[Int];\n  capacity: Int;\n  invariant: items.len() <= capacity;\n}\n\nfn enqueue(q: &mut Queue, item: Int)\n  requires: q.items.len() < q.capacity;\n  ensures: q.items.len() == q@pre.items.len() + 1;\n{\n  q.items.push(item);\n}\n\nfn dequeue(q: &mut Queue) -> Option[Int]\n  requires: q.items.len() > 0;\n  ensures: q.items.len() == q@pre.items.len() - 1;\n{\n  let first = q.items[0];\n  q.items.remove(0);\n  return Some(first);\n}\n\nfn is_full(q: &Queue) -> Bool {\n  return q.items.len() == q.capacity;\n}\n\nfn main() -> Int {\n  var q: Queue = Queue{ items: Vec::new(), capacity: 5 };\n  enqueue(&mut q, 10);\n  enqueue(&mut q, 20);\n  enqueue(&mut q, 30);\n  io.println(\"Is full: \" + is_full(&q));\n  dequeue(&mut q);\n  dequeue(&mut q);\n  dequeue(&mut q);\n  return q.items.len();\n}",
+  "try_it": "Add a `Queue.peek` method that takes `&Queue` (immutable borrow) and returns `Option[Int]`. Requires `items.len() > 0`. Now you can inspect the front element without dequeuing — the immutable borrow guarantees no one can dequeue behind your back.",
+  "concepts": ["borrow", "mutable-reference", "immutable-reference", "contract", "data-structure"],
+  "tips": [
+    "Use `&mut` for mutation operations, `&` for read-only queries — the borrow checker enforces this at compile time",
+    "Contracts on borrowed parameters prevent the caller from sneaking in invalid state under the borrow",
+    "The invariant on capacity prevents silent overflows — if you add capacity checks, make them an invariant"
+  ],
+  "common_mistakes": [
+    "Calling `dequeue` without checking if the queue is empty — use `q.items.len() > 0` or wrap in `is_full` logic",
+    "Using `&mut` on a query method — it prevents other code from reading the queue simultaneously",
+    "Forgetting that `enqueue` consumes capacity — if you enqueue 5 times on a capacity-5 queue, the 6th call traps"
+  ],
+  "next_lesson": "L4-40",
+  "related": ["L4-33", "L4-35", "L3-25"]
+}

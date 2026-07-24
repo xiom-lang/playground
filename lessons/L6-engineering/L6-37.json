@@ -1,0 +1,26 @@
+{
+  "id": "L6-37",
+  "title": "Testing Interface Implementations",
+  "level": "L6",
+  "duration": "9 min",
+  "story": "You implemented the `Validator` interface for five different types. But are they all correct? An email validator that accepts '@@' is broken. A password checker that allows empty strings is dangerous. Systematically test interface implementations to catch these bugs.",
+  "why": "Interfaces create contracts between code — testing implementations ensures every type satisfies the interface correctly and behaves as expected.",
+  "narrative": "## Testing Interface Implementations\n\n### The Interface Under Test\n\n```xiom\ninterface Validator {\n  fn validate(&self, input: Str) -> Bool;\n  fn error_message(&self) -> Str;\n}\n```\n\n### Test Strategy\n\nTest each implementation for:\n1. **Valid inputs** — should return true\n2. **Invalid inputs** — should return false\n3. **Edge cases** — empty string, max length, boundary values\n4. **Error messages** — should be descriptive and not empty\n\n### Testing Email Validator\n\n```xiom\nfn test_email_validator() -> Bool {\n  let v = EmailValidator{};\n\n  assert(v.validate(\"user@example.com\") == true);\n  assert(v.validate(\"a@b.co\") == true);\n  assert(v.validate(\"notanemail\") == false);\n  assert(v.validate(\"@\") == false);\n  assert(v.validate(\"\") == false);\n  assert(v.error_message().len() > 0);\n\n  true\n}\n```\n\n### Testing All Implementations at Once\n\n```xiom\nfn run_all_tests() {\n  assert(test_email_validator());\n  assert(test_password_validator());\n  assert(test_age_validator());\n  io.println(\"All interface tests passed!\");\n}\n```",
+  "analogy": "When you buy a phone charger, you expect it to fit any USB-C port — that's the interface specification. Testing interface implementations is like a quality inspector verifying every charger from every manufacturer fits every port, delivers correct voltage, and doesn't short circuit.",
+  "code_template": "interface Checker {\n  fn check(&self, value: Int) -> Bool;\n}\n\ntype PositiveChecker {}\nfn PositiveChecker.check(&self, value: Int) -> Bool {\n  // TODO: return true if value > 0\n}\n\nfn test_positive_checker() -> Bool {\n  // TODO: test with 5 (should be true), 0 (false), -3 (false)\n}\n\nfn main() -> Int {\n  // TODO: run test and print result\n  return 0;\n}\n",
+  "solution": "interface Checker {\n  fn check(&self, value: Int) -> Bool;\n}\n\ntype PositiveChecker {}\nfn PositiveChecker.check(&self, value: Int) -> Bool {\n  value > 0\n}\n\nfn test_positive_checker() -> Bool {\n  let c = PositiveChecker{};\n  assert(c.check(5) == true);\n  assert(c.check(0) == false);\n  assert(c.check(-3) == false);\n  true\n}\n\nfn main() -> Int {\n  if test_positive_checker() {\n    io.println(\"All tests passed!\");\n  };\n  return 0;\n}\n",
+  "try_it": "Create a `RangeChecker` that checks if a value is between min and max (inclusive). Write tests for: value at min, value at max, value below min, value above max, and negative ranges. Run each test through a single `test_checker[T: Checker]` function.",
+  "concepts": ["testing", "interfaces", "assert", "edge-cases", "validation", "test-coverage"],
+  "tips": [
+    "Test both success and failure paths for every implementation",
+    "Edge cases reveal bugs: empty input, boundary values, extreme values",
+    "Write a generic test runner that works with any interface implementation"
+  ],
+  "common_mistakes": [
+    "Testing only valid inputs — invalid inputs are where bugs hide",
+    "Not checking error_message is non-empty — silent failures are confusing",
+    "Testing only one implementation and assuming others work the same way"
+  ],
+  "next_lesson": "L6-38",
+  "related": ["L6-21", "L6-24", "L5-13"]
+}

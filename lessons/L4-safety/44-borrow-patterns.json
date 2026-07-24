@@ -1,0 +1,27 @@
+{
+  "id": "L4-44",
+  "title": "Borrow Patterns Gallery",
+  "level": "L4",
+  "duration": "15 min",
+  "story": "Every XIOM developer eventually hits the same borrow checker errors. But once you learn the patterns — read-only inspection, mutation, iteration, chaining — those errors become a distant memory.",
+  "why": "Internalizing common borrow patterns eliminates guesswork — when you recognize the pattern, you already know the correct borrow to use.",
+  "narrative": "## The Four Borrow Patterns\n\n### Pattern 1: Read-Only Inspection\nUse `&` when the function only reads data:\n```xiom\nfn inspect(item: &Inventory) -> Int\n  ensures: result >= 0;\n{\n  return item.count;\n}\n```\nSafe, concurrent, zero-cost. The most common pattern.\n\n### Pattern 2: Mutation\nUse `&mut` when the function changes data:\n```xiom\nfn restock(item: &mut Inventory, qty: Int)\n  requires: qty > 0;\n  ensures: item.count == item@pre.count + qty;\n{\n  item.count = item.count + qty;\n}\n```\nOnly one `&mut` exists at a time. The compiler enforces this.\n\n### Pattern 3: Iteration\nBorrow the collection immutably, then iterate:\n```xiom\nfn sum_all(items: &Vec[Int]) -> Int {\n  let total = 0;\n  for item in items {\n    total = total + item;\n  }\n  return total;\n}\n```\nNo mutation while iterating — the compiler won't let you.\n\n### Pattern 4: Chaining\nPass a mutable borrow through a chain of functions:\n```xiom\nfn process_order(inv: &mut Inventory, orders: &Vec[Int])\n  requires: orders.len() > 0;\n{\n  for qty in orders {\n    sell(inv, qty);\n  }\n}\n```\n`sell` takes `&mut`, so `process_order` must also take `&mut`. The borrow follows the call chain.\n\n### Pattern Matching in Practice\nRecognize the pattern → apply the correct borrow → let contracts handle the logic. The compiler handles the rest.",
+  "analogy": "Borrow patterns are like muscle memory for a pianist — you don't think about which finger to use anymore; your hands just move correctly.",
+  "code_template": "type Ledger = {\n  entries: Vec[Int];\n  invariant: entries.len() >= 0;\n}\n\nfn inspect_all(ledger: &Ledger) -> Int {\n  let total = 0;\n  for entry in ledger.entries {\n    total = total + entry;\n  }\n  return total;\n}\n\nfn add_entry(ledger: &mut Ledger, amount: Int)\n  requires: amount > 0;\n{\n  ledger.entries.push(amount);\n}\n\nfn clear_ledger(ledger: &mut Ledger) {\n  // TODO: Clear all entries, then add a single 0 entry\n  // so the invariant (entries.len() >= 0) still holds\n}\n\nfn main() -> Int {\n  // TODO: Create Ledger, add 3 entries, inspect total, clear, inspect again\n  return 0;\n}",
+  "solution": "type Ledger = {\n  entries: Vec[Int];\n  invariant: entries.len() >= 0;\n}\n\nfn inspect_all(ledger: &Ledger) -> Int {\n  let total = 0;\n  for entry in ledger.entries {\n    total = total + entry;\n  }\n  return total;\n}\n\nfn add_entry(ledger: &mut Ledger, amount: Int)\n  requires: amount > 0;\n{\n  ledger.entries.push(amount);\n}\n\nfn clear_ledger(ledger: &mut Ledger) {\n  ledger.entries = Vec::new();\n  ledger.entries.push(0);\n}\n\nfn main() -> Int {\n  var l: Ledger = Ledger{ entries: Vec::new() };\n  add_entry(&mut l, 100);\n  add_entry(&mut l, 200);\n  add_entry(&mut l, 300);\n  let total = inspect_all(&l);\n  clear_ledger(&mut l);\n  let after = inspect_all(&l);\n  return after;\n}",
+  "try_it": "Write a function that takes `&Ledger` and returns the average of all entries (sum / count). Add appropriate contracts. Then try making it take `&mut Ledger` instead — does the compiler allow you to call `inspect_all` afterward? Why or why not?",
+  "concepts": ["borrow-patterns", "immutable-borrow", "mutable-borrow", "iteration", "chaining"],
+  "tips": [
+    "Pattern 1 (&): Use for any function that answers a question about the data",
+    "Pattern 2 (&mut): Use for any function that changes the data — but only ONE at a time",
+    "Pattern 3 (iteration): Always &-borrow the collection; the loop variable is a copy of each element",
+    "Pattern 4 (chaining): &mut flows through the call chain — if one function needs it, all callers need it"
+  ],
+  "common_mistakes": [
+    "Trying to iterate while mutating — the borrow checker catches this at compile time",
+    "Using `&mut` for read-only operations — it prevents concurrent reads unnecessarily",
+    "Forgetting to chain the borrow — if `inner()` takes `&mut`, `outer()` must either take `&mut` or create the owned value"
+  ],
+  "next_lesson": "L4-45",
+  "related": ["L4-39", "L4-40", "L3-22"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L3-21",
+  "title": "Match with Guards",
+  "level": "L3",
+  "duration": "10 min",
+  "story": "A grading system needs to convert scores to letters: 90+ is A, 80+ is B, 70+ is C. You could write a chain of if-else, but match guards let you express these range-based rules cleanly — like a lookup table with conditions.",
+  "why": "Match guards (`if condition`) add conditional logic to pattern arms — enabling range checks, comparisons, and complex conditions without leaving the match expression.",
+  "narrative": "## Adding Conditions to Patterns\n\nA **guard** is an `if` condition attached to a match arm. The arm only matches if both the pattern fits AND the condition is true.\n\n### Grade Classification with Guards\n\n```xiom\nfn grade(score: Int) -> Str {\n  return match score {\n    s if s >= 90 => \"A\",\n    s if s >= 80 => \"B\",\n    s if s >= 70 => \"C\",\n    s if s >= 60 => \"D\",\n    _ => \"F\",\n  };\n}\n\nfn main() -> Int {\n  io.println(grade(95));  // A\n  io.println(grade(83));  // B\n  io.println(grade(75));  // C\n  io.println(grade(61));  // D\n  io.println(grade(42));  // F\n  return 0;\n}\n```\n\n### How Guards Work\n\n1. XIOM checks each arm in order, top to bottom\n2. First, it checks if the pattern matches (`s` matches any value)\n3. Then, it checks the guard (`if s >= 90`)\n4. If both pass, that arm executes\n5. If the guard fails, XIOM moves to the next arm\n\n### Multiple Guards on Tuples\n\n```xiom\nfn compare(a: Int, b: Int) -> Str {\n  return match (a, b) {\n    (x, y) if x > y => string.int_to_str(x) + \" is greater\",\n    (x, y) if x < y => string.int_to_str(y) + \" is greater\",\n    (x, y) if x == y => \"Both equal \" + string.int_to_str(x),\n    _ => \"Unknown\",\n  };\n}\n\nfn main() -> Int {\n  io.println(compare(10, 5));  // 10 is greater\n  io.println(compare(3, 8));   // 8 is greater\n  io.println(compare(7, 7));   // Both equal 7\n  return 0;\n}\n```\n\n### Guards with Option\n\n```xiom\nfn describe_number(opt: Option[Int]) -> Str {\n  return match opt {\n    Some(n) if n > 0 => \"Positive: \" + string.int_to_str(n),\n    Some(n) if n < 0 => \"Negative: \" + string.int_to_str(n),\n    Some(n) => \"Zero\",\n    None => \"No number\",\n  };\n}\n\nfn main() -> Int {\n  io.println(describe_number(Some(42)));   // Positive: 42\n  io.println(describe_number(Some(-7)));   // Negative: -7\n  io.println(describe_number(Some(0)));    // Zero\n  io.println(describe_number(None));       // No number\n  return 0;\n}\n```",
+  "analogy": "Match guards are like a bouncer with a guest list AND a dress code — you need to be on the list (pattern match) AND follow the dress code (guard condition) to get in.",
+  "code_template": "// TODO: Write classify_temp(celsius: Int) -> Str using match with guards\n// >= 100 -> \"Boiling\", >= 30 -> \"Hot\", >= 20 -> \"Warm\", >= 0 -> \"Cold\", else \"Freezing\"\n\n// TODO: Write is_special(n: Int) -> Str using match with guards\n// Even AND divisible by 3 -> \"Special\", Even only -> \"Even\", Divisible by 3 only -> \"Divisible by 3\", else \"Plain\"\n\nfn main() -> Int {\n  // TODO: Test classify_temp with 105, 25, 15, -5\n  // TODO: Test is_special with 12, 4, 9, 7\n  return 0;\n}\n",
+  "solution": "fn classify_temp(celsius: Int) -> Str {\n  return match celsius {\n    t if t >= 100 => \"Boiling\",\n    t if t >= 30 => \"Hot\",\n    t if t >= 20 => \"Warm\",\n    t if t >= 0 => \"Cold\",\n    _ => \"Freezing\",\n  };\n}\n\nfn is_special(n: Int) -> Str {\n  return match n {\n    x if x % 2 == 0 && x % 3 == 0 => \"Special\",\n    x if x % 2 == 0 => \"Even\",\n    x if x % 3 == 0 => \"Divisible by 3\",\n    _ => \"Plain\",\n  };\n}\n\nfn main() -> Int {\n  io.println(classify_temp(105));\n  io.println(classify_temp(25));\n  io.println(classify_temp(15));\n  io.println(classify_temp(-5));\n  io.println(is_special(12));\n  io.println(is_special(4));\n  io.println(is_special(9));\n  io.println(is_special(7));\n  return 0;\n}\n",
+  "try_it": "Write a function `describe_score(score: Int) -> Str` that uses match guards to return: 100 → \"Perfect!\", 90-99 → \"Excellent\", 75-89 → \"Good\", 50-74 → \"Pass\", below 50 → \"Fail\". Add a special guard: if the score is 0, return \"Did you even try?\".",
+  "concepts": ["match-guards", "conditional-patterns", "range-checking", "guard-ordering"],
+  "tips": [
+    "Order guards from most specific to most general — the first matching arm wins",
+    "Guards can use any boolean expression: `&&`, `||`, function calls, etc.",
+    "Use `_` as the final catch-all when no guard matches — without it, the compiler will complain"
+  ],
+  "common_mistakes": [
+    "Putting guards in the wrong order — `s if s >= 60 => \"D\"` before `s if s >= 90 => \"A\"` means 95 gets 'D'",
+    "Forgetting the catch-all `_` arm — even with guards, match must be exhaustive",
+    "Using `=` instead of `==` in guard conditions — `s if s = 10` is assignment, not comparison"
+  ],
+  "next_lesson": "L3-22",
+  "related": ["L3-20", "L3-01", "L3-08"]
+}

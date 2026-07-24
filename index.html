@@ -53,8 +53,8 @@
 
   <div class="stats-bar">
     <div class="stat"><strong>930</strong> tests</div>
-    <div class="stat"><strong>378</strong> lessons</div>
-    <div class="stat"><strong>16</strong> crates</div>
+    <div class="stat"><strong>410</strong> lessons</div>
+    <div class="stat"><strong>9</strong> levels</div>
     <div class="stat"><strong>40</strong> stdlib modules</div>
     <div class="stat">v0.49.9</div>
   </div>
@@ -75,6 +75,7 @@
       <button id="btnSyntax" class="nav-btn" onclick="toggleSyntax()">Concepts</button>
       <button id="btnCompiler" class="nav-btn" onclick="toggleCompilerRef()">Compiler</button>
       <button id="btnPlayground" class="nav-btn" onclick="openPlayground()">Playground</button>
+      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts">?</button>
       <button id="btnRun" class="nav-btn run-btn" onclick="compile()">Run &#x25B8;</button>
     </div>
   </header>
@@ -84,8 +85,9 @@
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <span>Lessons</span>
-        <span id="progressSummary" class="progress-summary">0/378</span>
+        <span id="progressSummary" class="progress-summary">0/410</span>
       </div>
+      <input type="text" id="lessonSearch" class="lesson-search" placeholder="Search lessons..." oninput="filterLessons(this.value)">
       <div id="lessonList" class="lesson-list"></div>
     </aside>
 
@@ -99,6 +101,9 @@
         </div>
       </div>
     </div>
+
+    <!-- RESIZE HANDLE -->
+    <div id="resizeHandle" class="resize-handle"></div>
 
     <!-- EDITOR + OUTPUT -->
     <div class="editor-section">
@@ -140,6 +145,28 @@
   </div>
 
   <div id="status" class="status-bar">Ready. v0.49.9 — 930 tests</div>
+
+  <!-- Keyboard shortcut modal -->
+  <div id="shortcutModal" class="shortcut-modal hidden" onclick="if(event.target===this) toggleShortcuts()">
+    <div class="shortcut-modal-content">
+      <div class="shortcut-modal-header">
+        <h3>Keyboard Shortcuts</h3>
+        <button onclick="toggleShortcuts()" class="syntax-header-button">&#x2715;</button>
+      </div>
+      <div class="shortcut-grid">
+        <div class="shortcut-row"><kbd>Ctrl + Enter</kbd><span>Compile &amp; Run</span></div>
+        <div class="shortcut-row"><kbd>Ctrl + K</kbd><span>Toggle Concepts Panel</span></div>
+        <div class="shortcut-row"><kbd>Escape</kbd><span>Close Panels</span></div>
+        <div class="shortcut-row"><kbd>?</kbd><span>Show Shortcuts</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Compiling &amp; running...</div>
+  </div>
 </div>
 
 <!-- PLAYGROUND MODE (full-width editor, no sidebar) -->
@@ -151,6 +178,7 @@
       <button id="btnSyntaxPlay" class="nav-btn" onclick="toggleSyntax()">Concepts</button>
       <button id="btnCompilerPlay" class="nav-btn" onclick="toggleCompilerRef()">Compiler</button>
       <button id="btnFormat" class="nav-btn" onclick="formatCode()">Format</button>
+      <button class="nav-btn shortcut-btn" onclick="toggleShortcuts()" title="Shortcuts">?</button>
       <button id="btnRun2" class="nav-btn run-btn" onclick="compile()">Run &#x25B8;</button>
     </div>
   </header>
@@ -177,6 +205,12 @@
     </div>
   </div>
   <div id="pgStatus" class="status-bar">Playground — v0.49.9</div>
+
+  <!-- Loading overlay -->
+  <div id="pgLoadingOverlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Compiling &amp; running...</div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>

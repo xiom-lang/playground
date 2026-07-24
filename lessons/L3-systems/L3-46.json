@@ -1,0 +1,26 @@
+{
+  "id": "L3-46",
+  "title": "Shopping Cart Total",
+  "level": "L3",
+  "duration": "11 min",
+  "story": "Your online store's cart system needs to calculate the total price of all items. Each item's price comes in as a string from the frontend — like \"19.99\" or \"5.00\". But sometimes a rogue decimal or a blank field slips through. You need to parse every price, sum them up, and if ANY price is invalid, refuse the whole cart instead of silently charging zero.",
+  "why": "Parsing and summing multiple values with Result chaining using `?` teaches batch validation — the pattern that powers form submissions, CSV import, and API request processing.",
+  "narrative": "## Summing a Shopping Cart Safely\n\nA shopping cart has multiple items. Each item's price is a string. Parse them all, sum them, and if any fails, report the error.\n\n### The Basic Approach with ?\n\n```xiom\nfn cart_total(prices: [Str; 5]) -> Result[Float64, Str] {\n  let p0 = string.str_to_float(prices[0])?;\n  let p1 = string.str_to_float(prices[1])?;\n  let p2 = string.str_to_float(prices[2])?;\n  let p3 = string.str_to_float(prices[3])?;\n  let p4 = string.str_to_float(prices[4])?;\n\n  return Ok(p0 + p1 + p2 + p3 + p4);\n}\n```\n\nThe `?` operator does three things at once: tries to parse, extracts the value on success, and returns the error on failure. If `prices[2]` is \"abc\", the function returns `Err(...)` immediately — `p3` and `p4` are never parsed.\n\n### Testing with Valid and Invalid Data\n\n```xiom\nfn main() -> Int {\n  let items = [\"19.99\", \"5.50\", \"3.00\", \"12.00\", \"7.25\"];\n  let items_bad = [\"19.99\", \"5.50\", \"broken\", \"12.00\", \"7.25\"];\n\n  match cart_total(items) {\n    Ok(total) => { io.println(\"Total: $\" + string.float_to_str(total)); }\n    Err(e) => { io.println(\"Error: \" + e); }\n  }\n\n  match cart_total(items_bad) {\n    Ok(total) => { io.println(string.float_to_str(total)); }\n    Err(e) => { io.println(\"Error: \" + e); }\n  }\n\n  return 0;\n}\n```\n\n### Adding Quantities\n\nEach item also has a quantity:\n\n```xiom\nfn cart_total_qty(prices: [Str; 3], qtys: [Str; 3]) -> Result[Float64, Str] {\n  let p0 = string.str_to_float(prices[0])?;\n  let q0 = string.str_to_int(qtys[0])?;\n  let p1 = string.str_to_float(prices[1])?;\n  let q1 = string.str_to_int(qtys[1])?;\n  let p2 = string.str_to_float(prices[2])?;\n  let q2 = string.str_to_int(qtys[2])?;\n\n  return Ok(p0 * q0 + p1 * q1 + p2 * q2);\n}\n```\n\nThe `?` operator propagates either parse failure — if quantity \"2\" works but price \"x\" fails, you get the price error immediately.",
+  "analogy": "A shopping cart total is like a cashier scanning items. Each item has a barcode (the string). The scanner reads it and looks up the price (parse). If a barcode is damaged and can't scan, the cashier stops — they don't guess the price or charge zero. They call for a price check (return Err). Only when every item scans successfully do they announce the total.",
+  "code_template": "fn cart_total(prices: [Str; 3]) -> Result[Float64, Str] {\n  // TODO: parse prices[0], prices[1], prices[2] with ?\n  // TODO: return Ok with the sum\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: test with [\"10.00\", \"5.50\", \"2.25\"]\n  // TODO: test with [\"10.00\", \"bad\", \"2.25\"] and handle the error\n  return 0;\n}\n",
+  "solution": "fn cart_total(prices: [Str; 3]) -> Result[Float64, Str] {\n  let p0 = string.str_to_float(prices[0])?;\n  let p1 = string.str_to_float(prices[1])?;\n  let p2 = string.str_to_float(prices[2])?;\n  return Ok(p0 + p1 + p2);\n}\n\nfn main() -> Int {\n  let items = [\"10.00\", \"5.50\", \"2.25\"];\n  match cart_total(items) {\n    Ok(total) => { io.println(string.float_to_str(total)); return 200; }\n    Err(e) => { io.println(e); return 400; }\n  }\n}\n",
+  "try_it": "Add quantity support: create a second array of quantity strings. Multiply each price by its quantity before summing. Add tax: multiply the subtotal by 1.08 (8% tax) before returning. Add a discount: if total > 50.0, subtract 10.0. What happens when a quantity is '0'? Is that an error or a valid empty cart item? Add validation: prices must be > 0 and quantities must be > 0.",
+  "concepts": ["Result", "?", "Float64", "string.str_to_float", "string.str_to_int", "batch-parsing", "chaining"],
+  "tips": [
+    "The `?` operator is perfect for batch parsing — it short-circuits on the first error, saving work on invalid data",
+    "Keep prices and quantities in parallel arrays of the same length — index i in prices matches index i in quantities",
+    "Use `string.float_to_str` for displaying totals — it formats the Float64 into a readable string"
+  ],
+  "common_mistakes": [
+    "Using `match` for every parse when `?` would be cleaner — five manual matches is noisy; five `?` calls is clean",
+    "Forgetting that `?` stops at the first error — if prices[1] is bad, prices[2] is never checked",
+    "Mixing Float64 and Int arithmetic — `p0 * q0` where q0 is Int works, but the result is Float64"
+  ],
+  "next_lesson": "L3-47",
+  "related": ["L3-29", "L3-37", "L3-16", "L3-13"]
+}

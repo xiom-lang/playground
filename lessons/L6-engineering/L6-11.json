@@ -1,0 +1,26 @@
+{
+  "id": "L6-11",
+  "title": "Use Statement",
+  "level": "L6",
+  "duration": "9 min",
+  "story": "Typing `math_utils.add`, `string_utils.concat`, `validation.is_valid` every single time is exhausting. Your fingers ache from all the module prefixes. There's a better way: the `use` statement lets you import names directly, so you can write `add` instead of `math_utils.add`.",
+  "why": "The `use` statement controls namespace ergonomics — import everything for quick access, import single items for precision, or keep full prefixes for clarity when modules conflict.",
+  "narrative": "## Importing Names into Scope\n\nThe `use` statement brings module items into the current scope, so you can call them without the module prefix.\n\n### Three Import Styles\n\n```xiom\nmodule math {\n  pub fn add(a: Int, b: Int) -> Int { return a + b; }\n  pub fn multiply(a: Int, b: Int) -> Int { return a * b; }\n}\n\n// Style 1: Import the whole module\nuse math;\n\nfn main() -> Int {\n  let sum = math.add(3, 4);  // Still need prefix\n  io.println(string.int_to_str(sum));\n  return 0;\n}\n```\n\nWait — `use math;` still requires the prefix? Let's explore:\n\n```xiom\n// Style 2: Import specific items (no prefix needed)\n// Syntax: use module.item;\n\nuse math.add;\nuse math.multiply;\n\nfn main() -> Int {\n  let sum = add(3, 4);        // No prefix!\n  let prod = multiply(5, 6);  // No prefix!\n  io.println(string.int_to_str(sum));\n  return 0;\n}\n```\n\n### When to Use Each Style\n\n| Style | Syntax | Prefix Needed | Best For |\n|-------|--------|--------------|----------|\n| Full path | `module.item()` | Yes (always) | Occasional use, clarity |\n| Module import | `use module;` then `module.item()` | Yes | Multiple items from one module |\n| Item import | `use module.item;` | No | Frequently used single items |\n\n### Practical Example\n\n```xiom\nmodule io_utils {\n  pub fn print_label(label: Str, value: Int) {\n    io.println(label + \": \" + string.int_to_str(value));\n  }\n\n  pub fn print_header(title: Str) {\n    io.println(\"=== \" + title + \" ===\");\n  }\n}\n\nuse io_utils.print_label;\nuse io_utils.print_header;\n\nfn main() -> Int {\n  print_header(\"Report\");\n  print_label(\"Count\", 42);\n  return 0;\n}\n```\n\n### The Tradeoff\n\nPrefixes like `io_utils.print_label` make it obvious where functions come from — great for large codebases. Imports like `use io_utils.print_label;` make code shorter — great for frequently used functions. Choose based on clarity vs convenience.",
+  "analogy": "`use` is like hiring a personal assistant — instead of saying 'Call the accounting department and ask for the Q3 report' (module.item), you say 'Get the Q3 report' (just item). The assistant (use statement) knows which department to contact. But if you have two departments with the same-named report, you need the full path to avoid confusion.",
+  "code_template": "module stats {\n  pub fn average(a: Int, b: Int) -> Int {\n    return (a + b) / 2;\n  }\n\n  pub fn range(a: Int, b: Int) -> Int {\n    if a > b { return a - b; }\n    return b - a;\n  }\n}\n\nmodule strings {\n  pub fn length(s: Str) -> Int {\n    return string.str_len(s);\n  }\n}\n\n// TODO: Use 'use' to import stats.average\n// TODO: Use 'use' to import strings.length\n\nfn main() -> Int {\n  // TODO: Call average(10, 20) and print result (no prefix!)\n  // TODO: Call length(\"hello\") and print result\n  return 0;\n}\n",
+  "solution": "module stats {\n  pub fn average(a: Int, b: Int) -> Int {\n    return (a + b) / 2;\n  }\n\n  pub fn range(a: Int, b: Int) -> Int {\n    if a > b { return a - b; }\n    return b - a;\n  }\n}\n\nmodule strings {\n  pub fn length(s: Str) -> Int {\n    return string.str_len(s);\n  }\n}\n\nuse stats.average;\nuse strings.length;\n\nfn main() -> Int {\n  io.println(string.int_to_str(average(10, 20)));\n  io.println(string.int_to_str(length(\"hello\")));\n  return 0;\n}\n",
+  "try_it": "Add a `stats.median` function (or another helper). Import it with `use stats.median;`. Then call `stats.range(5, 15)` — with full path, since you didn't import it. Experiment: what if two modules both have a `format` function? Try importing both and calling just `format(...)` — does the compiler report ambiguity?",
+  "concepts": ["use", "import", "namespace", "scope", "prefix-elimination", "item-import", "module-import"],
+  "tips": [
+    "`use module.item;` imports a single item — call it as `item()`, no prefix needed",
+    "`use module;` imports the module — call items as `module.item()`, prefix required",
+    "Imports go at the top of the file, before any function definitions — it's a convention for readability"
+  ],
+  "common_mistakes": [
+    "Writing `use math;` and expecting `add(3, 4)` to work — module import still requires `math.add(3, 4)`",
+    "Importing too many items without prefixes — if every function is imported bare, you lose the context of where things come from",
+    "Forgetting to mark items as `pub` — `use` only works on public items; private items are invisible outside their module"
+  ],
+  "next_lesson": "L6-12",
+  "related": ["L6-08", "L6-09", "L6-10"]
+}

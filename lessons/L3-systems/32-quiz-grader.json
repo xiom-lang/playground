@@ -1,0 +1,25 @@
+{
+  "id": "L3-32",
+  "title": "Quiz Grader",
+  "level": "L3",
+  "duration": "9 min",
+  "story": "You're building an online quiz platform. Students type answers into text boxes, but some submit blank responses or gibberish. Each answer needs validation before it can be checked against the correct answer — and the result must say whether it's right or wrong.",
+  "why": "Validating user input before comparing it to expected values is the core pattern of form processing and quiz systems.",
+  "narrative": "## Grading Answers, Not Accepting Blanks\n\nA quiz grader must handle three outcomes: the answer is empty (invalid), the answer is correct, or the answer is wrong.\n\n### The Grade Function\n\n```xiom\nfn grade_answer(question: Str, answer: Str, correct: Str) -> Result[Bool, Str] {\n  if string.str_len(answer) == 0 {\n    return Err(\"Answer cannot be empty\");\n  }\n  return Ok(answer == correct);\n}\n```\n\nThe function returns `Err` for empty answers, `Ok(true)` for correct ones, and `Ok(false)` for wrong ones.\n\n### Building a Multi-Question Quiz\n\nCreate a function that runs one question and returns a score:\n\n```xiom\nfn run_quiz() -> Int {\n  var score = 0;\n  match grade_answer(\"Capital of France\", \"Paris\", \"Paris\") {\n    Ok(true) => { score = score + 1; }\n    Ok(false) => { /* wrong, no point */ }\n    Err(_) => { /* invalid answer, no point */ }\n  }\n  return score;\n}\n```\n\n### Using `unwrap_or` for Quick Checks\n\nWhen you just want to know if the answer is right (treating empty as wrong):\n\n```xiom\nlet is_correct = grade_answer(\"2+2\", \"4\", \"4\").unwrap_or(false);\n// is_correct is true\n\nlet is_correct = grade_answer(\"2+2\", \"\", \"4\").unwrap_or(false);\n// is_correct is false — empty answer treated as wrong\n```\n\n### The Pattern\n\n`Result[Bool, Str]` gives three states: error (invalid input), Ok(true) (correct), and Ok(false) (incorrect). This is richer than a plain `Bool` which can only say right or wrong.",
+  "analogy": "A quiz grader is like a teacher grading papers. If a student leaves the page blank (empty answer), the teacher doesn't even mark it — they hand it back with 'please write something.' If the student writes an answer, the teacher compares it to the answer key and marks it right or wrong. Three distinct outcomes from one function.",
+  "code_template": "fn grade_answer(question: Str, answer: Str, correct: Str) -> Result[Bool, Str] {\n  // TODO: return Err if answer is empty\n  // TODO: return Ok(answer == correct)\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: grade 3 questions, count correct answers, return score * 100\n  return 0;\n}",
+  "solution": "fn grade_answer(question: Str, answer: Str, correct: Str) -> Result[Bool, Str] {\n  if string.str_len(answer) == 0 {\n    return Err(\"Answer cannot be empty\");\n  }\n  return Ok(answer == correct);\n}\n\nfn main() -> Int {\n  var score = 0;\n  match grade_answer(\"Capital of France\", \"Paris\", \"Paris\") {\n    Ok(true) => { score = score + 1; }\n    Ok(false) => { }\n    Err(_) => { }\n  }\n  match grade_answer(\"2 + 2\", \"4\", \"4\") {\n    Ok(true) => { score = score + 1; }\n    Ok(false) => { }\n    Err(_) => { }\n  }\n  match grade_answer(\"Color of sky\", \"blue\", \"blue\") {\n    Ok(true) => { score = score + 1; }\n    Ok(false) => { }\n    Err(_) => { }\n  }\n  return score * 100;\n}",
+  "try_it": "Build a 5-question quiz. Test correct answers, wrong answers, and empty answers. Use `.unwrap_or(false)` to treat both errors and wrong answers as 'not correct'. Add a `grade_answer_case_insensitive` function that ignores capitalization by comparing `string.str_lower(answer)` with `string.str_lower(correct)`.",
+  "concepts": ["Result", "Bool", "Err", "Ok", "match", "unwrap_or", "string.str_len", "comparison"],
+  "tips": [
+    "Return `Err` for input validation failures (empty answer) — this is different from 'wrong answer' which is `Ok(false)`",
+    "`.unwrap_or(false)` on `Result[Bool, Str]` collapses both `Err` and `Ok(false)` into `false` — only `Ok(true)` survives",
+    "Use `string.str_len(answer) == 0` to check for empty strings — comparing to \"\" also works"
+  ],
+  "common_mistakes": [
+    "Returning `Ok(false)` for empty answers — empty should be `Err` because it's an input validation failure, not a wrong answer",
+    "Using `answer = correct` instead of `answer == correct` — single `=` is assignment, `==` is comparison"
+  ],
+  "next_lesson": "L3-33",
+  "related": ["L2-30", "L2-31", "L2-24"]
+}

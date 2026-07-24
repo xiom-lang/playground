@@ -1,0 +1,27 @@
+{
+  "id": "L4-24",
+  "title": "Vec and Ownership",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "A Vec is a container that owns everything inside it. When you move the Vec, every element moves too. When you borrow the Vec, you can inspect its contents.",
+  "why": "Vec is the most common collection type in XIOM — understanding how ownership works with collections is fundamental to writing real programs.",
+  "narrative": "## Vec Owns Its Elements\n\nA `Vec[T]` owns every `T` inside it. Moving the Vec moves all elements:\n\n```xiom\nfn consume_items(items: Vec[Int]) {\n  io.println(items.len());\n  // All elements dropped with Vec\n}\n\nfn main() -> Int {\n  let numbers = Vec[Int].new();\n  numbers.push(1);\n  numbers.push(2);\n  consume_items(numbers);  // Entire Vec + elements moved\n  return 0;\n}\n```\n\n### Borrowing for Iteration\n\n```xiom\nfn sum_items(items: &Vec[Int]) -> Int {\n  let total = 0;\n  for item in items {  // Iterates over &Int references\n    total = total + item;\n  }\n  return total;\n}\n```\n\n### Modifying Through &mut\n\n```xiom\nfn double_all(items: &mut Vec[Int]) {\n  let i = 0;\n  while i < items.len() {\n    items[i] = items[i] * 2;\n    i = i + 1;\n  }\n}\n\nfn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  data.push(2);\n  data.push(3);\n\n  io.println(sum_items(&data));  // Read — OK\n  double_all(&mut data);          // Write — OK\n  io.println(sum_items(&data));  // Read — OK\n  return data.len() as Int;\n}\n```\n\n### Vec Element Ownership\n\nIndividual elements follow the same rules. Accessing `vec[0]` through a borrow gives you a reference, not ownership.",
+  "analogy": "A Vec is like a bookshelf — the shelf owns the books on it. You can look at books (&), rearrange them (&mut), or move the entire shelf to a new room.",
+  "code_template": "// TODO: Create a Vec[Int], write fn first_and_last(v: &Vec[Int]) -> Int\n// that returns first + last element\n// Write fn clear_vec(v: &mut Vec[Int]) that empties the Vec\n// In main, create Vec, print first+last, clear, print len\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "fn first_and_last(v: &Vec[Int]) -> Int {\n  if v.len() > 0 {\n    return v[0] + v[v.len() - 1];\n  }\n  return 0;\n}\n\nfn clear_vec(v: &mut Vec[Int]) {\n  while v.len() > 0 {\n    v.pop();\n  }\n}\n\nfn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(10);\n  data.push(20);\n  data.push(30);\n  let result = first_and_last(&data);\n  clear_vec(&mut data);\n  io.println(data.len());\n  return result;\n}",
+  "try_it": "Write a function that takes &mut Vec[Int] and reverses the elements in place. Test it with multiple Vecs of different sizes.",
+  "concepts": ["Vec ownership", "collection borrowing", "element ownership", "iteration"],
+  "tips": [
+    "Vec[T] owns every T in it — moving the Vec moves all elements",
+    "Use &Vec[T] to iterate and inspect, &mut Vec[T] to modify elements",
+    "Accessing vec[i] through a borrow gives you a reference, not ownership",
+    "Vec operations like push/pop require &mut — they modify the Vec"
+  ],
+  "common_mistakes": [
+    "Trying to iterate (&) and push (&mut) at the same time — borrow conflict",
+    "Assuming cloning a Vec clones its elements — it clones the Vec structure AND elements",
+    "Forgetting that moving a Vec out of a struct moves the struct's field"
+  ],
+  "next_lesson": "L4-25",
+  "related": ["L4-14", "L4-15", "L4-16", "L4-23"]
+}

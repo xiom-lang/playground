@@ -1,0 +1,26 @@
+{
+  "id": "L6-17",
+  "title": "Generic Interface Functions",
+  "level": "L6",
+  "duration": "10 min",
+  "story": "You built a `Displayable` interface and implemented it for Books, Movies, and Songs. Now you want to write ONE function that prints a list of ANY displayable items - not three separate functions. Generics + interfaces is the answer.",
+  "why": "Generic functions with interface bounds let you write code that works on any type implementing a given interface, eliminating duplicate functions.",
+  "narrative": "## Writing Once, Using Everywhere\n\n### The Setup\n\n```xiom\ninterface Displayable {\n  fn display(&self) -> Str;\n}\n\ntype Book { title: Str; pages: Int; }\nfn Book.display(&self) -> Str { self.title.clone() }\n\ntype Movie { name: Str; runtime: Int; }\nfn Movie.display(&self) -> Str { self.name.clone() }\n```\n\n### The Generic Function\n\n```xiom\nfn print_all[T: Displayable](items: &Vec[T]) {\n  let mut i = 0;\n  while i < items.len() {\n    io.println(items.get(i).unwrap().display());\n    i += 1;\n  }\n}\n```\n\nThis ONE function works with `Vec[Book]`, `Vec[Movie]`, and any future `Vec[Something]` where Something implements Displayable.\n\n### Call It\n\n```xiom\nlet books: Vec[Book] = Vec[Book].new();\nbooks.push(Book{ title: \"Dune\", pages: 412 });\nprint_all(&books);\n```\n\nThe compiler generates specialized code for each type at compile time (monomorphisation). No runtime cost.",
+  "analogy": "A vending machine accepts any coin - pennies, nickels, dimes, quarters - because they all satisfy the 'Currency' interface. The machine doesn't need separate slots for each coin type. Generic functions work the same way: one slot for any type that satisfies the interface.",
+  "code_template": "interface Displayable {\n  fn display(&self) -> Str;\n}\n\ntype Fruit { name: Str; color: Str; }\nfn Fruit.display(&self) -> Str {\n  // TODO: return \"name (color)\"\n  self.name.clone()\n}\n\ntype Vegetable { name: Str; season: Str; }\nfn Vegetable.display(&self) -> Str {\n  // TODO: return \"name [season]\"\n}\n\nfn print_all[T: Displayable](items: &Vec[T]) {\n  // TODO: iterate and print each item using .display()\n}\n\nfn main() -> Int {\n  let fruits: Vec[Fruit] = Vec[Fruit].new();\n  fruits.push(Fruit{ name: \"Apple\", color: \"Red\" });\n  // TODO: call print_all on fruits\n  return 0;\n}\n",
+  "solution": "interface Displayable {\n  fn display(&self) -> Str;\n}\n\ntype Fruit { name: Str; color: Str; }\nfn Fruit.display(&self) -> Str {\n  let result = self.name.clone();\n  let open_paren = \" (\";\n  let close_paren = \")\";\n  let combined = string.str_concat(result, open_paren);\n  let combined = string.str_concat(combined, self.color.clone());\n  let combined = string.str_concat(combined, close_paren);\n  combined\n}\n\ntype Vegetable { name: Str; season: Str; }\nfn Vegetable.display(&self) -> Str {\n  let result = self.name.clone();\n  result\n}\n\nfn print_all[T: Displayable](items: &Vec[T]) {\n  let mut i = 0;\n  while i < items.len() {\n    io.println(items.get(i).unwrap().display());\n    i += 1;\n  }\n}\n\nfn main() -> Int {\n  let fruits: Vec[Fruit] = Vec[Fruit].new();\n  fruits.push(Fruit{ name: \"Apple\", color: \"Red\" });\n  print_all(&fruits);\n  return 0;\n}\n",
+  "try_it": "Add a `summarize_all[T: Displayable](items: &Vec[T]) -> Str` function that combines all display strings with commas. Then add a `Snack` type that implements Displayable and pass it to both functions.",
+  "concepts": ["generic-function", "interface-bound", "T: Interface", "monomorphisation", "code-reuse"],
+  "tips": [
+    "`fn f[T: Interface](x: T)` reads as: 'for any T that implements Interface'",
+    "The compiler generates a separate optimized version for each concrete type used",
+    "You can require multiple interfaces: `T: A + B + C`"
+  ],
+  "common_mistakes": [
+    "Writing separate functions for each type instead of one generic function",
+    "Forgetting that `items.get(i)` returns `Option`, needing `.unwrap()` or match",
+    "Trying to call interface methods on a type that doesn't implement the interface"
+  ],
+  "next_lesson": "L6-18",
+  "related": ["L5-02", "L5-06", "L5-16"]
+}

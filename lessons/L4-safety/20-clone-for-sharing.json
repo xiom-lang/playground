@@ -1,0 +1,27 @@
+{
+  "id": "L4-20",
+  "title": "Clone for Sharing",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "When you need to share a document with two departments, you make a photocopy. Clone is your photocopier — it creates independent copies so everyone gets their own.",
+  "why": "Clone is the deliberate escape hatch from move semantics — use it when you genuinely need multiple independent owners of the same data.",
+  "narrative": "## Sharing Data with .clone()\n\nWhen you need multiple parts of your program to own the same data, use `.clone()`:\n\n### The Problem: Ownership Prevents Sharing\n\n```xiom\nfn process(v: Vec[Int]) { /* takes ownership */ }\nfn analyze(v: Vec[Int]) { /* takes ownership */ }\n\nfn main() -> Int {\n  let data = Vec[Int].new();\n  // process(data);     // Moves data — gone!\n  // analyze(data);     // ERROR: data was moved!\n  return 0;\n}\n```\n\n### The Solution: Clone\n\n```xiom\nfn main() -> Int {\n  let original = Vec[Int].new();\n  original.push(1);\n  original.push(2);\n\n  let v1 = original.clone();  // Independent copy\n  let v2 = original.clone();  // Another independent copy\n\n  process(v1);   // OK — v1 is its own Vec\n  analyze(v2);   // OK — v2 is its own Vec\n  // original is still valid!\n  return original.len() as Int;\n}\n```\n\n### Clone vs Borrow\n\n- **Clone**: Expensive, creates independent owner. Use when you truly need separate copies.\n- **Borrow (&)**: Free, shares access. Use when you only need to read or temporarily modify.\n\n### When to Clone\n\n- Sending data to multiple owned-parameter functions\n- Storing a snapshot of data that will change\n- Thread-safe sharing (each thread gets its own copy)",
+  "analogy": "Clone is like photocopying a document — every department gets their own copy, and changes to one copy don't affect the others.",
+  "code_template": "// TODO: Create a Vec[Int] with values 10, 20, 30\n// Clone it twice to v1 and v2\n// Add 40 to v1, add 50 to v2\n// Print all three lengths\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let original = Vec[Int].new();\n  original.push(10);\n  original.push(20);\n  original.push(30);\n\n  var v1 = original.clone();\n  var v2 = original.clone();\n\n  v1.push(40);\n  v2.push(50);\n\n  io.println(original.len());\n  io.println(v1.len());\n  io.println(v2.len());\n  return original.len() as Int;\n}",
+  "try_it": "Create a string, clone it, modify the clone, and verify the original is unchanged. This proves clones are independent.",
+  "concepts": ["clone", "sharing", "independent ownership", "deep copy"],
+  "tips": [
+    "Clone gives you a deep, independent copy — changes don't propagate",
+    "Prefer borrowing (&) over cloning for read-only access — it's zero-cost",
+    "Clone is explicit — you always know when expensive copies happen",
+    "Consider whether a function really needs ownership before cloning for it"
+  ],
+  "common_mistakes": [
+    "Cloning when a borrow would work — cloning large structures is expensive",
+    "Thinking clones share data — they don't, each clone is fully independent",
+    "Cloning inside loops — the cost multiplies with every iteration"
+  ],
+  "next_lesson": "L4-21",
+  "related": ["L4-13", "L4-11", "L4-15"]
+}

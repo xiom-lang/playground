@@ -1,0 +1,25 @@
+{
+  "id": "L3-36",
+  "title": "Phone Number Parser",
+  "level": "L3",
+  "duration": "9 min",
+  "story": "Your contact import tool reads phone numbers from a CSV, but the data is messy — some entries are '555-1234' (missing area code), some are 'abc-def-ghij', and some are completely blank. You need a parser that enforces the 'XXX-XXX-XXXX' format and rejects anything else.",
+  "why": "Format validation with substring extraction and digit checking is the universal pattern for parsing structured text like phone numbers, ZIP codes, and serial numbers.",
+  "narrative": "## Enforcing a Strict Phone Format\n\nUS phone numbers follow the pattern: three digits, a dash, three digits, a dash, four digits.\n\n### The Rules\n\n1. **Length**: exactly 12 characters (10 digits + 2 dashes)\n2. **Dashes**: must be at positions 3 and 7 (0-indexed)\n3. **Digits**: all other characters must be digits 0–9\n\n### Step 1: Check Length\n\n```xiom\nfn parse_phone(phone: Str) -> Result[Str, Str] {\n  if string.str_len(phone) != 12 {\n    return Err(\"Phone must be 12 characters (XXX-XXX-XXXX)\");\n  }\n```\n\n### Step 2: Check Dashes\n\n```xiom\n  let dash1 = string.str_slice(phone, 3, 4);\n  let dash2 = string.str_slice(phone, 7, 8);\n  if dash1 != \"-\" || dash2 != \"-\" {\n    return Err(\"Phone must have dashes at positions 4 and 8\");\n  }\n```\n\n### Step 3: Check All Digits\n\nExtract the digit regions and verify each contains only 0–9:\n\n```xiom\n  let area = string.str_slice(phone, 0, 3);\n  let prefix = string.str_slice(phone, 4, 7);\n  let line = string.str_slice(phone, 8, 12);\n\n  let area_num = string.str_to_int(area);\n  let prefix_num = string.str_to_int(prefix);\n  let line_num = string.str_to_int(line);\n\n  if area_num is Err || prefix_num is Err || line_num is Err {\n    return Err(\"All non-dash characters must be digits\");\n  }\n```\n\nNote: `is` checks the variant without destructuring. If any section fails to parse as an integer, it contains non-digit characters.\n\n### Step 4: Return the Validated Number\n\n```xiom\n  return Ok(phone);\n}\n```\n\n### Testing\n\n```xiom\nparse_phone(\"555-123-4567\");  // Ok\nparse_phone(\"5551234567\");     // Err — no dashes\nparse_phone(\"555-ABC-4567\");   // Err — non-digits\nparse_phone(\"55-123-4567\");    // Err — wrong length\n```",
+  "analogy": "A phone number parser is like a ticket inspector on a train. The ticket must be exactly the right size (12 characters), have perforations in the right places (dashes at 3 and 7), and every section must contain only numbers — if any section has letters, it's a fake ticket.",
+  "code_template": "fn parse_phone(phone: Str) -> Result[Str, Str] {\n  // TODO: check length is 12\n  // TODO: check dashes at positions 3 and 7 (0-indexed)\n  // TODO: extract area (0-3), prefix (4-7), line (8-12)\n  // TODO: verify each section parses as Int with string.str_to_int\n  // TODO: return Ok(phone) if valid\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: parse \"555-123-4567\", return 200 if Ok, 400 if Err\n  return 0;\n}",
+  "solution": "fn parse_phone(phone: Str) -> Result[Str, Str] {\n  if string.str_len(phone) != 12 {\n    return Err(\"Phone must be 12 characters (XXX-XXX-XXXX)\");\n  }\n  let dash1 = string.str_slice(phone, 3, 4);\n  let dash2 = string.str_slice(phone, 7, 8);\n  if dash1 != \"-\" || dash2 != \"-\" {\n    return Err(\"Phone must have dashes at positions 4 and 8\");\n  }\n  let area = string.str_slice(phone, 0, 3);\n  let prefix = string.str_slice(phone, 4, 7);\n  let line = string.str_slice(phone, 8, 12);\n  let area_num = string.str_to_int(area);\n  let prefix_num = string.str_to_int(prefix);\n  let line_num = string.str_to_int(line);\n  if area_num is Err || prefix_num is Err || line_num is Err {\n    return Err(\"All non-dash characters must be digits\");\n  }\n  return Ok(phone);\n}\n\nfn main() -> Int {\n  match parse_phone(\"555-123-4567\") {\n    Ok(_) => { return 200; }\n    Err(_) => { return 400; }\n  }\n}",
+  "try_it": "Test valid: '555-123-4567', '800-000-0000'. Test invalid: '5551234567' (no dashes), '555-ABC-4567' (letters), '55-123-45678' (wrong lengths), '555--12-4567' (double dash). Add support for the '(XXX) XXX-XXXX' format with parentheses. Parse and return the area code separately.",
+  "concepts": ["Result", "string.str_slice", "string.str_to_int", "is", "pattern", "format validation", "string.str_len"],
+  "tips": [
+    "Use `string.str_slice(s, start, end)` where `start` is inclusive and `end` is exclusive — slice(0, 3) gives indices 0, 1, 2",
+    "The `is` keyword checks a Result's variant without extracting the value — `area_num is Err` is cleaner than a full match",
+    "Check length BEFORE slicing — if the string is too short, `str_slice` would fail with out-of-bounds errors"
+  ],
+  "common_mistakes": [
+    "Confusing index positions — dashes are at 0-based positions 3 and 7, which are the 4th and 8th characters (1-based)",
+    "Using `==` to compare Result to Err — use `is` instead: `area_num is Err` not `area_num == Err`"
+  ],
+  "next_lesson": "L3-37",
+  "related": ["L2-30", "L2-54", "L3-27", "L3-35"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L6-04",
+  "title": "Multiple Interfaces",
+  "level": "L6",
+  "duration": "11 min",
+  "story": "Your Person type needs to greet ('Hi, I'm Alex') AND display ('Alex, age 25') AND maybe compare by age ('who's older?'). That's three different capabilities. Should you build one giant interface? No! Build three focused interfaces, and let Person satisfy all of them.",
+  "why": "Real types satisfy multiple interfaces — a Person can be Greetable, Displayable, AND Comparable — and constraining generic functions with multiple interfaces gives you precise, powerful type requirements.",
+  "narrative": "## Wearing Many Hats\n\nA single type can satisfy multiple interfaces. Each interface represents one capability. Together, they describe everything the type can do.\n\n### Three Interfaces\n\n```xiom\ninterface Greetable {\n  fn greet() -> Str;\n}\n\ninterface Displayable {\n  fn display() -> Str;\n}\n\ninterface Comparable {\n  fn is_older_than(other: &Self) -> Bool;\n}\n```\n\n### Person Satisfies All Three\n\n```xiom\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\nfn Person.display(self) -> Str {\n  return self.name + \" (\" + string.int_to_str(self.age) + \")\";\n}\n\nfn Person.is_older_than(self, other: &Person) -> Bool {\n  return self.age > other.age;\n}\n```\n\n### Functions with Multiple Constraints\n\n```xiom\nfn introduce[T: Greetable + Displayable](thing: &T) {\n  io.println(thing.greet());\n  io.println(\"  Details: \" + thing.display());\n}\n```\n\n`[T: Greetable + Displayable]` means T must satisfy BOTH interfaces. Inside the function, you can call both `.greet()` and `.display()`.\n\n### Using the Multi-Interface Functions\n\n```xiom\nfn main() -> Int {\n  let alex = Person{ name: \"Alex\", age: 25 };\n  let bob = Person{ name: \"Bob\", age: 30 };\n\n  introduce(&alex);\n  io.println(\"Alex older than Bob: \" + string.bool_to_str(alex.is_older_than(&bob)));\n  return 0;\n}\n```\n\n### Why Multiple Interfaces Beat One Big Interface\n\nBad approach: one `PersonAbilities` interface with greet, display, and compare.\nGood approach: three focused interfaces.\n\nWhy? Because you might need a function that only needs Displayable (a logger) but NOT Greetable. With a big interface, you force every user to implement everything. With small interfaces, you only require what you actually use.\n\nThis principle is called the **Interface Segregation Principle**: many small, focused interfaces are better than one large, unfocused one.",
+  "analogy": "Multiple interfaces are like certifications on a resume — 'Certified Greeter,' 'Certified Displayable,' 'Certified Comparable.' A candidate (type) can have any combination. A job (function) lists which certifications are required. The hiring manager (compiler) checks that the candidate has all the required certs.",
+  "code_template": "interface Greetable {\n  fn greet() -> Str;\n}\n\ninterface Displayable {\n  fn display() -> Str;\n}\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\n// TODO: Write Person.display(self) -> Str\n//   Return name + \" (\" + age + \")\"\n\n// TODO: Write print_profile[T: Greetable + Displayable](thing: &T)\n//   Print both greet() and display()\n\nfn main() -> Int {\n  // TODO: Create Person \"Alex\", 25, call print_profile\n  return 0;\n}\n",
+  "solution": "interface Greetable {\n  fn greet() -> Str;\n}\n\ninterface Displayable {\n  fn display() -> Str;\n}\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\nfn Person.display(self) -> Str {\n  return self.name + \" (\" + string.int_to_str(self.age) + \")\";\n}\n\nfn print_profile[T: Greetable + Displayable](thing: &T) {\n  io.println(thing.greet());\n  io.println(thing.display());\n}\n\nfn main() -> Int {\n  let p = Person{ name: \"Alex\", age: 25 };\n  print_profile(&p);\n  return 0;\n}\n",
+  "try_it": "Add a third interface `Identifiable` with `fn id() -> Int`. Implement it for Person (return age * 1000, or a real ID field). Write a function `fn log_entity[T: Greetable + Displayable + Identifiable](thing: &T)` that prints ID, greeting, and display. What happens if you try to pass a type that only has Greetable — the compiler catches it!",
+  "concepts": ["multiple-interfaces", "interface-segregation", "multi-constraint", "composability", "focused-interfaces", "certification-pattern"],
+  "tips": [
+    "Use `+` to require multiple interfaces: `[T: Greetable + Displayable]` means T must satisfy both",
+    "Each interface should be SMALL — if an interface has more than 3 methods, consider splitting it",
+    "A type automatically satisfies all interfaces it has methods for — no explicit listing needed"
+  ],
+  "common_mistakes": [
+    "Creating one mega-interface — 'DoEverything' with 10 methods forces every implementor to write 10 methods",
+    "Forgetting the `+` syntax — `[T: Greetable Displayable]` is wrong; use `[T: Greetable + Displayable]`",
+    "Adding interface methods that are only used together — if `connect()` is always called before `send()`, they belong in the same interface"
+  ],
+  "next_lesson": "L6-05",
+  "related": ["L6-01", "L6-03", "L6-02"]
+}

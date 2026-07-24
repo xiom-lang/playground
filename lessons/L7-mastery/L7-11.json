@@ -1,0 +1,26 @@
+{
+  "id": "L7-11",
+  "title": "Palindrome Checker",
+  "level": "L7",
+  "duration": "8 min",
+  "story": "'racecar' spelled backwards is 'racecar'. 'A man a plan a canal Panama' — ignore spaces and case, and it reads the same both ways. Palindromes are wordplay's greatest hits. Build a checker that handles spaces, case, and punctuation.",
+  "why": "Palindrome checking combines string manipulation, character comparison, and loop patterns — fundamental skills for any text processing task.",
+  "narrative": "## Checking for Palindromes\n\n### What is a Palindrome?\n\nA string that reads the same forwards and backwards, ignoring spaces, case, and punctuation.\n\n### The Two-Pointer Technique\n\n```xiom\nfn is_palindrome(s: Str) -> Bool {\n  let mut left = 0;\n  let mut right = s.len();\n  while right > 0 { right -= 1; };\n\n  while left < right {\n    let left_char = s.get(left).unwrap();\n    let right_char = s.get(right).unwrap();\n\n    if left_char != right_char {\n      return false;\n    };\n    left += 1;\n    right -= 1;\n  };\n  true\n}\n```\n\n### Handling Case Insensitivity\n\n```xiom\nfn to_lower(c: Char) -> Char {\n  if c >= 'A' && c <= 'Z' {\n    let offset = c as Int - 'A' as Int;\n    let lower = 'a' as Int + offset;\n    return lower as Char;\n  };\n  c\n}\n```\n\n### Full Palindrome Check\n\n```xiom\nfn is_palindrome_full(s: Str) -> Bool {\n  let mut cleaned = \"\";\n  let mut i = 0;\n  while i < s.len() {\n    let c = s.get(i).unwrap();\n    if c != ' ' {\n      cleaned = string.str_concat(cleaned, string.from_char(to_lower(c)));\n    };\n    i += 1;\n  };\n  is_palindrome(cleaned)\n}\n```",
+  "analogy": "A mirror placed at the center of a palindrome should show the exact same word. 'racecar' — put a mirror after 'e' and you see 'rac' reflected as 'car'. Your two-pointer checker is two people reading from opposite ends, meeting in the middle, confirming every letter matches.",
+  "code_template": "fn is_palindrome(s: Str) -> Bool {\n  // TODO: use two pointers (left, right) to check if s reads the same forwards and backwards\n  // Compare characters from ends moving toward center\n}\n\nfn main() -> Int {\n  // TODO: test with \"racecar\" (true) and \"hello\" (false)\n  return 0;\n}\n",
+  "solution": "fn is_palindrome(s: Str) -> Bool {\n  if s.len() == 0 { return true; };\n  let mut left = 0;\n  let mut right = s.len() - 1;\n  while left < right {\n    let lc = s.get(left).unwrap();\n    let rc = s.get(right).unwrap();\n    if lc != rc { return false; };\n    left += 1;\n    right -= 1;\n  };\n  true\n}\n\nfn main() -> Int {\n  io.println(is_palindrome(\"racecar\"));\n  io.println(is_palindrome(\"hello\"));\n  io.println(is_palindrome(\"abba\"));\n  return 0;\n}\n",
+  "try_it": "Add palindrome checking that ignores spaces and case. Test with \"A man a plan a canal Panama\" and \"Never odd or even\". Also handle single-character strings and empty strings. What about numbers? 12321 is a numeric palindrome.",
+  "concepts": ["palindrome", "two-pointer", "string", "char-comparison", "case-sensitivity"],
+  "tips": [
+    "Two-pointer technique: left starts at 0, right at len-1, move toward center",
+    "Return false EARLY on first mismatch — no need to check the rest",
+    "Empty strings and single characters are technically palindromes"
+  ],
+  "common_mistakes": [
+    "Not adjusting right = s.len() - 1 — s.len() is one past the last index",
+    "Comparing left < right with <= — the center char doesn't need checking",
+    "Forgetting that string.get() returns Option — need .unwrap()"
+  ],
+  "next_lesson": "L7-12",
+  "related": ["L6-23", "L2-52", "L2-62"]
+}

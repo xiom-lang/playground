@@ -1,0 +1,27 @@
+{
+  "id": "L4-30",
+  "title": "L4 Mid-Review: Safe and Sound",
+  "level": "L4",
+  "duration": "15 min",
+  "story": "Your code is now safe from TWO angles: contracts guarantee correctness, ownership guarantees memory safety. Build a mini banking system that proves you've mastered both.",
+  "why": "This capstone exercise integrates every L4 concept — contracts, ownership, borrowing, invariants, and move semantics — into a real, working system.",
+  "narrative": "## Build a Safe Banking System\n\n### The Account Type with Invariant\n\n```xiom\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n  invariant: this.balance >= 0.0;\n```\n\n### Transfer with Full Contracts\n\n```xiom\nfn transfer(from: &mut Account, to: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= from.balance;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n```\n\n### Read-Only Reporting\n\n```xiom\nfn report(account: &Account) {\n  io.println(account.owner + \": $\" + account.balance);\n}\n\nfn total_balance(accounts: &Vec[Account]) -> Float64 {\n  let sum = 0.0;\n  for a in accounts {\n    sum = sum + a.balance;\n  }\n  return sum;\n}\n```\n\n### Mutation with Safety\n\n```xiom\nfn deposit(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  ensures: account.balance == account@pre.balance + amount;\n{\n  account.balance = account.balance + amount;\n}\n\nfn withdraw(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= account.balance;\n  ensures: account.balance == account@pre.balance - amount;\n{\n  account.balance = account.balance - amount;\n}\n```\n\n### All Together\n\n```xiom\nfn main() -> Int {\n  var alice = Account{ owner: \"Alice\", balance: 1000.0 };\n  var bob = Account{ owner: \"Bob\", balance: 500.0 };\n\n  report(&alice);            // Read — no modification\n  deposit(&mut bob, 200.0);  // Write — exclusive access\n  transfer(&mut alice, &mut bob, 300.0);  // Two writes\n  report(&alice);\n  report(&bob);\n\n  return alice.balance as Int;\n}\n```",
+  "analogy": "This banking system is a vault — contracts are the combination lock (only valid operations), ownership is the steel walls (no unauthorized access).",
+  "code_template": "// TODO: Build a mini banking system:\n// 1. Account type with invariant: balance >= 0.0\n// 2. fn deposit with requires: amount > 0.0 and ensures\n// 3. fn withdraw with requires: amount > 0.0, amount <= balance, ensures\n// 4. fn transfer with requires and ensures (calls deposit + withdraw)\n// 5. fn report that takes &Account and prints\n// 6. In main, create two accounts, deposit, transfer, report\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "type Account = {\n  owner: Str;\n  balance: Float64;\n}\n  invariant: this.balance >= 0.0;\n\nfn deposit(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  ensures: account.balance == account@pre.balance + amount;\n{\n  account.balance = account.balance + amount;\n}\n\nfn withdraw(account: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= account.balance;\n  ensures: account.balance == account@pre.balance - amount;\n{\n  account.balance = account.balance - amount;\n}\n\nfn transfer(from: &mut Account, to: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= from.balance;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n{\n  withdraw(from, amount);\n  deposit(to, amount);\n}\n\nfn report(account: &Account) {\n  io.println(account.owner + \": $\" + account.balance);\n}\n\nfn main() -> Int {\n  var alice = Account{ owner: \"Alice\", balance: 1000.0 };\n  var bob = Account{ owner: \"Bob\", balance: 500.0 };\n\n  deposit(&mut alice, 200.0);\n  transfer(&mut alice, &mut bob, 300.0);\n\n  report(&alice);\n  report(&bob);\n\n  return alice.balance as Int;\n}",
+  "try_it": "Add fn fn 'total_balance' that takes &Vec[Account] and sums all balances. Then add fn 'richest' that finds the account with the highest balance.",
+  "concepts": ["banking system", "invariant", "requires", "ensures", "&", "&mut", "ownership", "capstone"],
+  "tips": [
+    "The invariant balance >= 0.0 guarantees no account can go negative",
+    "transfer reuses deposit and withdraw — compose small safe functions into larger safe ones",
+    "report only needs & — it doesn't modify, so multiple reports can run simultaneously",
+    "Every function's signature tells you everything: requires = what it needs, &/&mut = how it accesses"
+  ],
+  "common_mistakes": [
+    "Forgetting that withdraw's requires prevents overdraft — the invariant alone isn't enough",
+    "Using owned parameters for report when & works — unnecessarily consumes the Account",
+    "Not adding ensures to deposit and withdraw — the contracts should verify the math"
+  ],
+  "next_lesson": "L4-31",
+  "related": ["L4-01", "L4-02", "L4-06", "L4-15", "L4-16", "L4-20", "L4-25", "L4-29"]
+}

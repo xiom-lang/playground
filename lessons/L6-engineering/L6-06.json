@@ -1,0 +1,26 @@
+{
+  "id": "L6-06",
+  "title": "Practical: Logger Interface",
+  "level": "L6",
+  "duration": "12 min",
+  "story": "Your app has a bug, but only in production — where logging is turned off. You need a logging system that can write to the console during development, write to nowhere in production, and maybe write to a file someday. The Logger interface decouples 'what to log' from 'where to log it.'",
+  "why": "The Logger pattern is the canonical real-world interface — it separates the logging concern from the implementation, letting you swap backends without changing a single line of application code.",
+  "narrative": "## Logging Without Coupling\n\nA **Logger interface** defines what logging can DO. Concrete implementations decide WHERE the logs go.\n\n### The Logger Interface\n\n```xiom\ninterface Logger {\n  fn log(msg: Str);\n}\n\ntype ConsoleLogger = {\n  prefix: Str;\n}\n\nfn ConsoleLogger.log(self, msg: Str) {\n  io.println(self.prefix + \": \" + msg);\n}\n\ntype SilentLogger = {\n  // No fields needed\n}\n\nfn SilentLogger.log(self, msg: Str) {\n  // Do nothing — logs disappear\n}\n```\n\n### Using the Logger\n\n```xiom\nfn run_process[T: Logger](logger: &T, steps: Int) {\n  logger.log(\"Starting process with \" + string.int_to_str(steps) + \" steps\");\n\n  let i = 0;\n  while i < steps {\n    logger.log(\"Step \" + string.int_to_str(i + 1) + \" completed\");\n    i = i + 1;\n  }\n\n  logger.log(\"Process finished\");\n}\n\nfn main() -> Int {\n  let verbose: ConsoleLogger = ConsoleLogger{ prefix: \"DEBUG\" };\n  run_process(&verbose, 3);\n\n  let quiet: SilentLogger = SilentLogger{};\n  run_process(&quiet, 3);\n  return 0;\n}\n```\n\n### The Power of Swapping\n\nTo change logging behavior, you change ONE line — which logger you pass to `run_process`. The function itself never changes. This is **dependency injection** at its simplest: the function depends on the Logger INTERFACE, not a specific logger IMPLEMENTATION.\n\n### Adding a New Logger\n\n```xiom\ntype FileLogger = {\n  filename: Str;\n  messages: Vec[Str];  // Simulated file storage\n}\n\nfn FileLogger.log(self: &mut FileLogger, msg: Str) {\n  self.messages.push(msg);\n}\n\nfn FileLogger.flush(self) -> Vec[Str] {\n  return self.messages;\n}\n```\n\nWait — `FileLogger.log` takes `&mut self` while the interface expects `self`. The interface defines the contract, but implementations can differ in ownership mode? In strict XIOM, the interface signature must match. Let's keep `self` for simplicity in the playground.",
+  "analogy": "The Logger interface is like a water pipe — the pipe specification (interface) defines 'water must flow through.' You can connect it to a faucet (ConsoleLogger), a drain (SilentLogger), or a storage tank (FileLogger). The house (application) doesn't care where the water goes, as long as the pipe fits.",
+  "code_template": "interface Logger {\n  fn log(msg: Str);\n}\n\n// TODO: Define ConsoleLogger type with prefix: Str field\n\n// TODO: Write ConsoleLogger.log(self, msg: Str) that prints prefix + msg\n\n// TODO: Define SilentLogger type (empty struct)\n\n// TODO: Write SilentLogger.log(self, msg: Str) that does nothing\n\nfn do_work[T: Logger](logger: &T) {\n  // TODO: Log \"Work started\" and \"Work done\"\n}\n\nfn main() -> Int {\n  // TODO: Create both loggers, call do_work with each\n  return 0;\n}\n",
+  "solution": "interface Logger {\n  fn log(msg: Str);\n}\n\ntype ConsoleLogger = {\n  prefix: Str;\n}\n\nfn ConsoleLogger.log(self, msg: Str) {\n  io.println(self.prefix + \": \" + msg);\n}\n\ntype SilentLogger = {\n}\n\nfn SilentLogger.log(self, msg: Str) {\n}\n\nfn do_work[T: Logger](logger: &T) {\n  logger.log(\"Work started\");\n  logger.log(\"Work done\");\n}\n\nfn main() -> Int {\n  let console = ConsoleLogger{ prefix: \"INFO\" };\n  let silent = SilentLogger{};\n\n  do_work(&console);\n  do_work(&silent);\n  return 0;\n}\n",
+  "try_it": "Add a `TimestampLogger` that wraps another logger and adds a timestamp prefix to every message (use a counter as a mock timestamp). Then add a `FilteredLogger` that only logs messages containing a specific keyword. Chain them: TimestampLogger wraps ConsoleLogger — two loggers composed together!",
+  "concepts": ["Logger", "dependency-injection", "strategy-pattern", "swap-implementations", "abstraction", "interface-for-configuration"],
+  "tips": [
+    "The Logger interface decouples 'what to log' from 'where to log' — change backends without touching application code",
+    "SilentLogger is a real pattern — it's the 'null object pattern,' useful for tests and production when logging is expensive",
+    "Different loggers can have different internal state — the interface only cares about the log() method"
+  ],
+  "common_mistakes": [
+    "Hardcoding `io.println` throughout your code instead of accepting a Logger — impossible to disable logging in production",
+    "Making the Logger interface too specific — `log_error`, `log_warning`, `log_info` are three methods; one `log(level, msg)` with a level enum is cleaner",
+    "Forgetting that the Logger is a DEPENDENCY — pass it in, don't create it inside the function"
+  ],
+  "next_lesson": "L6-07",
+  "related": ["L6-01", "L6-05", "L6-03"]
+}

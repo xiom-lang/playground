@@ -1,0 +1,26 @@
+{
+  "id": "L7-26",
+  "title": "Simple RPG Battle",
+  "level": "L7",
+  "duration": "10 min",
+  "story": "A hero with 100 HP faces a dragon with 150 HP. The hero can attack (deal 15-25 damage) or heal (recover 10-20 HP) — but healing wastes a turn the dragon uses to attack. Every decision matters. Build the battle system that powers every RPG.",
+  "why": "An RPG battle system combines structs for characters, enums for actions, random damage ranges, and turn-based logic — the core of combat in any role-playing game.",
+  "narrative": "## Building an RPG Battle System\n\n### Character Setup\n\n```xiom\ntype Character {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n  attack_min: Int;\n  attack_max: Int;\n}\n\nfn create_hero() -> Character {\n  Character{ name: \"Hero\", hp: 100, max_hp: 100, attack_min: 15, attack_max: 25 }\n}\n\nfn create_dragon() -> Character {\n  Character{ name: \"Dragon\", hp: 150, max_hp: 150, attack_min: 10, attack_max: 20 }\n}\n```\n\n### Attack Logic\n\n```xiom\nfn calculate_damage(attacker: &Character, seed: &mut Int) -> Int {\n  seed = (seed * 1103515245 + 12345) % 2147483648;\n  let range = attacker.attack_max - attacker.attack_min + 1;\n  attacker.attack_min + (seed % range)\n}\n\nfn attack(attacker: &Character, defender: &mut Character, seed: &mut Int) {\n  let damage = calculate_damage(attacker, seed);\n  defender.hp -= damage;\n  if defender.hp < 0 { defender.hp = 0; };\n  io.println(attacker.name);\n  io.println(damage);\n}\n```\n\n### Healing\n\n```xiom\nfn heal(target: &mut Character, seed: &mut Int) {\n  seed = (seed * 1103515245 + 12345) % 2147483648;\n  let amount = 10 + (seed % 11);\n  target.hp += amount;\n  if target.hp > target.max_hp { target.hp = target.max_hp; };\n}\n```\n\n### Battle Loop\n\n```xiom\nfn battle() -> Str {\n  let mut hero = create_hero();\n  let mut dragon = create_dragon();\n  let mut seed = 42;\n  let mut turn = 0;\n\n  while hero.hp > 0 && dragon.hp > 0 {\n    turn += 1;\n\n    attack(&hero, &mut dragon, &mut seed);\n    if dragon.hp <= 0 { return \"Hero wins!\"; };\n\n    attack(&dragon, &mut hero, &mut seed);\n    if hero.hp <= 0 { return \"Dragon wins!\"; };\n  };\n\n  \"Battle ended.\"\n}\n```",
+  "analogy": "A boxing match: two fighters trading blows, each punch dealing variable damage. Between rounds, a fighter might rest (heal). Your RPG battle is the referee counting HP instead of punches — when someone hits zero, the other hand is raised in victory.",
+  "code_template": "type Fighter {\n  name: Str;\n  hp: Int;\n  power: Int;\n}\n\nfn take_damage(fighter: &mut Fighter, amount: Int) {\n  // TODO: reduce HP, clamp to minimum of 0\n}\n\nfn is_alive(fighter: &Fighter) -> Bool {\n  // TODO: return true if hp > 0\n}\n\nfn main() -> Int {\n  // TODO: create two fighters, simulate 3 rounds of combat, print HP each round\n  return 0;\n}\n",
+  "solution": "type Fighter {\n  name: Str;\n  hp: Int;\n  power: Int;\n}\n\nfn take_damage(fighter: &mut Fighter, amount: Int) {\n  fighter.hp -= amount;\n  if fighter.hp < 0 { fighter.hp = 0; };\n}\n\nfn is_alive(fighter: &Fighter) -> Bool {\n  fighter.hp > 0\n}\n\nfn main() -> Int {\n  let mut hero = Fighter{ name: \"Hero\", hp: 100, power: 20 };\n  let mut enemy = Fighter{ name: \"Goblin\", hp: 40, power: 8 };\n\n  take_damage(&mut enemy, hero.power);\n  io.println(enemy.hp);\n  take_damage(&mut enemy, hero.power);\n  io.println(enemy.hp);\n  io.println(is_alive(&enemy));\n  return 0;\n}\n",
+  "try_it": "Add critical hits (10% chance, 2x damage). Add a special attack that deals extra damage but has a cooldown. Add defense stat that reduces incoming damage. Implement player choice: each turn, choose 'attack' or 'heal'. Add status effects: poison (damage over time), stun (skip turn).",
+  "concepts": ["rpg-battle", "structs", "random-damage", "turn-based", "game-loop", "state-management"],
+  "tips": [
+    "Clamp HP between 0 and max_hp — prevents negative HP or overhealing",
+    "Random damage = min + (seed % (max - min + 1))",
+    "Check death after every attack — don't let dead characters keep fighting"
+  ],
+  "common_mistakes": [
+    "Not checking for death immediately after damage — zombie character continues fighting",
+    "Overhealing without clamping — HP exceeds max, breaking game balance",
+    "Using the same seed for both characters — they deal identical damage patterns"
+  ],
+  "next_lesson": "L7-27",
+  "related": ["L7-21", "L7-25", "L2-03", "L2-04"]
+}

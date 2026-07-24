@@ -1,0 +1,27 @@
+{
+  "id": "L4-13",
+  "title": "Clone to Copy",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "If you need two copies of a book, you photocopy it. In XIOM, `.clone()` is your photocopier — it creates a deep, independent duplicate.",
+  "why": "Clone is explicit and visible — you always know when expensive copies happen, unlike languages where copies are implicit and surprising.",
+  "narrative": "## Explicit Copying with .clone()\n\nSince assignment MOVES, how do you get two independent copies? Use `.clone()`:\n\n```xiom\nfn main() -> Int {\n  let a = 5;\n  let b = a.clone();  // Deep copy — both a and b are valid\n  io.println(a);       // Prints 5\n  io.println(b);       // Prints 5\n  return a + b;\n}\n```\n\n### Clone Creates Independent Values\n\n```xiom\nfn main() -> Int {\n  let v1 = Vec[Int].new();\n  v1.push(1);\n  v1.push(2);\n\n  let v2 = v1.clone();  // Deep copy of entire Vec\n  v1.push(3);            // Only affects v1\n  v2.push(4);            // Only affects v2\n\n  io.println(v1.len());  // 3\n  io.println(v2.len());  // 3\n  return v1.len() as Int;\n}\n```\n\n### Clone is Explicit — No Surprises\n\n```xiom\nlet data = load_large_dataset();\nlet backup = data.clone();  // You KNOW this is expensive — it says \"clone\"!\n```\n\n### When to Clone\n\n- When you need two independent owners of the same data\n- When you want to keep the original after passing to a function\n- When the compiler tells you a value was moved and you still need it\n\nClone is your deliberate escape hatch from move semantics.",
+  "analogy": "Clone is a photocopier — you get an identical, independent copy. The original stays with you, and the copy is a separate item that can be modified independently.",
+  "code_template": "// TODO: Create a string variable 'greeting' = \"Hello\"\n// Clone it to 'copy'\n// Print both\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let greeting = \"Hello\";\n  let copy = greeting.clone();\n  io.println(greeting);\n  io.println(copy);\n  return greeting.len() as Int;\n}",
+  "try_it": "Clone a Vec[Int] and add different elements to the original and the clone. Print both to confirm they're independent.",
+  "concepts": ["clone", "deep copy", "independent ownership"],
+  "tips": [
+    "Use .clone() when you genuinely need two separate copies of data",
+    "Clone is explicit — you always see it, so you always know about the cost",
+    "For cheap-to-copy types like Int, the cost is negligible; for Vec it can be expensive",
+    "Prefer borrowing (&) over cloning when you only need to read data"
+  ],
+  "common_mistakes": [
+    "Overusing clone() when a borrow (&) would suffice — clone is expensive for large data",
+    "Assuming clone is always cheap — for Vec[Int] of millions of elements, it copies everything",
+    "Cloning inside a loop unnecessarily — the cost multiplies"
+  ],
+  "next_lesson": "L4-14",
+  "related": ["L4-11", "L4-12", "L4-15", "L4-20"]
+}

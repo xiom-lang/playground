@@ -1,0 +1,26 @@
+{
+  "id": "L6-08",
+  "title": "Modules Intro",
+  "level": "L6",
+  "duration": "10 min",
+  "story": "Your main function has grown to 200 lines — types, helpers, validation, I/O, all in one file. Finding anything is a nightmare. You need chapters for your code, just like chapters in a book. Modules let you group related code together and give it a name.",
+  "why": "Modules are the fundamental unit of code organization — they group related types and functions, control visibility, and prevent name collisions as programs grow beyond a single file.",
+  "narrative": "## Organizing Code into Chapters\n\nA **module** is a named block of code. Everything inside belongs to that module. You access its contents with the module name as a prefix.\n\n### Your First Module\n\n```xiom\nmodule math_utils {\n  fn add(a: Int, b: Int) -> Int {\n    return a + b;\n  }\n\n  fn double(n: Int) -> Int {\n    return n * 2;\n  }\n}\n\nfn main() -> Int {\n  let sum = math_utils.add(3, 4);\n  let doubled = math_utils.double(10);\n  io.println(string.int_to_str(sum));\n  io.println(string.int_to_str(doubled));\n  return 0;\n}\n```\n\n### How Modules Work\n\n1. `module math_utils { ... }` defines a module named `math_utils`\n2. Everything inside (functions, types, constants) belongs to the module\n3. Access items with `math_utils.add(3, 4)` — module name, dot, item name\n4. Modules create a **namespace** — `math_utils.add` is distinct from any other `add` function\n\n### Modules Can Contain Types Too\n\n```xiom\nmodule models {\n  type Person = {\n    name: Str;\n    age: Int;\n  }\n\n  fn make_person(name: Str, age: Int) -> Person {\n    return Person{ name: name, age: age };\n  }\n}\n\nfn main() -> Int {\n  let p = models.make_person(\"Alex\", 25);\n  io.println(p.name);\n  return 0;\n}\n```\n\n### Why Modules Matter\n\nWithout modules, every function name must be unique across your entire program. With 100 functions, that's chaos. Modules group related code and isolate names — `math_utils.add` and `string_utils.add` can coexist peacefully.\n\n### When to Create a Module\n\n- You have 3+ functions about the same topic (math, strings, I/O)\n- You want to hide internal helpers from external users\n- You're building a library that others will import\n- Your file is over 100 lines",
+  "analogy": "A module is like a chapter in a textbook — Chapter 3 is 'Math Functions,' Chapter 4 is 'String Functions.' Each chapter contains related content, has a clear title, and you reference content by chapter and section: 'see chapter 3, section 2' (math_utils.add).",
+  "code_template": "// TODO: Define a module named 'greeting' with one function:\n//   fn hello(name: Str) -> Str that returns \"Hello, \" + name\n\n// TODO: Define a module named 'farewell' with one function:\n//   fn goodbye(name: Str) -> Str that returns \"Goodbye, \" + name\n\nfn main() -> Int {\n  // TODO: Call greeting.hello(\"Alex\") and print result\n  // TODO: Call farewell.goodbye(\"Alex\") and print result\n  return 0;\n}\n",
+  "solution": "module greeting {\n  fn hello(name: Str) -> Str {\n    return \"Hello, \" + name;\n  }\n}\n\nmodule farewell {\n  fn goodbye(name: Str) -> Str {\n    return \"Goodbye, \" + name;\n  }\n}\n\nfn main() -> Int {\n  io.println(greeting.hello(\"Alex\"));\n  io.println(farewell.goodbye(\"Alex\"));\n  return 0;\n}\n",
+  "try_it": "Create a `stats` module with `min(a, b)` and `max(a, b)` functions. Create a `temperature` module with `celsius_to_fahrenheit(c)` and `fahrenheit_to_celsius(f)`. Use them both in main. What happens if you define `fn add(a, b)` in BOTH modules? Can they coexist? (Yes — modules prevent name collisions!)",
+  "concepts": ["module", "namespace", "code-organization", "module-access", "name-isolation", "prefix-notation"],
+  "tips": [
+    "Access module items with `module_name.item_name` — the dot connects the namespace to the item",
+    "Module names are typically snake_case: `math_utils`, `string_helpers`, `data_models`",
+    "A module can contain functions AND types — it's a self-contained unit of related code"
+  ],
+  "common_mistakes": [
+    "Forgetting the module prefix when calling a function — `add(3, 4)` instead of `math_utils.add(3, 4)`",
+    "Putting code outside the module block but calling it inside — module definitions are top-level, not inside functions",
+    "Making module names too long — `utility_functions_for_mathematical_operations` is painful to type; keep it concise"
+  ],
+  "next_lesson": "L6-09",
+  "related": ["L1-01", "L1-04", "L5-48"]
+}

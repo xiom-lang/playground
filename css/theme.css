@@ -366,6 +366,12 @@ body {
   background: var(--panel);
 }
 
+.shortcut-btn {
+  min-width: 30px;
+  padding: 6px 10px;
+  font-weight: 700;
+}
+
 .run-btn {
   background: var(--indigo-soft);
   color: var(--hi);
@@ -416,6 +422,23 @@ body {
 }
 
 .lesson-list { padding: 8px; }
+
+.lesson-search {
+  display: block;
+  width: calc(100% - 16px);
+  margin: 8px 8px 0 8px;
+  padding: 8px 12px;
+  background: var(--void);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--hi);
+  font-family: var(--sans);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.lesson-search:focus { border-color: var(--indigo); }
+.lesson-search::placeholder { color: var(--low); }
 
 .lesson-level-header {
   display: flex;
@@ -838,6 +861,23 @@ body {
   border-bottom: 2px solid var(--indigo);
 }
 
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--mono);
+  background: var(--indigo);
+  color: #fff;
+  vertical-align: middle;
+}
+
 .output-content {
   background: var(--void);
   flex: 1;
@@ -864,17 +904,35 @@ body {
   padding: 12px 20px;
   background: var(--green-soft);
   border-top: 1px solid rgba(52,211,153,0.3);
+  animation: completionSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes completionSlideIn {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .completion-bar span {
   color: var(--green);
   font-weight: 600;
   font-size: 14px;
+  animation: completionCheckPop 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes completionCheckPop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
 }
 
 .completion-bar .btn-primary {
   padding: 8px 20px;
   font-size: 13px;
+  animation: completionBtnSlide 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes completionBtnSlide {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 /* ================================================================
@@ -1198,3 +1256,109 @@ body {
    UTILITY
    ================================================================ */
 .hidden { display: none !important; }
+
+/* ================================================================
+   RESIZE HANDLE
+   ================================================================ */
+.resize-handle {
+  width: 5px;
+  cursor: col-resize;
+  background: var(--border-soft);
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+  position: relative;
+  z-index: 10;
+}
+.resize-handle:hover,
+.resize-handle.active {
+  background: var(--indigo);
+  box-shadow: 0 0 8px rgba(92,107,255,0.4);
+}
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -3px; right: -3px;
+}
+
+/* ================================================================
+   LOADING OVERLAY
+   ================================================================ */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8,9,11,0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  gap: 16px;
+}
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--indigo);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-size: 13px;
+  color: var(--mid);
+  font-family: var(--mono);
+}
+
+/* ================================================================
+   SHORTCUT MODAL
+   ================================================================ */
+.shortcut-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,9,11,0.8);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.shortcut-modal-content {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  min-width: 380px;
+  max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: modalIn 0.2s ease-out;
+}
+@keyframes modalIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.shortcut-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.shortcut-modal-header h3 { font-size: 15px; font-weight: 600; }
+.shortcut-modal-header button {
+  background: none; border: none; color: var(--mid);
+  cursor: pointer; font-size: 18px; padding: 2px 6px; border-radius: var(--radius-sm);
+}
+.shortcut-modal-header button:hover { color: var(--hi); background: var(--panel-2); }
+.shortcut-grid { display: flex; flex-direction: column; gap: 10px; }
+.shortcut-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; font-size: 13px;
+}
+.shortcut-row kbd {
+  background: var(--void); border: 1px solid var(--border);
+  border-radius: 5px; padding: 3px 8px; font-family: var(--mono);
+  font-size: 11px; color: var(--hi); min-width: 100px; text-align: center;
+}
+.shortcut-row span { color: var(--mid); }

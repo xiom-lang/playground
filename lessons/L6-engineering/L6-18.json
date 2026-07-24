@@ -1,0 +1,26 @@
+{
+  "id": "L6-18",
+  "title": "Sorting with Interfaces",
+  "level": "L6",
+  "duration": "11 min",
+  "story": "You have a list of scores, names, and dates - all need sorting. But sorting logic differs: numbers by value, strings alphabetically, dates chronologically. An interface captures 'can be compared' so you write sort ONCE.",
+  "why": "The Comparable interface lets you write a single sort function that works for any type that can be ordered, through bubble sort or any algorithm.",
+  "narrative": "## Universal Sorting\n\n### Define What 'Comparable' Means\n\n```xiom\ninterface Comparable {\n  fn is_greater(&self, other: &Self) -> Bool;\n  fn is_equal(&self, other: &Self) -> Bool;\n}\n```\n\nIf a type can answer 'am I greater than that?' and 'are we equal?', it's sortable.\n\n### Implement for Int Wrapper\n\n```xiom\ntype Score { value: Int; }\nfn Score.is_greater(&self, other: &Score) -> Bool { self.value > other.value }\nfn Score.is_equal(&self, other: &Score) -> Bool { self.value == other.value }\n```\n\n### A Sorting Function\n\n```xiom\nfn sort[T: Comparable](items: &mut Vec[T]) {\n  let mut i = 0;\n  while i < items.len() {\n    let mut j = i + 1;\n    while j < items.len() {\n      if items.get(i).unwrap().is_greater(items.get(j).unwrap()) {\n        let temp = items.get(i).unwrap().clone();\n        items.set(i, items.get(j).unwrap().clone());\n        items.set(j, temp);\n      }\n      j += 1;\n    }\n    i += 1;\n  }\n}\n```\n\nThis is bubble sort. One function sorts Scores, Names, Dates, or anything Comparable.",
+  "analogy": "A librarian can sort books by title, author, or year because books provide comparable properties. The librarian's sorting method doesn't change - only what property they compare. The Comparable interface is the 'comparable property' contract.",
+  "code_template": "interface Comparable {\n  fn is_greater(&self, other: &Self) -> Bool;\n}\n\ntype Player {\n  name: Str;\n  score: Int;\n}\n\nfn Player.is_greater(&self, other: &Player) -> Bool {\n  // TODO: compare by score\n}\n\nfn sort[T: Comparable](items: &mut Vec[T]) {\n  // TODO: bubble sort - swap if items[i] > items[j]\n}\n\nfn main() -> Int {\n  // TODO: create Vec of Players, fill and sort, then print ordered scores\n  return 0;\n}\n",
+  "solution": "interface Comparable {\n  fn is_greater(&self, other: &Self) -> Bool;\n}\n\ntype Player {\n  name: Str;\n  score: Int;\n}\n\nfn Player.is_greater(&self, other: &Player) -> Bool {\n  self.score > other.score\n}\n\nfn sort[T: Comparable](items: &mut Vec[T]) {\n  let mut i = 0;\n  while i < items.len() {\n    let mut j = i + 1;\n    while j < items.len() {\n      if items.get(i).unwrap().is_greater(items.get(j).unwrap()) {\n        let a = items.get(i).unwrap().clone();\n        let b = items.get(j).unwrap().clone();\n        items.set(i, b);\n        items.set(j, a);\n      }\n      j += 1;\n    }\n    i += 1;\n  }\n}\n\nfn main() -> Int {\n  let mut players: Vec[Player] = Vec[Player].new();\n  players.push(Player{ name: \"Alex\", score: 85 });\n  players.push(Player{ name: \"Blake\", score: 92 });\n  players.push(Player{ name: \"Casey\", score: 73 });\n  sort(&mut players);\n  let mut k = 0;\n  while k < players.len() {\n    io.println(players.get(k).unwrap().score);\n    k += 1;\n  }\n  return 0;\n}\n",
+  "try_it": "Implement Comparable for a `Name` type (wrapper around Str) and sort alphabetically. Then create `TimedScore` that compares by time (smaller = better). Run each through the same sort function.",
+  "concepts": ["Comparable", "bubble-sort", "generic-sort", "interface-design", "ordering"],
+  "tips": [
+    "`&Self` in an interface method means 'reference to the same type'",
+    "Bubble sort works by repeatedly comparing adjacent elements and swapping",
+    "The sort function only needs is_greater - equality is for stable sorts"
+  ],
+  "common_mistakes": [
+    "Comparing wrong fields - make sure is_greater compares what you intend to sort by",
+    "Forgetting to use `&mut` on the Vec parameter - sorting modifies in place",
+    "Swapping without clone() - you need copies of the values to swap"
+  ],
+  "next_lesson": "L6-19",
+  "related": ["L5-13", "L5-28", "L2-36"]
+}

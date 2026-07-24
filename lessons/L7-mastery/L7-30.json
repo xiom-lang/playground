@@ -1,0 +1,26 @@
+{
+  "id": "L7-30",
+  "title": "Blackjack Simplified",
+  "level": "L7",
+  "duration": "11 min",
+  "story": "21. The magic number. Get closer to 21 than the dealer without going over. Aces are 1 or 11. Face cards are 10. Hit or stand — every decision risks busting. Build the casino classic that's been dealt on felt tables for centuries.",
+  "why": "Blackjack combines card values, ace flexibility (1 or 11), dealer AI logic, win/loss/push outcomes, and hand comparison — rich game logic in a compact program.",
+  "narrative": "## Building Simplified Blackjack\n\n### Card Values\n\n```xiom\nfn card_value(rank: Int) -> Int {\n  if rank == 0 { return 11; };\n  if rank >= 9 { return 10; };\n  rank + 2\n}\n```\n\nAce (0) = 11 (or 1). Face cards (10-12) = 10. Number cards = rank+2.\n\n### Hand Value with Ace Logic\n\n```xiom\nfn hand_value(cards: &Vec[Int]) -> Int {\n  let mut total = 0;\n  let mut aces = 0;\n  let mut i = 0;\n  while i < cards.len() {\n    let val = card_value(cards.get(i).unwrap());\n    if val == 11 { aces += 1; };\n    total += val;\n    i += 1;\n  };\n\n  while total > 21 && aces > 0 {\n    total -= 10;\n    aces -= 1;\n  };\n  total\n}\n```\n\n### Dealer Strategy\n\nDealer must hit on 16 or below, stand on 17 or above:\n\n```xiom\nfn dealer_play(hand: &mut Vec[Int], deck: &mut Vec[Int], seed: &mut Int) -> Int {\n  while hand_value(hand) < 17 {\n    deal_card(hand, deck, seed);\n  };\n  hand_value(hand)\n}\n```\n\n### Determining Winner\n\n```xiom\nenum BlackjackResult {\n  PlayerWins;\n  DealerWins;\n  Push;\n  PlayerBust;\n  DealerBust;\n}\n\nfn determine_winner(player_total: Int, dealer_total: Int) -> BlackjackResult {\n  if player_total > 21 { return BlackjackResult.PlayerBust; };\n  if dealer_total > 21 { return BlackjackResult.DealerBust; };\n  if player_total > dealer_total { return BlackjackResult.PlayerWins; };\n  if dealer_total > player_total { return BlackjackResult.DealerWins; };\n  BlackjackResult.Push\n}\n```",
+  "analogy": "A high-stakes tug-of-war with 21 as the cliff edge. Pull too hard (hit) and you might fall off (bust). Pull too little (stand) and the dealer might pull past you. Your Blackjack code is the rope: every card pulls you closer to 21 or over the edge.",
+  "code_template": "fn hand_value(cards: &Vec[Int]) -> Int {\n  // TODO: sum card values; handle Ace (value 1, treated as 11 here)\n  // If total > 21 and you have Aces counted as 11, reduce by 10 per Ace until <= 21\n}\n\nfn is_bust(total: Int) -> Bool {\n  // TODO: return true if total > 21\n}\n\nfn main() -> Int {\n  // TODO: test hand: Ace(1) + King(10) = 21 (Blackjack!)\n  // TODO: test hand: Ace + 5 + 8 = 14 (not 24, Ace counts as 1)\n  return 0;\n}\n",
+  "solution": "fn hand_value(cards: &Vec[Int]) -> Int {\n  let mut total = 0;\n  let mut aces = 0;\n  let mut i = 0;\n  while i < cards.len() {\n    let v = cards.get(i).unwrap();\n    if v == 1 { aces += 1; total += 11; }\n    else if v >= 10 { total += 10; }\n    else { total += v; };\n    i += 1;\n  };\n  while total > 21 && aces > 0 {\n    total -= 10;\n    aces -= 1;\n  };\n  total\n}\n\nfn is_bust(total: Int) -> Bool {\n  total > 21\n}\n\nfn main() -> Int {\n  let mut hand1: Vec[Int] = Vec[Int].new();\n  hand1.push(1); hand1.push(10);\n  io.println(hand_value(&hand1));\n\n  let mut hand2: Vec[Int] = Vec[Int].new();\n  hand2.push(1); hand2.push(5); hand2.push(8);\n  io.println(hand_value(&hand2));\n  return 0;\n}\n",
+  "try_it": "Add betting: start with 100 chips, bet before each hand, win = double bet, blackjack = 1.5x. Add 'split' for pairs. Add card counting tracking (running count of high vs low cards). Simulate 1000 hands and calculate the house edge.",
+  "concepts": ["blackjack", "card-values", "ace-logic", "bust-detection", "dealer-ai", "hand-comparison"],
+  "tips": [
+    "Ace is 11 by default, but becomes 1 if total would exceed 21",
+    "Dealer must hit on 16 or less, stand on 17 or more — it's automatic",
+    "Blackjack = Ace + 10-value card = exactly 21 in 2 cards"
+  ],
+  "common_mistakes": [
+    "Counting all Aces as 11 and busting on Ace+Ace — should be 12 not 22",
+    "Dealer standing on soft 17 (Ace+6) — some casinos hit, some stand",
+    "Comparing values before checking for bust — bust ALWAYS loses regardless"
+  ],
+  "next_lesson": "L7-31",
+  "related": ["L7-23", "L7-26", "L7-24"]
+}

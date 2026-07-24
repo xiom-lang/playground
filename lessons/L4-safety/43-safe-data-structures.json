@@ -1,0 +1,26 @@
+{
+  "id": "L4-43",
+  "title": "Safe Data Structures",
+  "level": "L4",
+  "duration": "15 min",
+  "story": "Every production codebase eventually accumulates 'validation utility' functions scattered across 20 files. A centralized library of safe types eliminates this sprawl — validate once, use everywhere.",
+  "why": "A library of small, focused invariant types replaces ad-hoc validation with type-guaranteed safety across the entire codebase.",
+  "narrative": "## Building Your Safe Type Arsenal\n\nSmall, composable safe types form the foundation of any robust system. Each type does one validation, one invariant:\n\n```xiom\ntype PositiveInt = Int\n  invariant: this > 0;\n\ntype NonEmptyVec[T] = {\n  data: Vec[T];\n  invariant: data.len() > 0;\n}\n\ntype ValidEmail = {\n  address: Str;\n  invariant: address.contains(\"@\");\n  invariant: address.contains(\".\");\n}\n```\n\nEach type is independently validated. Combined, they form a library:\n\n```xiom\nfn send_welcome(to: &ValidEmail, name: &NonEmptyStr) {\n  io.println(\"Welcome \" + name.value + \"!\");\n  io.println(\"Sending to: \" + to.address);\n}\n```\n\nThe function `send_welcome` doesn't validate anything — the types guarantee validity. No `if email.contains(\"@\")`, no `if name == \"\"`.\n\n### The Power of Composition\n```xiom\ntype ValidPhone = {\n  number: Str;\n  invariant: string.str_len(number) >= 10;\n  invariant: string.str_len(number) <= 15;\n}\n\nfn contact(user_email: &ValidEmail, user_phone: &ValidPhone) {\n  io.println(\"Contact: \" + user_email.address + \" or \" + user_phone.number);\n}\n```\n\nBuild one safe type, use it in dozens of functions. The validation cost pays off every time a function skips a redundant check.",
+  "analogy": "A safe type library is like a set of calibrated measuring cups — each guarantees an exact amount. You don't need to re-measure every time you pour.",
+  "code_template": "type PositiveInt = Int\n  invariant: this > 0;\n\ntype NonEmptyVec[T] = {\n  data: Vec[T];\n  invariant: data.len() > 0;\n}\n\ntype ValidEmail = {\n  address: Str;\n  invariant: address.contains(\"@\");\n  invariant: address.contains(\".\");\n}\n\ntype ValidPhone = {\n  number: Str;\n  invariant: string.str_len(number) >= 10;\n  invariant: string.str_len(number) <= 15;\n}\n\nfn contact(user_email: &ValidEmail, user_phone: &ValidPhone) {\n  // TODO: Print email and phone\n}\n\nfn main() -> Int {\n  // TODO: Create ValidEmail and ValidPhone, call contact\n  return 0;\n}",
+  "solution": "type PositiveInt = Int\n  invariant: this > 0;\n\ntype NonEmptyVec[T] = {\n  data: Vec[T];\n  invariant: data.len() > 0;\n}\n\ntype ValidEmail = {\n  address: Str;\n  invariant: address.contains(\"@\");\n  invariant: address.contains(\".\");\n}\n\ntype ValidPhone = {\n  number: Str;\n  invariant: string.str_len(number) >= 10;\n  invariant: string.str_len(number) <= 15;\n}\n\nfn contact(user_email: &ValidEmail, user_phone: &ValidPhone) {\n  io.println(\"Email: \" + user_email.address);\n  io.println(\"Phone: \" + user_phone.number);\n}\n\nfn main() -> Int {\n  let email: ValidEmail = ValidEmail{ address: \"user@example.com\" };\n  let phone: ValidPhone = ValidPhone{ number: \"1234567890\" };\n  contact(&email, &phone);\n  return 0;\n}",
+  "try_it": "Add a `ValidUrl` type with an invariant that checks for `http://` or `https://` at the start. Then add a `ValidCreditCard` type with an invariant checking that the string length is exactly 16. Build a checkout function that takes both.",
+  "concepts": ["invariant", "type-library", "composition", "domain-types"],
+  "tips": [
+    "Start with small, single-purpose types — each with exactly one invariant",
+    "Compose them in function signatures — the safety compounds",
+    "Keep your safe types in a shared module — `safe_types.xi` — so every module can import them"
+  ],
+  "common_mistakes": [
+    "Making types too broad — `ValidString` is meaningless; `NonEmptyStr` is precise",
+    "Re-validating inside functions that receive safe types — the type already did the work",
+    "Creating a safe type but accepting raw strings in most functions — commit to using the safe type consistently"
+  ],
+  "next_lesson": "L4-44",
+  "related": ["L4-32", "L4-31", "L4-20"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L3-11",
+  "title": "Parsing Multiple Numbers",
+  "level": "L3",
+  "duration": "12 min",
+  "story": "A form on your website has three fields: age, score, and quantity. Users might leave some blank or type junk. You need to parse all three and report how many were valid — without crashing on the bad ones.",
+  "why": "Real applications process multiple inputs at once — parsing each with Result and aggregating the outcomes teaches robust batch processing.",
+  "narrative": "## Handling Multiple Parses\n\nWhen you have several inputs, you parse each one and track what worked and what didn't.\n\n### Parsing Three Numbers\n\n```xiom\nfn main() -> Int {\n  let raw1 = \"25\";\n  let raw2 = \"bad\";\n  let raw3 = \"100\";\n\n  let r1 = string.str_to_int(raw1);\n  let r2 = string.str_to_int(raw2);\n  let r3 = string.str_to_int(raw3);\n\n  let success_count = 0;\n  let sum = 0;\n\n  match r1 {\n    Ok(n) => { sum = sum + n; success_count = success_count + 1; },\n    Err(e) => io.println(\"Field 1 error: \" + e),\n  };\n  match r2 {\n    Ok(n) => { sum = sum + n; success_count = success_count + 1; },\n    Err(e) => io.println(\"Field 2 error: \" + e),\n  };\n  match r3 {\n    Ok(n) => { sum = sum + n; success_count = success_count + 1; },\n    Err(e) => io.println(\"Field 3 error: \" + e),\n  };\n\n  io.println(\"Successfully parsed: \" + string.int_to_str(success_count));\n  io.println(\"Sum: \" + string.int_to_str(sum));\n  return 0;\n}\n```\n\n### Using a Helper Function\n\nRather than repeating match logic, extract a helper:\n\n```xiom\nfn check_field(raw: Str, label: Str) -> Result[Int, Str] {\n  let parsed = string.str_to_int(raw);\n  return match parsed {\n    Ok(n) => Ok(n),\n    Err(e) => Err(label + \": \" + e),\n  };\n}\n\nfn main() -> Int {\n  let a = check_field(\"10\", \"Age\");\n  let b = check_field(\"xyz\", \"Score\");\n  let c = check_field(\"50\", \"Qty\");\n\n  let success = 0;\n  let total = 0;\n\n  match a { Ok(n) => { total = total + n; success = success + 1; } Err(_) => {} };\n  match b { Ok(n) => { total = total + n; success = success + 1; } Err(_) => {} };\n  match c { Ok(n) => { total = total + n; success = success + 1; } Err(_) => {} };\n\n  io.println(\"Valid fields: \" + string.int_to_str(success) + \"/3\");\n  io.println(\"Total: \" + string.int_to_str(total));\n  return 0;\n}\n```\n\n### Counting Success vs Failure\n\n```xiom\nfn main() -> Int {\n  let inputs = \"15\";  // imagine 3 inputs in sequence\n  let inputs2 = \"bad\";\n  let inputs3 = \"30\";\n\n  let good = 0;\n\n  if let Ok(_) = string.str_to_int(inputs) { good = good + 1; }\n  if let Ok(_) = string.str_to_int(inputs2) { good = good + 1; }\n  if let Ok(_) = string.str_to_int(inputs3) { good = good + 1; }\n\n  io.println(\"Valid: \" + string.int_to_str(good) + \"/3\");\n  return 0;\n}\n```",
+  "analogy": "Parsing multiple numbers is like checking tickets at a concert — each person hands you a ticket; some are valid (Ok), some are fake (Err). You count how many got in.",
+  "code_template": "fn main() -> Int {\n  // Four inputs — three are numbers, one is not\n  let raw1 = \"42\";\n  let raw2 = \"hello\";\n  let raw3 = \"7\";\n  let raw4 = \"100\";\n\n  // TODO: Parse all four with string.str_to_int\n\n  // TODO: Count how many parsed successfully\n\n  // TODO: Sum up the valid ones\n\n  // TODO: Print count and sum\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let raw1 = \"42\";\n  let raw2 = \"hello\";\n  let raw3 = \"7\";\n  let raw4 = \"100\";\n\n  let r1 = string.str_to_int(raw1);\n  let r2 = string.str_to_int(raw2);\n  let r3 = string.str_to_int(raw3);\n  let r4 = string.str_to_int(raw4);\n\n  let count = 0;\n  let total = 0;\n\n  match r1 { Ok(n) => { total = total + n; count = count + 1; } Err(_) => {} };\n  match r2 { Ok(n) => { total = total + n; count = count + 1; } Err(_) => {} };\n  match r3 { Ok(n) => { total = total + n; count = count + 1; } Err(_) => {} };\n  match r4 { Ok(n) => { total = total + n; count = count + 1; } Err(_) => {} };\n\n  io.println(\"Valid: \" + string.int_to_str(count) + \"/4\");\n  io.println(\"Sum: \" + string.int_to_str(total));\n  return 0;\n}\n",
+  "try_it": "Add a fifth input. Then change the logic so that if fewer than 2 inputs are valid, the program prints \"Error: too many invalid inputs\" and stops early. Test with all-valid and mostly-invalid data.",
+  "concepts": ["batch-parsing", "multiple-results", "aggregation", "if-let-ok"],
+  "tips": [
+    "`if let Ok(n) = result` lets you check success without caring about the error value",
+    "Use `Err(_)` in match to ignore the error message when you just need to know it failed",
+    "Track counts separately so you can report metrics like '3 of 5 fields were valid'"
+  ],
+  "common_mistakes": [
+    "Not initializing count and sum before accumulating — they must start at 0",
+    "Shadowing variables inside match — `match r1 { Ok(n) => ... }` creates a new n, it doesn't change outer variables unless you use assignment",
+    "Forgetting that each match arm is independent — variable changes in one arm don't affect the other"
+  ],
+  "next_lesson": "L3-12",
+  "related": ["L3-10", "L3-08", "L3-04"]
+}

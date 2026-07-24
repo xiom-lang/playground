@@ -1,0 +1,26 @@
+{
+  "id": "L6-34",
+  "title": "Practical: Collection Utilities Module",
+  "level": "L6",
+  "duration": "10 min",
+  "story": "Every program needs to find min, max, filter, and map over collections. Instead of rewriting these loops every time, build a reusable collection utilities module with generic functions that work on any Vec[T].",
+  "why": "A collection utilities module provides generic operations that work across any Vec type, saving you from rewriting loop patterns repeatedly.",
+  "narrative": "## Building a Collection Utilities Module\n\n### Generic Collection Operations\n\n```xiom\nmod coll_utils {\n  pub fn find_max[T](items: &Vec[T], greater: fn(&T, &T) -> Bool) -> Option[T] {\n    if items.len() == 0 { return Option.None; };\n    let mut max_idx = 0;\n    let mut i = 1;\n    while i < items.len() {\n      if greater(items.get(i).unwrap(), items.get(max_idx).unwrap()) {\n        max_idx = i;\n      };\n      i += 1;\n    };\n    Option.Some(items.get(max_idx).unwrap().clone())\n  }\n\n  pub fn count_if[T](items: &Vec[T], predicate: fn(&T) -> Bool) -> Int {\n    let mut count = 0;\n    let mut i = 0;\n    while i < items.len() {\n      if predicate(items.get(i).unwrap()) {\n        count += 1;\n      };\n      i += 1;\n    };\n    count\n  }\n\n  pub fn sum[T](items: &Vec[T], get_value: fn(&T) -> Int) -> Int {\n    let mut total = 0;\n    let mut i = 0;\n    while i < items.len() {\n      total += get_value(items.get(i).unwrap());\n      i += 1;\n    };\n    total\n  }\n}\n```\n\n### Using the Module\n\n```xiom\nfn is_greater(a: &Int, b: &Int) -> Bool { a > b }\nfn is_even(n: &Int) -> Bool { n % 2 == 0 }\nfn identity(n: &Int) -> Int { n }\n\nlet numbers: Vec[Int] = Vec[Int].new();\nnumbers.push(5); numbers.push(12); numbers.push(3);\n\nlet max_val = coll_utils.find_max(&numbers, is_greater);\nlet evens = coll_utils.count_if(&numbers, is_even);\n```",
+  "analogy": "A toolkit has pliers, screwdrivers, and a hammer — tools that work on any screw, any nail, any bolt regardless of brand. Collection utilities are your toolkit for Vecs: find_max doesn't care if it's a Vec of numbers, strings, or anything — it just works.",
+  "code_template": "mod coll_utils {\n  // TODO: pub fn find_min[T](items: &Vec[T], less: fn(&T, &T) -> Bool) -> Option[T]\n  // TODO: pub fn all_of[T](items: &Vec[T], pred: fn(&T) -> Bool) -> Bool\n  // TODO: pub fn none_of[T](items: &Vec[T], pred: fn(&T) -> Bool) -> Bool\n}\n\nfn is_positive(n: &Int) -> Bool { n > 0 }\nfn is_smaller(a: &Int, b: &Int) -> Bool { a < b }\n\nfn main() -> Int {\n  // TODO: test find_min, all_of, none_of\n  return 0;\n}\n",
+  "solution": "mod coll_utils {\n  pub fn find_min[T](items: &Vec[T], less: fn(&T, &T) -> Bool) -> Option[T] {\n    if items.len() == 0 { return Option.None; };\n    let mut min_idx = 0;\n    let mut i = 1;\n    while i < items.len() {\n      if less(items.get(i).unwrap(), items.get(min_idx).unwrap()) {\n        min_idx = i;\n      };\n      i += 1;\n    };\n    Option.Some(items.get(min_idx).unwrap().clone())\n  }\n\n  pub fn all_of[T](items: &Vec[T], pred: fn(&T) -> Bool) -> Bool {\n    let mut i = 0;\n    while i < items.len() {\n      if !pred(items.get(i).unwrap()) {\n        return false;\n      };\n      i += 1;\n    };\n    true\n  }\n\n  pub fn none_of[T](items: &Vec[T], pred: fn(&T) -> Bool) -> Bool {\n    let mut i = 0;\n    while i < items.len() {\n      if pred(items.get(i).unwrap()) {\n        return false;\n      };\n      i += 1;\n    };\n    true\n  }\n}\n\nfn is_positive(n: &Int) -> Bool { n > 0 }\nfn is_smaller(a: &Int, b: &Int) -> Bool { a < b }\n\nfn main() -> Int {\n  let nums: Vec[Int] = Vec[Int].new();\n  nums.push(5); nums.push(12); nums.push(3);\n  let min_val = coll_utils.find_min(&nums, is_smaller).unwrap();\n  io.println(min_val);\n  io.println(coll_utils.all_of(&nums, is_positive));\n  return 0;\n}\n",
+  "try_it": "Add `fold[T, U]` that reduces a Vec into a single value using an accumulator function. Use it to sum numbers and concatenate strings. Add `first_where` that finds the index of the first item matching a predicate.",
+  "concepts": ["collection-utilities", "generic-functions", "Vec", "higher-order-functions", "fn-pointers"],
+  "tips": [
+    "Pass comparison functions as parameters for maximum flexibility",
+    "Return Option when a result might not exist (empty Vec, no match)",
+    "Make functions generic so they work on Vec[Int], Vec[Str], Vec[YourType]"
+  ],
+  "common_mistakes": [
+    "Forgetting to handle empty collections — always check len() == 0",
+    "Calling .clone() unnecessarily on Copy types like Int",
+    "Writing type-specific versions when a generic version would work"
+  ],
+  "next_lesson": "L6-35",
+  "related": ["L6-22", "L5-02", "L2-36", "L6-26"]
+}

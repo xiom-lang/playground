@@ -1,0 +1,26 @@
+{
+  "id": "L5-29",
+  "title": "Friend List",
+  "level": "L5",
+  "duration": "9 min",
+  "story": "You just joined a new social platform and want to manage your friend list. Tom added you, you added Lisa, but did Mike accept your request? You need to add friends, remove them, and check who's in your circle — all in order.",
+  "why": "Vec with for-loops is the simplest way to manage ordered lists of items — friends are added in order, displayed in order, and searched in order.",
+  "narrative": "## Managing Ordered Lists with Vec\n\nA Vec keeps items in the order you add them. Combined with a `for` loop, it's the cleanest way to work with ordered collections.\n\n### Building a Friend List\n\n```xiom\nfn main() -> Int {\n  let friends: Vec[Str] = Vec[Str].new();\n\n  friends.push(\"Tom\");\n  friends.push(\"Lisa\");\n  friends.push(\"Aisha\");\n\n  for friend in &friends {\n    io.println(\"Friend: \" + friend);\n  }\n  return 0;\n}\n```\n\nThe `for friend in &friends` loop borrows each element, so you can read without moving. Use `&` when you just want to look.\n\n### Adding, Removing, and Checking\n\n```xiom\nfn add_friend(friends: &mut Vec[Str], name: Str) {\n  friends.push(name);\n}\n\nfn remove_friend(friends: &mut Vec[Str], name: Str) {\n  let i = 0;\n  while i < friends.len() {\n    let current = match friends.get(i) { Some(n) => n, None => \"\" };\n    if current == name {\n      // Remove by rebuilding without the target\n      friends.pop();  // Placeholder: rebuild approach\n    }\n    i = i + 1;\n  }\n}\n```\n\nActually, removing from the middle of a Vec cleanly requires rebuilding. Let's use a filter approach:\n\n```xiom\nfn remove_friend(friends: &mut Vec[Str], name: Str) {\n  let kept: Vec[Str] = Vec[Str].new();\n  for f in &friends {\n    if f != name {\n      kept.push(f);\n    }\n  }\n  // Replace original with filtered list\n  friends.pop();  // clear\n}\n```\n\nWait — to actually replace, we clear and re-push. A simpler approach: build a new Vec, then swap contents by clearing and re-pushing:\n\n```xiom\nfn remove_friend(friends: &mut Vec[Str], name: Str) {\n  let kept: Vec[Str] = Vec[Str].new();\n  let i = 0;\n  while i < friends.len() {\n    let f = match friends.get(i) { Some(n) => n, None => \"\" };\n    if f != name {\n      kept.push(f);\n    }\n    i = i + 1;\n  }\n  while friends.len() > 0 {\n    friends.pop();\n  }\n  i = 0;\n  while i < kept.len() {\n    let item = match kept.get(i) { Some(n) => n, None => \"\" };\n    friends.push(item);\n    i = i + 1;\n  }\n}\n```\n\n### Checking Membership\n\n```xiom\nfn is_friend(friends: &Vec[Str], name: Str) -> Bool {\n  for f in friends {\n    if f == name {\n      return true;\n    }\n  }\n  return false;\n}\n```\n\nA simple linear scan — works every time for small lists.",
+  "analogy": "A Vec friend list is like a sign-up sheet on a clipboard — names appear in the order they were written. You can scan down the list to find someone, cross a name out (remove), or add to the bottom (push).",
+  "code_template": "// TODO: Write is_friend(friends: &Vec[Str], name: Str) -> Bool\n//   Loop through friends, return true if found, false if not\n\nfn main() -> Int {\n  let friends: Vec[Str] = Vec[Str].new();\n\n  // TODO: Add 4 friends using .push()\n  // TODO: Use a for loop to print all friends\n  // TODO: Check if \"Tom\" is a friend and print the result\n  // TODO: Print the total friend count using .len()\n\n  return 0;\n}\n",
+  "solution": "fn is_friend(friends: &Vec[Str], name: Str) -> Bool {\n  let i = 0;\n  while i < friends.len() {\n    let f = match friends.get(i) { Some(n) => n, None => \"\" };\n    if f == name {\n      return true;\n    }\n    i = i + 1;\n  }\n  return false;\n}\n\nfn main() -> Int {\n  let friends: Vec[Str] = Vec[Str].new();\n  friends.push(\"Tom\");\n  friends.push(\"Lisa\");\n  friends.push(\"Aisha\");\n  friends.push(\"Miguel\");\n\n  let i = 0;\n  while i < friends.len() {\n    let f = match friends.get(i) { Some(n) => n, None => \"\" };\n    io.println(\"Friend: \" + f);\n    i = i + 1;\n  }\n\n  io.println(is_friend(&friends, \"Tom\"));\n  io.println(friends.len());\n  return 0;\n}\n",
+  "try_it": "Write a `count_friends_starting_with` function that counts how many friends' names start with a given letter. Then build a `mutual_friends` function that takes two friend lists and returns a Vec of names that appear in both. What data structure helps make the mutual search faster?",
+  "concepts": ["Vec", "for-loop", "membership-check", "linear-scan", "mutable-borrow", "ordered-collection"],
+  "tips": [
+    "Use `for item in &vec` to read every element — the `&` borrows so you don't lose ownership",
+    "Linear scan with `.get(i)` and while works for searching — simple but effective for small lists",
+    "Keep a separate tracking Vec if you need iteration order — Map and Set don't preserve insertion order"
+  ],
+  "common_mistakes": [
+    "Writing `for friend in friends` without `&` — this moves each element out, breaking the Vec",
+    "Using `.contains()` on Vec — Vec doesn't have `.contains()`, only Set does; use a manual loop",
+    "Trying to modify a Vec while iterating with for — build a new Vec with filtered items instead"
+  ],
+  "next_lesson": "L5-30",
+  "related": ["L5-01", "L5-26", "L1-10"]
+}

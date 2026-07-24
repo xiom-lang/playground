@@ -1,0 +1,26 @@
+{
+  "id": "L5-02",
+  "title": "Vec Push and Pop",
+  "level": "L5",
+  "duration": "10 min",
+  "story": "You're building an undo feature for a drawing app. Every action gets pushed onto a stack, and when the user presses undo, you pop the last action off. But what if there's nothing to undo? The Vec tells you.",
+  "why": "`.pop()` returns `Option[T]` — forcing you to handle the 'empty stack' case explicitly instead of crashing on a null value.",
+  "narrative": "## Adding and Removing from the End\n\n`.push()` adds to the end of a Vec. `.pop()` removes from the end and returns the removed item — wrapped in an `Option`.\n\n### Push: Add to the End\n\n```xiom\nlet stack: Vec[Int] = Vec[Int].new();\nstack.push(10);\nstack.push(20);\nstack.push(30);\n```\n\nThe Vec now contains `[10, 20, 30]` — in that exact order.\n\n### Pop: Remove from the End\n\n```xiom\nlet top = stack.pop();\n```\n\n`.pop()` removes the LAST item and returns it. But what if the Vec is empty? There's nothing to remove — so `.pop()` returns `Option[T]`:\n\n- `Some(value)` — when there was an item to pop\n- `None` — when the Vec was empty\n\n### Matching on the Result\n\n```xiom\nmatch stack.pop() {\n  Some(val) -> io.println(val);\n  None -> io.println(\"Stack is empty!\");\n}\n```\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let stack: Vec[Int] = Vec[Int].new();\n  stack.push(100);\n  stack.push(200);\n\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n\n  return 0;\n}\n```\n\nThis prints `200`, `100`, then `\"empty\"` — because after two pops, the stack is empty and `.pop()` returns `None`.",
+  "analogy": "A Vec with push and pop is like a stack of cafeteria trays. You add trays on top (push) and take trays from the top (pop). If you reach for a tray and the stack is empty, you get nothing — and the Option tells you 'None.' You never have to guess whether you grabbed something.",
+  "code_template": "fn main() -> Int {\n  let stack: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"first\", \"second\", \"third\"\n  // TODO: Pop three times, matching on Option each time\n  // TODO: Pop a fourth time to see None\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let stack: Vec[Str] = Vec[Str].new();\n  stack.push(\"first\");\n  stack.push(\"second\");\n  stack.push(\"third\");\n\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n  return 0;\n}\n",
+  "try_it": "Push 5 numbers onto a Vec and pop 3 of them. Print each popped value. Then check the Vec's length before and after all the operations. What value does the FIRST pop return? Try using `if let Some(val) = stack.pop() { ... }` instead of match — it's a shorter way to handle the Option.",
+  "concepts": ["Vec", "push", "pop", "Option", "Some", "None", "match", "stack", "LIFO"],
+  "tips": [
+    "`.pop()` always removes from the END — it's Last-In-First-Out (LIFO), like a stack of plates",
+    "Always match on `.pop()` — the compiler won't let you ignore the `None` case",
+    "After popping N times from a Vec with N items, `.len()` will be 0"
+  ],
+  "common_mistakes": [
+    "Assuming `.pop()` returns the value directly: it returns `Option[T]`, so you MUST handle the None case",
+    "Thinking pop removes from the front — it removes from the back, opposite of what you might expect",
+    "Not checking `.len()` before popping if you want to avoid the None case entirely"
+  ],
+  "next_lesson": "L5-03",
+  "related": ["L5-01", "L2-23", "L1-28"]
+}

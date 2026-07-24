@@ -1,0 +1,27 @@
+{
+  "id": "L4-11",
+  "title": "What is Ownership?",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "In most languages, values float around freely. In XIOM, every value has exactly one owner — like a library book that can only be checked out to one person at a time.",
+  "why": "Ownership eliminates entire categories of bugs — use-after-free, double-free, null pointer dereference — all checked at compile time with zero runtime overhead.",
+  "narrative": "## Every Value Has One Owner\n\nIn XIOM, when you create a value, it belongs to a variable. That variable is its ONE owner. When the owner goes out of scope, the value is dropped.\n\n```xiom\nfn main() -> Int {\n  let a = 5;       // 'a' owns the integer 5\n  io.println(a);   // Fine — a is valid\n  return a;\n}  // a goes out of scope, 5 is dropped\n```\n\n### Ownership Transfer\n\nWhen you assign one variable to another, ownership MOVES:\n\n```xiom\nfn main() -> Int {\n  let a = 42;\n  let b = a;       // Ownership moves from a to b\n  // io.println(a);  // ERROR: a is no longer valid!\n  io.println(b);   // Fine — b owns the value now\n  return b;\n}\n```\n\nAfter `let b = a;`, variable `a` is dead. Trying to use it is a compile-time error. This is XIOM's core safety mechanism — there is never confusion about who is responsible for cleaning up a value.\n\n### Why This Matters\n\nWithout ownership, you get:\n- **Use-after-free**: accessing memory that was already freed\n- **Double-free**: freeing the same memory twice\n- **Null pointer dereference**: accessing a pointer that was set to null\n\nWith ownership, the compiler catches all of these BEFORE your program runs.",
+  "analogy": "Ownership is like a library book — only one person can have it at a time. When you give it to someone else, you no longer have it.",
+  "code_template": "// TODO: Create a variable 'x' with value 100\n// Transfer ownership from 'x' to 'y'\n// Print 'y' and return it\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let x = 100;\n  let y = x;\n  io.println(y);\n  return y;\n}",
+  "try_it": "Add `io.println(x);` after the move to `y` and see what error the compiler gives you.",
+  "concepts": ["ownership", "move semantics", "scope", "drop"],
+  "tips": [
+    "Every value in XIOM has exactly one owner at any given time",
+    "When the owner goes out of scope, the value is automatically cleaned up",
+    "Think of ownership as responsibility — whoever owns the value is responsible for its lifetime",
+    "The compiler tracks ownership at compile time — no runtime bookkeeping needed"
+  ],
+  "common_mistakes": [
+    "Trying to use a variable after its value has been moved — the compiler will catch this",
+    "Thinking ownership is like garbage collection — it's completely different and happens at compile time",
+    "Confusing ownership with mutability — owned values can be mutable or immutable"
+  ],
+  "next_lesson": "L4-12",
+  "related": ["L4-12", "L4-13", "L4-21"]
+}

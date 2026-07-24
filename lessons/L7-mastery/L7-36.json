@@ -1,0 +1,26 @@
+{
+  "id": "L7-36",
+  "title": "Recipe Scaler",
+  "level": "L7",
+  "duration": "9 min",
+  "story": "A cookie recipe makes 24 cookies, but you need 60 for the bake sale. How much flour? How many eggs? Scaling recipes is multiplication, but 2.5 eggs is meaningless — you need to handle fractions intelligently. Build the tool every baker needs.",
+  "why": "A recipe scaler teaches ratio multiplication, fractional unit handling, and ingredient management — math applied to the kitchen.",
+  "narrative": "## Building a Recipe Scaler\n\n### Ingredient Structure\n\n```xiom\ntype Ingredient {\n  name: Str;\n  amount: Int;\n  unit: Str;\n}\n\ntype Recipe {\n  name: Str;\n  servings: Int;\n  ingredients: Vec[Ingredient];\n}\n```\n\n### Scaling\n\n```xiom\nfn scale_recipe(recipe: &Recipe, desired_servings: Int) -> Vec[Ingredient] {\n  let scale = desired_servings / recipe.servings;\n  let remainder = desired_servings % recipe.servings;\n\n  let mut scaled: Vec[Ingredient] = Vec[Ingredient].new();\n  let mut i = 0;\n  while i < recipe.ingredients.len() {\n    let ing = recipe.ingredients.get(i).unwrap();\n    let new_amount = ing.amount * scale;\n    scaled.push(Ingredient{\n      name: ing.name.clone(),\n      amount: new_amount,\n      unit: ing.unit.clone()\n    });\n    i += 1;\n  };\n  scaled\n}\n```\n\n### Handling Fractional Amounts\n\n```xiom\nfn format_amount(whole: Int, fraction: Int, denominator: Int) -> Str {\n  let mut result = \"\";\n  if whole > 0 {\n    result = int_to_str(whole);\n  };\n  if fraction > 0 {\n    if whole > 0 {\n      result = string.str_concat(result, \" and \");\n    };\n    result = string.str_concat(result, int_to_str(fraction));\n    result = string.str_concat(result, \"/\");\n    result = string.str_concat(result, int_to_str(denominator));\n  };\n  if whole == 0 && fraction == 0 {\n    result = \"0\";\n  };\n  result\n}\n```\n\n### Example\n\nOriginal (24 cookies):\n- 2 cups flour\n- 1 cup sugar\n- 2 eggs\n\nScaled to 60 cookies (×2.5):\n- 5 cups flour (2 × 2.5)\n- 2 and 1/2 cups sugar (1 × 2.5)\n- 5 eggs (2 × 2.5)\n\n### Halving a Recipe\n\n```xiom\nfn halve_recipe(recipe: &Recipe) -> Vec[Ingredient] {\n  let mut halved: Vec[Ingredient] = Vec[Ingredient].new();\n  let mut i = 0;\n  while i < recipe.ingredients.len() {\n    let ing = recipe.ingredients.get(i).unwrap();\n    halved.push(Ingredient{\n      name: ing.name.clone(),\n      amount: ing.amount / 2,\n      unit: ing.unit.clone()\n    });\n    i += 1;\n  };\n  halved\n}\n```",
+  "analogy": "A recipe card with two columns: 'Makes 24' and 'Makes 60'. Each ingredient has a scaling factor of 60/24 = 2.5. Your recipe scaler fills in the second column automatically, multiplying every ingredient by the scaling factor. For 2.5 eggs, it shows '2 large + 1 yolk'.",
+  "code_template": "type Recipe {\n  servings: Int;\n  flour_cups: Int;\n  sugar_cups: Int;\n  eggs: Int;\n}\n\nfn scale_recipe(original: &Recipe, new_servings: Int) -> Recipe {\n  // TODO: multiply each ingredient by (new_servings / original.servings)\n}\n\nfn main() -> Int {\n  // TODO: original makes 12, scale to 30 servings; print new amounts\n  return 0;\n}\n",
+  "solution": "type Recipe {\n  servings: Int;\n  flour_cups: Int;\n  sugar_cups: Int;\n  eggs: Int;\n}\n\nfn scale_recipe(original: &Recipe, new_servings: Int) -> Recipe {\n  let ratio = new_servings / original.servings;\n  Recipe{\n    servings: new_servings,\n    flour_cups: original.flour_cups * ratio,\n    sugar_cups: original.sugar_cups * ratio,\n    eggs: original.eggs * ratio\n  }\n}\n\nfn main() -> Int {\n  let original = Recipe{ servings: 12, flour_cups: 2, sugar_cups: 1, eggs: 2 };\n  let scaled = scale_recipe(&original, 30);\n  io.println(scaled.flour_cups);\n  io.println(scaled.sugar_cups);\n  io.println(scaled.eggs);\n  return 0;\n}\n",
+  "try_it": "Add a 'halve' and 'double' function as special cases of scale. Handle fractional ingredients by displaying them as mixed numbers (2 1/2 cups). Add unit conversion: if a scaled amount exceeds 3 teaspoons, convert to tablespoons.",
+  "concepts": ["scaling", "ratios", "recipe", "fractions", "ingredients", "multiplication"],
+  "tips": [
+    "Scale factor = desired_servings / original_servings",
+    "Integer scaling works well — fractional scaling needs rational number handling",
+    "Eggs can't be fractional — use 'egg + yolk' or 'egg white' for partials"
+  ],
+  "common_mistakes": [
+    "Dividing when you should multiply — scale factor multiplies, not divides",
+    "Using integer division and losing the fractional part — 2.5 becomes 2",
+    "Scaling serving count without scaling ingredients — recipe ratio breaks"
+  ],
+  "next_lesson": "L7-37",
+  "related": ["L7-32", "L7-35", "L2-03"]
+}

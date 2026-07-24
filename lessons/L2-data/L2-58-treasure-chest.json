@@ -1,0 +1,25 @@
+{
+  "id": "L2-58",
+  "title": "Treasure Chest",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You're building a dungeon crawler. Every treasure chest contains loot: gold coins, gems (with names like \"Ruby\"), potions (with effects like \"Healing\"), or just junk. Each loot type has a different gold value. You need to open random chests and tally your riches.",
+  "why": "An enum with both simple variants and data-carrying variants models randomized loot systems perfectly.",
+  "narrative": "## Opening Treasure Chests\n\nA treasure chest can contain four types of loot. Each has a different gold value when appraised.\n\n### The Loot Enum\n\n```xiom\nenum Loot {\n  Gold(amount: Int),\n  Gem(name: Str),\n  Potion(effect: Str),\n  Junk,\n}\n```\n\n### Creating Loot\n\n```xiom\nlet chest1 = Loot.Gold(50);\nlet chest2 = Loot.Gem(\"Ruby\");\nlet chest3 = Loot.Potion(\"Healing\");\nlet chest4 = Loot.Junk;\n```\n\n### Appraising Loot Value\n\nThe gold value depends on the loot type. Gems are always valuable. Potions are moderate. Junk is worthless.\n\n```xiom\nfn Loot.value(self) -> Int {\n  match self {\n    Gold(amount) => { return amount; }\n    Gem(name) => {\n      if name == \"Ruby\" { return 200; }\n      if name == \"Diamond\" { return 500; }\n      return 100;\n    }\n    Potion(effect) => {\n      if effect == \"Healing\" { return 30; }\n      if effect == \"Strength\" { return 50; }\n      return 20;\n    }\n    Junk => { return 0; }\n  }\n}\n```\n\n### Describing Loot\n\n```xiom\nfn Loot.describe(self) -> Str {\n  match self {\n    Gold(amount) => { return amount + \" gold coins\"; }\n    Gem(name) => { return \"A sparkling \" + name; }\n    Potion(effect) => { return \"A potion of \" + effect; }\n    Junk => { return \"Some old junk\"; }\n  }\n}\n```\n\n### Opening Chests\n\n```xiom\nchest1.value();    // 50\nchest2.value();    // 200\nchest3.value();    // 30\nchest4.value();    // 0\n\nchest2.describe(); // \"A sparkling Ruby\"\n```",
+  "analogy": "Loot is like your trick-or-treat bag after Halloween. Gold is actual coins. Gems are the full-size chocolate bars (valuable!). Potions are the gummy candies (decent). Junk is the toothbrush some neighbor always hands out (worthless). The value method is you sorting the bag on the living room floor.",
+  "code_template": "enum Loot {\n  Gold(amount: Int),\n  Gem(name: Str),\n  Potion(effect: Str),\n  Junk,\n}\n\n// TODO: write 'Loot.value' that returns gold value based on loot type\n\n// TODO: write 'Loot.describe' that returns a text description\n\nfn main() -> Int {\n  // TODO: create Gold(100), Gem(\"Diamond\"), Potion(\"Healing\"), Junk, return total value\n  return 0;\n}",
+  "solution": "enum Loot {\n  Gold(amount: Int),\n  Gem(name: Str),\n  Potion(effect: Str),\n  Junk,\n}\n\nfn Loot.value(self) -> Int {\n  match self {\n    Gold(amount) => { return amount; }\n    Gem(name) => {\n      if name == \"Diamond\" { return 500; }\n      if name == \"Ruby\" { return 200; }\n      return 100;\n    }\n    Potion(effect) => {\n      if effect == \"Healing\" { return 30; }\n      if effect == \"Strength\" { return 50; }\n      return 20;\n    }\n    Junk => { return 0; }\n  }\n}\n\nfn Loot.describe(self) -> Str {\n  match self {\n    Gold(amount) => { return amount + \" gold coins\"; }\n    Gem(name) => { return \"A sparkling \" + name; }\n    Potion(effect) => { return \"A potion of \" + effect; }\n    Junk => { return \"Some old junk\"; }\n  }\n}\n\nfn main() -> Int {\n  let c1 = Loot.Gold(100);\n  let c2 = Loot.Gem(\"Diamond\");\n  let c3 = Loot.Potion(\"Healing\");\n  let c4 = Loot.Junk;\n  return c1.value() + c2.value() + c3.value() + c4.value();\n}",
+  "try_it": "Add a `Weapon(name: Str, damage: Int)` variant. Add a `Loot.is_valuable(self) -> Bool` method (value > 100). Simulate opening 5 chests: Gold(25), Gem(\"Ruby\"), Potion(\"Strength\"), Weapon(\"Sword\", 25), Junk. Tally everything.",
+  "concepts": ["enum", "match", "loot", "value", "description", "variant-data"],
+  "tips": [
+    "Use `if/if/else` chains for gem/potion subcategories \u2014 match inside match is valid but nested",
+    "Junk carries no data and has no value \u2014 the simplest possible variant",
+    "The value method returns different amounts for different gem names \u2014 this shows multi-level matching"
+  ],
+  "common_mistakes": [
+    "Returning 200 for all gems \u2014 the value should depend on the gem name (Ruby=200, Diamond=500)",
+    "Forgetting to check all potion types \u2014 unknown potions should still return a reasonable default (20)"
+  ],
+  "next_lesson": "L2-59",
+  "related": ["L2-46", "L2-15", "L2-37"]
+}

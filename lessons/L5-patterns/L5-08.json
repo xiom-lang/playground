@@ -1,0 +1,26 @@
+{
+  "id": "L5-08",
+  "title": "Vec Methods Practice",
+  "level": "L5",
+  "duration": "10 min",
+  "story": "You're 30 minutes into debugging and realize your Vec has 0 items when it should have 50. Before you waste more time, you need to know: is the Vec empty? How many items does it have? Can I peek at the top without removing it?",
+  "why": "`.is_empty()`, `.len()`, push+pop+get — mastering all Vec inspection methods prevents wasted debugging time.",
+  "narrative": "## All Vec Methods in One Place\n\nHere's every Vec method you need for daily use, with real scenarios for each.\n\n### Check If Empty: .is_empty()\n\n```xiom\nif stack.is_empty() {\n  io.println(\"Nothing to undo!\");\n}\nelse {\n  match stack.pop() {\n    Some(v) -> io.println(v);\n    None -> {}\n  }\n}\n```\n\nAlways check `.is_empty()` before operations that depend on having data.\n\n### Count Items: .len()\n\n```xiom\nio.println(\"Queue has \" + string.int_to_str(queue.len()) + \" people waiting\");\n```\n\n### Build a Stack Using Vec\n\nA stack is a LIFO (Last-In-First-Out) data structure. Vec with push/pop IS a stack:\n\n```xiom\nfn push(stack: Vec[Int], val: Int) { stack.push(val); }\nfn peek(stack: Vec[Int]) -> Option[Int] { return stack.get(stack.len() - 1); }\n```\n\n### Full Program: Browser History\n\n```xiom\nfn main() -> Int {\n  let history: Vec[Str] = Vec[Str].new();\n\n  io.println(history.is_empty());\n\n  history.push(\"google.com\");\n  history.push(\"wikipedia.org\");\n  history.push(\"github.com\");\n\n  io.println(history.len());\n  io.println(history.is_empty());\n\n  match history.pop() {\n    Some(page) -> io.println(\"Back from: \" + page);\n    None -> io.println(\"No history\");\n  }\n\n  io.println(history.len());\n  return 0;\n}\n```",
+  "analogy": "Vec methods are like the dashboard of a car. `.is_empty()` is the fuel gauge — is there anything left? `.len()` is the odometer — how many miles (items)? Push/pop are the gas and brake pedals — add and remove. Together they give you complete control.",
+  "code_template": "fn peek(stack: Vec[Int]) -> Option[Int] {\n  // TODO: Check if stack is empty, return None if so\n  // TODO: Return the last element using .get() and .len()\n  return None;\n}\n\nfn main() -> Int {\n  let stack: Vec[Int] = Vec[Int].new();\n  // TODO: Push 10, 20, 30\n  // TODO: Use peek() to look at the top without removing\n  // TODO: Pop all items, checking .is_empty() before each pop\n  return 0;\n}\n",
+  "solution": "fn peek(stack: Vec[Int]) -> Option[Int] {\n  if stack.is_empty() { return None; }\n  return stack.get(stack.len() - 1);\n}\n\nfn main() -> Int {\n  let stack: Vec[Int] = Vec[Int].new();\n  stack.push(10);\n  stack.push(20);\n  stack.push(30);\n\n  match peek(stack) {\n    Some(v) -> io.println(v);\n    None -> io.println(\"empty\");\n  }\n\n  while !stack.is_empty() {\n    match stack.pop() {\n      Some(v) -> io.println(v);\n      None -> {}\n    }\n  }\n\n  io.println(stack.is_empty());\n  return 0;\n}\n",
+  "try_it": "Build a complete stack with `push`, `pop`, `peek`, and `is_empty` functions. Then build a queue using Vec (enqueue adds to the end, dequeue removes from the front — you'll need to rebuild the Vec for dequeue). Test both with a sequence of operations: push(1), push(2), pop(), push(3), pop(), pop(), pop(). Compare stack vs queue behavior.",
+  "concepts": ["Vec", "is_empty", "len", "push", "pop", "get", "stack", "peek", "LIFO"],
+  "tips": [
+    "`.is_empty()` is cleaner than `if len() == 0` — it reads like English and won't be wrong",
+    "Use `.get(len() - 1)` to peek at the last element without removing it",
+    "Stack = push + pop from the end. Queue = push to end, remove from front (harder with Vec, use a different approach)"
+  ],
+  "common_mistakes": [
+    "Calling `.pop()` on an empty Vec without checking `.is_empty()` first — you'll get None and might not handle it",
+    "Using `.len()` as the last index — the last valid index is `.len() - 1`, not `.len()`",
+    "Building a queue by removing from index 0 — this is O(n) with Vec; for queues, consider a different pattern"
+  ],
+  "next_lesson": "L5-09",
+  "related": ["L5-02", "L5-03", "L5-01", "L1-18"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L3-16",
+  "title": "Option to Result",
+  "level": "L3",
+  "duration": "10 min",
+  "story": "You're connecting two libraries. One returns Option (found it or not), but your code needs Result (it worked or here's why). You need a bridge between the two worlds — and you can build it with match.",
+  "why": "Option and Result are interchangeable with a simple conversion — turning None into Err gives you error messages, turning Err into None discards details when unnecessary.",
+  "narrative": "## Bridging Option and Result\n\nIn real code, you'll use both Option and Result. Sometimes one function returns Option but you need Result. Converting is straightforward.\n\n### Option → Result\n\n```xiom\nfn opt_to_res(opt: Option[Int], err_msg: Str) -> Result[Int, Str] {\n  return match opt {\n    Some(val) => Ok(val),\n    None => Err(err_msg),\n  };\n}\n\nfn main() -> Int {\n  let found = Some(42);\n  let not_found: Option[Int] = None;\n\n  let r1 = opt_to_res(found, \"Value missing\");\n  let r2 = opt_to_res(not_found, \"Value missing\");\n\n  io.println(r1.unwrap_or(0));  // 42\n  io.println(r2.unwrap_or(0));  // 0 (error suppressed)\n  return 0;\n}\n```\n\n### Result → Option (Dropping Error Info)\n\n```xiom\nfn res_to_opt(res: Result[Int, Str]) -> Option[Int] {\n  return match res {\n    Ok(val) => Some(val),\n    Err(_) => None,\n  };\n}\n\nfn main() -> Int {\n  let success: Result[Int, Str] = Ok(99);\n  let failure: Result[Int, Str] = Err(\"Network error\");\n\n  let o1 = res_to_opt(success);\n  let o2 = res_to_opt(failure);\n\n  io.println(o1.unwrap_or(0));  // 99\n  io.println(o2.unwrap_or(0));  // 0 (error info lost)\n  return 0;\n}\n```\n\n### Converting Both Ways in a Pipeline\n\n```xiom\nfn find_user(id: Int) -> Option[Str] {\n  if id == 1 { return Some(\"Alice\"); }\n  if id == 2 { return Some(\"Bob\"); }\n  return None;\n}\n\nfn get_user_or_error(id: Int) -> Result[Str, Str] {\n  let user_opt = find_user(id);\n  return match user_opt {\n    Some(name) => Ok(name),\n    None => Err(\"User \" + string.int_to_str(id) + \" not found\"),\n  };\n}\n\nfn main() -> Int {\n  match get_user_or_error(1) {\n    Ok(name) => io.println(\"Hello, \" + name),\n    Err(e) => io.println(e),\n  };\n  match get_user_or_error(99) {\n    Ok(name) => io.println(\"Hello, \" + name),\n    Err(e) => io.println(e),\n  };\n  return 0;\n}\n```",
+  "analogy": "Converting Option to Result is like upgrading from a 'yes/no' signal to a full explanation — Option says 'nothing there,' Result says 'nothing there BECAUSE the database was offline.'",
+  "code_template": "// TODO: Write find_student(id: Int) -> Option[Str]\n// 1->\"Alex\", 2->\"Bailey\", 3->\"Casey\", others->None\n\n// TODO: Write get_student(id: Int) -> Result[Str, Str]\n// Call find_student, convert None to Err(\"Student ID X not found\")\n\n// TODO: Write check_cache(key: Int) -> Result[Int, Str]\n// 100->Ok(42), 200->Ok(99), others->Err(\"Cache miss\")\n\n// TODO: Write cache_to_opt(res: Result[Int, Str]) -> Option[Int]\n// Convert Ok to Some, Err to None\n\nfn main() -> Int {\n  // TODO: Test get_student with valid and invalid IDs\n  // TODO: Test cache_to_opt with Ok and Err\n  return 0;\n}\n",
+  "solution": "fn find_student(id: Int) -> Option[Str] {\n  if id == 1 { return Some(\"Alex\"); }\n  if id == 2 { return Some(\"Bailey\"); }\n  if id == 3 { return Some(\"Casey\"); }\n  return None;\n}\n\nfn get_student(id: Int) -> Result[Str, Str] {\n  let maybe = find_student(id);\n  return match maybe {\n    Some(name) => Ok(name),\n    None => Err(\"Student ID \" + string.int_to_str(id) + \" not found\"),\n  };\n}\n\nfn check_cache(key: Int) -> Result[Int, Str] {\n  if key == 100 { return Ok(42); }\n  if key == 200 { return Ok(99); }\n  return Err(\"Cache miss\");\n}\n\nfn cache_to_opt(res: Result[Int, Str]) -> Option[Int] {\n  return match res {\n    Ok(val) => Some(val),\n    Err(_) => None,\n  };\n}\n\nfn main() -> Int {\n  io.println(get_student(2).unwrap_or(\"Not found\"));\n  io.println(get_student(99).unwrap_or(\"Not found\"));\n  io.println(cache_to_opt(check_cache(100)).unwrap_or(0));\n  io.println(cache_to_opt(check_cache(999)).unwrap_or(0));\n  return 0;\n}\n",
+  "try_it": "Write a bi-directional pipeline: start with Option, convert to Result, transform inside Result, convert back to Option. Use it to look up a config value, validate it, then return Some(validated) or None if anything fails.",
+  "concepts": ["Option-Result-conversion", "type-bridging", "error-enrichment", "error-discard"],
+  "tips": [
+    "Convert Option to Result when you need to attach an error message to a missing value",
+    "Convert Result to Option when the caller doesn't care WHY something failed, just whether it did",
+    "The conversion functions are just match statements — write them once and reuse them"
+  ],
+  "common_mistakes": [
+    "Converting `Some(error_msg)` to `Err(error_msg)` — Some means success in Option world, Ok means success in Result world",
+    "Losing important error info by converting Result to Option too early — keep the error until you're sure you don't need it",
+    "Writing the conversion inside every function instead of making a reusable helper"
+  ],
+  "next_lesson": "L3-17",
+  "related": ["L3-01", "L3-07", "L3-08"]
+}

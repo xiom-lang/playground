@@ -35,6 +35,7 @@ function collectLessonFiles(dir) {
     if (entry.isDirectory()) {
       results.push(...collectLessonFiles(fullPath));
     } else if (entry.isFile() && path.extname(entry.name).toLowerCase() === '.json') {
+      if (entry.name === 'index.json') continue;
       results.push(fullPath);
     }
   }

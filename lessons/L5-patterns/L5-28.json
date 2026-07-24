@@ -1,0 +1,26 @@
+{
+  "id": "L5-28",
+  "title": "Tag System",
+  "level": "L5",
+  "duration": "9 min",
+  "story": "You're building a photo app. Every photo can have tags like 'sunset', 'beach', 'friends'. You need a way to add tags, remove tags, and quickly check 'does this photo have the tag nature?' — without duplicates. Enter the Set.",
+  "why": "Sets store unique items and check membership instantly — perfect for tags, permissions, categories, and any collection where duplicates are meaningless.",
+  "narrative": "## Uniqueness Guaranteed\n\nA **Set** is like a Vec that automatically prevents duplicates. Every item is either in the Set or not — there's no \"how many times.\"\n\n### Creating and Using a Set\n\n```xiom\nfn main() -> Int {\n  let tags: Set[Str] = Set[Str].new();\n\n  tags.insert(\"sunset\");\n  tags.insert(\"beach\");\n  tags.insert(\"friends\");\n  tags.insert(\"sunset\");  // Duplicate — silently ignored!\n\n  io.println(tags.contains(&\"beach\"));    // true\n  io.println(tags.contains(&\"mountain\"));  // false\n\n  tags.remove(&\"beach\");\n  io.println(tags.contains(&\"beach\"));    // false\n\n  return 0;\n}\n```\n\n### Building a Tag Manager\n\n```xiom\ntype Photo = {\n  id: Int;\n  tags: Set[Str];\n}\n\nfn add_tag(photo: &mut Photo, tag: Str) {\n  photo.tags.insert(tag);\n}\n\nfn has_tag(photo: &Photo, tag: Str) -> Bool {\n  return photo.tags.contains(&tag);\n}\n\nfn main() -> Int {\n  let photo = Photo{ id: 1, tags: Set[Str].new() };\n  add_tag(&mut photo, \"sunset\");\n  add_tag(&mut photo, \"beach\");\n\n  io.println(has_tag(&photo, \"sunset\"));  // true\n  io.println(has_tag(&photo, \"urban\"));   // false\n  return 0;\n}\n```\n\n### Comparing with Vec\n\nA Vec would let you add \"sunset\" twice, and checking membership requires a loop. A Set guarantees uniqueness AND gives you O(1) membership checks with `.contains()` — no loop needed.",
+  "analogy": "A Set is like a VIP guest list — you're either on it or you're not. Adding your name twice doesn't put you on the list twice. The bouncer only checks 'are you on the list?' and the answer is a simple yes or no.",
+  "code_template": "type Photo = {\n  id: Int;\n  tags: Set[Str];\n}\n\nfn add_tag(photo: &mut Photo, tag: Str) {\n  // TODO: Insert the tag into the photo's tags\n}\n\nfn has_any_tag(photo: &Photo, search_tags: &Vec[Str]) -> Bool {\n  // TODO: Loop through search_tags, check if photo.tags contains each one\n  // Return true if ANY match\n  return false;\n}\n\nfn main() -> Int {\n  // TODO: Create a Photo with id 42\n  // TODO: Add tags: \"nature\", \"sunset\", \"ocean\"\n  // TODO: Check if photo has \"nature\" tag and print result\n  // TODO: Add \"nature\" again — verify it doesn't duplicate\n\n  return 0;\n}\n",
+  "solution": "type Photo = {\n  id: Int;\n  tags: Set[Str];\n}\n\nfn add_tag(photo: &mut Photo, tag: Str) {\n  photo.tags.insert(tag);\n}\n\nfn has_any_tag(photo: &Photo, search_tags: &Vec[Str]) -> Bool {\n  let i = 0;\n  while i < search_tags.len() {\n    let tag = match search_tags.get(i) { Some(t) => t, None => \"\" };\n    if photo.tags.contains(&tag) {\n      return true;\n    }\n    i = i + 1;\n  }\n  return false;\n}\n\nfn main() -> Int {\n  let mut photo = Photo{ id: 42, tags: Set[Str].new() };\n  add_tag(&mut photo, \"nature\");\n  add_tag(&mut photo, \"sunset\");\n  add_tag(&mut photo, \"ocean\");\n  add_tag(&mut photo, \"nature\");\n\n  io.println(photo.tags.contains(&\"nature\"));\n\n  let search: Vec[Str] = Vec[Str].new();\n  search.push(\"urban\");\n  search.push(\"ocean\");\n  io.println(has_any_tag(&photo, &search));\n  return 0;\n}\n",
+  "try_it": "Add a `remove_tag` function and a `count_tags` function that returns the number of tags. Then build a `merge_tags` function that takes two Photos and returns a new Set containing tags from both. For a challenge: create a function that finds photos matching ALL given tags (not just any).",
+  "concepts": ["Set", "insert", "contains", "remove", "uniqueness", "membership-test", "tag-system"],
+  "tips": [
+    "`.contains(&value)` instantly checks membership — no loop needed, unlike Vec",
+    "`.insert(value)` on a Set silently ignores duplicates — it's safe to insert the same tag twice",
+    "Use Set when you care about 'is this item in the collection?' — use Vec when you care about order or count"
+  ],
+  "common_mistakes": [
+    "Using `.len()` to check membership — O(n) loop vs O(1) with `.contains()`",
+    "Confusing Set.remove with Vec.pop — Set.remove needs a specific value: `tags.remove(&\"beach\")`",
+    "Expecting Set to maintain insertion order — Sets prioritize fast lookups over ordering"
+  ],
+  "next_lesson": "L5-29",
+  "related": ["L5-01", "L5-26", "L2-01"]
+}

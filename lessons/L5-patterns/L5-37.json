@@ -1,0 +1,26 @@
+{
+  "id": "L5-37",
+  "title": "Simple Cache",
+  "level": "L5",
+  "duration": "10 min",
+  "story": "Your app computes Fibonacci numbers on demand — but computing fib(40) takes forever, and users keep asking for the same numbers. You need a cache: a way to remember answers you've already computed, so you only calculate each value once.",
+  "why": "Caching is one of the most powerful performance optimizations — a Map stores computed results and transforms expensive O(2^n) operations into instant O(1) lookups.",
+  "narrative": "## Remembering What You've Already Done\n\nA **cache** stores computed results. Before doing expensive work, check the cache. If the answer exists, return it immediately — no recomputation needed.\n\n### Fibonacci Without a Cache (Slow)\n\nThe classic recursive Fibonacci:\n\n```xiom\nfn fib_slow(n: Int) -> Int {\n  if n <= 1 {\n    return n;\n  }\n  return fib_slow(n - 1) + fib_slow(n - 2);\n}\n```\n\nComputing `fib(40)` calls `fib_slow` over 300 million times. Your users will grow old waiting.\n\n### Fibonacci With a Cache (Fast)\n\n```xiom\nfn cached_fib(n: Int, cache: &mut Map[Int, Int]) -> Int {\n  // Check cache first\n  if cache.contains(&n) {\n    return match cache.get(&n) { Some(v) => v, None => 0 };\n  }\n\n  // Base case\n  if n <= 1 {\n    cache.insert(n, n);\n    return n;\n  }\n\n  // Compute and cache\n  let result = cached_fib(n - 1, cache) + cached_fib(n - 2, cache);\n  cache.insert(n, result);\n  return result;\n}\n```\n\nNow `fib(40)` does only 40 computations — each value computed once, then cached.\n\n### The Cache Pattern\n\nEvery cached function follows the same three-step pattern:\n\n1. **Check cache**: If result exists, return it\n2. **Compute**: Do the actual work\n3. **Store**: Save the result before returning\n\n```xiom\nfn main() -> Int {\n  var cache: Map[Int, Int] = Map[Int, Int].new();\n  let result = cached_fib(10, &mut cache);\n  io.println(string.int_to_str(result));\n  io.println(\"Cache size: \" + string.int_to_str(cache.len()));\n  return 0;\n}\n```\n\nThis pattern applies to ANY expensive computation — factorial, prime checking, string processing, database queries. Cache once, reuse forever.",
+  "analogy": "A cache is like writing answers in the margin of a math test — the first time you compute 7x8, you write 56. The next time you need it, you look at the margin instead of recalculating. Each cached result saves you from repeating work you've already done.",
+  "code_template": "// TODO: Write cached_factorial(n: Int, cache: &mut Map[Int, Int]) -> Int\n//   1. Check if n is in cache — if so, return cached value\n//   2. If n <= 1, insert and return 1\n//   3. Otherwise: result = n * cached_factorial(n-1, cache), cache it, return\n\nfn main() -> Int {\n  var cache: Map[Int, Int] = Map[Int, Int].new();\n\n  // TODO: Compute factorial of 6 using cached_factorial\n  // TODO: Print the result and the cache size\n\n  return 0;\n}\n",
+  "solution": "fn cached_factorial(n: Int, cache: &mut Map[Int, Int]) -> Int {\n  if cache.contains(&n) {\n    return match cache.get(&n) { Some(v) => v, None => 0 };\n  }\n  if n <= 1 {\n    cache.insert(n, 1);\n    return 1;\n  }\n  let result = n * cached_factorial(n - 1, cache);\n  cache.insert(n, result);\n  return result;\n}\n\nfn main() -> Int {\n  var cache: Map[Int, Int] = Map[Int, Int].new();\n  let result = cached_factorial(6, &mut cache);\n  io.println(string.int_to_str(result));\n  io.println(string.int_to_str(cache.len()));\n  return 0;\n}\n",
+  "try_it": "Add a `cache_stats` function that reports how many computations were new vs cached. Add a counter that increments on every cache miss (new computation). Compare `cached_fib(30)` cache misses vs total calls. Then write `cached_is_prime` using a Map[Int, Bool] cache — once you know 17 is prime, never compute it again.",
+  "concepts": ["cache", "memoization", "Map-as-cache", "dynamic-programming", "check-before-compute", "performance"],
+  "tips": [
+    "Always check the cache BEFORE computing — that's the whole point: avoid unnecessary work",
+    "Cache the result immediately after computing — if you forget to `.insert()` the cache is useless",
+    "The cache key must uniquely identify the computation — `n` for fib(n), `(a,b)` for add(a,b)"
+  ],
+  "common_mistakes": [
+    "Forgetting to pass `&mut cache` — caching requires mutating the Map, so the reference must be mutable",
+    "Checking cache as `cache.get(&n)` without `contains` — both work, but `contains` is clearer for 'does it exist?'",
+    "Not caching the base case — even `fib(0)` and `fib(1)` should be cached, or you'll recompute them repeatedly"
+  ],
+  "next_lesson": "L5-38",
+  "related": ["L5-26", "L5-27", "L1-32"]
+}

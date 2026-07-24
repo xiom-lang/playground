@@ -1,0 +1,25 @@
+{
+  "id": "L2-57",
+  "title": "Robot Command",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You're programming a robot turtle that understands four commands: Move forward, Turn left/right, Speak a message, and Wait. You write a list of commands and the robot executes them in order, printing what it's doing at each step.",
+  "why": "An enum command pattern with an execute function is the foundation of interpreters, game scripting, and bot automation.",
+  "narrative": "## Programming a Robot With Commands\n\nA robot processes a sequence of commands. Each command carries its own data (distance, degrees, message, seconds) and produces a string output when executed.\n\n### The Command Enum\n\n```xiom\nenum Command {\n  Move(distance: Int),\n  Turn(degrees: Int),\n  Speak(msg: Str),\n  Wait(seconds: Int),\n}\n```\n\n### Creating Commands\n\n```xiom\nlet cmd1 = Command.Move(10);\nlet cmd2 = Command.Turn(90);\nlet cmd3 = Command.Speak(\"Hello!\");\nlet cmd4 = Command.Wait(2);\n```\n\n### Executing a Single Command\n\nMatch on the command variant and return a description of what happened:\n\n```xiom\nfn execute(cmd: Command) -> Str {\n  match cmd {\n    Move(dist) => { return \"Moving forward \" + dist + \" steps\"; }\n    Turn(deg) => { return \"Turning \" + deg + \" degrees\"; }\n    Speak(msg) => { return \"Robot says: \" + msg; }\n    Wait(sec) => { return \"Waiting \" + sec + \" seconds\"; }\n  }\n}\n```\n\n### Running a Command Sequence\n\nProcess four commands in order:\n\n```xiom\nvar log = \"\";\nlog = execute(Command.Move(5));\nlog = execute(Command.Turn(180));\nlog = execute(Command.Speak(\"I am here!\"));\nlog = execute(Command.Wait(1));\n```\n\n### Tracking Robot State\n\n```xiom\ntype Robot = {\n  x: Int;\n  y: Int;\n}\n\nfn Robot.process(self, cmd: Command) -> Str {\n  match cmd {\n    Move(dist) => {\n      x = x + dist;\n      return \"Moved to (\" + x + \", \" + y + \")\";\n    }\n    _ => { return execute(cmd); }\n  }\n}\n```",
+  "analogy": "A Command is like a line in a script for a theater actor. Move(10) is \"walk 10 steps right.\" Turn(90) is \"face left.\" Speak(\"Hello!\") is the actor's line. The execute function is the stage director reading each line aloud as the actor performs it.",
+  "code_template": "enum Command {\n  Move(distance: Int),\n  Turn(degrees: Int),\n  Speak(msg: Str),\n  Wait(seconds: Int),\n}\n\n// TODO: write 'execute' that returns a string describing what the robot does\n\nfn main() -> Int {\n  // TODO: create 4 commands, execute each, return the total distance + wait seconds\n  return 0;\n}",
+  "solution": "enum Command {\n  Move(distance: Int),\n  Turn(degrees: Int),\n  Speak(msg: Str),\n  Wait(seconds: Int),\n}\n\nfn execute(cmd: Command) -> Str {\n  match cmd {\n    Move(dist) => { return \"Moving forward \" + dist + \" steps\"; }\n    Turn(deg) => { return \"Turning \" + deg + \" degrees\"; }\n    Speak(msg) => { return \"Robot says: \" + msg; }\n    Wait(sec) => { return \"Waiting \" + sec + \" seconds\"; }\n  }\n}\n\nfn main() -> Int {\n  let c1 = Command.Move(10);\n  let c2 = Command.Turn(90);\n  let c3 = Command.Speak(\"Hello!\");\n  let c4 = Command.Wait(3);\n  var total = 0;\n  match c1 { Move(d) => { total = total + d; } _ => { } }\n  match c4 { Wait(s) => { total = total + s; } _ => { } }\n  return total;\n}",
+  "try_it": "Add a `Dance` command variant that produces \"Robot dances!\" Add a `Command.repeat(self, times: Int) -> Command` method. Create a sequence: Move(3), Dance, Speak(\"Ta-da!\"), Move(-1). Process them all.",
+  "concepts": ["enum", "command-pattern", "execute", "match", "robot"],
+  "tips": [
+    "The `execute` function works on any Command \u2014 it's a standalone function, not a method",
+    "Each match arm returns a description string \u2014 the caller can display it or accumulate it",
+    "Use `_ =>` for variants you don't need to extract data from in a given context"
+  ],
+  "common_mistakes": [
+    "Forgetting to match all 4 variants in `execute` \u2014 the compiler requires exhaustive matching",
+    "Naming the variant `Movement` instead of `Move` \u2014 variant names should be verbs that feel like actions"
+  ],
+  "next_lesson": "L2-58",
+  "related": ["L2-39", "L2-15", "L2-37"]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "L7-12",
+  "title": "Word Counter",
+  "level": "L7",
+  "duration": "8 min",
+  "story": "Your English teacher assigns a 1000-word essay. How do you count words? By hand? No — build a word counter that handles spaces, tabs, newlines, and punctuation. Then extend it to count sentences and paragraphs too.",
+  "why": "Word counting teaches state-machine logic: tracking whether you're 'inside a word' as you scan character by character — a fundamental text processing pattern.",
+  "narrative": "## Counting Words, Sentences, Paragraphs\n\n### Word Counter\n\n```xiom\nfn count_words(text: Str) -> Int {\n  if text.len() == 0 { return 0; };\n  let mut count = 0;\n  let mut in_word = false;\n  let mut i = 0;\n  while i < text.len() {\n    let c = text.get(i).unwrap();\n    let is_space = c == ' ' || c == '\\n' || c == '\\t';\n\n    if is_space {\n      in_word = false;\n    } else if !in_word {\n      count += 1;\n      in_word = true;\n    };\n    i += 1;\n  };\n  count\n}\n```\n\n### Sentence Counter\n\n```xiom\nfn count_sentences(text: Str) -> Int {\n  let mut count = 0;\n  let mut i = 0;\n  while i < text.len() {\n    let c = text.get(i).unwrap();\n    if c == '.' || c == '!' || c == '?' {\n      count += 1;\n    };\n    i += 1;\n  };\n  count\n}\n```\n\n### Paragraph Counter\n\n```xiom\nfn count_paragraphs(text: Str) -> Int {\n  if text.len() == 0 { return 0; };\n  let mut count = 0;\n  let mut in_para = false;\n  let mut i = 0;\n  while i < text.len() {\n    let c = text.get(i).unwrap();\n    if c == '\\n' {\n      in_para = false;\n    } else if !in_para {\n      count += 1;\n      in_para = true;\n    };\n    i += 1;\n  };\n  count\n}\n```\n\n### Complete Text Stats\n\n```xiom\nfn analyze_text(text: Str) {\n  io.println(count_words(text));\n  io.println(count_sentences(text));\n  io.println(count_paragraphs(text));\n}\n```",
+  "analogy": "Reading a book, your finger traces each word. When you hit a space, the word ends and a new one begins. Your word counter's `in_word` flag is that finger — it knows when you've left one word and entered another. Sentences are marked by punctuation stop signs (., !, ?).",
+  "code_template": "fn count_words(text: Str) -> Int {\n  // TODO: track in_word state, increment count on word transitions\n}\n\nfn count_sentences(text: Str) -> Int {\n  // TODO: count occurrences of '.', '!', '?'\n}\n\nfn main() -> Int {\n  // TODO: analyze \"Hello world. This is a test! How are you?\"\n  return 0;\n}\n",
+  "solution": "fn count_words(text: Str) -> Int {\n  if text.len() == 0 { return 0; };\n  let mut count = 0;\n  let mut in_word = false;\n  let mut i = 0;\n  while i < text.len() {\n    let c = text.get(i).unwrap();\n    if c == ' ' {\n      in_word = false;\n    } else if !in_word {\n      count += 1;\n      in_word = true;\n    };\n    i += 1;\n  };\n  count\n}\n\nfn count_sentences(text: Str) -> Int {\n  let mut count = 0;\n  let mut i = 0;\n  while i < text.len() {\n    let c = text.get(i).unwrap();\n    if c == '.' || c == '!' || c == '?' { count += 1; };\n    i += 1;\n  };\n  count\n}\n\nfn main() -> Int {\n  let text = \"Hello world. This is a test! How are you?\";\n  io.println(count_words(text));\n  io.println(count_sentences(text));\n  return 0;\n}\n",
+  "try_it": "Add `average_word_length` (total chars / total words, excluding spaces). Add `most_common_word` that returns the word appearing most frequently. Handle edge cases: multiple spaces, leading/trailing spaces, and empty strings.",
+  "concepts": ["word-count", "state-machine", "text-analysis", "sentence-detection", "character-scanning"],
+  "tips": [
+    "The `in_word` flag tracks word boundaries — transitions from space to non-space = new word",
+    "Count sentences by terminal punctuation: '.', '!', '?'",
+    "Paragraphs are separated by blank lines (consecutive newlines)"
+  ],
+  "common_mistakes": [
+    "Counting every character as a word — only transitions matter",
+    "Forgetting to handle multiple consecutive spaces",
+    "Not resetting `in_word` on spaces — leads to undercounting"
+  ],
+  "next_lesson": "L7-13",
+  "related": ["L6-23", "L7-11", "L2-52"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "L3-31",
+  "title": "BMI Calculator with Validation",
+  "level": "L3",
+  "duration": "9 min",
+  "story": "Your fitness app asks for weight and height, but users type anything — 'seventy' instead of 70, negative numbers, or impossibly small heights. Before calculating BMI, every input must be parsed and validated, and the result must include a health category like 'Underweight' or 'Obese'.",
+  "why": "Multi-input validation chains with Result teach the pattern of collecting all inputs before performing the final computation.",
+  "narrative": "## Calculating BMI Safely\n\nBMI = weight(kg) / height(m)². But before we compute anything, we need two valid numbers from raw strings.\n\n### Step 1: Parse Both Inputs\n\n```xiom\nfn calculate_bmi(weight_str: Str, height_str: Str) -> Result[Str, Str] {\n  let weight = string.str_to_float(weight_str)?;\n  let height = string.str_to_float(height_str)?;\n```\n\nBoth `?` operators must succeed before we proceed. If either string is invalid, the function returns `Err` immediately.\n\n### Step 2: Validate Ranges\n\nA newborn weighs about 3 kg. An adult giraffe weighs about 1200 kg. We'll set generous but sane limits:\n\n```xiom\n  if weight < 2.0 || weight > 700.0 {\n    return Err(\"Weight must be 2-700 kg\");\n  }\n  if height < 0.5 || height > 3.0 {\n    return Err(\"Height must be 0.5-3.0 m\");\n  }\n```\n\n### Step 3: Calculate and Categorize\n\nBMI formula and WHO categories:\n\n```xiom\n  let bmi = weight / (height * height);\n  let category = if bmi < 18.5 {\n    \"Underweight\"\n  } elif bmi < 25.0 {\n    \"Normal weight\"\n  } elif bmi < 30.0 {\n    \"Overweight\"\n  } else {\n    \"Obese\"\n  };\n```\n\n### Step 4: Return a Descriptive Result\n\n```xiom\n  return Ok(category);\n}\n```\n\n### Example Calls\n\n```xiom\ncalculate_bmi(\"70\", \"1.75\");    // Ok(\"Normal weight\") — BMI 22.9\ncalculate_bmi(\"abc\", \"1.75\");   // Err — invalid weight\ncalculate_bmi(\"70\", \"0.2\");     // Err — height too small\n```",
+  "analogy": "The BMI calculator is like a doctor's intake form. First, the nurse checks if you wrote numbers or scribbles (parse). Then they check if the numbers make sense — a 0.2m tall person or 700kg weight raises eyebrows (validate). Only then does the doctor calculate your BMI and tell you the category.",
+  "code_template": "fn calculate_bmi(weight_str: Str, height_str: Str) -> Result[Str, Str] {\n  // TODO: parse both strings with string.str_to_float and ?\n  // TODO: validate weight 2-700 kg and height 0.5-3.0 m\n  // TODO: calculate bmi = weight / (height * height)\n  // TODO: categorize: <18.5 Underweight, <25 Normal, <30 Overweight, else Obese\n  // TODO: return Ok(category)\n  return Err(\"not implemented\");\n}\n\nfn main() -> Int {\n  // TODO: calculate BMI for \"70\" kg, \"1.75\" m; return 200 if Normal weight, else 400\n  return 0;\n}",
+  "solution": "fn calculate_bmi(weight_str: Str, height_str: Str) -> Result[Str, Str] {\n  let weight = string.str_to_float(weight_str)?;\n  let height = string.str_to_float(height_str)?;\n  if weight < 2.0 || weight > 700.0 {\n    return Err(\"Weight must be 2-700 kg\");\n  }\n  if height < 0.5 || height > 3.0 {\n    return Err(\"Height must be 0.5-3.0 m\");\n  }\n  let bmi = weight / (height * height);\n  let category = if bmi < 18.5 {\n    \"Underweight\"\n  } elif bmi < 25.0 {\n    \"Normal weight\"\n  } elif bmi < 30.0 {\n    \"Overweight\"\n  } else {\n    \"Obese\"\n  };\n  return Ok(category);\n}\n\nfn main() -> Int {\n  match calculate_bmi(\"70\", \"1.75\") {\n    Ok(\"Normal weight\") => { return 200; }\n    Ok(_) => { return 300; }\n    Err(_) => { return 400; }\n  }\n}",
+  "try_it": "Test with your own measurements if you know them. Try edge cases: '50' kg and '1.60' m (Normal), '45' kg and '1.80' m (Underweight), '100' kg and '1.70' m (Obese). Test invalid inputs: 'abc' for weight, '0' for height. Try adding a metric/imperial toggle (lbs and inches).",
+  "concepts": ["Result", "string.str_to_float", "?", "Float64", "if expression", "validation", "categorization"],
+  "tips": [
+    "Parse both inputs BEFORE any validation — if either parse fails, `?` returns early and you never reach validation",
+    "Use `if` as an expression (no semicolons on branches) to assign `let category = if bmi < 18.5 { ... }`",
+    "Order category thresholds from lowest to highest so each `elif` naturally catches the next range"
+  ],
+  "common_mistakes": [
+    "Using `weight / height * height` instead of `weight / (height * height)` — without parentheses, you divide then multiply",
+    "Forgetting that `?` returns from the ENTIRE function — after `let weight = ...?`, you're guaranteed to have a valid Float64"
+  ],
+  "next_lesson": "L3-32",
+  "related": ["L2-30", "L2-34", "L3-30", "L1-14"]
+}

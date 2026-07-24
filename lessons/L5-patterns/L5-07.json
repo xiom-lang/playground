@@ -1,0 +1,26 @@
+{
+  "id": "L5-07",
+  "title": "Todo List",
+  "level": "L5",
+  "duration": "11 min",
+  "story": "You wake up to a flood of notifications: 'Submit report,' 'Buy groceries,' 'Call dentist,' 'Fix bug #437.' Your brain can't track all this. You need a todo list that lets you add tasks, mark them complete, and see what's left.",
+  "why": "Managing items in a Vec — add, remove by index, list remaining — is the foundation of task tracking and list-based applications.",
+  "narrative": "## Building a Task Manager\n\nA todo list needs three operations: add a task, complete a task (remove it), and show what's left.\n\n### Storing Tasks\n\n```xiom\nlet todos: Vec[Str] = Vec[Str].new();\n```\n\nEach task is a string. We'll push new tasks onto the end.\n\n### Adding a Task\n\n```xiom\nfn add_task(todos: Vec[Str], task: Str) {\n  todos.push(task);\n}\n```\n\n### Completing a Task\n\nWe need to remove a task by its number. Since Vecs don't have `.remove(index)`, we build the logic:\n\n```xiom\nfn complete_task(todos: Vec[Str], index: Int) -> Option[Str] {\n  match todos.get(index) {\n    Some(task) -> {\n      let removed = task;\n      let new_todos: Vec[Str] = Vec[Str].new();\n      let i: Int = 0;\n      while i < todos.len() {\n        if i != index {\n          match todos.get(i) {\n            Some(t) -> new_todos.push(t);\n            None -> {}\n          }\n        }\n        i = i + 1;\n      }\n      return Some(removed);\n    }\n    None -> None\n  }\n}\n```\n\n### Listing All Tasks\n\n```xiom\nfn list_tasks(todos: Vec[Str]) {\n  let i: Int = 0;\n  while i < todos.len() {\n    match todos.get(i) {\n      Some(task) -> io.println(string.int_to_str(i + 1) + \". \" + task);\n      None -> {}\n    }\n    i = i + 1;\n  }\n}\n```\n\n### Full Program\n\n```xiom\nfn main() -> Int {\n  let todos: Vec[Str] = Vec[Str].new();\n  todos.push(\"Submit report\");\n  todos.push(\"Buy groceries\");\n  todos.push(\"Call dentist\");\n\n  io.println(\"My Todos:\");\n  list_tasks(todos);\n  io.println(\"Remaining: \" + string.int_to_str(todos.len()));\n  return 0;\n}\n```",
+  "analogy": "A todo list Vec is like sticky notes on a wall. You add new notes (push), read them left to right (for loop), and peel one off when done (pop or remove-by-index). The wall only holds what's still pending.",
+  "code_template": "fn main() -> Int {\n  let tasks: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"Walk dog\", \"Read book\", \"Write code\"\n  // TODO: Print all tasks with numbers using a while loop\n  // TODO: Push \"Exercise\" as a new task\n  // TODO: Print the updated list\n  // TODO: Pop the last task as \"completed\" and print the final list\n  return 0;\n}\n",
+  "solution": "fn main() -> Int {\n  let tasks: Vec[Str] = Vec[Str].new();\n  tasks.push(\"Walk dog\");\n  tasks.push(\"Read book\");\n  tasks.push(\"Write code\");\n\n  io.println(\"Todo List:\");\n  let i: Int = 0;\n  while i < tasks.len() {\n    match tasks.get(i) {\n      Some(t) -> io.println(string.int_to_str(i + 1) + \". \" + t);\n      None -> {}\n    }\n    i = i + 1;\n  }\n\n  tasks.push(\"Exercise\");\n  io.println(\"\\nAdded 'Exercise':\");\n  let j: Int = 0;\n  while j < tasks.len() {\n    match tasks.get(j) {\n      Some(t) -> io.println(string.int_to_str(j + 1) + \". \" + t);\n      None -> {}\n    }\n    j = j + 1;\n  }\n\n  match tasks.pop() {\n    Some(done) -> io.println(\"\\nCompleted: \" + done);\n    None -> {}\n  }\n\n  io.println(\"\\nRemaining tasks:\");\n  let k: Int = 0;\n  while k < tasks.len() {\n    match tasks.get(k) {\n      Some(t) -> io.println(string.int_to_str(k + 1) + \". \" + t);\n      None -> {}\n    }\n    k = k + 1;\n  }\n  return 0;\n}\n",
+  "try_it": "Add a `priority` field by storing tasks as `\"HIGH: Submit report\"` — then sort high-priority tasks to the top. Add a function that counts how many tasks are remaining. Try to add a `clear_all` function that removes every task from the Vec.",
+  "concepts": ["Vec", "push", "pop", "get", "while", "todo-list", "task-manager", "CRUD", "mini-app"],
+  "tips": [
+    "Use `.pop()` to remove from the end when order doesn't matter — it's simpler than rebuilding the Vec",
+    "Number tasks starting at 1 (human-friendly) even though Vec indices start at 0 (computer-friendly)",
+    "Keep display logic separate from data logic — one function prints, another modifies"
+  ],
+  "common_mistakes": [
+    "Removing an item from the middle of a Vec shifts all later items left — index numbers change after removal",
+    "Re-printing the entire list for every operation instead of just printing once after all changes",
+    "Forgetting that `.pop()` returns `Option[Str]` — you must handle the case where the list is empty"
+  ],
+  "next_lesson": "L5-08",
+  "related": ["L5-05", "L5-04", "L5-02", "L1-18"]
+}

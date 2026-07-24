@@ -1,0 +1,26 @@
+{
+  "id": "L7-37",
+  "title": "Calendar Helper",
+  "level": "L7",
+  "duration": "10 min",
+  "story": "What day of the week was July 20, 1969? (Moon landing — Sunday.) How many days in February 2024? (29 — leap year!) Build a calendar helper that answers these questions — the same calculations that power every calendar app on every device.",
+  "why": "Calendar calculations teach modular arithmetic, leap-year rules, and the fascinating math behind day-of-week formulas — practical date manipulation.",
+  "narrative": "## Building a Calendar Helper\n\n### Days Per Month\n\n```xiom\nfn days_in_month(month: Int, year: Int) -> Int {\n  if month == 2 {\n    if is_leap_year(year) { return 29; };\n    return 28;\n  };\n  if month == 4 || month == 6 || month == 9 || month == 11 {\n    return 30;\n  };\n  31\n}\n\nfn is_leap_year(year: Int) -> Bool {\n  if year % 400 == 0 { return true; };\n  if year % 100 == 0 { return false; };\n  year % 4 == 0\n}\n```\n\n### Day of Week (Zeller's Algorithm)\n\n```xiom\nfn day_of_week(day: Int, month: Int, year: Int) -> Int {\n  let m = month;\n  let y = year;\n  if m < 3 {\n    m += 12;\n    y -= 1;\n  };\n  let k = y % 100;\n  let j = y / 100;\n  let h = (day + (13 * (m + 1)) / 5 + k + k / 4 + j / 4 - 2 * j) % 7;\n\n  let result = ((h % 7) + 7) % 7;\n  result\n}\n```\n\nResult: 0=Saturday, 1=Sunday, 2=Monday, ..., 6=Friday.\n\n### Day Name\n\n```xiom\nfn day_name(dow: Int) -> Str {\n  if dow == 0 { return \"Saturday\"; };\n  if dow == 1 { return \"Sunday\"; };\n  if dow == 2 { return \"Monday\"; };\n  if dow == 3 { return \"Tuesday\"; };\n  if dow == 4 { return \"Wednesday\"; };\n  if dow == 5 { return \"Thursday\"; };\n  \"Friday\"\n}\n```\n\n### Days Between Dates\n\n```xiom\nfn days_between(d1: Int, m1: Int, y1: Int, d2: Int, m2: Int, y2: Int) -> Int {\n  let days1 = day_of_year(d1, m1, y1) + days_before_year(y1);\n  let days2 = day_of_year(d2, m2, y2) + days_before_year(y2);\n  days2 - days1\n}\n```\n\n### Calendar Print (One Month)\n\n```\nSun Mon Tue Wed Thu Fri Sat\n      1   2   3   4   5   6\n  7   8   9  10  11  12  13\n 14  15  16  17  18  19  20\n 21  22  23  24  25  26  27\n 28  29  30  31\n```",
+  "analogy": "A wall calendar where you flip to any month of any year. Your calendar helper is the math behind the calendar: '30 days hath September...' encoded as code, leap year rules for February, and Zeller's formula to find the day of the week for any date in history.",
+  "code_template": "fn is_leap_year(year: Int) -> Bool {\n  // TODO: divisible by 400? leap. Divisible by 100? NOT leap. Divisible by 4? leap.\n}\n\nfn days_in_month(month: Int, year: Int) -> Int {\n  // TODO: return correct days for each month, handling leap year for February\n}\n\nfn main() -> Int {\n  // TODO: check if 2024 is leap, print days in Feb 2024 and Feb 2025\n  return 0;\n}\n",
+  "solution": "fn is_leap_year(year: Int) -> Bool {\n  if year % 400 == 0 { return true; };\n  if year % 100 == 0 { return false; };\n  year % 4 == 0\n}\n\nfn days_in_month(month: Int, year: Int) -> Int {\n  if month == 2 {\n    if is_leap_year(year) { return 29; };\n    return 28;\n  };\n  if month == 4 || month == 6 || month == 9 || month == 11 { return 30; };\n  31\n}\n\nfn main() -> Int {\n  io.println(is_leap_year(2024));\n  io.println(days_in_month(2, 2024));\n  io.println(days_in_month(2, 2025));\n  return 0;\n}\n",
+  "try_it": "Implement day_of_week using the simpler 'Doomsday algorithm'. Print a full month calendar as a formatted grid. Calculate how many days until your next birthday. Find all Friday the 13ths in a given year.",
+  "concepts": ["calendar", "leap-year", "days-in-month", "day-of-week", "zeller", "date-arithmetic"],
+  "tips": [
+    "Leap year rule: every 4th year, EXCEPT centuries, EXCEPT every 4th century",
+    "Zeller's formula handles all Gregorian dates since 1582",
+    "Days before a year can be computed as: 365 * y + y/4 - y/100 + y/400"
+  ],
+  "common_mistakes": [
+    "Getting leap year wrong: 1900 is NOT leap, 2000 IS leap",
+    "January and February treated as months 13 and 14 of the PREVIOUS year in Zeller",
+    "Forgetting that months are 1-indexed (January=1), not 0-indexed"
+  ],
+  "next_lesson": "L7-38",
+  "related": ["L6-36", "L7-06", "L1-12"]
+}

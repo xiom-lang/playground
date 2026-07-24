@@ -207,6 +207,12 @@ document.addEventListener('keydown', function (e) {
     toggleSyntax();
   }
   if (e.key === 'Escape') {
+    // Close shortcut modal first
+    var modal = document.getElementById('shortcutModal');
+    if (modal && !modal.classList.contains('hidden')) {
+      modal.classList.add('hidden');
+      return;
+    }
     if (compilerRefVisible) {
       compilerRefVisible = false;
       document.getElementById('syntaxPanel').classList.add('hidden');
@@ -214,12 +220,17 @@ document.addEventListener('keydown', function (e) {
     }
     if (syntaxVisible) toggleSyntax();
   }
+  if (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    e.preventDefault();
+    toggleShortcuts();
+  }
 });
 
 window.addEventListener('load', function () {
   setupTabs();
   if (window.loadLessonCatalog) window.loadLessonCatalog();
   checkLastProgress();
+  initResizeHandle();
 });
 
 function checkLastProgress() {
@@ -277,4 +288,66 @@ function continueLearning() {
   } else {
     startLearning();
   }
+}
+
+// ========== RESIZE HANDLE ==========
+function initResizeHandle() {
+  var handle = document.getElementById('resizeHandle');
+  var panel = document.getElementById('narrativePanel');
+  if (!handle || !panel) return;
+
+  var startX = 0;
+  var startWidth = 0;
+  var dragging = false;
+
+  handle.addEventListener('mousedown', function (e) {
+    dragging = true;
+    startX = e.clientX;
+    startWidth = panel.offsetWidth;
+    handle.classList.add('active');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    if (!dragging) return;
+    var delta = e.clientX - startX;
+    var newWidth = startWidth + delta;
+    // Clamp between 220px and 600px
+    if (newWidth < 220) newWidth = 220;
+    if (newWidth > 600) newWidth = 600;
+    panel.style.width = newWidth + 'px';
+    panel.style.minWidth = newWidth + 'px';
+    panel.style.maxWidth = newWidth + 'px';
+  });
+
+  document.addEventListener('mouseup', function () {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('active');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+}
+
+// ========== LOADING OVERLAY ==========
+function showLoading() {
+  var overlay = currentMode === 'playground'
+    ? document.getElementById('pgLoadingOverlay')
+    : document.getElementById('loadingOverlay');
+  if (overlay) overlay.classList.remove('hidden');
+}
+
+function hideLoading() {
+  var overlay = document.getElementById('loadingOverlay');
+  if (overlay) overlay.classList.add('hidden');
+  var pgOverlay = document.getElementById('pgLoadingOverlay');
+  if (pgOverlay) pgOverlay.classList.add('hidden');
+}
+
+function toggleShortcuts() {
+  var modal = document.getElementById('shortcutModal');
+  if (!modal) return;
+  modal.classList.toggle('hidden');
 }

@@ -1,0 +1,26 @@
+{
+  "id": "L4-36",
+  "title": "Rectangle Validator",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "A graphics library once rendered a rectangle with negative dimensions, causing the GPU to allocate zero pixels. The screen went black, and the bug took three days to trace. Invariants on geometric types prevent these phantom shapes.",
+  "why": "Geometric constraints are the classic use case for invariants — shapes that violate their own definitions shouldn't exist.",
+  "narrative": "## Valid Shapes by Construction\n\nEvery rectangle must have positive width and height. No exceptions. Encode this once as invariants and every function that touches a Rectangle is guaranteed to work with a legitimate shape:\n\n```xiom\ntype Rectangle = {\n  width: Float64;\n  height: Float64;\n  invariant: width > 0.0;\n  invariant: height > 0.0;\n}\n\nfn Rectangle.area(self: &Self) -> Float64\n  ensures: result > 0.0;\n{\n  return self.width * self.height;\n}\n\nfn Rectangle.perimeter(self: &Self) -> Float64\n  ensures: result > 0.0;\n{\n  return 2.0 * (self.width + self.height);\n}\n\nfn Rectangle.is_square(self: &Self) -> Bool {\n  return self.width == self.height;\n}\n```\n\nNotice how `area` and `perimeter` have `ensures: result > 0.0` — this is only provable because the invariants guarantee positive dimensions. Without invariants, you couldn't trust that `area > 0`.\n\n### Safe Scaling\n```xiom\nfn Rectangle.scale(self: &mut Self, factor: Float64)\n  requires: factor > 0.0;\n  ensures: self.area() == self@pre.area() * factor * factor;\n{\n  self.width = self.width * factor;\n  self.height = self.height * factor;\n}\n```\n\nThe `requires` ensures scaling doesn't accidentally zero-out or invert the shape. The `ensures` proves the area scales by `factor²` — which is geometrically correct.",
+  "analogy": "A Rectangle invariant is like a building code — blueprints are checked BEFORE construction, so every standing building has at least met the code.",
+  "code_template": "type Rectangle = {\n  width: Float64;\n  height: Float64;\n  invariant: width > 0.0;\n  invariant: height > 0.0;\n}\n\nfn Rectangle.area(self: &Self) -> Float64\n  ensures: result > 0.0;\n{\n  return self.width * self.height;\n}\n\nfn Rectangle.perimeter(self: &Self) -> Float64\n  ensures: result > 0.0;\n{\n  return 2.0 * (self.width + self.height);\n}\n\nfn Rectangle.is_square(self: &Self) -> Bool {\n  return self.width == self.height;\n}\n\nfn Rectangle.scale(self: &mut Self, factor: Float64)\n  // TODO: Add requires: factor > 0.0\n  // TODO: Multiply width and height by factor\n{\n}\n\nfn main() -> Int {\n  // TODO: Create Rectangle{ width: 5.0, height: 10.0 }\n  // Print area, perimeter, is_square; scale by 2.0; print new area\n  return 0;\n}",
+  "solution": "type Rectangle = {\n  width: Float64;\n  height: Float64;\n  invariant: width > 0.0;\n  invariant: height > 0.0;\n}\n\nfn Rectangle.area(self: &Self) -> Float64\n  ensures: result > 0.0;\n{\n  return self.width * self.height;\n}\n\nfn Rectangle.perimeter(self: &Self) -> Float64\n  ensures: result > 0.0;\n{\n  return 2.0 * (self.width + self.height);\n}\n\nfn Rectangle.is_square(self: &Self) -> Bool {\n  return self.width == self.height;\n}\n\nfn Rectangle.scale(self: &mut Self, factor: Float64)\n  requires: factor > 0.0;\n{\n  self.width = self.width * factor;\n  self.height = self.height * factor;\n}\n\nfn main() -> Int {\n  var r: Rectangle = Rectangle{ width: 5.0, height: 10.0 };\n  io.println(\"Area: \" + r.area());\n  io.println(\"Perimeter: \" + r.perimeter());\n  io.println(\"Is square: \" + r.is_square());\n  r.scale(2.0);\n  io.println(\"New area: \" + r.area());\n  return 0;\n}",
+  "try_it": "Add a `Rectangle.fit_inside` method that takes `&self` and a `container: &Rectangle`, returning a new `Rectangle` scaled down to fit within the container while preserving aspect ratio. Use contracts to ensure the result fits.",
+  "concepts": ["invariant", "ensures", "geometric-validation", "mutation-contract"],
+  "tips": [
+    "Geometric types are perfect for invariants — their constraints are mathematically precise",
+    "Use `ensures` to prove derived properties (like area > 0) that follow from the invariants",
+    "Scaling with `factor < 0` would flip coordinates — the `requires` catches this nonsense input"
+  ],
+  "common_mistakes": [
+    "Forgetting that `scale(0.0)` makes width and height zero — violates both invariants. The `requires: factor > 0.0` prevents this.",
+    "Using `self.width *= factor` inside ensures — `@pre` is needed for comparisons involving the pre-mutation state",
+    "Creating Rectangle with width=0.0 thinking the invariant will 'fix' it — invariants trap, they don't fix"
+  ],
+  "next_lesson": "L4-37",
+  "related": ["L4-31", "L4-24", "L4-20"]
+}

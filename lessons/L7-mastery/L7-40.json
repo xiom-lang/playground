@@ -1,0 +1,26 @@
+{
+  "id": "L7-40",
+  "title": "L7 Capstone: Mini App Suite",
+  "level": "L7",
+  "duration": "18 min",
+  "story": "You've built calculators, games, timers, and converters. Now build a MENU that ties five of your favorite tools into one program. Pick an option, run that tool, return to menu. This is how real applications work — a launcher for your growing toolkit.",
+  "why": "The app suite capstone demonstrates program composition, menu-driven architecture, and the ability to orchestrate multiple subsystems — the pattern behind every multi-feature application.",
+  "narrative": "## Building a Mini App Suite\n\n### Menu System\n\n```xiom\nfn show_menu() {\n  io.println(\"=== Mini App Suite ===\");\n  io.println(\"1. Calculator\");\n  io.println(\"2. Tip Calculator\");\n  io.println(\"3. Number Guessing Game\");\n  io.println(\"4. To-Do List\");\n  io.println(\"5. Countdown Timer\");\n  io.println(\"0. Exit\");\n}\n\nfn run_app(choice: Int) {\n  if choice == 1 { run_calculator(); }\n  else if choice == 2 { run_tip_calculator(); }\n  else if choice == 3 { run_guessing_game(); }\n  else if choice == 4 { run_todo_list(); }\n  else if choice == 5 { run_timer(); }\n}\n```\n\n### Main Loop\n\n```xiom\nfn main() -> Int {\n  let mut running = true;\n  while running {\n    show_menu();\n    let choice = 1;\n\n    if choice == 0 {\n      running = false;\n      io.println(\"Goodbye!\");\n    } else {\n      run_app(choice);\n    };\n  };\n  return 0;\n}\n```\n\n### Integrating Components\n\nEach tool is a function that runs independently and returns to the menu:\n\n```xiom\nfn run_calculator() {\n  io.println(\"Calculator: 5 + 3 = 8\");\n}\n\nfn run_tip_calculator() {\n  io.println(\"Tip: $100 at 18% = $18 tip\");\n}\n\nfn run_guessing_game() {\n  io.println(\"Guess the number! (42)\");\n}\n\nfn run_todo_list() {\n  io.println(\"TODO: 3 items pending\");\n}\n\nfn run_timer() {\n  io.println(\"Timer: 5...4...3...2...1...Done!\");\n}\n```\n\n### Architecture Pattern\n\n```\nMenu\n ├── Calculator (add/sub/mul/div)\n ├── Tip Calculator (bill, %, split)\n ├── Guessing Game (random, hints)\n ├── To-Do List (add/complete/remove)\n └── Timer (countdown, format)\n```\n\n### Why This Matters\n\nReal software is composed of multiple features. The menu pattern is used in ATMs, POS systems, game main menus, and developer CLIs. Mastering it means you can build ANY multi-feature application.",
+  "analogy": "A Swiss Army knife: each tool (blade, scissors, screwdriver, corkscrew) is independently useful, but they live together in one compact body. The menu is the knife body. You pick which tool to deploy. Close it, and pick another. Your App Suite is the digital Swiss Army knife.",
+  "code_template": "fn show_menu() {\n  // TODO: print menu with 3+ options\n}\n\nfn run_choice(choice: Int) {\n  // TODO: dispatch to the right function based on choice\n}\n\nfn main() -> Int {\n  // TODO: show menu, run choice 2, show menu again, run choice 0 to exit\n  return 0;\n}\n",
+  "solution": "fn show_menu() {\n  io.println(\"=== Suite ===\");\n  io.println(\"1. Calculator\");\n  io.println(\"2. Guessing Game\");\n  io.println(\"3. Tip Calculator\");\n  io.println(\"0. Exit\");\n}\n\nfn calc_add(a: Int, b: Int) -> Int { a + b }\nfn guess_number() -> Int { 42 }\nfn tip_amount(bill: Int, pct: Int) -> Int { bill * pct / 100 }\n\nfn run_choice(choice: Int) {\n  if choice == 1 {\n    io.println(calc_add(5, 3));\n  } else if choice == 2 {\n    io.println(guess_number());\n  } else if choice == 3 {\n    io.println(tip_amount(100, 18));\n  };\n}\n\nfn main() -> Int {\n  show_menu();\n  run_choice(1);\n  run_choice(3);\n  return 0;\n}\n",
+  "try_it": "Add more apps from L7 (Unit Converter, Grade Calculator, Budget Tracker). Add a settings menu (difficulty, decimal places). Track usage statistics: which app is used most? Add persistent state — todo items survive between menu returns.",
+  "concepts": ["menu-system", "app-suite", "composition", "dispatch", "architecture", "integration"],
+  "tips": [
+    "The menu is a while loop + print + dispatch — simple, effective, extensible",
+    "Each app function should be self-contained — returns to menu when done",
+    "This pattern scales: add more options without restructuring the menu loop"
+  ],
+  "common_mistakes": [
+    "Apps that don't return to the menu — each must complete and yield control",
+    "Hardcoding choices in the main loop without a read_input mechanism",
+    "Not handling invalid choices — 'else' catches anything not in 1-5"
+  ],
+  "next_lesson": "L8-01",
+  "related": ["L7-31", "L7-10", "L7-35", "L7-38", "L7-39"]
+}

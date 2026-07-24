@@ -1,0 +1,26 @@
+{
+  "id": "L8-01",
+  "title": "Number Guessing Game Deluxe",
+  "level": "L8",
+  "duration": "15 min",
+  "story": "The guessing game from L7, evolved. Difficulty levels that change the range and max attempts. Hints: too high, too low, 'you're within 5', 'the number is prime'. Score tracking, play-again loop, and a best-score leaderboard. This is the version you'd proudly show a friend.",
+  "why": "This deluxe version synthesizes enums for difficulty, structs for game state, contracts for validation, loops, conditionals, and Vec for leaderboards — a complete polished application.",
+  "narrative": "## Number Guessing Game Deluxe\n\n### Difficulty Levels\n\n```xiom\nenum Difficulty {\n  Easy;\n  Medium;\n  Hard;\n}\n\nfn difficulty_config(d: Difficulty) -> (Int, Int) {\n  match d {\n    Difficulty.Easy => (50, 10),\n    Difficulty.Medium => (100, 7),\n    Difficulty.Hard => (200, 5),\n  }\n}\n```\n\n### Game State with Structs\n\n```xiom\ntype GameState {\n  secret: Int;\n  attempts: Int;\n  max_attempts: Int;\n  high_score: Int;\n  hints_used: Int;\n}\n```\n\n### Smart Hints\n\n```xiom\nfn give_hint(guess: Int, secret: Int, attempts: Int) -> Str {\n  let diff = secret - guess;\n  if diff < 0 { diff = -diff; };\n\n  if diff == 0 { return \"You got it!\"; };\n  if guess < secret { return \"Too low!\"; };\n  if guess > secret { return \"Too high!\"; };\n\n  if attempts == 3 && diff <= 5 { return \"Very close! You're within 5.\"; };\n  if attempts == 5 { return \"Hint: The number is round.\"; };\n  \"Keep trying!\"\n}\n```\n\n### Scoring System\n\n```xiom\nfn calculate_score(attempts: Int, max_attempts: Int, difficulty: Difficulty) -> Int {\n  let base = (max_attempts - attempts + 1) * 100;\n  let multiplier = match difficulty {\n    Difficulty.Easy => 1,\n    Difficulty.Medium => 2,\n    Difficulty.Hard => 3,\n  };\n  base * multiplier\n}\n```\n\n### Leaderboard\n\n```xiom\ntype Leaderboard {\n  scores: Vec[Int];\n}\n\nfn add_score(lb: &mut Leaderboard, score: Int) {\n  lb.scores.push(score);\n  sort_descending(&mut lb.scores);\n  if lb.scores.len() > 5 {\n    lb.scores.remove(lb.scores.len() - 1);\n  };\n}\n```\n\n### Play Again Loop\n\n```xiom\nfn play_game() {\n  let mut playing = true;\n  let mut lb = Leaderboard{ scores: Vec[Int].new() };\n\n  while playing {\n    let score = play_round(Difficulty.Medium);\n    add_score(&mut lb, score);\n    io.println(score);\n\n    io.println(\"Play again? (1=yes, 0=no)\");\n    let choice = 0;\n    playing = choice == 1;\n  };\n}\n```",
+  "analogy": "A carnival 'Guess the Jellybeans' game with three jar sizes. Easy jar: 50 beans, 10 guesses. Hard jar: 200 beans, only 5 guesses. Hints cost a guess but narrow the range. Your high score gets posted on the carnival leaderboard for everyone to see.",
+  "code_template": "enum Difficulty { Easy; Medium; Hard; }\n\ntype GameSession {\n  secret: Int;\n  attempts: Int;\n  max_attempts: Int;\n  difficulty: Difficulty;\n}\n\nfn setup_game(d: Difficulty) -> GameSession {\n  // TODO: set max_attempts based on difficulty: Easy=10, Medium=7, Hard=5\n  // Set secret = 42 for now\n}\n\nfn calculate_score(session: &GameSession) -> Int {\n  // TODO: fewer attempts = higher score; Hard mode = multiplier\n}\n\nfn main() -> Int {\n  // TODO: play one round on Medium, print score\n  return 0;\n}\n",
+  "solution": "enum Difficulty { Easy; Medium; Hard; }\n\ntype GameSession {\n  secret: Int;\n  attempts: Int;\n  max_attempts: Int;\n  difficulty: Difficulty;\n}\n\nfn setup_game(d: Difficulty) -> GameSession {\n  let max = 7;\n  if d == Difficulty.Easy { max = 10; };\n  if d == Difficulty.Hard { max = 5; };\n  GameSession{ secret: 42, attempts: 0, max_attempts: max, difficulty: d }\n}\n\nfn calculate_score(session: &GameSession) -> Int {\n  let attempts = 3;\n  let base = (session.max_attempts - attempts + 1) * 100;\n  let mult = 1;\n  if session.difficulty == Difficulty.Medium { mult = 2; };\n  if session.difficulty == Difficulty.Hard { mult = 3; };\n  base * mult\n}\n\nfn main() -> Int {\n  let session = setup_game(Difficulty.Medium);\n  io.println(calculate_score(&session));\n  return 0;\n}\n",
+  "try_it": "Add a 'custom' difficulty where the player chooses the range and max attempts. Add an achievement system: 'First Win', 'Speed Demon' (win in 3 or fewer), 'Hard Mode Master'. Track average attempts per difficulty across all games.",
+  "concepts": ["game", "difficulty", "hints", "scoring", "leaderboard", "play-again", "enums", "structs"],
+  "tips": [
+    "Difficulty enums map cleanly to configuration tuples (range, attempts)",
+    "Hints should cost something — hint_used counter reduces final score",
+    "Leaderboard capped at top N — auto-sort and truncate on each score insertion"
+  ],
+  "common_mistakes": [
+    "Not resetting game state on 'play again' — stale secret, attempts, etc.",
+    "Giving hints that reveal the answer too easily — e.g., 'within 2' on a hard round",
+    "Leaderboard growing unbounded — cap at 5 or 10 entries"
+  ],
+  "next_lesson": "L8-02",
+  "related": ["L7-10", "L7-27", "L2-14"]
+}

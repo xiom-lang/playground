@@ -1,0 +1,26 @@
+{
+  "id": "L6-02",
+  "title": "Interface Satisfaction",
+  "level": "L6",
+  "duration": "10 min",
+  "story": "Your chat app now has three message sources: people typing, bots auto-responding, and pet status updates. You want ONE notification function. The beauty of interfaces: all three types satisfy Greetable, so your single function handles them all without a single if-statement.",
+  "why": "Multiple types satisfying the same interface enables polymorphic code — one function, many behaviors, chosen automatically based on the actual type at runtime.",
+  "narrative": "## One Interface, Many Types\n\nWhen multiple types satisfy the same interface, a single generic function works with all of them. Each type brings its own behavior.\n\n### Three Types, One Interface\n\n```xiom\ninterface Greetable {\n  fn greet() -> Str;\n}\n\ntype Person = {\n  name: Str;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\ntype Robot = {\n  model: Str;\n}\n\nfn Robot.greet(self) -> Str {\n  return \"Beep boop, model \" + self.model;\n}\n\ntype Pet = {\n  pet_name: Str;\n  species: Str;\n}\n\nfn Pet.greet(self) -> Str {\n  return self.pet_name + \" the \" + self.species + \" wags tail\";\n}\n```\n\nNow all three satisfy `Greetable` — each has a `greet() -> Str` method. No special keyword needed.\n\n### One Function Rules Them All\n\n```xiom\nfn announce[T: Greetable](thing: &T) {\n  io.println(thing.greet());\n}\n\nfn main() -> Int {\n  let person = Person{ name: \"Alex\" };\n  let robot = Robot{ model: \"RX-9000\" };\n  let pet = Pet{ pet_name: \"Fluffy\", species: \"cat\" };\n\n  announce(&person);  // \"Hi, I'm Alex\"\n  announce(&robot);   // \"Beep boop, model RX-9000\"\n  announce(&pet);     // \"Fluffy the cat wags tail\"\n  return 0;\n}\n```\n\nSame function `announce`, three completely different behaviors — polymorphism in action.\n\n### The Key Insight\n\nThe function `announce` only knows that T satisfies `Greetable`. It doesn't know if T is a Person, Robot, or Pet. It only calls `.greet()`. This is **abstraction** — hiding details behind a shared interface. The compiler checks at the CALL SITE that whatever type you pass actually has a `greet()` method.",
+  "analogy": "Interface satisfaction is like a universal power outlet — any device (type) that has the right plug (methods) can connect. Your lamp, laptop, and phone charger all work in the same outlet because they all satisfy the 'pluggable' interface. The outlet doesn't care what the device does, only that it fits.",
+  "code_template": "interface Greetable {\n  fn greet() -> Str;\n}\n\ntype Person = {\n  name: Str;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\n// TODO: Define type Robot with model: Str\n// TODO: Write Robot.greet(self) that returns \"Robot model: \" + self.model\n// TODO: Define type City with city_name: Str\n// TODO: Write City.greet(self) that returns \"Welcome to \" + self.city_name\n\nfn announce[T: Greetable](thing: &T) {\n  // TODO: Print thing.greet()\n}\n\nfn main() -> Int {\n  // TODO: Create Person, Robot, and City, call announce on all three\n  return 0;\n}\n",
+  "solution": "interface Greetable {\n  fn greet() -> Str;\n}\n\ntype Person = {\n  name: Str;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\ntype Robot = {\n  model: Str;\n}\n\nfn Robot.greet(self) -> Str {\n  return \"Robot model: \" + self.model;\n}\n\ntype City = {\n  city_name: Str;\n}\n\nfn City.greet(self) -> Str {\n  return \"Welcome to \" + self.city_name;\n}\n\nfn announce[T: Greetable](thing: &T) {\n  io.println(thing.greet());\n}\n\nfn main() -> Int {\n  let p = Person{ name: \"Alex\" };\n  let r = Robot{ model: \"RX-9000\" };\n  let c = City{ city_name: \"Paris\" };\n  announce(&p);\n  announce(&r);\n  announce(&c);\n  return 0;\n}\n",
+  "try_it": "Add a `Dog` type (fields: name, breed) that greets with a bark. Add an `Alien` that greets in a made-up language. Count how many types you can make Greetable. Then try passing an Int to `announce` — what error do you get? The compiler tells you exactly why Int doesn't qualify (it has no `greet` method).",
+  "concepts": ["interface-satisfaction", "multiple-implementors", "polymorphism", "generic-constraint", "abstraction", "one-function-many-types"],
+  "tips": [
+    "Any type that has the interface methods IS that interface — no declaration needed",
+    "The interface only guarantees those methods exist — the function can't access type-specific fields",
+    "Multiple types can satisfy the same interface with COMPLETELY different implementations"
+  ],
+  "common_mistakes": [
+    "Expecting to access type-specific fields inside a generic function — `thing.name` doesn't work; only `thing.greet()` is guaranteed",
+    "Trying to put different types in one Vec[Greetable] — interfaces constrain GENERICS, they aren't a common type for collections",
+    "Forgetting that each type needs its OWN method definition — `fn Person.greet`, `fn Robot.greet`, etc."
+  ],
+  "next_lesson": "L6-03",
+  "related": ["L6-01", "L5-31", "L5-32"]
+}

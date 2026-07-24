@@ -1,0 +1,26 @@
+{
+  "id": "L5-19",
+  "title": "Generic Max Function",
+  "level": "L5",
+  "duration": "10 min",
+  "story": "You've written `max_int(3, 7)` and `max_float(2.5, 4.1)`. Now you need `max_str(\"apple\", \"zebra\")`. The logic is the same: compare two values and return the larger one. Can generics help here?",
+  "why": "Generic functions with comparison operations demonstrate how generics interact with type-specific behavior — the function is generic, but the comparison works because XIOM supports it for basic types.",
+  "narrative": "## Comparing Generic Values\n\nA max function compares two values and returns the larger one. With generics, we can write it once. But there's a catch: not all types can be compared.\n\n### A Generic Max (for Comparable Types)\n\n```xiom\nfn my_max[T](a: T, b: T) -> T {\n  if a > b { return a; }\n  else { return b; }\n}\n```\n\nThis works when `T` supports the `>` operator — which `Int`, `Float64`, and `Str` all do.\n\n### Using It with Different Types\n\n```xiom\nlet bigger_int = my_max(10, 25);\nlet bigger_float = my_max(3.14, 2.71);\nlet bigger_str = my_max(\"zebra\", \"apple\");\n```\n\nEach call infers `T` from the arguments. With `my_max(10, 25)`, `T` becomes `Int`. With `my_max(3.14, 2.71)`, `T` becomes `Float64`.\n\n### When It Doesn't Work\n\nIf you try `my_max` with a custom struct that doesn't support `>`, XIOM gives a compile error: 'T does not support comparison.' This is good — you find out at compile time, not runtime.\n\n### Full Program\n\n```xiom\nfn my_max[T](a: T, b: T) -> T {\n  if a > b { return a; }\n  else { return b; }\n}\n\nfn main() -> Int {\n  let x = my_max(10, 25);\n  io.println(x);\n\n  let y = my_max(3.14, 2.71);\n  io.println(string.float_to_str(y));\n\n  let z = my_max(\"zebra\", \"apple\");\n  io.println(z);\n\n  return 0;\n}\n```\n\n### The Power of Generics\n\nWithout generics, you'd need `max_int`, `max_float`, `max_str` — three nearly identical functions. With generics, one function handles all types that support comparison.",
+  "analogy": "A generic max function is like a measuring tape. Whether you're measuring height (Int), length (Float64), or alphabetical order (Str), the same tool works. The measuring tape doesn't care what it's measuring — it just compares which is bigger. The `[T]` is the tape saying 'I work on anything you can line up and compare.'",
+  "code_template": "// TODO: Write a generic function my_min[T] that returns the smaller value\nfn my_min[T](a: T, b: T) -> T {\n\n}\n\nfn main() -> Int {\n  // TODO: Call my_min with two Ints (5, 3) and print the result\n  // TODO: Call my_min with two Float64 values (1.5, 2.5) and print the result\n  return 0;\n}\n",
+  "solution": "fn my_min[T](a: T, b: T) -> T {\n  if a < b { return a; }\n  else { return b; }\n}\n\nfn main() -> Int {\n  let int_result = my_min(5, 3);\n  io.println(int_result);\n\n  let float_result = my_min(1.5, 2.5);\n  io.println(string.float_to_str(float_result));\n  return 0;\n}\n",
+  "try_it": "Write `my_equals[T](a: T, b: T) -> Bool` that returns true if the two values are equal. Try it with Int, Str, and Bool. Write a `clamp[T](value: T, min: T, max: T) -> T` function that returns `min` if value < min, `max` if value > max, and `value` otherwise. Test it with different types.",
+  "concepts": ["generics", "comparison", "max", "min", "T", "type-parameter", "operator-overloading", "polymorphism"],
+  "tips": [
+    "The `>` operator works on any T that supports comparison — Int, Float64, Str, and Char all do",
+    "Both parameters must be the SAME type T — you can't mix `my_max(5, 3.14)` because Int and Float64 are different",
+    "The return type matches the parameter type — max of two Ints returns Int, max of two Strs returns Str"
+  ],
+  "common_mistakes": [
+    "Mixing types in a generic call: `my_max(5, 3.14)` fails because 5 is Int and 3.14 is Float64 — convert one first",
+    "Assuming `>` works on custom structs — it doesn't unless the struct derives a comparison trait",
+    "Putting the comparison logic OUTSIDE the generic function and expecting it to work — the comparison must be inside the generic body"
+  ],
+  "next_lesson": "L5-20",
+  "related": ["L5-18", "L1-03", "L1-19", "L2-01"]
+}

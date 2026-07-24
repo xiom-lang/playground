@@ -1,0 +1,27 @@
+{
+  "id": "L4-12",
+  "title": "Move Semantics",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "When your friend borrows your favorite book and you never see it again — that's a move, not a borrow. In XIOM, assignment is a move by default.",
+  "why": "Move semantics are the default in XIOM because they are zero-cost — no copying, no reference counting, just a simple pointer swap.",
+  "narrative": "## Assignment Is a Move\n\nIn XIOM, the `=` operator MOVES ownership, it does NOT copy:\n\n```xiom\nfn main() -> Int {\n  let name = \"Alice\";\n  let greeting = name;  // name MOVED to greeting\n  // io.println(name);  // COMPILE ERROR: name has been moved\n  io.println(greeting); // Prints \"Alice\"\n  return 0;\n}\n```\n\n### Moves Are Shallow and Fast\n\n```xiom\nfn main() -> Int {\n  let v = Vec[Int].new();\n  v.push(1);\n  v.push(2);\n  let v2 = v;   // Just copies the pointer/length/capacity — O(1)!\n  // v is now invalid — prevents double-free\n  io.println(v2.len());\n  return v2.len() as Int;\n}\n```\n\n### The Compiler Enforces Moves\n\nIf you try to use a moved variable, the compiler produces a clear error. This eliminates the dreaded \"use-after-free\" bug forever.\n\n```xiom\n// This WILL NOT COMPILE:\nlet a = 10;\nlet b = a;\nio.println(a);  // error: use of moved value 'a'\n```\n\n### Moves Prevent Double-Free\n\nWithout move semantics, both `a` and `b` above might try to free the same memory. XIOM guarantees only one variable owns the value, so it's freed exactly once.",
+  "analogy": "Assignment is like handing someone your wallet — you no longer have it, they do. If you try to spend from a wallet you already gave away, that's fraud.",
+  "code_template": "// TODO: Create a Vec[Int], push 10, 20, 30\n// Move the Vec to a new variable\n// Try printing the new Vec's length\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "fn main() -> Int {\n  let v = Vec[Int].new();\n  v.push(10);\n  v.push(20);\n  v.push(30);\n  let moved_v = v;\n  io.println(moved_v.len());\n  return moved_v.len() as Int;\n}",
+  "try_it": "Try adding `io.println(v.len());` after the move to `moved_v`. See the compiler error about using a moved value.",
+  "concepts": ["move semantics", "ownership transfer", "use-after-free", "double-free"],
+  "tips": [
+    "Assignment (=) is always a move in XIOM, never a copy",
+    "A move is cheap — it only copies the pointer, not the data",
+    "The compiler tracks every variable's ownership status at compile time",
+    "If you need a copy, use .clone() explicitly"
+  ],
+  "common_mistakes": [
+    "Assuming = copies values — it doesn't, it moves them",
+    "Trying to use a variable after passing it to a function — functions take ownership too",
+    "Forgetting that returning a value from a function also moves it"
+  ],
+  "next_lesson": "L4-13",
+  "related": ["L4-11", "L4-13", "L4-14"]
+}

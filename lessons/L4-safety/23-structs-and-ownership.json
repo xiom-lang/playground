@@ -1,0 +1,27 @@
+{
+  "id": "L4-23",
+  "title": "Structs and Ownership",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "A struct is a box — when you move the box, everything inside moves with it. Structs own their fields, and moving a struct moves all its contents.",
+  "why": "Understanding struct ownership is critical because structs are the building blocks of XIOM programs — ownership rules apply recursively to all fields.",
+  "narrative": "## Structs Own Their Fields\n\nA struct owns everything inside it. Moving the struct moves all fields:\n\n```xiom\ntype Person = { name: Str; age: Int; }\n\nfn process(p: Person) {\n  io.println(p.name);\n  // p is dropped here — name and age cleaned up\n}\n\nfn main() -> Int {\n  let alice = Person{ name: \"Alice\", age: 30 };\n  process(alice);       // Ownership of entire Person moves\n  // io.println(alice.name);  // ERROR: alice was moved!\n  return 0;\n}\n```\n\n### Borrowing Struct Fields\n\n```xiom\nfn read_name(p: &Person) {\n  io.println(p.name);  // Reading a field through a borrow\n}\n\nfn birthday(p: &mut Person) {\n  p.age = p.age + 1;   // Modifying a field through &mut\n}\n\nfn main() -> Int {\n  var person = Person{ name: \"Bob\", age: 25 };\n  read_name(&person);\n  birthday(&mut person);\n  return person.age;\n}\n```\n\n### Partial Moves\n\n```xiom\ntype Pair = { first: Str; second: Str; }\n\nfn main() -> Int {\n  let pair = Pair{ first: \"hello\", second: \"world\" };\n  let f = pair.first;  // Moves just 'first' out\n  // io.println(pair.first);  // ERROR: first was moved\n  io.println(pair.second);    // OK — second wasn't moved\n  return pair.second.len() as Int;\n}\n```",
+  "analogy": "A struct is like a shipping container — you can open it to look inside (&), rearrange contents (&mut), or move the entire container to a new owner.",
+  "code_template": "// TODO: Define struct 'Point' with x: Int, y: Int\n// Write fn show(p: &Point) that prints x and y\n// Write fn move_right(p: &mut Point, dx: Int) that adds dx to x\n// In main, create Point, show it, move it, show again\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "type Point = { x: Int; y: Int; }\n\nfn show(p: &Point) {\n  io.println(p.x);\n  io.println(p.y);\n}\n\nfn move_right(p: &mut Point, dx: Int) {\n  p.x = p.x + dx;\n}\n\nfn main() -> Int {\n  var pt = Point{ x: 0, y: 0 };\n  show(&pt);\n  move_right(&mut pt, 5);\n  show(&pt);\n  return pt.x;\n}",
+  "try_it": "Define a struct with a Vec field. Move the struct to a function and try using it afterward. Observe how the Vec moves with the struct.",
+  "concepts": ["struct ownership", "field borrow", "partial move", "struct lifetime"],
+  "tips": [
+    "Moving a struct moves ALL its fields — you can't use any of them after",
+    "You can borrow individual fields through a struct borrow (&struct.field)",
+    "Partial moves are possible — you can move out one field while keeping the others",
+    "Think of struct ownership as recursive — each field follows the same rules"
+  ],
+  "common_mistakes": [
+    "Assuming fields are independent after a struct move — they all moved together",
+    "Trying to use a struct field after partially moving it — that field is gone",
+    "Forgetting that &struct.field borrows the entire struct, not just the field"
+  ],
+  "next_lesson": "L4-24",
+  "related": ["L4-11", "L4-18", "L4-24"]
+}

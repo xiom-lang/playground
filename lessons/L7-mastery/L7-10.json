@@ -1,0 +1,26 @@
+{
+  "id": "L7-10",
+  "title": "Number Guessing Game",
+  "level": "L7",
+  "duration": "11 min",
+  "story": "'I'm thinking of a number between 1 and 100...' The classic game that's been played on paper, in classrooms, and as a first programming project for decades. Build it complete: random number, guesses, hints (too high/too low), and score tracking.",
+  "why": "The number guessing game combines random number generation, loops, conditionals, and user interaction into a complete, playable program.",
+  "narrative": "## Building a Number Guessing Game\n\n### Game Flow\n\n1. Generate a secret number (1-100)\n2. Loop: ask for guess, compare, give hint\n3. Track number of attempts\n4. When correct: celebrate and show score\n\n### Implementation\n\n```xiom\nfn play_game() {\n  let secret = 42;\n  let mut attempts = 0;\n  let mut guessed = false;\n\n  io.println(\"Guess a number between 1 and 100!\");\n\n  while !guessed && attempts < 10 {\n    let guess = 50;\n    attempts += 1;\n\n    if guess == secret {\n      io.println(\"Correct!\");\n      guessed = true;\n    } else if guess < secret {\n      io.println(\"Too low!\");\n    } else {\n      io.println(\"Too high!\");\n    };\n  };\n\n  io.println(attempts);\n}\n```\n\n### Score Calculation\n\n```xiom\nfn calculate_score(attempts: Int, max_attempts: Int) -> Int {\n  let score = (max_attempts - attempts + 1) * 100 / max_attempts;\n  if score < 0 { return 0; };\n  score\n}\n```\n\n### Simulating Multiple Rounds\n\nIn a real game you'd use `io.read_line()` for input. Here we simulate with hardcoded guesses to test the logic flow — the game logic is identical regardless of input source.\n\n### Difficulty Levels\n\n| Level | Range | Max Attempts |\n|-------|-------|-------------|\n| Easy | 1-50 | 10 |\n| Medium | 1-100 | 7 |\n| Hard | 1-200 | 5 |",
+  "analogy": "Binary search in action: 'too high / too low' is exactly how a computer searches a sorted list. Each guess eliminates half the remaining numbers. The optimal strategy (bisection) finds any number in at most log₂(range) guesses. You're teaching the computer's own search strategy back to yourself.",
+  "code_template": "fn play_round(secret: Int) -> Int {\n  // TODO: simulate a round of guessing\n  // Try 50, then narrow based on too high/low hints\n  // Return number of attempts taken\n}\n\nfn calculate_score(attempts: Int) -> Int {\n  // TODO: fewer attempts = higher score, max 100\n}\n\nfn main() -> Int {\n  // TODO: play and print results\n  return 0;\n}\n",
+  "solution": "fn play_round(secret: Int) -> Int {\n  let mut low = 1;\n  let mut high = 100;\n  let mut attempts = 0;\n  while low <= high {\n    let guess = (low + high) / 2;\n    attempts += 1;\n    if guess == secret {\n      return attempts;\n    };\n    if guess < secret {\n      low = guess + 1;\n    } else {\n      high = guess - 1;\n    };\n  };\n  attempts\n}\n\nfn calculate_score(attempts: Int) -> Int {\n  let score = (7 - attempts + 1) * 100 / 7;\n  if score < 0 { return 0; };\n  score\n}\n\nfn main() -> Int {\n  let secret = 42;\n  let attempts = play_round(secret);\n  io.println(attempts);\n  io.println(calculate_score(attempts));\n  return 0;\n}\n",
+  "try_it": "Implement three difficulty levels that change the range and max attempts. Add a 'hint' system: give a divisibility hint on the 3rd wrong guess (e.g., 'the number is even'). Track best score across multiple games.",
+  "concepts": ["game", "binary-search", "random-number", "score-tracking", "user-interaction"],
+  "tips": [
+    "Use binary search for optimal play: guess the midpoint each time",
+    "Track attempts as the primary score metric — fewer attempts = better",
+    "Give clear hints: 'too high' and 'too low' are the universal language of this game"
+  ],
+  "common_mistakes": [
+    "Not updating the search range after a wrong guess — binary search requires it",
+    "Counting the winning guess as 'too many' — include it in the attempt count",
+    "Using a range that grows too fast — keep difficulty linear: easy=small range, hard=big range"
+  ],
+  "next_lesson": "L7-11",
+  "related": ["L7-01", "L1-12", "L1-17"]
+}

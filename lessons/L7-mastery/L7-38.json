@@ -1,0 +1,26 @@
+{
+  "id": "L7-38",
+  "title": "Countdown Timer",
+  "level": "L7",
+  "duration": "8 min",
+  "story": "3... 2... 1... Launch! Countdowns create anticipation. Whether it's a New Year's Eve countdown, a pomodoro work timer, or a rocket launch, the countdown is universal. Build a timer that ticks down from any duration, displaying minutes and seconds.",
+  "why": "A countdown timer teaches time decomposition (hours/minutes/seconds), decrementing state, formatted display, and loop-based tick simulation.",
+  "narrative": "## Building a Countdown Timer\n\n### Timer State\n\n```xiom\ntype Timer {\n  total_seconds: Int;\n  remaining: Int;\n  running: Bool;\n}\n\nfn create_timer(hours: Int, minutes: Int, seconds: Int) -> Timer {\n  let total = hours * 3600 + minutes * 60 + seconds;\n  Timer{ total_seconds: total, remaining: total, running: true }\n}\n```\n\n### Formatting Time\n\n```xiom\nfn format_time(total_seconds: Int) -> Str {\n  let h = total_seconds / 3600;\n  let m = (total_seconds % 3600) / 60;\n  let s = total_seconds % 60;\n\n  let mut result = pad_zero(h);\n  result = string.str_concat(result, \":\");\n  result = string.str_concat(result, pad_zero(m));\n  result = string.str_concat(result, \":\");\n  result = string.str_concat(result, pad_zero(s));\n  result\n}\n\nfn pad_zero(n: Int) -> Str {\n  if n < 10 {\n    let s = \"0\";\n    return string.str_concat(s, int_to_str(n));\n  };\n  int_to_str(n)\n}\n```\n\n### Ticking the Timer\n\n```xiom\nfn tick(timer: &mut Timer) -> Bool {\n  if !timer.running { return false; };\n  if timer.remaining <= 0 {\n    timer.running = false;\n    return false;\n  };\n  timer.remaining -= 1;\n  timer.remaining > 0\n}\n```\n\n### Running a Countdown\n\n```xiom\nfn run_timer(timer: &mut Timer, ticks: Int) {\n  let mut i = 0;\n  while i < ticks && timer.running {\n    io.println(format_time(timer.remaining));\n    tick(timer);\n    i += 1;\n  };\n\n  if timer.remaining == 0 {\n    io.println(\"00:00:00\");\n    io.println(\"Time's up!\");\n  };\n}\n```\n\n### Common Timer Durations\n\n- Pomodoro: 25 minutes (0:25:00)\n- Break: 5 minutes (0:05:00)\n- New Year: 10 seconds (0:00:10)\n- Exam: 180 minutes (3:00:00)",
+  "analogy": "A kitchen timer shaped like a tomato (pomodoro!). Twist the dial to 25 minutes, and it ticks down second by second until DING. Your countdown timer is the digital version: set hours, minutes, seconds; press start; watch the numbers descend. When it hits zero, the alarm (print) fires.",
+  "code_template": "type Countdown {\n  seconds: Int;\n}\n\nfn format_timer(seconds: Int) -> Str {\n  // TODO: convert to MM:SS format (e.g., 65 → \"01:05\")\n}\n\nfn tick(timer: &mut Countdown) -> Bool {\n  // TODO: decrement seconds, return false when 0, else true\n}\n\nfn main() -> Int {\n  // TODO: create a 10-second timer, tick 12 times, print each tick\n  return 0;\n}\n",
+  "solution": "type Countdown {\n  seconds: Int;\n}\n\nfn format_timer(seconds: Int) -> Str {\n  let m = seconds / 60;\n  let s = seconds % 60;\n  let mut result = \"\";\n  if m < 10 { result = string.str_concat(result, \"0\"); };\n  result = string.str_concat(result, int_to_str(m));\n  result = string.str_concat(result, \":\");\n  if s < 10 { result = string.str_concat(result, \"0\"); };\n  result = string.str_concat(result, int_to_str(s));\n  result\n}\n\nfn tick(timer: &mut Countdown) -> Bool {\n  if timer.seconds <= 0 { return false; };\n  timer.seconds -= 1;\n  timer.seconds > 0\n}\n\nfn main() -> Int {\n  let mut timer = Countdown{ seconds: 10 };\n  let mut i = 0;\n  while i < 12 {\n    io.println(format_timer(timer.seconds));\n    tick(&mut timer);\n    i += 1;\n  };\n  return 0;\n}\n",
+  "try_it": "Add hours to the display (HH:MM:SS). Add pause/resume functionality. Implement a lap timer that records split times. Add an alarm sound by printing 'BEEP!' repeatedly. Create multiple timers running simultaneously.",
+  "concepts": ["timer", "countdown", "time-formatting", "state-management", "decrement", "HH:MM:SS"],
+  "tips": [
+    "Store time in seconds — convert to HH:MM:SS only for display",
+    "hours = seconds / 3600; minutes = (seconds % 3600) / 60; seconds = seconds % 60",
+    "Pad single digits with leading zero for proper time display"
+  ],
+  "common_mistakes": [
+    "Ticking past zero — check remaining > 0 BEFORE decrementing",
+    "Forgetting to update the display after each tick — timer appears frozen",
+    "Mixing up minutes and seconds in the format string"
+  ],
+  "next_lesson": "L7-39",
+  "related": ["L6-36", "L7-37", "L1-17"]
+}
