@@ -14,6 +14,16 @@ const HOST = 'localhost';
 const SCRIPT_DIR = __dirname;
 const XIOM_BIN = process.env.XIOM_BIN || path.join(SCRIPT_DIR, '..', 'target', 'debug', 'xiom' + (os.platform() === 'win32' ? '.exe' : ''));
 
+// Ensure xiom can find the stdlib and runtime when called from the playground server.
+// The playground directory is xiom-playground/, project root is one level up.
+const PROJECT_ROOT = path.resolve(SCRIPT_DIR, '..');
+if (!process.env.XIOM_STDLIB) {
+  const stdlibDir = path.join(PROJECT_ROOT, 'stdlib');
+  if (fs.existsSync(stdlibDir)) {
+    process.env.XIOM_STDLIB = stdlibDir;
+  }
+}
+
 const MIME = { '.html':'text/html','.js':'application/javascript','.css':'text/css','.wasm':'application/wasm','.json':'application/json','.png':'image/png','.ico':'image/x-icon' };
 
 function serveFile(res, filepath) {
@@ -77,33 +87,20 @@ function compileAllStages(source) {
       result.stages.verify = { success: verifyProc.success, output: result.contracts };
     }
 
-    // ── Execute: compile to binary, run it, capture stdout ──
+    // ── Execute: use xiom run to compile + execute in one step ──
     if (result.success) {
-      result.output = 'Compilation successful.';
+      // Strip ANSI escape codes from IR
+      if (result.ir) result.ir = result.ir.replace(/\x1b\[[0-9;]*m/g, '');
 
-      const buildProc = runXiom(['build', tmp, '-o', exe]);
-      if (buildProc.success && fs.existsSync(exe)) {
-        try {
-          const runProc = spawnSync(exe, [], { timeout: 5000, encoding: 'utf-8' });
-          const stdout = (runProc.stdout || '').trim();
-          const stderr = (runProc.stderr || '').trim();
-
-          if (stdout) result.runOutput = stdout;
-          if (stderr) result.runError = stderr;
-
-          if (stdout) {
-            result.output = stdout;
-          } else {
-            result.output = 'Program ran successfully (no output).';
-          }
-        } catch (runErr) {
-          result.runError = 'Runtime error: ' + (runErr.message || 'timeout');
-          result.output = result.runError;
-        } finally {
-          try { fs.unlinkSync(exe); } catch {}
-        }
+      const runProc = runXiom(['run', tmp]);
+      if (runProc.success && runProc.stdout) {
+        result.output = runProc.stdout.trim();
+        result.runOutput = runProc.stdout.trim();
+      } else if (runProc.stderr && runProc.stderr.trim()) {
+        result.output = runProc.stderr.trim();
+        result.runError = runProc.stderr.trim();
       } else {
-        result.output = 'Compilation successful.\nLLVM IR generated. Check the IR tab.';
+        result.output = 'Program ran with no output.';
       }
     } else {
       const errs = result.diagnostics.filter(d => d.kind === 'error');
