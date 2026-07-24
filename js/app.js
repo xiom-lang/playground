@@ -21,6 +21,12 @@ function startLearning() {
   if (window.loadLessonCatalog) {
     window.loadLessonCatalog();
   }
+  // Re-init editor if it was disposed (e.g. by switching to playground)
+  if (!window.editor && window.initLessonsEditor) {
+    window.initLessonsEditor();
+  } else if (window.editor) {
+    window.editor.layout();
+  }
 }
 
 function openPlayground() {

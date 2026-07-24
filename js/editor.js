@@ -173,6 +173,26 @@ require(['vs/editor/editor.main'], function () {
   });
 });
 
+window.initLessonsEditor = function () {
+  if (!window.monaco) {
+    require(['vs/editor/editor.main'], function () {
+      registerXiomLanguage();
+      if (window.pgEditor) { window.pgEditor.dispose(); window.pgEditor = null; }
+      window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
+      addCompileAction(window.editor);
+      window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
+      updateLineCount();
+    });
+    return;
+  }
+  registerXiomLanguage();
+  if (window.pgEditor) { window.pgEditor.dispose(); window.pgEditor = null; }
+  window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
+  addCompileAction(window.editor);
+  window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
+  updateLineCount();
+};
+
 window.initPlaygroundEditor = function () {
   if (window.pgEditor) return;
 
