@@ -1,0 +1,28 @@
+{
+  "id": "L0-09",
+  "title": "More Choices (If/Elif/Else)",
+  "level": "L0",
+  "duration": "8 min",
+  "story": "A traffic light has three states: red means stop, yellow means slow down, green means go. You need more than just two choices — you need three! With `elif`, your program can handle as many possibilities as you need.",
+  "why": "Real-world decisions rarely have just two options. Test scores are A, B, C, D, or F. Weather is sunny, cloudy, rainy, or snowy. `elif` lets your program handle every possibility cleanly, without piling up confusing layers of if-inside-if.",
+  "narrative": "## Going Beyond Two Choices\n\nIn the last lesson, you learned `if`/`else` — two doors, pick one. But life has more than two colors. What if you need three doors? Or five? That's where `elif` comes in.\n\n`elif` is short for \"else if.\" It lets you check another condition after the first one fails. You can chain as many `elif` blocks as you need, with one final `else` at the end as a catch-all.\n\n### The Pattern\n\n```xiom\nif first_condition {\n  // door 1\n} elif second_condition {\n  // door 2\n} elif third_condition {\n  // door 3\n} else {\n  // door 4 (if nothing else matched)\n}\n```\n\nThe computer checks the conditions in order, from top to bottom. As soon as it finds one that's `true`, it runs that block and skips the rest. The final `else` catches anything that didn't match.\n\n### Grade Calculator\n\nLet's build a classic: you give it a score, and it tells you the letter grade:\n\n```xiom\nfn main() {\n  let score = 85;\n\n  if score >= 90 {\n    io.println(\"Grade: A — Excellent!\");\n  } elif score >= 80 {\n    io.println(\"Grade: B — Good job!\");\n  } elif score >= 70 {\n    io.println(\"Grade: C — Not bad!\");\n  } elif score >= 60 {\n    io.println(\"Grade: D — You passed.\");\n  } else {\n    io.println(\"Grade: F — Keep studying!\");\n  }\n}\n```\n\nWatch what happens with `score = 85`:\n1. Is `85 >= 90`? No → skip the first block.\n2. Is `85 >= 80`? Yes → run the second block: prints \"Grade: B.\"\n3. The rest are skipped — even though `85 >= 70` is also true! Once a match is found, the computer stops checking.\n\n### The Order Matters\n\nThis is the most important rule about `elif`: **put the most specific conditions first.** If you wrote them in the wrong order, the first match would steal everything:\n\n```xiom\n// WRONG order — can you spot the problem?\nif score >= 60 {\n  io.println(\"Grade: D\");  // This matches EVERY passing score!\n} elif score >= 70 {\n  io.println(\"Grade: C\");  // This will NEVER run\n}\n```\n\nSince `score >= 60` is true for 85, 92, 100 — everything above 60 — the computer never reaches the other checks. Always go from highest to lowest (or lowest to highest) and be consistent.\n\n### A Weather Example\n\n```xiom\nfn main() {\n  let temperature = 28;\n\n  if temperature > 30 {\n    io.println(\"It's hot! Wear shorts.\");\n  } elif temperature > 20 {\n    io.println(\"It's warm. A t-shirt is fine.\");\n  } elif temperature > 10 {\n    io.println(\"It's cool. Bring a sweater.\");\n  } else {\n    io.println(\"It's cold! Wear a jacket.\");\n  }\n}\n```\n\nWith `elif`, your programs can handle the full rainbow of possibilities — not just black and white.",
+  "analogy": "If/elif/else is like choosing your path at a multi-way intersection — each sign (condition) points you in a different direction, and you follow the first one that matches.",
+  "code_template": "fn main() {\n  // TODO: Create a variable called 'score' with a number from 0 to 100\n  // TODO: Use if/elif/else to print a letter grade: A (90+), B (80+), C (70+), D (60+), F (below 60)\n  // TODO: Make sure the conditions go from highest to lowest!\n}",
+  "solution": "fn main() {\n  let score = 85;\n\n  if score >= 90 {\n    io.println(\"Grade: A — Excellent!\");\n  } elif score >= 80 {\n    io.println(\"Grade: B — Good job!\");\n  } elif score >= 70 {\n    io.println(\"Grade: C — Not bad!\");\n  } elif score >= 60 {\n    io.println(\"Grade: D — You passed.\");\n  } else {\n    io.println(\"Grade: F — Keep studying!\");\n  }\n}\n",
+  "try_it": "Give yourself different scores — 95, 82, 71, 60, 45 — and see your grade change. Then write your own elif chain for a different topic: movie ratings (G, PG, PG-13, R), or clothing sizes based on a number.",
+  "concepts": ["elif", "else if", "multi-way branching", "conditional chain", "order of conditions"],
+  "tips": [
+    "Always order your `elif` conditions from highest to lowest (or lowest to highest) — never mix directions.",
+    "You can have as many `elif` blocks as you need: 3, 5, even 10 — though if you need more than 5, there might be a simpler way.",
+    "The final `else` is optional — if there's no sensible default, you can leave it out.",
+    "Variables created inside an `if`/`elif`/`else` block only exist inside that block — they disappear when the block ends."
+  ],
+  "common_mistakes": [
+    "Writing `else if` instead of `elif` — XIOM uses `elif`, which is shorter and prevents a common bug called the 'dangling else' problem.",
+    "Ordering conditions randomly: `if score >= 60` before `elif score >= 90` means the `>= 90` check never runs.",
+    "Forgetting that only the FIRST matching block runs — even if later conditions would also be true.",
+    "Putting conditions after `else`: `else` is the catch-all and doesn't take a condition — `else score < 60 {` is wrong."
+  ],
+  "next_lesson": "L0-10",
+  "related": ["L0-07", "L0-08"]
+}

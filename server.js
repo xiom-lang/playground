@@ -43,6 +43,7 @@ function runXiom(args, stdin) {
 
 function compileAllStages(source) {
   const tmp = path.join(os.tmpdir(), `xiom_pg_${Date.now()}.xi`);
+  const exe = tmp.replace(/\.xi$/, os.platform() === 'win32' ? '.exe' : '');
   fs.writeFileSync(tmp, source);
 
   const result = {
@@ -53,6 +54,8 @@ function compileAllStages(source) {
     tokens: null,
     contracts: null,
     output: '',
+    runOutput: null,
+    runError: null,
   };
 
   try {
@@ -74,8 +77,34 @@ function compileAllStages(source) {
       result.stages.verify = { success: verifyProc.success, output: result.contracts };
     }
 
+    // ── Execute: compile to binary, run it, capture stdout ──
     if (result.success) {
-      result.output = 'Compilation successful.\nLLVM IR generated. Check the IR tab for generated code.';
+      result.output = 'Compilation successful.';
+
+      const buildProc = runXiom(['build', tmp, '-o', exe]);
+      if (buildProc.success && fs.existsSync(exe)) {
+        try {
+          const runProc = spawnSync(exe, [], { timeout: 5000, encoding: 'utf-8' });
+          const stdout = (runProc.stdout || '').trim();
+          const stderr = (runProc.stderr || '').trim();
+
+          if (stdout) result.runOutput = stdout;
+          if (stderr) result.runError = stderr;
+
+          if (stdout) {
+            result.output = stdout;
+          } else {
+            result.output = 'Program ran successfully (no output).';
+          }
+        } catch (runErr) {
+          result.runError = 'Runtime error: ' + (runErr.message || 'timeout');
+          result.output = result.runError;
+        } finally {
+          try { fs.unlinkSync(exe); } catch {}
+        }
+      } else {
+        result.output = 'Compilation successful.\nLLVM IR generated. Check the IR tab.';
+      }
     } else {
       const errs = result.diagnostics.filter(d => d.kind === 'error');
       result.output = `Compilation failed: ${errs.length} error(s).\nCheck the Diagnostics tab for details.`;

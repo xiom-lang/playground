@@ -61,16 +61,15 @@
         },
         {
           "id": "L0-05",
-          "title": "Numbers",
-          "file": "L0-first-steps/05-numbers.json",
-          "duration": "8 min",
+          "title": "Your First Mini-Project",
+          "file": "L0-first-steps/05-mini-project.json",
+          "duration": "10 min",
           "concepts": [
-            "Int",
+            "combining concepts",
+            "variables",
+            "io.println",
             "arithmetic",
-            "+",
-            "-",
-            "*",
-            "/"
+            "program structure"
           ]
         },
         {

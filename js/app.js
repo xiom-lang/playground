@@ -219,4 +219,62 @@ document.addEventListener('keydown', function (e) {
 window.addEventListener('load', function () {
   setupTabs();
   if (window.loadLessonCatalog) window.loadLessonCatalog();
+  checkLastProgress();
 });
+
+function checkLastProgress() {
+  var progress = window.getProgress ? window.getProgress() : [];
+  if (progress.length === 0) return;
+
+  var el = document.getElementById('continueSection');
+  if (!el) return;
+
+  el.classList.remove('hidden');
+
+  var countEl = document.getElementById('continueCount');
+  if (countEl) countEl.textContent = progress.length;
+
+  // Find the first uncompleted lesson in the catalog
+  var btnEl = document.getElementById('btnContinue');
+  if (btnEl && lessonCatalogCache) {
+    var allLessons = [];
+    lessonCatalogCache.levels.forEach(function (level) {
+      level.lessons.forEach(function (lesson) {
+        allLessons.push(lesson);
+      });
+    });
+
+    // Find the next uncompleted lesson
+    for (var i = 0; i < allLessons.length; i++) {
+      if (progress.indexOf(allLessons[i].id) === -1) {
+        btnEl.setAttribute('data-lesson-id', allLessons[i].id);
+        btnEl.setAttribute('data-lesson-file', allLessons[i].file);
+        btnEl.textContent = 'Continue: ' + allLessons[i].title + ' \u2192';
+        return;
+      }
+    }
+
+    // All lessons completed
+    btnEl.textContent = 'All lessons completed! \u2605 Review \u2192';
+  }
+}
+
+function continueLearning() {
+  var btn = document.getElementById('btnContinue');
+  if (!btn) return;
+
+  var lessonId = btn.getAttribute('data-lesson-id');
+  var lessonFile = btn.getAttribute('data-lesson-file');
+
+  if (lessonId && lessonFile) {
+    startLearning();
+    // Wait for the lessons screen to render, then select the lesson
+    setTimeout(function () {
+      if (window.selectLesson) {
+        window.selectLesson(lessonId, lessonFile);
+      }
+    }, 400);
+  } else {
+    startLearning();
+  }
+}

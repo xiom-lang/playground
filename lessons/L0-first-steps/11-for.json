@@ -1,0 +1,28 @@
+{
+  "id": "L0-11",
+  "title": "For Loops (Walking Through Things)",
+  "level": "L0",
+  "duration": "8 min",
+  "story": "You're the teacher taking attendance. You have a list of names and you call each one: 'Is Alex here? Is Jordan here? Is Sam here?' You're walking through the list one name at a time — and that's exactly what a `for` loop does.",
+  "why": "Real programs deal with lists of things all the time — friend names, game scores, shopping items, photo albums. `for` loops let you walk through each item in a list and do something with it, without writing the same code over and over.",
+  "narrative": "## Loops That Walk Through Lists\n\nIn the last lesson, you learned `while` loops — great for counting and repeating until a condition changes. But what if you already have a list of things and want to look at each one? That's where `for` comes in.\n\n### The Difference Between `while` and `for`\n\n- A `while` loop says: \"Keep doing this as long as the condition is true.\"\n- A `for` loop says: \"For each item in this list, do something with it.\"\n\nIf you have a list of your friends' names, `for` is perfect: you don't need to count or track a counter — you just say \"for each name in this list, print it.\"\n\n### Creating a List\n\nIn XIOM, you can create a list using square brackets `[ ]` with items separated by commas. This is called a **Vec** (short for \"vector,\" which is just a fancy word for \"list\"):\n\n```xiom\nfn main() {\n  let names = [\"Alex\", \"Jordan\", \"Sam\", \"Taylor\"];\n\n  for name in names {\n    io.println(name);\n  }\n}\n```\n\nThis prints:\n```\nAlex\nJordan\nSam\nTaylor\n```\n\nLet's walk through what happens:\n1. `names` is a list with four items.\n2. The `for` loop takes the first item (`\"Alex\"`) and puts it in the variable `name`.\n3. It runs the code inside `{ }` — printing `name`.\n4. It takes the second item (`\"Jordan\"`) and puts it in `name`.\n5. Runs the code again — prints `\"Jordan\"`.\n6. Repeats for `\"Sam\"` and `\"Taylor\"`.\n7. No more items? Done!\n\n### The Magic Variable\n\nNotice that `name` is created for you by the `for` loop — you don't write `let` or `var`. Each time through the loop, `name` holds the next item from the list. You pick whatever name makes sense: `for student in students`, `for score in scores`, `for snack in snacks`.\n\n### Lists of Numbers\n\nLists can hold numbers too:\n\n```xiom\nfn main() {\n  let scores = [95, 87, 92, 78, 100];\n\n  for score in scores {\n    io.println(score);\n  }\n}\n```\n\n### Greeting Everyone\n\nHere's a complete example that puts it all together:\n\n```xiom\nfn main() {\n  let friends = [\"Maya\", \"Leo\", \"Priya\", \"Kai\"];\n\n  io.println(\"Taking attendance:\");\n\n  for friend in friends {\n    let greeting = \"Hello, \" + friend + \"!\";\n    io.println(greeting);\n  }\n\n  io.println(\"Everyone is here!\");\n}\n```\n\nOne `for` loop, but it works for a list with 4 items, 40 items, or 400 items. Write the code once, let the loop handle the rest.\n\n### When to Use `for` vs `while`\n\n- Use `while` when you don't know how many times you'll repeat (waiting for a condition).\n- Use `for` when you have a list of items and want to visit each one exactly once.",
+  "analogy": "A for-loop is like a librarian checking each book on a shelf — they pick up one book at a time, look at it, put it back, and move to the next one, until they've checked them all.",
+  "code_template": "fn main() {\n  // TODO: Create a list of your friends' names using [ ] brackets\n  // TODO: Write a for loop that goes through each name in the list\n  // TODO: Inside the loop, print a greeting for each friend\n  // TODO: After the loop, print \"Everyone has been greeted!\"\n}",
+  "solution": "fn main() {\n  let friends = [\"Maya\", \"Leo\", \"Priya\", \"Kai\"];\n\n  io.println(\"Greeting my friends:\");\n\n  for friend in friends {\n    let message = \"Hi, \" + friend + \"!\";\n    io.println(message);\n  }\n\n  io.println(\"Everyone has been greeted!\");\n}\n",
+  "try_it": "Add your own friends' names to the list and greet them all. Then make a list of your favorite foods and use a for loop to print each one. Try a list of numbers too — can you print each number multiplied by 2 inside the loop?",
+  "concepts": ["for", "list", "Vec", "iteration", "collection", "array literal"],
+  "tips": [
+    "The variable in `for item in list` is created automatically — no `let` or `var` needed. It gets a new value each time through the loop.",
+    "Pick descriptive names for your loop variable: `for friend in friends`, not `for f in friends`.",
+    "Lists use square brackets with commas: `[\"a\", \"b\", \"c\"]`. The last item doesn't need a trailing comma.",
+    "You can put `if`/`else` inside a `for` loop — for example, only greet friends whose names start with a certain letter."
+  ],
+  "common_mistakes": [
+    "Writing `for name = in names` instead of `for name in names` — no equals sign, just `in`.",
+    "Using `let` before the loop variable: `for let name in names` — the loop creates the variable for you.",
+    "Trying to use a `for` loop with just a number range: `for i in 1..5` doesn't work in XIOM — use a `while` loop with a counter instead.",
+    "Forgetting the `in` keyword: `for name names {` is missing the `in` — it should be `for name in names {`."
+  ],
+  "next_lesson": "L0-12",
+  "related": ["L0-06", "L0-10"]
+}

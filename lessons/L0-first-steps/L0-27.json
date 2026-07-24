@@ -1,0 +1,26 @@
+{
+  "id": "L0-27",
+  "title": "Movie Night",
+  "level": "L0",
+  "duration": "6 min",
+  "story": "You're inviting your best friend Jordan to watch a movie on Saturday. You want to write a program that builds the perfect invitation message by gluing together pieces of text \u2014 the friend's name, the movie title, and the time. No more typing the same message over and over!",
+  "why": "Building strings from smaller pieces lets you create personalized messages without retyping everything. It's how apps send custom emails, notifications, and greetings.",
+  "narrative": "## Building Messages from Pieces\n\nImagine writing invitations for ten different friends. You'd write \"Hey Alex, let's watch Star Quest on Saturday!\" and then \"Hey Jordan, let's watch Star Quest on Saturday!\" \u2014 the only thing changing is the name. Instead of typing everything from scratch, you can store the changing parts in variables and glue them together.\n\n### Using `string.str_concat`\n\nXIOM has a function called `string.str_concat` that joins two strings together. It's like gluing two pieces of paper end-to-end:\n\n```xiom\nfn main() {\n  let greeting = \"Hey \";\n  let name = \"Jordan\";\n  let personalized = string.str_concat(greeting, name);\n  io.println(personalized);\n}\n```\n\nThis prints `Hey Jordan`. The `string.str_concat` function takes two strings and returns them stuck together as one.\n\n### Building a Full Invitation\n\nLet's build a complete movie invitation using multiple concatenations:\n\n```xiom\nfn main() {\n  let friend = \"Jordan\";\n  let movie = \"Star Quest\";\n  let day = \"Saturday\";\n\n  let part1 = string.str_concat(\"Hey \", friend);\n  let part2 = string.str_concat(part1, \", let's watch \");\n  let part3 = string.str_concat(part2, movie);\n  let full_message = string.str_concat(part3, \" on \");\n  let invitation = string.str_concat(full_message, day);\n  let final_message = string.str_concat(invitation, \"!\");\n\n  io.println(final_message);\n}\n```\n\nEach step adds one more piece to the message. By the end, you have a complete invitation: `Hey Jordan, let's watch Star Quest on Saturday!` Want to invite a different friend? Just change the `friend` variable!",
+  "analogy": "String concatenation is like building a train \u2014 each car holds a piece of text, and you hook them together one at a time to make a longer train.",
+  "code_template": "fn main() {\n  // TODO: Create a variable for your friend's name\n  // TODO: Create a variable for the movie title\n  // TODO: Create a variable for the day\n  // TODO: Use string.str_concat to build \"Hey NAME, let's watch MOVIE on DAY!\"\n  // TODO: Print the full invitation\n}\n",
+  "solution": "fn main() {\n  let friend = \"Jordan\";\n  let movie = \"Star Quest\";\n  let day = \"Saturday\";\n\n  let step1 = string.str_concat(\"Hey \", friend);\n  let step2 = string.str_concat(step1, \", let's watch \");\n  let step3 = string.str_concat(step2, movie);\n  let step4 = string.str_concat(step3, \" on \");\n  let step5 = string.str_concat(step4, day);\n  let invitation = string.str_concat(step5, \"!\");\n\n  io.println(invitation);\n}\n",
+  "try_it": "Change the movie title to your favorite movie and run the program again. Now try inviting a different friend by changing the `friend` variable. Can you add a time, like \"at 7pm\", to the invitation?",
+  "concepts": ["Str", "string.str_concat", "concatenation", "variables", "string building"],
+  "tips": [
+    "`string.str_concat(a, b)` takes exactly two strings and returns them glued together.",
+    "Don't forget spaces inside your text pieces: `\"Hey \"` has a space at the end so words don't run together.",
+    "You can chain concatenations: use the result of one `string.str_concat` as input to the next one."
+  ],
+  "common_mistakes": [
+    "Forgetting to include the space after a word: `string.str_concat(\"Hey\", friend)` produces `\"HeyJordan\"` without a space.",
+    "Trying to concatenate a number with a string \u2014 `string.str_concat(\"Age: \", 14)` won't work because 14 is an Int, not a Str.",
+    "Passing only one argument to `string.str_concat` \u2014 it always needs exactly two strings."
+  ],
+  "next_lesson": "L0-28",
+  "related": ["L0-06", "L0-04"]
+}

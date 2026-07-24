@@ -1,0 +1,28 @@
+{
+  "id": "L0-07",
+  "title": "True or False (Booleans)",
+  "level": "L0",
+  "duration": "8 min",
+  "story": "You're checking if you're tall enough for a roller coaster. The answer is either yes or no — true or false. There's no 'maybe' or 'a little bit.' The gate either opens or it doesn't. Computers make decisions the exact same way.",
+  "why": "Every decision a program makes — from 'is the password correct?' to 'is the game over?' — starts with a yes-or-no question. Booleans are the language of computer decision-making.",
+  "narrative": "## What Is a Boolean?\n\nA **Boolean** (BOOL-ee-un) is the simplest type in programming: it can only be `true` or `false`. That's it. Two possibilities. No more, no less.\n\nIn XIOM, you create a Boolean just like any other variable:\n\n```xiom\nfn main() {\n  let is_raining = true;\n  let is_sunny = false;\n\n  io.println(is_raining);  // Prints: true\n  io.println(is_sunny);    // Prints: false\n}\n```\n\nBooleans are named after George Boole, a mathematician who figured out that all logic can be built from just `true` and `false`. Pretty cool for something so simple!\n\n### Asking Questions with Comparisons\n\nThe real power of Booleans comes from **comparisons** — asking questions about your data and getting a `true` or `false` answer. Here are the comparison symbols:\n\n| Symbol | Meaning | Example |\n|--------|---------|---------|\n| `==` | Equal to | `age == 18` |\n| `!=` | Not equal to | `name != \"Alex\"` |\n| `>` | Greater than | `score > 100` |\n| `<` | Less than | `price < 50` |\n| `>=` | Greater or equal | `height >= 48` |\n| `<=` | Less or equal | `temperature <= 0` |\n\nWatch out: `==` (two equals signs) means \"are these equal?\" while `=` (one equals sign) means \"put this value in this variable.\" This trips up even experienced programmers!\n\n### Comparisons in Action\n\n```xiom\nfn main() {\n  let age = 14;\n  let can_drive = age >= 16;  // Is 14 >= 16? No → false\n\n  io.println(\"Can you drive?\");\n  io.println(can_drive);  // Prints: false\n\n  let name = \"Taylor\";\n  let is_taylor = name == \"Taylor\";  // Is the name equal? Yes → true\n\n  io.println(\"Is your name Taylor?\");\n  io.println(is_taylor);  // Prints: true\n}\n```\n\nWhen the computer sees `age >= 16`, it looks inside the `age` box, finds `14`, checks if `14` is greater than or equal to `16`, and says \"nope, that's false.\" Then it stores `false` in the `can_drive` box.\n\n### Printing Comparison Results Directly\n\nYou don't even need to store the result — you can print it straight away:\n\n```xiom\nfn main() {\n  io.println(10 > 5);   // Prints: true\n  io.println(10 < 5);   // Prints: false\n  io.println(7 == 7);   // Prints: true\n  io.println(7 != 7);   // Prints: false\n}\n```\n\nEach of these is a tiny question the computer answers for you. And now you know how to ask!",
+  "analogy": "A Boolean is like a light switch — it's either ON (true) or OFF (false), nothing in between.",
+  "code_template": "fn main() {\n  // TODO: Create a variable for your age\n  // TODO: Create a Boolean that checks if you are 18 or older\n  // TODO: Print the Boolean result\n  // TODO: Create another Boolean: is your name \"Alex\"?\n  // TODO: Print that result too\n}",
+  "solution": "fn main() {\n  let my_age = 14;\n  let is_adult = my_age >= 18;\n  io.println(\"Are you an adult?\");\n  io.println(is_adult);\n\n  let my_name = \"Jordan\";\n  let is_alex = my_name == \"Alex\";\n  io.println(\"Is your name Alex?\");\n  io.println(is_alex);\n\n  io.println(\"Is 50 greater than 30?\");\n  io.println(50 > 30);\n}\n",
+  "try_it": "Compare your age to 18 and print whether you're an adult. Then compare your shoe size to 7. Try comparing two numbers with each of the six comparison symbols — how many print `true` and how many print `false`?",
+  "concepts": ["Bool", "true", "false", "comparison", "==", "!=", ">", "<", ">=", "<="],
+  "tips": [
+    "Use `==` (double equals) to check if two things are the same. Use `=` (single equals) to put a value into a variable.",
+    "Booleans print as the words `true` and `false`, not `1` and `0` like in some other languages.",
+    "You can compare strings too: `\"apple\" == \"apple\"` is `true`, `\"apple\" == \"banana\"` is `false`.",
+    "Store comparison results in variables with descriptive names: `is_adult`, `can_vote`, `has_won` — the `is_` and `has_` prefix tells you it's a Boolean."
+  ],
+  "common_mistakes": [
+    "Using `=` instead of `==` in a comparison: `age = 18` puts 18 into age, while `age == 18` checks if age equals 18.",
+    "Comparing a string to a number: `\"hello\" == 5` doesn't make sense and won't work — they must be the same type.",
+    "Writing `true` or `false` in quotes: `\"true\"` is a string, not a Boolean. Without quotes it's a real Boolean value.",
+    "Forgetting that `>=` means 'greater than OR equal to' — `5 >= 5` is `true` because 5 equals 5."
+  ],
+  "next_lesson": "L0-08",
+  "related": ["L0-04", "L0-06"]
+}

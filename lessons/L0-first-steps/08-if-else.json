@@ -1,0 +1,28 @@
+{
+  "id": "L0-08",
+  "title": "Making Choices (If/Else)",
+  "level": "L0",
+  "duration": "8 min",
+  "story": "You're deciding what to wear. If it's cold, wear a jacket. Otherwise, wear a t-shirt. Your program can make the same kind of choice — look at a condition and decide which path to take.",
+  "why": "Programs that always do the same thing are boring. With `if` and `else`, your code can look at the world around it and react differently. Every video game, every smart app, every recommendation engine is built on this idea.",
+  "narrative": "## Making Decisions with `if`\n\nSo far, your programs have done the same thing every time you run them — print this, calculate that, in exactly the same order. But what if you want your program to do something different depending on the situation? That's where `if` comes in.\n\n### The Basic Pattern\n\n```xiom\nfn main() {\n  let temperature = 35;\n\n  if temperature < 50 {\n    io.println(\"Wear a jacket — it's cold!\");\n  }\n}\n```\n\nHere's how the computer reads this:\n1. Look at `temperature`. It's `35`.\n2. Check: is `35 < 50`? Yes → `true`.\n3. Since it's `true`, run the code inside the `{ }` braces.\n4. Print the message.\n\nIf the condition had been `false`, the computer would have skipped right over the `{ }` block and done nothing.\n\n### Adding an `else`\n\nA plain `if` either does something or does nothing. But what if we want two options — do this OR do that? That's what `else` is for:\n\n```xiom\nfn main() {\n  let temperature = 75;\n\n  if temperature < 50 {\n    io.println(\"Wear a jacket!\");\n  } else {\n    io.println(\"Wear a t-shirt!\");\n  }\n}\n```\n\nThe computer now has two doors:\n- If the condition is `true` → go through the first door (the `if` block).\n- If the condition is `false` → go through the second door (the `else` block).\n\nExactly ONE of these runs — never both, never neither.\n\n### Real Example: Positive or Negative?\n\n```xiom\nfn main() {\n  let number = -7;\n\n  if number >= 0 {\n    io.println(\"The number is positive or zero!\");\n  } else {\n    io.println(\"The number is negative!\");\n  }\n}\n```\n\nChange `number` to `42` and run it again. The output changes! That's the magic — the same program behaves differently based on the data.\n\n### The Curly Braces Rule\n\nNotice the `{ }` braces after `if` and `else`. Everything you want to happen inside a branch goes between those braces. And yes — each line still needs its semicolon `;`.\n\n```xiom\nif condition {\n  // This line runs when true\n  // So does this one\n} else {\n  // This line runs when false\n  // And this one too\n}\n```\n\nYou just taught your computer how to make choices. From here, you can build programs that respond intelligently to any situation!",
+  "analogy": "An if-statement is like a fork in the road — the sign (the condition) tells you which path to take, and you can only walk down one of them.",
+  "code_template": "fn main() {\n  // TODO: Create a variable called 'score' and give it a number\n  // TODO: If the score is 50 or higher, print \"You passed!\"\n  // TODO: Else, print \"Keep trying — you'll get it!\"\n}",
+  "solution": "fn main() {\n  let score = 72;\n\n  if score >= 50 {\n    io.println(\"You passed! Great job!\");\n  } else {\n    io.println(\"Keep trying — you'll get it!\");\n  }\n\n  let number = -3;\n  if number >= 0 {\n    io.println(\"Positive!\");\n  } else {\n    io.println(\"Negative!\");\n  }\n}\n",
+  "try_it": "Change the `score` variable to different numbers — 90, 50, 30, 0 — and watch the output change. Then try changing `number` between positive and negative values. The same code, different results!",
+  "concepts": ["if", "else", "conditional", "branching", "decision making"],
+  "tips": [
+    "The condition inside `if (...)` must be a Boolean — something that can be `true` or `false`.",
+    "You don't need `(...)` around the condition in XIOM — just write `if score >= 50 {` without parentheses.",
+    "Only ONE branch runs — the computer picks either the `if` block OR the `else` block, never both.",
+    "Indent the code inside `{ }` braces with two spaces — it makes your code much easier to read."
+  ],
+  "common_mistakes": [
+    "Using `=` instead of `==` in the condition: `if score = 50` tries to put 50 into score, not check equality.",
+    "Putting a semicolon right after the condition: `if score >= 50; {` — no semicolon before the opening brace.",
+    "Forgetting the braces `{ }` — even if you only have one line, you still need the braces.",
+    "Writing `else` on its own without an `if` first — `else` always follows an `if` block."
+  ],
+  "next_lesson": "L0-09",
+  "related": ["L0-07", "L0-05"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "L0-41",
+  "title": "Guessing Game Setup",
+  "level": "L0",
+  "duration": "6 min",
+  "story": "You're building a guessing game for your friends. Instead of picking a secret number yourself, you let the computer surprise you every single time!",
+  "why": "Random numbers make programs unpredictable and fun — they're the heart of every game.",
+  "narrative": "## Generating Random Numbers\n\nComputers are great at following instructions, but games need surprise and excitement. That's where random numbers come in! XIOM gives you `math.random_range(min, max)` — a function that picks a random number between `min` and `max` (including both ends).\n\n### Your First Random Number\n\n```xiom\nfn main() {\n  let secret: Int = math.random_range(1, 10);\n  io.println(\"The secret number is: \");\n  io.println(secret);\n}\n```\n\nRun this program a few times. See how the number changes? Every time you run it, you get a different secret! `math.random_range(1, 10)` tells the computer: \"Give me a random number from 1 to 10.\" It could be 1, it could be 10, or anything in between.\n\n### Setting Up Your Game\n\nNow you have the secret ingredient for your guessing game. In later lessons, you'll ask the player to guess and compare their answer to the secret. But for now, just enjoy watching the computer surprise you with a different number each time!",
+  "analogy": "Random number generation is like rolling dice — you never know what you'll get, but you know it'll be within a certain range.",
+  "code_template": "fn main() {\n  // TODO: generate a random number from 1 to 10\n  // TODO: store it in a variable named 'secret'\n  // TODO: print the secret number\n}\n",
+  "solution": "fn main() {\n  let secret: Int = math.random_range(1, 10);\n  io.println(\"The secret number is: \");\n  io.println(secret);\n}\n",
+  "try_it": "Change the range to 1-100 and run it a few times. See how the numbers get bigger! Then try 1-1000 for even more variety.",
+  "concepts": ["random", "math.random_range", "random-numbers"],
+  "tips": [
+    "`math.random_range(min, max)` includes both ends — so `random_range(1, 10)` can return 1 AND 10",
+    "Run your program multiple times to see different random results each time",
+    "Always store the random result in a variable so you can use it later"
+  ],
+  "common_mistakes": [
+    "Forgetting to store the result — `math.random_range(1, 10);` without a variable means the random number is lost",
+    "Thinking the first run is 'the' answer — random means different every time you run the program"
+  ],
+  "next_lesson": "L0-42",
+  "related": ["L0-12", "L0-43"]
+}

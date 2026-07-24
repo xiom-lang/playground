@@ -18,7 +18,11 @@ async function compile() {
     var r = await resp.json();
 
     var outputEl = document.getElementById(ids.output);
-    outputEl.textContent = r.output || 'No output.';
+    var outText = r.output || 'No output.';
+    if (r.runError) {
+      outText += '\n\n--- stderr ---\n' + r.runError;
+    }
+    outputEl.textContent = outText;
     outputEl.classList.add('animate-in');
 
     var irEl = document.getElementById(ids.ir);
@@ -85,8 +89,16 @@ async function compile() {
     }
 
     var errCount = (r.diagnostics || []).filter(function (d) { return d.kind === 'error'; }).length;
-    statusEl.textContent = r.success ? 'Compiled successfully. &#x2713;' : 'Failed: ' + errCount + ' error(s)';
-    statusEl.className = r.success ? 'status-bar ok' : (errCount ? 'status-bar err' : 'status-bar ok');
+    if (r.success && r.runOutput !== undefined) {
+      statusEl.innerHTML = 'Ran successfully. &#x2713;';
+      statusEl.className = 'status-bar ok';
+    } else if (r.success) {
+      statusEl.innerHTML = 'Compiled successfully. &#x2713;';
+      statusEl.className = 'status-bar ok';
+    } else {
+      statusEl.innerHTML = 'Failed: ' + errCount + ' error(s)';
+      statusEl.className = errCount ? 'status-bar err' : 'status-bar ok';
+    }
 
   } catch (e) {
     var outEl = document.getElementById(ids.output);

@@ -22,6 +22,10 @@
       <button class="btn-primary" onclick="startLearning()">Start Learning</button>
       <button class="btn-secondary" onclick="openPlayground()">Try Playground</button>
     </div>
+    <div id="continueSection" class="continue-section hidden">
+      <div class="continue-prompt">You've completed <strong id="continueCount">0</strong> lessons. Pick up where you left off:</div>
+      <button id="btnContinue" class="btn-primary continue-btn" onclick="continueLearning()">Continue Learning &#x2192;</button>
+    </div>
   </div>
 
   <div class="feature-grid">

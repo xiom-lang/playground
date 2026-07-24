@@ -1,0 +1,25 @@
+{
+  "id": "L0-16",
+  "title": "How Long Is It?",
+  "level": "L0",
+  "duration": "6 min",
+  "story": "You're creating a password for your new game account. The sign-up form says \"Password must be at least 8 characters.\" You type your secret word, but is it long enough? Your program can check for you in an instant!",
+  "why": "Counting characters is essential for validating passwords, checking usernames, and making sure text fits in limits.",
+  "narrative": "## Measuring Text with string.str_len()\n\nEvery string has a hidden property: its length. The length is simply how many characters are in the string. Letters, numbers, spaces, and punctuation all count as one character each.\n\n### The str_len Function\n\n`string.str_len(your_string)` returns an Int \u2014 the number of characters. Here's how it works:\n\n```xiom\nfn main() {\n  let word: Str = \"Hello\";\n  let length: Int = string.str_len(word);\n  io.println(length);\n}\n```\n\nThis prints `5` because \"Hello\" has five characters: H, e, l, l, o.\n\n### Checking Your Password\n\n```xiom\nfn main() {\n  let password: Str = \"kitten123\";\n  let pass_len: Int = string.str_len(password);\n  let is_strong: Bool = pass_len >= 8;\n  io.println(is_strong);\n}\n```\n\nWe count the password length, then compare it to 8 using `>=`. If the password has 9 characters, `pass_len >= 8` is `true`. If it has only 5 characters, the result is `false`.\n\n### What Counts as a Character?\n\nSpaces count! Even punctuation like `!`, `?`, and `.` count. `\"Hi there!\"` has 9 characters: H, i, space, t, h, e, r, e, !. Every single keypress adds one to the count.",
+  "analogy": "string.str_len() is like a ruler for text \u2014 it measures exactly how many letters, spaces, and symbols your string contains.",
+  "code_template": "fn main() {\n  let my_name: Str = \"YOUR_NAME_HERE\";\n  // TODO: measure the length of my_name using string.str_len\n  // TODO: print the length\n}\n",
+  "solution": "fn main() {\n  let my_name: Str = \"Alexandra\";\n  let name_len: Int = string.str_len(my_name);\n  io.println(name_len);\n}\n",
+  "try_it": "Measure the length of your full name (first and last with a space between). Then check if it's longer than 10 characters using `>=`. Print both the length and the true/false result!",
+  "concepts": ["string-length", "string.str_len", "character-counting"],
+  "tips": [
+    "string.str_len() returns an Int, so you can compare the result with `<`, `>`, `==`, etc.",
+    "Count your string characters manually on paper first, then check if the program agrees!",
+    "Use str_len to validate input \u2014 like making sure a username is between 3 and 20 characters"
+  ],
+  "common_mistakes": [
+    "Forgetting that spaces count as characters \u2014 \"my name\" has 7 characters, not 6!",
+    "Writing `str_len` without `string.` in front \u2014 the full name is `string.str_len()`"
+  ],
+  "next_lesson": "L0-17",
+  "related": ["L0-13", "L0-15", "L0-17"]
+}

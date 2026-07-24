@@ -1,0 +1,25 @@
+{
+  "id": "L0-18",
+  "title": "Changing Values (var)",
+  "level": "L0",
+  "duration": "7 min",
+  "story": "You're playing a video game and your score keeps going up as you collect coins. You can't use `let` for that \u2014 `let` locks the value forever! You need a special kind of variable that CAN change. That's `var`.",
+  "why": "Mutable variables let programs track changing state like scores, health bars, counts, and positions \u2014 the heart of every game and app.",
+  "narrative": "## let vs var: The Big Difference\n\nSo far, every variable we've made used `let`. A `let` variable is like writing in permanent marker \u2014 once you set it, it stays that way forever. But `var` is like writing in pencil \u2014 you can erase and change it anytime.\n\n### The Rules\n\n```xiom\nfn main() {\n  let fixed: Int = 10;\n  var changeable: Int = 10;\n\n  changeable = 25;\n  io.println(changeable);\n}\n```\n\n`changeable` starts at 10, then we reassign it to 25. This prints 25. But if we tried `fixed = 25`, the compiler would yell at us \u2014 `let` variables can't change!\n\n### Keeping Score\n\n```xiom\nfn main() {\n  var score: Int = 0;\n  io.print(\"Starting score: \");\n  io.println(score);\n\n  score = score + 100;\n  io.print(\"Found a coin! Score: \");\n  io.println(score);\n\n  score = score + 50;\n  io.print(\"Beat a monster! Score: \");\n  io.println(score);\n}\n```\n\nEach time something happens in the game, we update `score`. It grows from 0 to 100 to 150. This is how every game keeps track of points!\n\n### When to Use Which\n\nUse `let` for values that truly never change \u2014 like a player's name, or the number of days in a week. Use `var` for things that DO change \u2014 scores, counters, health, position. Default to `let` and switch to `var` only when you need to change the value later.",
+  "analogy": "`let` is a tattoo \u2014 permanent and unchanging. `var` is a whiteboard \u2014 you can erase and rewrite whenever you want.",
+  "code_template": "fn main() {\n  var points: Int = 100;\n  // TODO: subtract 15 from points (lose some points!)\n  // TODO: add 30 to points (bonus round!)\n  // TODO: print the final score\n}\n",
+  "solution": "fn main() {\n  var points: Int = 100;\n  points = points - 15;\n  points = points + 30;\n  io.println(points);\n}\n",
+  "try_it": "Start with 100 points, subtract 15 (you lost a life), then add 30 (you found a treasure). Print the score after each change so you can watch it go up and down!",
+  "concepts": ["var", "mutable", "reassignment", "let-vs-var"],
+  "tips": [
+    "Default to `let` \u2014 only use `var` when you know the value needs to change later",
+    "You can change a `var` as many times as you want \u2014 there's no limit!",
+    "When reassigning, DON'T write the type again: just `points = 85;`, not `var points: Int = 85;`"
+  ],
+  "common_mistakes": [
+    "Trying to reassign a `let` variable \u2014 the compiler won't allow it. Switch to `var` instead!",
+    "Writing the full declaration when reassigning: `var score: Int = 50;` creates a NEW variable. Just write `score = 50;`"
+  ],
+  "next_lesson": "L0-19",
+  "related": ["L0-08", "L0-19", "L0-25"]
+}

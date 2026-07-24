@@ -1,0 +1,28 @@
+{
+  "id": "L0-06",
+  "title": "Working with Text (Strings)",
+  "level": "L0",
+  "duration": "8 min",
+  "story": "You're making a name tag for your desk. You want it BIG and BOLD so everyone can see it from across the room. Instead of shouting, you can make your program print your name in ALL CAPS — and even count how many letters it has!",
+  "why": "Text is how programs talk to people. Almost every program you use — games, apps, websites — shows text on the screen. Knowing how to work with text is like learning to write instead of just saying numbers.",
+  "narrative": "## What Are Strings?\n\nA **string** is just a piece of text. In XIOM, strings are written between double quotes, like `\"hello\"` or `\"My name is Alex\"`. You've been using strings since your very first program — every time you wrote `io.println(\"...\")`, you were using a string!\n\nStrings aren't just for printing — you can do lots of things with them.\n\n### Gluing Strings Together\n\nYou can stick two strings together with the `+` sign. This is called **concatenation** (con-CAT-uh-nation). It's like gluing two pieces of paper to make one longer piece:\n\n```xiom\nfn main() {\n  let greeting = \"Hello, \" + \"world!\";\n  io.println(greeting);  // Prints: Hello, world!\n}\n```\n\nYou can also glue a string variable with another string:\n\n```xiom\nfn main() {\n  let first = \"Alex\";\n  let last = \"Chen\";\n  let full = first + \" \" + last;  // The middle \" \" adds a space\n  io.println(full);  // Prints: Alex Chen\n}\n```\n\n### Counting Letters with `string.str_len()`\n\nWant to know how long a string is? XIOM has a built-in tool called `string.str_len()` that counts the characters. It's like putting a ruler next to your text:\n\n```xiom\nfn main() {\n  let word = \"butterfly\";\n  let length = string.str_len(word);\n  io.println(length);  // Prints: 9\n}\n```\n\n### Making Text LOUD with `string.str_upper()`\n\nNeed to make text uppercase? Use `string.str_upper()`. It takes a string and returns the same text in ALL CAPS:\n\n```xiom\nfn main() {\n  let whisper = \"hello\";\n  let shout = string.str_upper(whisper);\n  io.println(shout);  // Prints: HELLO\n}\n```\n\nThere's also `string.str_lower()` which does the opposite — it makes everything lowercase.\n\n### Putting It All Together\n\nHere's a program that uses all three string tricks:\n\n```xiom\nfn main() {\n  let name = \"sam\";\n\n  // Glue strings together\n  let message = \"Welcome, \" + name + \"!\";\n  io.println(message);\n\n  // Count the letters\n  let count = string.str_len(name);\n  io.println(count);\n\n  // Make it uppercase\n  let loud = string.str_upper(name);\n  io.println(loud);\n}\n```\n\nStrings are everywhere in programming. Every chat message, every game dialog, every website headline — they're all strings. You just learned how to shape them!",
+  "analogy": "A string is like a bead necklace — each character is a bead, and `string.str_len()` counts the beads, while `string.str_upper()` paints them all the same bright color.",
+  "code_template": "fn main() {\n  // TODO: Create a variable called 'name' with your name\n  // TODO: Create a greeting by gluing \"Hi, \" + name + \"!\"\n  // TODO: Print the greeting\n  // TODO: Count the letters in your name using string.str_len() and print it\n  // TODO: Print your name in ALL CAPS using string.str_upper()\n}",
+  "solution": "fn main() {\n  let name = \"Maya\";\n\n  let greeting = \"Hi, \" + name + \"!\";\n  io.println(greeting);\n\n  let count = string.str_len(name);\n  io.println(\"Your name has this many letters:\");\n  io.println(count);\n\n  let loud_name = string.str_upper(name);\n  io.println(\"Here it is in ALL CAPS:\");\n  io.println(loud_name);\n}",
+  "try_it": "Print your name in ALL CAPS and count how many letters it has. Then try printing your full name (first + space + last) and count those letters too!",
+  "concepts": ["Str", "string literal", "concatenation", "string.str_len", "string.str_upper", "string.str_lower"],
+  "tips": [
+    "Use `+` to glue strings together — don't forget to add spaces between words if you want them: `\"Hello \" + name`.",
+    "`string.str_len()` counts every character including spaces: `\"a b\"` has a length of 3.",
+    "`string.str_upper()` and `string.str_lower()` don't change the original string — they give you a new one.",
+    "You can store the result of any string function in a variable, just like you store numbers."
+  ],
+  "common_mistakes": [
+    "Using `+` to glue a string and a number: `\"Score: \" + 5` won't work. Numbers and strings are different types.",
+    "Forgetting the space when gluing words: `first + last` becomes `\"AlexChen\"` instead of `\"Alex Chen\"`.",
+    "Trying to use `string.str_len()` on a number — it only works with strings, not numbers.",
+    "Thinking `string.str_upper(name)` changes `name` itself — it returns a new uppercase string, leaving the original alone."
+  ],
+  "next_lesson": "L0-07",
+  "related": ["L0-04", "L0-05"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "L0-15",
+  "title": "Fun with Strings",
+  "level": "L0",
+  "duration": "6 min",
+  "story": "You're making a custom birthday card for your best friend. Instead of writing the same message for everyone, you want the computer to mix and match greetings, names, and messages to create something personal!",
+  "why": "Building strings from pieces lets programs create personalized messages, reports, and displays for every user.",
+  "narrative": "## Building Sentences from Pieces\n\nA string is just text between double quotes: `\"Hello\"`. But what if you want to build a sentence from smaller pieces? That's where `string.str_concat()` comes in!\n\n### What Is Concatenation?\n\nConcatenation is a fancy word for \"sticking strings together.\" The function `string.str_concat(a, b)` takes two strings and glues them into one. Think of it like linking paper clips into a chain.\n\n### Your First String Builder\n\n```xiom\nfn main() {\n  let greeting: Str = \"Happy Birthday, \";\n  let name: Str = \"Sam\";\n  let message: Str = string.str_concat(greeting, name);\n  io.println(message);\n}\n```\n\nThis prints `Happy Birthday, Sam`. Notice the space after the comma in `\"Happy Birthday, \"` \u2014 without it, you'd get `\"Happy Birthday,Sam\"`.\n\n### Chaining Multiple Pieces\n\n```xiom\nfn main() {\n  let part1: Str = \"I \";\n  let part2: Str = \"love \";\n  let part3: Str = \"pizza\";\n  let joined: Str = string.str_concat(part1, string.str_concat(part2, part3));\n  io.println(joined);\n}\n```\n\nWe nest one concat inside another to join three pieces. The innermost concat runs first, then the outer one adds on top!",
+  "analogy": "String concatenation is like building a LEGO tower \u2014 you snap pieces together one at a time until you have something big.",
+  "code_template": "fn main() {\n  let adjective: Str = \"awesome\";\n  let noun: Str = \"coder\";\n  let space: Str = \" \";\n  // TODO: build the phrase \"awesome coder\" using string.str_concat\n  // TODO: print the result\n}\n",
+  "solution": "fn main() {\n  let adjective: Str = \"awesome\";\n  let noun: Str = \"coder\";\n  let space: Str = \" \";\n  let phrase: Str = string.str_concat(adjective, string.str_concat(space, noun));\n  io.println(phrase);\n}\n",
+  "try_it": "Build a sentence about yourself from 3 variables! Create variables for your name, a verb (like \"loves\"), and a thing (like \"dogs\"), then concatenate them into a story.",
+  "concepts": ["strings", "concatenation", "Str"],
+  "tips": [
+    "Always include spaces in your strings where needed \u2014 concat doesn't add them automatically!",
+    "You can nest concat calls to join more than two strings at once",
+    "String variables always need the type `Str` and values go in double quotes"
+  ],
+  "common_mistakes": [
+    "Forgetting spaces between words \u2014 `\"Hello\" + \"World\"` becomes `\"HelloWorld\"`, not `\"Hello World\"`",
+    "Using `+` to join strings in XIOM \u2014 you must use `string.str_concat()`, not the plus sign"
+  ],
+  "next_lesson": "L0-16",
+  "related": ["L0-06", "L0-16", "L0-17"]
+}
