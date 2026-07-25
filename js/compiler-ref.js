@@ -4,42 +4,70 @@ var compilerRefData = {
       title: "Basic Commands",
       icon: "\uD83D\uDDA5",
       entries: [
-        { cmd: "xiom run file.xi", desc: "Compile and run a XIOM source file" },
-        { cmd: "xiom build file.xi", desc: "Compile to a native binary" },
-        { cmd: "xiom check file.xi", desc: "Type-check without compiling" },
+        { cmd: "xiom run file.xi", desc: "Compile and run (scripting mode \u2014 auto-adds use xiom.io;)" },
+        { cmd: "xiom build file.xi", desc: "Compile to native binary" },
+        { cmd: "xiom check file.xi", desc: "Type-check only, no codegen" },
+        { cmd: "xiom check --check-only file.xi", desc: "Parse + type-check only" },
         { cmd: "xiom fmt file.xi", desc: "Format source code" },
+        { cmd: "xiom doc file.xi", desc: "Generate documentation" },
       ]
     },
     {
-      title: "Compiler Flags",
+      title: "Compilation Flags",
       icon: "\u2699",
       entries: [
-        { cmd: "--emit-ir", desc: "Output LLVM IR (Intermediate Representation)" },
-        { cmd: "--emit-tokens", desc: "Output the token stream from the lexer" },
-        { cmd: "--diagnostics-json", desc: "Machine-readable diagnostic output" },
-        { cmd: "--verify", desc: "Run Z3 SMT solver to statically verify contracts" },
-        { cmd: "--no-contracts", desc: "Strip all contract checks from the binary" },
-        { cmd: "--target native", desc: "Compile for the host platform" },
-        { cmd: "--target wasm", desc: "Compile to WebAssembly" },
+        { cmd: "--emit-ir", desc: "Output LLVM IR" },
+        { cmd: "--emit-tokens", desc: "Output token stream from lexer" },
+        { cmd: "--emit-ast", desc: "Output AST (Abstract Syntax Tree)" },
+        { cmd: "--diagnostics-json", desc: "Machine-readable diagnostic output in JSON" },
+        { cmd: "--opt level", desc: "Optimization level (0, 1, 2, 3)" },
+        { cmd: "--debug", desc: "Include debug symbols" },
+        { cmd: "--release", desc: "Release mode (optimized, no debug)" },
+      ]
+    },
+    {
+      title: "Target Flags",
+      icon: "\uD83C\uDFAF",
+      entries: [
+        { cmd: "--target native", desc: "Compile for host platform (default)" },
+        { cmd: "--target wasm", desc: "Compile to WebAssembly (.wasm)" },
+        { cmd: "--target ir", desc: "Stop after IR generation, output .ll file" },
+      ]
+    },
+    {
+      title: "Contracts & Verification",
+      icon: "\uD83D\uDEE1",
+      entries: [
+        { cmd: "--verify", desc: "Run Z3 SMT solver for static contract verification" },
+        { cmd: "--no-contracts", desc: "Strip all contract checks from binary (for release)" },
+        { cmd: "--contracts-only", desc: "Only check contracts, skip codegen" },
+        { cmd: "--contracts-verbose", desc: "Show detailed contract check results" },
+      ]
+    },
+    {
+      title: "Diagnostics & Debugging",
+      icon: "\uD83D\uDD0D",
+      entries: [
+        { cmd: "--verbose", desc: "Show detailed compilation steps (each phase)" },
+        { cmd: "--time", desc: "Show timing for each compiler phase" },
+        { cmd: "--stats", desc: "Show compilation statistics" },
+        { cmd: "--json", desc: "Output all results as JSON" },
+        { cmd: "--color", desc: "Force colored output" },
+        { cmd: "--no-color", desc: "Disable colored output" },
+        { cmd: "--warnings-as-errors", desc: "Treat warnings as errors" },
       ]
     },
     {
       title: "Package Management",
       icon: "\uD83D\uDCE6",
       entries: [
-        { cmd: "xiom init", desc: "Create a new XIOM package with package.xi" },
-        { cmd: "xiom add <package>", desc: "Add a dependency to your project" },
-        { cmd: "xiom test", desc: "Run all tests in the project" },
-        { cmd: "xiom doc", desc: "Generate documentation from source" },
-      ]
-    },
-    {
-      title: "Debugging",
-      icon: "\uD83D\uDD0D",
-      entries: [
-        { cmd: "--verbose", desc: "Show detailed compilation steps" },
-        { cmd: "--time", desc: "Show timing for each compiler phase" },
-        { cmd: "--stats", desc: "Show compilation statistics" },
+        { cmd: "xiom init", desc: "Create new XIOM package with package.xi" },
+        { cmd: "xiom add <package>", desc: "Add dependency" },
+        { cmd: "xiom remove <package>", desc: "Remove dependency" },
+        { cmd: "xiom update", desc: "Update dependencies" },
+        { cmd: "xiom test", desc: "Run all tests" },
+        { cmd: "xiom bench", desc: "Run benchmarks" },
+        { cmd: "xiom clean", desc: "Clean build artifacts" },
       ]
     }
   ]
@@ -56,7 +84,7 @@ function showCompilerRef() {
 
   var intro = document.createElement('div');
   intro.style.cssText = 'margin-bottom:20px;font-size:13px;color:var(--mid);line-height:1.6;';
-  intro.textContent = 'The XIOM compiler (xiom) provides a command-line interface for building, checking, and running XIOM programs. Below is a reference of the most common commands and flags.';
+  intro.textContent = 'The XIOM compiler (xiom) provides a command-line interface for building, checking, and running XIOM programs. Below is a reference of all commands and flags.';
   container.appendChild(intro);
 
   compilerRefData.sections.forEach(function (section) {

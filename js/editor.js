@@ -6,9 +6,7 @@ function registerXiomLanguage() {
 
   monaco.languages.register({ id: 'xiom' });
 
-  // ── Monarch tokeniser with state-based function-name highlighting ──
   monaco.languages.setMonarchTokensProvider('xiom', {
-    // Monarch requires @references to be STRINGS (pipe-separated regex), NOT arrays
     keywords: 'fn|let|var|const|return|if|elif|else|match|while|for|in|type|enum|interface|derive|spawn|async|await|comptime|module|use|pub|as|unsafe|extern|true|false|self|result|Some|None|Ok|Err|is|and|or|not|where',
     typeKeywords: 'Int|Int8|Int16|Int32|Int64|UInt|UInt8|UInt16|UInt32|UInt64|Float32|Float64|Bool|Str|Char|Unit|Option|Result|Vec|Map|Set',
     operators: [
@@ -24,11 +22,8 @@ function registerXiomLanguage() {
         [/[ \t\r\n]+/, 'white'],
         [/\/\/.*$/, 'comment'],
         [/"/, { token: 'string.quote', bracket: '@open', next: '@string' }],
-        // Contract keywords — inline regex (Monarch @contractKeywords needs string, not array)
         [/\b(requires|ensures|invariant)\b/, 'contract'],
-        // 'fn' transitions to capture the function name
         [/\bfn\b/, { token: 'keyword', next: '@fnName' }],
-        // Keywords / types — @reference works for arrays in Monarch
         [/@keywords\b/, 'keyword'],
         [/@typeKeywords\b/, 'type'],
         [/\b\d+(\.\d+)?\b/, 'number'],
@@ -36,14 +31,12 @@ function registerXiomLanguage() {
         [/@symbols/, { cases: { '@operators': 'operator', '@default': '' } }],
       ],
 
-      // After 'fn', the next identifier is the function name
       fnName: [
         [/[ \t]+/, 'white'],
         [/[a-zA-Z_][a-zA-Z0-9_]*/, { token: 'function', next: '@pop' }],
         ['', '', '@pop'],
       ],
 
-      // String state
       string: [
         [/[^\\"]+/, 'string'],
         [/@escapes/, 'string.escape'],
@@ -53,7 +46,6 @@ function registerXiomLanguage() {
     },
   });
 
-  // ── XIOM Dark Theme ──
   monaco.editor.defineTheme('xiom-dark', {
     base: 'vs-dark',
     inherit: true,
@@ -97,7 +89,6 @@ function registerXiomLanguage() {
     }
   });
 
-  // Also define a light variant (for toggle)
   monaco.editor.defineTheme('xiom-light', {
     base: 'vs',
     inherit: true,
@@ -117,11 +108,6 @@ function registerXiomLanguage() {
       'editor.lineHighlightBackground': '#f6f8fa',
     }
   });
-}
-
-function disposeAllEditors() {
-  if (window.editor) { window.editor.dispose(); window.editor = null; }
-  if (window.pgEditor) { window.pgEditor.dispose(); window.pgEditor = null; }
 }
 
 function createEditor(containerId, initialValue) {
@@ -159,20 +145,12 @@ function addCompileAction(editor) {
   });
 }
 
-function addLineColTracker(editor) {
-  editor.onDidChangeCursorPosition(function () {
-    updateLineCount();
-  });
-}
-
 require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs' } });
 require(['vs/editor/editor.main'], function () {
   registerXiomLanguage();
 
-  disposeAllEditors();
   window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
   addCompileAction(window.editor);
-  addLineColTracker(window.editor);
 
   window.editor.onDidChangeCursorPosition(function () {
     updateLineCount();
@@ -181,7 +159,6 @@ require(['vs/editor/editor.main'], function () {
 
 window.initLessonsEditor = function () {
   if (!window.monaco) {
-    // Monaco loader still running — wait, don't double-require
     var check = setInterval(function () {
       if (window.monaco) {
         clearInterval(check);
@@ -195,32 +172,8 @@ window.initLessonsEditor = function () {
 
 function _createLessonsEditor() {
   registerXiomLanguage();
-  if (window.pgEditor) { window.pgEditor.dispose(); window.pgEditor = null; }
   window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
   addCompileAction(window.editor);
   window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
-  updateLineCount();
-}
-
-window.initPlaygroundEditor = function () {
-  if (window.pgEditor) return;
-  if (!window.monaco) {
-    var check = setInterval(function () {
-      if (window.monaco) {
-        clearInterval(check);
-        _createPlaygroundEditor();
-      }
-    }, 100);
-    return;
-  }
-  _createPlaygroundEditor();
-};
-
-function _createPlaygroundEditor() {
-  registerXiomLanguage();
-  if (window.editor) { window.editor.dispose(); window.editor = null; }
-  window.pgEditor = createEditor('pgEditorContainer', 'fn main() {\n  io.println("Hello!");\n}');
-  addCompileAction(window.pgEditor);
-  window.pgEditor.onDidChangeCursorPosition(function () { updateLineCount(); });
   updateLineCount();
 }

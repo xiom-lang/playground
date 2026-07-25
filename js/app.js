@@ -1,4 +1,3 @@
-var currentMode = 'landing';
 var currentEditorTheme = localStorage.getItem('xiom_editor_theme') || 'xiom-dark';
 var currentLessonId = null;
 var currentLessonFile = null;
@@ -6,24 +5,20 @@ var currentLessonData = null;
 var lessonCatalogCache = null;
 var syntaxVisible = false;
 var compilerRefVisible = false;
-var stdlibPinned = false;
+
 
 function showLanding() {
-  currentMode = 'landing';
   document.getElementById('landing').classList.remove('hidden');
   document.getElementById('lessonsScreen').classList.add('hidden');
-  document.getElementById('playgroundScreen').classList.add('hidden');
 }
 
 function startLearning() {
-  currentMode = 'lessons';
   document.getElementById('landing').classList.add('hidden');
-  document.getElementById('playgroundScreen').classList.add('hidden');
   document.getElementById('lessonsScreen').classList.remove('hidden');
+  document.getElementById('lessonsScreen').classList.remove('sidebar-hidden');
   if (window.loadLessonCatalog) {
     window.loadLessonCatalog();
   }
-  // Re-init editor if it was disposed (e.g. by switching to playground)
   if (!window.editor && window.initLessonsEditor) {
     window.initLessonsEditor();
   } else if (window.editor) {
@@ -31,26 +26,36 @@ function startLearning() {
   }
 }
 
-function openPlayground() {
-  currentMode = 'playground';
+function toggleSidebar() {
+  var screen = document.getElementById('lessonsScreen');
+  if (!screen) return;
+  screen.classList.toggle('sidebar-hidden');
+  if (window.editor) window.editor.layout();
+}
+
+function openFreePlay() {
   document.getElementById('landing').classList.add('hidden');
-  document.getElementById('lessonsScreen').classList.add('hidden');
-  document.getElementById('playgroundScreen').classList.remove('hidden');
-  initPlaygroundEditor();
+  var screen = document.getElementById('lessonsScreen');
+  screen.classList.add('sidebar-hidden');
+  screen.classList.remove('hidden');
+  if (!window.editor && window.initLessonsEditor) {
+    window.initLessonsEditor();
+  } else if (window.editor) {
+    window.editor.layout();
+  }
 }
 
 function toggleSyntax() {
+  closeStdlibPanel();
   if (compilerRefVisible) {
     compilerRefVisible = false;
     syntaxVisible = true;
-    var panel = document.getElementById('syntaxPanel');
-    panel.classList.remove('hidden');
     hideCompilerRef();
-    return;
+  } else {
+    syntaxVisible = !syntaxVisible;
   }
-  syntaxVisible = !syntaxVisible;
-  var panel2 = document.getElementById('syntaxPanel');
-  panel2.classList.toggle('hidden', !syntaxVisible);
+  var panel = document.getElementById('syntaxPanel');
+  panel.classList.toggle('hidden', !syntaxVisible);
   if (syntaxVisible) {
     populateSyntaxPanel();
   }
@@ -59,16 +64,21 @@ function toggleSyntax() {
 function toggleCompilerRef() {
   var panel = document.getElementById('syntaxPanel');
 
-  if (syntaxVisible && !compilerRefVisible) {
+  closeStdlibPanel();
+
+  if (!compilerRefVisible && syntaxVisible) {
     compilerRefVisible = true;
     showCompilerRef();
     return;
   }
+
   if (compilerRefVisible) {
     compilerRefVisible = false;
+    syntaxVisible = false;
     panel.classList.add('hidden');
     return;
   }
+
   compilerRefVisible = true;
   syntaxVisible = true;
   panel.classList.remove('hidden');
@@ -77,10 +87,13 @@ function toggleCompilerRef() {
 
 function toggleStdlibPanel() {
   var panel = document.getElementById('stdlibPanel');
-  if (!panel || panel.classList.contains('hidden')) {
-    panel = document.getElementById('stdlibPanelPlay');
-  }
   if (!panel) return;
+
+  if (panel.classList.contains('hidden')) {
+    if (syntaxVisible) toggleSyntax();
+    if (compilerRefVisible) toggleCompilerRef();
+  }
+
   panel.classList.toggle('hidden');
   if (!panel.classList.contains('hidden')) {
     showStdlibPanel();
@@ -88,28 +101,15 @@ function toggleStdlibPanel() {
 }
 
 function closeStdlibPanel() {
-  if (stdlibPinned) return;
   var panel = document.getElementById('stdlibPanel');
-  if (!panel || panel.classList.contains('hidden')) {
-    panel = document.getElementById('stdlibPanelPlay');
-  }
   if (panel) panel.classList.add('hidden');
 }
 
-function pinStdlib() {
-  stdlibPinned = !stdlibPinned;
-  var panels = document.querySelectorAll('.stdlib-panel');
-  var btns = document.querySelectorAll('.stdlib-pin-btn');
-  panels.forEach(function (p) { p.classList.toggle('pinned', stdlibPinned); });
-  btns.forEach(function (b) { b.classList.toggle('pinned', stdlibPinned); });
-  btns.forEach(function (b) { b.innerHTML = stdlibPinned ? '📌' : '📍'; });
-}
-
 function formatCode() {
-  var source = getActiveEditorValue();
+  var source = window.editor ? window.editor.getValue() : '';
   if (!source) return;
 
-  var statusEl = currentMode === 'playground' ? document.getElementById('pgStatus') : document.getElementById('status');
+  var statusEl = document.getElementById('status');
   statusEl.textContent = 'Formatting...';
   statusEl.className = 'status-bar busy';
 
@@ -121,7 +121,7 @@ function formatCode() {
     .then(function (resp) { return resp.json(); })
     .then(function (r) {
       if (r.formatted) {
-        var ed = getActiveEditor();
+        var ed = window.editor;
         if (ed) ed.setValue(r.formatted);
         statusEl.textContent = 'Formatted.';
         statusEl.className = 'status-bar ok';
@@ -187,18 +187,16 @@ function dismissOnboarding() {
 }
 
 function updateLineCount() {
-  var ed = getActiveEditor();
+  var ed = window.editor;
   if (!ed) return;
   var pos = ed.getPosition();
-  var elId = currentMode === 'playground' ? 'pgLineCol' : 'lineCol';
-  var el = document.getElementById(elId);
+  var el = document.getElementById('lineCol');
   if (el && pos) {
     el.textContent = 'Ln ' + pos.lineNumber + ', Col ' + pos.column;
   }
 }
 
 function getActiveEditor() {
-  if (currentMode === 'playground') return window.pgEditor || null;
   return window.editor || null;
 }
 
@@ -213,24 +211,22 @@ function loadQuickExample(name) {
     vars: 'fn main() {\n  let myName = "Alex";\n  let myAge = 14;\n  io.println(myName);\n  io.println(myAge);\n}',
     math: 'fn main() {\n  let apples = 5;\n  let oranges = 3;\n  let total = apples + oranges;\n  io.println("Total fruit: ");\n  io.println(total);\n}'
   };
-  var ed = window.editor || window.pgEditor;
+  var ed = window.editor;
   if (ed && examples[name]) {
     ed.setValue(examples[name]);
     ed.focus();
   } else if (examples[name]) {
-    // Editor not ready yet — retry after delay
     setTimeout(function () {
-      var retryEd = window.editor || window.pgEditor;
+      var retryEd = window.editor;
       if (retryEd) { retryEd.setValue(examples[name]); retryEd.focus(); }
     }, 500);
   }
-  document.getElementById('exampleSelect').value = '';
+  var el = document.getElementById('exampleSelect');
+  if (el) el.value = '';
 }
 
 function getActiveOutputIds() {
-  if (!document.getElementById('lessonsScreen').classList.contains('hidden'))
-    return { output:'output', ir:'ir', diag:'diag', tokens:'tokens', contracts:'contracts', status:'status' };
-  return { output:'pgOutput', ir:'pgIR', diag:'pgDiag', tokens:'pgTokens', contracts:'pgContracts', status:'pgStatus' };
+  return { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts', status: 'status' };
 }
 
 // ========== TAB SWITCHING ==========
@@ -246,9 +242,7 @@ function setupTabs() {
       var tabName = tab.dataset.tab;
       var outputEl = parent.nextElementSibling;
       if (!outputEl) return;
-      var ids = !document.getElementById('lessonsScreen').classList.contains('hidden')
-        ? { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts' }
-        : { output: 'pgOutput', ir: 'pgIR', diag: 'pgDiag', tokens: 'pgTokens', contracts: 'pgContracts' };
+      var ids = { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts' };
 
       Object.keys(ids).forEach(function (key) {
         var el = document.getElementById(ids[key]);
@@ -260,29 +254,26 @@ function setupTabs() {
 
 // ========== KEYBOARD SHORTCUTS ==========
 document.addEventListener('keydown', function (e) {
+  var lessonsScreen = document.getElementById('lessonsScreen');
+  var isLessonsVisible = lessonsScreen && !lessonsScreen.classList.contains('hidden');
+
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
     e.preventDefault();
-    if (currentMode !== 'landing' && window.compile) window.compile();
+    if (isLessonsVisible && window.compile) window.compile();
   }
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
     e.preventDefault();
     toggleSyntax();
   }
   if (e.key === 'Escape') {
-    // Close shortcut modal first
     var modal = document.getElementById('shortcutModal');
     if (modal && !modal.classList.contains('hidden')) {
       modal.classList.add('hidden');
       return;
     }
     var stdlibPanel = document.getElementById('stdlibPanel');
-    if (stdlibPanel && !stdlibPanel.classList.contains('hidden') && !stdlibPinned) {
+    if (stdlibPanel && !stdlibPanel.classList.contains('hidden')) {
       stdlibPanel.classList.add('hidden');
-      return;
-    }
-    var stdlibPanelPlay = document.getElementById('stdlibPanelPlay');
-    if (stdlibPanelPlay && !stdlibPanelPlay.classList.contains('hidden') && !stdlibPinned) {
-      stdlibPanelPlay.classList.add('hidden');
       return;
     }
     if (compilerRefVisible) {
@@ -320,7 +311,6 @@ function checkLastProgress() {
   var countEl = document.getElementById('continueCount');
   if (countEl) countEl.textContent = progress.length;
 
-  // Find the first uncompleted lesson in the catalog
   var btnEl = document.getElementById('btnContinue');
   if (btnEl && lessonCatalogCache) {
     var allLessons = [];
@@ -330,7 +320,6 @@ function checkLastProgress() {
       });
     });
 
-    // Find the next uncompleted lesson
     for (var i = 0; i < allLessons.length; i++) {
       if (progress.indexOf(allLessons[i].id) === -1) {
         btnEl.setAttribute('data-lesson-id', allLessons[i].id);
@@ -340,7 +329,6 @@ function checkLastProgress() {
       }
     }
 
-    // All lessons completed
     btnEl.textContent = 'All lessons completed! \u2605 Review \u2192';
   }
 }
@@ -354,7 +342,6 @@ function continueLearning() {
 
   if (lessonId && lessonFile) {
     startLearning();
-    // Wait for the lessons screen to render, then select the lesson
     setTimeout(function () {
       if (window.selectLesson) {
         window.selectLesson(lessonId, lessonFile);
@@ -389,7 +376,6 @@ function initResizeHandle() {
     if (!dragging) return;
     var delta = e.clientX - startX;
     var newWidth = startWidth + delta;
-    // Clamp between 220px and 600px
     if (newWidth < 220) newWidth = 220;
     if (newWidth > 600) newWidth = 600;
     panel.style.width = newWidth + 'px';
@@ -408,17 +394,13 @@ function initResizeHandle() {
 
 // ========== LOADING OVERLAY ==========
 function showLoading() {
-  var overlay = currentMode === 'playground'
-    ? document.getElementById('pgLoadingOverlay')
-    : document.getElementById('loadingOverlay');
+  var overlay = document.getElementById('loadingOverlay');
   if (overlay) overlay.classList.remove('hidden');
 }
 
 function hideLoading() {
   var overlay = document.getElementById('loadingOverlay');
   if (overlay) overlay.classList.add('hidden');
-  var pgOverlay = document.getElementById('pgLoadingOverlay');
-  if (pgOverlay) pgOverlay.classList.add('hidden');
 }
 
 function toggleShortcuts() {
@@ -428,14 +410,16 @@ function toggleShortcuts() {
 }
 
 function toggleHamburger() {
-  var actions = document.querySelector('#lessonsScreen:not(.hidden) .header-actions') ||
-                document.querySelector('#playgroundScreen:not(.hidden) .header-actions');
+  var actions = document.querySelector('#lessonsScreen:not(.hidden) .header-actions');
   if (actions) actions.classList.toggle('open');
 }
 
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.header-actions') && !e.target.closest('.hamburger-btn')) {
     document.querySelectorAll('.header-actions.open').forEach(function(el) { el.classList.remove('open'); });
+  }
+  if (!e.target.closest('.header-dropdown')) {
+    document.querySelectorAll('.header-dropdown.open').forEach(function(el) { el.classList.remove('open'); });
   }
 });
 
@@ -454,7 +438,6 @@ function applyAppTheme() {
   } else {
     html.classList.remove('light-mode');
   }
-  // Sync editor theme
   currentEditorTheme = currentAppTheme === 'light' ? 'xiom-light' : 'xiom-dark';
   updateThemeButtons();
 }
@@ -464,14 +447,11 @@ function toggleEditorTheme() {
   localStorage.setItem('xiom_app_theme', currentAppTheme);
   applyAppTheme();
 
-  // Switch Monaco theme
   try {
     var t = currentAppTheme === 'light' ? 'xiom-light' : 'xiom-dark';
     if (window.editor) monaco.editor.setTheme(t);
-    if (window.pgEditor) monaco.editor.setTheme(t);
   } catch(e) {}
 
-  // Flash overlay
   var overlay = document.getElementById('themeFlash');
   if (!overlay) {
     overlay = document.createElement('div');

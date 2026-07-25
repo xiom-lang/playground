@@ -171,30 +171,25 @@ function buildConceptCard(concept) {
 }
 
 function loadExample(concept) {
-  // If no editor is active (e.g. first-time use), switch to playground and init one.
-  if (!window.editor && !window.pgEditor && currentMode === 'landing') {
-    openPlayground();
+  if (!window.editor && currentAppTheme === undefined) {
+    // Not in lessons mode — need to navigate there first
+    if (typeof startLearning === 'function') startLearning();
+    setTimeout(function () {
+      _tryLoadExample(concept);
+    }, 500);
+    toggleSyntax();
+    return;
   }
+  _tryLoadExample(concept);
+  toggleSyntax();
+}
 
+function _tryLoadExample(concept) {
   var ed = getActiveEditor();
   if (ed) {
     ed.setValue(concept.example);
     ed.focus();
-  } else {
-    // Fallback: try playground editor directly
-    if (!window.pgEditor) {
-      window.initPlaygroundEditor();
-    }
-    // Wait briefly for Monaco to initialise, then set value
-    setTimeout(function () {
-      var pgEd = window.pgEditor;
-      if (pgEd) {
-        pgEd.setValue(concept.example);
-        pgEd.focus();
-      }
-    }, 300);
   }
-  toggleSyntax();
 }
 
 function toggleCard(conceptId) {
@@ -214,14 +209,6 @@ function toggleCard(conceptId) {
   } else {
     expandedCardId = null;
   }
-}
-
-function loadExample(concept) {
-  var ed = getActiveEditor();
-  if (ed) {
-    ed.setValue(concept.example);
-  }
-  toggleSyntax();
 }
 
 function filterConcepts(query) {

@@ -77,42 +77,10 @@
 .stdlib-panel.hidden { display: none; }
 .stdlib-panel.pinned { border-left-color: var(--indigo); }
 
-/* ---- Playground Screen ---- */
-.playground-screen {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.playground-layout {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-}
-
-.playground-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-width: 0;
-}
-
-.playground-main .editor-container,
-.playground-layout .editor-container {
-  flex: 1;
-  min-height: 0;
-  background: #111217;
-}
-
-.playground-main .output-panel,
-.playground-layout .output-panel {
-  height: 35%;
-  min-height: 150px;
-  flex-shrink: 0;
-}
+/* ---- Sidebar Hidden ---- */
+.lessons-screen.sidebar-hidden .sidebar { display: none; }
+.lessons-screen.sidebar-hidden .narrative-panel { display: none; }
+.lessons-screen.sidebar-hidden .resize-handle { display: none; }
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {

@@ -556,32 +556,7 @@ var stdlibData = {
         { sig: "ManuallyDrop.drop[T](self)", desc: "Explicitly drop" },
       ]
     },
-    {
-      name: "ptr",
-      desc: "Raw pointer operations (unsafe block required)",
-      wasm: "✗",
-      functions: [
-        { sig: "ptr.null[T]() -> *T", desc: "Null pointer" },
-        { sig: "ptr.null_mut[T]() -> *mut T", desc: "Mutable null pointer" },
-        { sig: "ptr.dangling[T]() -> *T", desc: "Dangling (non-null, unaligned)" },
-        { sig: "ptr.is_null[T](ptr: *const T) -> Bool", desc: "Check if null" },
-        { sig: "ptr.read[T](ptr: *const T) -> T", desc: "Read from pointer" },
-        { sig: "ptr.write[T](ptr: *mut T, value: T)", desc: "Write to pointer" },
-        { sig: "ptr.read_volatile[T](ptr: *const T) -> T", desc: "Volatile read" },
-        { sig: "ptr.write_volatile[T](ptr: *mut T, value: T)", desc: "Volatile write" },
-        { sig: "ptr.swap[T](a: *mut T, b: *mut T)", desc: "Swap pointer values" },
-        { sig: "ptr.replace[T](dest: *mut T, src: T) -> T", desc: "Replace at pointer" },
-        { sig: "ptr.copy[T](src: *const T, dst: *mut T, n: Int)", desc: "Copy memory" },
-        { sig: "ptr.copy_nonoverlapping[T](src: *const T, dst: *mut T, n: Int)", desc: "Copy non-overlapping" },
-        { sig: "ptr.eq[T](a: *const T, b: *const T) -> Bool", desc: "Pointer equality" },
-        { sig: "ptr.offset[T](ptr: *const T, n: Int) -> *const T", desc: "Pointer offset" },
-        { sig: "ptr.wrapping_offset[T](ptr: *const T, n: Int) -> *const T", desc: "Wrapping offset" },
-        { sig: "ptr.add[T](ptr: *const T, n: Int) -> *const T", desc: "Add to pointer" },
-        { sig: "ptr.sub[T](ptr: *const T, n: Int) -> *const T", desc: "Subtract from pointer" },
-        { sig: "ptr.from_ref[T](r: &T) -> *const T", desc: "Reference to const pointer" },
-        { sig: "ptr.from_mut[T](r: &mut T) -> *mut T", desc: "Mutable reference to pointer" },
-      ]
-    },
+
     {
       name: "alloc",
       desc: "Memory allocation: Layout, Allocator interface, global alloc/free",
@@ -778,597 +753,7 @@ var stdlibData = {
         { sig: "SIGUSR2: Int = 12", desc: "User-defined signal 2" },
       ]
     },
-    {
-      name: "sync",
-      desc: "Synchronization: Mutex, RwLock, Condvar, Once, Barrier, Arc, Atomics",
-      wasm: "⚠",
-      functions: [
-        { sig: "Mutex[T]", desc: "Mutual exclusion lock" },
-        { sig: "MutexGuard[T]", desc: "RAII guard for Mutex" },
-        { sig: "RwLock[T]", desc: "Read-write lock" },
-        { sig: "ReadGuard[T]", desc: "RAII guard for read lock" },
-        { sig: "WriteGuard[T]", desc: "RAII guard for write lock" },
-        { sig: "Condvar", desc: "Condition variable" },
-        { sig: "Once", desc: "One-time initialization" },
-        { sig: "Barrier", desc: "Thread barrier" },
-        { sig: "Arc[T]", desc: "Atomic reference-counted pointer" },
-        { sig: "AtomicBool", desc: "Atomic boolean" },
-        { sig: "AtomicInt", desc: "Atomic integer" },
-        { sig: "Mutex.new[T](value: T) -> Mutex[T]", desc: "Create mutex", wasm: "⚠" },
-        { sig: "Mutex.lock[T](self) -> MutexGuard[T]", desc: "Lock mutex (blocks)", wasm: "⚠" },
-        { sig: "Mutex.try_lock[T](self) -> Option[MutexGuard[T]]", desc: "Try lock (non-blocking)", wasm: "⚠" },
-        { sig: "Mutex.into_inner[T](self) -> T", desc: "Consume mutex, return value", wasm: "★" },
-        { sig: "MutexGuard.get[T](self) -> T", desc: "Read guarded value", wasm: "★" },
-        { sig: "MutexGuard.get_mut[T](self) -> T", desc: "Mutate guarded value", wasm: "★" },
-        { sig: "MutexGuard.drop[T](self)", desc: "Release lock", wasm: "★" },
-        { sig: "RwLock.new[T](data: T) -> RwLock[T]", desc: "Create read-write lock", wasm: "⚠" },
-        { sig: "RwLock.read[T](self) -> ReadGuard[T]", desc: "Acquire read lock", wasm: "⚠" },
-        { sig: "RwLock.write[T](self) -> WriteGuard[T]", desc: "Acquire write lock", wasm: "⚠" },
-        { sig: "RwLock.try_read[T](self) -> Option[ReadGuard[T]]", desc: "Try read lock", wasm: "⚠" },
-        { sig: "RwLock.try_write[T](self) -> Option[WriteGuard[T]]", desc: "Try write lock", wasm: "⚠" },
-        { sig: "ReadGuard.get[T](self) -> T", desc: "Read through guard", wasm: "★" },
-        { sig: "WriteGuard.get[T](self) -> T", desc: "Read through guard", wasm: "★" },
-        { sig: "WriteGuard.get_mut[T](self) -> T", desc: "Mutate through guard", wasm: "★" },
-        { sig: "Condvar.new() -> Condvar", desc: "Create condition variable", wasm: "⚠" },
-        { sig: "Condvar.wait[T](self, guard: MutexGuard[T]) -> MutexGuard[T]", desc: "Wait on condition", wasm: "⚠" },
-        { sig: "Condvar.notify_one(self)", desc: "Wake one waiter", wasm: "⚠" },
-        { sig: "Condvar.notify_all(self)", desc: "Wake all waiters", wasm: "⚠" },
-        { sig: "Once.new() -> Once", desc: "Create one-time init", wasm: "★" },
-        { sig: "Once.call_once(self, f: fn())", desc: "Execute once only", wasm: "★" },
-        { sig: "Once.is_completed(self) -> Bool", desc: "Check if already called", wasm: "★" },
-        { sig: "Barrier.new(n: Int) -> Barrier", desc: "Create barrier for n threads", wasm: "⚠" },
-        { sig: "Barrier.wait(self)", desc: "Wait at barrier", wasm: "⚠" },
-        { sig: "Arc.new[T](value: T) -> Arc[T]", desc: "Create atomic reference-counted", wasm: "★" },
-        { sig: "Arc.clone[T](self) -> Arc[T]", desc: "Clone Arc (increment count)", wasm: "★" },
-        { sig: "Arc.get[T](self) -> T", desc: "Get inner value", wasm: "★" },
-        { sig: "Arc.strong_count[T](self) -> Int", desc: "Reference count", wasm: "★" },
-        { sig: "Arc.ptr_eq[T,U](self, other: &Arc[U]) -> Bool", desc: "Pointer equality", wasm: "★" },
-        { sig: "Arc.drop[T](self)", desc: "Explicit drop", wasm: "★" },
-        { sig: "AtomicBool.new(val: Bool) -> AtomicBool", desc: "Create atomic bool", wasm: "★" },
-        { sig: "AtomicBool.load(self) -> Bool", desc: "Load value", wasm: "★" },
-        { sig: "AtomicBool.store(self, val: Bool)", desc: "Store value", wasm: "★" },
-        { sig: "AtomicBool.swap(self, val: Bool) -> Bool", desc: "Swap value", wasm: "★" },
-        { sig: "AtomicBool.compare_exchange(self, cur: Bool, new: Bool) -> Bool", desc: "CAS operation", wasm: "★" },
-        { sig: "AtomicInt.new(val: Int) -> AtomicInt", desc: "Create atomic int", wasm: "★" },
-        { sig: "AtomicInt.load(self) -> Int", desc: "Load value", wasm: "★" },
-        { sig: "AtomicInt.store(self, val: Int)", desc: "Store value", wasm: "★" },
-        { sig: "AtomicInt.fetch_add(self, val: Int) -> Int", desc: "Atomic add", wasm: "★" },
-        { sig: "AtomicInt.fetch_sub(self, val: Int) -> Int", desc: "Atomic subtract", wasm: "★" },
-        { sig: "AtomicInt.swap(self, val: Int) -> Int", desc: "Swap value", wasm: "★" },
-        { sig: "AtomicInt.compare_exchange(self, cur: Int, new: Int) -> Bool", desc: "CAS operation", wasm: "★" },
-      ]
-    },
-    {
-      name: "thread",
-      desc: "Threads, scoped threads, and thread utilities",
-      wasm: "✗",
-      functions: [
-        { sig: "Thread", desc: "{ handle: *UInt8; id: Int }" },
-        { sig: "JoinHandle[T]", desc: "{ thread: Thread; result_buf: *UInt8 }" },
-        { sig: "Scope", desc: "Scoped thread context" },
-        { sig: "thread.spawn[T](f: fn() -> T) -> JoinHandle[T]", desc: "Spawn new thread" },
-        { sig: "thread.spawn_with_name[T](name: Str, f: fn() -> T) -> JoinHandle[T]", desc: "Spawn named thread" },
-        { sig: "JoinHandle.join[T](self) -> Result[T, Str]", desc: "Wait for thread, get result" },
-        { sig: "JoinHandle.is_finished[T](self) -> Bool", desc: "Check if thread finished" },
-        { sig: "JoinHandle.thread[T](self) -> Thread", desc: "Get thread object" },
-        { sig: "JoinHandle.detach[T](self)", desc: "Detach (fire and forget)" },
-        { sig: "Thread.current() -> Thread", desc: "Current thread" },
-        { sig: "Thread.id(self) -> Int", desc: "Thread ID" },
-        { sig: "Thread.name(self) -> Option[Str]", desc: "Thread name" },
-        { sig: "thread.sleep_ms(ms: Int)", desc: "Sleep milliseconds" },
-        { sig: "thread.sleep(ms: Int)", desc: "Sleep milliseconds" },
-        { sig: "thread.yield_now()", desc: "Yield execution" },
-        { sig: "thread.scope[T](f: fn(&Scope) -> T) -> T", desc: "Scoped threads (borrow-safe)" },
-        { sig: "Scope.spawn[T](self, f: fn() -> T) -> JoinHandle[T]", desc: "Spawn within scope" },
-        { sig: "thread.available_parallelism() -> Int", desc: "Available CPU parallelism" },
-        { sig: "thread.hardware_threads() -> Int", desc: "Hardware thread count" },
-        { sig: "thread.current_thread_id() -> Int", desc: "Current thread ID" },
-      ]
-    },
-    {
-      name: "async",
-      desc: "Cooperative executor, channels, and async primitives",
-      wasm: "★",
-      functions: [
-        { sig: "Executor", desc: "{ ready: Vec[fn()]; timers: Vec[Timer] }" },
-        { sig: "Channel[T]", desc: "{ items: Vec[T]; closed: Bool; cap: Int }" },
-        { sig: "Executor.new() -> Executor", desc: "Create executor" },
-        { sig: "Executor.spawn(self, task: fn())", desc: "Spawn task" },
-        { sig: "Executor.at(self, deadline: Int, task: fn())", desc: "Schedule at deadline" },
-        { sig: "Executor.step(self) -> Bool", desc: "Execute one step" },
-        { sig: "Executor.fire_due_timers(self)", desc: "Fire expired timers" },
-        { sig: "Executor.run(self)", desc: "Run until all tasks done" },
-        { sig: "Executor.block_on(self, task: fn())", desc: "Block on single task" },
-        { sig: "async.spawn(task: fn())", desc: "Spawn on default executor" },
-        { sig: "async.run()", desc: "Run default executor" },
-        { sig: "async.block_on(task: fn())", desc: "Block on task" },
-        { sig: "async.delay(ms: Int, task: fn())", desc: "Delay task execution" },
-        { sig: "async.sleep_ms(ms: Int)", desc: "Async sleep" },
-        { sig: "Channel.bounded[T](capacity: Int) -> Channel[T]", desc: "Bounded channel" },
-        { sig: "Channel.unbounded[T]() -> Channel[T]", desc: "Unbounded channel" },
-        { sig: "Channel.send[T](value: T)", desc: "Send value" },
-        { sig: "Channel.recv[T]() -> T", desc: "Receive value" },
-        { sig: "Channel.try_recv[T]() -> Option[T]", desc: "Try receive" },
-        { sig: "Channel.close[T]()", desc: "Close channel" },
-      ]
-    },
-    {
-      name: "net",
-      desc: "TCP, UDP, HTTP, DNS, and URL parsing",
-      wasm: "✗",
-      functions: [
-        { sig: "TcpStream", desc: "{ fd: Int }" },
-        { sig: "TcpListener", desc: "{ fd: Int }" },
-        { sig: "UdpSocket", desc: "{ fd: Int }" },
-        { sig: "NetError", desc: "{ message: Str; code: Int }" },
-        { sig: "HttpResponse", desc: "{ status: Int; body: Str }" },
-        { sig: "HttpMethod", desc: "enum { GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS }" },
-        { sig: "UrlParts", desc: "{ scheme: Str; host: Str; port: Int; path: Str; query: Str; fragment: Str }" },
-        { sig: "net.tcp_connect(host: Str, port: Int) -> Result[TcpStream, NetError]", desc: "Connect TCP" },
-        { sig: "net.tcp_listen(host: Str, port: Int) -> Result[TcpListener, NetError]", desc: "Listen TCP" },
-        { sig: "TcpStream.read(self, buf: &mut Vec[UInt8]) -> Result[Int, NetError]", desc: "Read from stream" },
-        { sig: "TcpStream.write(self, data: &Vec[UInt8]) -> Result[Int, NetError]", desc: "Write to stream" },
-        { sig: "TcpStream.close(self) -> Result[Unit, NetError]", desc: "Close stream" },
-        { sig: "TcpListener.accept(self) -> Result[(TcpStream, Str), NetError]", desc: "Accept connection" },
-        { sig: "net.http_get(url: Str) -> Result[HttpResponse, NetError]", desc: "HTTP GET request" },
-        { sig: "net.http_post(url: Str, body: Str) -> Result[HttpResponse, NetError]", desc: "HTTP POST request" },
-        { sig: "net.udp_bind(host: Str, port: Int) -> Result[UdpSocket, NetError]", desc: "Bind UDP socket" },
-        { sig: "UdpSocket.send_to(self, data: &Vec[UInt8], addr: Str, port: Int) -> Result[Int, NetError]", desc: "Send UDP datagram" },
-        { sig: "UdpSocket.recv_from(self, buf: &mut Vec[UInt8]) -> Result[(Int, Str, Int), NetError]", desc: "Receive UDP datagram" },
-        { sig: "UdpSocket.close(self) -> Result[Unit, NetError]", desc: "Close socket" },
-        { sig: "net.resolve_host(hostname: Str) -> Result[Vec[Str], NetError]", desc: "DNS resolve" },
-        { sig: "net.local_addr(port: Int) -> Result[Str, NetError]", desc: "Get local address" },
-        { sig: "net.parse_url(url: Str) -> Result[UrlParts, NetError]", desc: "Parse URL" },
-      ]
-    },
-    {
-      name: "ffi",
-      desc: "Thin C FFI wrappers and extern helpers",
-      wasm: "✗",
-      functions: [
-        { sig: "ffi.extern_c(name: Str) -> Int", desc: "Resolve C symbol address" },
-        { sig: "ffi.alloc(size: Int) -> *UInt8", desc: "Allocate raw memory (C malloc)" },
-        { sig: "ffi.free(ptr: *UInt8)", desc: "Free raw memory (C free)" },
-        { sig: "ffi.memcpy(dest: *UInt8, src: *UInt8, size: Int)", desc: "Copy memory" },
-        { sig: "ffi.size_of[T]() -> Int", desc: "Size in bytes" },
-        { sig: "ffi.align_of[T]() -> Int", desc: "Alignment in bytes" },
-      ]
-    },
-    {
-      name: "cell",
-      desc: "Interior mutability: Cell, RefCell, Ref, RefMut",
-      wasm: "★",
-      functions: [
-        { sig: "Cell[T]", desc: "{ value: T } - copy-based interior mutability" },
-        { sig: "RefCell[T]", desc: "{ value: T; borrows: Int } - runtime borrow checking" },
-        { sig: "Ref[T]", desc: "{ cell: RefCell[T] } - immutable borrow guard" },
-        { sig: "RefMut[T]", desc: "{ cell: RefCell[T] } - mutable borrow guard" },
-        { sig: "Cell.new[T](value: T) -> Cell[T]", desc: "Create Cell" },
-        { sig: "Cell.get[T](self) -> T", desc: "Get value (copy)" },
-        { sig: "Cell.set[T](self, value: T)", desc: "Set value" },
-        { sig: "Cell.replace[T](self, value: T) -> T", desc: "Replace and return old" },
-        { sig: "Cell.swap[T](self, other: &Cell[T])", desc: "Swap two cells" },
-        { sig: "RefCell.new[T](value: T) -> RefCell[T]", desc: "Create RefCell" },
-        { sig: "RefCell.borrow[T](self) -> Ref[T]", desc: "Borrow immutably" },
-        { sig: "RefCell.borrow_mut[T](self) -> RefMut[T]", desc: "Borrow mutably" },
-        { sig: "RefCell.try_borrow[T](self) -> Option[Ref[T]]", desc: "Try borrow immutably" },
-        { sig: "RefCell.try_borrow_mut[T](self) -> Option[RefMut[T]]", desc: "Try borrow mutably" },
-        { sig: "RefCell.replace[T](self, value: T) -> T", desc: "Replace value" },
-        { sig: "Ref.get[T](self) -> T", desc: "Read through Ref" },
-        { sig: "RefMut.get[T](self) -> T", desc: "Read through RefMut" },
-        { sig: "RefMut.set[T](self, value: T)", desc: "Write through RefMut" },
-      ]
-    },
-    {
-      name: "rc",
-      desc: "Reference counting: Rc (shared ownership) and Weak",
-      wasm: "★",
-      functions: [
-        { sig: "Rc[T]", desc: "{ ptr: *RcInner[T] } - reference-counted pointer" },
-        { sig: "Weak[T]", desc: "{ ptr: *RcInner[T] } - weak reference" },
-        { sig: "Rc.new[T](value: T) -> Rc[T]", desc: "Create Rc" },
-        { sig: "Rc.clone[T](self) -> Rc[T]", desc: "Clone (increment count)" },
-        { sig: "Rc.strong_count[T](self) -> Int", desc: "Strong reference count" },
-        { sig: "Rc.weak_count[T](self) -> Int", desc: "Weak reference count" },
-        { sig: "Rc.get[T](self) -> T", desc: "Get inner value" },
-        { sig: "Rc.ptr_eq[T,U](self, other: &Rc[U]) -> Bool", desc: "Pointer equality" },
-        { sig: "Rc.downgrade[T](self) -> Weak[T]", desc: "Create weak reference" },
-        { sig: "Rc.unwrap_or_clone[T:Clone](self) -> T", desc: "Unwrap if unique, else clone" },
-        { sig: "Rc.drop[T](self)", desc: "Explicit drop" },
-        { sig: "Weak.upgrade[T](self) -> Option[Rc[T]]", desc: "Upgrade weak to strong" },
-        { sig: "Weak.strong_count[T](self) -> Int", desc: "Strong count" },
-        { sig: "Weak.weak_count[T](self) -> Int", desc: "Weak count" },
-        { sig: "Weak.drop[T](self)", desc: "Explicit drop" },
-      ]
-    },
-    {
-      name: "serialize",
-      desc: "JSON serialization/deserialization with JsonValue",
-      wasm: "★",
-      functions: [
-        { sig: "interface Serialize", desc: "serialize, serialize_json, serialize_bytes" },
-        { sig: "interface Deserialize", desc: "deserialize, deserialize_json, deserialize_bytes" },
-        { sig: "SerializeError", desc: "{ kind: Int; message: Str; path: Str; line: Int; col: Int }" },
-        { sig: "JsonValue", desc: "enum { Null, Bool, Number, String, Array, Object }" },
-        { sig: "SerializeError.format_error() -> Str", desc: "Format error message" },
-        { sig: "serialize.detect_format(data: &Vec[UInt8]) -> Str", desc: "Detect format" },
-        { sig: "serialize.is_valid_json(data: Str) -> Bool", desc: "Validate JSON string" },
-        { sig: "serialize.is_valid_bytes(data: &Vec[UInt8]) -> Bool", desc: "Validate JSON bytes" },
-        { sig: "serialize.json_string(s: Str) -> Str", desc: "Build JSON string literal" },
-        { sig: "serialize.json_number(n: Float64) -> Str", desc: "Build JSON number" },
-        { sig: "serialize.json_bool(b: Bool) -> Str", desc: "Build JSON bool" },
-        { sig: "serialize.json_null() -> Str", desc: "Build JSON null" },
-        { sig: "serialize.json_array(items: Vec[Str]) -> Str", desc: "Build JSON array" },
-        { sig: "serialize.json_object(pairs: Vec[(Str,Str)]) -> Str", desc: "Build JSON object" },
-        { sig: "serialize.to_json[T:Serialize](value: T) -> Result[Str, SerializeError]", desc: "Serialize to JSON" },
-        { sig: "serialize.from_json[T:Deserialize](s: Str) -> Result[T, SerializeError]", desc: "Deserialize from JSON" },
-        { sig: "serialize.json_parse(data: Str) -> Result[JsonValue, SerializeError]", desc: "Parse JSON string" },
-        { sig: "serialize.parse_json(s: Str) -> Result[JsonValue, SerializeError]", desc: "Parse JSON (alias)" },
-        { sig: "JsonValue.to_str(self) -> Str", desc: "Convert to string" },
-        { sig: "JsonValue.get(self, key: Str) -> Option[JsonValue]", desc: "Get object field" },
-        { sig: "JsonValue.index(self, i: Int) -> Option[JsonValue]", desc: "Get array element" },
-        { sig: "serialize.little_endian() -> Bool", desc: "Check if little-endian" },
-        { sig: "serialize.big_endian() -> Bool", desc: "Check if big-endian" },
-      ]
-    },
-    {
-      name: "crypto",
-      desc: "Hashing (SHA, MD5, BLAKE3), HMAC, AES, RSA, PBKDF2, Argon2",
-      wasm: "★",
-      functions: [
-        { sig: "KeyPair", desc: "{ public: Vec[UInt8]; private: Vec[UInt8] }" },
-        { sig: "crypto.sha256(data: &Vec[UInt8]) -> Vec[UInt8]", desc: "SHA-256 hash" },
-        { sig: "crypto.sha256_accelerated(data: &Vec[UInt8]) -> Vec[UInt8]", desc: "SHA-256 (HW-accelerated)" },
-        { sig: "crypto.sha256_hex(data: &Vec[UInt8]) -> Str", desc: "SHA-256 as hex string" },
-        { sig: "crypto.sha512(data: &Vec[UInt8]) -> Vec[UInt8]", desc: "SHA-512 hash" },
-        { sig: "crypto.md5(data: &Vec[UInt8]) -> Vec[UInt8]", desc: "MD5 hash" },
-        { sig: "crypto.blake3(data: &Vec[UInt8]) -> Vec[UInt8]", desc: "BLAKE3 hash" },
-        { sig: "crypto.hmac_sha256(key: &Vec[UInt8], data: &Vec[UInt8]) -> Vec[UInt8]", desc: "HMAC-SHA256" },
-        { sig: "crypto.aes_encrypt(key: &Vec[UInt8], pt: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "AES encrypt" },
-        { sig: "crypto.aes_decrypt(key: &Vec[UInt8], ct: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "AES decrypt" },
-        { sig: "crypto.aes_encrypt_gcm(key,n,pt,aad) -> Result[(Vec[UInt8],Vec[UInt8]), Str]", desc: "AES-GCM encrypt" },
-        { sig: "crypto.aes_decrypt_gcm(key,n,ct,tag,aad) -> Result[Vec[UInt8], Str]", desc: "AES-GCM decrypt" },
-        { sig: "crypto.generate_rsa_keypair(bits: Int) -> Result[KeyPair, Str]", desc: "Generate RSA keypair" },
-        { sig: "crypto.rsa_encrypt(pub: &Vec[UInt8], data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "RSA encrypt" },
-        { sig: "crypto.rsa_decrypt(priv: &Vec[UInt8], data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "RSA decrypt" },
-        { sig: "crypto.rsa_sign(priv: &Vec[UInt8], data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "RSA sign" },
-        { sig: "crypto.rsa_verify(pub: &Vec[UInt8], data: &Vec[UInt8], sig: &Vec[UInt8]) -> Result[Bool, Str]", desc: "RSA verify" },
-        { sig: "crypto.pbkdf2(pw: &Str, salt: &Vec[UInt8], iters: Int, len: Int) -> Vec[UInt8]", desc: "PBKDF2 key derivation" },
-        { sig: "crypto.argon2(pw: &Str, salt: &Vec[UInt8], mem: Int, iters: Int, par: Int) -> Vec[UInt8]", desc: "Argon2 key derivation" },
-        { sig: "crypto.secure_random_bytes(count: Int) -> Vec[UInt8]", desc: "Cryptographically secure random bytes" },
-        { sig: "crypto.constant_time_compare(a: &Vec[UInt8], b: &Vec[UInt8]) -> Bool", desc: "Constant-time comparison" },
-      ]
-    },
-    {
-      name: "compress",
-      desc: "Compression: gzip, zlib, deflate, brotli, lz4, snappy",
-      wasm: "★",
-      functions: [
-        { sig: "interface Compressor", desc: "compress, decompress" },
-        { sig: "GzipCompressor", desc: "{ level: Int }" },
-        { sig: "GzipCompressor.new() -> GzipCompressor", desc: "Create gzip compressor" },
-        { sig: "GzipCompressor.with_level(level: Int) -> GzipCompressor", desc: "With compression level" },
-        { sig: "compress.gzip_compress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Gzip compress" },
-        { sig: "compress.gzip_compress_level(data: &Vec[UInt8], lvl: Int) -> Result[Vec[UInt8], Str]", desc: "Gzip at level" },
-        { sig: "compress.gzip_decompress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Gzip decompress" },
-        { sig: "compress.deflate_compress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Deflate compress" },
-        { sig: "compress.deflate_decompress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Deflate decompress" },
-        { sig: "compress.deflate_compress_level(data: &Vec[UInt8], lvl: Int) -> Result[Vec[UInt8], Str]", desc: "Deflate at level" },
-        { sig: "compress.zlib_compress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Zlib compress" },
-        { sig: "compress.zlib_compress_level(data: &Vec[UInt8], lvl: Int) -> Result[Vec[UInt8], Str]", desc: "Zlib at level" },
-        { sig: "compress.zlib_decompress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Zlib decompress" },
-        { sig: "compress.brotli_compress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Brotli compress" },
-        { sig: "compress.brotli_compress_level(data: &Vec[UInt8], q: Int) -> Result[Vec[UInt8], Str]", desc: "Brotli at quality" },
-        { sig: "compress.brotli_decompress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Brotli decompress" },
-        { sig: "compress.lz4_compress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "LZ4 compress" },
-        { sig: "compress.lz4_decompress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "LZ4 decompress" },
-        { sig: "compress.snappy_compress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Snappy compress" },
-        { sig: "compress.snappy_decompress(data: &Vec[UInt8]) -> Result[Vec[UInt8], Str]", desc: "Snappy decompress" },
-        { sig: "compress.compression_ratio(orig: Int, comp: Int) -> Float64", desc: "Calculate ratio" },
-        { sig: "compress.is_compressed(data: &Vec[UInt8]) -> Bool", desc: "Check if compressed" },
-        { sig: "compress.detect_format(data: &Vec[UInt8]) -> Str", desc: "Detect compression format" },
-      ]
-    },
-    {
-      name: "encoding",
-      desc: "Encoding: base64, hex, URL, percent, UTF-8",
-      wasm: "★",
-      functions: [
-        { sig: "encoding.base64_encode(data: &Vec[UInt8]) -> Str", desc: "Base64 encode" },
-        { sig: "encoding.base64_decode(encoded: Str) -> Result[Vec[UInt8], Str]", desc: "Base64 decode" },
-        { sig: "encoding.base64url_encode(data: &Vec[UInt8]) -> Str", desc: "Base64URL encode" },
-        { sig: "encoding.base64url_decode(encoded: Str) -> Result[Vec[UInt8], Str]", desc: "Base64URL decode" },
-        { sig: "encoding.hex_encode(data: &Vec[UInt8]) -> Str", desc: "Hex encode (lowercase)" },
-        { sig: "encoding.hex_decode(encoded: Str) -> Result[Vec[UInt8], Str]", desc: "Hex decode" },
-        { sig: "encoding.hex_encode_upper(data: &Vec[UInt8]) -> Str", desc: "Hex encode (uppercase)" },
-        { sig: "encoding.url_encode(data: Str) -> Str", desc: "URL encode" },
-        { sig: "encoding.url_decode(encoded: Str) -> Result[Str, Str]", desc: "URL decode" },
-        { sig: "encoding.percent_encode(data: Str) -> Str", desc: "Percent encode" },
-        { sig: "encoding.percent_decode(encoded: Str) -> Result[Str, Str]", desc: "Percent decode" },
-        { sig: "encoding.utf8_encode(s: Str) -> Vec[UInt8]", desc: "UTF-8 encode" },
-        { sig: "encoding.utf8_decode(data: &Vec[UInt8]) -> Result[Str, Str]", desc: "UTF-8 decode" },
-        { sig: "encoding.utf8_valid(data: &Vec[UInt8]) -> Bool", desc: "Validate UTF-8" },
-        { sig: "encoding.utf8_char_len(first_byte: UInt8) -> Int", desc: "UTF-8 char len from first byte" },
-        { sig: "encoding.binary_to_text(data: &Vec[UInt8], fmt: Int) -> Str", desc: "Binary to text" },
-        { sig: "encoding.text_to_binary(text: Str, fmt: Int) -> Result[Vec[UInt8], Str]", desc: "Text to binary" },
-      ]
-    },
-    {
-      name: "regex",
-      desc: "Regular expressions with match, capture, replace, split",
-      wasm: "★",
-      functions: [
-        { sig: "Regex", desc: "{ pattern: Str; compiled: Int }" },
-        { sig: "Match", desc: "{ start: Int; end: Int; text: Str }" },
-        { sig: "Captures", desc: "{ groups: Vec[Option[Match]] }" },
-        { sig: "Regex.new(pattern: Str) -> Result[Regex, Str]", desc: "Compile regex" },
-        { sig: "Regex.is_match(self, text: Str) -> Bool", desc: "Test if pattern matches" },
-        { sig: "Regex.find(self, text: Str) -> Option[Match]", desc: "Find first match" },
-        { sig: "Regex.find_all(self, text: Str) -> Vec[Match]", desc: "Find all matches" },
-        { sig: "Regex.captures(self, text: Str) -> Option[Captures]", desc: "Capture groups" },
-        { sig: "Regex.replace(self, text: Str, repl: Str) -> Str", desc: "Replace first match" },
-        { sig: "Regex.replace_all(self, text: Str, repl: Str) -> Str", desc: "Replace all matches" },
-        { sig: "Regex.split(self, text: Str) -> Vec[Str]", desc: "Split by pattern" },
-        { sig: "Regex.match_count(self, text: Str) -> Int", desc: "Count matches" },
-        { sig: "Captures.get(self, index: Int) -> Option[Match]", desc: "Get capture group" },
-        { sig: "Captures.get_named(self, name: Str) -> Option[Match]", desc: "Get named capture" },
-        { sig: "Captures.len(self) -> Int", desc: "Number of capture groups" },
-        { sig: "regex.regex_escape(pattern: Str) -> Str", desc: "Escape regex special chars" },
-        { sig: "regex.is_valid_regex(pattern: Str) -> Bool", desc: "Validate regex pattern" },
-      ]
-    },
-    {
-      name: "rand",
-      desc: "Random numbers, distributions, shuffling, UUIDs",
-      wasm: "★",
-      functions: [
-        { sig: "interface Rng", desc: "next_int, next_float, next_bytes" },
-        { sig: "StdRng", desc: "{ state: Int }" },
-        { sig: "StdRng.new() -> StdRng", desc: "Create RNG with entropy seed" },
-        { sig: "StdRng.from_seed(seed: Int) -> StdRng", desc: "Create RNG from seed" },
-        { sig: "rand.random() -> Float64", desc: "Random float 0..1" },
-        { sig: "rand.random_int(min: Int, max: Int) -> Int", desc: "Random int in range" },
-        { sig: "rand.random_float(min: Float64, max: Float64) -> Float64", desc: "Random float in range" },
-        { sig: "rand.random_bool() -> Bool", desc: "Random boolean" },
-        { sig: "rand.random_bytes(count: Int) -> Vec[UInt8]", desc: "Random bytes" },
-        { sig: "rand.sample_uniform(min: Float64, max: Float64) -> Float64", desc: "Uniform distribution" },
-        { sig: "rand.sample_normal(mean: Float64, stddev: Float64) -> Float64", desc: "Normal distribution" },
-        { sig: "rand.sample_exponential(lambda: Float64) -> Float64", desc: "Exponential distribution" },
-        { sig: "rand.sample_bernoulli(p: Float64) -> Bool", desc: "Bernoulli trial" },
-        { sig: "rand.sample_binomial(n: Int, p: Float64) -> Int", desc: "Binomial distribution" },
-        { sig: "rand.sample_poisson(lambda: Float64) -> Int", desc: "Poisson distribution" },
-        { sig: "rand.sample_gamma(shape: Float64, scale: Float64) -> Float64", desc: "Gamma distribution" },
-        { sig: "rand.sample_beta(alpha: Float64, beta: Float64) -> Float64", desc: "Beta distribution" },
-        { sig: "rand.shuffle[T](items: &mut Vec[T])", desc: "Shuffle in place" },
-        { sig: "rand.pick[T](items: &Vec[T]) -> Option[&T]", desc: "Pick random element" },
-        { sig: "rand.pick_n[T](items: &Vec[T], n: Int) -> Vec[&T]", desc: "Pick n random elements" },
-        { sig: "rand.weighted_pick[T](items: &Vec[T], w: &Vec[Float64]) -> Option[&T]", desc: "Weighted random pick" },
-        { sig: "rand.uuid_v4() -> Str", desc: "Generate UUID v4" },
-        { sig: "rand.uuid_v7() -> Str", desc: "Generate UUID v7 (timestamp)" },
-        { sig: "rand.seed_from_entropy()", desc: "Seed from system entropy" },
-        { sig: "rand.seed_from_time()", desc: "Seed from current time" },
-        { sig: "rand.seed_from_value(seed: Int)", desc: "Seed from value" },
-      ]
-    },
-    {
-      name: "log",
-      desc: "Structured logging with levels, JSON output, and filtering",
-      wasm: "★",
-      functions: [
-        { sig: "LogLevel", desc: "enum { Trace, Debug, Info, Warn, Error, Fatal }" },
-        { sig: "LogEntry", desc: "{ level: LogLevel; message: Str; file: Str; line: Int; timestamp: Int; data: Map[Str,Str] }" },
-        { sig: "log.trace(msg: Str)", desc: "Log at TRACE level" },
-        { sig: "log.debug(msg: Str)", desc: "Log at DEBUG level" },
-        { sig: "log.info(msg: Str)", desc: "Log at INFO level" },
-        { sig: "log.warn(msg: Str)", desc: "Log at WARN level" },
-        { sig: "log.error(msg: Str)", desc: "Log at ERROR level" },
-        { sig: "log.fatal(msg: Str)", desc: "Log at FATAL level" },
-        { sig: "log.trace_with(msg: Str, data: Map[Str,Str])", desc: "Trace with structured data" },
-        { sig: "log.debug_with(msg: Str, data: Map[Str,Str])", desc: "Debug with structured data" },
-        { sig: "log.info_with(msg: Str, data: Map[Str,Str])", desc: "Info with structured data" },
-        { sig: "log.warn_with(msg: Str, data: Map[Str,Str])", desc: "Warn with structured data" },
-        { sig: "log.error_with(msg: Str, data: Map[Str,Str])", desc: "Error with structured data" },
-        { sig: "log.set_level(level: LogLevel)", desc: "Set minimum log level" },
-        { sig: "log.get_level() -> LogLevel", desc: "Get current log level" },
-        { sig: "log.set_output(file: Str) -> Result[Unit, Str]", desc: "Redirect logs to file" },
-        { sig: "log.set_output_json(enabled: Bool)", desc: "Toggle JSON output" },
-        { sig: "log.set_output_color(enabled: Bool)", desc: "Toggle colored output" },
-        { sig: "log.entries_since(instant: Instant) -> Vec[LogEntry]", desc: "Get entries since instant" },
-        { sig: "log.clear_log()", desc: "Clear log buffer" },
-      ]
-    },
-    {
-      name: "test",
-      desc: "Contract-aware test framework with assertions and benchmarking",
-      wasm: "★",
-      functions: [
-        { sig: "TestResult", desc: "{ passed: Bool; name: Str; message: Str; duration_ms: Int }" },
-        { sig: "ContractFailure", desc: "{ clause: Str; expression: Str; values: Str; location: Str }" },
-        { sig: "test.assert(condition: Bool, name: Str) -> TestResult", desc: "Basic assertion" },
-        { sig: "test.assert_eq[T:Eq](expected: T, actual: T, name: Str) -> TestResult", desc: "Assert equality" },
-        { sig: "test.assert_ne[T:Eq](expected: T, actual: T, name: Str) -> TestResult", desc: "Assert inequality" },
-        { sig: "test.assert_lt[T:Ord](left: T, right: T, name: Str) -> TestResult", desc: "Assert less than" },
-        { sig: "test.assert_gt[T:Ord](left: T, right: T, name: Str) -> TestResult", desc: "Assert greater than" },
-        { sig: "test.assert_contains(haystack: Str, needle: Str, name: Str) -> TestResult", desc: "Assert string contains" },
-        { sig: "test.assert_ok[T,E](result: Result[T,E], name: Str) -> TestResult", desc: "Assert Result is Ok" },
-        { sig: "test.assert_err[T,E](result: Result[T,E], name: Str) -> TestResult", desc: "Assert Result is Err" },
-        { sig: "test.assert_some[T](option: Option[T], name: Str) -> TestResult", desc: "Assert Option is Some" },
-        { sig: "test.assert_none[T](option: Option[T], name: Str) -> TestResult", desc: "Assert Option is None" },
-        { sig: "test.assert_contract[T](v: T, p: fn(&T)->Bool, name: Str) -> TestResult", desc: "Assert contract holds" },
-        { sig: "test.run(test: fn() -> TestResult) -> Int", desc: "Run single test" },
-        { sig: "test.run_all(tests: Vec[fn() -> TestResult]) -> Int", desc: "Run all tests" },
-        { sig: "test.run_filtered(tests: Vec[fn()->TestResult], filter: Str) -> Int", desc: "Run filtered tests" },
-        { sig: "test.format_results(results: Vec[TestResult]) -> Str", desc: "Format results" },
-        { sig: "test.format_results_json(results: Vec[TestResult]) -> Str", desc: "Format results as JSON" },
-        { sig: "test.bench(name: Str, f: fn()) -> TestResult", desc: "Quick benchmark" },
-      ]
-    },
-    {
-      name: "bench",
-      desc: "Precise benchmarking with iterations and statistics",
-      wasm: "★",
-      functions: [
-        { sig: "BenchResult", desc: "{ name: Str; iterations: Int; total_ns: Int; mean_ns: Int; min_ns: Int; max_ns: Int; stddev_ns: Int }" },
-        { sig: "bench.run_bench(name: Str, f: fn()) -> BenchResult", desc: "Run benchmark" },
-        { sig: "bench.run_bench_n(name: Str, iters: Int, f: fn()) -> BenchResult", desc: "Benchmark N iterations" },
-        { sig: "bench.compare(a: BenchResult, b: BenchResult) -> Str", desc: "Compare two benchmarks" },
-        { sig: "bench.black_box[T](value: T) -> T", desc: "Prevent compiler optimization" },
-      ]
-    },
-    {
-      name: "contracts",
-      desc: "Contract introspection, coverage, verification, and export",
-      wasm: "★",
-      functions: [
-        { sig: "ContractClause", desc: "Contract clause metadata" },
-        { sig: "FunctionContracts", desc: "Function contract metadata" },
-        { sig: "TypeContracts", desc: "Type contract metadata" },
-        { sig: "ContractIndex", desc: "Full contract index" },
-        { sig: "ContractCheckResult", desc: "Contract check result" },
-        { sig: "contracts.verify_invariants[T](value: &T) -> Vec[ContractCheckResult]", desc: "Verify type invariants" },
-        { sig: "contracts.verify_function_contracts(fn: Str, args: Map[Str,Str]) -> Vec[ContractCheckResult]", desc: "Verify function contracts" },
-        { sig: "contracts.check_invariant[T](value: &T, inv: Str) -> ContractCheckResult", desc: "Check single invariant" },
-        { sig: "contracts.build_contract_index() -> ContractIndex", desc: "Build contract index" },
-        { sig: "contracts.get_function_contracts(name: Str) -> Option[Vec[FunctionContracts]]", desc: "Get function contracts" },
-        { sig: "contracts.get_type_contracts(name: Str) -> Option[Vec[TypeContracts]]", desc: "Get type contracts" },
-        { sig: "contracts.find_functions_using_type(name: Str) -> Vec[Str]", desc: "Find functions using type" },
-        { sig: "contracts.find_invariants_using_field(type: Str, field: Str) -> Vec[ContractClause]", desc: "Find invariants on field" },
-        { sig: "contracts.export_contracts_json() -> Str", desc: "Export contracts as JSON" },
-        { sig: "contracts.export_contracts_markdown() -> Str", desc: "Export contracts as Markdown" },
-        { sig: "contracts.export_contracts_openapi() -> Str", desc: "Export contracts as OpenAPI" },
-        { sig: "contracts.reset_contract_coverage()", desc: "Reset coverage tracking" },
-        { sig: "contracts.record_contract_hit(clause: ContractClause, inputs: Map[Str,Str])", desc: "Record contract hit" },
-        { sig: "contracts.get_contract_coverage() -> Map[Str, Bool]", desc: "Get coverage map" },
-        { sig: "contracts.get_uncovered_contracts() -> Vec[ContractClause]", desc: "Get uncovered contracts" },
-        { sig: "contracts.coverage_percentage() -> Float64", desc: "Get coverage percentage" },
-        { sig: "contracts.can_compose(req: Vec[ContractClause], ens: Vec[ContractClause]) -> Str", desc: "Check composability" },
-        { sig: "contracts.verify_chain(fns: Vec[Str]) -> Result[Unit, Vec[ContractCheckResult]]", desc: "Verify function chain" },
-        { sig: "contracts.total_contracts() -> Int", desc: "Total contract count" },
-        { sig: "contracts.total_requires() -> Int", desc: "Total requires clauses" },
-        { sig: "contracts.total_ensures() -> Int", desc: "Total ensures clauses" },
-        { sig: "contracts.total_invariants() -> Int", desc: "Total invariant clauses" },
-        { sig: "contracts.functions_with_contracts() -> Int", desc: "Functions with contracts" },
-        { sig: "contracts.types_with_invariants() -> Int", desc: "Types with invariants" },
-        { sig: "contracts.contract_density() -> Float64", desc: "Contract density metric" },
-      ]
-    },
-    {
-      name: "reflect",
-      desc: "Runtime type information, TypeId, downcasting",
-      wasm: "★",
-      functions: [
-        { sig: "TypeId", desc: "{ id: Int }" },
-        { sig: "TypeInfo", desc: "Runtime type metadata" },
-        { sig: "FieldInfo", desc: "Runtime field metadata" },
-        { sig: "interface Any", desc: "Base trait for downcasting" },
-        { sig: "reflect.type_count() -> Int", desc: "Number of registered types" },
-        { sig: "reflect.type_name_by_id(id: Int) -> Str", desc: "Type name from ID" },
-        { sig: "reflect.type_id_by_name(name: Str) -> Int", desc: "Type ID from name" },
-        { sig: "reflect.type_field_count(id: Int) -> Int", desc: "Field count for type" },
-        { sig: "TypeId.of[T]() -> TypeId", desc: "Get TypeId for T" },
-        { sig: "reflect.type_name[T]() -> Str", desc: "Get type name" },
-        { sig: "reflect.type_size[T]() -> Int", desc: "Get type size" },
-        { sig: "reflect.type_align[T]() -> Int", desc: "Get type alignment" },
-        { sig: "reflect.downcast_ref[T:Any](value: &dyn Any) -> Option[&T]", desc: "Downcast reference" },
-        { sig: "reflect.downcast_mut[T:Any](value: &mut dyn Any) -> Option[&mut T]", desc: "Downcast mutable ref" },
-        { sig: "reflect.reflect_type[T]() -> TypeInfo", desc: "Reflect on type" },
-        { sig: "reflect.type_info_by_name(name: Str) -> Option[TypeInfo]", desc: "Get TypeInfo by name" },
-        { sig: "reflect.all_types() -> Vec[TypeInfo]", desc: "Get all type info" },
-      ]
-    },
-    {
-      name: "vulkan",
-      desc: "GPU graphics & compute (ecosystem package, requires Vulkan SDK + GLFW)",
-      wasm: "✗",
-      functions: [
-        // Lifecycle
-        { sig: "vulkan.create_app(title: Str, w: Int, h: Int) -> Result[Int, Str]", desc: "Create Vulkan app" },
-        { sig: "vulkan.destroy_app(app: Int)", desc: "Destroy app and free GPU resources" },
-        { sig: "vulkan.should_close(app: Int) -> Bool", desc: "Check if window should close" },
-        { sig: "vulkan.poll(app: Int)", desc: "Poll window events" },
-        { sig: "vulkan.now() -> Float64", desc: "Current time (seconds)" },
-        { sig: "vulkan.device_type(app: Int) -> Int", desc: "GPU device type" },
-        { sig: "vulkan.last_error() -> Str", desc: "Last error message" },
-        { sig: "vulkan.get_framebuffer_size(app: Int) -> (Int, Int)", desc: "Framebuffer dimensions" },
-        // Frame
-        { sig: "vulkan.set_clear_color(app: Int, r: Float32, g: Float32, b: Float32)", desc: "Set background color" },
-        { sig: "vulkan.begin_frame(app: Int) -> Int", desc: "Begin frame (1=OK, 0=skip, -1=fatal)" },
-        { sig: "vulkan.end_frame(app: Int)", desc: "End frame and present" },
-        // Drawing (Legacy)
-        { sig: "vulkan.draw_triangle_2d(app: Int, r: Float32, g: Float32, b: Float32)", desc: "Draw 2D triangle" },
-        { sig: "vulkan.draw_quad_2d(app, cx, cy, hw, hh, r, g, b)", desc: "Draw 2D quad" },
-        { sig: "vulkan.draw_cube_3d(app: Int, angle: Float32)", desc: "Draw rotating 3D cube" },
-        { sig: "vulkan.draw_cube_3d_at(app, angle, px, py, pz, scale)", desc: "Draw 3D cube at position" },
-        { sig: "vulkan.particles_enable(app: Int, count: Int) -> Bool", desc: "Enable particle system" },
-        { sig: "vulkan.draw_particles(app: Int, dt: Float32)", desc: "Draw particle system" },
-        // Buffer
-        { sig: "vulkan.buffer_create(app, size, usage, mem) -> Result[Int, Str]", desc: "Create GPU buffer" },
-        { sig: "vulkan.buffer_destroy(app: Int, buf: Int)", desc: "Destroy buffer" },
-        { sig: "vulkan.buffer_size(app: Int, buf: Int) -> Int", desc: "Get buffer size" },
-        { sig: "vulkan.buffer_map(app: Int, buf: Int) -> Bool", desc: "Map buffer to CPU" },
-        { sig: "vulkan.buffer_unmap(app: Int, buf: Int)", desc: "Unmap buffer" },
-        { sig: "vulkan.buffer_write_float(app, buf, offset, data: Vec[Float32])", desc: "Write floats to buffer" },
-        { sig: "vulkan.buffer_read_float(app, buf, offset, count) -> Vec[Float32]", desc: "Read floats from buffer" },
-        // Image
-        { sig: "vulkan.image_create_2d(app, w, h, fmt, usage, mips) -> Result[Int, Str]", desc: "Create 2D image" },
-        { sig: "vulkan.image_destroy(app: Int, img: Int)", desc: "Destroy image" },
-        { sig: "vulkan.image_view_create(app, img, fmt, aspect) -> Result[Int, Str]", desc: "Create image view" },
-        { sig: "vulkan.image_view_destroy(app: Int, view: Int)", desc: "Destroy image view" },
-        { sig: "vulkan.image_transition(app, img, old, new)", desc: "Transition image layout" },
-        // Sampler
-        { sig: "vulkan.sampler_create(app, filter, addr_u, addr_v, mip, lod) -> Result[Int, Str]", desc: "Create sampler" },
-        { sig: "vulkan.sampler_destroy(app: Int, sampler: Int)", desc: "Destroy sampler" },
-        // Shader
-        { sig: "vulkan.shader_create(app, code: Vec[UInt32]) -> Result[Int, Str]", desc: "Create shader from SPIR-V" },
-        { sig: "vulkan.shader_create_named(app, name: Str) -> Result[Int, Str]", desc: "Create named embedded shader" },
-        { sig: "vulkan.shader_destroy(app: Int, shader: Int)", desc: "Destroy shader" },
-        // Pipeline
-        { sig: "vulkan.pipeline_layout_create(app, push_sz, stages, layouts) -> Result[Int, Str]", desc: "Create pipeline layout" },
-        { sig: "vulkan.pipeline_layout_destroy(app: Int, layout: Int)", desc: "Destroy pipeline layout" },
-        { sig: "vulkan.desc_set_layout_create(app, bindings: Vec[Int32]) -> Result[Int, Str]", desc: "Create descriptor set layout" },
-        { sig: "vulkan.desc_set_layout_destroy(app: Int, layout: Int)", desc: "Destroy descriptor set layout" },
-        { sig: "vulkan.pipeline_create_graphics(app, ...) -> Result[Int, Str]", desc: "Create graphics pipeline (12 params)" },
-        { sig: "vulkan.pipeline_create_compute(app, shader, layout) -> Result[Int, Str]", desc: "Create compute pipeline" },
-        { sig: "vulkan.pipeline_destroy(app: Int, pipeline: Int)", desc: "Destroy pipeline" },
-        // Descriptor
-        { sig: "vulkan.desc_pool_create(app, sizes: Vec[Int32], max: Int) -> Result[Int, Str]", desc: "Create descriptor pool" },
-        { sig: "vulkan.desc_pool_destroy(app: Int, pool: Int)", desc: "Destroy descriptor pool" },
-        { sig: "vulkan.desc_set_allocate(app, pool, layout) -> Result[Int, Str]", desc: "Allocate descriptor set" },
-        { sig: "vulkan.desc_set_write_buffer(app, set, bind, buf, off, range, type)", desc: "Write buffer descriptor" },
-        { sig: "vulkan.desc_set_write_image(app, set, bind, sampler, view)", desc: "Write image descriptor" },
-        // Render Pass
-        { sig: "vulkan.render_pass_create(app, formats: Vec[Int32], depth: Int) -> Result[Int, Str]", desc: "Create render pass" },
-        { sig: "vulkan.render_pass_destroy(app: Int, rp: Int)", desc: "Destroy render pass" },
-        { sig: "vulkan.framebuffer_create(app, rp, attachments, w, h) -> Result[Int, Str]", desc: "Create framebuffer" },
-        { sig: "vulkan.framebuffer_destroy(app: Int, fb: Int)", desc: "Destroy framebuffer" },
-        // Command Recording
-        { sig: "vulkan.cmd_bind_vertex_buffer(app, binding, buf, offset)", desc: "Bind vertex buffer" },
-        { sig: "vulkan.cmd_bind_index_buffer(app, buf, offset, type)", desc: "Bind index buffer" },
-        { sig: "vulkan.cmd_bind_pipeline(app: Int, pipeline: Int)", desc: "Bind pipeline" },
-        { sig: "vulkan.cmd_bind_descriptor_sets(app, layout, first, sets)", desc: "Bind descriptor sets" },
-        { sig: "vulkan.cmd_push_constants_float(app, layout, stages, off, data)", desc: "Push float constants" },
-        { sig: "vulkan.cmd_draw(app, verts, instances, first_v, first_i)", desc: "Draw vertices" },
-        { sig: "vulkan.cmd_draw_indexed(app, indices, instances, first_i, vo, first_in)", desc: "Draw indexed" },
-        // Multi-Pass & Compute
-        { sig: "vulkan.begin_custom_pass(app, rp, fb, w, h, r, g, b) -> Int", desc: "Begin custom render pass" },
-        { sig: "vulkan.end_custom_pass(app: Int) -> Int", desc: "End custom render pass" },
-        { sig: "vulkan.compute_dispatch(app, pipeline, layout, x, y, z)", desc: "Dispatch compute shader" },
-        // Offscreen
-        { sig: "vulkan.offscreen_create(w: Int, h: Int) -> Result[Int, Str]", desc: "Create offscreen context" },
-        { sig: "vulkan.offscreen_render_triangle(app, r, g, b) -> Bool", desc: "Render triangle offscreen" },
-        { sig: "vulkan.offscreen_pixel(app: Int, x: Int, y: Int) -> Int", desc: "Read pixel (0xRRGGBBAA)" },
-        { sig: "vulkan.offscreen_hash(app: Int) -> Int", desc: "FNV-1a hash of framebuffer" },
-        { sig: "vulkan.offscreen_destroy(app: Int)", desc: "Destroy offscreen context" },
-        // Wrapper
-        { sig: "VulkanApp", desc: "{ handle: Int; width: Int; height: Int }" },
-        { sig: "VulkanApp.new(title: Str, w: Int, h: Int) -> Result[VulkanApp, Str]", desc: "Create VulkanApp wrapper" },
-        { sig: "VulkanApp.is_open() -> Bool", desc: "Check if window is open" },
-        { sig: "VulkanApp.frame_2d(r: Float32, g: Float32, b: Float32)", desc: "Render 2D frame" },
-        { sig: "VulkanApp.frame_3d(angle: Float32)", desc: "Render 3D frame" },
-        { sig: "VulkanApp.frame_particles(dt: Float32)", desc: "Render particle frame" },
-        { sig: "VulkanApp.close()", desc: "Close window" },
-      ]
-    },
+
   ]
 };
 
@@ -1379,7 +764,7 @@ function showStdlibRef() {
   if (!container || !headerTitle) return;
   headerTitle.textContent = 'Standard Library';
 
-  var html = '<input type="text" class="concept-search" placeholder="Search all 40 modules..." oninput="filterStdlib(this.value)">';
+  var html = '<input type="text" class="concept-search" placeholder="Search all 20 modules..." oninput="filterStdlib(this.value)">';
   html += '<div class="stdlib-wasm-legend"><span class="wasm-badge wasm-full">★ WASM</span> <span class="wasm-badge wasm-partial">⚠ Limited</span> <span class="wasm-badge wasm-none">✗ None</span></div>';
 
   stdlibData.modules.forEach(function(mod) {
@@ -1424,68 +809,66 @@ function hideStdlibRef() {
 // ── Persistent Panel Rendering ──
 function showStdlibPanel() {
   var container = document.getElementById('stdlibPanelContent');
-  if (!container) {
-    container = document.getElementById('stdlibPanelContentPlay');
-  }
-  if (!container) return;
 
   var html = '';
-  stdlibData.modules.forEach(function (mod) {
-    html += '<div class="stdlib-module" data-stdlib-module="' + mod.name + '">';
-    html += '<div class="stdlib-module-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">';
-    html += '<span class="stdlib-module-arrow">▼</span>';
-    html += '<span class="stdlib-module-name">' + mod.name + '</span>';
-    var wc = mod.wasm === '★' ? 'full' : mod.wasm === '⚠' ? 'partial' : 'none';
-    html += '<span class="wasm-badge wasm-' + wc + '">' + mod.wasm + '</span>';
-    html += '<span class="stdlib-module-desc">' + mod.desc + '</span>';
+
+  html += '<div class="stdlib-hero">';
+  html += '<input type="text" class="stdlib-search" placeholder="Search all 594 functions..." oninput="filterStdlibPanel(this.value)">';
+  html += '<div class="stdlib-quick-chips">';
+  var quickChips = [
+    { label: 'io.println', module: 'io', fnSig: 'io.println' },
+    { label: 'Int.to_str', module: 'convert', fnSig: 'Int.to_str' },
+    { label: 'Vec.push', module: 'collections', fnSig: 'Vec.push' },
+    { label: 'if / elif / else', module: 'core', fnSig: 'if' },
+    { label: 'fn', module: 'core', fnSig: 'fn' },
+    { label: 'match', module: 'core', fnSig: 'match' },
+  ];
+  quickChips.forEach(function(chip) {
+    html += '<span class="stdlib-chip" onclick="filterStdlibPanel(\'' + chip.label + '\'); var s = document.querySelector(\'.stdlib-search\'); if(s) s.value=\'' + chip.label + '\';" title="Jump to ' + chip.label + '">' + chip.label + '</span>';
+  });
+  html += '</div></div>';
+
+  html += '<div class="stdlib-modules">';
+  stdlibData.modules.forEach(function(mod, idx) {
+    var totalFns = mod.functions.length;
+    html += '<div class="stdlib-mod-card" data-stdlib-module="' + mod.name + '">';
+    html += '<div class="stdlib-mod-card-header" onclick="this.parentElement.classList.toggle(\'open\')">';
+    html += '<div class="stdlib-mod-card-left">';
+    html += '<span class="stdlib-mod-card-arrow">▸</span>';
+    html += '<span class="stdlib-mod-card-name">' + mod.name + '</span>';
+    html += '<span class="stdlib-mod-card-badge">' + totalFns + '</span>';
     html += '</div>';
-    html += '<div class="stdlib-module-fns">';
-    mod.functions.forEach(function (fn) {
-      var w = fn.wasm || mod.wasm;
-      var wc2 = w === '★' ? 'full' : w === '⚠' ? 'partial' : 'none';
-      html += '<div class="stdlib-fn" data-stdlib-search="' + mod.name + ' ' + fn.sig.toLowerCase() + ' ' + fn.desc.toLowerCase() + '">';
+    html += '<span class="stdlib-mod-card-desc">' + mod.desc + '</span>';
+    html += '</div>';
+    html += '<div class="stdlib-mod-card-body">';
+    mod.functions.forEach(function(fn) {
+      html += '<div class="stdlib-fn-row" data-stdlib-search="' + mod.name + ' ' + fn.sig.toLowerCase() + ' ' + fn.desc.toLowerCase() + '" id="stdlib-fn-' + mod.name + '-' + fn.sig.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 30) + '">';
       html += '<code>' + esc(fn.sig) + '</code>';
-      html += '<span class="wasm-badge wasm-' + wc2 + '" title="WASM: ' + (w === '★' ? 'Full' : w === '⚠' ? 'Limited' : 'Unavailable') + '">' + w + '</span>';
-      html += '<span class="stdlib-fn-desc">' + fn.desc + '</span>';
+      html += '<span>' + fn.desc + '</span>';
       html += '</div>';
     });
     html += '</div></div>';
   });
+  html += '</div>';
 
-  container.innerHTML = html;
+  html += '<div class="stdlib-footer">20 modules &middot; 594 functions &middot; XIOM v0.49.9</div>';
 
-  var container2 = document.getElementById('stdlibPanelContentPlay');
-  if (container2 && container2 !== container) {
-    container2.innerHTML = html;
-  }
+  if (container) container.innerHTML = html;
 }
 
 function filterStdlibPanel(query) {
   var q = query.toLowerCase().trim();
   var panel = document.getElementById('stdlibPanel');
-  if (!panel || panel.classList.contains('hidden')) {
-    panel = document.getElementById('stdlibPanelPlay');
-  }
   if (!panel) return;
 
-  panel.querySelectorAll('.stdlib-fn').forEach(function (el) {
-    el.style.display = (q === '' || (el.getAttribute('data-stdlib-search') || '').indexOf(q) >= 0) ? '' : 'none';
+  panel.querySelectorAll('.stdlib-fn-row').forEach(function(row) {
+    var text = (row.getAttribute('data-stdlib-search') || '').toLowerCase();
+    row.style.display = (q === '' || text.indexOf(q) >= 0) ? '' : 'none';
   });
-  panel.querySelectorAll('.stdlib-module').forEach(function (mod) {
-    var any = mod.querySelectorAll('.stdlib-fn:not([style*="display: none"])').length > 0;
+  panel.querySelectorAll('.stdlib-mod-card').forEach(function(mod) {
+    var any = Array.from(mod.querySelectorAll('.stdlib-fn-row')).some(function(r) { return r.style.display !== 'none'; });
     mod.style.display = any ? '' : 'none';
   });
-
-  var otherPanel = panel.id === 'stdlibPanel' ? document.getElementById('stdlibPanelPlay') : document.getElementById('stdlibPanel');
-  if (otherPanel) {
-    otherPanel.querySelectorAll('.stdlib-fn').forEach(function (el) {
-      el.style.display = (q === '' || (el.getAttribute('data-stdlib-search') || '').indexOf(q) >= 0) ? '' : 'none';
-    });
-    otherPanel.querySelectorAll('.stdlib-module').forEach(function (mod) {
-      var any = mod.querySelectorAll('.stdlib-fn:not([style*="display: none"])').length > 0;
-      mod.style.display = any ? '' : 'none';
-    });
-  }
 }
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }

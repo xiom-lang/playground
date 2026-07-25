@@ -367,6 +367,8 @@ html.light-mode .output-content {
   padding: 10px 20px;
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
+  position: relative;
+  z-index: 50;
 }
 
 .back-btn {
@@ -450,6 +452,59 @@ html.light-mode .output-content {
 .nav-btn:hover {
   color: var(--hi);
   background: var(--panel);
+}
+
+/* Desktop-only */
+.desktop-only { display: inline-flex; }
+@media (max-width: 768px) { .desktop-only { display: none; } }
+
+/* Run button — primary action */
+.btn-run {
+  background: var(--indigo);
+  color: #fff;
+  border: none;
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(92,107,255,0.3);
+  white-space: nowrap;
+}
+.btn-run:hover {
+  box-shadow: 0 4px 16px rgba(92,107,255,0.5);
+  transform: translateY(-1px);
+}
+
+/* Dropdown */
+.header-dropdown { position: relative; display: inline-flex; z-index: 50; }
+.header-dropdown-menu {
+  display: none; position: absolute; top: 100%; left: 0;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 4px; z-index: 200;
+  min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  flex-direction: column;
+}
+.header-dropdown.open .header-dropdown-menu { display: flex; }
+.header-dropdown-menu button {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 9px 14px; border: none; background: none;
+  color: var(--hi); font-size: 13px; font-family: var(--sans);
+  cursor: pointer; border-radius: 6px; text-align: left;
+  transition: background 0.15s;
+}
+.header-dropdown-menu button:hover { background: var(--indigo-soft); }
+
+/* Theme toggle button */
+.theme-toggle { font-size: 16px; padding: 4px 8px; line-height: 1; }
+.shortcut-btn { min-width: 30px; padding: 6px 10px; font-weight: 700; }
+
+/* Close dropdown on outside click */
+@media (min-width: 769px) {
+  .header-dropdown-menu { display: none !important; }
+  .header-dropdown.open .header-dropdown-menu { display: flex !important; }
 }
 
 .shortcut-btn {
@@ -1492,31 +1547,47 @@ html.light-mode .output-content {
 }
 
 /* ================================================================
-   STDLIB REFERENCE PANEL
+   STDLIB REFERENCE PANEL (redesigned)
    ================================================================ */
 .stdlib-panel-header {
   display: flex; align-items: center; gap: 8px;
   padding: 12px 14px; border-bottom: 1px solid var(--border-soft);
-  position: sticky; top: 0; background: var(--panel); z-index: 2;
 }
-.stdlib-panel-header h3 {
-  font-size: 13px; font-weight: 600; color: var(--indigo);
-  flex-shrink: 0; margin: 0;
-}
-.stdlib-panel-header .concept-search {
-  flex: 1; min-width: 0; margin: 0; padding: 6px 10px; font-size: 11px;
-}
-.stdlib-panel-header button {
-  background: none; border: none; color: var(--mid);
-  cursor: pointer; font-size: 14px; padding: 4px 6px; border-radius: var(--radius-sm);
-  flex-shrink: 0;
-}
+.stdlib-panel-header h3 { font-size: 14px; font-weight: 700; color: var(--indigo); margin: 0; flex: 1; }
+.stdlib-panel-header button { background: none; border: none; color: var(--mid); cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 6px; }
 .stdlib-panel-header button:hover { color: var(--hi); background: var(--panel-2); }
-.stdlib-pin-btn.pinned { color: var(--indigo); }
 
-.stdlib-panel-content {
-  flex: 1; overflow-y: auto; padding: 8px 10px;
-}
+.stdlib-panel-content { flex: 1; overflow-y: auto; }
+
+/* Hero section */
+.stdlib-hero { padding: 14px 14px 8px; border-bottom: 1px solid var(--border-soft); }
+.stdlib-search { width: 100%; padding: 10px 14px; background: var(--void); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--hi); font-family: var(--sans); font-size: 13px; outline: none; transition: border-color 0.2s; margin-bottom: 10px; }
+.stdlib-search:focus { border-color: var(--indigo); }
+.stdlib-search::placeholder { color: var(--low); }
+.stdlib-quick-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.stdlib-chip { display: inline-block; padding: 4px 10px; background: var(--indigo-soft); color: var(--indigo); border: 1px solid rgba(92,107,255,0.25); border-radius: 100px; font-size: 11px; font-family: var(--mono); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.stdlib-chip:hover { background: rgba(92,107,255,0.22); border-color: var(--indigo); }
+
+/* Module cards */
+.stdlib-modules { padding: 6px 8px 8px; }
+.stdlib-mod-card { margin-bottom: 4px; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); overflow: hidden; background: var(--void); }
+.stdlib-mod-card-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.stdlib-mod-card-header:hover { background: var(--panel-2); }
+.stdlib-mod-card-left { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.stdlib-mod-card-arrow { font-size: 8px; color: var(--low); transition: transform 0.15s; }
+.stdlib-mod-card.open .stdlib-mod-card-arrow { transform: rotate(90deg); }
+.stdlib-mod-card-name { font-weight: 700; font-size: 12px; color: var(--indigo); font-family: var(--mono); }
+.stdlib-mod-card-badge { font-size: 9px; color: var(--low); background: var(--panel-2); padding: 1px 6px; border-radius: 8px; font-family: var(--mono); }
+.stdlib-mod-card-desc { font-size: 10px; color: var(--mid); flex: 1; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-left: 8px; }
+.stdlib-mod-card-body { display: none; padding: 0 12px 8px; }
+.stdlib-mod-card.open .stdlib-mod-card-body { display: block; }
+.stdlib-fn-row { display: flex; align-items: baseline; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border-soft); font-size: 10px; }
+.stdlib-fn-row:last-child { border-bottom: none; }
+.stdlib-fn-row code { font-family: var(--mono); font-size: 10px; color: var(--hi); flex-shrink: 0; max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stdlib-fn-row span { color: var(--mid); font-size: 10px; flex: 1; }
+
+/* Footer */
+.stdlib-footer { padding: 10px 14px; border-top: 1px solid var(--border-soft); font-size: 10px; color: var(--low); text-align: center; font-family: var(--mono); }
 
 /* On mobile, stdlib becomes full-screen overlay */
 @media (max-width: 768px) {
@@ -1525,25 +1596,6 @@ html.light-mode .output-content {
     width: 100vw; max-width: 100vw;
   }
 }
-.stdlib-wasm-legend { display: flex; gap: 10px; margin: 0 0 14px 0; font-size: 10px; color: var(--low); font-family: var(--mono); }
-.wasm-badge { display: inline-block; padding: 1px 5px; border-radius: 4px; font-size: 9px; font-weight: 700; font-family: var(--mono); line-height: 1.5; }
-.wasm-badge.wasm-full { background: var(--green-soft); color: var(--green); }
-.wasm-badge.wasm-partial { background: rgba(240,180,69,0.12); color: var(--amber); }
-.wasm-badge.wasm-none { background: rgba(255,92,122,0.1); color: var(--error); }
-
-.stdlib-module { margin-bottom: 4px; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--void); overflow: hidden; }
-.stdlib-module-header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; user-select: none; transition: background 0.15s; }
-.stdlib-module-header:hover { background: var(--panel-2); }
-.stdlib-module-arrow { font-size: 8px; color: var(--low); transition: transform 0.15s; flex-shrink: 0; }
-.stdlib-module.collapsed .stdlib-module-arrow { transform: rotate(-90deg); }
-.stdlib-module-name { font-weight: 700; font-size: 13px; color: var(--indigo); font-family: var(--mono); flex-shrink: 0; }
-.stdlib-module-desc { font-size: 11px; color: var(--mid); flex: 1; }
-.stdlib-module-fns { padding: 0 12px 8px; }
-.stdlib-module.collapsed .stdlib-module-fns { display: none; }
-.stdlib-fn { display: flex; align-items: baseline; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--border-soft); font-size: 11px; }
-.stdlib-fn:last-child { border-bottom: none; }
-.stdlib-fn code { font-family: var(--mono); font-size: 11px; color: var(--hi); flex-shrink: 0; min-width: 0; }
-.stdlib-fn-desc { color: var(--mid); font-size: 11px; flex: 1; }
 
 /* ================================================================
    ONBOARDING MODAL

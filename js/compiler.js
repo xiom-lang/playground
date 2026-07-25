@@ -1,15 +1,15 @@
 async function compile() {
-  if (currentMode === 'landing' || !currentMode) return;
+  var lessonsScreen = document.getElementById('lessonsScreen');
+  if (!lessonsScreen || lessonsScreen.classList.contains('hidden')) return;
 
-  var ed = getActiveEditor();
+  var ed = window.editor;
   var source = ed ? ed.getValue() : '';
-  var ids = getActiveOutputIds();
+  var ids = { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts', status: 'status' };
   var statusEl = document.getElementById(ids.status);
 
   statusEl.textContent = 'Compiling...';
   statusEl.className = 'status-bar busy';
 
-  // Show loading overlay
   if (window.showLoading) window.showLoading();
 
   try {
@@ -65,21 +65,8 @@ async function compile() {
       contractsEl.innerHTML = '<span style="color:#5c5f6b">No contracts in this code. Add <code style="color:#5c6bff">requires:</code> or <code style="color:#5c6bff">ensures:</code> to see verification.</span>';
     }
 
-    if (window.editor && window.monaco && currentMode === 'lessons') {
+    if (window.editor && window.monaco) {
       monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', (r.diagnostics || []).filter(function (d) { return d.line > 0; }).map(function (d) {
-        return {
-          severity: d.kind === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
-          message: d.message,
-          startLineNumber: d.line,
-          startColumn: d.col || 1,
-          endLineNumber: d.line,
-          endColumn: (d.col || 1) + 15,
-        };
-      }));
-    }
-
-    if (window.pgEditor && window.monaco && currentMode === 'playground') {
-      monaco.editor.setModelMarkers(window.pgEditor.getModel(), 'xiom', (r.diagnostics || []).filter(function (d) { return d.line > 0; }).map(function (d) {
         return {
           severity: d.kind === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
           message: d.message,
@@ -96,7 +83,6 @@ async function compile() {
     statusEl.className = r.success ? 'status-bar ok' : (errCount ? 'status-bar err' : 'status-bar ok');
     if (window.hideLoading) window.hideLoading();
 
-    // Update tab badge counts
     updateTabBadges(r, source);
 
   } catch (e) {
@@ -124,7 +110,6 @@ function highlightIR(ir) {
 function updateTabBadges(r, source) {
   var tabs = document.querySelectorAll('.output-tabs .tab');
   tabs.forEach(function (tab) {
-    // Remove existing badges
     var existing = tab.querySelector('.tab-badge');
     if (existing) existing.remove();
     tab.style.position = '';
@@ -139,7 +124,6 @@ function updateTabBadges(r, source) {
     tabEl.appendChild(badge);
   }
 
-  var prefix = !document.getElementById('lessonsScreen').classList.contains('hidden') ? '' : 'pg';
   var diagCount = (r.diagnostics || []).length;
   var contractCount = source.indexOf('requires:') >= 0 || source.indexOf('ensures:') >= 0 ? 1 : 0;
   var tokenCount = (r.tokens || []).length;
