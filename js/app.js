@@ -248,6 +248,11 @@ function setupTabs() {
         var el = document.getElementById(ids[key]);
         if (el) el.classList.toggle('hidden', key !== tabName);
       });
+
+      // Lazy-load IR and Tokens on first click
+      if ((tabName === 'ir' || tabName === 'tokens') && window.lazyLoadTab) {
+        window.lazyLoadTab(tabName);
+      }
     });
   });
 }

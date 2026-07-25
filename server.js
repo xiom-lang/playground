@@ -69,42 +69,29 @@ function compileAllStages(source) {
   };
 
   try {
-    const lexProc = runXiom(['--emit-tokens', tmp]);
-    result.stages.lex = { success: lexProc.success, output: lexProc.stdout || 'Tokens not available' };
-    if (lexProc.stdout) result.tokens = lexProc.stdout.split('\n').filter(l => l.trim());
+    // Single pass: xiom run compiles + checks + executes
+    const proc = runXiom(['run', tmp]);
+    result.success = proc.success;
+    result.diagnostics = parseDiagnostics(proc.stderr);
+    result.output = proc.stdout ? proc.stdout.trim() : '';
 
-    const parseProc = runXiom(['--check', '--check-only', tmp]);
-    result.stages.parse = { success: parseProc.success, output: parseProc.stdout || 'Parse OK' };
+    if (!result.success) {
+      const errs = result.diagnostics.filter(d => d.kind === 'error');
+      result.output = errs.length > 0
+        ? 'Compilation failed: ' + errs.length + ' error(s).\nCheck the Diagnostics tab for details.'
+        : (proc.stderr ? proc.stderr.trim() : 'Compilation failed.');
+    } else if (!result.output) {
+      result.output = 'Program ran with no output.';
+    }
 
-    const fullProc = runXiom(['--emit-ir', '--diagnostics-json', tmp]);
-    result.success = fullProc.success;
-    result.ir = fullProc.stdout || null;
-    result.diagnostics = parseDiagnostics(fullProc.stderr);
+    if (result.output) result.runOutput = result.output;
 
+    // Contracts: only if source uses them
     if (source.includes('requires:') || source.includes('ensures:') || source.includes('invariant:')) {
       const verifyProc = runXiom(['--verify', tmp]);
       result.contracts = verifyProc.stdout || verifyProc.stderr || 'Contract verification not available';
+      result.stages = result.stages || {};
       result.stages.verify = { success: verifyProc.success, output: result.contracts };
-    }
-
-    // ── Execute: use xiom run to compile + execute in one step ──
-    if (result.success) {
-      // Strip ANSI escape codes from IR
-      if (result.ir) result.ir = result.ir.replace(/\x1b\[[0-9;]*m/g, '');
-
-      const runProc = runXiom(['run', tmp]);
-      if (runProc.success && runProc.stdout) {
-        result.output = runProc.stdout.trim();
-        result.runOutput = runProc.stdout.trim();
-      } else if (runProc.stderr && runProc.stderr.trim()) {
-        result.output = runProc.stderr.trim();
-        result.runError = runProc.stderr.trim();
-      } else {
-        result.output = 'Program ran with no output.';
-      }
-    } else {
-      const errs = result.diagnostics.filter(d => d.kind === 'error');
-      result.output = `Compilation failed: ${errs.length} error(s).\nCheck the Diagnostics tab for details.`;
     }
 
   } finally {
@@ -143,6 +130,27 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
 
+  if (req.method === 'POST' && req.url === '/api/check') {
+    try {
+      const body = await parseBody(req);
+      const { source } = JSON.parse(body);
+      const tmp = path.join(os.tmpdir(), `xiom_chk_${Date.now()}.xi`);
+      fs.writeFileSync(tmp, source);
+      const proc = runXiom(['--check', '--check-only', tmp]);
+      try { fs.unlinkSync(tmp); } catch {}
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: proc.success,
+        diagnostics: parseDiagnostics(proc.stderr),
+        output: proc.stderr || (proc.success ? 'OK' : 'Failed')
+      }));
+    } catch(e) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, output: e.message }));
+    }
+    return;
+  }
+
   if (req.method === 'POST' && req.url === '/api/compile') {
     try {
       const body = await parseBody(req);
@@ -153,6 +161,26 @@ const server = http.createServer(async (req, res) => {
     } catch(e) {
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: false, output: e.message, diagnostics: [{code:'S001',kind:'error',line:0,col:0,message:e.message}] }));
+    }
+    return;
+  }
+
+  // Lazy-load endpoints — only called when user clicks IR/Tokens tabs
+  if (req.method === 'POST' && (req.url === '/api/tokens' || req.url === '/api/ir')) {
+    try {
+      const body = await parseBody(req);
+      const { source } = JSON.parse(body);
+      const tmp = path.join(os.tmpdir(), `xiom_lazy_${Date.now()}.xi`);
+      fs.writeFileSync(tmp, source);
+      const flag = req.url === '/api/tokens' ? '--emit-tokens' : '--emit-ir';
+      const proc = runXiom([flag, tmp]);
+      try { fs.unlinkSync(tmp); } catch {}
+      const output = proc.stdout ? proc.stdout.replace(/\x1b\[[0-9;]*m/g, '') : null;
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: proc.success, output: output, error: proc.stderr || null }));
+    } catch(e) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: e.message }));
     }
     return;
   }
