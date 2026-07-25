@@ -1,99 +1,70 @@
 async function compile() {
-  var lessonsScreen = document.getElementById('lessonsScreen');
-  if (!lessonsScreen || lessonsScreen.classList.contains('hidden')) return;
+  var screen = document.getElementById('lessonsScreen');
+  if (!screen || screen.classList.contains('hidden')) return;
 
   var ed = window.editor;
   var source = ed ? ed.getValue() : '';
   var ids = { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts', status: 'status' };
   var statusEl = document.getElementById(ids.status);
+  var btn = document.getElementById('btnRun');
 
+  // Show compiling state on button + status
+  if (btn) btn.classList.add('running');
   statusEl.textContent = 'Compiling...';
   statusEl.className = 'status-bar busy';
+  statusEl.style.display = '';
 
-  try {
-    var body = JSON.stringify({ source: source });
-    var headers = { 'Content-Type': 'application/json' };
+  var body = JSON.stringify({ source: source });
+  var headers = { 'Content-Type': 'application/json' };
 
-    var [checkResp, runResp] = await Promise.all([
-      fetch('/api/check', { method: 'POST', headers: headers, body: body }),
-      fetch('/api/compile', { method: 'POST', headers: headers, body: body })
-    ]);
+  // Fire both in parallel — update UI as each returns
+  fetch('/api/check', { method: 'POST', headers: headers, body: body })
+    .then(function(r) { return r.json(); })
+    .then(function(check) {
+      var diagEl = document.getElementById(ids.diag);
+      var diags = check.diagnostics || [];
+      if (diags.length > 0) {
+        diagEl.innerHTML = diags.map(function(d) {
+          var cls = d.kind === 'error' ? 'diag-error' : 'diag-warn';
+          return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' — ' + escapeHtml(d.message) + '</div>';
+        }).join('');
+      } else if (check.success) {
+        diagEl.innerHTML = '<span style="color:#34d399">No diagnostics — clean code. ✓</span>';
+      }
+      // Editor markers
+      if (window.editor && window.monaco) {
+        monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function(d){return d.line>0}).map(function(d){return{severity:d.kind==='error'?monaco.MarkerSeverity.Error:monaco.MarkerSeverity.Warning,message:d.message,startLineNumber:d.line,startColumn:d.col||1,endLineNumber:d.line,endColumn:(d.col||1)+15}}));
+      }
+      statusEl.textContent = 'Running...';
+    }).catch(function(){});
 
-    var check = await checkResp.json();
-    var run = await runResp.json();
+  fetch('/api/compile', { method: 'POST', headers: headers, body: body })
+    .then(function(r) { return r.json(); })
+    .then(function(run) {
+      var outputEl = document.getElementById(ids.output);
+      outputEl.textContent = run.output || 'No output.';
+      outputEl.classList.add('animate-in');
 
-    // Output
-    var outputEl = document.getElementById(ids.output);
-    outputEl.textContent = run.output || 'No output.';
-    outputEl.classList.add('animate-in');
+      var irEl = document.getElementById(ids.ir);
+      irEl.textContent = run.ir ? run.ir : 'Click this tab to generate IR.';
 
-    // IR
-    var irEl = document.getElementById(ids.ir);
-    if (run.ir) {
-      irEl.innerHTML = highlightIR(run.ir);
-    } else {
-      irEl.textContent = 'Click this tab to generate IR.';
-    }
+      if (run.contracts) {
+        document.getElementById(ids.contracts).textContent = run.contracts;
+      }
 
-    // Diagnostics from check (fast path)
-    var diagEl = document.getElementById(ids.diag);
-    var diags = check.diagnostics || [];
-    if (diags.length > 0) {
-      diagEl.innerHTML = diags.map(function (d) {
-        var cls = d.kind === 'error' ? 'diag-error' : 'diag-warn';
-        return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' \u2014 ' + escapeHtml(d.message) + '</div>';
-      }).join('');
-    } else if (check.success) {
-      diagEl.innerHTML = '<span style="color:#34d399">No diagnostics \u2014 clean code. \u2713;</span>';
-    }
+      var tokensEl = document.getElementById(ids.tokens);
+      if (!run.tokens) tokensEl.textContent = 'Click this tab to generate tokens.';
 
-    // Contracts
-    var contractsEl = document.getElementById(ids.contracts);
-    if (run.contracts) {
-      contractsEl.textContent = run.contracts;
-    } else if (source.indexOf('requires:') >= 0 || source.indexOf('ensures:') >= 0) {
-      contractsEl.innerHTML = '<span style="color:#f0b445">Contracts detected. Verification not run.</span>';
-    } else {
-      contractsEl.innerHTML = '<span style="color:#5c5f6b">No contracts in this code.</span>';
-    }
+      statusEl.innerHTML = run.success ? '✓ Ran' : '✗ Failed';
+      statusEl.className = run.success ? 'status-bar ok' : 'status-bar err';
+      if (btn) btn.classList.remove('running');
 
-    // Tokens — placeholder
-    var tokensEl = document.getElementById(ids.tokens);
-    if (!run.tokens) tokensEl.textContent = 'Click this tab to generate tokens.';
-
-    // Status
-    var errCount = diags.filter(function(d){return d.kind==='error'}).length;
-    statusEl.innerHTML = run.success ? '&#x2713; Ran' : '&#x2717; ' + errCount + ' error(s)';
-    statusEl.className = run.success ? 'status-bar ok' : (errCount ? 'status-bar err' : 'status-bar ok');
-
-    // Badges
-    updateTabBadgesAlt(diags, run.tokens, run.contracts, source);
-
-    // Editor markers
-    if (window.editor && window.monaco) {
-      monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function (d) { return d.line > 0; }).map(function (d) {
-        return {
-          severity: d.kind === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
-          message: d.message,
-          startLineNumber: d.line,
-          startColumn: d.col || 1,
-          endLineNumber: d.line,
-          endColumn: (d.col || 1) + 15,
-        };
-      }));
-    }
-
-    // Store for lazy tabs
-    window._lastSource = source;
-
-  } catch (e) {
-    var outEl = document.getElementById(ids.output);
-    outEl.textContent = 'Cannot reach compile server. Run: node server.js';
-    statusEl.textContent = 'Server not running.';
-    statusEl.className = 'status-bar err';
-  }
-
-  if (window.hideLoading) window.hideLoading();
+      window._lastSource = source;
+    }).catch(function(e) {
+      statusEl.textContent = 'Server not running.';
+      statusEl.className = 'status-bar err';
+      if (btn) btn.classList.remove('running');
+    });
 }
 
 function escapeHtml(s) {

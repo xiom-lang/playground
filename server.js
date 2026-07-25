@@ -8,6 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const os = require('os');
+const crypto = require('crypto');
+const CACHE_DIR = path.join(os.tmpdir(), 'xiom_pg_cache');
 
 const PORT = 3000;
 const HOST = 'localhost';
@@ -69,7 +71,20 @@ function compileAllStages(source) {
   };
 
   try {
-    // Single pass: xiom run compiles + checks + executes
+    // Check cache first — re-runs of unchanged code are instant
+    if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+    const hash = crypto.createHash('sha256').update(source).digest('hex');
+    const cachedExe = path.join(CACHE_DIR, hash + (os.platform() === 'win32' ? '.exe' : ''));
+
+    if (fs.existsSync(cachedExe)) {
+      const runProc = spawnSync(cachedExe, [], { timeout: 5000, encoding: 'utf-8' });
+      result.success = true;
+      result.output = (runProc.stdout || '').trim() || 'Program ran with no output.';
+      result.runOutput = result.output;
+      return result;
+    }
+
+    // No cache — compile + cache + run
     const proc = runXiom(['run', tmp]);
     result.success = proc.success;
     result.diagnostics = parseDiagnostics(proc.stderr);
@@ -85,6 +100,14 @@ function compileAllStages(source) {
     }
 
     if (result.output) result.runOutput = result.output;
+
+    // Cache binary for instant re-runs of same code
+    if (result.success) {
+      try {
+        const buildBin = runXiom(['build', tmp, '-o', cachedExe]);
+        if (!buildBin.success) { try { fs.unlinkSync(cachedExe); } catch {} }
+      } catch {}
+    }
 
     // Contracts: only if source uses them
     if (source.includes('requires:') || source.includes('ensures:') || source.includes('invariant:')) {

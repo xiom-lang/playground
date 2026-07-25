@@ -477,6 +477,25 @@ html.light-mode .output-content {
   box-shadow: 0 4px 16px rgba(92,107,255,0.5);
   transform: translateY(-1px);
 }
+.btn-run.running {
+  pointer-events: none;
+  opacity: 0.8;
+  background: var(--indigo-soft);
+  color: var(--indigo);
+  border: 1px solid rgba(92,107,255,0.35);
+  box-shadow: none;
+}
+.btn-run.running::after {
+  content: '';
+  display: inline-block;
+  width: 12px; height: 12px;
+  margin-left: 6px;
+  border: 2px solid var(--indigo);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
 
 /* Dropdown */
 .header-dropdown { position: relative; display: inline-flex; z-index: 50; }
