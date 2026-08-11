@@ -1,4 +1,4 @@
-﻿// XIOM Standard Library Reference - v0.49.9
+﻿ // XIOM Standard Library Reference - v0.58.0
 // ★ = fully WASM-compatible   ⚠ = limited in WASM   ✗ = not available in WASM
 
 var stdlibData = {
@@ -851,7 +851,7 @@ function showStdlibPanel() {
   });
   html += '</div>';
 
-  html += '<div class="stdlib-footer">20 modules &middot; 594 functions &middot; XIOM v0.49.9</div>';
+  html += '<div class="stdlib-footer">64 modules &middot; ~2,215 functions &middot; XIOM v0.58.0</div>';
 
   if (container) container.innerHTML = html;
 }

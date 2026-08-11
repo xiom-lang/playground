@@ -17,26 +17,78 @@ async function compile() {
   var body = JSON.stringify({ source: source });
   var headers = { 'Content-Type': 'application/json' };
 
-  // Fire both in parallel — update UI as each returns
-  fetch('/api/check', { method: 'POST', headers: headers, body: body })
-    .then(function(r) { return r.json(); })
-    .then(function(check) {
-      var diagEl = document.getElementById(ids.diag);
-      var diags = check.diagnostics || [];
-      if (diags.length > 0) {
-        diagEl.innerHTML = diags.map(function(d) {
-          var cls = d.kind === 'error' ? 'diag-error' : 'diag-warn';
-          return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' — ' + escapeHtml(d.message) + '</div>';
-        }).join('');
-      } else if (check.success) {
-        diagEl.innerHTML = '<span style="color:#34d399">No diagnostics — clean code. ✓</span>';
+  // In-browser WASM compiler (if loaded): diagnostics + LLVM IR instantly for
+  // PURE programs. Programs with `use` (stdlib imports) cannot compile in the
+  // wasm (no stdlib bundled) — those go entirely to the server. The server
+  // /api/compile is still used to RUN the program (Output tab).
+  var wasmCompiled = false;
+  var wasmIrSet = false;
+  var pureProgram = source.indexOf('use ') === -1;
+  if (window.xiomWasm && pureProgram) {
+    window.xiomWasm.then(function (w) {
+      if (!w) return;
+      try {
+        var res = JSON.parse(w.compile(source));
+        wasmCompiled = true;
+        var diagEl = document.getElementById(ids.diag);
+        if (diagEl) {
+          var diags = res.diagnostics || [];
+          if (diags.length > 0) {
+            diagEl.innerHTML = diags.map(function (d) {
+              var cls = d.kind === 'type_error' || d.kind === 'parse_error' || d.kind === 'lex_error' ? 'diag-error' : 'diag-warn';
+              return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' — ' + escapeHtml(d.message) + '</div>';
+            }).join('');
+          } else if (res.success) {
+            diagEl.innerHTML = '<span style="color:#34d399">No diagnostics — clean code. ✓ (WASM)</span>';
+          }
+          // Editor markers
+          if (window.editor && window.monaco) {
+            monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function (d) { return d.line > 0; }).map(function (d) {
+              return { severity: (d.kind === 'type_error' || d.kind === 'parse_error' || d.kind === 'lex_error') ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning, message: d.message, startLineNumber: d.line, startColumn: d.col || 1, endLineNumber: d.line, endColumn: (d.col || 1) + 15 };
+            }));
+          }
+        }
+        var irEl = document.getElementById(ids.ir);
+        if (irEl && res.ir) {
+          irEl.textContent = res.ir;
+          wasmIrSet = true;
+          irEl.classList.add('animate-in');
+        }
+        if (!res.success && !document.getElementById(ids.output).textContent) {
+          document.getElementById(ids.output).textContent = 'Compilation failed — see Diagnostics tab.';
+        }
+      } catch (e) {
+        console.warn('[xiom-wasm] compile error, falling back to server: ' + e);
+        wasmCompiled = false;
       }
-      // Editor markers
-      if (window.editor && window.monaco) {
-        monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function(d){return d.line>0}).map(function(d){return{severity:d.kind==='error'?monaco.MarkerSeverity.Error:monaco.MarkerSeverity.Warning,message:d.message,startLineNumber:d.line,startColumn:d.col||1,endLineNumber:d.line,endColumn:(d.col||1)+15}}));
-      }
-      statusEl.textContent = 'Running...';
-    }).catch(function(){});
+    }).catch(function () {});
+  }
+
+  // Server /api/check: diagnostics fallback when the WASM compiler is absent.
+  if (!wasmCompiled) {
+    fetch('/api/check', { method: 'POST', headers: headers, body: body })
+      .then(function (r) { return r.json(); })
+      .then(function (check) {
+        if (wasmCompiled) return;
+        var diagEl = document.getElementById(ids.diag);
+        var diags = check.diagnostics || [];
+        if (diags.length > 0) {
+          diagEl.innerHTML = diags.map(function (d) {
+            var cls = d.kind === 'error' ? 'diag-error' : 'diag-warn';
+            return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' — ' + escapeHtml(d.message) + '</div>';
+          }).join('');
+        } else if (check.success) {
+          diagEl.innerHTML = '<span style="color:#34d399">No diagnostics — clean code. ✓</span>';
+        }
+        // Editor markers
+        if (window.editor && window.monaco) {
+          monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function (d) { return d.line > 0; }).map(function (d) {
+            return { severity: d.kind === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning, message: d.message, startLineNumber: d.line, startColumn: d.col || 1, endLineNumber: d.line, endColumn: (d.col || 1) + 15 };
+          }));
+        }
+        statusEl.textContent = 'Running...';
+      }).catch(function () {});
+  }
 
   fetch('/api/compile', { method: 'POST', headers: headers, body: body })
     .then(function(r) { return r.json(); })
@@ -46,7 +98,11 @@ async function compile() {
       outputEl.classList.add('animate-in');
 
       var irEl = document.getElementById(ids.ir);
-      irEl.textContent = run.ir ? run.ir : 'Click this tab to generate IR.';
+      // Don't clobber the WASM-generated IR with the server's placeholder when
+      // the server only returns run output.
+      if (!wasmIrSet) {
+        irEl.textContent = run.ir ? run.ir : 'Click this tab to generate IR.';
+      }
 
       if (run.contracts) {
         document.getElementById(ids.contracts).textContent = run.contracts;
