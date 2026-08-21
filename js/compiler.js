@@ -19,7 +19,7 @@ async function compile() {
 
   // In-browser WASM compiler (if loaded): diagnostics + LLVM IR instantly for
   // PURE programs. Programs with `use` (stdlib imports) cannot compile in the
-  // wasm (no stdlib bundled) — those go entirely to the server. The server
+  // wasm (no stdlib bundled) -- those go entirely to the server. The server
   // /api/compile is still used to RUN the program (Output tab).
   var wasmCompiled = false;
   var wasmIrSet = false;
@@ -36,10 +36,10 @@ async function compile() {
           if (diags.length > 0) {
             diagEl.innerHTML = diags.map(function (d) {
               var cls = d.kind === 'type_error' || d.kind === 'parse_error' || d.kind === 'lex_error' ? 'diag-error' : 'diag-warn';
-              return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' — ' + escapeHtml(d.message) + '</div>';
+              return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' -- ' + escapeHtml(d.message) + '</div>';
             }).join('');
           } else if (res.success) {
-            diagEl.innerHTML = '<span style="color:#34d399">No diagnostics — clean code. ✓ (WASM)</span>';
+            diagEl.innerHTML = '<span style="color:#34d399">No diagnostics -- clean code. [OK] (WASM)</span>';
           }
           // Editor markers
           if (window.editor && window.monaco) {
@@ -55,7 +55,7 @@ async function compile() {
           irEl.classList.add('animate-in');
         }
         if (!res.success && !document.getElementById(ids.output).textContent) {
-          document.getElementById(ids.output).textContent = 'Compilation failed — see Diagnostics tab.';
+          document.getElementById(ids.output).textContent = 'Compilation failed -- see Diagnostics tab.';
         }
       } catch (e) {
         console.warn('[xiom-wasm] compile error, falling back to server: ' + e);
@@ -75,10 +75,10 @@ async function compile() {
         if (diags.length > 0) {
           diagEl.innerHTML = diags.map(function (d) {
             var cls = d.kind === 'error' ? 'diag-error' : 'diag-warn';
-            return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' — ' + escapeHtml(d.message) + '</div>';
+            return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' -- ' + escapeHtml(d.message) + '</div>';
           }).join('');
         } else if (check.success) {
-          diagEl.innerHTML = '<span style="color:#34d399">No diagnostics — clean code. ✓</span>';
+          diagEl.innerHTML = '<span style="color:#34d399">No diagnostics -- clean code. [OK]</span>';
         }
         // Editor markers
         if (window.editor && window.monaco) {
@@ -111,7 +111,7 @@ async function compile() {
       var tokensEl = document.getElementById(ids.tokens);
       if (!run.tokens) tokensEl.textContent = 'Click this tab to generate tokens.';
 
-      statusEl.innerHTML = run.success ? '✓ Ran' : '✗ Failed';
+      statusEl.innerHTML = run.success ? '[OK] Ran' : '[FAIL] Failed';
       statusEl.className = run.success ? 'status-bar ok' : 'status-bar err';
       if (btn) btn.classList.remove('running');
 

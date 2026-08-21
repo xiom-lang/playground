@@ -1,4 +1,4 @@
-# fix-lessons.ps1 — Fix lesson duplicates, ID mismatches, and regenerate index.json
+# fix-lessons.ps1 -- Fix lesson duplicates, ID mismatches, and regenerate index.json
 # Usage: .\fix-lessons.ps1 [-DryRun]
 
 param([switch]$DryRun)
@@ -6,7 +6,7 @@ param([switch]$DryRun)
 $ErrorActionPreference = "Stop"
 $lessonsDir = Resolve-Path "$PSScriptRoot\..\lessons"
 
-# ─── Step 1: Delete superseded/duplicate files ──────────────────────────
+# --- Step 1: Delete superseded/duplicate files --------------------------
 $toDelete = @(
     "L2-data/02-enums.json",
     "L2-data/03-option.json",
@@ -25,7 +25,7 @@ foreach ($f in $toDelete) {
     }
 }
 
-# ─── Step 2: Renumber duplicate-prefix files ────────────────────────────
+# --- Step 2: Renumber duplicate-prefix files ----------------------------
 Write-Host ""
 Write-Host "=== STEP 2: Renumbering duplicate-prefix files ===" -ForegroundColor Cyan
 
@@ -113,7 +113,7 @@ if (-not $DryRun) {
     Write-Host "  (DRY RUN: no files changed)"
 }
 
-# ─── Step 3: Fix internal IDs ──────────────────────────────────────────
+# --- Step 3: Fix internal IDs ------------------------------------------
 Write-Host ""
 Write-Host "=== STEP 3: Fixing internal lesson IDs ===" -ForegroundColor Cyan
 
@@ -166,7 +166,7 @@ foreach ($dn in $levelIdMap.Keys) {
 }
 Write-Host "  Total fixes: $fixCount" -ForegroundColor Green
 
-# ─── Step 4: Regenerate index.json ──────────────────────────────────────
+# --- Step 4: Regenerate index.json --------------------------------------
 Write-Host ""
 Write-Host "=== STEP 4: Regenerating index.json ===" -ForegroundColor Cyan
 

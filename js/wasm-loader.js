@@ -10,7 +10,7 @@
 window.xiomWasm = (async function () {
   try {
     // The wasm files live at the playground ROOT (xiom_wasm.js + xiom_wasm_bg.wasm),
-    // while this loader lives in js/ — import one level up.
+    // while this loader lives in js/ -- import one level up.
     var mod = await import('../xiom_wasm.js');
     var init = mod.default;
     var wasmUrl = new URL('../xiom_wasm_bg.wasm', document.baseURI).href;

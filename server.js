@@ -71,7 +71,7 @@ function compileAllStages(source) {
   };
 
   try {
-    // Check cache first — re-runs of unchanged code are instant
+    // Check cache first -- re-runs of unchanged code are instant
     if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
     const hash = crypto.createHash('sha256').update(source).digest('hex');
     const cachedExe = path.join(CACHE_DIR, hash + (os.platform() === 'win32' ? '.exe' : ''));
@@ -84,7 +84,7 @@ function compileAllStages(source) {
       return result;
     }
 
-    // No cache — compile + cache + run
+    // No cache -- compile + cache + run
     const proc = runXiom(['run', tmp]);
     result.success = proc.success;
     result.diagnostics = parseDiagnostics(proc.stderr);
@@ -188,7 +188,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Lazy-load endpoints — only called when user clicks IR/Tokens tabs
+  // Lazy-load endpoints -- only called when user clicks IR/Tokens tabs
   if (req.method === 'POST' && (req.url === '/api/tokens' || req.url === '/api/ir')) {
     try {
       const body = await parseBody(req);

@@ -1,6 +1,6 @@
 # XIOM Playground v0.58.0
 
-Browser-based XIOM code editor and compiler. Write `.xi` code, compile to LLVM IR, see diagnostics — all in your browser.
+Browser-based XIOM code editor and compiler. Write `.xi` code, compile to LLVM IR, see diagnostics -- all in your browser.
 
 ## Quick Start
 
@@ -29,7 +29,7 @@ python server.py
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Playground UI — editor, tabs, IR highlighting |
+| `index.html` | Playground UI -- editor, tabs, IR highlighting |
 | `server.js` | Node.js dev server + `/api/compile` endpoint |
 | `server.py` | Python dev server (alternative) |
 | `js/wasm-loader.js` | Loads the in-browser WASM compiler (promise; falls back to server) |
@@ -45,7 +45,7 @@ cargo build -p xiom-wasm --target wasm32-unknown-unknown --release
 wasm-bindgen --target web --out-dir xiom-playground target/wasm32-unknown-unknown/release/xiom_wasm.wasm
 ```
 
-Note: the in-browser compiler has no stdlib (no `use xiom.*` imports) — it covers
+Note: the in-browser compiler has no stdlib (no `use xiom.*` imports) -- it covers
 pure language programs (functions, structs, enums, generics, contracts, Vec,
 Option/Result builtins). Stdlib programs still work via the server endpoints.
 

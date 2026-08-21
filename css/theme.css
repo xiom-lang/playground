@@ -1,5 +1,5 @@
 /* ================================================================
-   XIOM Playground Theme — v0.49.9
+   XIOM Playground Theme -- v0.49.9
    Design system derived from XIOM landing page mockup.
    Palette: indigo accent, layered dark panels, ambient particles.
    ================================================================ */
@@ -458,7 +458,7 @@ html.light-mode .output-content {
 .desktop-only { display: inline-flex; }
 @media (max-width: 768px) { .desktop-only { display: none; } }
 
-/* Run button — primary action */
+/* Run button -- primary action */
 .btn-run {
   background: var(--indigo);
   color: #fff;

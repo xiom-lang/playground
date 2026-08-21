@@ -391,7 +391,7 @@ for (const file of files) {
   }
 }
 
-console.log(`\n\x1b[2m──────────────────────────────\x1b[0m`);
+console.log(`\n\x1b[2m------------------------------\x1b[0m`);
 console.log(`  Fixed:   \x1b[32m${fixed}\x1b[0m`);
 console.log(`  Skipped: \x1b[90m${skipped}\x1b[0m`);
 console.log(`  Errors:  \x1b[31m${errors}\x1b[0m`);

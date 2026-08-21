@@ -433,17 +433,17 @@ function main() {
   console.log('\n');
 
   if (fixMode) {
-    console.log('\x1b[2m──────────────────────────────\x1b[0m');
+    console.log('\x1b[2m------------------------------\x1b[0m');
     console.log(`  Auto-fixed: \x1b[33m${fixed}\x1b[0m lesson(s)`);
   }
 
-  console.log('\x1b[2m──────────────────────────────\x1b[0m');
+  console.log('\x1b[2m------------------------------\x1b[0m');
   console.log(`  Total:   ${total}`);
   console.log(`  Cached:  \x1b[90m${cached}\x1b[0m`);
   console.log(`  Checked: ${checked}`);
   console.log(`  Passed:  \x1b[32m${passed}\x1b[0m`);
   console.log(`  Failed:  \x1b[31m${failed}\x1b[0m`);
-  console.log('\x1b[2m──────────────────────────────\x1b[0m');
+  console.log('\x1b[2m------------------------------\x1b[0m');
 
   if (failures.length > 0) {
     console.log(`\n\x1b[31m${failures.length} lesson(s) with errors:\x1b[0m\n`);

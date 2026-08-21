@@ -7,15 +7,15 @@ const LESSONS_DIR = path.join(__dirname, '..', 'lessons');
 const INDEX_FILE = path.join(LESSONS_DIR, 'index.json');
 
 const LEVEL_NAMES = {
-  'L0': { name: 'First Steps', icon: '\uD83C\uDF31', description: 'Printing, numbers, variables — your first steps into programming.' },
+  'L0': { name: 'First Steps', icon: '\uD83C\uDF31', description: 'Printing, numbers, variables -- your first steps into programming.' },
   'L1': { name: 'Functions', icon: '\uD83C\uDF7D\uFE0F', description: 'Functions as named recipes. Parameters, return values, composition.' },
   'L2': { name: 'Data', icon: '\uD83D\uDCE6', description: 'Structs, enums, methods, Option and Result patterns.' },
   'L3': { name: 'Pattern Power', icon: '\uD83D\uDD0D', description: 'Pattern matching, Option, Result, the ? operator, error handling.' },
-  'L4': { name: 'XIOM Magic', icon: '\uD83D\uDEE1\uFE0F', description: 'Contracts, ownership, borrowing — what makes XIOM unique.' },
-  'L5': { name: 'Collections', icon: '\uD83D\uDCCB', description: 'Vec, Map, Set, generics — working with many things at once.' },
-  'L6': { name: 'Engineering', icon: '\uD83D\uDD27', description: 'Interfaces, modules, libraries — writing professional code.' },
-  'L7': { name: 'Practice', icon: '\uD83C\uDFAE', description: 'Coding katas — games, calculators, tools, and simulators.' },
-  'L8': { name: 'Showcase', icon: '\uD83C\uDF1F', description: 'Grand finale — build impressive single-file programs.' },
+  'L4': { name: 'XIOM Magic', icon: '\uD83D\uDEE1\uFE0F', description: 'Contracts, ownership, borrowing -- what makes XIOM unique.' },
+  'L5': { name: 'Collections', icon: '\uD83D\uDCCB', description: 'Vec, Map, Set, generics -- working with many things at once.' },
+  'L6': { name: 'Engineering', icon: '\uD83D\uDD27', description: 'Interfaces, modules, libraries -- writing professional code.' },
+  'L7': { name: 'Practice', icon: '\uD83C\uDFAE', description: 'Coding katas -- games, calculators, tools, and simulators.' },
+  'L8': { name: 'Showcase', icon: '\uD83C\uDF1F', description: 'Grand finale -- build impressive single-file programs.' },
 };
 
 function collectLessons() {
@@ -56,7 +56,7 @@ function buildIndex(lessons) {
   return { version: '0.49.9', total_lessons: lessons.length, levels };
 }
 
-// ── Main ──
+// -- Main --
 console.log('\x1b[36m\x1b[1mXIOM Index Generator v0.49.9\x1b[0m');
 const lessons = collectLessons();
 console.log(`Found \x1b[32m${lessons.length}\x1b[0m lessons across \x1b[32m${new Set(lessons.map(l => l.level)).size}\x1b[0m levels.`);

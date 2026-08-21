@@ -1,12 +1,12 @@
-﻿ // XIOM Standard Library Reference - v0.58.0
-// ★ = fully WASM-compatible   ⚠ = limited in WASM   ✗ = not available in WASM
+ // XIOM Standard Library Reference - v0.58.0
+// * = fully WASM-compatible   [WARN] = limited in WASM   [FAIL] = not available in WASM
 
 var stdlibData = {
   modules: [
     {
       name: "core",
       desc: "Built-in types and interfaces - always available, no import needed",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "Option[T]", desc: "Some(value) | None - no null" },
         { sig: "Result[T, E]", desc: "Ok(value) | Err(error) - no exceptions" },
@@ -79,7 +79,7 @@ var stdlibData = {
     {
       name: "collections",
       desc: "Vec, Map, Set, LinkedList, Queue, Stack, VecDeque, BTreeMap, BTreeSet, Slice",
-      wasm: "★",
+      wasm: "*",
       functions: [
         // Vec
         { sig: "Vec.new[T]() -> Vec[T]", desc: "Create empty vector" },
@@ -174,7 +174,7 @@ var stdlibData = {
     {
       name: "string",
       desc: "UTF-8 string operations",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "string.str_len(s: Str) -> Int", desc: "Character count" },
         { sig: "string.str_concat(a: Str, b: Str) -> Str", desc: "Concatenate two strings" },
@@ -205,54 +205,54 @@ var stdlibData = {
     {
       name: "io",
       desc: "Console output, files, process, buffered I/O",
-      wasm: "⚠",
+      wasm: "[WARN]",
       functions: [
-        { sig: "io.print(msg: Str)", desc: "Print to stdout", wasm: "★" },
-        { sig: "io.println(msg: Str)", desc: "Print line to stdout", wasm: "★" },
-        { sig: "io.print_line(s: Str)", desc: "Print line (alias)", wasm: "★" },
-        { sig: "io.read_line() -> Str", desc: "Read line from stdin", wasm: "✗" },
-        { sig: "io.read_int() -> Result[Int, Str]", desc: "Read integer from stdin", wasm: "✗" },
-        { sig: "io.read_float() -> Result[Float64, Str]", desc: "Read float from stdin", wasm: "✗" },
-        { sig: "io.stdin() -> Int", desc: "Get stdin file descriptor", wasm: "✗" },
-        { sig: "io.stdout() -> Int", desc: "Get stdout file descriptor", wasm: "★" },
-        { sig: "io.stderr() -> Int", desc: "Get stderr file descriptor", wasm: "★" },
-        { sig: "io.read_file(path: Str) -> Result[Str, IOError]", desc: "Read entire file", wasm: "✗" },
-        { sig: "io.write_file(path: Str, c: Str) -> Result[Unit, IOError]", desc: "Write file", wasm: "✗" },
-        { sig: "io.append_file(path: Str, c: Str) -> Result[Unit, IOError]", desc: "Append to file", wasm: "✗" },
-        { sig: "io.file_exists(path: Str) -> Bool", desc: "Check if file exists", wasm: "✗" },
-        { sig: "io.is_dir(path: Str) -> Bool", desc: "Check if path is directory", wasm: "✗" },
-        { sig: "io.create_dir(path: Str) -> Result[Unit, IOError]", desc: "Create directory", wasm: "✗" },
-        { sig: "io.list_dir(path: Str) -> Result[Vec[Str], IOError]", desc: "List directory contents", wasm: "✗" },
-        { sig: "io.remove_file(path: Str) -> Result[Unit, IOError]", desc: "Delete file", wasm: "✗" },
-        { sig: "io.copy_file(src: Str, dst: Str) -> Result[Unit, IOError]", desc: "Copy file", wasm: "✗" },
-        { sig: "io.rename(src: Str, dst: Str) -> Result[Unit, IOError]", desc: "Rename/move file", wasm: "✗" },
-        { sig: "io.metadata(path: Str) -> Result[Metadata, IOError]", desc: "Get file metadata", wasm: "✗" },
-        { sig: "io.set_permissions(p: Str, perm: Int) -> Result[Unit, IOError]", desc: "Set file permissions", wasm: "✗" },
-        { sig: "io.exit(code: Int)", desc: "Exit process", wasm: "✗" },
-        { sig: "io.args() -> Vec[Str]", desc: "Command-line arguments", wasm: "✗" },
-        { sig: "io.env_var(name: Str) -> Option[Str]", desc: "Get environment variable", wasm: "⚠" },
-        { sig: "io.time_now() -> Int", desc: "Current time as integer", wasm: "⚠" },
-        { sig: "io.sleep(ms: Int)", desc: "Sleep milliseconds", wasm: "✗" },
-        { sig: "io.join_paths(base: Str, child: Str) -> Str", desc: "Join path components", wasm: "★" },
-        { sig: "io.parent_path(path: Str) -> Option[Str]", desc: "Parent directory path", wasm: "★" },
-        { sig: "io.file_name(path: Str) -> Option[Str]", desc: "File name from path", wasm: "★" },
-        { sig: "io.extension(path: Str) -> Option[Str]", desc: "File extension", wasm: "★" },
-        { sig: "io.is_absolute(path: Str) -> Bool", desc: "Check if absolute path", wasm: "★" },
-        { sig: "BufReader.new(reader: Int) -> BufReader", desc: "Create buffered reader", wasm: "★" },
-        { sig: "BufReader.read_line(self, buf: &mut Str) -> Result[Int, IOError]", desc: "Read buffered line", wasm: "★" },
-        { sig: "BufReader.lines(self) -> Vec[Str]", desc: "Read all lines", wasm: "★" },
-        { sig: "BufWriter.new(writer: Int) -> BufWriter", desc: "Create buffered writer", wasm: "★" },
-        { sig: "Cursor.new(data: Vec[UInt8]) -> Cursor", desc: "Create in-memory cursor", wasm: "★" },
-        { sig: "Cursor.into_inner(self) -> Vec[UInt8]", desc: "Extract inner data", wasm: "★" },
-        { sig: "interface Read", desc: "read, read_to_end, read_to_string, read_exact", wasm: "★" },
-        { sig: "interface Write", desc: "write, write_all, flush", wasm: "★" },
-        { sig: "interface Seek", desc: "seek, stream_position", wasm: "★" },
+        { sig: "io.print(msg: Str)", desc: "Print to stdout", wasm: "*" },
+        { sig: "io.println(msg: Str)", desc: "Print line to stdout", wasm: "*" },
+        { sig: "io.print_line(s: Str)", desc: "Print line (alias)", wasm: "*" },
+        { sig: "io.read_line() -> Str", desc: "Read line from stdin", wasm: "[FAIL]" },
+        { sig: "io.read_int() -> Result[Int, Str]", desc: "Read integer from stdin", wasm: "[FAIL]" },
+        { sig: "io.read_float() -> Result[Float64, Str]", desc: "Read float from stdin", wasm: "[FAIL]" },
+        { sig: "io.stdin() -> Int", desc: "Get stdin file descriptor", wasm: "[FAIL]" },
+        { sig: "io.stdout() -> Int", desc: "Get stdout file descriptor", wasm: "*" },
+        { sig: "io.stderr() -> Int", desc: "Get stderr file descriptor", wasm: "*" },
+        { sig: "io.read_file(path: Str) -> Result[Str, IOError]", desc: "Read entire file", wasm: "[FAIL]" },
+        { sig: "io.write_file(path: Str, c: Str) -> Result[Unit, IOError]", desc: "Write file", wasm: "[FAIL]" },
+        { sig: "io.append_file(path: Str, c: Str) -> Result[Unit, IOError]", desc: "Append to file", wasm: "[FAIL]" },
+        { sig: "io.file_exists(path: Str) -> Bool", desc: "Check if file exists", wasm: "[FAIL]" },
+        { sig: "io.is_dir(path: Str) -> Bool", desc: "Check if path is directory", wasm: "[FAIL]" },
+        { sig: "io.create_dir(path: Str) -> Result[Unit, IOError]", desc: "Create directory", wasm: "[FAIL]" },
+        { sig: "io.list_dir(path: Str) -> Result[Vec[Str], IOError]", desc: "List directory contents", wasm: "[FAIL]" },
+        { sig: "io.remove_file(path: Str) -> Result[Unit, IOError]", desc: "Delete file", wasm: "[FAIL]" },
+        { sig: "io.copy_file(src: Str, dst: Str) -> Result[Unit, IOError]", desc: "Copy file", wasm: "[FAIL]" },
+        { sig: "io.rename(src: Str, dst: Str) -> Result[Unit, IOError]", desc: "Rename/move file", wasm: "[FAIL]" },
+        { sig: "io.metadata(path: Str) -> Result[Metadata, IOError]", desc: "Get file metadata", wasm: "[FAIL]" },
+        { sig: "io.set_permissions(p: Str, perm: Int) -> Result[Unit, IOError]", desc: "Set file permissions", wasm: "[FAIL]" },
+        { sig: "io.exit(code: Int)", desc: "Exit process", wasm: "[FAIL]" },
+        { sig: "io.args() -> Vec[Str]", desc: "Command-line arguments", wasm: "[FAIL]" },
+        { sig: "io.env_var(name: Str) -> Option[Str]", desc: "Get environment variable", wasm: "[WARN]" },
+        { sig: "io.time_now() -> Int", desc: "Current time as integer", wasm: "[WARN]" },
+        { sig: "io.sleep(ms: Int)", desc: "Sleep milliseconds", wasm: "[FAIL]" },
+        { sig: "io.join_paths(base: Str, child: Str) -> Str", desc: "Join path components", wasm: "*" },
+        { sig: "io.parent_path(path: Str) -> Option[Str]", desc: "Parent directory path", wasm: "*" },
+        { sig: "io.file_name(path: Str) -> Option[Str]", desc: "File name from path", wasm: "*" },
+        { sig: "io.extension(path: Str) -> Option[Str]", desc: "File extension", wasm: "*" },
+        { sig: "io.is_absolute(path: Str) -> Bool", desc: "Check if absolute path", wasm: "*" },
+        { sig: "BufReader.new(reader: Int) -> BufReader", desc: "Create buffered reader", wasm: "*" },
+        { sig: "BufReader.read_line(self, buf: &mut Str) -> Result[Int, IOError]", desc: "Read buffered line", wasm: "*" },
+        { sig: "BufReader.lines(self) -> Vec[Str]", desc: "Read all lines", wasm: "*" },
+        { sig: "BufWriter.new(writer: Int) -> BufWriter", desc: "Create buffered writer", wasm: "*" },
+        { sig: "Cursor.new(data: Vec[UInt8]) -> Cursor", desc: "Create in-memory cursor", wasm: "*" },
+        { sig: "Cursor.into_inner(self) -> Vec[UInt8]", desc: "Extract inner data", wasm: "*" },
+        { sig: "interface Read", desc: "read, read_to_end, read_to_string, read_exact", wasm: "*" },
+        { sig: "interface Write", desc: "write, write_all, flush", wasm: "*" },
+        { sig: "interface Seek", desc: "seek, stream_position", wasm: "*" },
       ]
     },
     {
       name: "fmt",
       desc: "String formatting with {} placeholders and Display interface",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "interface Display", desc: "fn fmt(self, f: &mut Formatter) -> Result[Unit, FmtError]" },
         { sig: "Formatter.new() -> Formatter", desc: "Create formatter" },
@@ -275,7 +275,7 @@ var stdlibData = {
     {
       name: "math",
       desc: "Math functions, constants, and pure-XIOM fallbacks (*_pure)",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "math.PI: Float64", desc: "pi = 3.141592653589793" },
         { sig: "math.E: Float64", desc: "e = 2.718281828459045" },
@@ -321,7 +321,7 @@ var stdlibData = {
     {
       name: "num",
       desc: "Numeric traits, integer utilities, checked/wrapping arithmetic",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "interface Neg", desc: "fn neg(self) -> Self" },
         { sig: "interface Rem", desc: "fn rem(self, other: Self) -> Self" },
@@ -377,7 +377,7 @@ var stdlibData = {
     {
       name: "cmp",
       desc: "Comparison, Ordering enum, min/max/clamp",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "Ordering", desc: "enum { Less, Equal, Greater }" },
         { sig: "Reverse[T]", desc: "Wraps value for reverse ordering" },
@@ -403,7 +403,7 @@ var stdlibData = {
     {
       name: "hash",
       desc: "Hashing interfaces, DefaultHasher, and hash utilities",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "interface Hash", desc: "fn hash(self, hasher: Hasher)" },
         { sig: "interface Hasher", desc: "write, write_int, write_str, finish" },
@@ -425,7 +425,7 @@ var stdlibData = {
     {
       name: "char",
       desc: "Character classification and conversion (32-bit Unicode)",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "char.is_alphabetic(c: Char) -> Bool", desc: "Check if letter" },
         { sig: "char.is_alphanumeric(c: Char) -> Bool", desc: "Check if letter or digit" },
@@ -448,7 +448,7 @@ var stdlibData = {
     {
       name: "convert",
       desc: "Type conversions - CRITICAL: XIOM has NO implicit conversions",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "interface From[T]", desc: "fn from(value: T) -> Self" },
         { sig: "interface Into[T]", desc: "fn into(self) -> T" },
@@ -467,7 +467,7 @@ var stdlibData = {
     {
       name: "iter",
       desc: "Iterators, ranges, and adapter chains (map, filter, zip, fold, etc.)",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "Range", desc: "{ start: Int; end: Int }" },
         { sig: "RangeInclusive", desc: "{ start: Int; end: Int; current: Int; done: Bool }" },
@@ -508,7 +508,7 @@ var stdlibData = {
     {
       name: "array",
       desc: "Fixed-size array [N]T operations",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "array.len[T,const N](arr: &[N]T) -> Int", desc: "Array length (compile-time const)" },
         { sig: "array.is_empty[T,const N](arr: &[N]T) -> Bool", desc: "Check if empty" },
@@ -537,7 +537,7 @@ var stdlibData = {
     {
       name: "mem",
       desc: "Memory utilities: swap, replace, take, drop, ManuallyDrop",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "ManuallyDrop[T]", desc: "{ value: T } - suppresses Drop" },
         { sig: "mem.swap[T](a: &mut T, b: &mut T)", desc: "Swap two values" },
@@ -560,7 +560,7 @@ var stdlibData = {
     {
       name: "alloc",
       desc: "Memory allocation: Layout, Allocator interface, global alloc/free",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "Layout", desc: "{ size: Int; align: Int }" },
         { sig: "AllocError", desc: "{ message: Str }" },
@@ -580,7 +580,7 @@ var stdlibData = {
     {
       name: "error",
       desc: "Error trait hierarchy, error chaining, and backtraces",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "interface Error", desc: "source, description, cause" },
         { sig: "ErrorChain", desc: "{ errors: Vec[Str] }" },
@@ -596,7 +596,7 @@ var stdlibData = {
     {
       name: "path",
       desc: "Path manipulation with Path and PathBuf",
-      wasm: "★",
+      wasm: "*",
       functions: [
         { sig: "Path", desc: "{ inner: Str } - immutable path" },
         { sig: "PathBuf", desc: "{ inner: Str } - mutable path buffer" },
@@ -632,86 +632,86 @@ var stdlibData = {
     {
       name: "time",
       desc: "Duration, Instant, SystemTime, DateTime - limited in WASM",
-      wasm: "⚠",
+      wasm: "[WARN]",
       functions: [
         { sig: "Duration", desc: "{ secs: Int; nanos: Int }" },
         { sig: "Instant", desc: "{ t: Int }" },
         { sig: "SystemTime", desc: "{ secs: Int; nanos: Int }" },
         { sig: "DateTime", desc: "{ year: Int; month: Int; day: Int; hour: Int; minute: Int; second: Int; weekday: Int }" },
-        { sig: "Duration.new(secs: Int, nanos: Int) -> Duration", desc: "Create duration", wasm: "★" },
-        { sig: "Duration.from_secs(s: Int) -> Duration", desc: "From seconds", wasm: "★" },
-        { sig: "Duration.from_secs_f64(s: Float64) -> Duration", desc: "From fractional seconds", wasm: "★" },
-        { sig: "Duration.from_millis(ms: Int) -> Duration", desc: "From milliseconds", wasm: "★" },
-        { sig: "Duration.from_micros(us: Int) -> Duration", desc: "From microseconds", wasm: "★" },
-        { sig: "Duration.from_nanos(ns: Int) -> Duration", desc: "From nanoseconds", wasm: "★" },
-        { sig: "Duration.as_secs(self) -> Int", desc: "To seconds", wasm: "★" },
-        { sig: "Duration.as_millis(self) -> Int", desc: "To milliseconds", wasm: "★" },
-        { sig: "Duration.as_micros(self) -> Int", desc: "To microseconds", wasm: "★" },
-        { sig: "Duration.as_nanos(self) -> Int", desc: "To nanoseconds", wasm: "★" },
-        { sig: "Duration.as_secs_f64(self) -> Float64", desc: "To fractional seconds", wasm: "★" },
-        { sig: "Duration.subsec_nanos(self) -> Int", desc: "Sub-second nanos part", wasm: "★" },
-        { sig: "Duration.add(self, other: Duration) -> Duration", desc: "Add durations", wasm: "★" },
-        { sig: "Duration.sub(self, other: Duration) -> Duration", desc: "Subtract durations", wasm: "★" },
-        { sig: "Duration.mul(self, factor: Int) -> Duration", desc: "Multiply by scalar", wasm: "★" },
-        { sig: "Duration.div(self, divisor: Int) -> Duration", desc: "Divide by scalar", wasm: "★" },
-        { sig: "Duration.checked_add(self, o: Duration) -> Option[Duration]", desc: "Checked add", wasm: "★" },
-        { sig: "Duration.checked_sub(self, o: Duration) -> Option[Duration]", desc: "Checked subtract", wasm: "★" },
-        { sig: "Instant.now() -> Instant", desc: "Current instant", wasm: "⚠" },
-        { sig: "Instant.elapsed(self) -> Duration", desc: "Time since instant", wasm: "⚠" },
-        { sig: "Instant.duration_since(self, earlier: Instant) -> Duration", desc: "Duration between instants", wasm: "★" },
-        { sig: "Instant.add(self, d: Duration) -> Instant", desc: "Add duration", wasm: "★" },
-        { sig: "Instant.sub(self, d: Duration) -> Instant", desc: "Subtract duration", wasm: "★" },
-        { sig: "SystemTime.now() -> SystemTime", desc: "Current system time", wasm: "✗" },
-        { sig: "SystemTime.unix_epoch() -> SystemTime", desc: "Unix epoch (1970-01-01)", wasm: "★" },
-        { sig: "SystemTime.duration_since(self, earlier: SystemTime) -> Result[Duration,Str]", desc: "Duration since", wasm: "★" },
-        { sig: "SystemTime.secs_since_epoch(self) -> Int", desc: "Seconds since epoch", wasm: "★" },
-        { sig: "DateTime.now() -> DateTime", desc: "Current date/time", wasm: "⚠" },
-        { sig: "DateTime.year(self) -> Int", desc: "Year component", wasm: "★" },
-        { sig: "DateTime.month(self) -> Int", desc: "Month (1-12)", wasm: "★" },
-        { sig: "DateTime.day(self) -> Int", desc: "Day of month", wasm: "★" },
-        { sig: "DateTime.hour(self) -> Int", desc: "Hour (0-23)", wasm: "★" },
-        { sig: "DateTime.minute(self) -> Int", desc: "Minute (0-59)", wasm: "★" },
-        { sig: "DateTime.second(self) -> Int", desc: "Second (0-59)", wasm: "★" },
-        { sig: "DateTime.weekday(self) -> Int", desc: "Day of week (0=Sun)", wasm: "★" },
-        { sig: "time.utc_now() -> DateTime", desc: "Current UTC date/time", wasm: "⚠" },
-        { sig: "time.local_now() -> DateTime", desc: "Current local date/time", wasm: "⚠" },
-        { sig: "time.sleep(dur: Duration)", desc: "Sleep for duration", wasm: "✗" },
-        { sig: "time.sleep_ms(ms: Int)", desc: "Sleep milliseconds", wasm: "✗" },
-        { sig: "time.sleep_until(instant: Instant)", desc: "Sleep until instant", wasm: "✗" },
+        { sig: "Duration.new(secs: Int, nanos: Int) -> Duration", desc: "Create duration", wasm: "*" },
+        { sig: "Duration.from_secs(s: Int) -> Duration", desc: "From seconds", wasm: "*" },
+        { sig: "Duration.from_secs_f64(s: Float64) -> Duration", desc: "From fractional seconds", wasm: "*" },
+        { sig: "Duration.from_millis(ms: Int) -> Duration", desc: "From milliseconds", wasm: "*" },
+        { sig: "Duration.from_micros(us: Int) -> Duration", desc: "From microseconds", wasm: "*" },
+        { sig: "Duration.from_nanos(ns: Int) -> Duration", desc: "From nanoseconds", wasm: "*" },
+        { sig: "Duration.as_secs(self) -> Int", desc: "To seconds", wasm: "*" },
+        { sig: "Duration.as_millis(self) -> Int", desc: "To milliseconds", wasm: "*" },
+        { sig: "Duration.as_micros(self) -> Int", desc: "To microseconds", wasm: "*" },
+        { sig: "Duration.as_nanos(self) -> Int", desc: "To nanoseconds", wasm: "*" },
+        { sig: "Duration.as_secs_f64(self) -> Float64", desc: "To fractional seconds", wasm: "*" },
+        { sig: "Duration.subsec_nanos(self) -> Int", desc: "Sub-second nanos part", wasm: "*" },
+        { sig: "Duration.add(self, other: Duration) -> Duration", desc: "Add durations", wasm: "*" },
+        { sig: "Duration.sub(self, other: Duration) -> Duration", desc: "Subtract durations", wasm: "*" },
+        { sig: "Duration.mul(self, factor: Int) -> Duration", desc: "Multiply by scalar", wasm: "*" },
+        { sig: "Duration.div(self, divisor: Int) -> Duration", desc: "Divide by scalar", wasm: "*" },
+        { sig: "Duration.checked_add(self, o: Duration) -> Option[Duration]", desc: "Checked add", wasm: "*" },
+        { sig: "Duration.checked_sub(self, o: Duration) -> Option[Duration]", desc: "Checked subtract", wasm: "*" },
+        { sig: "Instant.now() -> Instant", desc: "Current instant", wasm: "[WARN]" },
+        { sig: "Instant.elapsed(self) -> Duration", desc: "Time since instant", wasm: "[WARN]" },
+        { sig: "Instant.duration_since(self, earlier: Instant) -> Duration", desc: "Duration between instants", wasm: "*" },
+        { sig: "Instant.add(self, d: Duration) -> Instant", desc: "Add duration", wasm: "*" },
+        { sig: "Instant.sub(self, d: Duration) -> Instant", desc: "Subtract duration", wasm: "*" },
+        { sig: "SystemTime.now() -> SystemTime", desc: "Current system time", wasm: "[FAIL]" },
+        { sig: "SystemTime.unix_epoch() -> SystemTime", desc: "Unix epoch (1970-01-01)", wasm: "*" },
+        { sig: "SystemTime.duration_since(self, earlier: SystemTime) -> Result[Duration,Str]", desc: "Duration since", wasm: "*" },
+        { sig: "SystemTime.secs_since_epoch(self) -> Int", desc: "Seconds since epoch", wasm: "*" },
+        { sig: "DateTime.now() -> DateTime", desc: "Current date/time", wasm: "[WARN]" },
+        { sig: "DateTime.year(self) -> Int", desc: "Year component", wasm: "*" },
+        { sig: "DateTime.month(self) -> Int", desc: "Month (1-12)", wasm: "*" },
+        { sig: "DateTime.day(self) -> Int", desc: "Day of month", wasm: "*" },
+        { sig: "DateTime.hour(self) -> Int", desc: "Hour (0-23)", wasm: "*" },
+        { sig: "DateTime.minute(self) -> Int", desc: "Minute (0-59)", wasm: "*" },
+        { sig: "DateTime.second(self) -> Int", desc: "Second (0-59)", wasm: "*" },
+        { sig: "DateTime.weekday(self) -> Int", desc: "Day of week (0=Sun)", wasm: "*" },
+        { sig: "time.utc_now() -> DateTime", desc: "Current UTC date/time", wasm: "[WARN]" },
+        { sig: "time.local_now() -> DateTime", desc: "Current local date/time", wasm: "[WARN]" },
+        { sig: "time.sleep(dur: Duration)", desc: "Sleep for duration", wasm: "[FAIL]" },
+        { sig: "time.sleep_ms(ms: Int)", desc: "Sleep milliseconds", wasm: "[FAIL]" },
+        { sig: "time.sleep_until(instant: Instant)", desc: "Sleep until instant", wasm: "[FAIL]" },
       ]
     },
     {
       name: "env",
       desc: "Environment variables, directories, and platform constants",
-      wasm: "⚠",
+      wasm: "[WARN]",
       functions: [
-        { sig: "env.OS: Str", desc: "OS name ('windows')", wasm: "★" },
-        { sig: "env.ARCH: Str", desc: "Architecture ('x86_64')", wasm: "★" },
-        { sig: "env.FAMILY: Str", desc: "OS family ('unix' or 'windows')", wasm: "★" },
-        { sig: "env.var(name: Str) -> Result[Str, Str]", desc: "Get env variable", wasm: "⚠" },
-        { sig: "env.var_opt(name: Str) -> Option[Str]", desc: "Get env variable (optional)", wasm: "⚠" },
-        { sig: "env.set_var(name: Str, value: Str)", desc: "Set env variable", wasm: "✗" },
-        { sig: "env.remove_var(name: Str)", desc: "Remove env variable", wasm: "✗" },
-        { sig: "env.vars() -> Vec[(Str, Str)]", desc: "All env variables", wasm: "✗" },
-        { sig: "env.args() -> Vec[Str]", desc: "Command-line arguments", wasm: "✗" },
-        { sig: "env.args_os() -> Vec[Str]", desc: "Raw OS arguments", wasm: "✗" },
-        { sig: "env.current_exe() -> Result[Str, Str]", desc: "Current executable path", wasm: "✗" },
-        { sig: "env.current_dir() -> Result[Str, Str]", desc: "Current working directory", wasm: "⚠" },
-        { sig: "env.set_current_dir(path: Str) -> Result[Unit, Str]", desc: "Change working directory", wasm: "✗" },
-        { sig: "env.temp_dir() -> Str", desc: "Temporary directory", wasm: "★" },
-        { sig: "env.home_dir() -> Option[Str]", desc: "Home directory", wasm: "⚠" },
-        { sig: "env.data_dir() -> Option[Str]", desc: "Data directory", wasm: "⚠" },
-        { sig: "env.cache_dir() -> Option[Str]", desc: "Cache directory", wasm: "⚠" },
-        { sig: "env.config_dir() -> Option[Str]", desc: "Config directory", wasm: "⚠" },
-        { sig: "env.executable_dir() -> Option[Str]", desc: "Executable directory", wasm: "⚠" },
-        { sig: "env.join_paths(a: Str, b: Str) -> Str", desc: "Join path components", wasm: "★" },
-        { sig: "env.path_separator() -> Str", desc: "Platform path separator", wasm: "★" },
+        { sig: "env.OS: Str", desc: "OS name ('windows')", wasm: "*" },
+        { sig: "env.ARCH: Str", desc: "Architecture ('x86_64')", wasm: "*" },
+        { sig: "env.FAMILY: Str", desc: "OS family ('unix' or 'windows')", wasm: "*" },
+        { sig: "env.var(name: Str) -> Result[Str, Str]", desc: "Get env variable", wasm: "[WARN]" },
+        { sig: "env.var_opt(name: Str) -> Option[Str]", desc: "Get env variable (optional)", wasm: "[WARN]" },
+        { sig: "env.set_var(name: Str, value: Str)", desc: "Set env variable", wasm: "[FAIL]" },
+        { sig: "env.remove_var(name: Str)", desc: "Remove env variable", wasm: "[FAIL]" },
+        { sig: "env.vars() -> Vec[(Str, Str)]", desc: "All env variables", wasm: "[FAIL]" },
+        { sig: "env.args() -> Vec[Str]", desc: "Command-line arguments", wasm: "[FAIL]" },
+        { sig: "env.args_os() -> Vec[Str]", desc: "Raw OS arguments", wasm: "[FAIL]" },
+        { sig: "env.current_exe() -> Result[Str, Str]", desc: "Current executable path", wasm: "[FAIL]" },
+        { sig: "env.current_dir() -> Result[Str, Str]", desc: "Current working directory", wasm: "[WARN]" },
+        { sig: "env.set_current_dir(path: Str) -> Result[Unit, Str]", desc: "Change working directory", wasm: "[FAIL]" },
+        { sig: "env.temp_dir() -> Str", desc: "Temporary directory", wasm: "*" },
+        { sig: "env.home_dir() -> Option[Str]", desc: "Home directory", wasm: "[WARN]" },
+        { sig: "env.data_dir() -> Option[Str]", desc: "Data directory", wasm: "[WARN]" },
+        { sig: "env.cache_dir() -> Option[Str]", desc: "Cache directory", wasm: "[WARN]" },
+        { sig: "env.config_dir() -> Option[Str]", desc: "Config directory", wasm: "[WARN]" },
+        { sig: "env.executable_dir() -> Option[Str]", desc: "Executable directory", wasm: "[WARN]" },
+        { sig: "env.join_paths(a: Str, b: Str) -> Str", desc: "Join path components", wasm: "*" },
+        { sig: "env.path_separator() -> Str", desc: "Platform path separator", wasm: "*" },
       ]
     },
     {
       name: "os",
       desc: "Platform info, process management, filesystem walk, pipes, signals",
-      wasm: "✗",
+      wasm: "[FAIL]",
       functions: [
         { sig: "ChildProcess", desc: "{ pid: Int; stdin: Int; stdout: Int; stderr: Int }" },
         { sig: "FileWatcher", desc: "{ path: Str; recursive: Bool }" },
@@ -757,7 +757,7 @@ var stdlibData = {
   ]
 };
 
-// ── Rendering ──
+// -- Rendering --
 function showStdlibRef() {
   var container = document.querySelector('.syntax-content');
   var headerTitle = document.querySelector('.syntax-header h3');
@@ -765,14 +765,14 @@ function showStdlibRef() {
   headerTitle.textContent = 'Standard Library';
 
   var html = '<input type="text" class="concept-search" placeholder="Search all 20 modules..." oninput="filterStdlib(this.value)">';
-  html += '<div class="stdlib-wasm-legend"><span class="wasm-badge wasm-full">★ WASM</span> <span class="wasm-badge wasm-partial">⚠ Limited</span> <span class="wasm-badge wasm-none">✗ None</span></div>';
+  html += '<div class="stdlib-wasm-legend"><span class="wasm-badge wasm-full">* WASM</span> <span class="wasm-badge wasm-partial">[WARN] Limited</span> <span class="wasm-badge wasm-none">[FAIL] None</span></div>';
 
   stdlibData.modules.forEach(function(mod) {
     html += '<div class="stdlib-module" data-stdlib-module="' + mod.name + '">';
     html += '<div class="stdlib-module-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">';
-    html += '<span class="stdlib-module-arrow">▼</span>';
+    html += '<span class="stdlib-module-arrow">v</span>';
     html += '<span class="stdlib-module-name">' + mod.name + '</span>';
-    html += '<span class="wasm-badge wasm-' + (mod.wasm === '★' ? 'full' : mod.wasm === '⚠' ? 'partial' : 'none') + '">' + mod.wasm + '</span>';
+    html += '<span class="wasm-badge wasm-' + (mod.wasm === '*' ? 'full' : mod.wasm === '[WARN]' ? 'partial' : 'none') + '">' + mod.wasm + '</span>';
     html += '<span class="stdlib-module-desc">' + mod.desc + '</span>';
     html += '</div>';
     html += '<div class="stdlib-module-fns">';
@@ -780,7 +780,7 @@ function showStdlibRef() {
       var w = fn.wasm || mod.wasm;
       html += '<div class="stdlib-fn" data-stdlib-search="' + mod.name + ' ' + fn.sig.toLowerCase() + ' ' + fn.desc.toLowerCase() + '">';
       html += '<code>' + esc(fn.sig) + '</code>';
-      html += '<span class="wasm-badge wasm-' + (w === '★' ? 'full' : w === '⚠' ? 'partial' : 'none') + '" title="WASM: ' + (w === '★' ? 'Full' : w === '⚠' ? 'Limited' : 'Unavailable') + '">' + w + '</span>';
+      html += '<span class="wasm-badge wasm-' + (w === '*' ? 'full' : w === '[WARN]' ? 'partial' : 'none') + '" title="WASM: ' + (w === '*' ? 'Full' : w === '[WARN]' ? 'Limited' : 'Unavailable') + '">' + w + '</span>';
       html += '<span class="stdlib-fn-desc">' + fn.desc + '</span>';
       html += '</div>';
     });
@@ -806,7 +806,7 @@ function hideStdlibRef() {
   if (t) t.textContent = 'Concepts';
 }
 
-// ── Persistent Panel Rendering ──
+// -- Persistent Panel Rendering --
 function showStdlibPanel() {
   var container = document.getElementById('stdlibPanelContent');
 
@@ -834,7 +834,7 @@ function showStdlibPanel() {
     html += '<div class="stdlib-mod-card" data-stdlib-module="' + mod.name + '">';
     html += '<div class="stdlib-mod-card-header" onclick="this.parentElement.classList.toggle(\'open\')">';
     html += '<div class="stdlib-mod-card-left">';
-    html += '<span class="stdlib-mod-card-arrow">▸</span>';
+    html += '<span class="stdlib-mod-card-arrow">></span>';
     html += '<span class="stdlib-mod-card-name">' + mod.name + '</span>';
     html += '<span class="stdlib-mod-card-badge">' + totalFns + '</span>';
     html += '</div>';
