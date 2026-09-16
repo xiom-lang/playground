@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+     SPDX-License-Identifier: MIT OR Apache-2.0 -->
 # XIOM Playground -- BEGINNER-FIRST AUDIT v3
 
 **Date:** 2026-07-23  

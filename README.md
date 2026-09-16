@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+     SPDX-License-Identifier: MIT OR Apache-2.0 -->
 # XIOM Playground v0.58.0
 
 Browser-based XIOM code editor and compiler. Write `.xi` code, compile to LLVM IR, see diagnostics -- all in your browser.

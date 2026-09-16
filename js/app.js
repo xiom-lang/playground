@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+// SPDX-License-Identifier: MIT OR Apache-2.0
 var currentEditorTheme = localStorage.getItem('xiom_editor_theme') || 'xiom-dark';
 var currentLessonId = null;
 var currentLessonFile = null;

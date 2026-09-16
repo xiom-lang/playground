@@ -1,0 +1,15 @@
+XIOM Playground
+Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+
+This software is developed as part of the XIOM project
+(https://github.com/xiom-lang).
+
+Bundled components:
+
+- xiom_wasm_bg.wasm is a WebAssembly build of the XIOM compiler
+  (https://github.com/xiom-lang/xiom), licensed under MIT OR Apache-2.0.
+
+Third-party components loaded at runtime (not bundled):
+
+- Monaco Editor (https://github.com/microsoft/monaco-editor),
+  MIT License, served via the jsDelivr CDN.

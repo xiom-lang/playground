@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+// SPDX-License-Identifier: MIT OR Apache-2.0
 async function compile() {
   var screen = document.getElementById('lessonsScreen');
   if (!screen || screen.classList.contains('hidden')) return;

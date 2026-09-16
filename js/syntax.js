@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+// SPDX-License-Identifier: MIT OR Apache-2.0
 var concepts = [
   // -- First Steps --
   { id: "program", name: "What is a Program?", icon: "\uD83D\uDCDD", section: "first-steps", metaphor: "A program is like a recipe. You write steps, the computer follows them in order.", example: "fn main() {\n  io.println(\"Step 1: Hello!\");\n  io.println(\"Step 2: Goodbye!\");\n}", keywords: ["fn", "main", "io.println"], lessonId: "L0-01" },

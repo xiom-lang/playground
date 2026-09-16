@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // ============================================================================
 // XIOM WASM compiler loader (v0.58.0)
 // Loads the in-browser compiler (xiom_wasm.js + xiom_wasm_bg.wasm) built from

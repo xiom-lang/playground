@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """
 XIOM Playground Dev Server v0.49.9
 Serves static files + compile API endpoint with full diagnostics.

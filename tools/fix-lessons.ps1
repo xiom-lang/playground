@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # fix-lessons.ps1 -- Fix lesson duplicates, ID mismatches, and regenerate index.json
 # Usage: .\fix-lessons.ps1 [-DryRun]
 

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+// SPDX-License-Identifier: MIT OR Apache-2.0
  // XIOM Standard Library Reference - v0.58.0
 // * = fully WASM-compatible   [WARN] = limited in WASM   [FAIL] = not available in WASM
 

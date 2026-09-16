@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+// SPDX-License-Identifier: MIT OR Apache-2.0
 /**
  * XIOM Playground Server v0.49.9
  * Multi-stage compilation: tokens, AST, IR, diagnostics, contracts.
