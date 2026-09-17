@@ -21,17 +21,15 @@ user-submitted code, the container is the security boundary.
 
 `docker-compose.yml` runs the server with: non-root user, read-only root
 filesystem, `tmpfs` for `/tmp`, `cap_drop: ALL`,
-`no-new-privileges:true`, memory and pid limits, and an **internal network
-with no egress**. User programs therefore cannot write outside `/tmp`,
-grow without bound, or reach the network. Keep all of these when editing.
+`no-new-privileges:true`, and memory and pid limits. Egress is blocked by
+`scripts/playground-egress-guard.sh` from `xiom-lang/.github`, which inserts
+an idempotent `DOCKER-USER` rule dropping container-initiated NEW
+connections. The guard runs from the deploy script and from cron at boot
+(an internal Docker network cannot publish a port on Docker 28.x, which is
+why the guard exists).
 
-If a Docker version refuses to publish a port on an internal network,
-remove the `networks:` block and block egress instead:
-
-```
-docker network inspect playground_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'
-iptables -I DOCKER-USER -s <subnet> -m conntrack --ctstate NEW -j DROP
-```
+User programs therefore cannot write outside `/tmp`, grow without bound, or
+reach the network. Keep all of these when editing.
 
 ## Deploy / update
 

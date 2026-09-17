@@ -6,9 +6,9 @@
 # 127.0.0.1:3300 (3000 is Gitea on this host).
 #
 # Sandbox: the playground executes user-submitted programs, so the
-# container is locked down. If the internal network blocks the published
-# port on some Docker version, remove `networks:`/`internal: true` and
-# instead block egress with a DOCKER-USER rule (see DEPLOY.md).
+# container is locked down. Egress is blocked by the DOCKER-USER guard rule
+# applied by scripts/playground-egress-guard.sh (an internal network blocks
+# the published port on Docker 28.x, so the guard is the working mechanism).
 
 services:
   playground:
@@ -45,7 +45,3 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-networks:
-  default:
-    internal: true
