@@ -1,61 +1,78 @@
 # Playground -- Deployment Guide
 
-Read this before changing deployment. The playground is a static site with a
-prebuilt WASM module; there is no build step on the server.
+The playground is **not a static site**. `js/compiler.js` compiles and runs
+programs through `server.js` (`/api/compile`, `/api/check`, `/api/ir`,
+`/api/tokens`, `/api/format`, `/api/lessons`), and the in-browser WASM
+compiler only covers pure programs. Because the server executes
+user-submitted code, the container is the security boundary.
 
-## Layout
+## Runtime architecture
 
-| Path | Purpose |
-|---|---|
-| `index.html`, `css/`, `js/`, `lessons/` | the site |
-| `xiom_wasm.js`, `xiom_wasm_bg.wasm`, `xiom_wasm.d.ts` | checked-in WASM compiler |
-| `server.js`, `server.py` | local development servers only - never published |
-| `tools/` | lesson/syntax validation scripts - never published |
+- `server.js`: zero dependencies, Node `http`, listens on
+  `HOST:PORT` (defaults 127.0.0.1:3000; production sets 0.0.0.0:3000
+  inside the container).
+- It spawns the real compiler via `XIOM_BIN` with `XIOM_STDLIB` pointing at
+  the toolchain's `lib/`; `clang` is installed in the image for linking.
+- Production container: `xiom-playground` from `docker-compose.yml`, bound to
+  `127.0.0.1:3300` on the host (Gitea owns 3000). Hestia nginx terminates
+  TLS for `playground.xiom-lang.org` and proxies to that port.
 
-## How deploys work
+## Sandbox (do not weaken)
 
-- `/opt/xiom/bin/playground-deploy.sh` (from `xiom-lang/.github`,
-  `scripts/playground-deploy.sh`) fetches this repository into
-  `/opt/xiom/playground` and publishes the static tree to
-  `/home/lefteris/web/playground.xiom-lang.org/public_html`.
-- It runs hourly from `/etc/cron.d/xiom-deploy` (minute 29). Pushing to
-  `main` goes live within the hour; run the script on the VPS for an
-  immediate publish.
-- The script deletes development-only paths from the docroot
-  (`.git`, `.kilo`, `tools`, `server.js`, `server.py`, `README.md`,
-  `DEPLOY.md`, workspace files).
+`docker-compose.yml` runs the server with: non-root user, read-only root
+filesystem, `tmpfs` for `/tmp`, `cap_drop: ALL`,
+`no-new-privileges:true`, memory and pid limits, and an **internal network
+with no egress**. User programs therefore cannot write outside `/tmp`,
+grow without bound, or reach the network. Keep all of these when editing.
 
-## Verifying
-
-```
-curl -sI https://playground.xiom-lang.org/ | head -3
-curl -s https://playground.xiom-lang.org/ | head -c 200
-```
-
-Then open the page and run a sample lesson. If the page loads but the
-compiler fails, check the browser console for `SharedArrayBuffer` or COOP/COEP
-errors - the vhost then needs these response headers:
+If a Docker version refuses to publish a port on an internal network,
+remove the `networks:` block and block egress instead:
 
 ```
-add_header Cross-Origin-Opener-Policy same-origin;
-add_header Cross-Origin-Embedder-Policy require-corp;
+docker network inspect playground_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'
+iptables -I DOCKER-USER -s <subnet> -m conntrack --ctstate NEW -j DROP
 ```
 
-They are added through a custom Hestia web template on the VPS (this host is
-nginx-only; templates live in
-`/usr/local/hestia/data/templates/web/nginx/php-fpm/`).
+## Deploy / update
+
+On the VPS: `/opt/xiom/bin/playground-deploy.sh` (from `xiom-lang/.github`,
+`scripts/playground-deploy.sh`) fetches this repository into
+`/opt/xiom/playground`, extracts the released Linux toolchain into
+`/opt/xiom/toolchain` on first run, then `docker compose up -d --build`.
+It runs hourly from `/etc/cron.d/xiom-deploy` (minute 29).
+
+Hestia template: `xiom-playground` (nginx-only host, templates live in
+`/usr/local/hestia/data/templates/web/nginx/php-fpm/`) proxying the domain
+to `127.0.0.1:3300`:
+
+```
+v-change-web-domain-tpl lefteris playground.xiom-lang.org xiom-playground
+v-rebuild-web-domain lefteris playground.xiom-lang.org
+nginx -t
+```
+
+## Verification
+
+```
+docker compose -f /opt/xiom/playground/docker-compose.yml ps
+curl -s http://127.0.0.1:3300/api/lessons | head -c 200
+curl -sI https://playground.xiom-lang.org/ | head -5
+curl -s https://playground.xiom-lang.org/api/lessons | head -c 200
+```
+
+Then open the page and run a sample lesson; the Output tab must show real
+program output. If it shows "Server not running.", the container or the
+proxy is down.
 
 ## Updating the WASM module
 
-The WASM build comes from the compiler repository (`crates/xiom-wasm`).
-Wiring it to releases (so the playground tracks each compiler release) is a
-planned follow-up; until then, replacing `xiom_wasm_bg.wasm` plus its `.js`
-glue and committing is the update path.
+The in-browser compiler comes from the compiler repository
+(`crates/xiom-wasm`). Replacing `xiom_wasm_bg.wasm` plus its `.js` glue and
+committing is the update path until the release pipeline ships it.
 
 ## Rules
 
 - Pure ASCII files only.
-- Do not publish `tools/`, dev servers, or editor state; the deploy script
-  strips them, but keep new files out of the published set where possible.
-- The repo may contain a `.kilo/` worktree copy; it is gitignored and
-  stripped during deploy - never edit files there.
+- Never publish `tools/`, dev servers, or editor state; the runtime image
+  copies the whole repository but serves only what `server.js` exposes.
+- `.kilo/` worktrees are development state; never edit files there.

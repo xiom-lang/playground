@@ -1,0 +1,51 @@
+# Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+# SPDX-License-Identifier: MIT OR Apache-2.0
+#
+# XIOM Playground -- Docker Compose (Contabo VPS / Portainer ready).
+# Hestia nginx terminates TLS and proxies playground.xiom-lang.org to
+# 127.0.0.1:3300 (3000 is Gitea on this host).
+#
+# Sandbox: the playground executes user-submitted programs, so the
+# container is locked down. If the internal network blocks the published
+# port on some Docker version, remove `networks:`/`internal: true` and
+# instead block egress with a DOCKER-USER rule (see DEPLOY.md).
+
+services:
+  playground:
+    build: .
+    image: xiom-playground:latest
+    container_name: xiom-playground
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3300:3000"
+    volumes:
+      - /opt/xiom/toolchain:/toolchain:ro
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - XIOM_BIN=/toolchain/bin/xiom
+      - XIOM_STDLIB=/toolchain/lib
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m
+    mem_limit: 768m
+    pids_limit: 256
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/api/lessons', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    internal: true

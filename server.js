@@ -13,8 +13,8 @@ const os = require('os');
 const crypto = require('crypto');
 const CACHE_DIR = path.join(os.tmpdir(), 'xiom_pg_cache');
 
-const PORT = 3000;
-const HOST = 'localhost';
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || 'localhost';
 const SCRIPT_DIR = __dirname;
 const XIOM_BIN = process.env.XIOM_BIN || path.join(SCRIPT_DIR, '..', 'target', 'debug', 'xiom' + (os.platform() === 'win32' ? '.exe' : ''));
 
