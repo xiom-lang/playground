@@ -9,6 +9,7 @@
   "analogy": "The leap year rule is like a VIP club entrance. Rule 1: If you're on the 400 list (divisible by 400), you're in. Rule 2: If you're on the banned-100 list (divisible by 100), you're out — even if you were on the 4 list. Rule 3: If you're on the 4 list, you're in. Otherwise, denied. The order of checking the lists at the door is critical — check the VIP 400 list first!",
   "code_template": "use xiom.io;\n// TODO: Write is_leap_year(year: Int) -> Bool\n// Check year % 400 == 0 first (return true)\n// Then year % 100 == 0 (return false)\n// Then year % 4 == 0 (return true)\n// Otherwise return false\n\nfn main() {\n  // TODO: Test is_leap_year with 2024, 1900, 2000, and 2023\n  // Print whether each is a leap year\n}",
   "solution": "use xiom.io;\nuse xiom.iter;\nfn is_leap_year(year: Int) -> Bool {\n  if year % 400 == 0 {\n  }\n  if year % 100 == 0 {\n  }\n  if year % 4 == 0 {\n  }\n}\nfn main() {\n  let years = [2024, 1900, 2000, 2023];\n  for __i in range(0, years.len()) {\n    let y = years[__i];\n    if is_leap_year(y) {\n      io.println(\"Leap year!\");\n    } else {\n      io.println(\"Not a leap year.\");\n    }\n  }\n}",
+  "expected_output": "Not a leap year.\nNot a leap year.\nNot a leap year.\nNot a leap year.",
   "try_it": "Extend is_leap_year to print WHY each year is or isn't a leap year. For example: '2000 is a leap year because it is divisible by 400.' Add years 2100, 2400, and your birth year to the test set.",
   "concepts": [
     "Boolean logic",

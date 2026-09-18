@@ -9,6 +9,7 @@
   "analogy": "A quiz function is like a Scantron grading machine. Each student bubble sheet (call) passes through the same machine (function) with different answer keys (parameters). The machine doesn't care what subject the test is about — it just compares answers to the key.",
   "code_template": "use xiom.io;\n// TODO: Write ask_question(question: Str, correct: Str, answer: Str) -> Bool\n// Return true if answer matches correct, false otherwise\n\nfn main() {\n  var points = 0;\n  // TODO: Ask 3 questions using ask_question\n  // If correct, add 1 to points\n  // Print final score\n}",
   "solution": "use xiom.io;\nfn ask_question(question: Str, correct: Str, answer: Str) -> Bool {\n  if answer == correct {\n    return true;\n  } else {\n  }\n}\n\nfn main() {\n  var points = 0;\n  if ask_question(\"Capital of France?\", \"Paris\", \"Paris\") {\n    points = points + 1;\n  }\n  if ask_question(\"5 * 6 = ?\", \"30\", \"30\") {\n    points = points + 1;\n  }\n  if ask_question(\"Earth is flat?\", \"no\", \"yes\") {\n    points = points + 1;\n  }\n  io.println(\"Quiz complete!\");\n}",
+  "expected_output": "Quiz complete!",
   "try_it": "Modify `ask_question` to accept two wrong answer options and print them alongside the correct answer, simulating a multiple-choice quiz. Track the score across 5 questions.",
   "concepts": [
     "parameterized logic",

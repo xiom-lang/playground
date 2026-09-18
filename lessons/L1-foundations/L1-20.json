@@ -9,6 +9,7 @@
   "analogy": "Your function toolkit is like a Swiss Army knife — each blade does one job, but together they can handle almost anything. The more functions you build, the more capable your toolkit becomes.",
   "code_template": "use xiom.io;\n// TODO: Write at least THREE different functions:\n// 1. A math function (like 'cube' or 'is_even')\n// 2. A string function (like 'whisper' or 'exclaim')\n// 3. A boolean function (like 'is_warm' or 'can_drive')\n// Call all three from main and print their results\n\nfn main() {\n  // TODO: Call your three functions here\n}",
   "solution": "use xiom.io;\nuse xiom.string;\nfn cube(n: Int) -> Int {\n  return n * n * n;\n}\n\nfn whisper(text: Str) -> Str {\n  return string.str_lower(text);\n}\n\nfn can_drive(age: Int) -> Bool {\n  return age >= 16;\n}\n\nfn main() {\n  io.println(\"Cube of 4 is 64\");\n  io.println(whisper(\"SHHH\"));\n  io.println(\"Can drive at 18? true\");\n}",
+  "expected_output": "Cube of 4 is 64\nshhh\nCan drive at 18? true",
   "try_it": "Add one more function of your OWN design — something you wish existed. A tip calculator? A password strength checker? A number guessing game? Build it using everything you know!",
   "concepts": [
     "function-review",

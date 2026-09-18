@@ -9,6 +9,7 @@
   "analogy": "A function is like a named recipe — write it once, use it many times. You don't rewrite the pancake recipe every morning; you just follow the one you already have.",
   "code_template": "use xiom.io;\n// TODO: define a function called 'greet' that prints a welcome message\n\nfn main() {\n  // TODO: call the greet function\n}",
   "solution": "use xiom.io;\nfn greet() {\n  io.println(\"Hello, friend!\");\n  io.println(\"Welcome to XIOM!\");\n}\n\nfn main() {\n  greet();\n}",
+  "expected_output": "Hello, friend!\nWelcome to XIOM!",
   "try_it": "Add a second function called `say_bye()` that prints a goodbye message. Call both `greet()` and `say_bye()` from main.",
   "concepts": [
     "functions",

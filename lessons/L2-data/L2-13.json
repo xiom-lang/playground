@@ -9,6 +9,7 @@
   "analogy": "An enum for days is like a wall calendar — the days are printed, immutable, and you can't add an eighth day no matter how hard you try.",
   "code_template": "use xiom.io;\n\nenum Day {\n  Monday,\n  Tuesday,\n  Wednesday,\n  Thursday,\n  Friday,\n  Saturday,\n  Sunday,\n}\n\n// TODO: Write 'is_weekend' that returns true for Saturday and Sunday\n\n// TODO: Write 'is_school_day' that returns true for Monday through Friday\n\nfn main() -> Int {\n  // TODO: Test both functions with Monday and Saturday\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum Day {\n  Monday,\n  Tuesday,\n  Wednesday,\n  Thursday,\n  Friday,\n  Saturday,\n  Sunday,\n}\n\nfn is_weekend(day: Day) -> Bool {\n  return match day {\n    Saturday | Sunday => true,\n    Monday | Tuesday | Wednesday | Thursday | Friday => false,\n  };\n}\n\nfn is_school_day(day: Day) -> Bool {\n  return match day {\n    Monday | Tuesday | Wednesday | Thursday | Friday => true,\n    Saturday | Sunday => false,\n  };\n}\n\nfn main() -> Int {\n  io.println(is_weekend(Day.Monday).to_str());\n  io.println(is_weekend(Day.Saturday).to_str());\n  io.println(is_school_day(Day.Sunday).to_str());\n  return 0;\n}\n",
+  "expected_output": "0\n1\n0",
   "try_it": "Write a `mood` function that returns an emoji description for each day: Monday = \"tired\", Friday = \"excited\", Saturday = \"happy\", Sunday = \"relaxed\". Use match to return all seven.",
   "concepts": [
     "enum-as-calendar",

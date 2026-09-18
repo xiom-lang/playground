@@ -9,6 +9,7 @@
   "analogy": "`.insert()` and `.get()` are like a library's card catalog. You file a card under a title (insert key→value). Later, you look up that title (get) and instantly find the book's location. If you file a NEW card under the same title, it replaces the old one — the catalog always has the latest info.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  let prices: Map[Str,Float64] = Map[Str,Float64].new();\n  // TODO: Insert \"apple\" -> 0.99, \"banana\" -> 0.59\n  // TODO: Update \"apple\" to 1.29\n  // TODO: Look up \"apple\" and \"orange\", print both results\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nuse xiom.convert;\nfn main() -> Int {\n  let prices: Map[Str,Float64] = Map[Str,Float64].new();\n  prices.insert(\"apple\", 0.99);\n  prices.insert(\"banana\", 0.59);\n  prices.insert(\"apple\", 1.29);\n\n  match prices.get(\"apple\") {\n    Some(p) => io.println(convert.float_to_string(p));\n    None => io.println(\"not found\");\n  }\n\n  match prices.get(\"orange\") {\n    Some(p) => io.println(convert.float_to_string(p));\n    None => io.println(\"not found\");\n  }\n\n  return 0;\n}\n",
+  "expected_output": "4.60848846269195e+18\nnot found",
   "try_it": "Build a translation dictionary with 5 word pairs. Write a `translate` function that returns the translation or '???' if unknown. Add a `update_or_insert` function that only inserts if the key doesn't exist yet. What happens if you insert different value types (like trying to insert a Str into a Map[Str,Int])?",
   "concepts": [
     "Map",

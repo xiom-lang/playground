@@ -9,6 +9,7 @@
   "analogy": "Parentheses in math are like fences around a group of things � everything inside gets handled first, as a team.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: calculate (10 + 5) * 3 and store in result1\n  // TODO: calculate 10 + 5 * 3 and store in result2\n  // TODO: print both results\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let result1: Int = (10 + 5) * 3;\n  let result2: Int = 10 + 5 * 3;\n  io.println(\"45\");\n  io.println(\"25\");\n}\n",
+  "expected_output": "45\n25",
   "try_it": "Calculate (10 + 5) * 3 versus 10 + 5 * 3 and print both. Then try (20 - 8) / 2 versus 20 - 8 / 2. See how parentheses change everything!",
   "concepts": [
     "parentheses",

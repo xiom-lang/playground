@@ -9,6 +9,7 @@
   "analogy": "A factory function is like a 3D printer — you give it raw materials (parameters) and it prints a finished object (struct instance).",
   "code_template": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write 'create_person' that takes name and age, returns a Person\n\n// TODO: Write 'older_person' that takes two Persons, returns the one with higher age\n\nfn main() -> Int {\n  // TODO: Create two people using create_person, find the older one, print their name\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn create_person(name: Str, age: Int) -> Person {\n  return Person{ name: name, age: age };\n}\n\nfn older_person(a: Person, b: Person) -> Person {\n  if a.age > b.age {\n    return a;\n  }\n  return b;\n}\n\nfn main() -> Int {\n  let p1 = create_person(\"Ivy\", 14);\n  let p2 = create_person(\"Jack\", 19);\n  let older = older_person(p1, p2);\n  io.println(older.name.to_str());\n  return 0;\n}\n",
+  "expected_output": "",
   "try_it": "Write a `create_family` function that takes four names and ages, returns a Person for each, and prints the name of the oldest family member.",
   "concepts": [
     "factory-function",

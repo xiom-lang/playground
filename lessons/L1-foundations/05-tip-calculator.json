@@ -9,6 +9,7 @@
   "analogy": "A tip calculator is like assembling a meal — each function is a separate step (chop vegetables, cook protein, plate the dish), and main is the chef who puts all the steps together.",
   "code_template": "use xiom.io;\n// TODO: write calc_tip(amount, percent) that returns the tip amount\n// TODO: write calc_total(amount, tip) that returns amount + tip\n\nfn main() {\n  // TODO: call calc_tip with a bill of 80 and 15%\n  // TODO: call calc_total with the bill and tip\n  // TODO: print the bill, tip, and total\n}",
   "solution": "use xiom.io;\nfn calc_tip(amount: Int, percent: Int) -> Int {\n  return amount * percent / 100;\n}\n\nfn calc_total(amount: Int, tip: Int) -> Int {\n  return amount + tip;\n}\n\nfn main() {\n  let bill: Int = 80;\n  let tip: Int = calc_tip(bill, 15);\n  let total: Int = calc_total(bill, tip);\n  io.println(\"Bill: \");\n  io.println(\"Bill: $80\");\n  io.println(\"Tip: \");\n  io.println(\"Tip: $12\");\n  io.println(\"Total: \");\n  io.println(\"Total: $92\");\n}",
+  "expected_output": "Bill:\nBill: $80\nTip:\nTip: $12\nTotal:\nTotal: $92",
   "try_it": "Add a `split_bill(total: Int, people: Int) -> Int` function that divides the total by the number of people. Print how much each person owes!",
   "concepts": [
     "functions",

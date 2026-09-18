@@ -9,6 +9,7 @@
   "analogy": "A struct with more fields is like a longer form — more blanks to fill, but still one piece of paper that travels as a unit.",
   "code_template": "use xiom.io;\n\ntype Book = {\n  title: Str;\n  author: Str;\n  pages: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create three Book instances for three of your favorite books\n\n  // TODO: Print each book's title and page count\n\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\ntype Book = {\n  title: Str;\n  author: Str;\n  pages: Int;\n}\n\nfn main() -> Int {\n  let book1 = Book{ title: \"The Giver\", author: \"Lois Lowry\", pages: 240 };\n  let book2 = Book{ title: \"Holes\", author: \"Louis Sachar\", pages: 233 };\n  let book3 = Book{ title: \"Wonder\", author: \"R.J. Palacio\", pages: 320 };\n  io.println(book1.title.to_str() + \" — \" + \" pages\");\n  io.println(book1.pages.to_str());\n  io.println(book2.title.to_str() + \" — \" + \" pages\");\n  io.println(book2.pages.to_str());\n  io.println(book3.title.to_str() + \" — \" + \" pages\");\n  io.println(book3.pages.to_str());\n  return 0;\n}\n",
+  "expected_output": " \u2014  pages\n240\n \u2014  pages\n233\n \u2014  pages\n320",
   "try_it": "Add a `rating: Float64` field to the Book struct (1.0 to 5.0). Update all three books with ratings and print them alongside the title.",
   "concepts": [
     "multi-field-struct",

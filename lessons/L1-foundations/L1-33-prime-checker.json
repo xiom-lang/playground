@@ -9,6 +9,7 @@
   "analogy": "Checking for primes is like trying to split a pizza evenly among different numbers of friends. If you can split it evenly (no remainder) with 2, 3, 4, or more friends, the pizza (number) is composite. If every attempt leaves a messy remainder, the pizza is prime — indivisible by anyone except yourself and one friend.",
   "code_template": "use xiom.io;\n// TODO: Write is_prime(n: Int) -> Bool\n// Return false if n < 2\n// Use a while loop to check if any number from 2 to n-1 divides n evenly\n// Use early return when a divisor is found\n\nfn main() {\n  // TODO: Check if 7, 10, 13, and 21 are prime using is_prime\n  // Print \"Prime!\" or \"Not prime!\" for each\n}",
   "solution": "use xiom.io;\nuse xiom.iter;\nfn is_prime(n: Int) -> Bool {\n  if n < 2 {\n  }\n  var divisor = 2;\n  while divisor < n {\n    if n % divisor == 0 {\n    }\n    divisor = divisor + 1;\n  }\n}\nfn main() {\n  let numbers = [7, 10, 13, 21];\n  for __i in range(0, numbers.len()) {\n    let n = numbers[__i];\n    if is_prime(n) {\n      io.println(\"Prime!\");\n    } else {\n      io.println(\"Not prime!\");\n    }\n  }\n}",
+  "expected_output": "Not prime!\nNot prime!\nNot prime!\nNot prime!",
   "try_it": "Optimize is_prime: instead of checking every number up to n-1, only check up to n/2. Can you figure out why this still works? Test with a large number like 97.",
   "concepts": [
     "modulo operator",

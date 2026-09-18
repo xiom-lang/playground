@@ -9,6 +9,7 @@
   "analogy": "A palindrome check is like folding a piece of paper in half. When you fold 'racecar' down the middle, the 'r' touches 'r', the 'a' touches 'a', and the 'c' touches 'c'. If every pair matches at the fold, the word is a palindrome. A mismatch is like a torn edge — the fold doesn't line up.",
   "code_template": "use xiom.io;\nuse xiom.string;\n// TODO: Write is_palindrome(text: Str) -> Bool\n// Get length with string.str_len(text)\n// Use two pointers (left starting at 0, right at len - 1)\n// Compare characters while left < right\n// Return false on first mismatch, true if loop completes\n\nfn main() {\n  // TODO: Test is_palindrome with \"racecar\" and \"hello\"\n  // Print whether each is a palindrome\n}",
   "solution": "use xiom.io;\nuse xiom.string;\nfn is_palindrome(text: Str) -> Bool {\n  let len = string.str_len(text);\n  if len <= 1 {\n  }\n  var left = 0;\n  var right = len - 1;\n  while left < right {\n    if text[left] != text[right] {\n    }\n    left = left + 1;\n    right = right - 1;\n  }\n}\nfn main() {\n  if is_palindrome(\"racecar\") {\n    io.println(\"racecar is a palindrome!\");\n  }\n  if is_palindrome(\"hello\") {\n    io.println(\"hello is a palindrome!\");\n  } else {\n    io.println(\"hello is NOT a palindrome!\");\n  }\n}",
+  "expected_output": "hello is NOT a palindrome!",
   "try_it": "Test is_palindrome with \"madam\", \"kayak\", \"palindrome\", and your own name. Then modify the function to ignore case by using string.str_lower() on the input before comparing.",
   "concepts": [
     "two-pointer algorithm",

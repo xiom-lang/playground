@@ -9,6 +9,7 @@
   "analogy": "A string is like a bead necklace — each character is a bead, and `string.str_len()` counts the beads, while `string.str_upper()` paints them all the same bright color.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Create a variable called 'name' with your name\n  // TODO: Create a greeting by gluing \"Hi, \" + name + \"!\"\n  // TODO: Print the greeting\n  // TODO: Count the letters in your name using string.str_len() and print it\n  // TODO: Print your name in ALL CAPS using string.str_upper()\n}",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let name = \"Maya\";\n\n  let greeting = \"Hi, \" + name + \"!\";\n  io.println(greeting);\n\n  let count = string.str_len(name);\n  io.println(\"Your name has this many letters:\");\n  io.println(\"4\");\n\n  let loud_name = string.str_upper(name);\n  io.println(\"Here it is in ALL CAPS:\");\n  io.println(loud_name);\n}",
+  "expected_output": "Hi, Maya!\nYour name has this many letters:\n4\nHere it is in ALL CAPS:\nMAYA",
   "try_it": "Print your name in ALL CAPS and count how many letters it has. Then try printing your full name (first + space + last) and count those letters too!",
   "concepts": [
     "Str",

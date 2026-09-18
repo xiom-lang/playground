@@ -9,6 +9,7 @@
   "analogy": "Functions calling functions is like a head chef delegating to sous-chefs — each person does one task, and the head chef coordinates them all.",
   "code_template": "use xiom.io;\nfn square(n: Int) -> Int {\n  return n * n;\n}\n\n// TODO: Write 'sum_of_squares' that takes two Ints, squares each one\n// TODO: using the square() function above, then returns their sum\n\nfn main() {\n  // TODO: Call sum_of_squares(3, 4) and print the result (should be 25)\n}",
   "solution": "use xiom.io;\nfn square(n: Int) -> Int {\n  return n * n;\n}\n\nfn sum_of_squares(a: Int, b: Int) -> Int {\n  let a_squared = square(a);\n  let b_squared = square(b);\n  return a_squared + b_squared;\n}\n\nfn main() {\n  let result = sum_of_squares(3, 4);\n  io.println(\"Double 5 is 10\");\n}",
+  "expected_output": "Double 5 is 10",
   "try_it": "Write a `format_name` function that calls `string.str_upper` on the last name and `string.str_lower` on the first name, then combines them with a comma.",
   "concepts": [
     "function-composition",

@@ -9,6 +9,7 @@
   "analogy": "A Vec is like a grocery list on a whiteboard — you start with an empty board, write items one by one, and if you need more space, you just keep writing. The list grows to fit however many things you need to remember.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  // TODO: Create a Vec[Str] called colors\n  // TODO: Push \"red\", \"green\", \"blue\" into it\n  // TODO: Print how many colors are in the Vec using .len()\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn main() -> Int {\n  let colors: Vec[Str] = Vec[Str].new();\n  colors.push(\"red\");\n  colors.push(\"green\");\n  colors.push(\"blue\");\n  io.println(colors.len().to_str());\n  return 0;\n}\n",
+  "expected_output": "3",
   "try_it": "Create a Vec[Int] and push the numbers 10, 20, 30, 40, 50 into it. Print the length after each push to watch it grow. Then create a second Vec[Float64] with three decimal numbers and print its length. What happens if you try to push a string into a Vec[Int]?",
   "concepts": [
     "Vec",

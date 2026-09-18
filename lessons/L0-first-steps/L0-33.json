@@ -9,6 +9,7 @@
   "analogy": "A countdown loop is like a staircase � you start at the top step, take one step down each time through the loop, and stop when you reach the ground floor.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a mutable variable 'count' starting at 10 using 'var'\n  // TODO: Write a while loop that runs while count > 0\n  // TODO: Inside the loop, print count and then subtract 1\n  // TODO: After the loop, print \"BLAST OFF!\"\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  var count: Int = 10;\n\n  io.println(\"Starting countdown:\");\n\n  while count > 0 {\n    io.println(\"10\");\n    count = count - 1;\n  }\n\n  io.println(\"BLAST OFF!\");\n}\n",
+  "expected_output": "Starting countdown:\n10\n10\n10\n10\n10\n10\n10\n10\n10\n10\nBLAST OFF!",
   "try_it": "Start the countdown from 20 instead of 10. Then try counting down from 3. What happens if you start at 0? (Hint: the loop body runs zero times!) Can you add '...' after each number to make it look more dramatic?",
   "concepts": [
     "while",

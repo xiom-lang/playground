@@ -9,6 +9,7 @@
   "analogy": "A module is like a chapter in a textbook — Chapter 3 is 'Math Functions,' Chapter 4 is 'String Functions.' Each chapter contains related content, has a clear title, and you reference content by chapter and section: 'see chapter 3, section 2' (math_utils.add).",
   "code_template": "use xiom.io;\n// TODO: Define a module named 'greeting' with one function:\n//   fn hello(name: Str) -> Str that returns \"Hello, \" + name\n\n// TODO: Define a module named 'farewell' with one function:\n//   fn goodbye(name: Str) -> Str that returns \"Goodbye, \" + name\n\nfn main() -> Int {\n  // TODO: Call greeting.hello(\"Alex\") and print result\n  // TODO: Call farewell.goodbye(\"Alex\") and print result\n  return 0;\n}\n",
   "solution": "use xiom.io;\nmodule greeting {\n  pub fn hello(name: Str) -> Str {\n    return \"Hello, \" + name;\n  }\n}\n\nmodule farewell {\n  pub fn goodbye(name: Str) -> Str {\n    return \"Goodbye, \" + name;\n  }\n}\n\nfn main() -> Int {\n  io.println(greeting.hello(\"Alex\"));\n  io.println(farewell.goodbye(\"Alex\"));\n  return 0;\n}\n",
+  "expected_output": "Hello, Alex\nGoodbye, Alex",
   "try_it": "Create a `stats` module with `min(a, b)` and `max(a, b)` functions. Create a `temperature` module with `celsius_to_fahrenheit(c)` and `fahrenheit_to_celsius(f)`. Use them both in main. What happens if you define `fn add(a, b)` in BOTH modules? Can they coexist? (Yes — modules prevent name collisions!)",
   "concepts": [
     "module",

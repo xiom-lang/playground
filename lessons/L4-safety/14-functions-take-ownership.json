@@ -9,6 +9,7 @@
     "analogy":  "Passing a value to a function is like giving a gift — once you hand it over, it belongs to the recipient. You can\u0027t use a gift you already gave away.",
     "code_template":  "use xiom.io;\n\n// TODO: Write a function \u0027print_and_drop\u0027 that takes Vec[Int]\n// Print the length and let it drop\n// In main, create a Vec, pass it, verify you can\u0027t use it after\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn print_and_drop(v: Vec[Int]) {\n  io.println(v.len().to_str());\n}\n\nfn main() -\u003e Int {\n  let my_vec = Vec[Int].new();\n  my_vec.push(10);\n  my_vec.push(20);\n  let len = my_vec.len();\n  print_and_drop(my_vec);\n  return len as Int;\n}",
+    "expected_output": "2",
     "try_it":  "Try adding `io.println(my_vec.len());` after the call to `print_and_drop`. See the compiler error about using a moved value.",
     "concepts":  [
                      "ownership transfer",

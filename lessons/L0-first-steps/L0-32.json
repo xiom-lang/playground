@@ -9,6 +9,7 @@
   "analogy": "`string.str_upper` and `string.str_lower` are like a volume knob for text � turn it up to SHOUT or down to whisper, and the original stays the same.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Create a variable 'message' with a sentence in mixed case\n  // TODO: Use string.str_upper to convert it to ALL CAPS\n  // TODO: Use string.str_lower to convert it to all lowercase\n  // TODO: Print the original message, the shouted version, and the whispered version\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let message = \"I Love Ice Cream\";\n\n  io.println(\"Original message:\");\n  io.println(message);\n\n  let shouted = string.str_upper(message);\n  io.println(\"Shouted:\");\n  io.println(shouted);\n\n  let whispered = string.str_lower(message);\n  io.println(\"Whispered:\");\n  io.println(whispered);\n\n  let name = \"alex\";\n  let loud_name = string.str_upper(name);\n  io.println(\"Friend's name in caps:\");\n  io.println(loud_name);\n}\n",
+  "expected_output": "Original message:\nI Love Ice Cream\nShouted:\nI LOVE ICE CREAM\nWhispered:\ni love ice cream\nFriend's name in caps:\nALEX",
   "try_it": "Convert your friend's name to ALL CAPS. Then try a sentence with mixed case like 'ThE qUiCk BrOwN fOx'. What happens when you apply `string.str_upper` to it? What about `string.str_lower`? Can you whisper AND THEN shout the same message?",
   "concepts": [
     "string.str_upper",

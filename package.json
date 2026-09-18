@@ -16,6 +16,8 @@
     "stdlib:ref": "node tools/generate-stdlib-ref.js",
     "stdlib:ref:check": "node tools/generate-stdlib-ref.js --check",
     "limitations": "node tools/generate-limitations.js",
-    "limitations:check": "node tools/generate-limitations.js --check"
+    "limitations:check": "node tools/generate-limitations.js --check",
+    "expected": "node tools/generate-expected-outputs.js",
+    "expected:check": "node tools/generate-expected-outputs.js --check"
   }
 }

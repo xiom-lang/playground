@@ -31,6 +31,8 @@ async function compile() {
   var body = JSON.stringify({ source: source });
   var headers = { 'Content-Type': 'application/json' };
 
+  resetOutputMatch();
+
   // 1. In-browser compiler: instant IR preview / offline diagnostics.
   var wasmResult = null;
   var pureProgram = source.indexOf('use ') === -1 && source.indexOf('use\t') === -1;
@@ -145,7 +147,86 @@ function renderRunResult(run, ids) {
   if (!run.tokens) {
     document.getElementById(ids.tokens).textContent = 'Click this tab to generate tokens.';
   }
+  renderOutputMatch(run);
 }
+
+// Canonical output form; keep in sync with tools/lib/output.js.
+function normalizeOutputText(text) {
+  return String(text == null ? '' : text)
+    .replace(/\r\n/g, '\n')
+    .replace(/\u001b\[[0-9;]*m/g, '')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n+$/, '');
+}
+
+function outputMatchHost() {
+  var pre = document.getElementById('output');
+  if (!pre || !pre.parentNode) return null;
+  var host = document.getElementById('outputMatch');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'outputMatch';
+    host.className = 'output-match hidden';
+    pre.parentNode.insertBefore(host, pre);
+  }
+  return host;
+}
+
+function resetOutputMatch() {
+  var host = document.getElementById('outputMatch');
+  if (host) {
+    host.className = 'output-match hidden';
+    host.innerHTML = '';
+  }
+}
+
+/**
+ * Compare the run output with the lesson's generated expected_output.
+ * The comparison only applies when the editor still holds the reference
+ * solution; for edited programs it just says so, because a different output
+ * is the point of experimenting.
+ */
+function renderOutputMatch(run) {
+  var host = outputMatchHost();
+  if (!host) return;
+  host.className = 'output-match hidden';
+  host.innerHTML = '';
+
+  var lesson = window.currentLessonData || (typeof currentLessonData !== 'undefined' ? currentLessonData : null);
+  if (!lesson || typeof lesson.expected_output !== 'string') return;
+  if (!run || !run.success) return;
+
+  var actual = run.runOutput != null ? run.runOutput : String(run.output || '');
+  if (actual === 'Program ran with no output.') actual = '';
+  var expected = lesson.expected_output;
+
+  var source = window.editor ? window.editor.getValue() : '';
+  var sourceMatches = typeof lesson.solution === 'string' &&
+    normalizeOutputText(source) === normalizeOutputText(lesson.solution);
+  if (!sourceMatches) {
+    host.className = 'output-match note';
+    host.textContent = 'Edited program \u2014 not compared with the lesson\'s expected output.';
+    return;
+  }
+
+  if (normalizeOutputText(actual) === normalizeOutputText(expected)) {
+    host.className = 'output-match ok';
+    host.textContent = '\u2713 Output matches the expected result.';
+    return;
+  }
+
+  host.className = 'output-match warn';
+  var title = document.createElement('div');
+  title.className = 'output-match-title';
+  title.textContent = 'Output differs from the expected result.';
+  var detail = document.createElement('pre');
+  detail.className = 'output-match-expected';
+  detail.textContent = 'Expected:\n' + (expected.length > 2000 ? expected.slice(0, 2000) + '\n...' : expected);
+  host.appendChild(title);
+  host.appendChild(detail);
+}
+window.renderOutputMatch = renderOutputMatch;
+window.resetOutputMatch = resetOutputMatch;
 
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

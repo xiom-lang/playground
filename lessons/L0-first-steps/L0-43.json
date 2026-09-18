@@ -9,6 +9,7 @@
   "analogy": "A fortune teller is like a choose-your-own-adventure book — the random number picks which page (fortune) you land on.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: generate a random number from 1 to 3\n  // TODO: use if/elif/else to print a different fortune for each number\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.math;\nfn main() {\n  let roll: Int = math.random_range(1, 3);\n  io.println(\"Your fortune: \");\n  if roll == 1 {\n    io.println(\"An exciting adventure is coming your way!\");\n  } elif roll == 2 {\n    io.println(\"A surprise gift will arrive soon.\");\n  } else {\n    io.println(\"Today is your lucky day — take a chance!\");\n  }\n}\n",
+  "expected_output": "Your fortune:\nAn exciting adventure is coming your way!",
   "try_it": "Add two more fortunes by changing the range to 1-5 and adding more `elif` branches. Make them creative!",
   "concepts": [
     "if-elif-else",

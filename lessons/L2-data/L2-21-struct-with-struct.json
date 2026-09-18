@@ -9,6 +9,7 @@
   "analogy": "A Person contains an Address like an envelope contains a mailing label — the label is a distinct thing attached to the envelope.",
   "code_template": "use xiom.io;\n\ntype Address = {\n  street: Str;\n  city: Str;\n}\n\ntype Person = {\n  name: Str;\n  home: Address;\n}\n\n// TODO: write a function 'city_of' that returns the city from a Person\n\nfn main() -> Int {\n  // TODO: create a Person with a home Address, call city_of, return 0\n  return 0;\n}",
   "solution": "use xiom.io;\n\ntype Address = {\n  street: Str;\n  city: Str;\n}\n\ntype Person = {\n  name: Str;\n  home: Address;\n}\n\nfn city_of(person: Person) -> Str {\n  return person.home.city;\n}\n\nfn main() -> Int {\n  let addr = Address{ street: \"10 Downing St\"; city: \"London\"; };\n  let pm = Person{ name: \"Prime Minister\"; home: addr; };\n  let city = pm.home.city;\n  return 0;\n}",
+  "expected_output": "",
   "try_it": "Add a `work: Address` field to Person. Create someone with both a home and work address, then write a function that returns the full address as a single string.",
   "concepts": [
     "struct",

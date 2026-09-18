@@ -9,6 +9,7 @@
   "analogy": "FindResult is like tracking a package. \"Found\" means the courier has your package and tells you which shelf it's on (position). \"NotFound\" means the warehouse is empty. You can't open \"NotFound\" expecting contents � the courier forces you to look inside first.",
   "code_template": "use xiom.io;\n\nenum FindResult {\n  Found(item: Str, position: Int),\n  NotFound,\n}\n\n// TODO: write 'find_char' that searches text for the first occurrence of target\n\n// TODO: write 'get_position' that returns the position from Found, or -1 for NotFound\n\nfn main() -> Int {\n  // TODO: search for \"e\" in \"hello\", return the position (or -1)\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum FindResult {\n  Found(item: Str, position: Int),\n  NotFound,\n}\n\nfn find_char(text: Str, target: Str) -> FindResult {\n  if text == target { return FindResult.Found(text, 0); }\n  return FindResult.NotFound;\n}\n\nfn get_position(result: FindResult) -> Int {\n  match result {\n    Found(_, pos) => { return pos; }\n    NotFound => { return -1; }\n  }\n}\n\nfn main() -> Int {\n  let r = find_char(\"hello\", \"e\");\n  return get_position(r);\n}",
+  "expected_output": "",
   "try_it": "Search for different letters in \"chocolate\": try 'o', 'x', 'c', 'e'. Add a `find_all` concept that tracks multiple positions. Add a `FoundFirst(position: Int)` variant that only stores position (not the item).",
   "concepts": [
     "enum",

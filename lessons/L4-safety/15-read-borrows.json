@@ -9,6 +9,7 @@
   "analogy": "& is like letting someone look at your book — they can read it, but they can't write in it, and you still own it.",
   "code_template": "use xiom.io;\n\n// TODO: Write a function 'sum' that takes &Vec[Int] and returns Int\n// In main, create a Vec, borrow it for sum(), then print the Vec again\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
   "solution": "use xiom.io;\nuse xiom.iter;\n\nfn sum(v: &Vec[Int]) -> Int {\n  let total = 0;\n  for __i in range(0, v.len()) {\n    let item = v[__i];\n    total = total + item;\n  }\n  return total;\n}\n\nfn main() -> Int {\n  let data = Vec[Int].new();\n  data.push(5);\n  data.push(10);\n  data.push(15);\n  let result = sum(&data);\n  io.println(data.len().to_str());\n  return result;\n}",
+  "expected_output": "3",
   "try_it": "Create three separate read borrows of the same Vec and pass each to a different function. All three work simultaneously.",
   "concepts": [
     "read borrow",

@@ -9,6 +9,7 @@
   "analogy": "Time calculations are like stacking building blocks — each layer (minutes, hours, days) builds on top of the one before it.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: create variables for seconds per minute, minutes per hour, hours per day, days per week\n  // TODO: calculate seconds per hour, per day, and per week using multiplication\n  // TODO: print all the results\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let sec_per_min: Int = 60;\n  let min_per_hour: Int = 60;\n  let hour_per_day: Int = 24;\n  let day_per_week: Int = 7;\n  let sec_per_hour: Int = sec_per_min * min_per_hour;\n  let sec_per_day: Int = sec_per_hour * hour_per_day;\n  let sec_per_week: Int = sec_per_day * day_per_week;\n  io.println(\"60\");\n  io.println(\"3600\");\n  io.println(\"86400\");\n  io.println(\"604800\");\n}\n",
+  "expected_output": "60\n3600\n86400\n604800",
   "try_it": "Add `day_per_year: Int = 365` and calculate seconds in a year. Then try calculating how many seconds YOU have been alive!",
   "concepts": [
     "multiplication",

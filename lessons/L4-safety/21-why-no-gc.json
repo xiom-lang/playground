@@ -9,6 +9,7 @@
   "analogy": "Garbage collector = a janitor who cleans up after everyone at unpredictable times. Ownership = everyone cleans up after themselves immediately when they leave. No surprises.",
   "code_template": "use xiom.io;\n\n// TODO: Create a Vec, move it, use clone for sharing\n// Show the three ways to handle memory:\n// 1. Ownership (default)\n// 2. Clone (explicit copy)\n// 3. Borrow (&) (shared access)\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
   "solution": "use xiom.io;\n\nfn main() -> Int {\n  let original = Vec[Int].new();\n  original.push(1);\n\n  let moved = original;       // 1. Ownership: original is gone;\n  let copy = moved.clone();   // 2. Clone: independent copy;\n  let ref = &moved;           // 3. Borrow: shared read access;\n\n  io.println(ref.len().to_str());\n  return copy.len() as Int;\n}",
+  "expected_output": "1",
   "try_it": "Imagine this code in C: create a Vec, free it, then try to use it (use-after-free). In XIOM, the compiler would catch this before it runs.",
   "concepts": [
     "garbage collector",

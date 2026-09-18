@@ -9,6 +9,7 @@
   "analogy": "`origin()` is the on/off switch that boots your point at (0,0). `move` is the joystick — each call nudges the point in a direction while keeping its current position.",
   "code_template": "use xiom.io;\n\ntype Point = {\n  x: Int;\n  y: Int;\n}\n\n// TODO: write a factory function 'origin' that returns Point at (0,0)\n\n// TODO: add method 'move' that adds dx to x and dy to y\n\n// TODO: add method 'reflect' that flips both signs (x = -x, y = -y)\n\nfn main() -> Int {\n  // TODO: create point at origin, move to (5,12), reflect, return x + y\n  return 0;\n}",
   "solution": "use xiom.io;\n\ntype Point = {\n  x: Int;\n  y: Int;\n}\n\nfn origin() -> Point {\n  return Point{ x: 0; y: 0; };\n}\n\nfn Point.move(self, dx: Int, dy: Int) {\n  x = x + dx;\n  y = y + dy;\n}\n\nfn Point.reflect(self) {\n  x = -x;\n  y = -y;\n}\n\nfn main() -> Int {\n  var p = origin();\n  p.move(5, 12);\n  p.reflect();\n  return p.x + p.y;\n}",
+  "expected_output": "",
   "try_it": "Add a `reset` method that sets the point back to (0,0). Add a method `manhattan_distance(self) -> Int` that returns `abs(x) + abs(y)`. Move a point to (10, -5) and print both distances.",
   "concepts": [
     "struct",

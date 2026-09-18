@@ -9,6 +9,7 @@
   "analogy": "Math functions are like a Swiss Army knife of numbers — each blade does one specific cut, but together they handle any job.",
   "code_template": "use xiom.io;\n// TODO: Write 'square' that returns n * n\n// TODO: Write 'is_positive' that returns true if n > 0\n// TODO: Write 'absolute' that returns n if n >= 0, otherwise -n\n\nfn main() {\n  // TODO: Test square(6), is_positive(-3), and absolute(-15)\n}",
   "solution": "use xiom.io;\nfn square(n: Int) -> Int {\n  return n * n;\n}\n\nfn is_positive(n: Int) -> Bool {\n  return n > 0;\n}\n\nfn absolute(n: Int) -> Int {\n  if n >= 0 {\n    return n;\n  } else {\n    return -n;\n  }\n}\n\nfn main() {\n  io.println(\"Square of 6 is 36\");\n  io.println(\"Is -3 positive? false\");\n  io.println(\"Absolute of -15 is 15\");\n}",
+  "expected_output": "Square of 6 is 36\nIs -3 positive? false\nAbsolute of -15 is 15",
   "try_it": "Add an `is_multiple_of` function that checks if one number is divisible by another (hint: use `%`). Then test `is_multiple_of(15, 5)` — should be true.",
   "concepts": [
     "math-functions",

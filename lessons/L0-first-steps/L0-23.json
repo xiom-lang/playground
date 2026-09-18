@@ -9,6 +9,7 @@
   "analogy": "A while loop counting up is like climbing stairs � you start at step 1 and keep climbing until you reach the top.",
   "code_template": "use xiom.io;\n\nfn main() {\n  var i: Int = 1;\n  // TODO: use a while loop to print the 5 times table\n  // TODO: print \"i x 5 =\" followed by the result\n  // TODO: print from 1 x 5 up to 10 x 5\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  var i: Int = 1;\n  while i <= 10 {\n    let result: Int = i * 5;\n    io.print(\"1\");\n    io.print(\" x 5 = \");\n    io.println(\"5\");\n    i += 1;\n  }\n}\n",
+  "expected_output": "1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5\n1 x 5 = 5",
   "try_it": "Print the 5 times table from 1 x 5 to 12 x 5. Then change the step to count by 2s or 3s. What happens if you change `i += 1` to a bigger number?",
   "concepts": [
     "while-loop",

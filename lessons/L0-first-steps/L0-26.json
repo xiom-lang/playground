@@ -9,6 +9,7 @@
   "analogy": "Calculating with variables is like labeling each item on a receipt � you can see exactly where every number comes from instead of just getting a mysterious total.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create variables for hamster price and count\n  // TODO: Create variables for food price and count\n  // TODO: Calculate the total for hamsters (price times count)\n  // TODO: Calculate the total for food\n  // TODO: Add the two subtotals to get the grand total\n  // TODO: Print each subtotal and the grand total\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let hamster_price: Int = 8;\n  let hamster_count: Int = 3;\n  let food_price: Int = 12;\n  let food_count: Int = 2;\n\n  let hamster_total: Int = hamster_price * hamster_count;\n  let food_total: Int = food_price * food_count;\n  let grand_total: Int = hamster_total + food_total;\n\n  io.println(\"Hamsters cost:\");\n  io.println(\"24\");\n  io.println(\"Food costs:\");\n  io.println(\"24\");\n  io.println(\"Grand total:\");\n  io.println(\"48\");\n}\n",
+  "expected_output": "Hamsters cost:\n24\nFood costs:\n24\nGrand total:\n48",
   "try_it": "Add a fish tank at $25 to your cart. Create a `tank_price` variable and a `tank_count` variable set to 1, calculate the tank subtotal, and include it in the grand total. What's your new total?",
   "concepts": [
     "let",

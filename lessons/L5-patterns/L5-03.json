@@ -9,6 +9,7 @@
   "analogy": "`.get()` is like asking a librarian: 'Do you have book number 42?' The librarian checks the shelf and either hands you the book (Some) or says 'Sorry, we only have 10 books' (None). You never reach for a book that isn't there.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  let nums: Vec[Int] = Vec[Int].new();\n  // TODO: Push 10, 20, 30 into nums\n  // TODO: Use .get(0) and match to print the first element\n  // TODO: Use .get(5) and match — what happens?\n  // TODO: Print the length with .len()\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn main() -> Int {\n  let nums: Vec[Int] = Vec[Int].new();\n  nums.push(10);\n  nums.push(20);\n  nums.push(30);\n\n  match nums.get(0) {\n    Some(v) => io.println(v.to_str());\n    None => io.println(\"missing\");\n  }\n\n  match nums.get(5) {\n    Some(v) => io.println(v.to_str());\n    None => io.println(\"missing\");\n  }\n\n  io.println(nums.len().to_str());\n  return 0;\n}\n",
+  "expected_output": "10\nmissing\n3",
   "try_it": "Create a Vec with 5 fruits. Access index 0, index 4, and index 100. Try accessing index -1 (does XIOM reject negative indices?). Write a loop that prints every element using .get() and .len() together. Then try using `items.get(items.len() - 1)` to get the last element — this is a common pattern.",
   "concepts": [
     "Vec",

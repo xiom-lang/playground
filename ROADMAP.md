@@ -23,11 +23,16 @@ make editor support match what developers expect.
   - `tools/generate-limitations.js` derives `js/limitations.json` from
     `tools/lesson-baseline.json`; the lesson list shows a "compiler" badge and
     blocked lessons disable Run with an inline explanation.
-- [ ] A3. Expected output per lesson
-  - Generate `expected_output` for every lesson from a Linux execution sweep
-    (379 solutions run today), review once, and show a pass/fail match in the
-    Output tab ("Output matches" / "Expected X, got Y").
-  - Extend `tools/lesson-audit.js` to assert expected outputs in CI.
+- [x] A3. Expected output per lesson
+  - `tools/generate-expected-outputs.js` executes each solution twice on Linux
+    and stores the output in `expected_output`; 351 of the 379 runnable
+    lessons are deterministic. The 28 that print varying values (compiler
+    finding C18) are recorded in `tools/expected-output-skips.json` and carry
+    no field, so CI cannot flake.
+  - The Output tab shows "Output matches the expected result" - or the
+    expected text on mismatch - when the editor still holds the reference
+    solution. `tools/lesson-audit.js` asserts stored outputs in the nightly
+    CI job and `--check` gates the data on every push.
 - [ ] A4. Mobile lesson experience
   - Read-only lesson view for narrow screens with copy-to-clipboard instead
     of a cramped Monaco instance.
@@ -82,6 +87,9 @@ sandbox.
 - C5/C17 Six codegen bug classes block 31 lessons from executing.
 - C6 Pinned stdlib tag ships the benchmark `package.xi`.
 - C8 No WASM release asset (in-browser compiler is manually copied).
+- C18 `Str` values through `Vec`/fields/`.to_str()` print nondeterministic
+  pointer data (28 lessons cannot carry an expected output).
+- C19 `Float64.to_str()` prints the IEEE-754 bit pattern instead of the value.
 - Ops: re-clone `/opt/xiom/playground` after the history rewrite if not done.
 
 ## Acceptance for VPS testing

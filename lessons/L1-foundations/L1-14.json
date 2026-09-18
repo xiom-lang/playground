@@ -9,6 +9,7 @@
   "analogy": "A grading function is like a coin sorter — coins go in, and the machine routes each one to the right slot based on its value.",
   "code_template": "use xiom.io;\n// TODO: Write 'letter_grade' that returns \"A\" for 90+, \"B\" for 80+, \"C\" for 70+, \"D\" for 60+, \"F\" otherwise\n// TODO: Write 'is_passing' that returns true if score >= 60\n\nfn main() {\n  // TODO: Print letter_grade(85) and is_passing(85)\n}",
   "solution": "use xiom.io;\nfn letter_grade(score: Int) -> Str {\n  if score >= 90 {\n    return \"A\";\n  } else if score >= 80 {\n    return \"B\";\n  } else if score >= 70 {\n    return \"C\";\n  } else if score >= 60 {\n    return \"D\";\n  } else {\n    return \"F\";\n  }\n}\n\nfn is_passing(score: Int) -> Bool {\n  return score >= 60;\n}\n\nfn main() {\n  io.println(letter_grade(85));\n  io.println(\"Passing grade? true\");\n}",
+  "expected_output": "B\nPassing grade? true",
   "try_it": "Add a `grade_comment` function that returns \"Excellent!\" for A, \"Good job!\" for B, \"Keep trying!\" for C, and \"Study more!\" for D/F. Have it call `letter_grade` inside.",
   "concepts": [
     "conditional-returns",

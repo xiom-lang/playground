@@ -9,6 +9,7 @@
   "analogy": "A while-loop is like a merry-go-round — it keeps spinning while the music plays (the condition is true), and stops the moment the music ends (the condition becomes false).",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a mutable variable 'count' starting at 5 using 'var'\n  // TODO: Write a while loop that runs while count > 0\n  // TODO: Inside the loop, print count and then subtract 1 from it\n  // TODO: After the loop, print \"Liftoff!\"\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"Countdown:\");\n\n  var count = 5;\n\n  while count > 0 {\n    io.println(\"5\");\n    count = count - 1;\n  }\n\n  io.println(\"Liftoff!\");\n}\n",
+  "expected_output": "Countdown:\n5\n5\n5\n5\n5\nLiftoff!",
   "try_it": "Change the countdown to start from 10 instead of 5. Then try counting UP instead of down — start at 1 and count to 10. What condition do you need? What does `count = count + 1` do inside the loop?",
   "concepts": [
     "while",

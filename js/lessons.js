@@ -180,6 +180,7 @@ function loadLessonContent(lessonFile) {
       if (window.editor && lesson.code_template) {
         window.editor.setValue(lesson.code_template);
       }
+      if (window.resetOutputMatch) window.resetOutputMatch();
       applyLessonAvailability(lesson);
       updateProgressSummary();
     })

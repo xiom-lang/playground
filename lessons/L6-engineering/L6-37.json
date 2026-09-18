@@ -9,6 +9,7 @@
   "analogy": "When you buy a phone charger, you expect it to fit any USB-C port — that's the interface specification. Testing interface implementations is like a quality inspector verifying every charger from every manufacturer fits every port, delivers correct voltage, and doesn't short circuit.",
   "code_template": "use xiom.io;\ninterface Checker {\n  fn check(&self, value: Int) -> Bool;\n}\n\ntype PositiveChecker = {}\nfn PositiveChecker.check(&self, value: Int) -> Bool {\n  // TODO: return true if value > 0\n}\n\nfn test_positive_checker() -> Bool {\n  // TODO: test with 5 (should be true), 0 (false), -3 (false)\n}\n\nfn main() -> Int {\n  // TODO: run test and print result\n  return 0;\n}\n",
   "solution": "use xiom.io;\ninterface Checker {\n  fn check(&self, value: Int) -> Bool;\n}\n\ntype PositiveChecker = {}\nfn PositiveChecker.check(&self, value: Int) -> Bool {\n  value > 0\n}\n\nfn test_positive_checker() -> Bool {\n  let c = PositiveChecker{};\n  assert(c.check(5) == true);\n  assert(c.check(0) == false);\n  assert(c.check(-3) == false);\n  true\n}\n\nfn main() -> Int {\n  if test_positive_checker() {\n    io.println(\"All tests passed!\");\n  };\n  return 0;\n}\n",
+  "expected_output": "All tests passed!",
   "try_it": "Create a `RangeChecker` that checks if a value is between min and max (inclusive). Write tests for: value at min, value at max, value below min, value above max, and negative ranges. Run each test through a single `test_checker[T: Checker]` function.",
   "concepts": [
     "testing",

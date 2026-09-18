@@ -9,6 +9,7 @@
   "analogy": "&& is like a door that needs TWO keys to open. || is like a door that opens with EITHER key.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let number: Int = 15;\n  // TODO: check if number is greater than 10 AND less than 20\n  // TODO: store the result and print it\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let number: Int = 15;\n  let in_range: Bool = number > 10 && number < 20;\n  io.println(\"15\");\n}\n",
+  "expected_output": "15",
   "try_it": "Check if a number is between 10 and 20 (greater than 10 AND less than 20). Then check if a number is less than 5 OR greater than 95. Change the number and watch the result flip!",
   "concepts": [
     "logical-operators",

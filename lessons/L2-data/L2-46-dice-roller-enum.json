@@ -9,6 +9,7 @@
   "analogy": "Each dice variant is a different physical die in your dice bag. max_value is the number printed on the highest face. The roll function is you shaking the die and tossing it � the result lands somewhere between 1 and the max.",
   "code_template": "use xiom.io;\n\nenum Dice {\n  D4,\n  D6,\n  D8,\n  D10,\n  D12,\n  D20,\n}\n\n// TODO: write a method 'Dice.max_value' that returns the number of sides\n\n// TODO: write a function 'roll' that takes a Dice and returns a simulated roll result\n\nfn main() -> Int {\n  // TODO: roll a D20, roll a D6, return the sum of both rolls\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum Dice {\n  D4,\n  D6,\n  D8,\n  D10,\n  D12,\n  D20,\n}\n\nfn Dice.max_value(self) -> Int {\n  match self {\n    D4 => { return 4; }\n    D6 => { return 6; }\n    D8 => { return 8; }\n    D10 => { return 10; }\n    D12 => { return 12; }\n    D20 => { return 20; }\n  }\n}\n\nfn roll(d: Dice) -> Int {\n  let max = d.max_value();\n  return (max / 2) + 1;\n}\n\nfn main() -> Int {\n  let d20 = Dice.D20;\n  let d6 = Dice.D6;\n  return roll(d20) + roll(d6);\n}",
+  "expected_output": "",
   "try_it": "Add a `D100` (percentile) die to the enum. Roll a D20 five times and track the results. Add a function `roll_with_advantage(d: Dice) -> Int` that rolls twice and returns the higher result.",
   "concepts": [
     "enum",

@@ -9,6 +9,7 @@
   "analogy": "Random number generation is like rolling dice — you never know what you'll get, but you know it'll be within a certain range.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: generate a random number from 1 to 10\n  // TODO: store it in a variable named 'secret'\n  // TODO: print the secret number\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.math;\nfn main() {\n  let secret: Int = math.random_range(1, 10);\n  io.println(\"The secret number is: \");\n  io.println(\"(random)\");\n}\n",
+  "expected_output": "The secret number is:\n(random)",
   "try_it": "Change the range to 1-100 and run it a few times. See how the numbers get bigger! Then try 1-1000 for even more variety.",
   "concepts": [
     "random",

@@ -9,6 +9,7 @@
   "analogy": "A contract is like a pinky promise to the compiler — 'I promise b won't be zero' (requires) and 'I promise the result is correct' (ensures). But unlike a pinky promise, the compiler actually VERIFIES it. If you call divide(10, 0), the compiler doesn't just shrug — it stops and says 'You broke your promise about b at line 42.' It's a promise with a built-in lie detector.",
   "code_template": "use xiom.io;\n\nfn safe_divide(a: Float64, b: Float64) -> Float64\n  // TODO: add requires: b != 0.0;\n  // TODO: add ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -> Int {\n  // TODO: call safe_divide with 20.0 and 4.0, print result\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nuse xiom.convert;\nfn safe_divide(a: Float64, b: Float64) -> Float64\n  requires: b != 0.0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -> Int {\n  let x = safe_divide(20.0, 4.0);\n  io.println(convert.float_to_string(x));\n  return 0;\n}\n",
+  "expected_output": "5",
   "try_it": "Call safe_divide(10.0, 0.0) and see what happens — the program should trap with a contract violation message. Then write a `safe_sqrt` function with `requires: x >= 0.0;` and `ensures: result >= 0.0;`. Test it with 25.0 (should work) and -4.0 (should violate the requires). Add an ensures that accidentally says `ensures: result < 0.0;` for sqrt of 25.0 — the ensures will fail because sqrt(25) = 5, which is not less than 0. Now you've seen both kinds of contract violations.",
   "concepts": [
     "contracts",

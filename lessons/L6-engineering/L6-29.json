@@ -9,6 +9,7 @@
   "analogy": "A smartphone comes with default apps (calculator, calendar) that work for everyone. But you can install custom apps to replace them. Default interface methods are the built-in apps — they work out of the box, but you can override them with custom behavior.",
   "code_template": "use xiom.io;\ninterface Describable {\n  fn label(&self) -> Str;\n\n  fn describe(&self) -> Str {\n    // TODO: return label() + \" - no description available\"\n  }\n}\n\ntype Product = {\n  name: Str;\n}\n\nfn Product.label(&self) -> Str {\n  // TODO: return self.name\n}\n\nfn main() -> Int {\n  // TODO: create Product, call .label() and .describe()\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\ninterface Describable {\n  fn label(&self) -> Str;\n\n  fn describe(&self) -> Str {\n    string.str_concat(self.label(), \" - no description available\")\n  }\n}\n\ntype Product = {\n  name: Str;\n}\n\nfn Product.label(&self) -> Str {\n  self.name.clone()\n}\n\nfn main() -> Int {\n  let p = Product{ name: \"Widget\" };\n  io.println(p.label());\n  io.println(p.describe());\n  return 0;\n}\n",
+  "expected_output": "Widget\nWidget - no description available",
   "try_it": "Add a `summarize` default method that returns `label() + \" (type: \" + type_name() + \")\"`. Add `type_name()` to the interface. Then create a `Service` type that overrides `describe()` with a custom message.",
   "concepts": [
     "default-methods",

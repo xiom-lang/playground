@@ -9,6 +9,7 @@
   "analogy": "A `var` variable is like a scoreboard � it shows the current score, and every time something happens you update the number on display.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a mutable variable 'score' starting at 0 using 'var'\n  // TODO: Print the starting score\n  // TODO: Add 2 points using += and print the score\n  // TODO: Add 2 more points and print\n  // TODO: Subtract 1 point using -= and print\n  // TODO: Print the final score\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  var score: Int = 0;\n\n  io.println(\"Tip-off! Starting score:\");\n  io.println(\"0\");\n\n  score += 2;\n  io.println(\"Layup � two points! Score:\");\n  io.println(\"0\");\n\n  score += 2;\n  io.println(\"Jump shot � two points! Score:\");\n  io.println(\"0\");\n\n  score -= 1;\n  io.println(\"Technical foul � lose one point. Score:\");\n  io.println(\"0\");\n\n  io.println(\"Game over! Final score:\");\n  io.println(\"0\");\n}\n",
+  "expected_output": "Tip-off! Starting score:\n0\nLayup \ufffd two points! Score:\n0\nJump shot \ufffd two points! Score:\n0\nTechnical foul \ufffd lose one point. Score:\n0\nGame over! Final score:\n0",
   "try_it": "Add a 3-point shot: use `score += 3` after the second basket and print the new score. Then simulate a whole game with multiple baskets, a few fouls, and a three-pointer at the buzzer � what's the final score?",
   "concepts": [
     "var",

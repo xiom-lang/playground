@@ -9,6 +9,7 @@
     "analogy":  "Clone is like photocopying a document — every department gets their own copy, and changes to one copy don\u0027t affect the others.",
     "code_template":  "use xiom.io;\n\n// TODO: Create a Vec[Int] with values 10, 20, 30\n// Clone it twice to v1 and v2\n// Add 40 to v1, add 50 to v2\n// Print all three lengths\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn main() -\u003e Int {\n  let original = Vec[Int].new();\n  original.push(10);\n  original.push(20);\n  original.push(30);\n\n  var v1 = original.clone();\n  var v2 = original.clone();\n\n  v1.push(40);\n  v2.push(50);\n\n  io.println(original.len().to_str());\n  io.println(v1.len().to_str());\n  io.println(v2.len().to_str());\n  return original.len() as Int;\n}",
+    "expected_output": "3\n4\n4",
     "try_it":  "Create a string, clone it, modify the clone, and verify the original is unchanged. This proves clones are independent.",
     "concepts":  [
                      "clone",

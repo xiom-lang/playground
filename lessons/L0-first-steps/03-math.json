@@ -9,6 +9,7 @@
   "analogy": "The computer is like a super-fast calculator that never makes mistakes.",
   "code_template": "use xiom.io;\n\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  // TODO: Print a subtraction, like \"20 - 7 = 13\"\n  // TODO: Print a multiplication, like \"6 * 9 = 54\"\n  // TODO: Print a division, like \"100 / 4 = 25\"\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  io.println(\"20 - 7 = 13\");\n  io.println(\"6 * 9 = 54\");\n  io.println(\"100 / 4 = 25\");\n}",
+  "expected_output": "5 + 3 = 8\n20 - 7 = 13\n6 * 9 = 54\n100 / 4 = 25",
   "try_it": "Calculate how many seconds are in a day: 24 * 60 * 60. Print the answer. Then try seconds in a week.",
   "concepts": [
     "addition",

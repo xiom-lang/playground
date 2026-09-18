@@ -9,6 +9,7 @@
   "analogy": "Difficulty is the \"game slider\" in the settings menu. Easy is training wheels � lots of tries. Expert is the tightrope with no net � one attempt. The description is the warning label under each level.",
   "code_template": "use xiom.io;\n\nenum Difficulty {\n  Easy,\n  Medium,\n  Hard,\n  Expert,\n}\n\n// TODO: write a method 'Difficulty.max_attempts' that returns attempts per level\n\n// TODO: write a method 'Difficulty.description' that returns a flavorful description\n\nfn main() -> Int {\n  // TODO: create Expert difficulty, check attempts, return number of attempts\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum Difficulty {\n  Easy,\n  Medium,\n  Hard,\n  Expert,\n}\n\nfn Difficulty.max_attempts(self) -> Int {\n  match self {\n    Easy => { return 10; }\n    Medium => { return 5; }\n    Hard => { return 3; }\n    Expert => { return 1; }\n  }\n}\n\nfn Difficulty.description(self) -> Str {\n  match self {\n    Easy => { return \"Plenty of chances to learn\"; }\n    Medium => { return \"A fair challenge\"; }\n    Hard => { return \"Mistakes are costly\"; }\n    Expert => { return \"One error and you are done\"; }\n  }\n}\n\nfn main() -> Int {\n  let level = Difficulty.Expert;\n  return level.max_attempts();\n}",
+  "expected_output": "",
   "try_it": "Add a `Nightmare` difficulty mode with 0 attempts (instant game over on error). Add a `Difficulty.score_multiplier(self) -> Float64` method (Easy = 0.5x, Medium = 1.0x, Hard = 2.0x, Expert = 5.0x).",
   "concepts": [
     "enum",

@@ -9,6 +9,7 @@
     "analogy":  "Contracts are the rules of the road (don\u0027t speed, stop at red lights). Ownership is the seatbelt and airbags. Both keep you safe, but in different ways.",
     "code_template":  "use xiom.io;\n\n// TODO: Write fn \u0027withdraw\u0027 for Account with requires and \u0026mut\n// Write fn \u0027deposit\u0027 for Account with requires and \u0026mut\n// In main, create two accounts, transfer between them\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn transfer(from: \u0026mut Account, to: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= from.balance;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n\nfn main() -\u003e Int {\n  var alice = Account{ owner: \"Alice\", balance: 100.0 };\n  var bob = Account{ owner: \"Bob\", balance: 50.0 };\n  transfer(\u0026mut alice, \u0026mut bob, 30.0);\n  return alice.balance as Int;\n}",
+    "expected_output": "",
     "try_it":  "Add `ensures: from.balance \u003e= 0.0` and `ensures: to.balance \u003e= 0.0` to the transfer function. Then try to transfer more than the sender has.",
     "concepts":  [
                      "contracts + ownership",

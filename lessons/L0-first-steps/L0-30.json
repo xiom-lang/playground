@@ -9,6 +9,7 @@
   "analogy": "Calculating pizza quantities is like planning a road trip � you figure out the total distance (total slices needed) and then divide by your speed (slices per pizza) to know how long it'll take (how many pizzas).",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create variables for guests, slices per person, and slices per pizza\n  // TODO: Calculate total slices needed (guests times slices per person)\n  // TODO: Calculate pizzas needed (total slices divided by slices per pizza)\n  // TODO: Print the number of guests, total slices, and pizzas to order\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let guests: Int = 8;\n  let slices_per_person: Int = 3;\n  let slices_per_pizza: Int = 8;\n\n  let total_slices: Int = guests * slices_per_person;\n  let pizzas_needed: Int = total_slices / slices_per_pizza;\n\n  io.println(\"Guests coming:\");\n  io.println(\"8\");\n  io.println(\"Total slices needed:\");\n  io.println(\"24\");\n  io.println(\"Pizzas to order:\");\n  io.println(\"3\");\n\n  io.println(\"Enjoy the party!\");\n}\n",
+  "expected_output": "Guests coming:\n8\nTotal slices needed:\n24\nPizzas to order:\n3\nEnjoy the party!",
   "try_it": "Change the number of guests to 12. How many pizzas do you need now? Then try making each person eat 4 slices instead of 3. What if each pizza only has 6 slices? Experiment with different numbers and see how the answer changes!",
   "concepts": [
     "let",

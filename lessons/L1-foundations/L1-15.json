@@ -9,6 +9,7 @@
   "analogy": "Geometry functions are like a formula cheat sheet that does the math for you — plug in the numbers, get the answer.",
   "code_template": "use xiom.io;\n// TODO: Write 'area_of_rectangle(width, height)' that returns width * height\n// TODO: Write 'perimeter_of_rectangle(width, height)' that returns 2*(w + h)\n// TODO: Write 'area_of_circle(radius)' that returns 3.14159 * r * r\n\nfn main() {\n  // TODO: Print area of a 4x6 rectangle and area of a circle with radius 5\n}",
   "solution": "use xiom.io;\nfn area_of_rectangle(width: Float64, height: Float64) -> Float64 {\n  return width * height;\n}\n\nfn perimeter_of_rectangle(width: Float64, height: Float64) -> Float64 {\n  return 2.0 * (width + height);\n}\n\nfn area_of_circle(radius: Float64) -> Float64 {\n  return 3.14159 * radius * radius;\n}\n\nfn main() {\n  io.println(\"Rectangle area: 24\");\n  io.println(\"Circle area: 78.54\");\n}",
+  "expected_output": "Rectangle area: 24\nCircle area: 78.54",
   "try_it": "Add a `volume_of_box` function that takes length, width, and height and returns the volume. Then write `surface_area_of_box` for the total surface area (six sides).",
   "concepts": [
     "geometry-functions",

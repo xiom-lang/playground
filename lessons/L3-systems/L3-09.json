@@ -9,6 +9,7 @@
   "analogy": ".unwrap_or on Result is like having a spare tire — if your main tire blows (Err), you don't call a tow truck; you just put on the spare and keep driving.",
   "code_template": "use xiom.io;\n\n// TODO: Write fetch_score(player: Str) -> Result[Int, Str]\n// \"Alice\" -> Ok(1200), \"Bob\" -> Ok(800), others -> Err(\"Player not found\")\n\nfn main() -> Int {\n  // TODO: Fetch \"Alice\"'s score, unwrap to 0, print it\n\n  // TODO: Fetch \"Charlie\"'s score, unwrap to 0, print it\n\n  // TODO: Fetch \"Bob\"'s score, unwrap to 0, print it\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn fetch_score(player: Str) -> Result[Int, Str] {\n  if player == \"Alice\" { return Ok(1200); }\n  if player == \"Bob\"   { return Ok(800); }\n  return Err(\"Player not found\");\n}\n\nfn main() -> Int {\n  let s1 = fetch_score(\"Alice\").unwrap_or(0);\n  let s2 = fetch_score(\"Charlie\").unwrap_or(0);\n  let s3 = fetch_score(\"Bob\").unwrap_or(0);\n  io.println(to_string(s1));\n  io.println(to_string(s2));\n  io.println(to_string(s3));\n  return 0;\n}\n",
+  "expected_output": "1200\n0\n800",
   "try_it": "Modify fetch_score to return different error messages (e.g., \"Player not found\" vs \"Score unavailable\"). Does .unwrap_or care about the error message? When would you switch to match instead?",
   "concepts": [
     "Result-unwrap_or",

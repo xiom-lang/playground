@@ -9,6 +9,7 @@
   "analogy": "`let` is a tattoo � permanent and unchanging. `var` is a whiteboard � you can erase and rewrite whenever you want.",
   "code_template": "use xiom.io;\n\nfn main() {\n  var points: Int = 100;\n  // TODO: subtract 15 from points (lose some points!)\n  // TODO: add 30 to points (bonus round!)\n  // TODO: print the final score\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  var points: Int = 100;\n  points = points - 15;\n  points = points + 30;\n  io.println(\"100\");\n}\n",
+  "expected_output": "100",
   "try_it": "Start with 100 points, subtract 15 (you lost a life), then add 30 (you found a treasure). Print the score after each change so you can watch it go up and down!",
   "concepts": [
     "var",

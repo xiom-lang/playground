@@ -9,6 +9,7 @@
   "analogy": "Function composition is like a factory assembly line. A raw metal sheet enters Station 1 (cutting), the cut piece goes to Station 2 (painting), the painted piece goes to Station 3 (packaging). Each station is a function. Rearrange the stations and you get a different product.",
   "code_template": "use xiom.io;\n// TODO: Write double(x: Int) -> Int\n// TODO: Write add_ten(x: Int) -> Int\n// TODO: Write halve(x: Int) -> Int\n// TODO: Write square(x: Int) -> Int (returns x * x)\n\nfn main() {\n  let input = 4;\n  // TODO: Chain double -> add_ten -> square -> halve\n  // Print that the assembly line is complete\n}",
   "solution": "use xiom.io;\nfn double(x: Int) -> Int {\n  return x * 2;\n}\n\nfn add_ten(x: Int) -> Int {\n  return x + 10;\n}\n\nfn halve(x: Int) -> Int {\n  return x / 2;\n}\n\nfn square(x: Int) -> Int {\n  return x * x;\n}\n\nfn main() {\n  let input = 4;\n  let step1 = double(input);\n  let step2 = add_ten(step1);\n  let step3 = square(step2);\n  let step4 = halve(step3);\n  io.println(\"Assembly line complete!\");\n}",
+  "expected_output": "Assembly line complete!",
   "try_it": "Add a fifth function `triple(x: Int) -> Int` and insert it between `square` and `halve`. Then try a completely different order and predict the result before running.",
   "concepts": [
     "function composition",

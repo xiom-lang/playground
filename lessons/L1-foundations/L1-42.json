@@ -9,6 +9,7 @@
   "analogy": "Summing numbers is like filling a jar with coins. Each iteration drops one coin (the current i value) into the jar (total). The jar starts empty (total=0), and by the end of the loop, it holds the sum of all coins dropped. `sum_range` lets you choose which set of coins to drop — not always starting from coin 1.",
   "code_template": "use xiom.io;\n// TODO: Write sum_to(n: Int) -> Int\n// Use a while loop from 1 to n, accumulating total\n// Handle n < 1 by returning 0\n\n// TODO: Write sum_range(start: Int, end: Int) -> Int\n// Use a while loop from start to end\n// Handle start > end by returning 0\n\nfn main() {\n  // TODO: Call sum_to(100) and sum_range(10, 20)\n  // Print both results\n}",
   "solution": "use xiom.io;\nfn sum_to(n: Int) -> Int {\n  if n < 1 {\n  }\n  var total = 0;\n  var i = 1;\n  while i <= n {\n    total = total + i;\n    i = i + 1;\n  }\n}\nfn sum_range(start: Int, end: Int) -> Int {\n  if start > end {\n  }\n  var total = 0;\n  var i = start;\n  while i <= end {\n    total = total + i;\n    i = i + 1;\n  }\n}\nfn main() {\n  let s1 = sum_to(100);\n  let s2 = sum_range(10, 20);\n  io.println(\"Sums complete!\");\n}",
+  "expected_output": "Sums complete!",
   "try_it": "Use `sum_to` to verify Gauss's shortcut: sum_to(n) should equal n × (n+1) / 2. Write a function `gauss_check(n)` that computes both methods and returns true if they match. Test with n=100, n=50, and n=1000.",
   "concepts": [
     "accumulator with addition",

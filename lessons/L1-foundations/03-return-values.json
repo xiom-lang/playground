@@ -9,6 +9,7 @@
   "analogy": "A function that returns a value is like a vending machine: you put money in (parameters), it gives you a snack back (return value). No return = a machine that eats your money!",
   "code_template": "use xiom.io;\n// TODO: define a function 'double' that takes an Int and returns Int\n// TODO: inside double, return x * 2\n\nfn main() {\n  // TODO: call double(5) and store the result in a variable\n  // TODO: print the result\n}",
   "solution": "use xiom.io;\nfn double(x: Int) -> Int {\n  return x * 2;\n}\n\nfn main() {\n  let result: Int = double(5);\n  io.println(\"Double 5 is 10\");\n}",
+  "expected_output": "Double 5 is 10",
   "try_it": "Create a `triple(x: Int) -> Int` function that returns `x * 3`. Then create a `square(x: Int) -> Int` that returns `x * x`. Call both from main!",
   "concepts": [
     "return-values",

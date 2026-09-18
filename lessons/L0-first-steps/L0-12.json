@@ -9,6 +9,7 @@
   "analogy": "Variables in math are like labeled jars � you put numbers in, do operations with the labels, and get new numbers out.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let price: Int = 4;\n  let quantity: Int = 3;\n  // TODO: multiply price times quantity, store in total\n  // TODO: print the total\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let price: Int = 4;\n  let quantity: Int = 3;\n  let total: Int = price * quantity;\n  io.println(\"12\");\n}\n",
+  "expected_output": "12",
   "try_it": "Calculate the total cost of 3 pizzas at $12 each. Create a `price` variable set to 12 and a `quantity` variable set to 3, then multiply and print!",
   "concepts": [
     "variables",

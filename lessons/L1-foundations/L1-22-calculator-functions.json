@@ -9,6 +9,7 @@
   "analogy": "A calculator's keypad has separate buttons for +, -, x, and /. Each button is like a function — press it, give it two numbers, get a result. The buttons are independent; replacing the multiply button doesn't break the add button.",
   "code_template": "use xiom.io;\n// TODO: Write four functions: add, subtract, multiply, divide\n// Each takes two Int parameters and returns an Int\n// divide() should return 0 if b is 0\n// Call all four from main() with two numbers\n\nfn main() {\n  let a = 30;\n  let b = 5;\n  // TODO: Call your functions and print results\n}",
   "solution": "use xiom.io;\nfn add(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn subtract(a: Int, b: Int) -> Int {\n  return a - b;\n}\n\nfn multiply(a: Int, b: Int) -> Int {\n  return a * b;\n}\n\nfn divide(a: Int, b: Int) -> Int {\n  if b == 0 {\n  }\n  return a / b;\n}\n\nfn main() {\n  let a = 30;\n  let b = 5;\n  let sum = add(a, b);\n  let diff = subtract(a, b);\n  let prod = multiply(a, b);\n  let quot = divide(a, b);\n  io.println(\"All calculations complete!\");\n}",
+  "expected_output": "All calculations complete!",
   "try_it": "Add a fifth function `modulus(a, b)` that returns the remainder of a divided by b, and test it with different number pairs.",
   "concepts": [
     "arithmetic functions",

@@ -9,6 +9,7 @@
   "analogy": "Boolean functions are like bouncers at a club — they check each person against the rules and say yes or no.",
   "code_template": "use xiom.io;\n// TODO: Write 'is_adult(age)' returning true if age >= 18\n// TODO: Write 'can_drive(age)' returning true if age >= 16\n// TODO: Write 'is_teenager(age)' returning true if age >= 13 AND age <= 19\n\nfn main() {\n  // TODO: Test all three with age 15 and print the results\n}",
   "solution": "use xiom.io;\nfn is_adult(age: Int) -> Bool {\n  return age >= 18;\n}\n\nfn can_drive(age: Int) -> Bool {\n  return age >= 16;\n}\n\nfn is_teenager(age: Int) -> Bool {\n  return age >= 13 && age <= 19;\n}\n\nfn main() {\n  let age = 15;\n  io.println(\"Is 15 an adult? false\");\n  io.println(\"Can 15 drive? false\");\n  io.println(\"Is 15 a teenager? true\");\n}",
+  "expected_output": "Is 15 an adult? false\nCan 15 drive? false\nIs 15 a teenager? true",
   "try_it": "Write an `is_valid_username` function that returns true if a username has at least 3 letters AND at most 20 letters. Test it with short and long names.",
   "concepts": [
     "Bool-return",

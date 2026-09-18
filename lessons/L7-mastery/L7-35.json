@@ -9,6 +9,7 @@
   "analogy": "A restaurant bill with a scribbled tip calculation on the back of a napkin: '87.50 × 0.20 = 17.50, total = 105.00, ÷ 3 = 35 each.' Your tip calculator does it instantly, with a breakdown of different percentages so you can pick based on service quality. The napkin, digitized.",
   "code_template": "use xiom.io;\nfn calculate_split(bill: Int, tip_percent: Int, people: Int) -> Int {\n  // TODO: compute (bill + tip) / people\n  // Tip = bill * tip_percent / 100\n}\n\nfn main() -> Int {\n  // TODO: calculate split for $100 bill, 18% tip, 4 people\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn calculate_split(bill: Int, tip_percent: Int, people: Int) -> Int {\n  if people <= 0 { return 0; };\n  let tip = bill * tip_percent / 100;\n  let total = bill + tip;\n  total / people\n}\n\nfn main() -> Int {\n  let per_person = calculate_split(100, 18, 4);\n  io.println(per_person.to_str());\n  return 0;\n}\n",
+  "expected_output": "29",
   "try_it": "Round up to the nearest dollar. Add service quality as input: Poor=10%, Good=15%, Great=20%, Amazing=25%. Show tip, total, and per-person amount for each quality level. Print a formatted 'receipt' with all calculations.",
   "concepts": [
     "tip",

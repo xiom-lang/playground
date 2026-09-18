@@ -9,6 +9,7 @@
   "analogy": "A car's dashboard has warning lights (contracts). You don't need a separate inspection report - if the oil light is on, there's a problem. Contracts are built-in warning lights that fire automatically.",
   "code_template": "use xiom.io;\nfn is_even(n: Int) -> Bool\n  requires: n >= 1\n{\n  // TODO: return true if n is even\n  false\n}\n\nfn main() -> Int {\n  // TODO: Write 4 assert tests:\n  // is_even(2) should be true\n  // is_even(3) should be false\n  // is_even(0) should be... (what happens with contract?)\n  // is_even(100) should be true\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn is_even(n: Int) -> Bool\n  requires: n >= 1\n{\n  n % 2 == 0\n}\n\nfn main() -> Int {\n  assert(is_even(2) == true);\n  assert(is_even(3) == false);\n  assert(is_even(100) == true);\n  io.println(\"All tests passed!\");\n  return 0;\n}\n",
+  "expected_output": "All tests passed!",
   "try_it": "Write a `safe_divide(a, b)` function with requires `b != 0` and ensures `result * b == a`. Test with: divide(10, 2), divide(10, 3), divide(10, 0). Observe which ones pass the contract and which trigger the requires.",
   "concepts": [
     "testing",

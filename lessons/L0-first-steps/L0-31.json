@@ -9,6 +9,7 @@
   "analogy": "`string.str_len` is like a tape measure for text � it tells you exactly how long your string is, one character at a time.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Create a variable 'password' with a test password\n  // TODO: Use string.str_len to get the length\n  // TODO: Print the length\n  // TODO: If the length is 8 or more, print \"Strong!\"\n  // TODO: Else, print \"Too short! Use at least 8 characters.\"\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let password = \"supermegacat123\";\n  let length = string.str_len(password);\n\n  io.println(\"Password length:\");\n  io.println(\"15\");\n\n  if length >= 8 {\n    io.println(\"Strong password!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n\n  let password2 = \"cat\";\n  let length2 = string.str_len(password2);\n\n  io.println(\"Testing a short password:\");\n  io.println(\"3\");\n\n  if length2 >= 8 {\n    io.println(\"Strong password!\");\n  } else {\n    io.println(\"Too short! Use at least 8 characters.\");\n  }\n}\n",
+  "expected_output": "Password length:\n15\nStrong password!\nTesting a short password:\n3\nToo short! Use at least 8 characters.",
   "try_it": "Test different passwords: try 'abc', 'hello123', 'my_super_secret', and a sentence with spaces. How long does each one measure? What's the shortest password that passes the check? What's the longest password you can think of?",
   "concepts": [
     "string.str_len",

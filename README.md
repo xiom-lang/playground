@@ -49,6 +49,7 @@ health checks stay responsive while a submission compiles.
 - Keyboard shortcut Ctrl+Enter (Cmd+Enter) to run
 - In-browser WASM compiler: instant IR preview and offline diagnostics for pure programs
 - Server toolchain is authoritative for diagnostics and produces real program output
+- Expected-output match for reference solutions ("Output matches the expected result")
 - Full standard library reference generated from the toolchain (516 modules / 6,522 public functions) with search
 - Light/dark themes, progress tracking, responsive layout
 
@@ -73,7 +74,15 @@ node tools/lesson-audit.js --check-only      # compile every lesson + template
 node tools/lesson-audit.js                   # also execute every passing solution
 node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
 node tools/generate-stdlib-ref.js --check    # stdlib reference matches the toolchain
+node tools/generate-expected-outputs.js --check   # expected outputs are complete and current
 ```
+
+`expected_output` for each lesson is generated from a Linux execution sweep by
+`tools/generate-expected-outputs.js` (each solution runs twice; only
+deterministic outputs are stored). Lessons whose output varies between runs are
+recorded in `tools/expected-output-skips.json` and stay without the field, so
+the CI assertion introduced in `tools/lesson-audit.js` cannot flake. The Output
+tab compares the run result with the expected output for unmodified solutions.
 
 `js/stdlib-ref.json` is generated from the pinned toolchain by
 `tools/generate-stdlib-ref.js` (curated descriptions are preserved by

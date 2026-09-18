@@ -9,6 +9,7 @@
   "analogy": "A Set is like a stamp collection — you can't have two of the same stamp. If you try to add a stamp you already own, it just doesn't go in. Unlike a Vec (which is like a pile of receipts where duplicates pile up), a Set automatically deduplicates everything.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  // TODO: Create a Set[Int] called lucky_numbers\n  // TODO: Insert 7, 13, 7, 42\n  // TODO: Check if 7 and 8 are in the Set with .contains()\n  // TODO: Remove 13 and verify it's gone\n  return 0;\n}\n",
   "solution": "use xiom.io;\nuse xiom.collect.hashset;\n\nfn main() -> Int {\n  var lucky_numbers = hashset_new();\n  hashset_insert(&mut lucky_numbers, 7);\n  hashset_insert(&mut lucky_numbers, 13);\n  hashset_insert(&mut lucky_numbers, 7);\n  hashset_insert(&mut lucky_numbers, 42);\n\n  io.println(hashset_contains(&lucky_numbers, 7).to_str());\n  io.println(hashset_contains(&lucky_numbers, 8).to_str());\n\n  hashset_remove(&mut lucky_numbers, 13);\n  io.println(hashset_contains(&lucky_numbers, 13).to_str());\n\n  return 0;\n}\n",
+  "expected_output": "1\n0\n0",
   "try_it": "Create a Set of banned usernames. Ask the user to pick a username (hardcode a test string) and check if it's banned with `.contains()`. Try inserting 10 random numbers (with some repeats) into a Set — how many unique numbers do you end up with? Convert a Vec with duplicates into a Set to see the unique count.",
   "concepts": [
     "Set",

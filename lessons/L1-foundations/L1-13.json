@@ -9,6 +9,7 @@
   "analogy": "Temperature functions are like a universal power adapter — they convert one standard into another so everything works together.",
   "code_template": "use xiom.io;\n// TODO: Write 'c_to_f' that converts Celsius to Fahrenheit: c * 9/5 + 32\n// TODO: Write 'is_cold' that returns true if celsius < 10.0\n\nfn main() {\n  // TODO: Convert 25C to Fahrenheit and print it\n  // TODO: Check if 5.0 is cold and print the result\n}",
   "solution": "use xiom.io;\nfn c_to_f(celsius: Float64) -> Float64 {\n  return celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn is_cold(celsius: Float64) -> Bool {\n  return celsius < 10.0;\n}\n\nfn main() {\n  let fahr = c_to_f(25.0);\n  io.println(\"25C in Fahrenheit: 77\");\n  io.println(\"Is 5C cold? true\");\n}",
+  "expected_output": "25C in Fahrenheit: 77\nIs 5C cold? true",
   "try_it": "Add a `c_to_k` function that converts Celsius to Kelvin (C + 273.15). Then write `describe_temp` that prints all three scales for a given Celsius value.",
   "concepts": [
     "unit-conversion",

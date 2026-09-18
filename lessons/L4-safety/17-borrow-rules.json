@@ -9,6 +9,7 @@
   "analogy": "Borrow rules are like a library reading room — any number of people can quietly read, but if someone is updating the catalog, everyone else must wait outside.",
   "code_template": "use xiom.io;\n\n// TODO: Create a Vec, make a read borrow, then inside a new scope { }\n// create a write borrow to modify it after the read borrow ends\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
   "solution": "use xiom.io;\n\nfn main() -> Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  data.push(2);\n  {\n    let r = &data;  // Read borrow starts;\n    io.println(r.len().to_str());\n  }  // Read borrow ends here\n  {\n    let w = &mut data;  // Write borrow starts (read borrow is dead);\n    w.push(3);\n  }  // Write borrow ends here\n  return data.len() as Int;\n}",
+  "expected_output": "2",
   "try_it": "Try to hold a & borrow and create a &mut borrow at the same time. Observe the compiler error and fix it with scoping.",
   "concepts": [
     "borrow rules",

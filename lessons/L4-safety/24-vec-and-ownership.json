@@ -9,6 +9,7 @@
     "analogy":  "A Vec is like a bookshelf — the shelf owns the books on it. You can look at books (\u0026), rearrange them (\u0026mut), or move the entire shelf to a new room.",
     "code_template":  "use xiom.io;\n\n// TODO: Create a Vec[Int], write fn first_and_last(v: \u0026Vec[Int]) -\u003e Int\n// that returns first + last element\n// Write fn clear_vec(v: \u0026mut Vec[Int]) that empties the Vec\n// In main, create Vec, print first+last, clear, print len\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn first_and_last(v: \u0026Vec[Int]) -\u003e Int {\n  if v.len() \u003e 0 {\n    return v[0] + v[v.len() - 1];\n  }\n  return 0;\n}\n\nfn clear_vec(v: \u0026mut Vec[Int]) {\n  while v.len() \u003e 0 {\n    v.pop();\n  }\n}\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(10);\n  data.push(20);\n  data.push(30);\n  let result = first_and_last(\u0026data);\n  clear_vec(\u0026mut data);\n  io.println(data.len().to_str());\n  return result;\n}",
+    "expected_output": "0",
     "try_it":  "Write a function that takes \u0026mut Vec[Int] and reverses the elements in place. Test it with multiple Vecs of different sizes.",
     "concepts":  [
                      "Vec ownership",

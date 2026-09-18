@@ -9,6 +9,7 @@
   "analogy": "String functions are like a text factory conveyor belt — raw text goes in one end, and transformed text comes out the other.",
   "code_template": "use xiom.io;\nuse xiom.string;\n// TODO: Write 'shout' that returns uppercase of text using string.str_upper\n// TODO: Write 'count_letters' that returns length of text using string.str_len\n// TODO: Write 'is_empty_text' that returns true if count_letters(text) == 0\n\nfn main() {\n  // TODO: Test shout(\"quiet\"), count_letters(\"hello\"), and is_empty_text(\"\")\n}",
   "solution": "use xiom.io;\nuse xiom.string;\nfn shout(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn count_letters(text: Str) -> Int {\n  return string.str_len(text);\n}\n\nfn is_empty_text(text: Str) -> Bool {\n  return count_letters(text) == 0;\n}\n\nfn main() {\n  io.println(shout(\"quiet\"));\n  io.println(\"Letter count: 5\");\n  io.println(\"Is empty? true\");\n}",
+  "expected_output": "QUIET\nLetter count: 5\nIs empty? true",
   "try_it": "Write an `exclaim` function that takes text and returns it with three exclamation marks added. Then write `whisper_exclaim` that whisper-fies it first, then adds the exclamation marks.",
   "concepts": [
     "string-functions",

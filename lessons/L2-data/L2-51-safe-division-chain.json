@@ -9,6 +9,7 @@
   "analogy": "Chaining safe operations is like a relay race. Each runner (operation) passes the baton (result value) to the next. If one runner drops the baton (error), the whole team is disqualified. The match expression is the handoff point.",
   "code_template": "use xiom.io;\n\nenum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n\n// TODO: write 'safe_divide' that returns DivResult.Ok or DivResult.DivByZero\n\n// TODO: write 'chain_divide' that chains a/b then result/c, failing at first error\n\nfn main() -> Int {\n  // TODO: chain 100/5 then result/2, return the final value or -1 on error\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum DivResult {\n  Ok(n: Int),\n  DivByZero,\n}\n\nfn safe_divide(a: Int, b: Int) -> DivResult {\n  if b == 0 {\n    return DivResult.DivByZero;\n  }\n  return DivResult.Ok(a / b);\n}\n\nfn chain_divide(a: Int, b: Int, c: Int) -> DivResult {\n  let r1 = safe_divide(a, b);\n  match r1 {\n    Ok(n) => { return safe_divide(n, c); }\n    DivByZero => { return DivResult.DivByZero; }\n  }\n}\n\nfn main() -> Int {\n  let result = chain_divide(100, 5, 2);\n  match result {\n    Ok(n) => { return n; }\n    DivByZero => { return -1; }\n  }\n}",
+  "expected_output": "",
   "try_it": "Extend to a 3-step chain: divide A by B, then by C, then by D. Test it with 100/5/2/5 (should succeed), 100/0/2/5 (fail at step 1), and 100/5/0/5 (fail at step 2). Add a `safe_remainder` that also returns DivResult.",
   "concepts": [
     "enum",

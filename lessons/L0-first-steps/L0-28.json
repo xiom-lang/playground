@@ -9,6 +9,7 @@
   "analogy": "Using `&&` is like needing both a key AND a card to open a door � if either is missing, the door stays locked.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable 'temperature' and set it to a number\n  // TODO: Create a Boolean 'is_sunny' set to true or false\n  // TODO: Write an if statement: if temperature > 20 AND is_sunny, print \"Wear shorts!\"\n  // TODO: Else, print \"Wear a jacket!\"\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let temperature: Int = 25;\n  let is_sunny: Bool = true;\n\n  if temperature > 20 && is_sunny {\n    io.println(\"Wear shorts and a t-shirt!\");\n  } else {\n    io.println(\"Better wear a jacket.\");\n  }\n\n  let is_raining: Bool = false;\n\n  if is_raining {\n    io.println(\"Don't forget your umbrella!\");\n  } else {\n    io.println(\"No rain today � leave the umbrella at home.\");\n  }\n}\n",
+  "expected_output": "Wear shorts and a t-shirt!\nNo rain today \ufffd leave the umbrella at home.",
   "try_it": "Add a check for rain: create an `is_raining` Boolean and use `||` (OR) to print \"Stay inside and watch a movie!\" if it's cold OR raining. Try different combinations of temperature and weather � how does the output change?",
   "concepts": [
     "if",

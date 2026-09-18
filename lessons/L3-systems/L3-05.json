@@ -9,6 +9,7 @@
   "analogy": "Finding with Option is like asking a librarian for a book — they either come back with the book in hand (Some) or tell you 'we don't have it' (None).",
   "code_template": "use xiom.io;\n\n// TODO: Write find_grade function\n// Takes a student name (Str), returns Option[Str]\n// \"Alex\" -> Some(\"A\"), \"Bailey\" -> Some(\"B\"), \"Casey\" -> Some(\"C\")\n// Anyone else -> None\n\n// TODO: Write get_grade_message function\n// Uses find_grade, returns a nice sentence or \"Student not found\"\n\nfn main() -> Int {\n  // TODO: Test with \"Alex\", \"Bailey\", and \"Unknown\", print results\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nfn find_grade(name: Str) -> Option[Str] {\n  if name == \"Alex\"   { return Some(\"A\"); }\n  if name == \"Bailey\" { return Some(\"B\"); }\n  if name == \"Casey\"  { return Some(\"C\"); }\n  return None;\n}\n\nfn get_grade_message(name: Str) -> Str {\n  if let Some(grade) = find_grade(name) {\n    return name + \" got a \" + grade + \"!\";\n  }\n  return \"Student \" + name + \" not found.\";\n}\n\nfn main() -> Int {\n  io.println(get_grade_message(\"Alex\").to_str());\n  io.println(get_grade_message(\"Bailey\").to_str());\n  io.println(get_grade_message(\"Unknown\").to_str());\n  return 0;\n}\n",
+  "expected_output": "",
   "try_it": "Add two more students to find_grade. Then create a `find_honor_roll` function that returns Option[Str] — only return Some(name) for students with A or B. Returns None for C or not found. Test all cases.",
   "concepts": [
     "search-pattern",

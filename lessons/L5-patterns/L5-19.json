@@ -9,6 +9,7 @@
   "analogy": "A generic max function is like a measuring tape. Whether you're measuring height (Int), length (Float64), or alphabetical order (Str), the same tool works. The measuring tape doesn't care what it's measuring — it just compares which is bigger. The `[T]` is the tape saying 'I work on anything you can line up and compare.'",
   "code_template": "use xiom.io;\n// TODO: Write a generic function my_min[T] that returns the smaller value\nfn my_min[T](a: T, b: T) -> T {\n\n}\n\nfn main() -> Int {\n  // TODO: Call my_min with two Ints (5, 3) and print the result\n  // TODO: Call my_min with two Float64 values (1.5, 2.5) and print the result\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nuse xiom.convert;\nfn my_min[T](a: T, b: T) -> T {\n  if a < b { return a; }\n  else { return b; }\n}\n\nfn main() -> Int {\n  let int_result = my_min(5, 3);\n  io.println(int_result.to_str());\n\n  let float_result = my_min(1.5, 2.5);\n  io.println(convert.float_to_string(float_result));\n  return 0;\n}\n",
+  "expected_output": "3\n1.5",
   "try_it": "Write `my_equals[T](a: T, b: T) -> Bool` that returns true if the two values are equal. Try it with Int, Str, and Bool. Write a `clamp[T](value: T, min: T, max: T) -> T` function that returns `min` if value < min, `max` if value > max, and `value` otherwise. Test it with different types.",
   "concepts": [
     "generics",

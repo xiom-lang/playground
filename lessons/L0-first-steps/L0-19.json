@@ -9,6 +9,7 @@
   "analogy": "Shortcut operators are like a remote control for your variable � one button press does the same thing as typing out the full command.",
   "code_template": "use xiom.io;\n\nfn main() {\n  var total: Int = 50;\n  // TODO: add 25 to total using +=\n  // TODO: subtract 10 from total using -=\n  // TODO: print the result\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  var total: Int = 50;\n  total += 25;\n  total -= 10;\n  io.println(\"50\");\n}\n",
+  "expected_output": "50",
   "try_it": "Start with 50, add 25 using `+=`, then subtract 10 using `-=`. Print after each step. Then try `*=` to double a number and `/=` to halve it!",
   "concepts": [
     "assignment-operators",

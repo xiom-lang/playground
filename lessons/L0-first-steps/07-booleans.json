@@ -9,6 +9,7 @@
   "analogy": "A Boolean is like a light switch — it's either ON (true) or OFF (false), nothing in between.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable for your age\n  // TODO: Create a Boolean that checks if you are 18 or older\n  // TODO: Print the Boolean result\n  // TODO: Create another Boolean: is your name \"Alex\"?\n  // TODO: Print that result too\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  let my_age = 14;\n  let is_adult = my_age >= 18;\n  io.println(\"Are you an adult?\");\n  io.println(\"false\");\n\n  let my_name = \"Jordan\";\n  let is_alex = my_name == \"Alex\";\n  io.println(\"Is your name Alex?\");\n  io.println(\"false\");\n\n  io.println(\"Is 50 greater than 30?\");\n  io.println(\"true\");\n}\n",
+  "expected_output": "Are you an adult?\nfalse\nIs your name Alex?\nfalse\nIs 50 greater than 30?\ntrue",
   "try_it": "Compare your age to 18 and print whether you're an adult. Then compare your shoe size to 7. Try comparing two numbers with each of the six comparison symbols — how many print `true` and how many print `false`?",
   "concepts": [
     "Bool",

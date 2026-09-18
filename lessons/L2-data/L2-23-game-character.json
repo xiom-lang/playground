@@ -9,6 +9,7 @@
   "analogy": "HP is like water in a bucket. `max_hp` is the bucket's brim — you can't hold more than the bucket. Taking damage is pouring water out; you can't have less than empty.",
   "code_template": "use xiom.io;\n\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n\n// TODO: add method 'take_damage' that subtracts amount and clamps to 0\n\n// TODO: add method 'heal' that adds amount and clamps to max_hp\n\nfn main() -> Int {\n  // TODO: create a character with 50/100 HP, damage for 70, heal for 40, return final hp\n  return 0;\n}",
   "solution": "use xiom.io;\n\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n\nfn Character.take_damage(self, amount: Int) {\n  hp = hp - amount;\n  if hp < 0 {\n    hp = 0;\n  }\n}\n\nfn Character.heal(self, amount: Int) {\n  hp = hp + amount;\n  if hp > max_hp {\n    hp = max_hp;\n  }\n}\n\nfn main() -> Int {\n  var hero = Character{ name: \"Mage\"; hp: 50; max_hp: 100; };\n  hero.take_damage(70);\n  hero.heal(40);\n  return hero.hp;\n}",
+  "expected_output": "",
   "try_it": "Add an `is_alive` method that returns `hp > 0`. Add a `health_percent` method that returns `(hp * 100) / max_hp`. Create a character at 30/120 HP and print the percentage.",
   "concepts": [
     "struct",

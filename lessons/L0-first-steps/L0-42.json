@@ -9,6 +9,7 @@
   "analogy": "A magic trick is just following a recipe with surprise at the end — your program reveals every step so the audience can see there's no cheating.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: pick a starting number and store it in 'original'\n  // TODO: double it and store in 'doubled'\n  // TODO: add 10 and store in 'plus_ten'\n  // TODO: divide by 2 and store in 'halved'\n  // TODO: subtract the original and store in 'magic_result'\n  // TODO: print magic_result\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let original: Int = 42;\n  let doubled: Int = original * 2;\n  let plus_ten: Int = doubled + 10;\n  let halved: Int = plus_ten / 2;\n  let magic_result: Int = halved - original;\n  io.println(\"5\");\n}\n",
+  "expected_output": "5",
   "try_it": "Try different starting numbers: 7, 13, 100, 999. The result is always 5! Can you figure out why mathematically?",
   "concepts": [
     "variables",

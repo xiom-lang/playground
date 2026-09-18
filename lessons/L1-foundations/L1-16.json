@@ -9,6 +9,7 @@
   "analogy": "Time conversion functions are like a unit translator — \"5 minutes\" goes in, \"300 seconds\" comes out, no thinking required.",
   "code_template": "use xiom.io;\n// TODO: Write 'minutes_to_seconds' that multiplies by 60\n// TODO: Write 'hours_to_minutes' that multiplies by 60\n// TODO: Write 'days_to_minutes' that first converts days -> hours, then hours -> minutes (call your other functions!)\n\nfn main() {\n  // TODO: Print the number of minutes in 2 days using days_to_minutes(2)\n}",
   "solution": "use xiom.io;\nfn minutes_to_seconds(minutes: Int) -> Int {\n  return minutes * 60;\n}\n\nfn hours_to_minutes(hours: Int) -> Int {\n  return hours * 60;\n}\n\nfn days_to_minutes(days: Int) -> Int {\n  let hours = days * 24;\n  return hours_to_minutes(hours);\n}\n\nfn main() {\n  io.println(\"2 days in minutes: 2880\");\n}",
+  "expected_output": "2 days in minutes: 2880",
   "try_it": "Write a `weeks_to_minutes` function that chains through `days_to_hours` and `hours_to_minutes`. Calculate how many minutes are in a week!",
   "concepts": [
     "time-conversion",

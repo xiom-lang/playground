@@ -9,6 +9,7 @@
   "analogy": "Default values are like a coffee shop's \"usual\" order — the barista knows what you want unless you specify otherwise.",
   "code_template": "use xiom.io;\n// TODO: Write 'make_pizza' that takes 'topping: Str' and returns \"Pizza with X\"\n// TODO: Write 'make_cheese_pizza' with no params that calls make_pizza(\"cheese\")\n\nfn main() {\n  // TODO: Call both and print the results\n}",
   "solution": "use xiom.io;\nfn make_pizza(topping: Str) -> Str {\n  return \"Pizza with \" + topping;\n}\n\nfn make_cheese_pizza() -> Str {\n  return make_pizza(\"cheese\");\n}\n\nfn main() {\n  io.println(make_cheese_pizza());\n  io.println(make_pizza(\"pepperoni\"));\n}",
+  "expected_output": "Pizza with cheese\nPizza with pepperoni",
   "try_it": "Create a `draw_line` function that takes a length (Int) and a symbol (Str). Then make `draw_short_line()` that draws 10 dashes by default. Call both.",
   "concepts": [
     "default-values",

@@ -9,6 +9,7 @@
   "analogy": "A rain gauge under a storm: one raindrop is random, but a thousand raindrops fill the gauge to a predictable depth. Each flip is a raindrop — chaotic individually. A thousand flips is the storm — the ratio converges inevitably to 50% like water finding its level.",
   "code_template": "use xiom.io;\nfn simulate_flips(count: Int) -> Int {\n  // TODO: flip 'count' coins, return number of heads\n  // Use: heads when seed % 2 == 0\n}\n\nfn main() -> Int {\n  // TODO: simulate 10, 100, and 1000 flips; print heads count and percentage\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn simulate_flips(count: Int) -> Int {\n  var heads = 0;\n  var seed = 1;\n  var i = 0;\n  while i < count {\n    seed = (seed * 1103515245 + 12345) % 2147483648;\n    if seed % 2 == 0 { heads += 1; };\n    i += 1;\n  };\n  heads\n}\n\nfn main() -> Int {\n  let h10 = simulate_flips(10);\n  io.println(h10.to_str());\n  io.println((h10 * 100 / 10).to_str());\n\n  let h100 = simulate_flips(100);\n  io.println(h100.to_str());\n  io.println((h100 * 100 / 100).to_str());\n\n  let h1000 = simulate_flips(1000);\n  io.println(h1000.to_str());\n  io.println((h1000 * 100 / 1000).to_str());\n  return 0;\n}\n",
+  "expected_output": "5\n50\n50\n50\n500\n50",
   "try_it": "Track the longest streak of consecutive heads in 1000 flips — surprising how often you get 7+ in a row. Simulate the gambler's fallacy: after 5 heads in a row, what's the probability the next flip is heads? (Spoiler: still 50%).",
   "concepts": [
     "coin-flip",

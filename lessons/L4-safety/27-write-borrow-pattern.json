@@ -9,6 +9,7 @@
     "analogy":  "A write borrow is like booking a private editing room — you go in alone, make your changes, and when you\u0027re done, the room (data) is available for others again.",
     "code_template":  "use xiom.io;\n\n// TODO: Write fn \u0027zero_negatives\u0027 that takes \u0026mut Vec[Int]\n// Replace any negative value with 0\n// Write fn \u0027remove_evens\u0027 that takes \u0026mut Vec[Int]\n// Remove all even numbers from the Vec\n// In main, create Vec, apply both, print result\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn zero_negatives(items: \u0026mut Vec[Int]) {\n  let i = 0;\n  while i \u003c items.len() {\n    if items[i] \u003c 0 { items[i] = 0; }\n    i = i + 1;\n  }\n}\n\nfn remove_evens(items: \u0026mut Vec[Int]) {\n  let i = 0;\n  while i \u003c items.len() {\n    if items[i] % 2 == 0 {\n      items[i] = items[items.len() - 1];\n      items.pop();\n    } else {\n      i = i + 1;\n    }\n  }\n}\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(-5);\n  data.push(10);\n  data.push(-3);\n  data.push(7);\n  data.push(4);\n  data.push(-1);\n  zero_negatives(\u0026mut data);\n  remove_evens(\u0026mut data);\n  return data.len() as Int;\n}",
+    "expected_output": "",
     "try_it":  "Write a fn shuffle(items: \u0026mut Vec[Int]) that rearranges elements randomly. Verify the Vec has the same length after shuffling.",
     "concepts":  [
                      "write borrow pattern",

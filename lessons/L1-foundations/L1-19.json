@@ -9,6 +9,7 @@
   "analogy": "Random functions are like shaking a magic 8-ball — you ask a question, give it a shake, and a random answer appears.",
   "code_template": "use xiom.io;\nuse xiom.math;\n// TODO: Write 'roll_d6' that returns math.random_range(1, 6)\n// TODO: Write 'flip_coin' that randomly returns \"Heads\" or \"Tails\"\n\nfn main() {\n  // TODO: Call roll_d6() and flip_coin() and print the results\n}",
   "solution": "use xiom.io;\nuse xiom.math;\nfn roll_d6() -> Int {\n  return math.random_range(1, 6);\n}\n\nfn flip_coin() -> Str {\n  let result = math.random_range(0, 1);\n  if result == 0 {\n    return \"Heads\";\n  } else {\n    return \"Tails\";\n  }\n}\n\nfn main() {\n  io.println(\"Dice roll result: 1-6\");\n  io.println(flip_coin());\n}",
+  "expected_output": "Dice roll result: 1-6\nHeads",
   "try_it": "Write a `roll_custom_dice(sides)` function that takes a number of sides and returns a random roll. Test it with a 4-sided, 8-sided, and 100-sided die!",
   "concepts": [
     "random",

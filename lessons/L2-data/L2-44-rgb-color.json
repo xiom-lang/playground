@@ -9,6 +9,7 @@
   "analogy": "A Color is like a paint mixer with three sliders: red, green, and blue. Brightness tells you how much light the mix reflects. is_dark is the question \"would white text be readable on this background?\" Hex is the universal paint code.",
   "code_template": "use xiom.io;\n\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n\n// TODO: write a method 'Color.brightness' that returns the average of r, g, b\n\n// TODO: write a method 'Color.is_dark' that returns true if brightness < 128\n\n// TODO: write a method 'Color.to_hex' that returns \"#RRGGBB\" using uppercase hex digits\n\nfn main() -> Int {\n  // TODO: create a dark color, return 1 if it's dark, otherwise 0\n  return 0;\n}",
   "solution": "use xiom.io;\n\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n\nfn Color.brightness(self) -> Int {\n  return (r + g + b) / 3;\n}\n\nfn Color.is_dark(self) -> Bool {\n  return self.brightness() < 128;\n}\n\nfn Color.to_hex(self) -> Str {\n  let hex = \"0123456789ABCDEF\";\n  return \"#\" + hex + hex + hex + hex + hex + hex;\n}\n\nfn main() -> Int {\n  let crimson = Color{ r: 220; g: 20; b: 60; };\n  if crimson.is_dark() { return 1; }\n  return 0;\n}",
+  "expected_output": "",
   "try_it": "Add a `Color.invert(self) -> Color` method that returns the complementary color (255 - r, 255 - g, 255 - b). Add a `Color.mix(self, other: Color) -> Color` method that averages each channel. Create your favorite real color.",
   "concepts": [
     "struct",

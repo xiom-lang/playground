@@ -9,6 +9,7 @@
   "analogy": "Compound interest is like a snowball rolling downhill. Each rotation (year) picks up more snow (interest), and the bigger snowball picks up even more snow next rotation. The function is the hill — you tell it the starting size, slope, and number of rotations; it tells you the final snowball.",
   "code_template": "use xiom.io;\n// TODO: Write calc_interest(principal: Float64, rate: Float64, years: Int) -> Float64\n// Use a while loop to multiply the balance by (1.0 + rate) each year\n\nfn main() {\n  let start_amount = 2000.0;\n  let interest_rate = 0.07;\n  let num_years = 15;\n  // TODO: Calculate the final balance and print a completion message\n}",
   "solution": "use xiom.io;\nfn calc_interest(principal: Float64, rate: Float64, years: Int) -> Float64 {\n  var balance = principal;\n  var y = 0;\n  while y < years {\n    balance = balance * (1.0 + rate);\n    y = y + 1;\n  }\n}\nfn main() {\n  let start_amount = 2000.0;\n  let interest_rate = 0.07;\n  let num_years = 15;\n  let result = calc_interest(start_amount, interest_rate, num_years);\n  io.println(\"Compound interest calculation complete!\");\n}",
+  "expected_output": "Compound interest calculation complete!",
   "try_it": "Modify `calc_interest` to also return how much total interest was earned (final balance minus principal). Test with a 1000.0 principal at 10% for 20 years.",
   "concepts": [
     "while loop inside function",

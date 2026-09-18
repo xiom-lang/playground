@@ -9,6 +9,7 @@
     "analogy":  "Assignment is like handing someone your wallet — you no longer have it, they do. If you try to spend from a wallet you already gave away, that\u0027s fraud.",
     "code_template":  "use xiom.io;\n\n// TODO: Create a Vec[Int], push 10, 20, 30\n// Move the Vec to a new variable\n// Try printing the new Vec\u0027s length\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn main() -\u003e Int {\n  let v = Vec[Int].new();\n  v.push(10);\n  v.push(20);\n  v.push(30);\n  let moved_v = v;\n  io.println(moved_v.len().to_str());\n  return moved_v.len() as Int;\n}",
+    "expected_output": "3",
     "try_it":  "Try adding `io.println(v.len());` after the move to `moved_v`. See the compiler error about using a moved value.",
     "concepts":  [
                      "move semantics",

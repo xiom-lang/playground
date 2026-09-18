@@ -9,6 +9,7 @@
   "analogy": "A for loop is like a conveyor belt � items come to you one at a time, and you process each the same way.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let days: Vec[Str] = [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"];\n  // TODO: use a for loop to print each day\n  // TODO: each line should say \"Today is \" followed by the day\n}\n",
   "solution": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let days: Vec[Str] = [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"];\n  for __i in range(0, days.len()) {\n    let day = days[__i];\n    io.print(\"Today is \");\n    io.println(day);\n  }\n}\n",
+  "expected_output": "Today is Mon\nToday is Tue\nToday is Wed\nToday is Thu\nToday is Fri",
   "try_it": "Create a list of your 5 favorite foods. Use a for loop to print \"Yum! I love [food]\" for each one. Then try a list of numbers and compute something inside the loop!",
   "concepts": [
     "for-loop",

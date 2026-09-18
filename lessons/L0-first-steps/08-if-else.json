@@ -9,6 +9,7 @@
   "analogy": "An if-statement is like a fork in the road — the sign (the condition) tells you which path to take, and you can only walk down one of them.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable called 'score' and give it a number\n  // TODO: If the score is 50 or higher, print \"You passed!\"\n  // TODO: Else, print \"Keep trying — you'll get it!\"\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  let score = 72;\n\n  if score >= 50 {\n    io.println(\"You passed! Great job!\");\n  } else {\n    io.println(\"Keep trying — you'll get it!\");\n  }\n\n  let number = -3;\n  if number >= 0 {\n    io.println(\"Positive!\");\n  } else {\n    io.println(\"Negative!\");\n  }\n}\n",
+  "expected_output": "You passed! Great job!\nNegative!",
   "try_it": "Change the `score` variable to different numbers — 90, 50, 30, 0 — and watch the output change. Then try changing `number` between positive and negative values. The same code, different results!",
   "concepts": [
     "if",

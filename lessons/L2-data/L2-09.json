@@ -9,6 +9,7 @@
     "analogy":  "A bank account is like a wallet. Deposit adds cash, withdraw takes cash out (but only if you have enough), and transfer moves cash from one wallet to another.",
     "code_template":  "use xiom.io;\n\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\n// TODO: Write \u0027deposit\u0027 method — adds amount to balance\n\n// TODO: Write \u0027withdraw\u0027 method — subtracts amount IF balance \u003e= amount, returns Bool\n\nfn main() -\u003e Int {\n  // TODO: Create an account with 100.0, deposit 25.0, withdraw 40.0, print final balance\n  return 0;\n}\n",
     "solution":  "use xiom.io;\n\ntype Account = {\n  owner: Str;\n  balance: Float64;\n}\n\nfn Account.deposit(self, amount: Float64) {\n  balance = balance + amount;\n}\n\nfn Account.withdraw(self, amount: Float64) -\u003e Bool {\n  if balance \u003e= amount {\n    balance = balance - amount;\n    return true;\n  }\n  return false;\n}\n\nfn main() -\u003e Int {\n  let acc = Account{ owner: \"Alex\", balance: 100.0 };\n  acc.deposit(25.0);\n  acc.withdraw(40.0);\n  io.println(acc.balance.to_str());\n  return 0;\n}\n",
+    "expected_output": "",
     "try_it":  "Add a `transfer` method that moves money from one account to another. It should return `false` if the source doesn\u0027t have enough funds. Test it with two accounts.",
     "concepts":  [
                      "mutation-methods",

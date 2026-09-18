@@ -9,6 +9,7 @@
   "analogy": "A void function is like a megaphone announcement — it broadcasts a message but doesn't hand you anything back.",
   "code_template": "use xiom.io;\n// TODO: Write a void function 'print_banner' that prints three lines:\n// \"==================\", \"    WELCOME!\", \"==================\"\n\nfn main() {\n  // TODO: Call print_banner()\n}",
   "solution": "use xiom.io;\nfn print_banner() {\n  io.println(\"==================\");\n  io.println(\"    WELCOME!\");\n  io.println(\"==================\");\n}\n\nfn main() {\n  print_banner();\n}",
+  "expected_output": "==================\n    WELCOME!\n==================",
   "try_it": "Create a void function called `weather_report` that takes temperature (Int) and condition (Str) and prints a nicely formatted weather summary.",
   "concepts": [
     "void-function",

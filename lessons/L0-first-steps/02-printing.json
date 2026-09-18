@@ -9,6 +9,7 @@
   "analogy": "A program reads top-to-bottom, like reading a page in a book — you start at the first line and work your way down.",
   "code_template": "use xiom.io;\n\nfn main() {\n  io.println(\"Hello!\");\n  // TODO: Print a second message, like your name\n  // TODO: Print a number, like your age\n  // TODO: Print one more message of your choice\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"Welcome to my program!\");\n  io.println(\"My name is Taylor.\");\n  io.println(\"25\");\n  io.println(\"Nice to meet you!\");\n}",
+  "expected_output": "Welcome to my program!\nMy name is Taylor.\n25\nNice to meet you!",
   "try_it": "Add a line that prints your age as a number. Then add another line that prints your age with quotes around it — what's different? Now add one more line that prints your shoe size as a number.",
   "concepts": [
     "io.println",

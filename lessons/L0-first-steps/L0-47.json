@@ -9,6 +9,7 @@
   "analogy": "String functions are like a spy's gadget kit — a magnifying glass (str_len), a megaphone (str_upper), and a silencer (str_lower).",
   "code_template": "use xiom.io;\n\nfn main() {\n  let name: Str = \"TODO: put your name here\";\n  // TODO: get the length of the name\n  // TODO: convert the name to uppercase\n  // TODO: convert the name to lowercase\n  // TODO: print all three results\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let name: Str = \"Alex\";\n  let name_length: Int = string.str_len(name);\n  let name_upper: Str = string.str_upper(name);\n  let name_lower: Str = string.str_lower(name);\n  io.println(\"4\");\n  io.println(name_upper);\n  io.println(name_lower);\n}\n",
+  "expected_output": "4\nALEX\nalex",
   "try_it": "Analyze your full name (first and last). What's the total character count? Then try analyzing the word 'supercalifragilisticexpialidocious'!",
   "concepts": [
     "strings",

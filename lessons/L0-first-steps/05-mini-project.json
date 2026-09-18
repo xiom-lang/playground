@@ -9,6 +9,7 @@
   "analogy": "Programs are like Lego — you snap small pieces together (printing, variables, math) to build something bigger than any single piece could be on its own.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable for your name\n  // TODO: Create a variable for your age\n  // TODO: Print a greeting message\n  // TODO: Print your name and age\n  // TODO: Calculate and print your birth year (current year minus your age)\n  // TODO: Calculate and print a fun math fact (like your age in months)\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  // Store information about yourself\n  let name = \"Jordan\";\n  let age = 14;\n  let current_year = 2026;\n\n  // Print a greeting\n  io.println(\"Hey there! Here's a little about me:\");\n\n  // Print the stored information\n  io.println(name);\n  io.println(\"14\");\n\n  // Calculate and print birth year\n  let birth_year = current_year - age;\n  io.println(\"I was born around:\");\n  io.println(\"2012\");\n\n  // Print a fun math fact\n  io.println(\"Fun fact: my age in months is:\");\n  io.println(\"168\");\n  io.println(\"That's a lot of months!\");\n}",
+  "expected_output": "Hey there! Here's a little about me:\nJordan\n14\nI was born around:\n2012\nFun fact: my age in months is:\n168\nThat's a lot of months!",
   "try_it": "Add a variable for your favorite number. Print something about it — like what you get when you multiply it by 10. Can you also calculate and print how many days old you are (age × 365)?",
   "concepts": [
     "combining concepts",

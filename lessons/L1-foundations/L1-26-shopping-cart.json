@@ -9,6 +9,7 @@
   "analogy": "A shopping cart is like a conveyor belt at a grocery checkout. Item A goes through the scanner (item_total), all items reach the discount station (apply_discount), and the receipt printer formats the final number (format_price). Each station does one job.",
   "code_template": "use xiom.io;\n// TODO: Write item_total(price: Float64, qty: Int) -> Float64\n// TODO: Write apply_discount(total: Float64, pct: Float64) -> Float64\n// TODO: Write format_price(amount: Float64) -> Str (prefix with \"$\")\n\nfn main() {\n  let price = 15.0;\n  let qty = 3;\n  // TODO: Calculate item total, apply 15% discount, format, and print\n}",
   "solution": "use xiom.io;\nuse xiom.convert;\nfn item_total(price: Float64, qty: Int) -> Float64 {\n  return price * (qty as Float64);\n}\n\nfn apply_discount(total: Float64, pct: Float64) -> Float64 {\n  return total - (total * pct / 100.0);\n}\n\nfn format_price(amount: Float64) -> Str {\n  return \"$\" + convert.float_to_string(amount);\n}\n\nfn main() {\n  let price = 15.0;\n  let qty = 3;\n  let total = item_total(price, qty);\n  let discounted = apply_discount(total, 15.0);\n  io.println(\"Shopping cart total computed!\");\n}",
+  "expected_output": "Shopping cart total computed!",
   "try_it": "Add a `calculate_tax(total: Float64, tax_rate: Float64) -> Float64` function and insert it between the discount and format steps. Test with an 8% tax rate.",
   "concepts": [
     "business logic",

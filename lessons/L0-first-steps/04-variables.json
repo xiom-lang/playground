@@ -9,6 +9,7 @@
   "analogy": "A variable is like a labeled box — you put something inside and give it a name so you can find it later.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable called 'name' with your name\n  // TODO: Create a variable called 'favorite_color' with your favorite color\n  // TODO: Print both variables using io.println\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  let name = \"Taylor\";\n  let age = 12;\n  let favorite_color = \"blue\";\n  io.println(\"Hi, my name is:\");\n  io.println(name);\n  io.println(\"I am this old:\");\n  io.println(\"12\");\n  io.println(\"My favorite color is:\");\n  io.println(favorite_color);\n}",
+  "expected_output": "Hi, my name is:\nTaylor\nI am this old:\n12\nMy favorite color is:\nblue",
   "try_it": "Add a variable for your favorite food and print it. Then add a variable for your favorite number. Can you print them all in one program?",
   "concepts": [
     "let",

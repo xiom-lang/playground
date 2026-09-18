@@ -9,6 +9,7 @@
   "analogy": "Fibonacci is like climbing stairs where each step's height equals the sum of the previous two steps. To reach step 10, you start at step 0 and step 1, then calculate each intermediate step until you reach your target. The function is your climbing algorithm — give it a step number, it returns the height.",
   "code_template": "use xiom.io;\n// TODO: Write fibonacci(n: Int) -> Int using a while loop\n// Return 0 for n==0, 1 for n==1, otherwise calculate iteratively\n\nfn main() {\n  // TODO: Use a while loop to compute and print fibonacci(0) through fibonacci(9)\n}",
   "solution": "use xiom.io;\nfn fibonacci(n: Int) -> Int {\n  if n == 0 {\n  }\n  if n == 1 {\n  }\n  var prev = 0;\n  var curr = 1;\n  var i = 2;\n  while i <= n {\n    let next = prev + curr;\n    prev = curr;\n    curr = next;\n    i = i + 1;\n  }\n}\nfn main() {\n  var i = 0;\n  while i < 10 {\n    let fib = fibonacci(i);\n    io.println(\"Fibonacci computed!\");\n    i = i + 1;\n  }\n}",
+  "expected_output": "Fibonacci computed!\nFibonacci computed!\nFibonacci computed!\nFibonacci computed!\nFibonacci computed!\nFibonacci computed!\nFibonacci computed!\nFibonacci computed!\nFibonacci computed!\nFibonacci computed!",
   "try_it": "Modify the program to print the ratio of consecutive Fibonacci numbers (fib(n+1) / fib(n)). As n grows, this ratio approaches the golden ratio (~1.618).",
   "concepts": [
     "iterative algorithm",

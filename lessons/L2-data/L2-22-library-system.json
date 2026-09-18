@@ -9,6 +9,7 @@
   "analogy": "A library book is like a light switch — it can be either ON (checked out) or OFF (available). The `checkout` and `return_book` methods flip the switch.",
   "code_template": "use xiom.io;\n\ntype Book = {\n  title: Str;\n  author: Str;\n  checked_out: Bool;\n}\n\n// TODO: add method 'checkout' that sets checked_out to true\n\n// TODO: add method 'is_available' that returns true when NOT checked out\n\n// TODO: add method 'return_book' that sets checked_out back to false\n\nfn main() -> Int {\n  // TODO: create a book, checkout, check availability, return, return 0\n  return 0;\n}",
   "solution": "use xiom.io;\n\ntype Book = {\n  title: Str;\n  author: Str;\n  checked_out: Bool;\n}\n\nfn Book.checkout(self) {\n  checked_out = true;\n}\n\nfn Book.is_available(self) -> Bool {\n  return !checked_out;\n}\n\nfn Book.return_book(self) {\n  checked_out = false;\n}\n\nfn main() -> Int {\n  var book = Book{\n    title: \"The Hobbit\";\n    author: \"J.R.R. Tolkien\";\n    checked_out: false;\n  };\n  book.checkout();\n  let avail = book.is_available();\n  book.return_book();\n  let avail_after = book.is_available();\n  return 0;\n}",
+  "expected_output": "",
   "try_it": "Add a `due_date: Str` field to Book (e.g., \"2026-08-01\"). Modify `checkout` to set the due date to 14 days from now. Add a method `is_overdue` that always returns false for now.",
   "concepts": [
     "struct",

@@ -1135,6 +1135,46 @@ html.light-mode .output-content {
   color: var(--mid);
 }
 
+/* Expected-output comparison shown above the Output tab result. */
+.output-match {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+  color: var(--mid);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.output-match.ok {
+  border-color: rgba(52, 211, 153, 0.35);
+  background: var(--green-soft);
+  color: var(--green);
+}
+.output-match.warn {
+  border-color: rgba(240, 180, 69, 0.4);
+  background: rgba(240, 180, 69, 0.08);
+  color: var(--amber);
+}
+.output-match.note {
+  color: var(--low);
+}
+.output-match .output-match-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.output-match .output-match-expected {
+  margin: 0;
+  padding: 8px 10px;
+  max-height: 180px;
+  overflow: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--void);
+  color: var(--hi);
+  font-size: 11px;
+}
+
 /* ================================================================
    FLOATING COMPLETE BUTTON
    ================================================================ */

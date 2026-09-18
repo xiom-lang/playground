@@ -9,6 +9,7 @@
   "analogy": "The `!` symbol is a light switch � it flips true to false and false to true with one click.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let number: Int = 0;\n  let is_zero: Bool = number == 0;\n  // TODO: use ! to check if number is NOT zero\n  // TODO: print the result\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let number: Int = 0;\n  let is_not_zero: Bool = !(number == 0);\n  io.println(\"0\");\n}\n",
+  "expected_output": "0",
   "try_it": "Check whether a number is NOT zero using `!`. Try it with 0, 7, and -3. Then try a double NOT: `!!true` and `!!false`. What do you get?",
   "concepts": [
     "not",

@@ -9,6 +9,7 @@
     "analogy":  "\u0026mut is like having the only key to a room and a whiteboard marker. You can go in, change things, and nobody else can enter until you come out.",
     "code_template":  "use xiom.io;\n\n// TODO: Write a function \u0027double_all\u0027 that takes \u0026mut Vec[Int]\n// Multiply every element by 2\n// In main, create a Vec, call double_all, print the result\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn double_all(v: \u0026mut Vec[Int]) {\n  let i = 0;\n  while i \u003c v.len() {\n    v[i] = v[i] * 2;\n    i = i + 1;\n  }\n}\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  data.push(2);\n  data.push(3);\n  double_all(\u0026mut data);\n  io.println(data[0].to_str());\n  return data[0];\n}",
+    "expected_output": "2",
     "try_it":  "Try creating a \u0026 and a \u0026mut to the same Vec at the same time. See the compiler error about conflicting borrows.",
     "concepts":  [
                      "write borrow",

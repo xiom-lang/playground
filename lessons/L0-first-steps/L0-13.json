@@ -9,6 +9,7 @@
   "analogy": "Comparison operators are like a measuring tape � they tell you which side is bigger.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let my_age: Int = 12;\n  let friend_age: Int = 14;\n  // TODO: check if my_age is less than friend_age, store in a Bool\n  // TODO: print the result\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let my_age: Int = 12;\n  let friend_age: Int = 14;\n  let am_i_younger: Bool = my_age < friend_age;\n  io.println(\"true\");\n}\n",
+  "expected_output": "true",
   "try_it": "Compare your age to your friend's age. Create two age variables and use all six comparison operators to see which comparisons are true and which are false!",
   "concepts": [
     "comparison",

@@ -9,6 +9,7 @@
   "analogy": "Splitting a bill is like cutting a pizza � first you figure out how big the pizza is (bill + tip), then you divide it into equal slices (per person).",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create variables for bill amount, tip percent, and number of friends\n  // TODO: Calculate tip amount (bill times tip percent divided by 100)\n  // TODO: Calculate total (bill plus tip)\n  // TODO: Calculate per-person amount (total divided by friends)\n  // TODO: Print the bill, tip, total, and per-person amount\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let bill: Int = 80;\n  let tip_percent: Int = 15;\n  let friends: Int = 4;\n\n  let tip_amount: Int = bill * tip_percent / 100;\n  let total: Int = bill + tip_amount;\n  let each_pays: Int = total / friends;\n\n  io.println(\"Original bill:\");\n  io.println(\"80\");\n  io.println(\"Tip (15%):\");\n  io.println(\"12\");\n  io.println(\"Total with tip:\");\n  io.println(\"92\");\n  io.println(\"Each person pays:\");\n  io.println(\"23\");\n}\n",
+  "expected_output": "Original bill:\n80\nTip (15%):\n12\nTotal with tip:\n92\nEach person pays:\n23",
   "try_it": "Change the tip percentage to 20% and see how it affects the total and per-person amount. Then try a different bill amount: $120 split among 5 friends with an 18% tip. What if the tip is 10%? Can you find numbers that divide evenly for each scenario?",
   "concepts": [
     "Int",

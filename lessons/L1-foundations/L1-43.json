@@ -9,6 +9,7 @@
   "analogy": "A void function like `print_table` is like a microwave — you press a button, it does work (heats food), but you don't 'get' anything back except the completed action. A value-returning function like `sum_to` is like a vending machine — you put in money, and you receive a product (the return value) in exchange.",
   "code_template": "use xiom.io;\n// TODO: Write print_table(n: Int) (a void function — no return type)\n// Use a while loop from 1 to 10\n// For each i, calculate i * n and print it\n\nfn main() {\n  // TODO: Call print_table(7) to print multiplication table of 7\n  // Call print_table(3) to print multiplication table of 3\n}",
   "solution": "use xiom.io;\nfn print_table(n: Int) {\n  var i = 1;\n  while i <= 10 {\n    let product = i * n;\n    io.println(\"Calculated!\");\n    i = i + 1;\n  }\n}\n\nfn main() {\n  io.println(\"Table of 7:\");\n  print_table(7);\n  io.println(\"Table of 3:\");\n  print_table(3);\n}",
+  "expected_output": "Table of 7:\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nTable of 3:\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!\nCalculated!",
   "try_it": "Extend `print_table` to accept a second parameter `up_to: Int` so the table prints from 1×n to up_to×n instead of always stopping at 10. Then write a `print_all_tables(max: Int)` function that prints tables 1 through max using a loop.",
   "concepts": [
     "void functions",

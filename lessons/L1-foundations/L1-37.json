@@ -9,6 +9,7 @@
   "analogy": "These functions are like different tools in a toolbox. `classify()` is the label maker — it puts a sticker on each number. `is_even()` is a two-hole punch — it checks if the number fits. `is_divisible_by()` is an adjustable wrench — you set the divisor and it tells you if the fit is perfect.",
   "code_template": "use xiom.io;\n// TODO: Write classify(n: Int) -> Str (returns \"positive\", \"negative\", or \"zero\")\n// TODO: Write is_even(n: Int) -> Bool (true if n % 2 == 0)\n// TODO: Write is_divisible_by(n: Int, d: Int) -> Bool (true if n % d == 0, false if d == 0)\n\nfn main() {\n  // TODO: Test classify on 5, -3, and 0\n  // TODO: Test is_even on 4 and 7\n  // TODO: Test is_divisible_by on (10, 2) and (10, 3)\n  // Print the results\n}",
   "solution": "use xiom.io;\nfn classify(n: Int) -> Str {\n  if n > 0 {\n    return \"positive\";\n  } elif n < 0 {\n    return \"negative\";\n  } else {\n    return \"zero\";\n  }\n}\n\nfn is_even(n: Int) -> Bool {\n  return n % 2 == 0;\n}\n\nfn is_divisible_by(n: Int, d: Int) -> Bool {\n  if d == 0 {\n  }\n  return n % d == 0;\n}\n\nfn main() {\n  let n1 = 5;\n  let n2 = -3;\n  let n3 = 0;\n  io.println(\"Classification complete!\");\n}",
+  "expected_output": "Classification complete!",
   "try_it": "Add a fourth function `is_odd(n: Int) -> Bool` that reuses `is_even` (hint: return !is_even(n)). Then write a `describe_number(n: Int) -> Str` function that combines classify, is_even, and is_divisible_by into one descriptive sentence.",
   "concepts": [
     "classification functions",

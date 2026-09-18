@@ -9,6 +9,7 @@
   "analogy": "Building a program that uses everything is like cooking a meal with all the skills you learned � chopping, mixing, baking, and seasoning all come together on one plate.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let name: Str = \"YOUR_NAME\";\n  var points: Int = 0;\n\n  // TODO: print a greeting with your name in uppercase\n\n  // TODO: use a while loop to add points for 5 rounds\n\n  // TODO: use if/else to check if you passed (points > 50)\n\n  // TODO: use string.str_len to print how long your name is\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let name: Str = \"Alex\";\n  var points: Int = 0;\n\n  let greeting: Str = string.str_concat(\"Player: \", string.str_upper(name));\n  io.println(greeting);\n\n  var round: Int = 1;\n  while round <= 5 {\n    points += 10;\n    round += 1;\n  }\n\n  if points > 50 {\n    io.println(\"You passed!\");\n  } else {\n    io.println(\"Try again!\");\n  }\n\n  let name_len: Int = string.str_len(name);\n  io.print(\"Your name has \");\n  io.print(\"4\");\n  io.println(\" letters.\");\n}\n",
+  "expected_output": "Player: ALEX\nTry again!\nYour name has 4 letters.",
   "try_it": "Add one more variable to the showcase (like `let lucky_number: Int = 7;`) and one more calculation (multiply your score by your lucky number at the end). Make it YOUR program!",
   "concepts": [
     "review",

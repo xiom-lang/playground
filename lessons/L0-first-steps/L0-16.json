@@ -9,6 +9,7 @@
   "analogy": "string.str_len() is like a ruler for text � it measures exactly how many letters, spaces, and symbols your string contains.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let my_name: Str = \"YOUR_NAME_HERE\";\n  // TODO: measure the length of my_name using string.str_len\n  // TODO: print the length\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let my_name: Str = \"Alexandra\";\n  let name_len: Int = string.str_len(my_name);\n  io.println(\"9\");\n}\n",
+  "expected_output": "9",
   "try_it": "Measure the length of your full name (first and last with a space between). Then check if it's longer than 10 characters using `>=`. Print both the length and the true/false result!",
   "concepts": [
     "string-length",

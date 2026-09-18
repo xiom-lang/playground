@@ -9,6 +9,7 @@
   "analogy": "A BMI calculator is like a thermometer with colored zones. The thermometer measures the temperature (calc_bmi), then a color strip maps that number to a category (bmi_category): blue for cold, green for normal, red for fever.",
   "code_template": "use xiom.io;\n// TODO: Write calc_bmi(weight_kg: Float64, height_m: Float64) -> Float64\n// TODO: Write bmi_category(bmi: Float64) -> Str using if/elif\n// Categories: <18.5 Underweight, <25.0 Normal, <30.0 Overweight, else Obese\n\nfn main() {\n  let weight = 82.5;\n  let height = 1.80;\n  // TODO: Calculate BMI, then get category, then print both\n}",
   "solution": "use xiom.io;\nfn calc_bmi(weight_kg: Float64, height_m: Float64) -> Float64 {\n  return weight_kg / (height_m * height_m);\n}\n\nfn bmi_category(bmi: Float64) -> Str {\n  if bmi < 18.5 {\n    return \"Underweight\";\n  } elif bmi < 25.0 {\n    return \"Normal weight\";\n  } elif bmi < 30.0 {\n    return \"Overweight\";\n  } else {\n    return \"Obese\";\n  }\n}\n\nfn main() {\n  let weight = 82.5;\n  let height = 1.80;\n  let bmi = calc_bmi(weight, height);\n  let category = bmi_category(bmi);\n  io.println(\"BMI calculation complete!\");\n}",
+  "expected_output": "BMI calculation complete!",
   "try_it": "Change the weight and height values to test different BMI categories. Try 50.0 kg at 1.70 m and 100.0 kg at 1.65 m.",
   "concepts": [
     "Float64 return type",

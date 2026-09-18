@@ -9,6 +9,7 @@
   "analogy": "String concatenation is like building a train � each car holds a piece of text, and you hook them together one at a time to make a longer train.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  // TODO: Create a variable for your friend's name\n  // TODO: Create a variable for the movie title\n  // TODO: Create a variable for the day\n  // TODO: Use string.str_concat to build \"Hey NAME, let's watch MOVIE on DAY!\"\n  // TODO: Print the full invitation\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let friend = \"Jordan\";\n  let movie = \"Star Quest\";\n  let day = \"Saturday\";\n\n  let step1 = string.str_concat(\"Hey \", friend);\n  let step2 = string.str_concat(step1, \", let's watch \");\n  let step3 = string.str_concat(step2, movie);\n  let step4 = string.str_concat(step3, \" on \");\n  let step5 = string.str_concat(step4, day);\n  let invitation = string.str_concat(step5, \"!\");\n\n  io.println(invitation);\n}\n",
+  "expected_output": "Hey Jordan, let's watch Star Quest on Saturday!",
   "try_it": "Change the movie title to your favorite movie and run the program again. Now try inviting a different friend by changing the `friend` variable. Can you add a time, like \"at 7pm\", to the invitation?",
   "concepts": [
     "Str",

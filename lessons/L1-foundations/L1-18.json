@@ -9,6 +9,7 @@
   "analogy": "A greeting function is like a friendly doorman who checks their watch and adjusts their welcome — \"Good morning!\" at sunrise, \"Good evening!\" at sunset.",
   "code_template": "use xiom.io;\n// TODO: Write 'greet' that takes a name (Str) and hour (Int)\n// TODO: Return \"Good morning, NAME!\" if 5-11, \"Good afternoon, NAME!\" if 12-16,\n// TODO: \"Good evening, NAME!\" if 17-20, and \"Hello, NAME!\" otherwise\n\nfn main() {\n  // TODO: Print greet(\"Alex\", 8) and greet(\"Alex\", 22)\n}",
   "solution": "use xiom.io;\nfn greet(name: Str, hour: Int) -> Str {\n  if hour >= 5 && hour < 12 {\n    return \"Good morning, \" + name + \"!\";\n  } else if hour >= 12 && hour < 17 {\n    return \"Good afternoon, \" + name + \"!\";\n  } else if hour >= 17 && hour < 21 {\n    return \"Good evening, \" + name + \"!\";\n  } else {\n    return \"Hello, \" + name + \"!\";\n  }\n}\n\nfn main() {\n  io.println(greet(\"Alex\", 8));\n  io.println(greet(\"Alex\", 22));\n}",
+  "expected_output": "Good morning, Alex!\nHello, Alex!",
   "try_it": "Add a `get_time_emoji` function that returns a sun emoji \"(sun)\" for morning, \"(coffee)\" for afternoon, and \"(moon)\" for evening. Then combine it with your greet function!",
   "concepts": [
     "time-based-logic",

@@ -9,6 +9,7 @@
     "analogy":  "Ownership is like a library book — only one person can have it at a time. When you give it to someone else, you no longer have it.",
     "code_template":  "use xiom.io;\n\n// TODO: Create a variable \u0027x\u0027 with value 100\n// Transfer ownership from \u0027x\u0027 to \u0027y\u0027\n// Print \u0027y\u0027 and return it\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn main() -\u003e Int {\n  let x = 100;\n  let y = x;\n  io.println(y.to_str());\n  return y;\n}",
+    "expected_output": "100",
     "try_it":  "Add `io.println(x);` after the move to `y` and see what error the compiler gives you.",
     "concepts":  [
                      "ownership",

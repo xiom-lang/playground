@@ -9,6 +9,7 @@
   "analogy": "A program is like a recipe: you write step-by-step instructions, and the computer follows them exactly.",
   "code_template": "use xiom.io;\n\n// Write your first XIOM program\nfn main() {\n  io.println(\"Hello, XIOM!\");\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"Hello, XIOM!\");\n}",
+  "expected_output": "Hello, XIOM!",
   "try_it": "Change the greeting inside the quotes. Try your name, a different language, or an emoji!",
   "concepts": [
     "use",

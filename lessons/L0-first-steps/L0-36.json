@@ -9,6 +9,7 @@
   "analogy": "The modulo `%` is like dealing cards to friends � after dealing evenly around the circle, the cards left in your hand are the remainder.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable 'number' and set it to any whole number\n  // TODO: Check if number % 2 equals 0 (use == to compare)\n  // TODO: If yes, print \"Even!\"\n  // TODO: Else, print \"Odd!\"\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let number: Int = 7;\n\n  if number % 2 == 0 {\n    io.println(\"Even!\");\n  } else {\n    io.println(\"Odd!\");\n  }\n\n  var count: Int = 1;\n\n  while count <= 5 {\n    io.print(\"1\");\n    io.print(\" is \");\n\n    if count % 2 == 0 {\n      io.println(\"even\");\n    } else {\n      io.println(\"odd\");\n    }\n\n    count = count + 1;\n  }\n}\n",
+  "expected_output": "Odd!\n1 is odd\n1 is even\n1 is odd\n1 is even\n1 is odd",
   "try_it": "Test numbers 1 through 10 with your even/odd checker. Which numbers are even? Can you modify the program to print 'Divisible by 3!' if the number is divisible by 3 instead? (Hint: use `number % 3 == 0`.)",
   "concepts": [
     "modulo",

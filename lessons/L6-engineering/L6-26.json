@@ -9,6 +9,7 @@
   "analogy": "A shelf bracket holds books, boxes, or toys - the bracket doesn't care what goes on it. Stack[T] is the bracket: same structure, holds anything. The T is just a placeholder for 'whatever you put here'.",
   "code_template": "use xiom.io;\ntype Stack[T] = {\n  items: Vec[T];\n}\n\nfn Stack.push[T](&mut self, item: T) {\n  // TODO: push item onto self.items\n}\n\nfn Stack.pop[T](&mut self) -> Option[T] {\n  // TODO: remove and return last item, or None if empty\n}\n\nfn main() -> Int {\n  // TODO: create Stack[Int], push 5, 10, 15, pop and print each\n  return 0;\n}\n",
   "solution": "use xiom.io;\ntype Stack[T] = {\n  items: Vec[T];\n}\n\nfn Stack.push[T](&mut self, item: T) {\n  self.items.push(item);\n}\n\nfn Stack.pop[T](&mut self) -> Option[T] {\n  if self.items.len() == 0 {\n    return None;\n  };\n  let last = self.items.len() - 1;\n  let result = self.items.get(last).unwrap().clone();\n  self.items.remove(last);\n  Some(result)\n}\n\nfn main() -> Int {\n  var s: Stack[Int] = Stack{ items: Vec[Int].new() };\n  s.push(5);\n  s.push(10);\n  s.push(15);\n  let v1 = s.pop().unwrap();\n  let v2 = s.pop().unwrap();\n  let v3 = s.pop().unwrap();\n  io.println(v1.to_str());\n  io.println(v2.to_str());\n  io.println(v3.to_str());\n  return 0;\n}\n",
+  "expected_output": "15\n10\n5",
   "try_it": "Create a Stack[Float64] and push 1.1, 2.2, 3.3. Pop all three and print. Then create Stack[Bool] with true/false. Notice how pop() returns values in reverse order (LIFO).",
   "concepts": [
     "generic-struct",

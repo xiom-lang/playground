@@ -9,6 +9,7 @@
   "analogy": "string.str_upper is like a megaphone for your text, and string.str_lower is like a quiet whisper.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let my_name: Str = \"YOUR_NAME\";\n  // TODO: convert my_name to uppercase, store in a variable\n  // TODO: convert my_name to lowercase, store in another variable\n  // TODO: print both versions\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let my_name: Str = \"Robin\";\n  let upper_name: Str = string.str_upper(my_name);\n  let lower_name: Str = string.str_lower(my_name);\n  io.println(upper_name);\n  io.println(lower_name);\n}\n",
+  "expected_output": "ROBIN\nrobin",
   "try_it": "Print your name in all caps and all lowercase. Then create a funny sentence, convert it to uppercase for SHOUTING, and lowercase for whispering. Print both!",
   "concepts": [
     "uppercase",

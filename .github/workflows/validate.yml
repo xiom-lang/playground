@@ -38,6 +38,9 @@ jobs:
       - name: Lesson limitations are current
         run: node tools/generate-limitations.js --check
 
+      - name: Expected outputs are current
+        run: node tools/generate-expected-outputs.js --check
+
       - name: Lesson audit (type checks vs baseline)
         run: node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
 

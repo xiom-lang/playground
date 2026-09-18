@@ -9,6 +9,7 @@
     "analogy":  "The borrow checker is a proofreader that catches every grammatical error. Fix the errors, and your code is guaranteed to be well-formed.",
     "code_template":  "use xiom.io;\n\n// TODO: Fix the borrow error:\n// var data = Vec[Int].new(); data.push(1);\n// let r = \u0026data;\n// let w = \u0026mut data; // ERROR:\n// w.push(2);\n\nfn main() -\u003e Int {\n  // TODO: Fix by scoping the read borrow\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(1);\n  {\n    let r = \u0026data;\n    io.println(r.len().to_str());\n  }\n  let w = \u0026mut data;\n  w.push(2);\n  return data.len() as Int;\n}",
+    "expected_output": "1",
     "try_it":  "Take the \u0027cannot borrow as mutable and immutable\u0027 error. Try three different fixes: (1) scope the borrows, (2) clone the data, (3) restructure to avoid the conflict.",
     "concepts":  [
                      "borrow checker",

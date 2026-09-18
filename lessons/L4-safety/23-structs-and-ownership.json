@@ -9,6 +9,7 @@
     "analogy":  "A struct is like a shipping container — you can open it to look inside (\u0026), rearrange contents (\u0026mut), or move the entire container to a new owner.",
     "code_template":  "use xiom.io;\n\n// TODO: Define struct \u0027Point\u0027 with x: Int, y: Int\n// Write fn show(p: \u0026Point) that prints x and y\n// Write fn move_right(p: \u0026mut Point, dx: Int) that adds dx to x\n// In main, create Point, show it, move it, show again\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\ntype Point = { x: Int; y: Int; }\n\nfn show(p: \u0026Point) {\n  io.println(p.x.to_str());\n  io.println(p.y.to_str());\n}\n\nfn move_right(p: \u0026mut Point, dx: Int) {\n  p.x = p.x + dx;\n}\n\nfn main() -\u003e Int {\n  var pt = Point{ x: 0, y: 0 };\n  show(\u0026pt);\n  move_right(\u0026mut pt, 5);\n  show(\u0026pt);\n  return pt.x;\n}",
+    "expected_output": "0\n0\n5\n0",
     "try_it":  "Define a struct with a Vec field. Move the struct to a function and try using it afterward. Observe how the Vec moves with the struct.",
     "concepts":  [
                      "struct ownership",

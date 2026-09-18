@@ -9,6 +9,7 @@
   "analogy": "If/elif/else is like choosing your path at a multi-way intersection — each sign (condition) points you in a different direction, and you follow the first one that matches.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable called 'score' with a number from 0 to 100\n  // TODO: Use if/elif/else to print a letter grade: A (90+), B (80+), C (70+), D (60+), F (below 60)\n  // TODO: Make sure the conditions go from highest to lowest!\n}",
   "solution": "use xiom.io;\n\nfn main() {\n  let score = 85;\n\n  if score >= 90 {\n    io.println(\"Grade: A — Excellent!\");\n  } elif score >= 80 {\n    io.println(\"Grade: B — Good job!\");\n  } elif score >= 70 {\n    io.println(\"Grade: C — Not bad!\");\n  } elif score >= 60 {\n    io.println(\"Grade: D — You passed.\");\n  } else {\n    io.println(\"Grade: F — Keep studying!\");\n  }\n}\n",
+  "expected_output": "Grade: B \u2014 Good job!",
   "try_it": "Give yourself different scores — 95, 82, 71, 60, 45 — and see your grade change. Then write your own elif chain for a different topic: movie ratings (G, PG, PG-13, R), or clothing sizes based on a number.",
   "concepts": [
     "elif",

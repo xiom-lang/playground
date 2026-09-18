@@ -9,6 +9,7 @@
   "analogy": "Nested ifs are like a choose-your-own-adventure book � each decision leads to a new set of choices.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let is_weekend: Bool = true;\n  let is_sunny: Bool = false;\n\n  // TODO: if it's the weekend, check if it's sunny\n  // TODO: print \"Park day!\" if weekend AND sunny\n  // TODO: print \"Movie day!\" if weekend but NOT sunny\n  // TODO: print \"School day\" if not weekend\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let is_weekend: Bool = true;\n  let is_sunny: Bool = false;\n\n  if is_weekend {\n    if is_sunny {\n      io.println(\"Park day!\");\n    } else {\n      io.println(\"Movie day!\");\n    }\n  } else {\n    io.println(\"School day\");\n  }\n}\n",
+  "expected_output": "Movie day!",
   "try_it": "Create a two-level decision tree about your evening plans. First check if you have homework. If yes, check the subject. If no, check if it's nice outside. Print different activities for each path!",
   "concepts": [
     "nested-if",

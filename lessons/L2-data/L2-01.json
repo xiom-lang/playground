@@ -9,6 +9,7 @@
   "analogy": "A struct is like a form you fill out — it has labeled fields for each piece of information. Once filled, the whole form travels together as one unit.",
   "code_template": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create a Person with your name and age\n\n  // TODO: Print the name field\n\n  // TODO: Print the age field\n\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Alex\", age: 15 };\n  io.println(me.name.to_str());\n  io.println(me.age.to_str());\n  return 0;\n}\n",
+  "expected_output": "\n15",
   "try_it": "Create a Person struct for your best friend. Add a third field called `hobby: Str`. Print all three fields.",
   "concepts": [
     "type",

@@ -9,6 +9,7 @@
   "analogy": "A generic function is like a universal remote control. Instead of having separate remotes for your TV, DVD player, and sound system, one remote works with all of them. The `[T]` is like the remote saying 'I work with whatever device you point me at' — Int, Str, Bool, it doesn't matter.",
   "code_template": "use xiom.io;\n// TODO: Write a generic function show_len[T] that takes Vec[T] and prints its length\nfn show_len[T](v: Vec[T]) {\n\n}\n\nfn main() -> Int {\n  let ints: Vec[Int] = Vec[Int].new();\n  ints.push(10); ints.push(20);\n  let strs: Vec[Str] = Vec[Str].new();\n  strs.push(\"hi\"); strs.push(\"there\"); strs.push(\"!\");\n  // TODO: Call show_len with both Vecs\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn show_len[T](v: Vec[T]) {\n  io.println(v.len().to_str());\n}\n\nfn main() -> Int {\n  let ints: Vec[Int] = Vec[Int].new();\n  ints.push(10); ints.push(20);\n  let strs: Vec[Str] = Vec[Str].new();\n  strs.push(\"hi\"); strs.push(\"there\"); strs.push(\"!\");\n  show_len(ints);\n  show_len(strs);\n  return 0;\n}\n",
+  "expected_output": "2\n3",
   "try_it": "Write a generic `first_element[T]` function that takes `Vec[T]` and returns `Option[T]` — the first element if it exists. Test it with Vec[Int], Vec[Str], and Vec[Bool]. Write a generic `is_empty_vec[T]` that takes `Vec[T]` and returns Bool. Notice how the function body doesn't need to know what T is — the logic works on any type.",
   "concepts": [
     "generics",

@@ -9,6 +9,7 @@
   "analogy": "A receipt printer is like a cash register — you tell it what was bought and how much, and it calculates the total for you.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: create variables for items and their prices\n  // TODO: calculate subtotals by multiplying quantity by price\n  // TODO: calculate the grand total\n  // TODO: print a nicely formatted receipt with all items and the total\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let lemonade: Int = 2;\n  let cookie: Int = 3;\n  let lemonade_price: Int = 5;\n  let cookie_price: Int = 4;\n  let lemonade_total: Int = lemonade * lemonade_price;\n  let cookie_total: Int = cookie * cookie_price;\n  let grand_total: Int = lemonade_total + cookie_total;\n  io.println(\"=== LEMONADE STAND ===\");\n  io.println(\"Lemonade x2: \");\n  io.println(\"10\");\n  io.println(\"Cookies  x3: \");\n  io.println(\"12\");\n  io.println(\"--------------------\");\n  io.println(\"TOTAL: \");\n  io.println(\"22\");\n  io.println(\"Thank you!\");\n}\n",
+  "expected_output": "=== LEMONADE STAND ===\nLemonade x2:\n10\nCookies  x3:\n12\n--------------------\nTOTAL:\n22\nThank you!",
   "try_it": "Add a third item to your receipt (brownies? iced tea?) with its own quantity, price, and subtotal. Recalculate the grand total.",
   "concepts": [
     "variables",

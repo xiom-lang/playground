@@ -9,6 +9,7 @@
   "analogy": "String concatenation is like building a LEGO tower � you snap pieces together one at a time until you have something big.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let adjective: Str = \"awesome\";\n  let noun: Str = \"coder\";\n  let space: Str = \" \";\n  // TODO: build the phrase \"awesome coder\" using string.str_concat\n  // TODO: print the result\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let adjective: Str = \"awesome\";\n  let noun: Str = \"coder\";\n  let space: Str = \" \";\n  let phrase: Str = string.str_concat(adjective, string.str_concat(space, noun));\n  io.println(phrase);\n}\n",
+  "expected_output": "awesome coder",
   "try_it": "Build a sentence about yourself from 3 variables! Create variables for your name, a verb (like \"loves\"), and a thing (like \"dogs\"), then concatenate them into a story.",
   "concepts": [
     "strings",

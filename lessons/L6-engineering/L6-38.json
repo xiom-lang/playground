@@ -9,6 +9,7 @@
   "analogy": "Before a bridge opens, engineers test every beam, bolt, and cable individually, then test the whole structure under load. Module tests are your bridge inspection: test each function alone (unit), then test them working together (integration).",
   "code_template": "use xiom.io;\nmodule geometry {\n  // TODO: pub fn area_rectangle(w: Int, h: Int) -> Int\n  // TODO: pub fn perimeter_rectangle(w: Int, h: Int) -> Int\n  // TODO: pub fn is_square(w: Int, h: Int) -> Bool\n}\n\n// TODO: write test_geometry that tests all three functions\n\nfn main() -> Int {\n  // TODO: run tests\n  return 0;\n}\n",
   "solution": "use xiom.io;\nmodule geometry {\n  pub fn area_rectangle(w: Int, h: Int) -> Int { w * h }\n  pub fn perimeter_rectangle(w: Int, h: Int) -> Int { 2 * (w + h) }\n  pub fn is_square(w: Int, h: Int) -> Bool { w == h }\n}\n\nfn test_geometry() -> Bool {\n  assert(geometry.area_rectangle(4, 5) == 20);\n  assert(geometry.perimeter_rectangle(4, 5) == 18);\n  assert(geometry.is_square(4, 4) == true);\n  assert(geometry.is_square(4, 5) == false);\n  true\n}\n\nfn main() -> Int {\n  if test_geometry() { io.println(\"Passed!\"); };\n  return 0;\n}\n",
+  "expected_output": "Passed!",
   "try_it": "Add `area_circle(radius: Float64)` and `circumference(radius: Float64)` to geometry. Write tests using approximate comparison (tolerance of 0.01). Add tests for edge cases: zero dimensions, negative dimensions (should these be errors?).",
   "concepts": [
     "testing",

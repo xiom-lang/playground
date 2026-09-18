@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 /**
  * Lesson audit: compile every lesson solution + template against the installed
- * XIOM toolchain, execute the solutions that type-check, and report failures.
+ * XIOM toolchain, execute the solutions that type-check, compare the output of
+ * lessons that carry `expected_output`, and report failures.
  *
  * Usage:
  *   node tools/lesson-audit.js [options]
@@ -29,6 +30,7 @@ const os = require('os');
 const path = require('path');
 const { runProcess } = require('../lib/run-xiom');
 const { REPO, XIOM_BIN, TOOLCHAIN_VERSION, childEnv } = require('./lib/toolchain');
+const { normalizeOutput } = require('./lib/output');
 
 const LESSONS = path.join(REPO, 'lessons');
 const WORK_ROOT = path.join(os.tmpdir(), 'xiom_lesson_audit');
@@ -116,7 +118,7 @@ async function runSource(source, id) {
     exit: proc.code,
     timedOut: proc.timedOut,
     ms: Date.now() - started,
-    stdout: proc.stdout.slice(0, 300),
+    stdout: proc.stdout.slice(0, 65536),
     errors: parseErrors(proc.stderr),
     stderrTail: proc.stderr.slice(-400),
   };
@@ -150,7 +152,7 @@ function loadLessons() {
 }
 
 async function auditLesson(lesson) {
-  const record = { id: lesson.id, level: lesson.level, title: lesson.title, file: lesson.file, check: null, template: null, run: null, encodingError: null };
+  const record = { id: lesson.id, level: lesson.level, title: lesson.title, file: lesson.file, check: null, template: null, run: null, expected: null, encodingError: null };
   let data;
   try {
     data = JSON.parse(readUtf8Strict(path.join(LESSONS, lesson.file)));
@@ -162,6 +164,15 @@ async function auditLesson(lesson) {
   if (data.code_template) record.template = await checkSource(data.code_template, lesson.id, 't');
   if (!CHECK_ONLY && record.check && record.check.ok && data.solution) {
     record.run = await runSource(data.solution, lesson.id);
+    if (typeof data.expected_output === 'string') {
+      const expected = normalizeOutput(data.expected_output);
+      const actual = record.run.ok ? normalizeOutput(record.run.stdout) : null;
+      record.expected = {
+        ok: record.run.ok ? actual === expected : null,
+        expected: expected.slice(0, 500),
+        actual: actual === null ? null : actual.slice(0, 500),
+      };
+    }
   }
   return record;
 }
@@ -169,13 +180,14 @@ async function auditLesson(lesson) {
 function summarize(records) {
   const byLevel = {};
   for (const record of records) {
-    const bucket = byLevel[record.level] || (byLevel[record.level] = { total: 0, solutionOk: 0, solutionFail: 0, templateFail: 0, runFail: 0, encodingFail: 0 });
+    const bucket = byLevel[record.level] || (byLevel[record.level] = { total: 0, solutionOk: 0, solutionFail: 0, templateFail: 0, runFail: 0, expectedFail: 0, encodingFail: 0 });
     bucket.total++;
     if (record.encodingError) bucket.encodingFail++;
     if (record.check && record.check.ok) bucket.solutionOk++;
     if (record.check && !record.check.ok) bucket.solutionFail++;
     if (record.template && !record.template.ok) bucket.templateFail++;
     if (record.run && !record.run.ok) bucket.runFail++;
+    if (record.expected && record.expected.ok === false) bucket.expectedFail++;
   }
   return byLevel;
 }
@@ -186,25 +198,26 @@ function failureSets(records) {
     template: records.filter((r) => r.template && !r.template.ok).map((r) => r.id),
     solution: records.filter((r) => r.check && !r.check.ok).map((r) => r.id),
     runtime: records.filter((r) => r.run && !r.run.ok).map((r) => r.id),
+    expected: records.filter((r) => r.expected && r.expected.ok === false).map((r) => r.id),
   };
 }
 
 function printSummary(records, byLevel, failures) {
   console.log('');
   console.log('Lesson audit - toolchain ' + TOOLCHAIN_VERSION + ' (' + XIOM_BIN + ')');
-  console.log('level   total  sol_ok  sol_fail  tpl_fail  run_fail  enc_fail');
+  console.log('level   total  sol_ok  sol_fail  tpl_fail  run_fail  exp_fail  enc_fail');
   for (const level of Object.keys(byLevel).sort()) {
     const b = byLevel[level];
     console.log(
       level.padEnd(7) + String(b.total).padStart(5) + String(b.solutionOk).padStart(8) + String(b.solutionFail).padStart(10) +
-      String(b.templateFail).padStart(10) + String(b.runFail).padStart(10) + String(b.encodingFail).padStart(10)
+      String(b.templateFail).padStart(10) + String(b.runFail).padStart(10) + String(b.expectedFail).padStart(10) + String(b.encodingFail).padStart(10)
     );
   }
   const total = records.length;
   console.log(
     'TOTAL  ' + String(total).padStart(5) + String(failures.solution.length ? total - failures.solution.length : total).padStart(8) +
     String(failures.solution.length).padStart(10) + String(failures.template.length).padStart(10) +
-    String(failures.runtime.length).padStart(10) + String(failures.encoding.length).padStart(10)
+    String(failures.runtime.length).padStart(10) + String(failures.expected.length).padStart(10) + String(failures.encoding.length).padStart(10)
   );
   const signatures = {};
   for (const record of records) {
@@ -228,8 +241,8 @@ function loadBaseline(file) {
 function compareBaseline(baseline, failures, ranSolutions) {
   const regressions = [];
   const fixed = [];
-  for (const kind of ['encoding', 'template', 'solution', 'runtime']) {
-    if (kind === 'runtime' && !ranSolutions) continue;
+  for (const kind of ['encoding', 'template', 'solution', 'runtime', 'expected']) {
+    if ((kind === 'runtime' || kind === 'expected') && !ranSolutions) continue;
     const known = new Set((baseline.known && baseline.known[kind]) || []);
     const current = new Set(failures[kind]);
     for (const id of current) if (!known.has(id)) regressions.push(kind + ':' + id);
@@ -239,11 +252,13 @@ function compareBaseline(baseline, failures, ranSolutions) {
 }
 
 function writeBaseline(file, baseline, failures, ranSolutions) {
+  const previous = (kind) => (baseline && baseline.known && baseline.known[kind]) || [];
   const known = {
     encoding: failures.encoding,
     template: failures.template,
     solution: failures.solution,
-    runtime: ranSolutions ? failures.runtime : ((baseline && baseline.known && baseline.known.runtime) || []),
+    runtime: ranSolutions ? failures.runtime : previous('runtime'),
+    expected: ranSolutions ? failures.expected : previous('expected'),
   };
   const payload = {
     toolchain: TOOLCHAIN_VERSION,
@@ -280,12 +295,12 @@ async function main() {
   if (UPDATE_BASELINE) writeBaseline(UPDATE_BASELINE, baseline, failures, !CHECK_ONLY);
   if (FAIL_ON_FAILURES) {
     const total = failures.encoding.length + failures.template.length + failures.solution.length +
-      (CHECK_ONLY ? 0 : failures.runtime.length);
+      (CHECK_ONLY ? 0 : failures.runtime.length + failures.expected.length);
     if (total > 0) {
       console.error('');
       console.error('FAILURES: ' + total + ' (encoding=' + failures.encoding.length +
         ' template=' + failures.template.length + ' solution=' + failures.solution.length +
-        (CHECK_ONLY ? '' : ' runtime=' + failures.runtime.length) + ')');
+        (CHECK_ONLY ? '' : ' runtime=' + failures.runtime.length + ' expected=' + failures.expected.length) + ')');
       process.exit(2);
     }
   }

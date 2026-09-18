@@ -9,6 +9,7 @@
   "analogy": "Think of your data as a shared document. Viewers (&) can all look at once. Editors (&mut) need exclusive access. The system ensures nobody edits while others view.",
   "code_template": "use xiom.io;\n\n// TODO: Define struct 'Book' with title: Str, pages: Int\n// Write: fn read_book(b: &Book) — prints title\n// Write: fn add_pages(b: &mut Book, n: Int) — adds pages\n// In main, create a Book, read it, modify it, read again\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
   "solution": "use xiom.io;\n\ntype Book = { title: Str; pages: Int; }\n\nfn read_book(b: &Book) {\n  io.println(b.title.to_str() + \": \" + b.pages.to_str() + \" pages\");\n}\n\nfn add_pages(b: &mut Book, n: Int) {\n  b.pages = b.pages + n;\n}\n\nfn main() -> Int {\n  var book = Book{ title: \"XIOM Guide\", pages: 100 };\n  read_book(&book);\n  add_pages(&mut book, 50);\n  read_book(&book);\n  return book.pages;\n}",
+  "expected_output": ": 100 pages\n: 150 pages",
   "try_it": "Add another borrow function like fn rename(b: &mut Book, new_title: Str). Call it between reads and verify the scoping works.",
   "concepts": [
     "borrow patterns",

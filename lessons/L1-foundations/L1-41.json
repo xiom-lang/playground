@@ -9,6 +9,7 @@
   "analogy": "Computing factorial is like stacking dominoes in a line and multiplying their values. You start with one domino (result=1). Each step, you pick up the next domino (i) and multiply it into the growing product. After n steps, you've multiplied all dominoes from 1 to n, and the final product is n!.",
   "code_template": "use xiom.io;\n// TODO: Write factorial(n: Int) -> Int\n// Handle n < 0 (return 0)\n// Start result at 1, use a while loop from 1 to n\n// Multiply result by i each iteration\n\nfn main() {\n  // TODO: Call factorial(5) and factorial(7)\n  // Print both results\n}",
   "solution": "use xiom.io;\nfn factorial(n: Int) -> Int {\n  if n < 0 {\n  }\n  var result = 1;\n  var i = 1;\n  while i <= n {\n    result = result * i;\n    i = i + 1;\n  }\n}\nfn main() {\n  let f5 = factorial(5);\n  let f7 = factorial(7);\n  io.println(\"Factorials ready!\");\n}",
+  "expected_output": "Factorials ready!",
   "try_it": "Calculate factorial(10) and factorial(0). Then write a `factorial_range(start: Int, end: Int)` function that prints the factorial of every number from start to end using your factorial function in a loop.",
   "concepts": [
     "accumulator pattern",

@@ -9,6 +9,7 @@
     "analogy":  "Scope is like a room. Variables live inside the room. When you leave the room, everything inside is cleaned up. You can\u0027t reference something in a room you\u0027ve already left.",
     "code_template":  "use xiom.io;\n\n// TODO: Create a value \u0027x\u0027, then inside a nested scope { }\n// create a read borrow of x, print it, let it die\n// After the scope, create a write borrow of x\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn main() -\u003e Int {\n  var x = Vec[Int].new();\n  x.push(42);\n  {\n    let r = \u0026x;\n    io.println(r.len().to_str());\n  }\n  let w = \u0026mut x;\n  w.push(99);\n  return x.len() as Int;\n}",
+    "expected_output": "1",
     "try_it":  "Try declaring a borrow in an inner scope and using it in the outer scope. The compiler will tell you the borrow doesn\u0027t live long enough.",
     "concepts":  [
                      "scope",

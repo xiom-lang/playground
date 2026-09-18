@@ -9,6 +9,7 @@
   "analogy": "A temperature converter is like a translator — it takes a number in one 'language' (Celsius) and speaks it in another (Fahrenheit).",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: create a variable 'celsius' with a starting temperature\n  // TODO: calculate fahrenheit using the formula: C * 9 / 5 + 32\n  // TODO: print both celsius and fahrenheit\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let celsius: Int = 20;\n  let fahrenheit: Int = celsius * 9 / 5 + 32;\n  io.println(\"Celsius: \");\n  io.println(\"20\");\n  io.println(\"Fahrenheit: \");\n  io.println(\"68\");\n}\n",
+  "expected_output": "Celsius:\n20\nFahrenheit:\n68",
   "try_it": "Convert 0 degrees (freezing), 20 degrees (room temp), and 100 degrees (boiling). Then try -10 for a really cold day!",
   "concepts": [
     "variables",

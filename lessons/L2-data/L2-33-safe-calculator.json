@@ -9,6 +9,7 @@
   "analogy": "A CalcResult is like a package from a store. You either got what you ordered (Value) or received a notice saying \"out of stock\" (Error). You don't know which until you open it.",
   "code_template": "use xiom.io;\n\nenum CalcResult {\n  Value(n: Int),\n  Error(msg: Str),\n}\n\n// TODO: write a function 'safe_divide' that returns Error when dividing by zero\n\n// TODO: write a function 'extract_value' that returns the n inside Value, or -1 on Error\n\nfn main() -> Int {\n  // TODO: divide 100 by 0, then 100 by 4, return the sum of extracted values\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum CalcResult {\n  Value(n: Int),\n  Error(msg: Str),\n}\n\nfn safe_divide(a: Int, b: Int) -> CalcResult {\n  if b == 0 {\n    return CalcResult.Error(\"Division by zero\");\n  }\n  return CalcResult.Value(a / b);\n}\n\nfn extract_value(r: CalcResult) -> Int {\n  match r {\n    Value(n) => { return n; }\n    Error(_) => { return -1; }\n  }\n}\n\nfn main() -> Int {\n  let r1 = safe_divide(100, 0);\n  let r2 = safe_divide(100, 4);\n  return extract_value(r1) + extract_value(r2);\n}",
+  "expected_output": "",
   "try_it": "Add a `safe_modulo(a: Int, b: Int) -> CalcResult` function that returns the remainder of a / b, or an error if b is 0. Add a `safe_power(base: Int, exp: Int) -> CalcResult` that errors if exp is negative. Chain three operations: divide 10 by 3, get the value, then modulo that value by 2.",
   "concepts": [
     "enum",

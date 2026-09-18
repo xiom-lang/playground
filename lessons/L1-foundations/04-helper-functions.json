@@ -9,6 +9,7 @@
   "analogy": "Helper functions are like delegating chores — one person sets the table, another cooks, another cleans. Each does one job, and together they run the whole household.",
   "code_template": "use xiom.io;\n// TODO: write a helper function 'print_greeting' that prints a welcome message\n// TODO: write a helper function 'add_numbers' that takes two Ints and returns their sum\n\nfn main() {\n  // TODO: call print_greeting\n  // TODO: call add_numbers with two numbers and print the result\n}",
   "solution": "use xiom.io;\nfn print_greeting() {\n  io.println(\"Welcome to the Calculator!\");\n}\n\nfn add_numbers(a: Int, b: Int) -> Int {\n  return a + b;\n}\n\nfn main() {\n  print_greeting();\n  let sum: Int = add_numbers(7, 8);\n  io.println(\"Sum is 15\");\n}",
+  "expected_output": "Welcome to the Calculator!\nSum is 15",
   "try_it": "Split your program into 3 helper functions: one that prints a welcome, one that calculates a sum, and one that prints a goodbye. Call all three from main.",
   "concepts": [
     "helper-functions",

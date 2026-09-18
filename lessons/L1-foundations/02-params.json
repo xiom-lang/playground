@@ -9,6 +9,7 @@
   "analogy": "Parameters are like ingredients you give to a recipe — 'make me a cake WITH chocolate' vs 'make me a cake WITH vanilla'. Same recipe, different result!",
   "code_template": "use xiom.io;\n// TODO: define a function 'greet' that takes a name parameter (Str)\n// TODO: the function should print a personalized greeting using the name\n\nfn main() {\n  // TODO: call greet with at least two different names\n}",
   "solution": "use xiom.io;\nfn greet(name: Str) {\n  io.println(\"Hello, \");\n  io.println(name);\n  io.println(\"!\");\n}\n\nfn main() {\n  greet(\"Alice\");\n  greet(\"Bob\");\n}",
+  "expected_output": "Hello,\nAlice\n!\nHello,\nBob\n!",
   "try_it": "Add an `age: Int` parameter to `greet` so it prints both the name AND age. Call it like `greet(\"Emma\", 15)`.",
   "concepts": [
     "parameters",

@@ -9,6 +9,7 @@
   "analogy": "A day planner is like a traffic light for your week — green for weekends (go relax!), yellow for weekdays (keep going!), red for invalid days (stop and fix the input).",
   "code_template": "use xiom.io;\n\nfn main() {\n  let day: Str = \"TODO: pick a day\";\n  // TODO: use if/elif/else to print a message for each day of the week\n  // TODO: include an else for invalid days\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let day: Str = \"Friday\";\n  if day == \"Monday\" {\n    io.println(\"Start the week strong!\");\n  } elif day == \"Friday\" {\n    io.println(\"Almost weekend!\");\n  } elif day == \"Saturday\" {\n    io.println(\"Relax!\");\n  } elif day == \"Sunday\" {\n    io.println(\"Relax!\");\n  } else {\n    io.println(\"Keep going!\");\n  }\n}\n",
+  "expected_output": "Almost weekend!",
   "try_it": "Add a suggestion for Wednesday. Then try combining Saturday and Sunday into one condition: change the Sunday `elif` to `elif day == \"Sunday\"` and make both weekend days print the same relaxing message.",
   "concepts": [
     "if-elif-else",

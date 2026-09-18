@@ -9,6 +9,7 @@
   "analogy": "GCD is like finding the largest measuring cup that exactly fills two containers without leaving leftover water. LCM is finding the smallest container that both measuring cups can fill exactly. Two sides of the same coin, connected by a simple formula.",
   "code_template": "use xiom.io;\nfn gcd(a: Int, b: Int) -> Int {\n  // TODO: implement Euclidean algorithm\n  // while b != 0: (a, b) = (b, a % b)\n}\n\nfn lcm(a: Int, b: Int) -> Int {\n  // TODO: use gcd to compute lcm\n  // Formula: (a / gcd(a,b)) * b\n}\n\nfn main() -> Int {\n  // TODO: compute and print gcd(24, 36) and lcm(24, 36)\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn gcd(a: Int, b: Int) -> Int {\n  var x = a;\n  var y = b;\n  while y != 0 {\n    let temp = y;\n    y = x % y;\n    x = temp;\n  };\n  x\n}\n\nfn lcm(a: Int, b: Int) -> Int {\n  (a / gcd(a, b)) * b\n}\n\nfn main() -> Int {\n  let g = gcd(24, 36);\n  let l = lcm(24, 36);\n  io.println(g.to_str());\n  io.println(l.to_str());\n  return 0;\n}\n",
+  "expected_output": "12\n72",
   "try_it": "Compute GCD and LCM for pairs of large prime numbers — the GCD should be 1. Compute GCD of (100, 0) — what happens? Add a contract that requires both inputs to be positive. Test with (1071, 462) — GCD should be 21.",
   "concepts": [
     "gcd",
