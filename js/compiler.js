@@ -10,7 +10,7 @@ async function compile() {
   if (!screen || screen.classList.contains('hidden')) return;
 
   var ed = window.editor;
-  var source = ed ? ed.getValue() : '';
+  var source = ed ? ed.getValue() : (window.getMobileCodeValue ? window.getMobileCodeValue() : '');
   var ids = { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts', status: 'status' };
   var statusEl = document.getElementById(ids.status);
   var btn = document.getElementById('btnRun');
@@ -200,7 +200,7 @@ function renderOutputMatch(run) {
   if (actual === 'Program ran with no output.') actual = '';
   var expected = lesson.expected_output;
 
-  var source = window.editor ? window.editor.getValue() : '';
+  var source = window.editor ? window.editor.getValue() : (window.getMobileCodeValue ? window.getMobileCodeValue() : '');
   var sourceMatches = typeof lesson.solution === 'string' &&
     normalizeOutputText(source) === normalizeOutputText(lesson.solution);
   if (!sourceMatches) {

@@ -149,36 +149,175 @@ function addCompileAction(editor) {
   });
 }
 
-require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs' } });
-if (!window._monacoLoading) {
-  window._monacoLoading = true;
+// ---------------------------------------------------------------------------
+// Narrow screens: a read-only code view with copy-to-clipboard instead of a
+// cramped Monaco instance. Monaco is not even downloaded on those screens.
+// ---------------------------------------------------------------------------
+
+var MOBILE_QUERY = '(max-width: 768px)';
+var DEFAULT_CODE = 'use xiom.io;\n\nfn main() {\n  io.println("Hello, XIOM!");\n}';
+var mobileCodeValue = DEFAULT_CODE;
+var monacoWaiters = [];
+var monacoRequested = false;
+
+function isNarrowViewport() {
+  return !!(window.matchMedia && window.matchMedia(MOBILE_QUERY).matches);
+}
+
+function loadMonaco(callback) {
+  if (window.monaco) { callback(); return; }
+  monacoWaiters.push(callback);
+  if (monacoRequested) return;
+  monacoRequested = true;
+  require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs' } });
   require(['vs/editor/editor.main'], function () {
     registerXiomLanguage();
-    window.editor = createEditor('editorContainer', 'use xiom.io;\n\nfn main() {\n  io.println("Hello, XIOM!");\n}');
-    addCompileAction(window.editor);
-    window.editor.onDidChangeCursorPosition(function () {
-      updateLineCount();
-    });
+    var waiters = monacoWaiters;
+    monacoWaiters = [];
+    for (var i = 0; i < waiters.length; i++) waiters[i]();
   });
 }
 
+function copyTextFallback(text) {
+  var area = document.createElement('textarea');
+  area.value = text;
+  area.setAttribute('readonly', 'readonly');
+  area.style.position = 'fixed';
+  area.style.left = '-9999px';
+  document.body.appendChild(area);
+  area.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+  document.body.removeChild(area);
+  return ok;
+}
+
+function onCopyClick(button) {
+  var done = function (ok) {
+    button.textContent = ok ? 'Copied' : 'Copy failed';
+    if (ok) button.classList.add('copied');
+    setTimeout(function () {
+      button.textContent = 'Copy';
+      button.classList.remove('copied');
+    }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(mobileCodeValue).then(
+      function () { done(true); },
+      function () { done(copyTextFallback(mobileCodeValue)); }
+    );
+  } else {
+    done(copyTextFallback(mobileCodeValue));
+  }
+}
+
+function ensureMobileCodeView() {
+  var container = document.getElementById('editorContainer');
+  if (!container) return null;
+  var host = document.getElementById('mobileCodeView');
+  if (host) return host;
+
+  host = document.createElement('div');
+  host.id = 'mobileCodeView';
+  host.className = 'mobile-code-view';
+
+  var bar = document.createElement('div');
+  bar.className = 'mobile-code-bar';
+
+  var label = document.createElement('span');
+  label.className = 'mobile-code-label';
+  label.textContent = 'Program';
+
+  var hint = document.createElement('span');
+  hint.className = 'mobile-code-hint';
+  hint.textContent = 'Read-only on this screen';
+
+  var button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mobile-copy-btn';
+  button.textContent = 'Copy';
+  button.setAttribute('aria-label', 'Copy the program to the clipboard');
+  button.onclick = function () { onCopyClick(button); };
+
+  bar.appendChild(label);
+  bar.appendChild(hint);
+  bar.appendChild(button);
+
+  var pre = document.createElement('pre');
+  pre.id = 'mobileCodePre';
+  pre.className = 'mobile-code-pre';
+  pre.setAttribute('tabindex', '0');
+  pre.setAttribute('aria-label', 'Lesson program, read-only');
+
+  host.appendChild(bar);
+  host.appendChild(pre);
+  container.appendChild(host);
+  return host;
+}
+
+function renderMobileCode() {
+  var pre = document.getElementById('mobileCodePre');
+  if (pre) pre.textContent = mobileCodeValue;
+}
+
+function showMobileCodeView() {
+  ensureMobileCodeView();
+  var screen = document.getElementById('lessonsScreen');
+  if (screen) screen.classList.add('mobile-code-mode');
+  renderMobileCode();
+}
+
+function ensureDesktopEditor() {
+  loadMonaco(function () {
+    var screen = document.getElementById('lessonsScreen');
+    if (screen) screen.classList.remove('mobile-code-mode');
+    if (window.editor) {
+      window.editor.layout();
+      return;
+    }
+    window.editor = createEditor('editorContainer', mobileCodeValue || DEFAULT_CODE);
+    addCompileAction(window.editor);
+    window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
+    updateLineCount();
+  });
+}
+
+window.setMobileCode = function (text) {
+  mobileCodeValue = typeof text === 'string' ? text : '';
+  if (isNarrowViewport()) showMobileCodeView();
+  else renderMobileCode();
+};
+window.getMobileCodeValue = function () { return mobileCodeValue; };
+window.isNarrowViewport = isNarrowViewport;
+
 window.initLessonsEditor = function () {
-  if (!window.monaco) {
-    var check = setInterval(function () {
-      if (window.monaco) {
-        clearInterval(check);
-        _createLessonsEditor();
-      }
-    }, 100);
+  if (isNarrowViewport()) {
+    showMobileCodeView();
     return;
   }
-  _createLessonsEditor();
+  ensureDesktopEditor();
 };
 
-function _createLessonsEditor() {
-  registerXiomLanguage();
-  window.editor = createEditor('editorContainer', 'fn main() {\n  io.println("Hello!");\n}');
-  addCompileAction(window.editor);
-  window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
-  updateLineCount();
+if (isNarrowViewport()) {
+  showMobileCodeView();
+} else {
+  loadMonaco(function () {
+    if (window.editor) return;
+    window.editor = createEditor('editorContainer', DEFAULT_CODE);
+    addCompileAction(window.editor);
+    window.editor.onDidChangeCursorPosition(function () { updateLineCount(); });
+  });
 }
+
+window.addEventListener('resize', function () {
+  var screen = document.getElementById('lessonsScreen');
+  if (!screen) return;
+  if (isNarrowViewport()) {
+    if (window.editor) mobileCodeValue = window.editor.getValue();
+    showMobileCodeView();
+  } else {
+    screen.classList.remove('mobile-code-mode');
+    if (window.editor) window.editor.layout();
+    else ensureDesktopEditor();
+  }
+});

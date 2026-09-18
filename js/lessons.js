@@ -179,6 +179,8 @@ function loadLessonContent(lessonFile) {
       document.getElementById('lessonTitle').textContent = lesson.title;
       if (window.editor && lesson.code_template) {
         window.editor.setValue(lesson.code_template);
+      } else if (window.setMobileCode) {
+        window.setMobileCode(lesson.code_template || '');
       }
       if (window.resetOutputMatch) window.resetOutputMatch();
       applyLessonAvailability(lesson);

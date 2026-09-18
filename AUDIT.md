@@ -826,3 +826,21 @@ Five of them (L0-28, L0-29, L0-35, L0-40, L2-28) appear in solutions, and the
 three that print them carry U+FFFD in their expected output today. Restoring
 the intended characters needs per-occurrence judgement; see also section 3.4.
 
+## 13. Mobile read-only lesson view (A4 complete, 2026-09-19)
+
+On screens at or below 768px the playground no longer downloads Monaco. The
+editor slot becomes a read-only program view with the lesson code, a
+copy-to-clipboard button (Clipboard API with an execCommand fallback), and a
+"Read-only on this screen" hint. Run, Format, quick examples, and the
+expected-output comparison all resolve `getMobileCodeValue()` when no editor
+exists, so the feature set stays usable on a phone. Resizing across the
+breakpoint switches modes without losing the program: leaving mobile
+initializes Monaco with the read-only text, entering mobile copies the
+current editor value into the read-only view.
+
+Verified with a real browser at 390x844 in both themes: `window.monaco` stays
+undefined, `#mobileCodeView` renders the lesson template, the Copy button
+shows its "Copied" state, the `/api/compile` request body carries the
+read-only source, and both resize directions preserve the code. No console
+errors.
+

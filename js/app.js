@@ -109,7 +109,7 @@ function closeStdlibPanel() {
 }
 
 function formatCode() {
-  var source = window.editor ? window.editor.getValue() : '';
+  var source = getActiveEditorValue();
   if (!source) return;
 
   var statusEl = document.getElementById('status');
@@ -131,6 +131,7 @@ function formatCode() {
       if (r.formatted) {
         var ed = window.editor;
         if (ed) ed.setValue(r.formatted);
+        else if (window.setMobileCode) window.setMobileCode(r.formatted);
         statusEl.textContent = 'Formatted.';
         statusEl.className = 'status-bar ok';
       } else {
@@ -210,7 +211,8 @@ function getActiveEditor() {
 
 function getActiveEditorValue() {
   var ed = getActiveEditor();
-  return ed ? ed.getValue() : '';
+  if (ed) return ed.getValue();
+  return window.getMobileCodeValue ? window.getMobileCodeValue() : '';
 }
 
 function loadQuickExample(name) {
@@ -224,10 +226,14 @@ function loadQuickExample(name) {
     ed.setValue(examples[name]);
     ed.focus();
   } else if (examples[name]) {
-    setTimeout(function () {
-      var retryEd = window.editor;
-      if (retryEd) { retryEd.setValue(examples[name]); retryEd.focus(); }
-    }, 500);
+    if (window.isNarrowViewport && window.isNarrowViewport() && window.setMobileCode) {
+      window.setMobileCode(examples[name]);
+    } else {
+      setTimeout(function () {
+        var retryEd = window.editor;
+        if (retryEd) { retryEd.setValue(examples[name]); retryEd.focus(); }
+      }, 500);
+    }
   }
   var el = document.getElementById('exampleSelect');
   if (el) el.value = '';

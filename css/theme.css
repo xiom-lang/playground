@@ -1460,6 +1460,75 @@ html.light-mode .output-content {
 }
 
 /* ================================================================
+   MOBILE READ-ONLY CODE VIEW
+   ================================================================ */
+.mobile-code-view { display: none; }
+
+.mobile-code-mode .mobile-code-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--void);
+}
+
+.mobile-code-mode .editor-container > .monaco-editor { display: none; }
+.mobile-code-mode .ln-col-bar { display: none; }
+.mobile-code-mode .stdlib-fn-row .stdlib-copy { display: none; }
+
+.mobile-code-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--panel);
+}
+
+.mobile-code-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mid);
+}
+
+.mobile-code-hint {
+  font-size: 11px;
+  color: var(--low);
+}
+
+.mobile-copy-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+  color: var(--hi);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+.mobile-copy-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+.mobile-copy-btn:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+.mobile-copy-btn.copied { border-color: var(--green); color: var(--green); background: var(--green-soft); }
+
+.mobile-code-pre {
+  flex: 1;
+  margin: 0;
+  padding: 14px 16px;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--hi);
+  background: var(--void);
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+.mobile-code-pre:focus-visible { outline: 2px solid var(--indigo); outline-offset: -2px; }
+
+/* ================================================================
    RESPONSIVE
    ================================================================ */
 @media (max-width: 768px) {

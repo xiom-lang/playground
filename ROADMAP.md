@@ -33,9 +33,12 @@ make editor support match what developers expect.
     expected text on mismatch - when the editor still holds the reference
     solution. `tools/lesson-audit.js` asserts stored outputs in the nightly
     CI job and `--check` gates the data on every push.
-- [ ] A4. Mobile lesson experience
-  - Read-only lesson view for narrow screens with copy-to-clipboard instead
-    of a cramped Monaco instance.
+- [x] A4. Mobile lesson experience
+  - Narrow screens (<=768px) never download Monaco; the editor slot becomes a
+    read-only program view with a copy-to-clipboard button, and Run plus the
+    expected-output comparison use that source. Resizing across the
+    breakpoint lazily loads Monaco (or the read-only view) without losing the
+    program text.
 - [x] A5. Editor autocomplete (data-driven)
   - Monaco completion provider built from `js/stdlib-ref.json`: module names
     after `use xiom.`, module members after an imported alias (`io.`, `math.`),

@@ -191,7 +191,9 @@ function _tryLoadExample(concept) {
   if (ed) {
     ed.setValue(concept.example);
     ed.focus();
+    return;
   }
+  if (window.setMobileCode) window.setMobileCode(concept.example);
 }
 
 function toggleCard(conceptId) {
