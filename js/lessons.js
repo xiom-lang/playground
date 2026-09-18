@@ -452,10 +452,13 @@ function filterLessons(query) {
   var q = query.toLowerCase().trim();
   var items = document.querySelectorAll('.lesson-item');
   var headers = document.querySelectorAll('.lesson-level-header');
+  var visibleCount = 0;
 
   items.forEach(function (item) {
     var text = (item.textContent || '').toLowerCase();
-    item.style.display = (q === '' || text.indexOf(q) >= 0) ? '' : 'none';
+    var show = q === '' || text.indexOf(q) >= 0;
+    item.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
   });
 
   headers.forEach(function (header) {
@@ -467,6 +470,20 @@ function filterLessons(query) {
     }
     header.style.display = hasVisible ? '' : 'none';
   });
+
+  var empty = document.getElementById('lessonEmpty');
+  if (q !== '' && visibleCount === 0) {
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.id = 'lessonEmpty';
+      empty.className = 'lesson-empty';
+      var list = document.getElementById('lessonList');
+      if (list) list.appendChild(empty);
+    }
+    empty.textContent = 'No lessons match "' + query.trim() + '". Try a different word.';
+  } else if (empty && empty.parentNode) {
+    empty.parentNode.removeChild(empty);
+  }
 }
 
 window.loadLessonCatalog = loadLessonCatalog;

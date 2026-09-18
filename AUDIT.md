@@ -844,3 +844,27 @@ shows its "Copied" state, the `/api/compile` request body carries the
 read-only source, and both resize directions preserve the code. No console
 errors.
 
+## 14. Visual polish pass (A6 complete, 2026-09-19)
+
+Changes:
+
+- Landing hierarchy: the feature grid is now a labeled section ("Why learn
+  with XIOM?") with a supporting line; verified at 1440px and 390px in both
+  themes with no horizontal overflow.
+- Empty states: lesson search and both stdlib search surfaces (persistent
+  panel and Concepts panel) now say what did not match instead of leaving a
+  blank area, and the message clears with the query.
+- Focus states: interactive elements (buttons, links, tabs, lesson rows,
+  chips, search inputs, dynamic copy buttons) get a consistent 2px indigo
+  `:focus-visible` ring; lesson rows use an inset ring so it is not clipped
+  by the scroller. Verified with keyboard tabbing.
+- Theme correctness: `--border-hover` replaces hardcoded dark-only hover
+  borders; `.editor-container` uses `var(--panel)` so light mode does not
+  flash a dark rectangle before Monaco loads.
+- Stdlib panel bug fixes found during this pass: the persistent panel
+  rendered two search boxes (a static header input plus a hero input) - the
+  hero input is gone and the quick chips now drive the header input. Chip and
+  typed queries like `io.println`/`Vec.push` never matched because module
+  names and signatures are indexed as "module signature"; queries now
+  normalize dots to spaces. Dead `.stdlib-search` CSS was removed.
+

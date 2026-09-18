@@ -54,7 +54,7 @@
 .editor-container {
   flex: 1;
   min-height: 0;
-  background: #111217;
+  background: var(--panel);
 }
 
 .lessons-screen .output-panel {

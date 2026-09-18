@@ -13,6 +13,7 @@
   --panel-3: #1c1e24;
   --border: #25272e;
   --border-soft: #1a1c22;
+  --border-hover: #3a3d47;
   --hi: #f2f3f6;
   --mid: #9497a3;
   --low: #5c5f6b;
@@ -39,6 +40,7 @@ html.light-mode {
   --panel-3: #dde3e8;
   --border: #d0d7de;
   --border-soft: #d8dee4;
+  --border-hover: #b8c0c9;
   --hi: #1f2328;
   --mid: #656d76;
   --low: #8b949e;
@@ -211,7 +213,7 @@ html.light-mode .output-content {
 }
 
 .btn-secondary:hover {
-  border-color: #3a3d47;
+  border-color: var(--border-hover);
   background: var(--panel-2);
 }
 
@@ -265,15 +267,36 @@ html.light-mode .output-content {
 .landing-footer a:hover { color: #9aa4ff; }
 .landing-footer-sep { color: var(--border); }
 
+/* ---- Landing sections ---- */
+.landing-section {
+  width: 100%;
+  max-width: 1100px;
+  margin-bottom: 60px;
+  animation: fadeInUp 1s ease-out;
+}
+
+.landing-section-title {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--hi);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.landing-section-sub {
+  font-size: 13.5px;
+  color: var(--mid);
+  text-align: center;
+  margin-bottom: 28px;
+}
+
 /* ---- Feature Grid ---- */
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 24px;
-  max-width: 1100px;
   width: 100%;
-  margin-bottom: 60px;
-  animation: fadeInUp 1s ease-out;
 }
 
 .feature-card {
@@ -286,7 +309,7 @@ html.light-mode .output-content {
 
 .feature-card:hover {
   transform: translateY(-2px);
-  border-color: #33353d;
+  border-color: var(--border-hover);
   background: var(--panel-2);
 }
 
@@ -1194,7 +1217,7 @@ html.light-mode .output-content {
   cursor: pointer; font-family: var(--sans); font-weight: 600;
   transition: all 0.2s ease;
 }
-.floating-complete .btn-next:hover { border-color: #3a3d47; background: var(--panel-2); }
+.floating-complete .btn-next:hover { border-color: var(--border-hover); background: var(--panel-2); }
 
 /* ================================================================
    SYNTAX / CONCEPTS PANEL (slide-in from right)
@@ -1529,6 +1552,55 @@ html.light-mode .output-content {
 .mobile-code-pre:focus-visible { outline: 2px solid var(--indigo); outline-offset: -2px; }
 
 /* ================================================================
+   FOCUS STATES
+   ================================================================ */
+a:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.back-btn:focus-visible,
+.nav-btn:focus-visible,
+.header-site-link:focus-visible,
+.tab:focus-visible,
+.stdlib-chip:focus-visible,
+.stdlib-copy:focus-visible,
+.continue-btn:focus-visible,
+.syntax-header-button:focus-visible,
+.floating-complete button:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 2px;
+}
+
+.lesson-item:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: -2px;
+}
+
+.lesson-search:focus-visible,
+.concept-search:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 1px;
+  border-color: var(--indigo);
+}
+
+/* ================================================================
+   EMPTY STATES
+   ================================================================ */
+.lesson-empty,
+.stdlib-empty {
+  padding: 18px 16px;
+  color: var(--low);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.stdlib-empty {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  margin: 12px 0;
+}
+
+/* ================================================================
    RESPONSIVE
    ================================================================ */
 @media (max-width: 768px) {
@@ -1731,9 +1803,6 @@ html.light-mode .output-content {
 
 /* Hero section */
 .stdlib-hero { padding: 14px 14px 8px; border-bottom: 1px solid var(--border-soft); }
-.stdlib-search { width: 100%; padding: 10px 14px; background: var(--void); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--hi); font-family: var(--sans); font-size: 13px; outline: none; transition: border-color 0.2s; margin-bottom: 10px; }
-.stdlib-search:focus { border-color: var(--indigo); }
-.stdlib-search::placeholder { color: var(--low); }
 .stdlib-quick-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .stdlib-chip { display: inline-block; padding: 4px 10px; background: var(--indigo-soft); color: var(--indigo); border: 1px solid rgba(92,107,255,0.25); border-radius: 100px; font-size: 11px; font-family: var(--mono); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
 .stdlib-chip:hover { background: rgba(92,107,255,0.22); border-color: var(--indigo); }

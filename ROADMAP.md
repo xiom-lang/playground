@@ -43,9 +43,13 @@ make editor support match what developers expect.
   - Monaco completion provider built from `js/stdlib-ref.json`: module names
     after `use xiom.`, module members after an imported alias (`io.`, `math.`),
     method names after `.`, keywords/types, and parameter snippets.
-- [~] A6. Visual polish
+- [x] A6. Visual polish
   - Tier badges, limitation badges, copy buttons, docs links, and panel
-    spacing are in place; landing hierarchy and mobile polish remain.
+    spacing were already in place. This pass added the missing landing
+    hierarchy ("Why learn with XIOM?" section), empty states for lesson and
+    stdlib searches, indigo `:focus-visible` rings for interactive elements,
+    theme-token hover colors, and the stdlib panel cleanup (one search box,
+    working dotted queries such as `io.println`).
 
 ## Phase B -- Progress and history (this repository, no backend)
 

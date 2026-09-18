@@ -139,18 +139,45 @@ function showStdlibRef() {
   });
 }
 
+function normalizeStdlibQuery(query) {
+  // Module paths are searched as "module signature", so "io.println" has to
+  // become "io println" to match.
+  return String(query == null ? '' : query).toLowerCase().trim().replace(/\./g, ' ');
+}
+
+function updateStdlibEmptyState(scope, displayQuery, visible) {
+  var host = scope.querySelector('.stdlib-modules');
+  if (!host) return;
+  var empty = host.querySelector('.stdlib-empty');
+  if (displayQuery !== '' && visible === 0) {
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.className = 'stdlib-empty';
+      host.appendChild(empty);
+    }
+    empty.textContent = 'No functions match "' + displayQuery + '". Try a module or function name.';
+  } else if (empty && empty.parentNode) {
+    empty.parentNode.removeChild(empty);
+  }
+}
+
 function filterStdlib(query) {
-  var q = query.toLowerCase().trim();
-  var list = document.querySelector('.stdlib-modules');
+  var q = normalizeStdlibQuery(query);
+  var scope = document.querySelector('.syntax-panel') || document;
+  var list = scope.querySelector('.stdlib-modules');
   if (list) list.classList.toggle('searching', q !== '');
-  document.querySelectorAll('.stdlib-fn').forEach(function (el) {
-    el.style.display = (q === '' || (el.getAttribute('data-stdlib-search') || '').indexOf(q) >= 0) ? '' : 'none';
+  var visible = 0;
+  scope.querySelectorAll('.stdlib-fn').forEach(function (el) {
+    var show = q === '' || (el.getAttribute('data-stdlib-search') || '').indexOf(q) >= 0;
+    el.style.display = show ? '' : 'none';
+    if (show) visible++;
   });
-  document.querySelectorAll('.stdlib-module').forEach(function (mod) {
+  scope.querySelectorAll('.stdlib-module').forEach(function (mod) {
     if (q === '') { mod.style.display = ''; return; }
     var any = mod.querySelectorAll('.stdlib-fn:not([style*="display: none"])').length > 0;
     mod.style.display = any ? '' : 'none';
   });
+  updateStdlibEmptyState(scope, String(query || '').trim(), visible);
 }
 
 function hideStdlibRef() {
@@ -169,12 +196,10 @@ function showStdlibPanel() {
     var html = '';
 
     html += '<div class="stdlib-hero">';
-    html += '<input type="text" class="stdlib-search" placeholder="Search all ' + data.counts.functions +
-      ' functions..." oninput="filterStdlibPanel(this.value)">';
     html += '<div class="stdlib-quick-chips">';
     var quickChips = ['io.println', 'to_string', 'Vec.push', 'match', 'println', 'hashset'];
     quickChips.forEach(function (label) {
-      html += '<span class="stdlib-chip" onclick="filterStdlibPanel(\'' + label + '\'); var s = document.querySelector(\'.stdlib-search\'); if(s) s.value=\'' + label + '\';" title="Search ' + label + '">' + label + '</span>';
+      html += '<span class="stdlib-chip" onclick="filterStdlibPanel(\'' + label + '\'); var s = document.querySelector(\'#stdlibPanel .concept-search\'); if (s) s.value = \'' + label + '\';" title="Search ' + label + '">' + label + '</span>';
     });
     html += '</div>';
     html += '<div class="stdlib-tier-bar">' + tierToggleButton(data) +
@@ -217,22 +242,26 @@ function showStdlibPanel() {
 }
 
 function filterStdlibPanel(query) {
-  var q = query.toLowerCase().trim();
+  var q = normalizeStdlibQuery(query);
   var panel = document.getElementById('stdlibPanel');
   if (!panel) return;
 
   var list = panel.querySelector('.stdlib-modules');
   if (list) list.classList.toggle('searching', q !== '');
 
+  var visible = 0;
   panel.querySelectorAll('.stdlib-fn-row').forEach(function (row) {
     var text = (row.getAttribute('data-stdlib-search') || '').toLowerCase();
-    row.style.display = (q === '' || text.indexOf(q) >= 0) ? '' : 'none';
+    var show = q === '' || text.indexOf(q) >= 0;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
   });
   panel.querySelectorAll('.stdlib-mod-card').forEach(function (mod) {
     if (q === '') { mod.style.display = ''; return; }
     var any = Array.from(mod.querySelectorAll('.stdlib-fn-row')).some(function (r) { return r.style.display !== 'none'; });
     mod.style.display = any ? '' : 'none';
   });
+  updateStdlibEmptyState(panel, String(query || '').trim(), visible);
 }
 
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
