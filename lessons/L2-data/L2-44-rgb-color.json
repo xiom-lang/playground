@@ -1,36 +1,36 @@
 {
-    "id":  "L2-44",
-    "title":  "RGB Color",
-    "level":  "L2",
-    "duration":  "9 min",
-    "story":  "You\u0027re building a design tool and need to represent colors. Every color on screen is made of red, green, and blue values (0-255). You want to compute brightness, check if a color is dark or light, and convert colors to the hex format designers love (#RRGGBB).",
-    "why":  "Color math (average, threshold checks, hex conversion) shows how struct methods can transform raw data into useful derived values.",
-    "narrative":  "## Modeling RGB Colors\n\nEvery pixel on your screen is a mix of red, green, and blue light. Each channel goes from 0 (off) to 255 (full blast).\n\n### The Color Struct\n\n```xiom\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n```\n\n### Creating Colors\n\n```xiom\nlet crimson = Color{ r: 220; g: 20; b: 60; };\nlet teal = Color{ r: 0; g: 128; b: 128; };\nlet snow = Color{ r: 255; g: 255; b: 255; };\n```\n\n### Computing Brightness\n\nThe average of the three channels gives a rough brightness measure:\n\n```xiom\nfn Color.brightness(self) -\u003e Int {\n  return (r + g + b) / 3;\n}\n```\n\n### Checking if a Color is Dark\n\nIf the brightness falls below a threshold, the color is dark:\n\n```xiom\nfn Color.is_dark(self) -\u003e Bool {\n  return self.brightness() \u003c 128;\n}\n```\n\n### Converting to Hex\n\nDesigners use hex strings like `#DC143C` (crimson). Each channel converts to two hex digits:\n\n```xiom\nfn to_hex_digit(n: Int) -\u003e Str {\n  let digits = \"0123456789ABCDEF\";\n  let hi = n / 16;\n  let lo = n % 16;\n  return digits + digits;\n}\n\nfn Color.to_hex(self) -\u003e Str {\n  return \"#\" + to_hex_digit(r) + to_hex_digit(g) + to_hex_digit(b);\n}\n```\n\n### Using Color Methods\n\n```xiom\ncrimson.brightness();  // 100\ncrimson.is_dark();     // true (100 \u003c 128)\ncrimson.to_hex();      // \"#DC143C\"\n```",
-    "analogy":  "A Color is like a paint mixer with three sliders: red, green, and blue. Brightness tells you how much light the mix reflects. is_dark is the question \"would white text be readable on this background?\" Hex is the universal paint code.",
-    "code_template":  "use xiom.io;\n\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n\n// TODO: write a method \u0027Color.brightness\u0027 that returns the average of r, g, b\n\n// TODO: write a method \u0027Color.is_dark\u0027 that returns true if brightness \u003c 128\n\n// TODO: write a method \u0027Color.to_hex\u0027 that returns \"#RRGGBB\" using uppercase hex digits\n\nfn main() -\u003e Int {\n  // TODO: create a dark color, return 1 if it\u0027s dark, otherwise 0\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n\nfn Color.brightness(self) -\u003e Int {\n  return (r + g + b) / 3;\n}\n\nfn Color.is_dark(self) -\u003e Bool {\n  return self.brightness() \u003c 128;\n}\n\nfn Color.to_hex(self) -\u003e Str {\n  let hex = \"0123456789ABCDEF\";\n  return \"#\" + hex + hex + hex + hex + hex + hex;\n}\n\nfn main() -\u003e Int {\n  let crimson = Color{ r: 220; g: 20; b: 60; };\n  if crimson.is_dark() { return 1; }\n  return 0;\n}",
-    "try_it":  "Add a `Color.invert(self) -\u003e Color` method that returns the complementary color (255 - r, 255 - g, 255 - b). Add a `Color.mix(self, other: Color) -\u003e Color` method that averages each channel. Create your favorite real color.",
-    "concepts":  [
-                     "struct",
-                     "method",
-                     "Int",
-                     "Bool",
-                     "hex",
-                     "threshold"
-                 ],
-    "tips":  [
-                 "Brightness is (r+g+b)/3 — integer division drops the decimal, which is fine for threshold checks",
-                 "Use a string of hex digits and index into it with `n / 16` for the high nibble and `n % 16` for the low",
-                 "Chain methods: `is_dark` calls `self.brightness()` so the logic stays in one place"
-             ],
-    "common_mistakes":  [
-                            "Using lowercase hex digits (a-f) when the exercise expects uppercase (A-F) — check your hex string",
-                            "Dividing by 3 after casting to Float64 then casting back — Int division works fine for this use case"
-                        ],
-    "next_lesson":  "L2-45",
-    "related":  [
-                    "L2-04",
-                    "L2-25",
-                    "L2-27"
-                ]
+  "id": "L2-44",
+  "title": "RGB Color",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You're building a design tool and need to represent colors. Every color on screen is made of red, green, and blue values (0-255). You want to compute brightness, check if a color is dark or light, and convert colors to the hex format designers love (#RRGGBB).",
+  "why": "Color math (average, threshold checks, hex conversion) shows how struct methods can transform raw data into useful derived values.",
+  "narrative": "## Modeling RGB Colors\n\nEvery pixel on your screen is a mix of red, green, and blue light. Each channel goes from 0 (off) to 255 (full blast).\n\n### The Color Struct\n\n```xiom\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n```\n\n### Creating Colors\n\n```xiom\nlet crimson = Color{ r: 220; g: 20; b: 60; };\nlet teal = Color{ r: 0; g: 128; b: 128; };\nlet snow = Color{ r: 255; g: 255; b: 255; };\n```\n\n### Computing Brightness\n\nThe average of the three channels gives a rough brightness measure:\n\n```xiom\nfn Color.brightness(self) -> Int {\n  return (r + g + b) / 3;\n}\n```\n\n### Checking if a Color is Dark\n\nIf the brightness falls below a threshold, the color is dark:\n\n```xiom\nfn Color.is_dark(self) -> Bool {\n  return self.brightness() < 128;\n}\n```\n\n### Converting to Hex\n\nDesigners use hex strings like `#DC143C` (crimson). Each channel converts to two hex digits:\n\n```xiom\nfn to_hex_digit(n: Int) -> Str {\n  let digits = \"0123456789ABCDEF\";\n  let hi = n / 16;\n  let lo = n % 16;\n  return digits + digits;\n}\n\nfn Color.to_hex(self) -> Str {\n  return \"#\" + to_hex_digit(r) + to_hex_digit(g) + to_hex_digit(b);\n}\n```\n\n### Using Color Methods\n\n```xiom\ncrimson.brightness();  // 100\ncrimson.is_dark();     // true (100 < 128)\ncrimson.to_hex();      // \"#DC143C\"\n```",
+  "analogy": "A Color is like a paint mixer with three sliders: red, green, and blue. Brightness tells you how much light the mix reflects. is_dark is the question \"would white text be readable on this background?\" Hex is the universal paint code.",
+  "code_template": "use xiom.io;\n\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n\n// TODO: write a method 'Color.brightness' that returns the average of r, g, b\n\n// TODO: write a method 'Color.is_dark' that returns true if brightness < 128\n\n// TODO: write a method 'Color.to_hex' that returns \"#RRGGBB\" using uppercase hex digits\n\nfn main() -> Int {\n  // TODO: create a dark color, return 1 if it's dark, otherwise 0\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Color = {\n  r: Int;\n  g: Int;\n  b: Int;\n}\n\nfn Color.brightness(self) -> Int {\n  return (r + g + b) / 3;\n}\n\nfn Color.is_dark(self) -> Bool {\n  return self.brightness() < 128;\n}\n\nfn Color.to_hex(self) -> Str {\n  let hex = \"0123456789ABCDEF\";\n  return \"#\" + hex + hex + hex + hex + hex + hex;\n}\n\nfn main() -> Int {\n  let crimson = Color{ r: 220; g: 20; b: 60; };\n  if crimson.is_dark() { return 1; }\n  return 0;\n}",
+  "try_it": "Add a `Color.invert(self) -> Color` method that returns the complementary color (255 - r, 255 - g, 255 - b). Add a `Color.mix(self, other: Color) -> Color` method that averages each channel. Create your favorite real color.",
+  "concepts": [
+    "struct",
+    "method",
+    "Int",
+    "Bool",
+    "hex",
+    "threshold"
+  ],
+  "tips": [
+    "Brightness is (r+g+b)/3 â€” integer division drops the decimal, which is fine for threshold checks",
+    "Use a string of hex digits and index into it with `n / 16` for the high nibble and `n % 16` for the low",
+    "Chain methods: `is_dark` calls `self.brightness()` so the logic stays in one place"
+  ],
+  "common_mistakes": [
+    "Using lowercase hex digits (a-f) when the exercise expects uppercase (A-F) â€” check your hex string",
+    "Dividing by 3 after casting to Float64 then casting back â€” Int division works fine for this use case"
+  ],
+  "next_lesson": "L2-45",
+  "related": [
+    "L2-04",
+    "L2-25",
+    "L2-27"
+  ]
 }

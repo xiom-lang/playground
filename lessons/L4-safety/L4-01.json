@@ -1,39 +1,39 @@
 {
-    "id":  "L4-01",
-    "title":  "What Are Contracts?",
-    "level":  "L4",
-    "duration":  "12 min",
-    "story":  "What if the compiler could check your promises? In XIOM, it can. You\u0027ve been writing code that crashes when someone passes bad input. But what if you could tell the compiler \u0027I promise b won\u0027t be zero\u0027 and \u0027I promise this result is correct\u0027 — and the compiler enforces those promises before your code even runs? That\u0027s exactly what XIOM contracts do.",
-    "why":  "Contracts move bug detection from runtime crashes to compile-time verification — the compiler checks your promises before the program runs, catching errors that would otherwise become mysterious production bugs.",
-    "narrative":  "## The Compiler Checks Your Promises\n\nContracts are explicit promises a function makes about its inputs and outputs. The compiler enforces them.\n\n### The Problem Without Contracts\n\n```xiom\nfn divide(a: Float64, b: Float64) -\u003e Float64 {\n  return a / b;\n}\n```\n\nWhat happens when someone calls `divide(10.0, 0.0)`? The program crashes — but where? Inside `divide`, far from the caller who passed the bad value. The error message is cryptic. The user has no idea what went wrong.\n\n### The Solution: Add a Contract\n\n```xiom\nfn divide(a: Float64, b: Float64) -\u003e Float64\n  requires: b != 0.0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n```\n\nNow two things happen:\n1. **`requires: b != 0.0;`** — Before the function body runs, the compiler checks that `b` is not zero. If someone calls `divide(10.0, 0.0)`, the program traps immediately with a clear message: \u0027Contract violation: b != 0.0\u0027\n2. **`ensures: result * b == a;`** — After the function returns, the compiler checks that the result, when multiplied by `b`, gives back `a`. This verifies the math is correct.\n\n### The Two Contract Clauses\n\n| Clause | When Checked | What It Says |\n|--------|-------------|-------------|\n| `requires:` | Before function body | \u0027Caller must guarantee this\u0027 |\n| `ensures:` | After function body | \u0027Function guarantees this\u0027 |\n\n### A Complete Example\n\n```xiom\nfn safe_divide(a: Float64, b: Float64) -\u003e Float64\n  requires: b != 0.0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -\u003e Int {\n  let x = safe_divide(15.0, 3.0);\n  io.println(string.float_to_str(x));\n  return 0;\n}\n```\n\n### What Contracts Prevent\n\n- Division by zero → `requires: divisor != 0`\n- Negative square roots → `requires: x \u003e= 0.0`\n- Out-of-bounds access → `requires: index \u003c len`\n- Invalid states → `requires: file.is_open()`\n- Incorrect results → `ensures: result \u003e= 0`\n\nContracts aren\u0027t comments — they\u0027re machine-checked guarantees. If you break your promise, the compiler catches you.",
-    "analogy":  "A contract is like a pinky promise to the compiler — \u0027I promise b won\u0027t be zero\u0027 (requires) and \u0027I promise the result is correct\u0027 (ensures). But unlike a pinky promise, the compiler actually VERIFIES it. If you call divide(10, 0), the compiler doesn\u0027t just shrug — it stops and says \u0027You broke your promise about b at line 42.\u0027 It\u0027s a promise with a built-in lie detector.",
-    "code_template":  "use xiom.io;\n\nfn safe_divide(a: Float64, b: Float64) -\u003e Float64\n  // TODO: add requires: b != 0.0;\n  // TODO: add ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -\u003e Int {\n  // TODO: call safe_divide with 20.0 and 4.0, print result\n  return 0;\n}\n",
-    "solution":  "use xiom.io;\n\nuse xiom.string;\nfn safe_divide(a: Float64, b: Float64) -\u003e Float64\n  requires: b != 0.0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -\u003e Int {\n  let x = safe_divide(20.0, 4.0);\n  io.println(string.float_to_str(x));\n  return 0;\n}\n",
-    "try_it":  "Call safe_divide(10.0, 0.0) and see what happens — the program should trap with a contract violation message. Then write a `safe_sqrt` function with `requires: x \u003e= 0.0;` and `ensures: result \u003e= 0.0;`. Test it with 25.0 (should work) and -4.0 (should violate the requires). Add an ensures that accidentally says `ensures: result \u003c 0.0;` for sqrt of 25.0 — the ensures will fail because sqrt(25) = 5, which is not less than 0. Now you\u0027ve seen both kinds of contract violations.",
-    "concepts":  [
-                     "contracts",
-                     "requires",
-                     "ensures",
-                     "design-by-contract",
-                     "precondition",
-                     "postcondition",
-                     "compile-time-verification"
-                 ],
-    "tips":  [
-                 "`requires:` is the caller\u0027s responsibility — if the caller passes bad data, the contract traps at the CALL SITE",
-                 "`ensures:` is the function\u0027s responsibility — if the function returns wrong data, the contract traps at the RETURN SITE",
-                 "Contracts serve as live documentation — always up-to-date because they\u0027re enforced, unlike comments that rot",
-                 "Think of `result` in ensures as a special keyword meaning \u0027whatever this function returns\u0027"
-             ],
-    "common_mistakes":  [
-                            "Putting business logic inside requires — contracts should only VALIDATE, not compute results",
-                            "Writing `ensures: result \u003e 0;` when the function sometimes legitimately returns 0 — the contract must be ALWAYS true",
-                            "Forgetting that contracts add runtime checks in debug builds — they\u0027re not free, but the safety is worth it"
-                        ],
-    "next_lesson":  "L4-02",
-    "related":  [
-                    "L3-29",
-                    "L3-25",
-                    "L1-03"
-                ]
+  "id": "L4-01",
+  "title": "What Are Contracts?",
+  "level": "L4",
+  "duration": "12 min",
+  "story": "What if the compiler could check your promises? In XIOM, it can. You've been writing code that crashes when someone passes bad input. But what if you could tell the compiler 'I promise b won't be zero' and 'I promise this result is correct' — and the compiler enforces those promises before your code even runs? That's exactly what XIOM contracts do.",
+  "why": "Contracts move bug detection from runtime crashes to compile-time verification — the compiler checks your promises before the program runs, catching errors that would otherwise become mysterious production bugs.",
+  "narrative": "## The Compiler Checks Your Promises\n\nContracts are explicit promises a function makes about its inputs and outputs. The compiler enforces them.\n\n### The Problem Without Contracts\n\n```xiom\nfn divide(a: Float64, b: Float64) -> Float64 {\n  return a / b;\n}\n```\n\nWhat happens when someone calls `divide(10.0, 0.0)`? The program crashes — but where? Inside `divide`, far from the caller who passed the bad value. The error message is cryptic. The user has no idea what went wrong.\n\n### The Solution: Add a Contract\n\n```xiom\nfn divide(a: Float64, b: Float64) -> Float64\n  requires: b != 0.0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n```\n\nNow two things happen:\n1. **`requires: b != 0.0;`** — Before the function body runs, the compiler checks that `b` is not zero. If someone calls `divide(10.0, 0.0)`, the program traps immediately with a clear message: 'Contract violation: b != 0.0'\n2. **`ensures: result * b == a;`** — After the function returns, the compiler checks that the result, when multiplied by `b`, gives back `a`. This verifies the math is correct.\n\n### The Two Contract Clauses\n\n| Clause | When Checked | What It Says |\n|--------|-------------|-------------|\n| `requires:` | Before function body | 'Caller must guarantee this' |\n| `ensures:` | After function body | 'Function guarantees this' |\n\n### A Complete Example\n\n```xiom\nfn safe_divide(a: Float64, b: Float64) -> Float64\n  requires: b != 0.0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -> Int {\n  let x = safe_divide(15.0, 3.0);\n  io.println(string.float_to_str(x));\n  return 0;\n}\n```\n\n### What Contracts Prevent\n\n- Division by zero → `requires: divisor != 0`\n- Negative square roots → `requires: x >= 0.0`\n- Out-of-bounds access → `requires: index < len`\n- Invalid states → `requires: file.is_open()`\n- Incorrect results → `ensures: result >= 0`\n\nContracts aren't comments — they're machine-checked guarantees. If you break your promise, the compiler catches you.",
+  "analogy": "A contract is like a pinky promise to the compiler — 'I promise b won't be zero' (requires) and 'I promise the result is correct' (ensures). But unlike a pinky promise, the compiler actually VERIFIES it. If you call divide(10, 0), the compiler doesn't just shrug — it stops and says 'You broke your promise about b at line 42.' It's a promise with a built-in lie detector.",
+  "code_template": "use xiom.io;\n\nfn safe_divide(a: Float64, b: Float64) -> Float64\n  // TODO: add requires: b != 0.0;\n  // TODO: add ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -> Int {\n  // TODO: call safe_divide with 20.0 and 4.0, print result\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nuse xiom.convert;\nfn safe_divide(a: Float64, b: Float64) -> Float64\n  requires: b != 0.0;\n  ensures: result * b == a;\n{\n  return a / b;\n}\n\nfn main() -> Int {\n  let x = safe_divide(20.0, 4.0);\n  io.println(convert.float_to_string(x));\n  return 0;\n}\n",
+  "try_it": "Call safe_divide(10.0, 0.0) and see what happens — the program should trap with a contract violation message. Then write a `safe_sqrt` function with `requires: x >= 0.0;` and `ensures: result >= 0.0;`. Test it with 25.0 (should work) and -4.0 (should violate the requires). Add an ensures that accidentally says `ensures: result < 0.0;` for sqrt of 25.0 — the ensures will fail because sqrt(25) = 5, which is not less than 0. Now you've seen both kinds of contract violations.",
+  "concepts": [
+    "contracts",
+    "requires",
+    "ensures",
+    "design-by-contract",
+    "precondition",
+    "postcondition",
+    "compile-time-verification"
+  ],
+  "tips": [
+    "`requires:` is the caller's responsibility — if the caller passes bad data, the contract traps at the CALL SITE",
+    "`ensures:` is the function's responsibility — if the function returns wrong data, the contract traps at the RETURN SITE",
+    "Contracts serve as live documentation — always up-to-date because they're enforced, unlike comments that rot",
+    "Think of `result` in ensures as a special keyword meaning 'whatever this function returns'"
+  ],
+  "common_mistakes": [
+    "Putting business logic inside requires — contracts should only VALIDATE, not compute results",
+    "Writing `ensures: result > 0;` when the function sometimes legitimately returns 0 — the contract must be ALWAYS true",
+    "Forgetting that contracts add runtime checks in debug builds — they're not free, but the safety is worth it"
+  ],
+  "next_lesson": "L4-02",
+  "related": [
+    "L3-29",
+    "L3-25",
+    "L1-03"
+  ]
 }

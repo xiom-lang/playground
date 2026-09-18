@@ -1,44 +1,44 @@
 {
-    "id":  "L2-59",
-    "title":  "Data Structures Review: Build Anything",
-    "level":  "L2",
-    "duration":  "10 min",
-    "story":  "You\u0027ve built playlists, contacts, shopping carts, colors, timers, dice rollers, seasons, difficulty levels, coffee orders, card games, safe math chains, config parsers, search functions, temperature alerts, validators, week planners, robot commands, and treasure chests. Now synthesize everything into a single showcase.",
-    "why":  "Review and synthesis: combine structs, enums, methods, nesting, and matching across multiple domains in one file.",
-    "narrative":  "## The Complete L2 Toolkit\n\nYou now have all the building blocks for data modeling:\n\n| Concept | Syntax | When to Use |\n|---------|--------|-------------|\n| Struct | `type Name = { field: Type; }` | Grouping related values |\n| Enum | `enum Name { Var, Var2 }` | One type, fixed choices |\n| Enum with data | `Variant(data: Type)` | Choices that carry values |\n| Method | `fn Type.method(self) { }` | Behavior on data |\n| Nested types | Field of another struct/enum | Hierarchical data |\n| Match | `match val { V =\u003e { } }` | Branch on variants |\n\n### Domain 1: Bookstore\n\n```xiom\ntype Book = {\n  title: Str;\n  price: Float64;\n}\n\nenum BookCondition {\n  New,\n  Used(wear: Str),\n  Damaged,\n}\n\nfn BookCondition.discount(self) -\u003e Float64 {\n  match self {\n    New =\u003e { return 0.0; }\n    Used(_) =\u003e { return 0.3; }\n    Damaged =\u003e { return 0.6; }\n  }\n}\n```\n\n### Domain 2: Fitness Tracker\n\n```xiom\nenum Exercise {\n  Running(distance: Float64),\n  Lifting(weight: Int, reps: Int),\n  Yoga,\n}\n\nfn Exercise.calories(self) -\u003e Int {\n  match self {\n    Running(dist) =\u003e { return (dist * 100.0) as Int; }\n    Lifting(w, reps) =\u003e { return w * reps / 10; }\n    Yoga =\u003e { return 150; }\n  }\n}\n```\n\n### Domain 3: Notification System\n\n```xiom\nenum Priority { Low, Medium, High, Urgent }\n\ntype Notification = {\n  title: Str;\n  body: Str;\n  priority: Priority;\n}\n\nfn Notification.should_alert(self) -\u003e Bool {\n  return priority == Priority.High || priority == Priority.Urgent;\n}\n```\n\n### The Pattern\n\nEvery domain follows the same recipe: identify the nouns (structs), the choices (enums), and the verbs (methods). Everything else is just combining these three concepts.",
-    "analogy":  "You\u0027re now a data architect. Structs are your bricks. Enums are your paint colors. Methods are your blueprints. Match is your construction crew that reads the blueprint and decides which wall to build next. Every building in town uses the same materials — the difference is how you arrange them.",
-    "code_template":  "use xiom.io;\n\n// DOMAIN 1: Movie Database\n// TODO: define a Movie struct (title: Str, year: Int, rating: Float64)\nenum Genre { Action, Comedy, Drama, Horror, SciFi }\n\n// DOMAIN 2: Food Delivery\n// TODO: define an OrderStatus enum (Preparing, OnTheWay, Delivered, Cancelled)\n// TODO: define an Order struct (food: Str, price: Float64, status: OrderStatus)\n\n// DOMAIN 3: Music Theory\n// TODO: define a Note enum with variants C, D, E, F, G, A, B\n// TODO: define a Chord struct (root: Note, quality: Str)\n\nfn main() -\u003e Int {\n  // TODO: create one thing from each domain, return the number of types you defined\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\ntype Movie = {\n  title: Str;\n  year: Int;\n  rating: Float64;\n}\n\nenum Genre { Action, Comedy, Drama, Horror, SciFi }\n\nenum OrderStatus { Preparing, OnTheWay, Delivered, Cancelled }\n\ntype Order = {\n  food: Str;\n  price: Float64;\n  status: OrderStatus;\n}\n\nenum Note { C, D, E, F, G, A, B }\n\ntype Chord = {\n  root: Note;\n  quality: Str;\n}\n\nfn Movie.is_classic(self) -\u003e Bool {\n  return year \u003c 2000 \u0026\u0026 rating \u003e 8.0;\n}\n\nfn OrderStatus.is_active(self) -\u003e Bool {\n  match self {\n    Preparing =\u003e { return true; }\n    OnTheWay =\u003e { return true; }\n    Delivered =\u003e { return false; }\n    Cancelled =\u003e { return false; }\n  }\n}\n\nfn Chord.name(self) -\u003e Str {\n  return note_name(root) + \" \" + quality;\n}\n\nfn note_name(n: Note) -\u003e Str {\n  match n {\n    C =\u003e { return \"C\"; }\n    D =\u003e { return \"D\"; }\n    E =\u003e { return \"E\"; }\n    F =\u003e { return \"F\"; }\n    G =\u003e { return \"G\"; }\n    A =\u003e { return \"A\"; }\n    B =\u003e { return \"B\"; }\n  }\n}\n\nfn main() -\u003e Int {\n  let m = Movie{ title: \"The Matrix\"; year: 1999; rating: 8.7; };\n  let o = Order{ food: \"Pizza\"; price: 12.99; status: OrderStatus.Preparing; };\n  let c = Chord{ root: Note.C; quality: \"major\"; };\n  return 3;\n}",
-    "try_it":  "Combine two of your types into a new struct. For example: combine Movie and Genre into a `CatalogEntry` struct. Combine Order and a `Customer` struct. Combine Chord and Note into a `Song` struct that holds a sequence of chords. There are no wrong answers.",
-    "concepts":  [
-                     "struct",
-                     "enum",
-                     "method",
-                     "match",
-                     "nesting",
-                     "synthesis",
-                     "review"
-                 ],
-    "tips":  [
-                 "Start with the nouns (structs), then the choices (enums), then the verbs (methods)",
-                 "Every domain breaks down the same way: what data exists? what choices? what actions?",
-                 "If two structs share fields, consider nesting one inside the other",
-                 "Build incrementally: define one struct, test it, add an enum, test again"
-             ],
-    "common_mistakes":  [
-                            "Trying to fit everything into one giant struct — split into smaller, focused types",
-                            "Making every field an enum when a simple type would do — enums are for CHOICES, not values",
-                            "Defining types in the wrong order — types used by other types must be defined first"
-                        ],
-    "next_lesson":  "L2-60",
-    "related":  [
-                    "L2-40",
-                    "L2-21",
-                    "L2-26",
-                    "L2-29",
-                    "L2-31",
-                    "L2-33",
-                    "L2-36",
-                    "L2-39"
-                ]
+  "id": "L2-59",
+  "title": "Data Structures Review: Build Anything",
+  "level": "L2",
+  "duration": "10 min",
+  "story": "You've built playlists, contacts, shopping carts, colors, timers, dice rollers, seasons, difficulty levels, coffee orders, card games, safe math chains, config parsers, search functions, temperature alerts, validators, week planners, robot commands, and treasure chests. Now synthesize everything into a single showcase.",
+  "why": "Review and synthesis: combine structs, enums, methods, nesting, and matching across multiple domains in one file.",
+  "narrative": "## The Complete L2 Toolkit\n\nYou now have all the building blocks for data modeling:\n\n| Concept | Syntax | When to Use |\n|---------|--------|-------------|\n| Struct | `type Name = { field: Type; }` | Grouping related values |\n| Enum | `enum Name { Var, Var2 }` | One type, fixed choices |\n| Enum with data | `Variant(data: Type)` | Choices that carry values |\n| Method | `fn Type.method(self) { }` | Behavior on data |\n| Nested types | Field of another struct/enum | Hierarchical data |\n| Match | `match val { V => { } }` | Branch on variants |\n\n### Domain 1: Bookstore\n\n```xiom\ntype Book = {\n  title: Str;\n  price: Float64;\n}\n\nenum BookCondition {\n  New,\n  Used(wear: Str),\n  Damaged,\n}\n\nfn BookCondition.discount(self) -> Float64 {\n  match self {\n    New => { return 0.0; }\n    Used(_) => { return 0.3; }\n    Damaged => { return 0.6; }\n  }\n}\n```\n\n### Domain 2: Fitness Tracker\n\n```xiom\nenum Exercise {\n  Running(distance: Float64),\n  Lifting(weight: Int, reps: Int),\n  Yoga,\n}\n\nfn Exercise.calories(self) -> Int {\n  match self {\n    Running(dist) => { return (dist * 100.0) as Int; }\n    Lifting(w, reps) => { return w * reps / 10; }\n    Yoga => { return 150; }\n  }\n}\n```\n\n### Domain 3: Notification System\n\n```xiom\nenum Priority { Low, Medium, High, Urgent }\n\ntype Notification = {\n  title: Str;\n  body: Str;\n  priority: Priority;\n}\n\nfn Notification.should_alert(self) -> Bool {\n  return priority == Priority.High || priority == Priority.Urgent;\n}\n```\n\n### The Pattern\n\nEvery domain follows the same recipe: identify the nouns (structs), the choices (enums), and the verbs (methods). Everything else is just combining these three concepts.",
+  "analogy": "You're now a data architect. Structs are your bricks. Enums are your paint colors. Methods are your blueprints. Match is your construction crew that reads the blueprint and decides which wall to build next. Every building in town uses the same materials â€” the difference is how you arrange them.",
+  "code_template": "use xiom.io;\n\n// DOMAIN 1: Movie Database\n// TODO: define a Movie struct (title: Str, year: Int, rating: Float64)\nenum Genre { Action, Comedy, Drama, Horror, SciFi }\n\n// DOMAIN 2: Food Delivery\n// TODO: define an OrderStatus enum (Preparing, OnTheWay, Delivered, Cancelled)\n// TODO: define an Order struct (food: Str, price: Float64, status: OrderStatus)\n\n// DOMAIN 3: Music Theory\n// TODO: define a Note enum with variants C, D, E, F, G, A, B\n// TODO: define a Chord struct (root: Note, quality: Str)\n\nfn main() -> Int {\n  // TODO: create one thing from each domain, return the number of types you defined\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Movie = {\n  title: Str;\n  year: Int;\n  rating: Float64;\n}\n\nenum Genre { Action, Comedy, Drama, Horror, SciFi }\n\nenum OrderStatus { Preparing, OnTheWay, Delivered, Cancelled }\n\ntype Order = {\n  food: Str;\n  price: Float64;\n  status: OrderStatus;\n}\n\nenum Note { C, D, E, F, G, A, B }\n\ntype Chord = {\n  root: Note;\n  quality: Str;\n}\n\nfn Movie.is_classic(self) -> Bool {\n  return year < 2000 && rating > 8.0;\n}\n\nfn OrderStatus.is_active(self) -> Bool {\n  match self {\n    Preparing => { return true; }\n    OnTheWay => { return true; }\n    Delivered => { return false; }\n    Cancelled => { return false; }\n  }\n}\n\nfn Chord.name(self) -> Str {\n  return note_name(root) + \" \" + quality;\n}\n\nfn note_name(n: Note) -> Str {\n  match n {\n    C => { return \"C\"; }\n    D => { return \"D\"; }\n    E => { return \"E\"; }\n    F => { return \"F\"; }\n    G => { return \"G\"; }\n    A => { return \"A\"; }\n    B => { return \"B\"; }\n  }\n}\n\nfn main() -> Int {\n  let m = Movie{ title: \"The Matrix\"; year: 1999; rating: 8.7; };\n  let o = Order{ food: \"Pizza\"; price: 12.99; status: OrderStatus.Preparing; };\n  let c = Chord{ root: Note.C; quality: \"major\"; };\n  return 3;\n}",
+  "try_it": "Combine two of your types into a new struct. For example: combine Movie and Genre into a `CatalogEntry` struct. Combine Order and a `Customer` struct. Combine Chord and Note into a `Song` struct that holds a sequence of chords. There are no wrong answers.",
+  "concepts": [
+    "struct",
+    "enum",
+    "method",
+    "match",
+    "nesting",
+    "synthesis",
+    "review"
+  ],
+  "tips": [
+    "Start with the nouns (structs), then the choices (enums), then the verbs (methods)",
+    "Every domain breaks down the same way: what data exists? what choices? what actions?",
+    "If two structs share fields, consider nesting one inside the other",
+    "Build incrementally: define one struct, test it, add an enum, test again"
+  ],
+  "common_mistakes": [
+    "Trying to fit everything into one giant struct â€” split into smaller, focused types",
+    "Making every field an enum when a simple type would do â€” enums are for CHOICES, not values",
+    "Defining types in the wrong order â€” types used by other types must be defined first"
+  ],
+  "next_lesson": "L2-60",
+  "related": [
+    "L2-40",
+    "L2-21",
+    "L2-26",
+    "L2-29",
+    "L2-31",
+    "L2-33",
+    "L2-36",
+    "L2-39"
+  ]
 }

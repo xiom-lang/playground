@@ -1,34 +1,34 @@
 {
-    "id":  "L2-23",
-    "title":  "Game Character",
-    "level":  "L2",
-    "duration":  "8 min",
-    "story":  "You\u0027re coding a simple RPG. Your hero has hit points (HP) and a maximum HP. When hit by a monster, HP drops. When drinking a potion, HP rises — but never above the max. You need mutating methods with boundary checks.",
-    "why":  "Methods can enforce rules (like HP clamping) so invalid states are impossible.",
-    "narrative":  "## Building a Game Character\n\nA character has a name, current HP, and maximum HP. Damage reduces HP; healing restores it — but HP must stay between 0 and `max_hp`.\n\n### The Character Struct\n\n```xiom\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n```\n\n### Taking Damage\n\nSubtract damage, but don\u0027t go below 0:\n\n```xiom\nfn Character.take_damage(self, amount: Int) {\n  hp = hp - amount;\n  if hp \u003c 0 {\n    hp = 0;\n  }\n}\n```\n\n### Healing\n\nAdd HP, but clamp to `max_hp`:\n\n```xiom\nfn Character.heal(self, amount: Int) {\n  hp = hp + amount;\n  if hp \u003e max_hp {\n    hp = max_hp;\n  }\n}\n```\n\n### Putting It Together\n\n```xiom\nvar hero = Character{ name: \"Knight\"; hp: 80; max_hp: 100; };\n\nhero.take_damage(30);  // hp = 50\nhero.take_damage(90);  // hp = 0 (clamped)\nhero.heal(25);         // hp = 25\nhero.heal(200);        // hp = 100 (clamped to max)\n```\n\n### Guard Conditions\n\nThe `if hp \u003c 0` and `if hp \u003e max_hp` checks are **guard conditions** — they prevent the HP from ever entering an invalid range. This is called **clamping**.",
-    "analogy":  "HP is like water in a bucket. `max_hp` is the bucket\u0027s brim — you can\u0027t hold more than the bucket. Taking damage is pouring water out; you can\u0027t have less than empty.",
-    "code_template":  "use xiom.io;\n\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n\n// TODO: add method \u0027take_damage\u0027 that subtracts amount and clamps to 0\n\n// TODO: add method \u0027heal\u0027 that adds amount and clamps to max_hp\n\nfn main() -\u003e Int {\n  // TODO: create a character with 50/100 HP, damage for 70, heal for 40, return final hp\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n\nfn Character.take_damage(self, amount: Int) {\n  hp = hp - amount;\n  if hp \u003c 0 {\n    hp = 0;\n  }\n}\n\nfn Character.heal(self, amount: Int) {\n  hp = hp + amount;\n  if hp \u003e max_hp {\n    hp = max_hp;\n  }\n}\n\nfn main() -\u003e Int {\n  var hero = Character{ name: \"Mage\"; hp: 50; max_hp: 100; };\n  hero.take_damage(70);\n  hero.heal(40);\n  return hero.hp;\n}",
-    "try_it":  "Add an `is_alive` method that returns `hp \u003e 0`. Add a `health_percent` method that returns `(hp * 100) / max_hp`. Create a character at 30/120 HP and print the percentage.",
-    "concepts":  [
-                     "struct",
-                     "method",
-                     "mutation",
-                     "clamping",
-                     "guard condition"
-                 ],
-    "tips":  [
-                 "Clamping means bounding a value between a minimum and maximum — common in games",
-                 "Check boundaries AFTER the mutation, so you catch the overflow/underflow",
-                 "Separate damage and healing into methods so the clamping logic lives in one place"
-             ],
-    "common_mistakes":  [
-                            "Subtracting without checking for negative HP can make a character undead",
-                            "Healing without clamping can push HP above max_hp, breaking game balance"
-                        ],
-    "next_lesson":  "L2-24",
-    "related":  [
-                    "L2-04",
-                    "L2-22"
-                ]
+  "id": "L2-23",
+  "title": "Game Character",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "You're coding a simple RPG. Your hero has hit points (HP) and a maximum HP. When hit by a monster, HP drops. When drinking a potion, HP rises â€” but never above the max. You need mutating methods with boundary checks.",
+  "why": "Methods can enforce rules (like HP clamping) so invalid states are impossible.",
+  "narrative": "## Building a Game Character\n\nA character has a name, current HP, and maximum HP. Damage reduces HP; healing restores it â€” but HP must stay between 0 and `max_hp`.\n\n### The Character Struct\n\n```xiom\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n```\n\n### Taking Damage\n\nSubtract damage, but don't go below 0:\n\n```xiom\nfn Character.take_damage(self, amount: Int) {\n  hp = hp - amount;\n  if hp < 0 {\n    hp = 0;\n  }\n}\n```\n\n### Healing\n\nAdd HP, but clamp to `max_hp`:\n\n```xiom\nfn Character.heal(self, amount: Int) {\n  hp = hp + amount;\n  if hp > max_hp {\n    hp = max_hp;\n  }\n}\n```\n\n### Putting It Together\n\n```xiom\nvar hero = Character{ name: \"Knight\"; hp: 80; max_hp: 100; };\n\nhero.take_damage(30);  // hp = 50\nhero.take_damage(90);  // hp = 0 (clamped)\nhero.heal(25);         // hp = 25\nhero.heal(200);        // hp = 100 (clamped to max)\n```\n\n### Guard Conditions\n\nThe `if hp < 0` and `if hp > max_hp` checks are **guard conditions** â€” they prevent the HP from ever entering an invalid range. This is called **clamping**.",
+  "analogy": "HP is like water in a bucket. `max_hp` is the bucket's brim â€” you can't hold more than the bucket. Taking damage is pouring water out; you can't have less than empty.",
+  "code_template": "use xiom.io;\n\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n\n// TODO: add method 'take_damage' that subtracts amount and clamps to 0\n\n// TODO: add method 'heal' that adds amount and clamps to max_hp\n\nfn main() -> Int {\n  // TODO: create a character with 50/100 HP, damage for 70, heal for 40, return final hp\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Character = {\n  name: Str;\n  hp: Int;\n  max_hp: Int;\n}\n\nfn Character.take_damage(self, amount: Int) {\n  hp = hp - amount;\n  if hp < 0 {\n    hp = 0;\n  }\n}\n\nfn Character.heal(self, amount: Int) {\n  hp = hp + amount;\n  if hp > max_hp {\n    hp = max_hp;\n  }\n}\n\nfn main() -> Int {\n  var hero = Character{ name: \"Mage\"; hp: 50; max_hp: 100; };\n  hero.take_damage(70);\n  hero.heal(40);\n  return hero.hp;\n}",
+  "try_it": "Add an `is_alive` method that returns `hp > 0`. Add a `health_percent` method that returns `(hp * 100) / max_hp`. Create a character at 30/120 HP and print the percentage.",
+  "concepts": [
+    "struct",
+    "method",
+    "mutation",
+    "clamping",
+    "guard condition"
+  ],
+  "tips": [
+    "Clamping means bounding a value between a minimum and maximum â€” common in games",
+    "Check boundaries AFTER the mutation, so you catch the overflow/underflow",
+    "Separate damage and healing into methods so the clamping logic lives in one place"
+  ],
+  "common_mistakes": [
+    "Subtracting without checking for negative HP can make a character undead",
+    "Healing without clamping can push HP above max_hp, breaking game balance"
+  ],
+  "next_lesson": "L2-24",
+  "related": [
+    "L2-04",
+    "L2-22"
+  ]
 }

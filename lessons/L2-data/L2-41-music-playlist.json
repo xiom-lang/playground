@@ -1,35 +1,35 @@
 {
-    "id":  "L2-41",
-    "title":  "Music Playlist",
-    "level":  "L2",
-    "duration":  "9 min",
-    "story":  "You just discovered an underground band and want to track their best songs. Each song has a title, artist, and duration. Your music app needs to format song info nicely so you can build a playlist and share it with friends.",
-    "why":  "A struct with a formatting method is the foundation of every data display system.",
-    "narrative":  "## Modeling a Song\n\nA song has three essential pieces of data: what it\u0027s called, who made it, and how long it lasts.\n\n### The Song Struct\n\n```xiom\ntype Song = {\n  title: Str;\n  artist: Str;\n  duration_sec: Int;\n}\n```\n\n### Creating Songs\n\n```xiom\nlet track1 = Song{ title: \"Neon Lights\"; artist: \"Synthwave Kid\"; duration_sec: 217; };\nlet track2 = Song{ title: \"Midnight Drive\"; artist: \"Synthwave Kid\"; duration_sec: 194; };\nlet track3 = Song{ title: \"Stargazer\"; artist: \"Cosmic Beats\"; duration_sec: 245; };\n```\n\n### Formatting a Song\n\nA method that produces a readable display string:\n\n```xiom\nfn Song.format(self) -\u003e Str {\n  let mins = duration_sec / 60;\n  let secs = duration_sec % 60;\n  return \"\\\"\" + title + \"\\\" by \" + artist + \" (\" + mins + \":\" + secs + \")\";\n}\n```\n\n### Building a Mini Playlist\n\n```xiom\nfn playlist_duration(tracks: Song, tracks: Song, tracks: Song) -\u003e Int {\n  return tracks.duration_sec + tracks.duration_sec + tracks.duration_sec;\n}\n```\n\nThis gives you all the basics: create songs, display them, and compute totals.",
-    "analogy":  "A Song struct is like a CD case (or a streaming card). The title is printed on the front, the artist is below it, and the duration is stamped on the spine. The format method reads the card aloud.",
-    "code_template":  "use xiom.io;\n\ntype Song = {\n  title: Str;\n  artist: Str;\n  duration_sec: Int;\n}\n\n// TODO: write a method \u0027Song.format\u0027 that returns \"Title by Artist (mm:ss)\"\n\n// TODO: write a function \u0027total_runtime\u0027 that takes 3 Songs and returns total seconds\n\nfn main() -\u003e Int {\n  // TODO: create 3 songs with at least 180 seconds each, return total runtime\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\ntype Song = {\n  title: Str;\n  artist: Str;\n  duration_sec: Int;\n}\n\nfn Song.format(self) -\u003e Str {\n  let mins = duration_sec / 60;\n  let secs = duration_sec % 60;\n  return \"\\\"\" + title + \"\\\" by \" + artist + \" (\" + mins + \":\" + secs + \")\";\n}\n\nfn total_runtime(a: Song, b: Song, c: Song) -\u003e Int {\n  return a.duration_sec + b.duration_sec + c.duration_sec;\n}\n\nfn main() -\u003e Int {\n  let s1 = Song{ title: \"Neon Lights\"; artist: \"Synthwave Kid\"; duration_sec: 217; };\n  let s2 = Song{ title: \"Midnight Drive\"; artist: \"Synthwave Kid\"; duration_sec: 194; };\n  let s3 = Song{ title: \"Stargazer\"; artist: \"Cosmic Beats\"; duration_sec: 245; };\n  return total_runtime(s1, s2, s3);\n}",
-    "try_it":  "Add your top 3 favorite songs with real titles and artists. Add a `Song.genre(self) -\u003e Str` field to the struct (use a genre enum: Rock, Pop, Electronic, Jazz). Add a method that returns whether the song is longer than 4 minutes.",
-    "concepts":  [
-                     "struct",
-                     "method",
-                     "string formatting",
-                     "Int",
-                     "modulo"
-                 ],
-    "tips":  [
-                 "Use `duration_sec / 60` for minutes and `duration_sec % 60` for remaining seconds",
-                 "Escape double quotes inside strings with `\\\"` to display the title in quotes",
-                 "Longer song durations make for more interesting total runtime calculations"
-             ],
-    "common_mistakes":  [
-                            "Forgetting the `% 60` on seconds — without modulo, seconds show numbers like 75 instead of 15",
-                            "Putting the artist name inside the title field — keep fields separate for clean data"
-                        ],
-    "next_lesson":  "L2-42",
-    "related":  [
-                    "L2-01",
-                    "L2-26",
-                    "L2-27"
-                ]
+  "id": "L2-41",
+  "title": "Music Playlist",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You just discovered an underground band and want to track their best songs. Each song has a title, artist, and duration. Your music app needs to format song info nicely so you can build a playlist and share it with friends.",
+  "why": "A struct with a formatting method is the foundation of every data display system.",
+  "narrative": "## Modeling a Song\n\nA song has three essential pieces of data: what it's called, who made it, and how long it lasts.\n\n### The Song Struct\n\n```xiom\ntype Song = {\n  title: Str;\n  artist: Str;\n  duration_sec: Int;\n}\n```\n\n### Creating Songs\n\n```xiom\nlet track1 = Song{ title: \"Neon Lights\"; artist: \"Synthwave Kid\"; duration_sec: 217; };\nlet track2 = Song{ title: \"Midnight Drive\"; artist: \"Synthwave Kid\"; duration_sec: 194; };\nlet track3 = Song{ title: \"Stargazer\"; artist: \"Cosmic Beats\"; duration_sec: 245; };\n```\n\n### Formatting a Song\n\nA method that produces a readable display string:\n\n```xiom\nfn Song.format(self) -> Str {\n  let mins = duration_sec / 60;\n  let secs = duration_sec % 60;\n  return \"\\\"\" + title + \"\\\" by \" + artist + \" (\" + mins + \":\" + secs + \")\";\n}\n```\n\n### Building a Mini Playlist\n\n```xiom\nfn playlist_duration(tracks: Song, tracks: Song, tracks: Song) -> Int {\n  return tracks.duration_sec + tracks.duration_sec + tracks.duration_sec;\n}\n```\n\nThis gives you all the basics: create songs, display them, and compute totals.",
+  "analogy": "A Song struct is like a CD case (or a streaming card). The title is printed on the front, the artist is below it, and the duration is stamped on the spine. The format method reads the card aloud.",
+  "code_template": "use xiom.io;\n\ntype Song = {\n  title: Str;\n  artist: Str;\n  duration_sec: Int;\n}\n\n// TODO: write a method 'Song.format' that returns \"Title by Artist (mm:ss)\"\n\n// TODO: write a function 'total_runtime' that takes 3 Songs and returns total seconds\n\nfn main() -> Int {\n  // TODO: create 3 songs with at least 180 seconds each, return total runtime\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Song = {\n  title: Str;\n  artist: Str;\n  duration_sec: Int;\n}\n\nfn Song.format(self) -> Str {\n  let mins = duration_sec / 60;\n  let secs = duration_sec % 60;\n  return \"\\\"\" + title + \"\\\" by \" + artist + \" (\" + mins + \":\" + secs + \")\";\n}\n\nfn total_runtime(a: Song, b: Song, c: Song) -> Int {\n  return a.duration_sec + b.duration_sec + c.duration_sec;\n}\n\nfn main() -> Int {\n  let s1 = Song{ title: \"Neon Lights\"; artist: \"Synthwave Kid\"; duration_sec: 217; };\n  let s2 = Song{ title: \"Midnight Drive\"; artist: \"Synthwave Kid\"; duration_sec: 194; };\n  let s3 = Song{ title: \"Stargazer\"; artist: \"Cosmic Beats\"; duration_sec: 245; };\n  return total_runtime(s1, s2, s3);\n}",
+  "try_it": "Add your top 3 favorite songs with real titles and artists. Add a `Song.genre(self) -> Str` field to the struct (use a genre enum: Rock, Pop, Electronic, Jazz). Add a method that returns whether the song is longer than 4 minutes.",
+  "concepts": [
+    "struct",
+    "method",
+    "string formatting",
+    "Int",
+    "modulo"
+  ],
+  "tips": [
+    "Use `duration_sec / 60` for minutes and `duration_sec % 60` for remaining seconds",
+    "Escape double quotes inside strings with `\\\"` to display the title in quotes",
+    "Longer song durations make for more interesting total runtime calculations"
+  ],
+  "common_mistakes": [
+    "Forgetting the `% 60` on seconds â€” without modulo, seconds show numbers like 75 instead of 15",
+    "Putting the artist name inside the title field â€” keep fields separate for clean data"
+  ],
+  "next_lesson": "L2-42",
+  "related": [
+    "L2-01",
+    "L2-26",
+    "L2-27"
+  ]
 }

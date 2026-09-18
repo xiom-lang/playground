@@ -1,34 +1,34 @@
 {
-    "id":  "L2-25",
-    "title":  "Coordinate Grid",
-    "level":  "L2",
-    "duration":  "8 min",
-    "story":  "A robot moves around a warehouse grid. It starts at (0,0), moves east 3 steps to (3,0), then north 4 steps to (3,4). You model this with a Point struct that tracks its own position through mutating methods.",
-    "why":  "Factory functions and mutating methods together give you complete control over a value\u0027s lifecycle.",
-    "narrative":  "## Points on a Grid\n\nA point on a 2D grid has `x` and `y` coordinates. You can create a point at the origin, then move it around.\n\n### The Point Struct\n\n```xiom\ntype Point = {\n  x: Int;\n  y: Int;\n}\n```\n\n### Factory Function\n\nA **factory function** creates and returns a new instance with a default state:\n\n```xiom\nfn origin() -\u003e Point {\n  return Point{ x: 0; y: 0; };\n}\n```\n\n### Moving a Point\n\nA mutating method shifts coordinates:\n\n```xiom\nfn Point.move(self, dx: Int, dy: Int) {\n  x = x + dx;\n  y = y + dy;\n}\n```\n\n### Tracking Movement\n\n```xiom\nvar p = origin();       // (0, 0)\np.move(3, 0);           // (3, 0)\np.move(0, 4);           // (3, 4)\np.move(-1, -2);         // (2, 2)\n```\n\n### Distance from Origin\n\nA read-only method that doesn\u0027t mutate:\n\n```xiom\nfn Point.distance(self) -\u003e Float64 {\n  return math.sqrt((x * x + y * y) as Float64);\n}\n```\n\n### Why Factory Functions?\n\nInstead of writing `Point{ x: 0; y: 0; }` everywhere, `origin()` tells you exactly what it does. Factory functions give meaningful names to common starting states.",
-    "analogy":  "`origin()` is the on/off switch that boots your point at (0,0). `move` is the joystick — each call nudges the point in a direction while keeping its current position.",
-    "code_template":  "use xiom.io;\n\ntype Point = {\n  x: Int;\n  y: Int;\n}\n\n// TODO: write a factory function \u0027origin\u0027 that returns Point at (0,0)\n\n// TODO: add method \u0027move\u0027 that adds dx to x and dy to y\n\n// TODO: add method \u0027reflect\u0027 that flips both signs (x = -x, y = -y)\n\nfn main() -\u003e Int {\n  // TODO: create point at origin, move to (5,12), reflect, return x + y\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\ntype Point = {\n  x: Int;\n  y: Int;\n}\n\nfn origin() -\u003e Point {\n  return Point{ x: 0; y: 0; };\n}\n\nfn Point.move(self, dx: Int, dy: Int) {\n  x = x + dx;\n  y = y + dy;\n}\n\nfn Point.reflect(self) {\n  x = -x;\n  y = -y;\n}\n\nfn main() -\u003e Int {\n  var p = origin();\n  p.move(5, 12);\n  p.reflect();\n  return p.x + p.y;\n}",
-    "try_it":  "Add a `reset` method that sets the point back to (0,0). Add a method `manhattan_distance(self) -\u003e Int` that returns `abs(x) + abs(y)`. Move a point to (10, -5) and print both distances.",
-    "concepts":  [
-                     "struct",
-                     "factory function",
-                     "method",
-                     "mutation",
-                     "coordinate"
-                 ],
-    "tips":  [
-                 "Factory functions start with a lowercase name and return an instance: `fn origin() -\u003e Point`",
-                 "Mutating methods don\u0027t need `\u0026mut` on `self` — XIOM infers mutability from field assignment",
-                 "Use `var` for points that move; use `let` for fixed reference points"
-             ],
-    "common_mistakes":  [
-                            "Forgetting `var` — a point declared with `let` can\u0027t be moved because it\u0027s immutable",
-                            "Confusing `x` and `y` order: `move(dx, dy)` means change in x first, then y"
-                        ],
-    "next_lesson":  "L2-26",
-    "related":  [
-                    "L2-04",
-                    "L2-23"
-                ]
+  "id": "L2-25",
+  "title": "Coordinate Grid",
+  "level": "L2",
+  "duration": "8 min",
+  "story": "A robot moves around a warehouse grid. It starts at (0,0), moves east 3 steps to (3,0), then north 4 steps to (3,4). You model this with a Point struct that tracks its own position through mutating methods.",
+  "why": "Factory functions and mutating methods together give you complete control over a value's lifecycle.",
+  "narrative": "## Points on a Grid\n\nA point on a 2D grid has `x` and `y` coordinates. You can create a point at the origin, then move it around.\n\n### The Point Struct\n\n```xiom\ntype Point = {\n  x: Int;\n  y: Int;\n}\n```\n\n### Factory Function\n\nA **factory function** creates and returns a new instance with a default state:\n\n```xiom\nfn origin() -> Point {\n  return Point{ x: 0; y: 0; };\n}\n```\n\n### Moving a Point\n\nA mutating method shifts coordinates:\n\n```xiom\nfn Point.move(self, dx: Int, dy: Int) {\n  x = x + dx;\n  y = y + dy;\n}\n```\n\n### Tracking Movement\n\n```xiom\nvar p = origin();       // (0, 0)\np.move(3, 0);           // (3, 0)\np.move(0, 4);           // (3, 4)\np.move(-1, -2);         // (2, 2)\n```\n\n### Distance from Origin\n\nA read-only method that doesn't mutate:\n\n```xiom\nfn Point.distance(self) -> Float64 {\n  return math.sqrt((x * x + y * y) as Float64);\n}\n```\n\n### Why Factory Functions?\n\nInstead of writing `Point{ x: 0; y: 0; }` everywhere, `origin()` tells you exactly what it does. Factory functions give meaningful names to common starting states.",
+  "analogy": "`origin()` is the on/off switch that boots your point at (0,0). `move` is the joystick â€” each call nudges the point in a direction while keeping its current position.",
+  "code_template": "use xiom.io;\n\ntype Point = {\n  x: Int;\n  y: Int;\n}\n\n// TODO: write a factory function 'origin' that returns Point at (0,0)\n\n// TODO: add method 'move' that adds dx to x and dy to y\n\n// TODO: add method 'reflect' that flips both signs (x = -x, y = -y)\n\nfn main() -> Int {\n  // TODO: create point at origin, move to (5,12), reflect, return x + y\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Point = {\n  x: Int;\n  y: Int;\n}\n\nfn origin() -> Point {\n  return Point{ x: 0; y: 0; };\n}\n\nfn Point.move(self, dx: Int, dy: Int) {\n  x = x + dx;\n  y = y + dy;\n}\n\nfn Point.reflect(self) {\n  x = -x;\n  y = -y;\n}\n\nfn main() -> Int {\n  var p = origin();\n  p.move(5, 12);\n  p.reflect();\n  return p.x + p.y;\n}",
+  "try_it": "Add a `reset` method that sets the point back to (0,0). Add a method `manhattan_distance(self) -> Int` that returns `abs(x) + abs(y)`. Move a point to (10, -5) and print both distances.",
+  "concepts": [
+    "struct",
+    "factory function",
+    "method",
+    "mutation",
+    "coordinate"
+  ],
+  "tips": [
+    "Factory functions start with a lowercase name and return an instance: `fn origin() -> Point`",
+    "Mutating methods don't need `&mut` on `self` â€” XIOM infers mutability from field assignment",
+    "Use `var` for points that move; use `let` for fixed reference points"
+  ],
+  "common_mistakes": [
+    "Forgetting `var` â€” a point declared with `let` can't be moved because it's immutable",
+    "Confusing `x` and `y` order: `move(dx, dy)` means change in x first, then y"
+  ],
+  "next_lesson": "L2-26",
+  "related": [
+    "L2-04",
+    "L2-23"
+  ]
 }

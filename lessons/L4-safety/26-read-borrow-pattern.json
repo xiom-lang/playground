@@ -1,37 +1,37 @@
 {
-    "id":  "L4-26",
-    "title":  "Read Borrow Pattern",
-    "level":  "L4",
-    "duration":  "10 min",
-    "story":  "Most bugs come from data changing when you don\u0027t expect it. The read borrow pattern guarantees your data stays frozen while you inspect it — nobody can modify what you\u0027re reading.",
-    "why":  "The read borrow pattern is the most common and safest way to pass data in XIOM — it\u0027s zero-cost, prevents accidental mutation, and allows concurrent readers.",
-    "narrative":  "## Functions That Inspect Without Modifying\n\nThe read borrow pattern: pass `\u0026` to functions that need to inspect data:\n\n```xiom\nfn average(scores: \u0026Vec[Int]) -\u003e Float64\n  requires: scores.len() \u003e 0;\n{\n  let sum = 0.0;\n  for score in scores {\n    sum = sum + (score as Float64);\n  }\n  return sum / (scores.len() as Float64);\n}\n\nfn max(scores: \u0026Vec[Int]) -\u003e Int\n  requires: scores.len() \u003e 0;\n{\n  let max_val = scores[0];\n  for score in scores {\n    if score \u003e max_val { max_val = score; }\n  }\n  return max_val;\n}\n```\n\n### Read-Only on Structs\n\n```xiom\ntype Student = { name: Str; grade: Float64; }\n\nfn is_passing(s: \u0026Student) -\u003e Bool {\n  return s.grade \u003e= 60.0;\n}\n\nfn describe(s: \u0026Student) {\n  io.println(s.name + \": \" + s.grade);\n}\n```\n\n### Why Read Borrows Are the Default\n\n- **Safe**: Can\u0027t accidentally modify data\n- **Fast**: Zero-cost, no cloning\n- **Concurrent**: Multiple read borrows at once\n- **Expressive**: Functions self-document — if it takes `\u0026`, it only reads\n\nUse `\u0026` as your first choice. Only use `\u0026mut` or owned when necessary.",
-    "analogy":  "A read borrow is like asking \"Can I see that?\" — you look at it, you give it back. Nothing changed, and multiple people can look at the same time.",
-    "code_template":  "use xiom.io;\n\n// TODO: Write fn \u0027median\u0027 for \u0026Vec[Int] that returns the middle value\n// Write fn \u0027range\u0027 for \u0026Vec[Int] that returns max - min\n// requires: len \u003e 0 for both\n// In main, create Vec, compute median and range\n\nfn main() -\u003e Int {\n  // TODO\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\nfn min_val(scores: \u0026Vec[Int]) -\u003e Int\n  requires: scores.len() \u003e 0;\n{\n  let m = scores[0];\n  for s in scores { if s \u003c m { m = s; } }\n  return m;\n}\n\nfn max_val(scores: \u0026Vec[Int]) -\u003e Int\n  requires: scores.len() \u003e 0;\n{\n  let m = scores[0];\n  for s in scores { if s \u003e m { m = s; } }\n  return m;\n}\n\nfn range(scores: \u0026Vec[Int]) -\u003e Int\n  requires: scores.len() \u003e 0;\n{\n  return max_val(scores) - min_val(scores);\n}\n\nfn main() -\u003e Int {\n  let data = Vec[Int].new();\n  data.push(10);\n  data.push(25);\n  data.push(5);\n  data.push(30);\n  return range(\u0026data);\n}",
-    "try_it":  "Add more read-only functions: fn std_dev(scores: \u0026Vec[Int]) -\u003e Float64, fn percentile(scores: \u0026Vec[Int], p: Int) -\u003e Int. All take \u0026, all can coexist.",
-    "concepts":  [
-                     "read borrow pattern",
-                     "\u0026 parameter",
-                     "immutable access",
-                     "zero-cost abstraction"
-                 ],
-    "tips":  [
-                 "If your function only reads data, always take \u0026 — it\u0027s the safest default",
-                 "Read borrows allow multiple simultaneous readers — no locks needed",
-                 "The \u0026 in the signature tells callers \u0027this function won\u0027t modify your data\u0027",
-                 "Read borrow functions can call other read borrow functions freely"
-             ],
-    "common_mistakes":  [
-                            "Taking owned parameters when \u0026 would work — you consume the value unnecessarily",
-                            "Forgetting to validate with requires — \u0026 doesn\u0027t validate, it only grants access",
-                            "Trying to modify data through a \u0026 reference — the compiler prevents this"
-                        ],
-    "next_lesson":  "L4-27",
-    "related":  [
-                    "L4-15",
-                    "L4-18",
-                    "L4-24",
-                    "L4-02"
-                ]
+  "id": "L4-26",
+  "title": "Read Borrow Pattern",
+  "level": "L4",
+  "duration": "10 min",
+  "story": "Most bugs come from data changing when you don't expect it. The read borrow pattern guarantees your data stays frozen while you inspect it — nobody can modify what you're reading.",
+  "why": "The read borrow pattern is the most common and safest way to pass data in XIOM — it's zero-cost, prevents accidental mutation, and allows concurrent readers.",
+  "narrative": "## Functions That Inspect Without Modifying\n\nThe read borrow pattern: pass `&` to functions that need to inspect data:\n\n```xiom\nfn average(scores: &Vec[Int]) -> Float64\n  requires: scores.len() > 0;\n{\n  let sum = 0.0;\n  for score in scores {\n    sum = sum + (score as Float64);\n  }\n  return sum / (scores.len() as Float64);\n}\n\nfn max(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  let max_val = scores[0];\n  for score in scores {\n    if score > max_val { max_val = score; }\n  }\n  return max_val;\n}\n```\n\n### Read-Only on Structs\n\n```xiom\ntype Student = { name: Str; grade: Float64; }\n\nfn is_passing(s: &Student) -> Bool {\n  return s.grade >= 60.0;\n}\n\nfn describe(s: &Student) {\n  io.println(s.name + \": \" + s.grade);\n}\n```\n\n### Why Read Borrows Are the Default\n\n- **Safe**: Can't accidentally modify data\n- **Fast**: Zero-cost, no cloning\n- **Concurrent**: Multiple read borrows at once\n- **Expressive**: Functions self-document — if it takes `&`, it only reads\n\nUse `&` as your first choice. Only use `&mut` or owned when necessary.",
+  "analogy": "A read borrow is like asking \"Can I see that?\" — you look at it, you give it back. Nothing changed, and multiple people can look at the same time.",
+  "code_template": "use xiom.io;\n\n// TODO: Write fn 'median' for &Vec[Int] that returns the middle value\n// Write fn 'range' for &Vec[Int] that returns max - min\n// requires: len > 0 for both\n// In main, create Vec, compute median and range\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
+  "solution": "use xiom.io;\nuse xiom.iter;\n\nfn min_val(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  let m = scores[0];\n  for __i in range(0, scores.len()) {\n    let s = scores[__i];\n    if s < m { m = s; } }\n  return m;\n}\n\nfn max_val(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  let m = scores[0];\n  for __i in range(0, scores.len()) {\n    let s = scores[__i];\n    if s > m { m = s; } }\n  return m;\n}\n\nfn range(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  return max_val(scores) - min_val(scores);\n}\n\nfn main() -> Int {\n  let data = Vec[Int].new();\n  data.push(10);\n  data.push(25);\n  data.push(5);\n  data.push(30);\n  return range(&data);\n}",
+  "try_it": "Add more read-only functions: fn std_dev(scores: &Vec[Int]) -> Float64, fn percentile(scores: &Vec[Int], p: Int) -> Int. All take &, all can coexist.",
+  "concepts": [
+    "read borrow pattern",
+    "& parameter",
+    "immutable access",
+    "zero-cost abstraction"
+  ],
+  "tips": [
+    "If your function only reads data, always take & — it's the safest default",
+    "Read borrows allow multiple simultaneous readers — no locks needed",
+    "The & in the signature tells callers 'this function won't modify your data'",
+    "Read borrow functions can call other read borrow functions freely"
+  ],
+  "common_mistakes": [
+    "Taking owned parameters when & would work — you consume the value unnecessarily",
+    "Forgetting to validate with requires — & doesn't validate, it only grants access",
+    "Trying to modify data through a & reference — the compiler prevents this"
+  ],
+  "next_lesson": "L4-27",
+  "related": [
+    "L4-15",
+    "L4-18",
+    "L4-24",
+    "L4-02"
+  ]
 }

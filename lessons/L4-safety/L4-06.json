@@ -1,36 +1,36 @@
 {
-    "id":  "L4-06",
-    "title":  "Invariant: Always True",
-    "level":  "L4",
-    "duration":  "13 min",
-    "story":  "Your game\u0027s Health struct has two fields: current (50) and maximum (100). But a bug sets current to 150 — more than maximum! That makes no sense. You need a rule that\u0027s ALWAYS true, no matter what happens: \u0027current must be between 0 and maximum.\u0027 In XIOM, that\u0027s an `invariant:` — a condition checked after every single mutation to the struct, forever.",
-    "why":  "Invariants guarantee data integrity across ALL operations — no matter how many methods or mutations happen, the struct can never enter an invalid state.",
-    "narrative":  "## The Rule That Can Never Be Broken\n\nAn `invariant:` is a condition attached to a type that must be true before AND after every method call. It\u0027s checked after construction and after every mutation.\n\n### Health with Invariant\n\n```xiom\ntype Health = {\n  current: Int;\n  maximum: Int;\n  invariant: current \u003e= 0;\n  invariant: current \u003c= maximum;\n}\n\nfn Health.heal(self, amount: Int) -\u003e Int\n  requires: amount \u003e= 0;\n{\n  let new_hp = self.current + amount;\n  if new_hp \u003e self.maximum { return self.maximum; }\n  else { return new_hp; }\n}\n\nfn Health.damage(self, amount: Int) -\u003e Int\n  requires: amount \u003e= 0;\n{\n  let new_hp = self.current - amount;\n  if new_hp \u003c 0 { return 0; }\n  else { return new_hp; }\n}\n\nfn main() -\u003e Int {\n  let hp = Health { current: 50, maximum: 100 };\n\n  let after_heal = hp.heal(10);\n  io.println(\"After heal: \" + string.int_to_str(after_heal));\n\n  let after_damage = hp.damage(70);\n  io.println(\"After damage: \" + string.int_to_str(after_damage));\n\n  let after_overheal = hp.heal(200);\n  io.println(\"After overheal: \" + string.int_to_str(after_overheal));\n\n  return 0;\n}\n```\n\n### How Invariants Work\n\n1. **Construction**: When you create `Health { current: 50, maximum: 100 }`, the invariants are checked. `50 \u003e= 0`? Yes. `50 \u003c= 100`? Yes. Construction succeeds.\n\n2. **After each method**: When `heal(10)` returns, the returned value (or updated struct) is checked. Is the new `current` still \u003e= 0 and \u003c= maximum? If the method somehow returned 150, the invariant would trap.\n\n3. **No escape**: You can\u0027t temporarily put the struct in an invalid state. The invariant is checked after EVERY mutation.\n\n### Score with Invariant\n\n```xiom\ntype Score = {\n  value: Int;\n  invariant: value \u003e= 0;\n}\n\nfn Score.add_points(self, points: Int) -\u003e Int\n  requires: points \u003e= 0;\n{\n  return self.value + points;\n}\n\nfn Score.reset(self) -\u003e Int\n  ensures: result == 0;\n{\n  return 0;\n}\n```\n\nThe invariant guarantees that `Score.value` is never negative. Even the `reset` method must maintain this — and it does, since 0 \u003e= 0.\n\n### Invariant vs Requires\n\n| Feature | `requires:` | `invariant:` |\n|---------|------------|-------------|\n| Scope | One function/method | Entire type |\n| Checked when | Before function body | After every mutation |\n| References | Parameters | Struct fields |\n| Purpose | Validate inputs | Maintain data integrity |\n\nInvariants are broader — they protect the type itself, not just one function.",
-    "analogy":  "An invariant is like a safety railing on a balcony. You can lean against it, walk near it, even bump into it — but you can\u0027t fall off, even if you try. The Health invariant (`current \u003e= 0` AND `current \u003c= maximum`) is the railing: you can deal damage, heal, reset — but current can NEVER go below 0 or above maximum. The railing is checked after EVERY action. No action, no matter how buggy, can push you over the edge.",
-    "code_template":  "use xiom.io;\n\ntype Health = {\n  current: Int;\n  maximum: Int;\n  // TODO: add invariant: current \u003e= 0;\n  // TODO: add invariant: current \u003c= maximum;\n}\n\nfn Health.heal(self, amount: Int) -\u003e Int\n  requires: amount \u003e= 0;\n{\n  let nhp = self.current + amount;\n  if nhp \u003e self.maximum { return self.maximum; }\n  else { return nhp; }\n}\n\nfn main() -\u003e Int {\n  // TODO: create Health { current: 80, maximum: 100 }\n  // TODO: heal 10, print result\n  return 0;\n}\n",
-    "solution":  "use xiom.io;\n\nuse xiom.string;\ntype Health = {\n  current: Int;\n  maximum: Int;\n  invariant: current \u003e= 0;\n  invariant: current \u003c= maximum;\n}\n\nfn Health.heal(self, amount: Int) -\u003e Int\n  requires: amount \u003e= 0;\n{\n  let nhp = self.current + amount;\n  if nhp \u003e self.maximum { return self.maximum; }\n  else { return nhp; }\n}\n\nfn main() -\u003e Int {\n  let hp = Health { current: 80, maximum: 100 };\n  let after = hp.heal(10);\n  io.println(string.int_to_str(after));\n  return 0;\n}\n",
-    "try_it":  "Create a `Temperature` type with `celsius: Float64; invariant: celsius \u003e= -273.15;` (absolute zero). Write `set_celsius` and `set_fahrenheit` methods that both respect the invariant. Try creating `Temperature { celsius: -500.0 }` — the invariant should trap. Write a `Speed` type with `meters_per_second: Float64; invariant: meters_per_second \u003e= 0.0;`. Add a `brake` method that decreases speed but never below 0. What happens if your `brake` method has a bug and returns -5? The invariant catches it.",
-    "concepts":  [
-                     "invariant",
-                     "data-integrity",
-                     "type-safety",
-                     "struct",
-                     "self-guarding-types"
-                 ],
-    "tips":  [
-                 "Invariants are checked after construction AND after every method call — they\u0027re the ultimate safety net",
-                 "Use invariants for relationships between fields: `current \u003c= maximum`, `start \u003c= end`",
-                 "If a method can\u0027t maintain the invariant, the method must adjust its logic — the invariant is non-negotiable"
-             ],
-    "common_mistakes":  [
-                            "Writing an invariant that\u0027s too weak — `invariant: value \u003e= -1000000;` is true but useless",
-                            "Writing an invariant that conflicts with a method\u0027s normal operation — the method must always satisfy the invariant",
-                            "Expecting invariants to be checked during method execution (between lines) — they\u0027re only checked at method boundaries (before/after)"
-                        ],
-    "next_lesson":  "L4-07",
-    "related":  [
-                    "L4-05",
-                    "L4-01",
-                    "L2-23"
-                ]
+  "id": "L4-06",
+  "title": "Invariant: Always True",
+  "level": "L4",
+  "duration": "13 min",
+  "story": "Your game's Health struct has two fields: current (50) and maximum (100). But a bug sets current to 150 — more than maximum! That makes no sense. You need a rule that's ALWAYS true, no matter what happens: 'current must be between 0 and maximum.' In XIOM, that's an `invariant:` — a condition checked after every single mutation to the struct, forever.",
+  "why": "Invariants guarantee data integrity across ALL operations — no matter how many methods or mutations happen, the struct can never enter an invalid state.",
+  "narrative": "## The Rule That Can Never Be Broken\n\nAn `invariant:` is a condition attached to a type that must be true before AND after every method call. It's checked after construction and after every mutation.\n\n### Health with Invariant\n\n```xiom\ntype Health = {\n  current: Int;\n  maximum: Int;\n  invariant: current >= 0;\n  invariant: current <= maximum;\n}\n\nfn Health.heal(self, amount: Int) -> Int\n  requires: amount >= 0;\n{\n  let new_hp = self.current + amount;\n  if new_hp > self.maximum { return self.maximum; }\n  else { return new_hp; }\n}\n\nfn Health.damage(self, amount: Int) -> Int\n  requires: amount >= 0;\n{\n  let new_hp = self.current - amount;\n  if new_hp < 0 { return 0; }\n  else { return new_hp; }\n}\n\nfn main() -> Int {\n  let hp = Health { current: 50, maximum: 100 };\n\n  let after_heal = hp.heal(10);\n  io.println(\"After heal: \" + string.int_to_str(after_heal));\n\n  let after_damage = hp.damage(70);\n  io.println(\"After damage: \" + string.int_to_str(after_damage));\n\n  let after_overheal = hp.heal(200);\n  io.println(\"After overheal: \" + string.int_to_str(after_overheal));\n\n  return 0;\n}\n```\n\n### How Invariants Work\n\n1. **Construction**: When you create `Health { current: 50, maximum: 100 }`, the invariants are checked. `50 >= 0`? Yes. `50 <= 100`? Yes. Construction succeeds.\n\n2. **After each method**: When `heal(10)` returns, the returned value (or updated struct) is checked. Is the new `current` still >= 0 and <= maximum? If the method somehow returned 150, the invariant would trap.\n\n3. **No escape**: You can't temporarily put the struct in an invalid state. The invariant is checked after EVERY mutation.\n\n### Score with Invariant\n\n```xiom\ntype Score = {\n  value: Int;\n  invariant: value >= 0;\n}\n\nfn Score.add_points(self, points: Int) -> Int\n  requires: points >= 0;\n{\n  return self.value + points;\n}\n\nfn Score.reset(self) -> Int\n  ensures: result == 0;\n{\n  return 0;\n}\n```\n\nThe invariant guarantees that `Score.value` is never negative. Even the `reset` method must maintain this — and it does, since 0 >= 0.\n\n### Invariant vs Requires\n\n| Feature | `requires:` | `invariant:` |\n|---------|------------|-------------|\n| Scope | One function/method | Entire type |\n| Checked when | Before function body | After every mutation |\n| References | Parameters | Struct fields |\n| Purpose | Validate inputs | Maintain data integrity |\n\nInvariants are broader — they protect the type itself, not just one function.",
+  "analogy": "An invariant is like a safety railing on a balcony. You can lean against it, walk near it, even bump into it — but you can't fall off, even if you try. The Health invariant (`current >= 0` AND `current <= maximum`) is the railing: you can deal damage, heal, reset — but current can NEVER go below 0 or above maximum. The railing is checked after EVERY action. No action, no matter how buggy, can push you over the edge.",
+  "code_template": "use xiom.io;\n\ntype Health = {\n  current: Int;\n  maximum: Int;\n  // TODO: add invariant: current >= 0;\n  // TODO: add invariant: current <= maximum;\n}\n\nfn Health.heal(self, amount: Int) -> Int\n  requires: amount >= 0;\n{\n  let nhp = self.current + amount;\n  if nhp > self.maximum { return self.maximum; }\n  else { return nhp; }\n}\n\nfn main() -> Int {\n  // TODO: create Health { current: 80, maximum: 100 }\n  // TODO: heal 10, print result\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\ntype Health = {\n  current: Int;\n  maximum: Int;\n  invariant: current >= 0;\n  invariant: current <= maximum;\n}\n\nfn Health.heal(self, amount: Int) -> Int\n  requires: amount >= 0;\n{\n  let nhp = self.current + amount;\n  if nhp > self.maximum { return self.maximum; }\n  else { return nhp; }\n}\n\nfn main() -> Int {\n  let hp = Health { current: 80, maximum: 100 };\n  let after = hp.heal(10);\n  io.println(to_string(after));\n  return 0;\n}\n",
+  "try_it": "Create a `Temperature` type with `celsius: Float64; invariant: celsius >= -273.15;` (absolute zero). Write `set_celsius` and `set_fahrenheit` methods that both respect the invariant. Try creating `Temperature { celsius: -500.0 }` — the invariant should trap. Write a `Speed` type with `meters_per_second: Float64; invariant: meters_per_second >= 0.0;`. Add a `brake` method that decreases speed but never below 0. What happens if your `brake` method has a bug and returns -5? The invariant catches it.",
+  "concepts": [
+    "invariant",
+    "data-integrity",
+    "type-safety",
+    "struct",
+    "self-guarding-types"
+  ],
+  "tips": [
+    "Invariants are checked after construction AND after every method call — they're the ultimate safety net",
+    "Use invariants for relationships between fields: `current <= maximum`, `start <= end`",
+    "If a method can't maintain the invariant, the method must adjust its logic — the invariant is non-negotiable"
+  ],
+  "common_mistakes": [
+    "Writing an invariant that's too weak — `invariant: value >= -1000000;` is true but useless",
+    "Writing an invariant that conflicts with a method's normal operation — the method must always satisfy the invariant",
+    "Expecting invariants to be checked during method execution (between lines) — they're only checked at method boundaries (before/after)"
+  ],
+  "next_lesson": "L4-07",
+  "related": [
+    "L4-05",
+    "L4-01",
+    "L2-23"
+  ]
 }

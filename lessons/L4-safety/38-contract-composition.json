@@ -1,36 +1,36 @@
 {
-    "id":  "L4-38",
-    "title":  "Contract Composition",
-    "level":  "L4",
-    "duration":  "12 min",
-    "story":  "A banking system transferred $10,000 from account A to account B — but account B\u0027s balance became negative because it had an overdraft fee that wasn\u0027t checked. A composed contract would have caught the cascade of failures before the transfer executed.",
-    "why":  "When multiple types with contracts interact, the composed contracts form a safety net that catches errors at any depth of the call chain.",
-    "narrative":  "## Contracts That Chain Together\n\nReal systems have multiple types, each with their own contracts. When functions accept multiple contract-protected types, the composed preconditions create a holistic safety guarantee:\n\n```xiom\ntype Account = {\n  id: Int;\n  balance: Float64;\n  invariant: balance \u003e= 0.0;\n}\n\nfn Account.deposit(self: \u0026mut Self, amount: Float64)\n  requires: amount \u003e 0.0;\n  ensures: self.balance == self@pre.balance + amount;\n{\n  self.balance = self.balance + amount;\n}\n\nfn merge_accounts(a: \u0026mut Account, b: Account)\n  requires: b.balance \u003e= 0.0;\n  ensures: a.balance == a@pre.balance + b.balance;\n{\n  a.balance = a.balance + b.balance;\n}\n```\n\nThe `merge_accounts` function operates on two Accounts. Account `b` is passed by value (moved), so it won\u0027t be used after merging. Account `a` is borrowed mutably. The contract guarantees:\n\n1. `b.balance \u003e= 0` — the source account isn\u0027t in debt (redundant with the invariant, but explicit)\n2. `a.balance` increases by exactly `b.balance` — no money is lost\n\n### Composition in Action\n```xiom\nfn transfer(from: \u0026mut Account, to: \u0026mut Account, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= from.balance;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n```\n\nThis function composes contracts across two mutable references. Both Account invariants (balance \u003e= 0) are preserved because `from.balance - amount \u003e= 0` is guaranteed by the second requires.",
-    "analogy":  "Contract composition is like interlocking gears — each gear (type/function) has its own teeth (contracts), and when they mesh, the whole machine turns smoothly or jams immediately on misalignment.",
-    "code_template":  "use xiom.io;\n\ntype Account = {\n  id: Int;\n  balance: Float64;\n  invariant: balance \u003e= 0.0;\n}\n\nfn Account.deposit(self: \u0026mut Self, amount: Float64)\n  requires: amount \u003e 0.0;\n  ensures: self.balance == self@pre.balance + amount;\n{\n  self.balance = self.balance + amount;\n}\n\nfn merge_accounts(a: \u0026mut Account, b: Account)\n  requires: b.balance \u003e= 0.0;\n  ensures: a.balance == a@pre.balance + b.balance;\n{\n  a.balance = a.balance + b.balance;\n}\n\nfn Account.withdraw(self: \u0026mut Self, amount: Float64)\n  // TODO: Add requires: amount \u003e 0.0 and amount \u003c= self.balance\n  // TODO: Subtract amount from self.balance\n{\n}\n\nfn main() -\u003e Int {\n  // TODO: Create two accounts, deposit 100 into a, transfer 30 from a to b\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\ntype Account = {\n  id: Int;\n  balance: Float64;\n  invariant: balance \u003e= 0.0;\n}\n\nfn Account.deposit(self: \u0026mut Self, amount: Float64)\n  requires: amount \u003e 0.0;\n  ensures: self.balance == self@pre.balance + amount;\n{\n  self.balance = self.balance + amount;\n}\n\nfn Account.withdraw(self: \u0026mut Self, amount: Float64)\n  requires: amount \u003e 0.0;\n  requires: amount \u003c= self.balance;\n  ensures: self.balance == self@pre.balance - amount;\n{\n  self.balance = self.balance - amount;\n}\n\nfn merge_accounts(a: \u0026mut Account, b: Account)\n  requires: b.balance \u003e= 0.0;\n  ensures: a.balance == a@pre.balance + b.balance;\n{\n  a.balance = a.balance + b.balance;\n}\n\nfn main() -\u003e Int {\n  var a: Account = Account{ id: 1, balance: 0.0 };\n  var b: Account = Account{ id: 2, balance: 0.0 };\n  a.deposit(100.0);\n  a.withdraw(30.0);\n  b.deposit(30.0);\n  return a.balance as Int;\n}",
-    "try_it":  "Add a `close_account` function that takes `Account` by value (move) and returns the final balance. This consumes the account — after close, it can never be used again. Add an `ensures` that the returned balance equals the input balance.",
-    "concepts":  [
-                     "contract-composition",
-                     "requires",
-                     "ensures",
-                     "invariant",
-                     "multi-reference"
-                 ],
-    "tips":  [
-                 "When a function takes multiple contract-protected types, list all preconditions — don\u0027t rely on downstream checks",
-                 "Pass by value (move) when the function should CONSUME the argument — prevents use-after-merge",
-                 "Chain `@pre` references carefully — `a@pre.balance` refers to a\u0027s balance before ANY mutation in this function"
-             ],
-    "common_mistakes":  [
-                            "Using `b.balance` in ensures after modifying `b` — but since `b` is consumed (move), post-state checks on it are meaningless",
-                            "Forgetting that both Account invariants must hold at function exit — the compiler checks `from.balance \u003e= 0` and `to.balance \u003e= 0`",
-                            "Passing both accounts by `\u0026mut` when one is consumed — pick the right ownership for each parameter"
-                        ],
-    "next_lesson":  "L4-39",
-    "related":  [
-                    "L4-06",
-                    "L4-50",
-                    "L4-25"
-                ]
+  "id": "L4-38",
+  "title": "Contract Composition",
+  "level": "L4",
+  "duration": "12 min",
+  "story": "A banking system transferred $10,000 from account A to account B — but account B's balance became negative because it had an overdraft fee that wasn't checked. A composed contract would have caught the cascade of failures before the transfer executed.",
+  "why": "When multiple types with contracts interact, the composed contracts form a safety net that catches errors at any depth of the call chain.",
+  "narrative": "## Contracts That Chain Together\n\nReal systems have multiple types, each with their own contracts. When functions accept multiple contract-protected types, the composed preconditions create a holistic safety guarantee:\n\n```xiom\ntype Account = {\n  id: Int;\n  balance: Float64;\n  invariant: balance >= 0.0;\n}\n\nfn Account.deposit(self: &mut Self, amount: Float64)\n  requires: amount > 0.0;\n  ensures: self.balance == self@pre.balance + amount;\n{\n  self.balance = self.balance + amount;\n}\n\nfn merge_accounts(a: &mut Account, b: Account)\n  requires: b.balance >= 0.0;\n  ensures: a.balance == a@pre.balance + b.balance;\n{\n  a.balance = a.balance + b.balance;\n}\n```\n\nThe `merge_accounts` function operates on two Accounts. Account `b` is passed by value (moved), so it won't be used after merging. Account `a` is borrowed mutably. The contract guarantees:\n\n1. `b.balance >= 0` — the source account isn't in debt (redundant with the invariant, but explicit)\n2. `a.balance` increases by exactly `b.balance` — no money is lost\n\n### Composition in Action\n```xiom\nfn transfer(from: &mut Account, to: &mut Account, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= from.balance;\n  ensures: from.balance == from@pre.balance - amount;\n  ensures: to.balance == to@pre.balance + amount;\n{\n  from.balance = from.balance - amount;\n  to.balance = to.balance + amount;\n}\n```\n\nThis function composes contracts across two mutable references. Both Account invariants (balance >= 0) are preserved because `from.balance - amount >= 0` is guaranteed by the second requires.",
+  "analogy": "Contract composition is like interlocking gears — each gear (type/function) has its own teeth (contracts), and when they mesh, the whole machine turns smoothly or jams immediately on misalignment.",
+  "code_template": "use xiom.io;\n\ntype Account = {\n  id: Int;\n  balance: Float64;\n  invariant: balance >= 0.0;\n}\n\nfn Account.deposit(&mut self, amount: Float64)\n  requires: amount > 0.0;\n  ensures: self.balance == self@pre.balance + amount;\n{\n  self.balance = self.balance + amount;\n}\n\nfn merge_accounts(a: &mut Account, b: Account)\n  requires: b.balance >= 0.0;\n  ensures: a.balance == a@pre.balance + b.balance;\n{\n  a.balance = a.balance + b.balance;\n}\n\nfn Account.withdraw(&mut self, amount: Float64)\n  // TODO: Add requires: amount > 0.0 and amount <= self.balance\n  // TODO: Subtract amount from self.balance\n{\n}\n\nfn main() -> Int {\n  // TODO: Create two accounts, deposit 100 into a, transfer 30 from a to b\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Account = {\n  id: Int;\n  balance: Float64;\n  invariant: balance >= 0.0;\n}\n\nfn Account.deposit(&mut self, amount: Float64)\n  requires: amount > 0.0;\n  ensures: self.balance == self@pre.balance + amount;\n{\n  self.balance = self.balance + amount;\n}\n\nfn Account.withdraw(&mut self, amount: Float64)\n  requires: amount > 0.0;\n  requires: amount <= self.balance;\n  ensures: self.balance == self@pre.balance - amount;\n{\n  self.balance = self.balance - amount;\n}\n\nfn merge_accounts(a: &mut Account, b: Account)\n  requires: b.balance >= 0.0;\n  ensures: a.balance == a@pre.balance + b.balance;\n{\n  a.balance = a.balance + b.balance;\n}\n\nfn main() -> Int {\n  var a: Account = Account{ id: 1, balance: 0.0 };\n  var b: Account = Account{ id: 2, balance: 0.0 };\n  a.deposit(100.0);\n  a.withdraw(30.0);\n  b.deposit(30.0);\n  return a.balance as Int;\n}",
+  "try_it": "Add a `close_account` function that takes `Account` by value (move) and returns the final balance. This consumes the account — after close, it can never be used again. Add an `ensures` that the returned balance equals the input balance.",
+  "concepts": [
+    "contract-composition",
+    "requires",
+    "ensures",
+    "invariant",
+    "multi-reference"
+  ],
+  "tips": [
+    "When a function takes multiple contract-protected types, list all preconditions — don't rely on downstream checks",
+    "Pass by value (move) when the function should CONSUME the argument — prevents use-after-merge",
+    "Chain `@pre` references carefully — `a@pre.balance` refers to a's balance before ANY mutation in this function"
+  ],
+  "common_mistakes": [
+    "Using `b.balance` in ensures after modifying `b` — but since `b` is consumed (move), post-state checks on it are meaningless",
+    "Forgetting that both Account invariants must hold at function exit — the compiler checks `from.balance >= 0` and `to.balance >= 0`",
+    "Passing both accounts by `&mut` when one is consumed — pick the right ownership for each parameter"
+  ],
+  "next_lesson": "L4-39",
+  "related": [
+    "L4-06",
+    "L4-50",
+    "L4-25"
+  ]
 }

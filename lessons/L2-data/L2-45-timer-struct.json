@@ -1,36 +1,36 @@
 {
-    "id":  "L2-45",
-    "title":  "Timer Struct",
-    "level":  "L2",
-    "duration":  "9 min",
-    "story":  "You\u0027re building a cooking app and need a countdown timer. It starts at 1 hour, 30 minutes, 45 seconds. You want to add seconds, convert the whole thing to total seconds, and tick the timer down. Mutating methods make this feel like a real ticking clock.",
-    "why":  "A struct with mutating methods models stateful objects like timers, counters, and game clocks.",
-    "narrative":  "## Building a Countdown Timer\n\nA timer tracks hours, minutes, and seconds. Mutating methods let you add time or tick the clock forward.\n\n### The Timer Struct\n\n```xiom\ntype Timer = {\n  hours: Int;\n  minutes: Int;\n  seconds: Int;\n}\n```\n\n### Creating a Timer\n\n```xiom\nlet pasta_timer = Timer{ hours: 0; minutes: 8; seconds: 30; };\nlet roast_timer = Timer{ hours: 1; minutes: 30; seconds: 0; };\n```\n\n### Total Seconds\n\nConvert the timer to a single number of seconds for easy comparison:\n\n```xiom\nfn Timer.total_seconds(self) -\u003e Int {\n  return hours * 3600 + minutes * 60 + seconds;\n}\n```\n\n### Adding Seconds\n\nA mutating method that adds seconds and handles overflow into minutes and hours:\n\n```xiom\nfn Timer.add_seconds(self, s: Int) {\n  let total = self.total_seconds() + s;\n  hours = total / 3600;\n  minutes = (total % 3600) / 60;\n  seconds = total % 60;\n}\n```\n\n### Using the Timer\n\n```xiom\nvar timer = Timer{ hours: 0; minutes: 5; seconds: 30; };\ntimer.total_seconds();    // 330\ntimer.add_seconds(45);    // now 6 minutes, 15 seconds\ntimer.total_seconds();    // 375\n```\n\n### Formatting the Display\n\n```xiom\nfn Timer.display(self) -\u003e Str {\n  return hours + \"h \" + minutes + \"m \" + seconds + \"s\";\n}\n```",
-    "analogy":  "A Timer is like a digital kitchen clock. total_seconds is the raw internal counter. add_seconds is you pressing the \"+30s\" button. The display method is the clock face — it reads the internal time in a human-friendly format.",
-    "code_template":  "use xiom.io;\n\ntype Timer = {\n  hours: Int;\n  minutes: Int;\n  seconds: Int;\n}\n\n// TODO: write a method \u0027Timer.total_seconds\u0027 that converts to a single Int\n\n// TODO: write a method \u0027Timer.add_seconds\u0027 that mutates the timer by adding s seconds\n\n// TODO: write a method \u0027Timer.display\u0027 that returns \"Xh Ym Zs\"\n\nfn main() -\u003e Int {\n  // TODO: create a timer at 1h 30m 0s, add 90 seconds, return total_seconds\n  return 0;\n}",
-    "solution":  "use xiom.io;\n\ntype Timer = {\n  hours: Int;\n  minutes: Int;\n  seconds: Int;\n}\n\nfn Timer.total_seconds(self) -\u003e Int {\n  return hours * 3600 + minutes * 60 + seconds;\n}\n\nfn Timer.add_seconds(self, s: Int) {\n  let total = self.total_seconds() + s;\n  hours = total / 3600;\n  minutes = (total % 3600) / 60;\n  seconds = total % 60;\n}\n\nfn Timer.display(self) -\u003e Str {\n  return hours + \"h \" + minutes + \"m \" + seconds + \"s\";\n}\n\nfn main() -\u003e Int {\n  var timer = Timer{ hours: 1; minutes: 30; seconds: 0; };\n  timer.add_seconds(90);\n  return timer.total_seconds();\n}",
-    "try_it":  "Add a `reset` method that sets hours/minutes/seconds to 0. Add a `Timer.tick(self)` method that adds 1 second (call add_seconds(1)). Create a countdown timer starting at 10 minutes and tick it 5 times. Add overflow: create a timer at 23h 59m 59s and tick it once.",
-    "concepts":  [
-                     "struct",
-                     "method",
-                     "mutation",
-                     "time",
-                     "arithmetic",
-                     "overflow"
-                 ],
-    "tips":  [
-                 "Overflow into hours and minutes: `total / 3600` for hours, `(total % 3600) / 60` for minutes",
-                 "`self.total_seconds()` inside `add_seconds` reuses the same conversion logic — no duplication",
-                 "Use `var` for the timer so `add_seconds` can mutate its fields"
-             ],
-    "common_mistakes":  [
-                            "Trying to add seconds without converting to total first — adding directly to the `seconds` field won\u0027t handle overflow into minutes",
-                            "Forgetting to multiply hours by 3600 and minutes by 60 in `total_seconds`"
-                        ],
-    "next_lesson":  "L2-46",
-    "related":  [
-                    "L2-04",
-                    "L2-25",
-                    "L2-38"
-                ]
+  "id": "L2-45",
+  "title": "Timer Struct",
+  "level": "L2",
+  "duration": "9 min",
+  "story": "You're building a cooking app and need a countdown timer. It starts at 1 hour, 30 minutes, 45 seconds. You want to add seconds, convert the whole thing to total seconds, and tick the timer down. Mutating methods make this feel like a real ticking clock.",
+  "why": "A struct with mutating methods models stateful objects like timers, counters, and game clocks.",
+  "narrative": "## Building a Countdown Timer\n\nA timer tracks hours, minutes, and seconds. Mutating methods let you add time or tick the clock forward.\n\n### The Timer Struct\n\n```xiom\ntype Timer = {\n  hours: Int;\n  minutes: Int;\n  seconds: Int;\n}\n```\n\n### Creating a Timer\n\n```xiom\nlet pasta_timer = Timer{ hours: 0; minutes: 8; seconds: 30; };\nlet roast_timer = Timer{ hours: 1; minutes: 30; seconds: 0; };\n```\n\n### Total Seconds\n\nConvert the timer to a single number of seconds for easy comparison:\n\n```xiom\nfn Timer.total_seconds(self) -> Int {\n  return hours * 3600 + minutes * 60 + seconds;\n}\n```\n\n### Adding Seconds\n\nA mutating method that adds seconds and handles overflow into minutes and hours:\n\n```xiom\nfn Timer.add_seconds(self, s: Int) {\n  let total = self.total_seconds() + s;\n  hours = total / 3600;\n  minutes = (total % 3600) / 60;\n  seconds = total % 60;\n}\n```\n\n### Using the Timer\n\n```xiom\nvar timer = Timer{ hours: 0; minutes: 5; seconds: 30; };\ntimer.total_seconds();    // 330\ntimer.add_seconds(45);    // now 6 minutes, 15 seconds\ntimer.total_seconds();    // 375\n```\n\n### Formatting the Display\n\n```xiom\nfn Timer.display(self) -> Str {\n  return hours + \"h \" + minutes + \"m \" + seconds + \"s\";\n}\n```",
+  "analogy": "A Timer is like a digital kitchen clock. total_seconds is the raw internal counter. add_seconds is you pressing the \"+30s\" button. The display method is the clock face â€” it reads the internal time in a human-friendly format.",
+  "code_template": "use xiom.io;\n\ntype Timer = {\n  hours: Int;\n  minutes: Int;\n  seconds: Int;\n}\n\n// TODO: write a method 'Timer.total_seconds' that converts to a single Int\n\n// TODO: write a method 'Timer.add_seconds' that mutates the timer by adding s seconds\n\n// TODO: write a method 'Timer.display' that returns \"Xh Ym Zs\"\n\nfn main() -> Int {\n  // TODO: create a timer at 1h 30m 0s, add 90 seconds, return total_seconds\n  return 0;\n}",
+  "solution": "use xiom.io;\n\ntype Timer = {\n  hours: Int;\n  minutes: Int;\n  seconds: Int;\n}\n\nfn Timer.total_seconds(self) -> Int {\n  return hours * 3600 + minutes * 60 + seconds;\n}\n\nfn Timer.add_seconds(self, s: Int) {\n  let total = self.total_seconds() + s;\n  hours = total / 3600;\n  minutes = (total % 3600) / 60;\n  seconds = total % 60;\n}\n\nfn Timer.display(self) -> Str {\n  return hours + \"h \" + minutes + \"m \" + seconds + \"s\";\n}\n\nfn main() -> Int {\n  var timer = Timer{ hours: 1; minutes: 30; seconds: 0; };\n  timer.add_seconds(90);\n  return timer.total_seconds();\n}",
+  "try_it": "Add a `reset` method that sets hours/minutes/seconds to 0. Add a `Timer.tick(self)` method that adds 1 second (call add_seconds(1)). Create a countdown timer starting at 10 minutes and tick it 5 times. Add overflow: create a timer at 23h 59m 59s and tick it once.",
+  "concepts": [
+    "struct",
+    "method",
+    "mutation",
+    "time",
+    "arithmetic",
+    "overflow"
+  ],
+  "tips": [
+    "Overflow into hours and minutes: `total / 3600` for hours, `(total % 3600) / 60` for minutes",
+    "`self.total_seconds()` inside `add_seconds` reuses the same conversion logic â€” no duplication",
+    "Use `var` for the timer so `add_seconds` can mutate its fields"
+  ],
+  "common_mistakes": [
+    "Trying to add seconds without converting to total first â€” adding directly to the `seconds` field won't handle overflow into minutes",
+    "Forgetting to multiply hours by 3600 and minutes by 60 in `total_seconds`"
+  ],
+  "next_lesson": "L2-46",
+  "related": [
+    "L2-04",
+    "L2-25",
+    "L2-38"
+  ]
 }
