@@ -87,6 +87,26 @@ nondeterministic pointer values (28 lessons cannot carry an expected output),
 C19 `.to_str()` on `Str`/`Float64` returning empty or bit-pattern values.
 The VPS owner will test Phase B after the next hourly pull.
 
+### Absorbing compiler fixes (C17/C18/C19)
+
+When a fix reaches a toolchain release:
+
+1. Bump `TOOLCHAIN_VERSION` and refetch with `tools/fetch-toolchain.ps1`
+   (Windows) or `tools/fetch-toolchain.sh` (Linux/CI).
+2. `node tools/generate-expected-outputs.js --wsl` re-executes every solution
+   and rewrites `expected_output` plus `tools/expected-output-skips.json`:
+   newly deterministic lessons lose their skip entry, C17-fixed lessons join
+   the runnable set.
+3. On Linux, `node tools/lesson-audit.js --update-baseline
+   tools/lesson-baseline.json` refreshes the known-failure lists, then
+   `node tools/generate-limitations.js` regenerates the lesson badges.
+4. Run the gate in section 8 and commit the refreshed data together with the
+   toolchain bump.
+
+Never hand-edit the generated files. Until step 2 runs, the nightly execution
+job reports expected-output mismatches for lessons whose output the fix
+changed; that is the intended drift signal.
+
 ## 4. Architecture map
 
 - `server.js`: zero-dep HTTP server; endpoints `/api/compile`, `/api/check`,
