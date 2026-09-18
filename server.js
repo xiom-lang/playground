@@ -444,11 +444,13 @@ function serveFile(res, method, filePath) {
       res.end('Not found');
       return;
     }
+    const extension = path.extname(filePath).toLowerCase();
+    const immutable = extension === '.wasm' || extension === '.png' || extension === '.ico' || extension === '.svg';
     const headers = {
-      'Content-Type': MIME[path.extname(filePath).toLowerCase()] || 'application/octet-stream',
+      'Content-Type': MIME[extension] || 'application/octet-stream',
       'Content-Length': stat.size,
       'X-Content-Type-Options': 'nosniff',
-      'Cache-Control': path.extname(filePath) === '.html' ? 'no-cache' : 'public, max-age=300',
+      'Cache-Control': immutable ? 'public, max-age=86400' : 'no-cache',
     };
     if (method === 'HEAD') {
       res.writeHead(200, headers);

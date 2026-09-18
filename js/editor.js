@@ -110,6 +110,8 @@ function registerXiomLanguage() {
       'editor.lineHighlightBackground': '#f6f8fa',
     }
   });
+
+  if (window.registerXiomCompletions) window.registerXiomCompletions(monaco);
 }
 
 function createEditor(containerId, initialValue) {

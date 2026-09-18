@@ -169,6 +169,16 @@ async function main() {
       assert.ok(payload.counts.modules >= 400, 'modules: ' + payload.counts.modules);
       assert.ok(payload.counts.functions >= 5000, 'functions: ' + payload.counts.functions);
       assert.ok(payload.modules.every((m) => Array.isArray(m.functions)));
+      assert.ok(payload.modules.every((m) => m.tier === 'playground' || m.tier === 'docs' || m.tier === 'local'));
+    });
+
+    await okAsync('GET /js/limitations.json lists blocked lessons', async () => {
+      const res = await request('GET', '/js/limitations.json');
+      assert.strictEqual(res.status, 200);
+      const payload = JSON.parse(res.body);
+      assert.ok(payload.lessons.length >= 1);
+      assert.ok(payload.lessons.every((l) => l.id && l.reason));
+      assert.ok(payload.lessons.every((l) => l.title));
     });
 
     console.log('static containment:');

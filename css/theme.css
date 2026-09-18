@@ -718,6 +718,46 @@ html.light-mode .output-content {
   flex-shrink: 0;
 }
 
+.lesson-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+.lesson-badge.limited {
+  color: var(--error);
+  border: 1px solid rgba(255, 92, 122, 0.35);
+  background: rgba(255, 92, 122, 0.08);
+}
+
+.lesson-limit-notice {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 92, 122, 0.3);
+  background: rgba(255, 92, 122, 0.07);
+  color: var(--error);
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+.btn-run:disabled,
+.btn-run[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+
+.btn-run:disabled:hover,
+.btn-run[disabled]:hover {
+  background: var(--indigo);
+}
+
 /* ================================================================
    NARRATIVE PANEL
    Dimensions controlled by layout.css; this file handles visuals only.
@@ -1610,6 +1650,64 @@ html.light-mode .output-content {
 /* Footer */
 .stdlib-footer { padding: 10px 14px; border-top: 1px solid var(--border-soft); font-size: 10px; color: var(--low); text-align: center; font-family: var(--mono); }
 .stdlib-loading { padding: 24px 14px; color: var(--low); font-size: 12px; text-align: center; font-family: var(--mono); }
+
+.stdlib-tier-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.stdlib-tier-toggle {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--hi);
+  font-size: 11px;
+  font-family: var(--mono);
+  cursor: pointer;
+}
+.stdlib-tier-toggle:hover { border-color: var(--indigo); color: var(--indigo); }
+.stdlib-tier-hint { font-size: 10px; color: var(--low); }
+
+.stdlib-modules .tier-hidden { display: none; }
+.stdlib-modules.show-all .tier-hidden,
+.stdlib-modules.searching .tier-hidden { display: block; }
+
+.tier-badge {
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.tier-docs { color: var(--indigo); border: 1px solid rgba(92, 107, 255, 0.35); background: var(--indigo-soft); }
+.tier-local { color: var(--low); border: 1px solid var(--border); background: var(--panel-2); }
+
+.stdlib-docs-link {
+  margin-left: 8px;
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--indigo);
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+  flex-shrink: 0;
+}
+.stdlib-docs-link:hover { color: var(--hi); }
+
+.stdlib-copy {
+  margin-left: auto;
+  padding: 0 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--low);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.stdlib-copy:hover { color: var(--indigo); border-color: var(--indigo); background: var(--indigo-soft); }
+.stdlib-fn-row { display: flex; align-items: center; gap: 10px; }
+.stdlib-fn-row .stdlib-copy { margin-left: auto; }
 
 /* On mobile, stdlib becomes full-screen overlay */
 @media (max-width: 768px) {

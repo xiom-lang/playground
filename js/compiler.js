@@ -21,6 +21,13 @@ async function compile() {
   statusEl.style.display = '';
   window._lastSource = source;
 
+  if (window.isCurrentLessonLimited && window.isCurrentLessonLimited()) {
+    statusEl.textContent = 'This lesson is blocked by a known compiler bug; see the notice above.';
+    statusEl.className = 'status-bar err';
+    if (btn) btn.classList.remove('running');
+    return;
+  }
+
   var body = JSON.stringify({ source: source });
   var headers = { 'Content-Type': 'application/json' };
 

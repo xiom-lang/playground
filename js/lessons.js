@@ -1,13 +1,58 @@
 // Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
 // SPDX-License-Identifier: MIT OR Apache-2.0
+var lessonLimitations = null;
+
+function loadLessonLimitations() {
+  return fetch('js/limitations.json')
+    .then(function (resp) { return resp.ok ? resp.json() : null; })
+    .then(function (data) {
+      lessonLimitations = {};
+      if (data && data.lessons) {
+        data.lessons.forEach(function (entry) { lessonLimitations[entry.id] = entry.reason; });
+      }
+      return lessonLimitations;
+    })
+    .catch(function () { lessonLimitations = {}; });
+}
+
+function lessonLimitReason(lessonId) {
+  return (lessonLimitations && lessonLimitations[lessonId]) || null;
+}
+
+function applyLessonAvailability(lesson) {
+  var reason = lesson ? lessonLimitReason(lesson.id) : null;
+  var btn = document.getElementById('btnRun');
+  if (btn) {
+    btn.disabled = !!reason;
+    btn.title = reason || '';
+  }
+  var existing = document.getElementById('lessonLimitNotice');
+  if (reason) {
+    if (!existing) {
+      var notice = document.createElement('div');
+      notice.id = 'lessonLimitNotice';
+      notice.className = 'lesson-limit-notice';
+      var host = document.querySelector('.editor-section');
+      if (host) host.insertBefore(notice, host.firstChild);
+      existing = notice;
+    }
+    existing.textContent = 'Known limitation: ' + reason + '. This lesson does not compile yet; you can still read and edit it.';
+  } else if (existing) {
+    existing.remove();
+  }
+}
+
 function loadLessonCatalog() {
-  fetch('/api/lessons')
+  loadLessonLimitations().then(function () {
+    return fetch('/api/lessons');
+  })
     .then(function (resp) {
       if (!resp.ok) throw new Error('Catalog not found');
       return resp.json();
     })
     .then(function (catalog) {
       lessonCatalogCache = catalog;
+      window.lessonCatalogCache = catalog;
       renderLessonList(catalog);
       updateProgressSummary();
     })
@@ -16,6 +61,7 @@ function loadLessonCatalog() {
         .then(function (resp) { return resp.json(); })
         .then(function (catalog) {
           lessonCatalogCache = catalog;
+          window.lessonCatalogCache = catalog;
           renderLessonList(catalog);
           updateProgressSummary();
         })
@@ -60,9 +106,14 @@ function renderLessonList(catalog) {
         ? '<span class="lesson-check completed">&#x2713;</span>'
         : '<span class="lesson-check"></span>';
 
+      var limitReason = lessonLimitReason(lesson.id);
+      var limitHtml = limitReason
+        ? '<span class="lesson-badge limited" title="' + escapeHtml(limitReason) + '">compiler</span>'
+        : '';
+
       item.innerHTML =
         checkHtml +
-        '<span class="lesson-title">' + lesson.title + '</span>' +
+        '<span class="lesson-title">' + lesson.title + limitHtml + '</span>' +
         '<span class="lesson-duration">' + lesson.duration + '</span>';
 
       item.setAttribute('role', 'option');
@@ -129,6 +180,7 @@ function loadLessonContent(lessonFile) {
       if (window.editor && lesson.code_template) {
         window.editor.setValue(lesson.code_template);
       }
+      applyLessonAvailability(lesson);
       updateProgressSummary();
     })
     .catch(function (err) {
@@ -423,3 +475,7 @@ window.saveProgress = saveProgress;
 window.getProgress = getProgress;
 window.markComplete = markComplete;
 window.escapeHtml = escapeHtml;
+window.isCurrentLessonLimited = function () {
+  return !!(currentLessonId && lessonLimitReason(currentLessonId));
+};
+window.applyLessonAvailability = applyLessonAvailability;

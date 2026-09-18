@@ -24,6 +24,39 @@ const CURATED = process.argv.includes('--curated') ? process.argv[process.argv.i
 const OUT = path.join(REPO, 'js', 'stdlib-ref.json');
 const LEGACY = path.join(REPO, 'js', 'stdlib-ref.js');
 
+// Sandbox tiers by top-level module. `playground` is shown by default (the
+// modules lessons teach and the sandbox fully supports), `docs` is searchable
+// with a docs link, `local` needs the real compiler (OS, memory, FFI, net).
+const PLAYGROUND_MODULES = new Set([
+  'core', 'io', 'string', 'math', 'convert', 'collections', 'iter', 'fmt',
+  'char', 'cmp', 'num', 'error', 'hash', 'rand', 'time', 'encoding', 'array',
+]);
+const DOCS_ONLY_MODULES = new Set([
+  'sync', 'async', 'test', 'serialize', 'regex', 'compress', 'crypto', 'log',
+  'contracts', 'cell', 'reflect', 'path', 'env', 'bench',
+]);
+// Modules that have a page under https://docs.xiom-lang.org/stdlib/.
+const DOCS_PAGES = new Set([
+  'core', 'io', 'collections', 'string', 'math', 'sync', 'async', 'net',
+  'crypto', 'serialize', 'test', 'iter', 'error', 'char', 'path', 'array',
+  'encoding', 'num', 'cmp', 'thread', 'mem', 'ptr', 'alloc', 'rc', 'os',
+  'env', 'time', 'convert', 'cell', 'fmt', 'hash', 'compress', 'rand',
+  'regex', 'simd', 'bench', 'log', 'contracts', 'reflect', 'ffi',
+]);
+
+function moduleTier(name) {
+  const parent = name.split('.')[0];
+  if (PLAYGROUND_MODULES.has(parent)) return 'playground';
+  if (DOCS_ONLY_MODULES.has(parent)) return 'docs';
+  return 'local';
+}
+
+function moduleDocsUrl(name) {
+  const parent = name.split('.')[0];
+  if (!DOCS_PAGES.has(parent)) return '';
+  return 'https://docs.xiom-lang.org/stdlib/' + parent + '.html';
+}
+
 function resolveStdlib() {
   const candidates = [
     childEnv.XIOM_STDLIB,
@@ -281,7 +314,14 @@ function build(stdlibDir) {
         if (item.wasm) out.wasm = item.wasm;
         return out;
       });
-      const mod = { name, desc: meta.desc || '', wasm: meta.wasm || '*', functions };
+      const mod = {
+        name,
+        desc: meta.desc || '',
+        wasm: meta.wasm || '*',
+        tier: moduleTier(name),
+        docs: moduleDocsUrl(name),
+        functions,
+      };
       return mod;
     }),
   };
