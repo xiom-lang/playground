@@ -20,12 +20,12 @@
     "nesting"
   ],
   "tips": [
-    "Match on `activity` (the field) inside `DayPlan.summary` � it destructures the inner enum",
+    "Match on `activity` (the field) inside `DayPlan.summary` — it destructures the inner enum",
     "The Activity enum carries different data per variant: Work has hours, Exercise has minutes, Social has friends",
     "Use `_ =>` as a catch-all in `total_work_hours` for any non-Work activity"
   ],
   "common_mistakes": [
-    "Trying to match on `self` instead of `activity` in `summary` � `self` is the DayPlan, not the Activity",
+    "Trying to match on `self` instead of `activity` in `summary` — `self` is the DayPlan, not the Activity",
     "Using `Work` without the enum prefix inside the struct literal: `activity: Work(8)` should be `activity: Activity.Work(8)`"
   ],
   "next_lesson": "L2-57",

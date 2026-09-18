@@ -6,7 +6,7 @@
   "story": "Your app reads configuration from a file. Each config value could be a number (\"42\"), a text string (\"localhost\"), or a yes/no flag (\"true\"). You need one type that holds any of these, a way to display them, and a safe way to extract numbers.",
   "why": "An enum with typed variant data is how apps handle mixed-type configuration values safely.",
   "narrative": "## Parsing Configuration Values\n\nConfiguration files mix numbers, text, and boolean values. An enum with variant data captures all three in one type.\n\n### The ConfigValue Enum\n\n```xiom\nenum ConfigValue {\n  Number(n: Int),\n  Text(s: Str),\n  YesNo(b: Bool),\n}\n```\n\n### Creating Config Values\n\n```xiom\nlet port = ConfigValue.Number(8080);\nlet host = ConfigValue.Text(\"localhost\");\nlet debug = ConfigValue.YesNo(true);\n```\n\n### Displaying Config Values\n\nEach variant formats differently:\n\n```xiom\nfn ConfigValue.display(self) -> Str {\n  match self {\n    Number(n) => { return \"number: \" + n; }\n    Text(s) => { return \"text: \" + s; }\n    YesNo(b) => {\n      if b { return \"yes\"; }\n      return \"no\";\n    }\n  }\n}\n```\n\n### Safely Extracting Numbers\n\nOnly `Number` variants have a numeric value. Others return a default:\n\n```xiom\nfn ConfigValue.as_number(self) -> Int {\n  match self {\n    Number(n) => { return n; }\n    Text(_) => { return 0; }\n    YesNo(b) => {\n      if b { return 1; }\n      return 0;\n    }\n  }\n}\n```\n\n### Using Config Values\n\n```xiom\nport.display();       // \"number: 8080\"\nhost.display();       // \"text: localhost\"\ndebug.display();      // \"yes\"\n\nport.as_number();     // 8080\nhost.as_number();     // 0 (not a number)\ndebug.as_number();    // 1 (true converts to 1)\n```",
-  "analogy": "ConfigValue is like a universal adapter plug. Number is the numeric prong, Text is the string port, YesNo is the binary switch. The display method translates each variant into a human-readable label. as_number tries to pull a number out of any plug � it works with the numeric prong and makes a best-effort guess for the others.",
+  "analogy": "ConfigValue is like a universal adapter plug. Number is the numeric prong, Text is the string port, YesNo is the binary switch. The display method translates each variant into a human-readable label. as_number tries to pull a number out of any plug — it works with the numeric prong and makes a best-effort guess for the others.",
   "code_template": "use xiom.io;\n\nenum ConfigValue {\n  Number(n: Int),\n  Text(s: Str),\n  YesNo(b: Bool),\n}\n\n// TODO: write 'ConfigValue.display' that returns a readable representation\n\n// TODO: write 'ConfigValue.as_number' that returns the numeric value or 0 for non-numbers\n\nfn main() -> Int {\n  // TODO: create Number(42), Text(\"hello\"), YesNo(true), return sum of as_number() values\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum ConfigValue {\n  Number(n: Int),\n  Text(s: Str),\n  YesNo(b: Bool),\n}\n\nfn ConfigValue.display(self) -> Str {\n  match self {\n    Number(n) => { return \"number: \" + n; }\n    Text(s) => { return \"text: \" + s; }\n    YesNo(b) => {\n      if b { return \"yes\"; }\n      return \"no\";\n    }\n  }\n}\n\nfn ConfigValue.as_number(self) -> Int {\n  match self {\n    Number(n) => { return n; }\n    Text(_) => { return 0; }\n    YesNo(b) => {\n      if b { return 1; }\n      return 0;\n    }\n  }\n}\n\nfn main() -> Int {\n  let v1 = ConfigValue.Number(42);\n  let v2 = ConfigValue.Text(\"hello\");\n  let v3 = ConfigValue.YesNo(true);\n  return v1.as_number() + v2.as_number() + v3.as_number();\n}",
   "expected_output": "",
@@ -20,12 +20,12 @@
   ],
   "tips": [
     "Use `_` wildcard when you don't need the variant's data: `Text(_)` means \"I know it's text, I just don't need the string\"",
-    "`as_number` provides a safe default (0) instead of crashing � this is the \"defensive extraction\" pattern",
-    "Bool can be converted to Int: `if b { return 1; }` � there's no automatic bool-to-int conversion"
+    "`as_number` provides a safe default (0) instead of crashing — this is the \"defensive extraction\" pattern",
+    "Bool can be converted to Int: `if b { return 1; }` — there's no automatic bool-to-int conversion"
   ],
   "common_mistakes": [
     "Trying to access data without matching first: you can't write `v.n` directly",
-    "Returning a string from `as_number` for Text variants � the return type is Int, so you must return a number"
+    "Returning a string from `as_number` for Text variants — the return type is Int, so you must return a number"
   ],
   "next_lesson": "L2-53",
   "related": [

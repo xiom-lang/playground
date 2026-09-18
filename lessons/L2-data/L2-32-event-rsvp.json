@@ -21,11 +21,11 @@
   "tips": [
     "Use `_` in match arms when you don't need the variant's data and want a catch-all",
     "Data-carrying variants use parentheses with named fields: `Maybe(reason: Str)`",
-    "Only destructure data you actually need � `Maybe(_)` matches Maybe without binding the reason"
+    "Only destructure data you actually need — `Maybe(_)` matches Maybe without binding the reason"
   ],
   "common_mistakes": [
-    "Trying to access `reason` on a `Yes` or `No` variant � those variants don't carry data",
-    "Forgetting that `match` must be exhaustive � the `_` wildcard is your escape hatch"
+    "Trying to access `reason` on a `Yes` or `No` variant — those variants don't carry data",
+    "Forgetting that `match` must be exhaustive — the `_` wildcard is your escape hatch"
   ],
   "next_lesson": "L2-33",
   "related": [

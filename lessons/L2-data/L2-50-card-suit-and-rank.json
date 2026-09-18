@@ -22,12 +22,12 @@
   ],
   "tips": [
     "Use two helper functions (rank_name, suit_name) instead of putting all logic inside describe",
-    "`a.rank == b.rank` compares the rank enum � enum variants support `==` comparison",
-    "Define enums before the struct that uses them � Suit and Rank must exist before Card references them"
+    "`a.rank == b.rank` compares the rank enum — enum variants support `==` comparison",
+    "Define enums before the struct that uses them — Suit and Rank must exist before Card references them"
   ],
   "common_mistakes": [
-    "Comparing cards with `a == b` to check for a pair � this only returns true if both suit AND rank match",
-    "Defining Card before Suit or Rank � the compiler reads top-to-bottom, so dependencies must come first"
+    "Comparing cards with `a == b` to check for a pair — this only returns true if both suit AND rank match",
+    "Defining Card before Suit or Rank — the compiler reads top-to-bottom, so dependencies must come first"
   ],
   "next_lesson": "L2-51",
   "related": [

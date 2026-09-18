@@ -19,13 +19,13 @@
     "robot"
   ],
   "tips": [
-    "The `execute` function works on any Command � it's a standalone function, not a method",
-    "Each match arm returns a description string � the caller can display it or accumulate it",
+    "The `execute` function works on any Command — it's a standalone function, not a method",
+    "Each match arm returns a description string — the caller can display it or accumulate it",
     "Use `_ =>` for variants you don't need to extract data from in a given context"
   ],
   "common_mistakes": [
-    "Forgetting to match all 4 variants in `execute` � the compiler requires exhaustive matching",
-    "Naming the variant `Movement` instead of `Move` � variant names should be verbs that feel like actions"
+    "Forgetting to match all 4 variants in `execute` — the compiler requires exhaustive matching",
+    "Naming the variant `Movement` instead of `Move` — variant names should be verbs that feel like actions"
   ],
   "next_lesson": "L2-58",
   "related": [

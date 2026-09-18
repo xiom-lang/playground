@@ -4,9 +4,9 @@
   "level": "L0",
   "duration": "7 min",
   "story": "You and your friends are lining up by height for a class photo. Who's taller? Who's shorter? Your program can decide instantly by comparing numbers with special comparison signs!",
-  "why": "Comparison operators let programs make decisions � from checking if a password matches to seeing if you're tall enough for a ride.",
-  "narrative": "## The Six Comparison Signs\n\nComputers are great at comparing things. They use special symbols called comparison operators. Each one asks a question and the answer is always `true` or `false` (a Bool value).\n\n### The Six Operators\n\n`==` means \"is equal to\" � are these two things the same?\n`!=` means \"is NOT equal to\" � are these different?\n`<` means \"is less than\" � is the left side smaller?\n`>` means \"is greater than\" � is the left side bigger?\n`<=` means \"less than or equal to\" � smaller OR the same.\n`>=` means \"greater than or equal to\" � bigger OR the same.\n\n### Let's Compare Heights\n\n```xiom\nfn main() {\n  let my_height: Int = 150;\n  let friend_height: Int = 155;\n  let is_taller: Bool = my_height > friend_height;\n  io.println(is_taller);\n}\n```\n\nSince 150 is NOT greater than 155, this prints `false`. If you swap the numbers, it prints `true`.\n\n### Double Equals Is NOT Single Equals\n\nThis is a big one: `=` assigns a value to a variable. `==` checks if two things are equal. They look similar but do completely different jobs. Never mix them up!",
-  "analogy": "Comparison operators are like a measuring tape � they tell you which side is bigger.",
+  "why": "Comparison operators let programs make decisions — from checking if a password matches to seeing if you're tall enough for a ride.",
+  "narrative": "## The Six Comparison Signs\n\nComputers are great at comparing things. They use special symbols called comparison operators. Each one asks a question and the answer is always `true` or `false` (a Bool value).\n\n### The Six Operators\n\n`==` means \"is equal to\" — are these two things the same?\n`!=` means \"is NOT equal to\" — are these different?\n`<` means \"is less than\" — is the left side smaller?\n`>` means \"is greater than\" — is the left side bigger?\n`<=` means \"less than or equal to\" — smaller OR the same.\n`>=` means \"greater than or equal to\" — bigger OR the same.\n\n### Let's Compare Heights\n\n```xiom\nfn main() {\n  let my_height: Int = 150;\n  let friend_height: Int = 155;\n  let is_taller: Bool = my_height > friend_height;\n  io.println(is_taller);\n}\n```\n\nSince 150 is NOT greater than 155, this prints `false`. If you swap the numbers, it prints `true`.\n\n### Double Equals Is NOT Single Equals\n\nThis is a big one: `=` assigns a value to a variable. `==` checks if two things are equal. They look similar but do completely different jobs. Never mix them up!",
+  "analogy": "Comparison operators are like a measuring tape — they tell you which side is bigger.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let my_age: Int = 12;\n  let friend_age: Int = 14;\n  // TODO: check if my_age is less than friend_age, store in a Bool\n  // TODO: print the result\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let my_age: Int = 12;\n  let friend_age: Int = 14;\n  let am_i_younger: Bool = my_age < friend_age;\n  io.println(\"true\");\n}\n",
   "expected_output": "true",
@@ -18,13 +18,13 @@
     "false"
   ],
   "tips": [
-    "Remember `==` is for comparing, `=` is for assigning � two very different jobs!",
-    "Comparison results are always `true` or `false` � they're perfect for if-statements later",
+    "Remember `==` is for comparing, `=` is for assigning — two very different jobs!",
+    "Comparison results are always `true` or `false` — they're perfect for if-statements later",
     "Use `<` and `>` for \"strict\" comparisons, `<=` and `>=` for \"or equal to\" comparisons"
   ],
   "common_mistakes": [
-    "Writing `=` when you mean `==` � `let x: Bool = a = b;` is wrong, use `let x: Bool = a == b;`",
-    "Forgetting that `true` and `false` have no quotes around them � they're Bool values, not Str"
+    "Writing `=` when you mean `==` — `let x: Bool = a = b;` is wrong, use `let x: Bool = a == b;`",
+    "Forgetting that `true` and `false` have no quotes around them — they're Bool values, not Str"
   ],
   "next_lesson": "L0-14",
   "related": [

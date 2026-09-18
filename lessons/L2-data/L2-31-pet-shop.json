@@ -3,7 +3,7 @@
   "title": "Pet Shop",
   "level": "L2",
   "duration": "8 min",
-  "story": "A pet shop has dogs, cats, fish, and birds � but each animal needs different info. A dog has a breed, a cat has a fur color, a fish needs a tank size, and a bird may or may not talk. You need one type that handles all four.",
+  "story": "A pet shop has dogs, cats, fish, and birds — but each animal needs different info. A dog has a breed, a cat has a fur color, a fish needs a tank size, and a bird may or may not talk. You need one type that handles all four.",
   "why": "Enum variants with data let one type represent completely different shapes of information.",
   "narrative": "## Enum Variants with Different Data\n\nEach pet type needs different fields. An enum with data variants makes this clean:\n\n### The Pet Enum\n\n```xiom\nenum Pet {\n  Dog(breed: Str),\n  Cat(color: Str),\n  Fish(tank_size: Int),\n  Bird(can_talk: Bool),\n}\n```\n\nEach variant carries its own data. `Dog` holds a breed string; `Fish` holds a tank size integer.\n\n### Creating Pets\n\n```xiom\nlet buddy = Pet.Dog(\"Golden Retriever\");\nlet whiskers = Pet.Cat(\"Orange\");\nlet nemo = Pet.Fish(20);\nlet polly = Pet.Bird(true);\n```\n\n### Describing Any Pet\n\nUse `match` to destructure and describe any pet:\n\n```xiom\nfn describe(p: Pet) -> Str {\n  match p {\n    Dog(breed) => { return \"A \" + breed + \" dog\"; }\n    Cat(color) => { return \"A \" + color + \" cat\"; }\n    Fish(tank_size) => { return \"A fish needing \" + tank_size + \"L tank\"; }\n    Bird(can_talk) => {\n      if can_talk {\n        return \"A talking bird\";\n      }\n      return \"A quiet bird\";\n    }\n  }\n}\n```\n\n### Pattern Matching in Action\n\n```xiom\ndescribe(buddy);    // \"A Golden Retriever dog\"\ndescribe(whiskers); // \"A Orange cat\"\ndescribe(nemo);     // \"A fish needing 20L tank\"\ndescribe(polly);    // \"A talking bird\"\n```\n\nEach arm destructures the variant and gives you access to its data.",
   "analogy": "An enum with data is like a package with a label and contents. The label says \"Dog\" and inside is the breed. Open the package with `match` to see what's inside.",
@@ -19,13 +19,13 @@
     "wildcard"
   ],
   "tips": [
-    "Each variant can have different types and numbers of fields � they're independent",
+    "Each variant can have different types and numbers of fields — they're independent",
     "Use `_` as a wildcard in match to match any variant without caring about its data",
     "Match arms use `=>` followed by a block `{ }` for multi-line logic"
   ],
   "common_mistakes": [
-    "Treating all variants as having the same data � you can't access `breed` on a Fish",
-    "Forgetting the `_` wildcard on data you don't use � write `Bird(_)` not `Bird(can_talk)` if unused"
+    "Treating all variants as having the same data — you can't access `breed` on a Fish",
+    "Forgetting the `_` wildcard on data you don't use — write `Bird(_)` not `Bird(can_talk)` if unused"
   ],
   "next_lesson": "L2-32",
   "related": [

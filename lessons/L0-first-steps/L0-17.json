@@ -4,7 +4,7 @@
   "level": "L0",
   "duration": "6 min",
   "story": "Your friend texts you in ALL CAPS and it feels like they're SHOUTING. What if your program could convert any message into a shouting voice or a whisper? With uppercase and lowercase functions, it can!",
-  "why": "Converting text case is used everywhere � from standardizing usernames to formatting titles and fixing messy user input.",
+  "why": "Converting text case is used everywhere — from standardizing usernames to formatting titles and fixing messy user input.",
   "narrative": "## Making Text SHOUT and whisper\n\nXIOM gives you two handy functions for changing how text looks: `string.str_upper()` makes everything BIG, and `string.str_lower()` makes everything small.\n\n### Transforming Text\n\n```xiom\nfn main() {\n  let message: Str = \"Hello World\";\n  let loud: Str = string.str_upper(message);\n  let quiet: Str = string.str_lower(message);\n  io.println(loud);\n  io.println(quiet);\n}\n```\n\nThis prints `HELLO WORLD` on one line and `hello world` on the next. Notice that letters change case but spaces and punctuation stay exactly the same!\n\n### Why Would You Do This?\n\nEver logged into a website and typed your email in all caps by accident? Many programs automatically convert usernames to lowercase so \"CoolKid123\" and \"coolkid123\" match. It's also great for making titles, formatting names, or creating fun text effects.\n\n### Combining with Other Skills\n\n```xiom\nfn main() {\n  let name: Str = \"alex\";\n  let upper_name: Str = string.str_upper(name);\n  let greeting: Str = string.str_concat(\"HELLO \", upper_name);\n  io.println(greeting);\n}\n```\n\nWe uppercase the name, then use concat to build a greeting. Now the whole message shouts: `HELLO ALEX`!",
   "analogy": "string.str_upper is like a megaphone for your text, and string.str_lower is like a quiet whisper.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let my_name: Str = \"YOUR_NAME\";\n  // TODO: convert my_name to uppercase, store in a variable\n  // TODO: convert my_name to lowercase, store in another variable\n  // TODO: print both versions\n}\n",
@@ -17,13 +17,13 @@
     "string-transformation"
   ],
   "tips": [
-    "str_upper and str_lower only affect letters � numbers and punctuation stay the same!",
-    "The original string is never changed � these functions return a brand new string",
+    "str_upper and str_lower only affect letters — numbers and punctuation stay the same!",
+    "The original string is never changed — these functions return a brand new string",
     "Combine with str_concat to build formatted messages like titles or greeting cards"
   ],
   "common_mistakes": [
-    "Expecting the original variable to change � `string.str_upper(name)` returns a new string, it doesn't modify `name` itself",
-    "Writing `str_upper(my_string)` without the `string.` part � it's `string.str_upper(my_string)`"
+    "Expecting the original variable to change — `string.str_upper(name)` returns a new string, it doesn't modify `name` itself",
+    "Writing `str_upper(my_string)` without the `string.` part — it's `string.str_upper(my_string)`"
   ],
   "next_lesson": "L0-18",
   "related": [

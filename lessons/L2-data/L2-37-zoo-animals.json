@@ -4,9 +4,9 @@
   "level": "L2",
   "duration": "8 min",
   "story": "The local zoo needs a digital animal catalog. Lions have an age. Elephants have an age AND weight. Penguins have a name (the zookeepers name each one). You need one type that describes all three, then functions to check which ones are babies.",
-  "why": "Enum variants can have completely different fields � each animal type carries only what's relevant to it.",
+  "why": "Enum variants can have completely different fields — each animal type carries only what's relevant to it.",
   "narrative": "## Modeling Diverse Animals\n\nDifferent animals need different data. An enum lets each variant carry its own unique set of fields.\n\n### The Animal Enum\n\n```xiom\nenum Animal {\n  Lion(age: Int),\n  Elephant(age: Int, weight: Float64),\n  Penguin(name: Str),\n}\n```\n\nLions have age. Elephants have age and weight. Penguins have a name instead of age.\n\n### Creating Animals\n\n```xiom\nlet simba = Animal.Lion(3);\nlet dumbo = Animal.Elephant(5, 2500.0);\nlet skipper = Animal.Penguin(\"Skipper\");\n```\n\n### Describing Any Animal\n\nMatch destructures each variant and builds a description:\n\n```xiom\nfn describe(a: Animal) -> Str {\n  match a {\n    Lion(age) => { return \"Lion, age \" + age; }\n    Elephant(age, weight) => { return \"Elephant, age \" + age + \", \" + weight + \"kg\"; }\n    Penguin(name) => { return \"Penguin named \" + name; }\n  }\n}\n```\n\n### Checking for Babies\n\nAnimals with an age field under 2 are babies. Penguins don't carry age, so they're never babies:\n\n```xiom\nfn is_baby(a: Animal) -> Bool {\n  match a {\n    Lion(age) => { return age < 2; }\n    Elephant(age, _) => { return age < 2; }\n    Penguin(_) => { return false; }\n  }\n}\n```\n\nThe `_` in `Elephant(age, _)` means \"I don't need the weight, just give me the age.\"\n\n### Using the Functions\n\n```xiom\nis_baby(simba);     // false (age 3)\nis_baby(dumbo);     // false (age 5)\n\nlet cub = Animal.Lion(1);\nis_baby(cub);       // true (age 1)\n```",
-  "analogy": "Animals are like different ID cards. A Lion card has an age field. An Elephant card has age AND weight. A Penguin card doesn't have age at all � it has a name. The zoo zookeeper reads each card differently.",
+  "analogy": "Animals are like different ID cards. A Lion card has an age field. An Elephant card has age AND weight. A Penguin card doesn't have age at all — it has a name. The zoo zookeeper reads each card differently.",
   "code_template": "use xiom.io;\n\nenum Animal {\n  Lion(age: Int),\n  Elephant(age: Int, weight: Float64),\n  Penguin(name: Str),\n}\n\n// TODO: write a function 'describe' that returns a unique string for each variant\n\n// TODO: write a function 'is_baby' that returns true if age < 2 (Penguins never babies)\n\n// TODO: write a function 'total_age' that sums ages, counting Penguins as 0\n\nfn main() -> Int {\n  // TODO: create baby lion (age 1), adult elephant (age 8, 5000kg), penguin, return total age\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum Animal {\n  Lion(age: Int),\n  Elephant(age: Int, weight: Float64),\n  Penguin(name: Str),\n}\n\nfn describe(a: Animal) -> Str {\n  match a {\n    Lion(age) => { return \"Lion, age \" + age; }\n    Elephant(age, weight) => { return \"Elephant, age \" + age + \", \" + weight + \"kg\"; }\n    Penguin(name) => { return \"Penguin named \" + name; }\n  }\n}\n\nfn is_baby(a: Animal) -> Bool {\n  match a {\n    Lion(age) => { return age < 2; }\n    Elephant(age, _) => { return age < 2; }\n    Penguin(_) => { return false; }\n  }\n}\n\nfn total_age(a: Animal) -> Int {\n  match a {\n    Lion(age) => { return age; }\n    Elephant(age, _) => { return age; }\n    Penguin(_) => { return 0; }\n  }\n}\n\nfn main() -> Int {\n  let cub = Animal.Lion(1);\n  let adult = Animal.Elephant(8, 5000.0);\n  let skipper = Animal.Penguin(\"Skipper\");\n  return total_age(cub) + total_age(adult) + total_age(skipper);\n}",
   "expected_output": "",
@@ -20,12 +20,12 @@
   ],
   "tips": [
     "Use `_` to ignore fields you don't need in a match arm: `Elephant(age, _)` ignores weight",
-    "Different variants can have different numbers of fields � the compiler tracks this for you",
-    "Name variants after the thing they represent: `Lion`, not `LionAnimal` � the enum name provides context"
+    "Different variants can have different numbers of fields — the compiler tracks this for you",
+    "Name variants after the thing they represent: `Lion`, not `LionAnimal` — the enum name provides context"
   ],
   "common_mistakes": [
-    "Trying to access `age` on a Penguin � penguins don't have an age field in this model",
-    "Forgetting the `_` wildcard on unused fields � match arms must bind or ignore every field"
+    "Trying to access `age` on a Penguin — penguins don't have an age field in this model",
+    "Forgetting the `_` wildcard on unused fields — match arms must bind or ignore every field"
   ],
   "next_lesson": "L2-38",
   "related": [

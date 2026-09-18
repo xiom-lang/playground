@@ -19,13 +19,13 @@
     "match"
   ],
   "tips": [
-    "Check the user first, then the password � this prevents leaking whether a user exists (security best practice says check both anyway, but for learning, order logically)",
+    "Check the user first, then the password — this prevents leaking whether a user exists (security best practice says check both anyway, but for learning, order logically)",
     "Carry useful data in success variants (like username) so the caller doesn't need to look it up again",
     "Name error variants after what went wrong, not what to do: `WrongPassword`, not `ShowError`"
   ],
   "common_mistakes": [
-    "Using `==` to compare `LoginResult` values directly � use `match` instead, it's clearer",
-    "Forgetting to handle all three variants after calling `try_login` � you might miss the error cases"
+    "Using `==` to compare `LoginResult` values directly — use `match` instead, it's clearer",
+    "Forgetting to handle all three variants after calling `try_login` — you might miss the error cases"
   ],
   "next_lesson": "L2-35",
   "related": [

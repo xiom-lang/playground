@@ -20,13 +20,13 @@
     "variant-data"
   ],
   "tips": [
-    "Use `if/if/else` chains for gem/potion subcategories � match inside match is valid but nested",
-    "Junk carries no data and has no value � the simplest possible variant",
-    "The value method returns different amounts for different gem names � this shows multi-level matching"
+    "Use `if/if/else` chains for gem/potion subcategories — match inside match is valid but nested",
+    "Junk carries no data and has no value — the simplest possible variant",
+    "The value method returns different amounts for different gem names — this shows multi-level matching"
   ],
   "common_mistakes": [
-    "Returning 200 for all gems � the value should depend on the gem name (Ruby=200, Diamond=500)",
-    "Forgetting to check all potion types � unknown potions should still return a reasonable default (20)"
+    "Returning 200 for all gems — the value should depend on the gem name (Ruby=200, Diamond=500)",
+    "Forgetting to check all potion types — unknown potions should still return a reasonable default (20)"
   ],
   "next_lesson": "L2-59",
   "related": [

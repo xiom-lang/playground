@@ -4,9 +4,9 @@
   "level": "L2",
   "duration": "8 min",
   "story": "Your movie collection has grown to hundreds of titles. You want to tag each one with a genre and quickly find the classics. An enum for genre and a bool-returning function make this trivial.",
-  "why": "Enums turn vague categories into compile-time-checked labels � no typos like \"Sci-Fi\" vs \"SciFi\".",
-  "narrative": "## Organizing Movies with Enums\n\nA movie has a title, year, and genre. An enum ensures the genre is always one of the valid options.\n\n### The Genre Enum\n\n```xiom\nenum Genre {\n  Action,\n  Comedy,\n  Drama,\n  SciFi,\n  Horror,\n}\n```\n\n### The Movie Struct\n\n```xiom\ntype Movie = {\n  title: Str;\n  genre: Genre;\n  year: Int;\n}\n```\n\n### Creating Movies\n\n```xiom\nlet alien = Movie{ title: \"Alien\"; genre: Genre.SciFi; year: 1979; };\nlet matrix = Movie{ title: \"The Matrix\"; genre: Genre.Action; year: 1999; };\n```\n\n### Filtering Classics\n\nA function that checks if a movie is a classic (released before 2000):\n\n```xiom\nfn is_classic(m: Movie) -> Bool {\n  return m.year < 2000;\n}\n```\n\n### Using the Filter\n\n```xiom\nis_classic(alien);   // true  (1979 < 2000)\nis_classic(matrix);  // true  (1999 < 2000)\n\nlet recent = Movie{ title: \"Dune\"; genre: Genre.SciFi; year: 2021; };\nis_classic(recent);  // false\n```\n\n### Enums Prevent Typos\n\nWithout an enum, you'd write `\"SciFi\"` and risk `\"Sci-Fi\"` or `\"sci-fi\"`. The enum guarantees only valid variants exist � the compiler catches mistakes.",
-  "analogy": "An enum is like a dropdown menu on a streaming site � you can only pick from the listed genres. A free-text field would let you type \"Comdy\" by mistake.",
+  "why": "Enums turn vague categories into compile-time-checked labels — no typos like \"Sci-Fi\" vs \"SciFi\".",
+  "narrative": "## Organizing Movies with Enums\n\nA movie has a title, year, and genre. An enum ensures the genre is always one of the valid options.\n\n### The Genre Enum\n\n```xiom\nenum Genre {\n  Action,\n  Comedy,\n  Drama,\n  SciFi,\n  Horror,\n}\n```\n\n### The Movie Struct\n\n```xiom\ntype Movie = {\n  title: Str;\n  genre: Genre;\n  year: Int;\n}\n```\n\n### Creating Movies\n\n```xiom\nlet alien = Movie{ title: \"Alien\"; genre: Genre.SciFi; year: 1979; };\nlet matrix = Movie{ title: \"The Matrix\"; genre: Genre.Action; year: 1999; };\n```\n\n### Filtering Classics\n\nA function that checks if a movie is a classic (released before 2000):\n\n```xiom\nfn is_classic(m: Movie) -> Bool {\n  return m.year < 2000;\n}\n```\n\n### Using the Filter\n\n```xiom\nis_classic(alien);   // true  (1979 < 2000)\nis_classic(matrix);  // true  (1999 < 2000)\n\nlet recent = Movie{ title: \"Dune\"; genre: Genre.SciFi; year: 2021; };\nis_classic(recent);  // false\n```\n\n### Enums Prevent Typos\n\nWithout an enum, you'd write `\"SciFi\"` and risk `\"Sci-Fi\"` or `\"sci-fi\"`. The enum guarantees only valid variants exist — the compiler catches mistakes.",
+  "analogy": "An enum is like a dropdown menu on a streaming site — you can only pick from the listed genres. A free-text field would let you type \"Comdy\" by mistake.",
   "code_template": "use xiom.io;\n\nenum Genre {\n  Action,\n  Comedy,\n  Drama,\n  SciFi,\n  Horror,\n}\n\ntype Movie = {\n  title: Str;\n  genre: Genre;\n  year: Int;\n}\n\n// TODO: write a function 'is_classic' that returns true for movies before 2000\n\n// TODO: write a function 'is_action' that returns true for Action genre\n\nfn main() -> Int {\n  // TODO: create 3 movies, count how many are both classics AND action, return the count\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum Genre {\n  Action,\n  Comedy,\n  Drama,\n  SciFi,\n  Horror,\n}\n\ntype Movie = {\n  title: Str;\n  genre: Genre;\n  year: Int;\n}\n\nfn is_classic(m: Movie) -> Bool {\n  return m.year < 2000;\n}\n\nfn is_action(m: Movie) -> Bool {\n  return m.genre == Genre.Action;\n}\n\nfn main() -> Int {\n  let m1 = Movie{ title: \"Die Hard\"; genre: Genre.Action; year: 1988; };\n  let m2 = Movie{ title: \"Fury Road\"; genre: Genre.Action; year: 2015; };\n  let m3 = Movie{ title: \"Inception\"; genre: Genre.Action; year: 2010; };\n  var count = 0;\n  if is_classic(m1) && is_action(m1) { count = count + 1; }\n  if is_classic(m2) && is_action(m2) { count = count + 1; }\n  if is_classic(m3) && is_action(m3) { count = count + 1; }\n  return count;\n}",
   "expected_output": "",
@@ -19,13 +19,13 @@
     "compiler safety"
   ],
   "tips": [
-    "Enum variants are accessed with `TypeName.Variant` � like `Genre.SciFi`",
+    "Enum variants are accessed with `TypeName.Variant` — like `Genre.SciFi`",
     "Use `==` to compare enum values (the variants themselves must be comparable)",
-    "Think of enums as a fixed vocabulary � the compiler is your spellchecker"
+    "Think of enums as a fixed vocabulary — the compiler is your spellchecker"
   ],
   "common_mistakes": [
-    "Typing `SciFi` directly instead of `Genre.SciFi` � the compiler needs the type prefix",
-    "Comparing enum values from different enum types (e.g., `Genre.Action == Mood.Happy`) � impossible"
+    "Typing `SciFi` directly instead of `Genre.SciFi` — the compiler needs the type prefix",
+    "Comparing enum values from different enum types (e.g., `Genre.Action == Mood.Happy`) — impossible"
   ],
   "next_lesson": "L2-27",
   "related": [

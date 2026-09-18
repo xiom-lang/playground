@@ -3,10 +3,10 @@
   "title": "Calendar Event",
   "level": "L2",
   "duration": "8 min",
-  "story": "Your calendar app shows events � meetings, birthdays, holidays, and deadlines. Each event has a date and a type. Holidays have a name (\"Christmas\"), but meetings don't need one. You need a system that handles all event types uniformly.",
+  "story": "Your calendar app shows events — meetings, birthdays, holidays, and deadlines. Each event has a date and a type. Holidays have a name (\"Christmas\"), but meetings don't need one. You need a system that handles all event types uniformly.",
   "why": "A struct for dates plus an enum for event types gives you a flexible calendar that formats any event.",
   "narrative": "## Modeling Calendar Events\n\nA calendar event has a date and a type. The type determines what extra information (if any) the event carries.\n\n### The Date Struct\n\n```xiom\ntype Date = {\n  day: Int;\n  month: Int;\n  year: Int;\n}\n```\n\n### The EventType Enum\n\n```xiom\nenum EventType {\n  Meeting,\n  Birthday,\n  Holiday(name: Str),\n  Deadline,\n}\n```\n\n### The Event Struct\n\n```xiom\ntype Event = {\n  date: Date;\n  kind: EventType;\n}\n```\n\n### Creating Events\n\n```xiom\nlet christmas = Event{\n  date: Date{ day: 25; month: 12; year: 2026; };\n  kind: EventType.Holiday(\"Christmas\");\n};\n\nlet deadline = Event{\n  date: Date{ day: 15; month: 7; year: 2026; };\n  kind: EventType.Deadline;\n};\n```\n\n### Formatting an Event\n\n```xiom\nfn format(e: Event) -> Str {\n  let date_str = e.date.day + \"/\" + e.date.month + \"/\" + e.date.year;\n  match e.kind {\n    Meeting => { return \"Meeting on \" + date_str; }\n    Birthday => { return \"Birthday on \" + date_str; }\n    Holiday(name) => { return name + \" on \" + date_str; }\n    Deadline => { return \"Deadline on \" + date_str; }\n  }\n}\n```\n\n### Using It\n\n```xiom\nformat(christmas);  // \"Christmas on 25/12/2026\"\nformat(deadline);   // \"Deadline on 15/7/2026\"\n```",
-  "analogy": "A calendar event is like a sticky note. The date is the day you stick it on. The event type is the color of the note � red for deadlines, green for birthdays. Holidays get an extra label written on them.",
+  "analogy": "A calendar event is like a sticky note. The date is the day you stick it on. The event type is the color of the note — red for deadlines, green for birthdays. Holidays get an extra label written on them.",
   "code_template": "use xiom.io;\n\ntype Date = {\n  day: Int;\n  month: Int;\n  year: Int;\n}\n\nenum EventType {\n  Meeting,\n  Birthday,\n  Holiday(name: Str),\n  Deadline,\n}\n\ntype Event = {\n  date: Date;\n  kind: EventType;\n}\n\n// TODO: write a function 'format' that returns a readable event description\n\n// TODO: write a function 'in_year' that returns true if the event is in a given year\n\nfn main() -> Int {\n  // TODO: create a birthday and a holiday in 2026, return count of events in 2026\n  return 0;\n}",
   "solution": "use xiom.io;\n\ntype Date = {\n  day: Int;\n  month: Int;\n  year: Int;\n}\n\nenum EventType {\n  Meeting,\n  Birthday,\n  Holiday(name: Str),\n  Deadline,\n}\n\ntype Event = {\n  date: Date;\n  kind: EventType;\n}\n\nfn format(e: Event) -> Str {\n  let date_str = e.date.day + \"/\" + e.date.month + \"/\" + e.date.year;\n  match e.kind {\n    Meeting => { return \"Meeting on \" + date_str; }\n    Birthday => { return \"Birthday on \" + date_str; }\n    Holiday(name) => { return name + \" on \" + date_str; }\n    Deadline => { return \"Deadline on \" + date_str; }\n  }\n}\n\nfn in_year(e: Event, yr: Int) -> Bool {\n  return e.date.year == yr;\n}\n\nfn main() -> Int {\n  let bday = Event{\n    date: Date{ day: 10; month: 3; year: 2026; };\n    kind: EventType.Birthday;\n  };\n  let holiday = Event{\n    date: Date{ day: 1; month: 1; year: 2026; };\n    kind: EventType.Holiday(\"New Year\");\n  };\n  var count = 0;\n  if in_year(bday, 2026) { count = count + 1; }\n  if in_year(holiday, 2026) { count = count + 1; }\n  return count;\n}",
   "expected_output": "",
@@ -20,12 +20,12 @@
     "formatting"
   ],
   "tips": [
-    "Put the date struct first � it's used by Event, so it must be defined above",
+    "Put the date struct first — it's used by Event, so it must be defined above",
     "Match on `e.kind` to handle each event type differently in your format function",
-    "Use `Int` for date components � years, months, and days are whole numbers"
+    "Use `Int` for date components — years, months, and days are whole numbers"
   ],
   "common_mistakes": [
-    "Defining Event before Date � the compiler reads top-to-bottom and won't know what Date is",
+    "Defining Event before Date — the compiler reads top-to-bottom and won't know what Date is",
     "Mixing up the order when creating a Date: `Date{ day: 25; month: 12; year: 2026; }` is correct"
   ],
   "next_lesson": "L2-39",

@@ -5,8 +5,8 @@
   "duration": "6 min",
   "story": "You're sorting a big pile of socks into pairs. Every time you find two matching socks, you make a pair and put them aside. But what if there's a leftover sock without a partner? That leftover means you have an odd number. Let's teach your program to figure out if any number is even or odd!",
   "why": "The modulo operator `%` is one of the most useful math tools in programming. It tells you what's left over after division, which helps with everything from alternating colors in a game to checking if a number is divisible.",
-  "narrative": "## The Remainder Trick\n\nWhen you divide numbers, sometimes they don't split evenly. If you have 7 cookies and 3 friends, each friend gets 2 cookies, and 1 cookie is left over. That leftover is called the **remainder**. The `%` (modulo) operator finds exactly that remainder.\n\n### How Modulo Works\n\n- `5 % 2` ? 5 divided by 2 leaves remainder 1\n- `8 % 2` ? 8 divided by 2 leaves remainder 0 (divides evenly!)\n- `10 % 3` ? 10 divided by 3 leaves remainder 1\n- `12 % 4` ? 12 divided by 4 leaves remainder 0\n\n### Even or Odd\n\nThe coolest use of `%` is checking if a number is even or odd. If a number divided by 2 has remainder 0, it's even. If the remainder is 1, it's odd:\n\n```xiom\nfn main() {\n  let number: Int = 7;\n\n  if number % 2 == 0 {\n    io.println(\"Even!\");\n  } else {\n    io.println(\"Odd!\");\n  }\n}\n```\n\n`number % 2` calculates the remainder when dividing by 2. Then `== 0` checks if that remainder is zero. If yes ? even. If no ? odd.\n\n### Testing Multiple Numbers\n\nLet's check several numbers to see the pattern:\n\n```xiom\nfn main() {\n  var count: Int = 1;\n\n  while count <= 10 {\n    io.print(count);\n    io.print(\" is \");\n\n    if count % 2 == 0 {\n      io.println(\"even\");\n    } else {\n      io.println(\"odd\");\n    }\n\n    count = count + 1;\n  }\n}\n```\n\nThis prints numbers 1 through 10, each labeled \"even\" or \"odd\". The `%` operator does the work every time � no memorizing which numbers are even!",
-  "analogy": "The modulo `%` is like dealing cards to friends � after dealing evenly around the circle, the cards left in your hand are the remainder.",
+  "narrative": "## The Remainder Trick\n\nWhen you divide numbers, sometimes they don't split evenly. If you have 7 cookies and 3 friends, each friend gets 2 cookies, and 1 cookie is left over. That leftover is called the **remainder**. The `%` (modulo) operator finds exactly that remainder.\n\n### How Modulo Works\n\n- `5 % 2` ? 5 divided by 2 leaves remainder 1\n- `8 % 2` ? 8 divided by 2 leaves remainder 0 (divides evenly!)\n- `10 % 3` ? 10 divided by 3 leaves remainder 1\n- `12 % 4` ? 12 divided by 4 leaves remainder 0\n\n### Even or Odd\n\nThe coolest use of `%` is checking if a number is even or odd. If a number divided by 2 has remainder 0, it's even. If the remainder is 1, it's odd:\n\n```xiom\nfn main() {\n  let number: Int = 7;\n\n  if number % 2 == 0 {\n    io.println(\"Even!\");\n  } else {\n    io.println(\"Odd!\");\n  }\n}\n```\n\n`number % 2` calculates the remainder when dividing by 2. Then `== 0` checks if that remainder is zero. If yes ? even. If no ? odd.\n\n### Testing Multiple Numbers\n\nLet's check several numbers to see the pattern:\n\n```xiom\nfn main() {\n  var count: Int = 1;\n\n  while count <= 10 {\n    io.print(count);\n    io.print(\" is \");\n\n    if count % 2 == 0 {\n      io.println(\"even\");\n    } else {\n      io.println(\"odd\");\n    }\n\n    count = count + 1;\n  }\n}\n```\n\nThis prints numbers 1 through 10, each labeled \"even\" or \"odd\". The `%` operator does the work every time — no memorizing which numbers are even!",
+  "analogy": "The modulo `%` is like dealing cards to friends — after dealing evenly around the circle, the cards left in your hand are the remainder.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a variable 'number' and set it to any whole number\n  // TODO: Check if number % 2 equals 0 (use == to compare)\n  // TODO: If yes, print \"Even!\"\n  // TODO: Else, print \"Odd!\"\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let number: Int = 7;\n\n  if number % 2 == 0 {\n    io.println(\"Even!\");\n  } else {\n    io.println(\"Odd!\");\n  }\n\n  var count: Int = 1;\n\n  while count <= 5 {\n    io.print(\"1\");\n    io.print(\" is \");\n\n    if count % 2 == 0 {\n      io.println(\"even\");\n    } else {\n      io.println(\"odd\");\n    }\n\n    count = count + 1;\n  }\n}\n",
   "expected_output": "Odd!\n1 is odd\n1 is even\n1 is odd\n1 is even\n1 is odd",
@@ -23,14 +23,14 @@
     "division"
   ],
   "tips": [
-    "`%` gives the remainder after division: `7 % 2` is 1 because 7 = 3�2 + 1.",
+    "`%` gives the remainder after division: `7 % 2` is 1 because 7 = 3×2 + 1.",
     "When `number % 2 == 0`, the number is even. When `number % 2 == 1`, it's odd.",
     "You can use `%` with any divisor: `% 3` checks divisibility by 3, `% 5` by 5, and so on.",
     "The modulo operator works on both positive and negative numbers."
   ],
   "common_mistakes": [
     "Using `/` instead of `%`: `7 / 2` gives 3 (the quotient), `7 % 2` gives 1 (the remainder).",
-    "Writing `number % 2 = 0` instead of `number % 2 == 0` � use double equals for comparison.",
+    "Writing `number % 2 = 0` instead of `number % 2 == 0` — use double equals for comparison.",
     "Forgetting parentheses: `number % 2 == 0` is correct; `number % 2 = = 0` with spaces in the double equals won't work."
   ],
   "next_lesson": "L0-37",

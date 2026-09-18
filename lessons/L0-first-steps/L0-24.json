@@ -4,9 +4,9 @@
   "level": "L0",
   "duration": "7 min",
   "story": "You're hosting a party and need to greet every guest as they arrive: \"Welcome, Mia!\" \"Welcome, Jay!\" \"Welcome, Priya!\" Instead of writing the same line over and over, you can put all the names in a list and let a `for` loop handle the greetings automatically!",
-  "why": "For loops are the cleanest way to process lists of things � from names in a contact list to items in a shopping cart to days in a month.",
-  "narrative": "## Looping Through a List\n\nA `for` loop visits each item in a list, one at a time. You don't need to track a counter or check a condition � the loop handles everything for you.\n\n### Your First For Loop\n\n```xiom\nfn main() {\n  let guests: Vec[Str] = [\"Mia\", \"Jay\", \"Priya\"];\n  for guest in guests {\n    io.print(\"Welcome, \");\n    io.println(guest);\n  }\n}\n```\n\nThis prints:\n`Welcome, Mia`\n`Welcome, Jay`\n`Welcome, Priya`\n\nEach time through the loop, `guest` holds the next name from the list. You don't have to write three separate print statements � one loop does all the work!\n\n### For Loop with Numbers\n\n```xiom\nfn main() {\n  for day in [1, 2, 3, 4, 5, 6, 7] {\n    io.print(\"Day \");\n    io.println(day);\n  }\n}\n```\n\nThis prints \"Day 1\" through \"Day 7\". Notice that `day` is an Int because the list contains integers. The loop variable takes on the type of whatever is in the list.\n\n### For vs While\n\nThink of `for` as the easy version of `while`. With `for`, you don't need a counter variable, a condition, or an update step. You just say \"for each thing in this list, do this\" and the loop figures out where to start and stop.\n\nUse `for` when you have a list to work through. Use `while` when you need custom counting or an unknown number of repetitions.",
-  "analogy": "A for loop is like a conveyor belt � items come to you one at a time, and you process each the same way.",
+  "why": "For loops are the cleanest way to process lists of things — from names in a contact list to items in a shopping cart to days in a month.",
+  "narrative": "## Looping Through a List\n\nA `for` loop visits each item in a list, one at a time. You don't need to track a counter or check a condition — the loop handles everything for you.\n\n### Your First For Loop\n\n```xiom\nfn main() {\n  let guests: Vec[Str] = [\"Mia\", \"Jay\", \"Priya\"];\n  for guest in guests {\n    io.print(\"Welcome, \");\n    io.println(guest);\n  }\n}\n```\n\nThis prints:\n`Welcome, Mia`\n`Welcome, Jay`\n`Welcome, Priya`\n\nEach time through the loop, `guest` holds the next name from the list. You don't have to write three separate print statements — one loop does all the work!\n\n### For Loop with Numbers\n\n```xiom\nfn main() {\n  for day in [1, 2, 3, 4, 5, 6, 7] {\n    io.print(\"Day \");\n    io.println(day);\n  }\n}\n```\n\nThis prints \"Day 1\" through \"Day 7\". Notice that `day` is an Int because the list contains integers. The loop variable takes on the type of whatever is in the list.\n\n### For vs While\n\nThink of `for` as the easy version of `while`. With `for`, you don't need a counter variable, a condition, or an update step. You just say \"for each thing in this list, do this\" and the loop figures out where to start and stop.\n\nUse `for` when you have a list to work through. Use `while` when you need custom counting or an unknown number of repetitions.",
+  "analogy": "A for loop is like a conveyor belt — items come to you one at a time, and you process each the same way.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let days: Vec[Str] = [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"];\n  // TODO: use a for loop to print each day\n  // TODO: each line should say \"Today is \" followed by the day\n}\n",
   "solution": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let days: Vec[Str] = [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"];\n  for __i in range(0, days.len()) {\n    let day = days[__i];\n    io.print(\"Today is \");\n    io.println(day);\n  }\n}\n",
   "expected_output": "Today is Mon\nToday is Tue\nToday is Wed\nToday is Thu\nToday is Fri",
@@ -18,13 +18,13 @@
     "collections"
   ],
   "tips": [
-    "The loop variable name is up to you � `for item in list` or `for x in numbers` both work fine",
+    "The loop variable name is up to you — `for item in list` or `for x in numbers` both work fine",
     "The list can contain anything: strings, numbers, even other lists!",
     "Inside the loop body, you can use the loop variable in calculations, comparisons, or string building"
   ],
   "common_mistakes": [
-    "Forgetting that `for` iterates through the whole list automatically � you don't need a counter or to check the length",
-    "Naming the loop variable the same as a variable outside the loop � this can cause confusing bugs!"
+    "Forgetting that `for` iterates through the whole list automatically — you don't need a counter or to check the length",
+    "Naming the loop variable the same as a variable outside the loop — this can cause confusing bugs!"
   ],
   "next_lesson": "L0-25",
   "related": [

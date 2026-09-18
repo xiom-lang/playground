@@ -3,14 +3,14 @@
   "title": "Temperature Alert",
   "level": "L2",
   "duration": "9 min",
-  "story": "You're building a smart thermostat dashboard. Temperatures range from freezing to scorching. At -5�C, you want a blue \"Freezing!\" alert. At 22�C, a green \"Normal.\" At 42�C, a red \"Extreme heat!\" Each alert carries the actual temperature so the UI can show the number.",
+  "story": "You're building a smart thermostat dashboard. Temperatures range from freezing to scorching. At -5°C, you want a blue \"Freezing!\" alert. At 22°C, a green \"Normal.\" At 42°C, a red \"Extreme heat!\" Each alert carries the actual temperature so the UI can show the number.",
   "why": "An enum with data in each variant models sensor alerts where the severity determines the message but data flows with the variant.",
-  "narrative": "## Modeling Temperature Alerts\n\nA temperature reading generates an alert. The alert's severity determines the message, but the actual temperature value travels inside the enum variant.\n\n### The Alert Enum\n\n```xiom\nenum Alert {\n  Normal,\n  Hot(temp: Int),\n  Cold(temp: Int),\n  Extreme(temp: Int),\n}\n```\n\n### Classifying Temperatures\n\nA function reads the Celsius value and decides which alert to fire:\n\n```xiom\nfn check_temperature(celsius: Int) -> Alert {\n  if celsius >= 40 { return Alert.Extreme(celsius); }\n  if celsius >= 30 { return Alert.Hot(celsius); }\n  if celsius <= 0 { return Alert.Cold(celsius); }\n  return Alert.Normal;\n}\n```\n\n### Generating Alert Messages\n\nEach alert type produces a different message:\n\n```xiom\nfn Alert.message(self) -> Str {\n  match self {\n    Normal => { return \"Temperature is comfortable.\"; }\n    Hot(temp) => { return \"Warning: \" + temp + \"\\u00b0C is hot!\"; }\n    Cold(temp) => { return \"Warning: \" + temp + \"\\u00b0C is cold!\"; }\n    Extreme(temp) => { return \"DANGER: \" + temp + \"\\u00b0C is extreme!\"; }\n  }\n}\n```\n\n### Testing the Range\n\n```xiom\ncheck_temperature(-5);   // Cold(-5)\ncheck_temperature(22);   // Normal\ncheck_temperature(35);   // Hot(35)\ncheck_temperature(45);   // Extreme(45)\n```\n\n### Using the Alert\n\n```xiom\nlet alert = check_temperature(42);\nalert.message();  // \"DANGER: 42�C is extreme!\"\n```",
+  "narrative": "## Modeling Temperature Alerts\n\nA temperature reading generates an alert. The alert's severity determines the message, but the actual temperature value travels inside the enum variant.\n\n### The Alert Enum\n\n```xiom\nenum Alert {\n  Normal,\n  Hot(temp: Int),\n  Cold(temp: Int),\n  Extreme(temp: Int),\n}\n```\n\n### Classifying Temperatures\n\nA function reads the Celsius value and decides which alert to fire:\n\n```xiom\nfn check_temperature(celsius: Int) -> Alert {\n  if celsius >= 40 { return Alert.Extreme(celsius); }\n  if celsius >= 30 { return Alert.Hot(celsius); }\n  if celsius <= 0 { return Alert.Cold(celsius); }\n  return Alert.Normal;\n}\n```\n\n### Generating Alert Messages\n\nEach alert type produces a different message:\n\n```xiom\nfn Alert.message(self) -> Str {\n  match self {\n    Normal => { return \"Temperature is comfortable.\"; }\n    Hot(temp) => { return \"Warning: \" + temp + \"\\u00b0C is hot!\"; }\n    Cold(temp) => { return \"Warning: \" + temp + \"\\u00b0C is cold!\"; }\n    Extreme(temp) => { return \"DANGER: \" + temp + \"\\u00b0C is extreme!\"; }\n  }\n}\n```\n\n### Testing the Range\n\n```xiom\ncheck_temperature(-5);   // Cold(-5)\ncheck_temperature(22);   // Normal\ncheck_temperature(35);   // Hot(35)\ncheck_temperature(45);   // Extreme(45)\n```\n\n### Using the Alert\n\n```xiom\nlet alert = check_temperature(42);\nalert.message();  // \"DANGER: 42°C is extreme!\"\n```",
   "analogy": "Alert is like a weather siren. The temperature is the sensor reading. Check_temperature is the person watching the dial: \"Under 0? Sound the cold siren. Over 40? Sound the extreme siren.\" The message method is the recorded voice that plays through the speakers.",
   "code_template": "use xiom.io;\n\nenum Alert {\n  Normal,\n  Hot(temp: Int),\n  Cold(temp: Int),\n  Extreme(temp: Int),\n}\n\n// TODO: write 'check_temperature' that classifies celsius into the correct Alert variant\n\n// TODO: write 'Alert.message' that returns an appropriate warning string\n\nfn main() -> Int {\n  // TODO: check temperature 35, return the temperature (extract from match)\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum Alert {\n  Normal,\n  Hot(temp: Int),\n  Cold(temp: Int),\n  Extreme(temp: Int),\n}\n\nfn check_temperature(celsius: Int) -> Alert {\n  if celsius >= 40 { return Alert.Extreme(celsius); }\n  if celsius >= 30 { return Alert.Hot(celsius); }\n  if celsius <= 0 { return Alert.Cold(celsius); }\n  return Alert.Normal;\n}\n\nfn Alert.message(self) -> Str {\n  match self {\n    Normal => { return \"Temperature is comfortable.\"; }\n    Hot(temp) => { return \"Warning: \" + temp + \"C is hot!\"; }\n    Cold(temp) => { return \"Warning: \" + temp + \"C is cold!\"; }\n    Extreme(temp) => { return \"DANGER: \" + temp + \"C is extreme!\"; }\n  }\n}\n\nfn main() -> Int {\n  let alert = check_temperature(35);\n  match alert {\n    Hot(temp) => { return temp; }\n    _ => { return 0; }\n  }\n}",
   "expected_output": "",
-  "try_it": "Add a `Freezing(temp: Int)` variant for temperatures below -10�C. Test temperatures from -15 to 50 in steps of 5. Add a `Alert.color(self) -> Str` method returning CSS colors: Normal=green, Hot=orange, Cold=blue, Extreme=red.",
+  "try_it": "Add a `Freezing(temp: Int)` variant for temperatures below -10°C. Test temperatures from -15 to 50 in steps of 5. Add a `Alert.color(self) -> Str` method returning CSS colors: Normal=green, Hot=orange, Cold=blue, Extreme=red.",
   "concepts": [
     "enum",
     "variant data",
@@ -21,12 +21,12 @@
   ],
   "tips": [
     "Check the most extreme cases first (>= 40, <= 0) so the order of `if` statements creates a priority system",
-    "Normal carries no data � when everything is fine, there's nothing extra to report",
+    "Normal carries no data — when everything is fine, there's nothing extra to report",
     "The `temp` field flows from `check_temperature` into the Alert variant, then out again in `message`"
   ],
   "common_mistakes": [
-    "Checking `celsius > 0` before `celsius <= 0` � a value of -5 passes > 0? No, but the order still matters for readability",
-    "Creating a Hot alert for 22�C � the threshold is 30, so 22 should be Normal"
+    "Checking `celsius > 0` before `celsius <= 0` — a value of -5 passes > 0? No, but the order still matters for readability",
+    "Creating a Hot alert for 22°C — the threshold is 30, so 22 should be Normal"
   ],
   "next_lesson": "L2-55",
   "related": [

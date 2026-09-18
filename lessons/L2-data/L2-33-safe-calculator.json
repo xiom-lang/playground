@@ -3,9 +3,9 @@
   "title": "Safe Calculator",
   "level": "L2",
   "duration": "8 min",
-  "story": "Your calculator app crashes every time someone divides by zero. Instead of crashing, you want it to say \"Cannot divide by zero!\" Enums can carry either a success value OR an error message � no crashes needed.",
+  "story": "Your calculator app crashes every time someone divides by zero. Instead of crashing, you want it to say \"Cannot divide by zero!\" Enums can carry either a success value OR an error message — no crashes needed.",
   "why": "Enums let functions return success OR failure in a single type, so callers must handle both cases.",
-  "narrative": "## Returning Success or Failure\n\nA function that might fail can return an enum: one variant for the happy path, one for the error. This forces the caller to handle both.\n\n### The CalcResult Enum\n\n```xiom\nenum CalcResult {\n  Value(n: Int),\n  Error(msg: Str),\n}\n```\n\n`Value` holds a successful result; `Error` holds a message explaining what went wrong.\n\n### Safe Division\n\n```xiom\nfn safe_divide(a: Int, b: Int) -> CalcResult {\n  if b == 0 {\n    return CalcResult.Error(\"Division by zero\");\n  }\n  return CalcResult.Value(a / b);\n}\n```\n\n### Handling the Result\n\nEvery caller must `match` on the result and handle both cases:\n\n```xiom\nlet result = safe_divide(10, 0);\nmatch result {\n  Value(n) => {\n    // Use n � division succeeded\n  }\n  Error(msg) => {\n    // Show the error to the user\n  }\n}\n```\n\n### More Safe Operations\n\n```xiom\nfn safe_add(a: Int, b: Int) -> CalcResult {\n  return CalcResult.Value(a + b);\n}\n\nfn safe_subtract(a: Int, b: Int) -> CalcResult {\n  return CalcResult.Value(a - b);\n}\n```\n\n### Chaining Results\n\n```xiom\nlet r1 = safe_divide(100, 5);  // Value(20)\nlet r2 = safe_divide(20, 0);   // Error(\"Division by zero\")\n```\n\nThis pattern is so common it has a name: the **Result type** � used across many languages for error handling without exceptions.",
+  "narrative": "## Returning Success or Failure\n\nA function that might fail can return an enum: one variant for the happy path, one for the error. This forces the caller to handle both.\n\n### The CalcResult Enum\n\n```xiom\nenum CalcResult {\n  Value(n: Int),\n  Error(msg: Str),\n}\n```\n\n`Value` holds a successful result; `Error` holds a message explaining what went wrong.\n\n### Safe Division\n\n```xiom\nfn safe_divide(a: Int, b: Int) -> CalcResult {\n  if b == 0 {\n    return CalcResult.Error(\"Division by zero\");\n  }\n  return CalcResult.Value(a / b);\n}\n```\n\n### Handling the Result\n\nEvery caller must `match` on the result and handle both cases:\n\n```xiom\nlet result = safe_divide(10, 0);\nmatch result {\n  Value(n) => {\n    // Use n — division succeeded\n  }\n  Error(msg) => {\n    // Show the error to the user\n  }\n}\n```\n\n### More Safe Operations\n\n```xiom\nfn safe_add(a: Int, b: Int) -> CalcResult {\n  return CalcResult.Value(a + b);\n}\n\nfn safe_subtract(a: Int, b: Int) -> CalcResult {\n  return CalcResult.Value(a - b);\n}\n```\n\n### Chaining Results\n\n```xiom\nlet r1 = safe_divide(100, 5);  // Value(20)\nlet r2 = safe_divide(20, 0);   // Error(\"Division by zero\")\n```\n\nThis pattern is so common it has a name: the **Result type** — used across many languages for error handling without exceptions.",
   "analogy": "A CalcResult is like a package from a store. You either got what you ordered (Value) or received a notice saying \"out of stock\" (Error). You don't know which until you open it.",
   "code_template": "use xiom.io;\n\nenum CalcResult {\n  Value(n: Int),\n  Error(msg: Str),\n}\n\n// TODO: write a function 'safe_divide' that returns Error when dividing by zero\n\n// TODO: write a function 'extract_value' that returns the n inside Value, or -1 on Error\n\nfn main() -> Int {\n  // TODO: divide 100 by 0, then 100 by 4, return the sum of extracted values\n  return 0;\n}",
   "solution": "use xiom.io;\n\nenum CalcResult {\n  Value(n: Int),\n  Error(msg: Str),\n}\n\nfn safe_divide(a: Int, b: Int) -> CalcResult {\n  if b == 0 {\n    return CalcResult.Error(\"Division by zero\");\n  }\n  return CalcResult.Value(a / b);\n}\n\nfn extract_value(r: CalcResult) -> Int {\n  match r {\n    Value(n) => { return n; }\n    Error(_) => { return -1; }\n  }\n}\n\nfn main() -> Int {\n  let r1 = safe_divide(100, 0);\n  let r2 = safe_divide(100, 4);\n  return extract_value(r1) + extract_value(r2);\n}",
@@ -19,13 +19,13 @@
     "safe operations"
   ],
   "tips": [
-    "Return `Error(...)` early when you detect a problem � no need to wrap everything in else",
-    "Every caller MUST match on the result � the compiler ensures you handle both success and failure",
-    "Name your variants clearly: `Value`/`Error` or `Ok`/`Err` � consistency helps readers"
+    "Return `Error(...)` early when you detect a problem — no need to wrap everything in else",
+    "Every caller MUST match on the result — the compiler ensures you handle both success and failure",
+    "Name your variants clearly: `Value`/`Error` or `Ok`/`Err` — consistency helps readers"
   ],
   "common_mistakes": [
-    "Only matching on `Value` and ignoring `Error` � if a variant isn't matched, the code won't compile",
-    "Using `if` instead of `match` to check results � this often misses the error case"
+    "Only matching on `Value` and ignoring `Error` — if a variant isn't matched, the code won't compile",
+    "Using `if` instead of `match` to check results — this often misses the error case"
   ],
   "next_lesson": "L2-34",
   "related": [

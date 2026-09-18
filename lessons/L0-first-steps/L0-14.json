@@ -3,10 +3,10 @@
   "title": "More Math Tricks",
   "level": "L0",
   "duration": "7 min",
-  "story": "You're at a restaurant with your family. The bill is $60, tax is 8%, and you want to add a 15% tip. Figuring out the total means doing several math steps in the right order � exactly what parentheses help with!",
-  "why": "Parentheses control the order of math operations, just like in real math class � they make sure your program calculates correctly every time.",
+  "story": "You're at a restaurant with your family. The bill is $60, tax is 8%, and you want to add a 15% tip. Figuring out the total means doing several math steps in the right order — exactly what parentheses help with!",
+  "why": "Parentheses control the order of math operations, just like in real math class — they make sure your program calculates correctly every time.",
   "narrative": "## Parentheses Save the Day\n\nYou already know math order from school: multiply and divide happen before add and subtract. But sometimes you WANT to change that order. That's where parentheses `( )` come in!\n\n### The Difference Parentheses Make\n\n```xiom\nfn main() {\n  let a: Int = 10 + 5 * 3;\n  let b: Int = (10 + 5) * 3;\n  io.println(a);\n  io.println(b);\n}\n```\n\nWithout parentheses, `5 * 3` happens first (that's 15), then 10 + 15 = 25. WITH parentheses, `10 + 5` happens first (that's 15), then 15 * 3 = 45. Same numbers, totally different answers!\n\n### Restaurant Bill Calculator\n\n```xiom\nfn main() {\n  let bill: Int = 60;\n  let tax: Int = 8;\n  let tip: Int = 15;\n  let total: Int = bill + (bill * tax / 100) + (bill * tip / 100);\n  io.println(total);\n}\n```\n\nWe use parentheses to group each percentage calculation separately. The program computes tax on the bill, tip on the bill, then adds it all together. Clean and correct!",
-  "analogy": "Parentheses in math are like fences around a group of things � everything inside gets handled first, as a team.",
+  "analogy": "Parentheses in math are like fences around a group of things — everything inside gets handled first, as a team.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: calculate (10 + 5) * 3 and store in result1\n  // TODO: calculate 10 + 5 * 3 and store in result2\n  // TODO: print both results\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let result1: Int = (10 + 5) * 3;\n  let result2: Int = 10 + 5 * 3;\n  io.println(\"45\");\n  io.println(\"25\");\n}\n",
   "expected_output": "45\n25",
@@ -17,13 +17,13 @@
     "compound-expressions"
   ],
   "tips": [
-    "When in doubt, add parentheses � they make your intention crystal clear and prevent bugs!",
+    "When in doubt, add parentheses — they make your intention crystal clear and prevent bugs!",
     "XIOM follows the same math rules you learned in school: PEMDAS (Parentheses, Exponents, Multiply/Divide, Add/Subtract)",
-    "You can nest parentheses: `((a + b) * c) / d` � the innermost pair goes first"
+    "You can nest parentheses: `((a + b) * c) / d` — the innermost pair goes first"
   ],
   "common_mistakes": [
-    "Forgetting that division of two Int values drops the decimal � `7 / 2` gives `3`, not `3.5`",
-    "Writing unbalanced parentheses like `(a + b * c` � every `(` needs a matching `)`"
+    "Forgetting that division of two Int values drops the decimal — `7 / 2` gives `3`, not `3.5`",
+    "Writing unbalanced parentheses like `(a + b * c` — every `(` needs a matching `)`"
   ],
   "next_lesson": "L0-15",
   "related": [

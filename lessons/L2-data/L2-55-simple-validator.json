@@ -19,13 +19,13 @@
     "form-validation"
   ],
   "tips": [
-    "Return the first validation error you encounter � don't try to list all problems at once",
+    "Return the first validation error you encounter — don't try to list all problems at once",
     "Include the threshold in the variant data: `TooShort(min: Int)` so the UI can show \"must be at least 3\"",
     "Use simple string matching to detect patterns: check for digits and special characters manually"
   ],
   "common_mistakes": [
-    "Returning Valid after finding a problem because you used `if` instead of `if/else if` � the last check overwrites earlier failures",
-    "Not including the threshold in the variant � without `min`, the caller can't build a precise error message"
+    "Returning Valid after finding a problem because you used `if` instead of `if/else if` — the last check overwrites earlier failures",
+    "Not including the threshold in the variant — without `min`, the caller can't build a precise error message"
   ],
   "next_lesson": "L2-56",
   "related": [

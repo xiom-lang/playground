@@ -3,10 +3,10 @@
   "title": "Countdown to Launch",
   "level": "L0",
   "duration": "6 min",
-  "story": "The rocket is on the launchpad. Mission Control starts the countdown: 10... 9... 8... Every second, one number appears on the giant screen. When it hits zero � BLAST OFF! Your program can be Mission Control, counting down from any number you choose.",
+  "story": "The rocket is on the launchpad. Mission Control starts the countdown: 10... 9... 8... Every second, one number appears on the giant screen. When it hits zero — BLAST OFF! Your program can be Mission Control, counting down from any number you choose.",
   "why": "`while` loops are how programs repeat an action until something changes. They power everything from game countdowns to loading bars to video playback.",
-  "narrative": "## Counting Down with a While Loop\n\nA `while` loop keeps running its code block over and over as long as a condition stays true. For a countdown, the condition is \"the count is greater than 0.\" Each time through, we subtract 1. When the count hits 0, the condition becomes false and the loop stops.\n\n### Rocket Launch Countdown\n\n```xiom\nfn main() {\n  var count: Int = 10;\n\n  io.println(\"Rocket launch sequence started!\");\n\n  while count > 0 {\n    io.println(count);\n    count = count - 1;\n  }\n\n  io.println(\"BLAST OFF!\");\n}\n```\n\nLet's walk through what happens:\n1. `count` starts at 10.\n2. Check: is 10 > 0? Yes ? print 10, subtract 1 (now 9).\n3. Check: is 9 > 0? Yes ? print 9, subtract 1 (now 8).\n4. ... continues: 7, 6, 5, 4, 3, 2, 1 ...\n5. Check: is 1 > 0? Yes ? print 1, subtract 1 (now 0).\n6. Check: is 0 > 0? NO ? exit the loop.\n7. Print \"BLAST OFF!\"\n\n### Why `var` Matters\n\nNotice `var count: Int = 10;` instead of `let`. The count MUST change inside the loop � otherwise the condition `count > 0` would always be true and the loop would run forever. `var` makes the variable mutable so you can update it.\n\n### Customizing the Countdown\n\nChange the starting number and the countdown adapts automatically:\n\n```xiom\nfn main() {\n  var count: Int = 5;\n\n  while count > 0 {\n    io.println(count);\n    count = count - 1;\n  }\n  io.println(\"Liftoff!\");\n}\n```\n\nThis prints 5, 4, 3, 2, 1, Liftoff! The same code, different starting point � no changes needed to the loop itself.",
-  "analogy": "A countdown loop is like a staircase � you start at the top step, take one step down each time through the loop, and stop when you reach the ground floor.",
+  "narrative": "## Counting Down with a While Loop\n\nA `while` loop keeps running its code block over and over as long as a condition stays true. For a countdown, the condition is \"the count is greater than 0.\" Each time through, we subtract 1. When the count hits 0, the condition becomes false and the loop stops.\n\n### Rocket Launch Countdown\n\n```xiom\nfn main() {\n  var count: Int = 10;\n\n  io.println(\"Rocket launch sequence started!\");\n\n  while count > 0 {\n    io.println(count);\n    count = count - 1;\n  }\n\n  io.println(\"BLAST OFF!\");\n}\n```\n\nLet's walk through what happens:\n1. `count` starts at 10.\n2. Check: is 10 > 0? Yes ? print 10, subtract 1 (now 9).\n3. Check: is 9 > 0? Yes ? print 9, subtract 1 (now 8).\n4. ... continues: 7, 6, 5, 4, 3, 2, 1 ...\n5. Check: is 1 > 0? Yes ? print 1, subtract 1 (now 0).\n6. Check: is 0 > 0? NO ? exit the loop.\n7. Print \"BLAST OFF!\"\n\n### Why `var` Matters\n\nNotice `var count: Int = 10;` instead of `let`. The count MUST change inside the loop — otherwise the condition `count > 0` would always be true and the loop would run forever. `var` makes the variable mutable so you can update it.\n\n### Customizing the Countdown\n\nChange the starting number and the countdown adapts automatically:\n\n```xiom\nfn main() {\n  var count: Int = 5;\n\n  while count > 0 {\n    io.println(count);\n    count = count - 1;\n  }\n  io.println(\"Liftoff!\");\n}\n```\n\nThis prints 5, 4, 3, 2, 1, Liftoff! The same code, different starting point — no changes needed to the loop itself.",
+  "analogy": "A countdown loop is like a staircase — you start at the top step, take one step down each time through the loop, and stop when you reach the ground floor.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a mutable variable 'count' starting at 10 using 'var'\n  // TODO: Write a while loop that runs while count > 0\n  // TODO: Inside the loop, print count and then subtract 1\n  // TODO: After the loop, print \"BLAST OFF!\"\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  var count: Int = 10;\n\n  io.println(\"Starting countdown:\");\n\n  while count > 0 {\n    io.println(\"10\");\n    count = count - 1;\n  }\n\n  io.println(\"BLAST OFF!\");\n}\n",
   "expected_output": "Starting countdown:\n10\n10\n10\n10\n10\n10\n10\n10\n10\n10\nBLAST OFF!",
@@ -21,16 +21,16 @@
     "mutable"
   ],
   "tips": [
-    "Use `var` (not `let`) for the count variable � it needs to change inside the loop.",
+    "Use `var` (not `let`) for the count variable — it needs to change inside the loop.",
     "The condition is checked BEFORE each loop iteration. If it's false from the start, the loop runs zero times.",
-    "Always make sure your loop makes progress toward the condition being false � otherwise you get an infinite loop.",
-    "You can print anything inside the loop � add dots, messages, or even multiple lines per count."
+    "Always make sure your loop makes progress toward the condition being false — otherwise you get an infinite loop.",
+    "You can print anything inside the loop — add dots, messages, or even multiple lines per count."
   ],
   "common_mistakes": [
     "Using `let` instead of `var`: `let count = 10;` then `count = count - 1;` will fail because `let` variables can't change.",
-    "Forgetting to subtract inside the loop � the count never changes, so the loop runs forever.",
-    "Putting a semicolon after the while condition: `while count > 0; {` � the semicolon creates an empty loop body.",
-    "Using `<=` instead of `>`: `while count <= 0` when count starts at 10 � condition is false immediately, loop never runs."
+    "Forgetting to subtract inside the loop — the count never changes, so the loop runs forever.",
+    "Putting a semicolon after the while condition: `while count > 0; {` — the semicolon creates an empty loop body.",
+    "Using `<=` instead of `>`: `while count <= 0` when count starts at 10 — condition is false immediately, loop never runs."
   ],
   "next_lesson": "L0-34",
   "related": [

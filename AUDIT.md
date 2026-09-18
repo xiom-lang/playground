@@ -819,12 +819,14 @@ New compiler findings from the sweep (for the compiler session):
   cases are deterministic, so their (buggy) output is stored faithfully and
   the nightly audit will flag the change when the compiler is fixed.
 
-Residual lesson-data item (R1, not A3 scope): 57 lesson files still contain
-U+FFFD replacement characters left by the Windows-1252 repair (originally
-em dashes, degree signs, and multiplication signs depending on context).
-Five of them (L0-28, L0-29, L0-35, L0-40, L2-28) appear in solutions, and the
-three that print them carry U+FFFD in their expected output today. Restoring
-the intended characters needs per-occurrence judgement; see also section 3.4.
+Residual lesson-data item (R1, resolved 2026-09-19): the Windows-1252 repair
+had left 390 U+FFFD replacement characters in 57 lesson files. All were
+restored with per-occurrence judgement: 374 em dashes, 10 multiplication
+signs (for example `8 guests x 3 slices`, `3x2`, `(age x 365)`, `$75 x 18%`),
+and 6 degree signs (`-5 C`, `22 C`, `42 C`). Five solutions contained them;
+the three that print one (L0-28, L0-29, L0-35) had their expected_output
+refreshed from the Linux sweep, and no lesson file contains U+FFFD anymore.
+See also section 3.4.
 
 ## 13. Mobile read-only lesson view (A4 complete, 2026-09-19)
 

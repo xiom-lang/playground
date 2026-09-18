@@ -4,9 +4,9 @@
   "level": "L0",
   "duration": "6 min",
   "story": "You're at the corner store buying snacks for a movie night. You grab 3 bags of chips at $4 each and 2 sodas at $2 each. Instead of doing the math in your head, you let your program figure out the total!",
-  "why": "Programs that calculate with variables can handle any numbers you throw at them � making them flexible and reusable.",
-  "narrative": "## Doing Math with Variables\n\nSo far we've printed numbers and strings. But the real magic happens when we put numbers inside variables and do math with them. Instead of hard-coding `io.println(\"12\")`, we can write `let total = price * quantity` and the program figures out the answer for us.\n\n### Your First Variable Calculation\n\nLet's say chips cost $4 per bag and you want 3 bags:\n\n```xiom\nfn main() {\n  let price: Int = 4;\n  let quantity: Int = 3;\n  let total: Int = price * quantity;\n  io.println(total);\n}\n```\n\nThe star `*` means multiply. The program reads `price * quantity`, does the math, and stores the result in `total`. If the price changes, you only need to update the variable � the math stays the same!\n\n### All the Math Signs\n\nYou can use `+` for add, `-` for subtract, `*` for multiply, and `/` for divide. Try changing the numbers and see what happens. Programs are like smart calculators that remember their work.",
-  "analogy": "Variables in math are like labeled jars � you put numbers in, do operations with the labels, and get new numbers out.",
+  "why": "Programs that calculate with variables can handle any numbers you throw at them — making them flexible and reusable.",
+  "narrative": "## Doing Math with Variables\n\nSo far we've printed numbers and strings. But the real magic happens when we put numbers inside variables and do math with them. Instead of hard-coding `io.println(\"12\")`, we can write `let total = price * quantity` and the program figures out the answer for us.\n\n### Your First Variable Calculation\n\nLet's say chips cost $4 per bag and you want 3 bags:\n\n```xiom\nfn main() {\n  let price: Int = 4;\n  let quantity: Int = 3;\n  let total: Int = price * quantity;\n  io.println(total);\n}\n```\n\nThe star `*` means multiply. The program reads `price * quantity`, does the math, and stores the result in `total`. If the price changes, you only need to update the variable — the math stays the same!\n\n### All the Math Signs\n\nYou can use `+` for add, `-` for subtract, `*` for multiply, and `/` for divide. Try changing the numbers and see what happens. Programs are like smart calculators that remember their work.",
+  "analogy": "Variables in math are like labeled jars — you put numbers in, do operations with the labels, and get new numbers out.",
   "code_template": "use xiom.io;\n\nfn main() {\n  let price: Int = 4;\n  let quantity: Int = 3;\n  // TODO: multiply price times quantity, store in total\n  // TODO: print the total\n}\n",
   "solution": "use xiom.io;\n\nfn main() {\n  let price: Int = 4;\n  let quantity: Int = 3;\n  let total: Int = price * quantity;\n  io.println(\"12\");\n}\n",
   "expected_output": "12",
@@ -19,11 +19,11 @@
   "tips": [
     "Always declare the type of your variable: `let total: Int = price * quantity;`",
     "Use descriptive names like `price` and `quantity` instead of `a` and `b`",
-    "The result of math goes into a NEW variable � don't try to change a `let` variable"
+    "The result of math goes into a NEW variable — don't try to change a `let` variable"
   ],
   "common_mistakes": [
-    "Forgetting the semicolon at the end of each line � every statement in XIOM needs one!",
-    "Using `x` instead of `*` for multiplication � `x` is just a letter, `*` is the multiply sign"
+    "Forgetting the semicolon at the end of each line — every statement in XIOM needs one!",
+    "Using `x` instead of `*` for multiplication — `x` is just a letter, `*` is the multiply sign"
   ],
   "next_lesson": "L0-13",
   "related": [

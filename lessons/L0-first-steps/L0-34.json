@@ -4,9 +4,9 @@
   "level": "L0",
   "duration": "6 min",
   "story": "Mom hands you the grocery list: milk, eggs, bread, apples, and cheese. She asks you to read each item out loud. Instead of reading them yourself, you write a program that goes through the list automatically, printing each item one by one!",
-  "why": "Lists are everywhere in programming � todo items, friend names, game inventory, song playlists. `for` loops let you visit each item in a list without writing repetitive code.",
-  "narrative": "## Walking Through a List\n\nA `for` loop takes a list of items and visits each one. You get a temporary variable that holds the current item, and the code inside the loop runs once for each thing in the list.\n\n### The Shopping List\n\nLet's create a list of groceries and print each one:\n\n```xiom\nfn main() {\n  let groceries = [\"milk\", \"eggs\", \"bread\", \"apples\", \"cheese\"];\n\n  io.println(\"Shopping list:\");\n\n  for item in groceries {\n    let message = string.str_concat(\"Buy: \", item);\n    io.println(message);\n  }\n\n  io.println(\"That's everything!\");\n}\n```\n\nThis prints:\n```\nShopping list:\nBuy: milk\nBuy: eggs\nBuy: bread\nBuy: apples\nBuy: cheese\nThat's everything!\n```\n\nThe `for` loop automatically visits each item. `item` gets the value `\"milk\"` on the first pass, `\"eggs\"` on the second, and so on.\n\n### How It Works\n\n1. `groceries` is a list of 5 strings inside `[ ]` brackets.\n2. `for item in groceries` means: \"for each thing in the list, put it in `item` and run the code.\"\n3. Inside the loop, we build a message using `string.str_concat(\"Buy: \", item)`.\n4. The loop repeats until every item has been visited.\n5. After the loop, we print a final message.\n\n### Lists of Numbers\n\nLists can hold numbers too:\n\n```xiom\nfn main() {\n  let prices = [3, 5, 2, 8, 4];\n\n  for price in prices {\n    io.println(price);\n  }\n}\n```\n\nSame pattern, different type of data. The `for` loop doesn't care what's inside the list � it just visits each item.",
-  "analogy": "A for loop is like reading names off a class roster � you point to each name, say it out loud, and move to the next one until the list is done.",
+  "why": "Lists are everywhere in programming — todo items, friend names, game inventory, song playlists. `for` loops let you visit each item in a list without writing repetitive code.",
+  "narrative": "## Walking Through a List\n\nA `for` loop takes a list of items and visits each one. You get a temporary variable that holds the current item, and the code inside the loop runs once for each thing in the list.\n\n### The Shopping List\n\nLet's create a list of groceries and print each one:\n\n```xiom\nfn main() {\n  let groceries = [\"milk\", \"eggs\", \"bread\", \"apples\", \"cheese\"];\n\n  io.println(\"Shopping list:\");\n\n  for item in groceries {\n    let message = string.str_concat(\"Buy: \", item);\n    io.println(message);\n  }\n\n  io.println(\"That's everything!\");\n}\n```\n\nThis prints:\n```\nShopping list:\nBuy: milk\nBuy: eggs\nBuy: bread\nBuy: apples\nBuy: cheese\nThat's everything!\n```\n\nThe `for` loop automatically visits each item. `item` gets the value `\"milk\"` on the first pass, `\"eggs\"` on the second, and so on.\n\n### How It Works\n\n1. `groceries` is a list of 5 strings inside `[ ]` brackets.\n2. `for item in groceries` means: \"for each thing in the list, put it in `item` and run the code.\"\n3. Inside the loop, we build a message using `string.str_concat(\"Buy: \", item)`.\n4. The loop repeats until every item has been visited.\n5. After the loop, we print a final message.\n\n### Lists of Numbers\n\nLists can hold numbers too:\n\n```xiom\nfn main() {\n  let prices = [3, 5, 2, 8, 4];\n\n  for price in prices {\n    io.println(price);\n  }\n}\n```\n\nSame pattern, different type of data. The `for` loop doesn't care what's inside the list — it just visits each item.",
+  "analogy": "A for loop is like reading names off a class roster — you point to each name, say it out loud, and move to the next one until the list is done.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a list of shopping items using [ ] brackets\n  // TODO: Print a header like \"Shopping list:\"\n  // TODO: Write a for loop that goes through each item\n  // TODO: Inside the loop, print \"Buy: \" followed by the item\n  // TODO: After the loop, print \"That's everything!\"\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nuse xiom.iter;\nfn main() {\n  let groceries = [\"milk\", \"eggs\", \"bread\", \"apples\", \"cheese\"];\n\n  io.println(\"Shopping list:\");\n\n  for __i in range(0, groceries.len()) {\n    let item = groceries[__i];\n    let message = string.str_concat(\"Buy: \", item);\n    io.println(message);\n  }\n\n  io.println(\"That's everything!\");\n}\n",
   "try_it": "Add 'chocolate' to the shopping list and run the program again. Then create a list of your favorite snacks and print them all with 'I love ' before each one. Can you make a list of numbers and print each one multiplied by 2 inside the loop?",
@@ -19,16 +19,16 @@
     "collection"
   ],
   "tips": [
-    "The loop variable (like `item`) is created automatically � no `let` or `var` needed.",
+    "The loop variable (like `item`) is created automatically — no `let` or `var` needed.",
     "Use descriptive names: `for friend in friends`, `for snack in snacks`.",
     "Lists use square brackets with commas between items: `[\"a\", \"b\", \"c\"]`.",
-    "You can do anything inside a for loop � print, do math, build strings, even use `if`/`else`."
+    "You can do anything inside a for loop — print, do math, build strings, even use `if`/`else`."
   ],
   "common_mistakes": [
-    "Writing `for item = in list` instead of `for item in list` � no equals sign, just `in`.",
-    "Using `let` before the loop variable: `for let item in list` � the loop creates the variable automatically.",
-    "Forgetting commas between list items: `[\"milk\" \"eggs\" \"bread\"]` won't work � each item must be separated by a comma.",
-    "Trying to use a `for` loop with just a number range like `for i in 1..10` � use a `while` loop for counting."
+    "Writing `for item = in list` instead of `for item in list` — no equals sign, just `in`.",
+    "Using `let` before the loop variable: `for let item in list` — the loop creates the variable automatically.",
+    "Forgetting commas between list items: `[\"milk\" \"eggs\" \"bread\"]` won't work — each item must be separated by a comma.",
+    "Trying to use a `for` loop with just a number range like `for i in 1..10` — use a `while` loop for counting."
   ],
   "next_lesson": "L0-35",
   "related": [
