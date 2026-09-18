@@ -1,9 +1,9 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-19. Branch `main`, commit `4445cac`, working tree clean,
+Last updated: 2026-09-19. Branch `main`, commit `f718ae6`, working tree clean,
 all commits pushed to `origin/main`.
 
-Read with `ROADMAP.md` (next work), `AUDIT.md` (findings, C1-C17), `README.md`
+Read with `ROADMAP.md` (next work), `AUDIT.md` (findings, C1-C19), `README.md`
 and `DEPLOY.md`.
 
 ## 1. Repository and scope
@@ -50,6 +50,22 @@ Audit (AUDIT.md) is fully implemented for this repository:
   `.`, keywords/types, signature snippets).
 - Known limitations: `tools/generate-limitations.js` -> `js/limitations.json`
   (31 lessons with reasons); lesson list badges them and disables Run.
+- Expected outputs (A3): `tools/generate-expected-outputs.js` sweeps every
+  solution twice on Linux and stores `expected_output`; 351/379 runnable
+  lessons are deterministic, the 28 with varying output are listed in
+  `tools/expected-output-skips.json` (compiler findings C18/C19). The Output
+  tab matches reference-solution runs, `tools/lesson-audit.js` asserts stored
+  outputs in the nightly job, and `--check` gates the data on every push.
+- Mobile (A4): screens <=768px never download Monaco; they get a read-only
+  program view with copy-to-clipboard, and Run/Format/examples all fall back
+  to `getMobileCodeValue()`.
+- Visual polish (A6): labeled landing section, search empty states, indigo
+  `:focus-visible` rings, theme-token fixes, one stdlib search box, and
+  working dotted queries (`io.println`).
+- Progress (B1-B4): `js/history.js` stores capped per-lesson run history,
+  shows a "Recent runs" block per lesson, a continue-where-you-left-off card
+  with level rings, JSON export/import, and a no-op `syncProgress()` adapter
+  whose registry contract is `docs/PROGRESS_SYNC.md`.
 - History rewrite: all commits/tags now `Lefteris Notas
   <lefterisnotas@gmail.com>`; backup bundle at
   `C:\Users\lefte\AppData\Local\Temp\kilo\playground-backup-20260918.bundle`.
@@ -58,28 +74,18 @@ Audit (AUDIT.md) is fully implemented for this repository:
 
 ## 3. Next work (ROADMAP.md)
 
-Phase A:
-- A3 expected outputs: generate `expected_output` for all lessons from a Linux
-  execution sweep, show match/mismatch in the Output tab, assert it in
-  `tools/lesson-audit.js` and CI. Largest remaining learning-UX item.
-- A4 mobile lesson view: read-only lesson + copy-to-clipboard on narrow
-  screens instead of cramped Monaco.
-- A6 finish visual polish (landing hierarchy, empty/focus states, both themes).
-
-Phase B (no backend):
-- B1 local history store (IndexedDB/localStorage, capped, per-lesson runs).
-- B2 history UI: per-lesson drawer, continue-where-you-left-off card,
-  per-level rings.
-- B3 export/import progress JSON.
-- B4 `syncProgress()` adapter + `docs/PROGRESS_SYNC.md` endpoint contract for
-  the registry service's future auth.
+Phase A (A3, A4, A6) and Phase B (B1-B4) are complete. Remaining:
 
 Phase C is blocked on the registry (search panel, GitHub OAuth SSO, shared
-design system).
+design system). Phase B leaves one hook ready for it: `syncProgress()` in
+`js/history.js` implements the contract in `docs/PROGRESS_SYNC.md`.
 
 Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
 flags, C5/C17 codegen bugs (the 31 blocked lessons), C6 stdlib `package.xi`,
-C8 WASM release asset.
+C8 WASM release asset, C18 `Str` data through containers printing
+nondeterministic pointer values (28 lessons cannot carry an expected output),
+C19 `.to_str()` on `Str`/`Float64` returning empty or bit-pattern values.
+The VPS owner will test Phase B after the next hourly pull.
 
 ## 4. Architecture map
 
@@ -87,28 +93,35 @@ C8 WASM release asset.
   `/api/ir`, `/api/tokens`, `/api/format`, `/api/lessons`, `/api/version`,
   `/api/health`; safe static serving from the repo dir.
 - `lib/run-xiom.js`: shared spawn with timeout + process-tree kill.
-- `js/`: `app.js` (shell, version footer, theme), `editor.js` (Monaco,
-  language, themes), `completions.js`, `compiler.js` (WASM preview + server
-  authority), `lessons.js` (catalog, narrative, limitations), `stdlib-ref.js`
-  (tiered panel), `wasm-loader.js`, `compiler-ref.js`, `syntax.js`.
-- `tools/`: `lesson-audit.js`, `migrate-lessons.js`, `lesson-patches.js`,
+- `js/`: `app.js` (shell, version footer, theme, continue card), `history.js`
+  (run history, export/import, sync adapter), `editor.js` (Monaco, mobile
+  read-only view), `completions.js`, `compiler.js` (WASM preview + server
+  authority + expected-output match), `lessons.js` (catalog, narrative,
+  limitations, rings), `stdlib-ref.js` (tiered panel), `wasm-loader.js`,
+  `compiler-ref.js`, `syntax.js`.
+- `tools/`: `lesson-audit.js`, `generate-expected-outputs.js`,
+  `expected-output-skips.json`, `migrate-lessons.js`, `lesson-patches.js`,
   `generate-stdlib-ref.js`, `generate-limitations.js`, `fetch-toolchain.*`,
-  `test-server.js`, `lib/toolchain.js`.
+  `test-server.js`, `lib/toolchain.js`, `lib/output.js`.
 - Data: `js/stdlib-ref.json`, `js/limitations.json`,
-  `tools/lesson-baseline.json`, `TOOLCHAIN_VERSION`, `WASM_VERSION`.
+  `tools/lesson-baseline.json`, `tools/expected-output-skips.json`,
+  `TOOLCHAIN_VERSION`, `WASM_VERSION`.
+- Docs: `docs/PROGRESS_SYNC.md` (registry progress API contract).
 
 ## 5. Commands
 
 ```powershell
-# Dev toolchain is already in .toolchain/ (Windows). For Linux execution:
-wsl -d Ubuntu -- bash /mnt/c/Users/lefte/AppData/Local/Temp/kilo/wsl_sweep.sh
+# Dev toolchain is already in .toolchain/ (Windows). Program execution must
+# run on Linux; the expected-output sweep drives WSL Ubuntu itself:
+node tools/generate-expected-outputs.js --wsl
 # (toolchain persists at /home/lefteris/xiom_audit/tc; Node is NOT installed
-#  in WSL, use python3 or install Node if a Node-based sweep is needed)
+#  in WSL, so the tool runs a python3 worker there)
 
 node server.js                         # local server (set XIOM_BIN/XIOM_STDLIB if needed)
 node tools/test-server.js              # 18 smoke checks
 node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
 node tools/lesson-audit.js             # + execute solutions (Linux; Windows clang hangs at -O2)
+node tools/generate-expected-outputs.js --check
 node tools/generate-stdlib-ref.js --check
 node tools/generate-limitations.js --check
 node tools/migrate-lessons.js          # dry run; --apply to write
@@ -146,8 +159,9 @@ node tools/migrate-lessons.js          # dry run; --apply to write
 
 1. `node --check` on every JS file (server, lib, tools, js).
 2. `node tools/test-server.js` (expect 18 passed, 1 Windows skip).
-3. `node tools/generate-stdlib-ref.js --check` and
-   `node tools/generate-limitations.js --check`.
+3. `node tools/generate-stdlib-ref.js --check`,
+   `node tools/generate-limitations.js --check` and
+   `node tools/generate-expected-outputs.js --check`.
 4. `node tools/lesson-audit.js --check-only --baseline
    tools/lesson-baseline.json` (expect "No regressions against baseline").
 5. `git status --porcelain` empty after staging; identity correct.
