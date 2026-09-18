@@ -649,13 +649,12 @@ New automation:
 - `.github/workflows/validate.yml`: JS syntax check, pinned toolchain fetch,
   lesson audit vs baseline, smoke tests; nightly execution of all solutions.
 
-Still open (tracked in sections 3, 4 and 7):
+Still open:
 
-- P14: generate `js/stdlib-ref.js` from the toolchain (516 modules / 6,497
-  `pub fn` vs 20 modules / 594 entries in the panel).
-- Cross-repo: C1 `--version`, C2 `xiom fmt`, C3 script-mode flags, C5 codegen
-  bugs, C6 stdlib `package.xi` pin, C8 WASM release asset.
+- Cross-repo: C1 `--version`, C2 `xiom fmt`, C3 script-mode flags, C5/C17
+  codegen bugs, C6 stdlib `package.xi` pin, C8 WASM release asset.
 - Phase 2 (lesson repair) is complete; see section 10.
+- P14 (stdlib reference) is complete; see section 11.
 
 ## 10. Lesson migration results (Phase 2 complete)
 
@@ -726,4 +725,30 @@ New compiler findings from the migration (for the compiler session):
   `i64` passed where `ptr` expected, and `expected '(' in call` for
   `Map[Int, Vec[Str]]` values. See `tools/lesson-baseline.json` for the full
   lesson list.
+
+## 11. Standard library reference generated from the toolchain (P14 complete)
+
+`tools/generate-stdlib-ref.js` scans the pinned toolchain's
+`lib/xiom/**/*.xi` and emits `js/stdlib-ref.json`:
+
+- 516 modules, 6,522 public functions, plus public types/enums/interfaces.
+- Curated descriptions from the old hand-written panel are preserved by
+  exact signature match, module-prefix-normalized match, and unique
+  base-name + arity match (527 descriptions recovered, all module
+  descriptions kept).
+- The output is byte-stable across runs (the timestamp is preserved when
+  content is unchanged), and `--check` fails CI when the file drifts from
+  the toolchain.
+- `js/stdlib-ref.js` is now UI-only and fetches the JSON lazily the first
+  time a reference panel opens, so the 470 KB data file is not on the
+  initial page load.
+- `index.html` no longer claims "20 stdlib modules"; the landing stats and
+  panel footer render real counts (`/api/version` and the JSON).
+
+Verified in a real browser: 516 module cards, "Search all 6522 functions...",
+footer `516 modules - 6,522 functions - XIOM v0.60.1`, `io.println` shows its
+curated description, search filters modules correctly, no console errors.
+
+Remaining production-grade work is cross-repo: the C1-C17 items above and
+the WASM release asset (C8). This repository's audit items are complete.
 

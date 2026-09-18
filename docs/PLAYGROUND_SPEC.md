@@ -1,5 +1,8 @@
 <!-- Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
      SPDX-License-Identifier: MIT OR Apache-2.0 -->
+> Historical specification (v0.49.9 era). The current architecture and
+> operational details live in `README.md`, `DEPLOY.md`, and `AUDIT.md`.
+
 # XIOM Playground v2.0 -- Product Specification
 
 **Version:** v0.49.9 -> v2.0  

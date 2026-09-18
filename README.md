@@ -49,7 +49,7 @@ health checks stay responsive while a submission compiles.
 - Keyboard shortcut Ctrl+Enter (Cmd+Enter) to run
 - In-browser WASM compiler: instant IR preview and offline diagnostics for pure programs
 - Server toolchain is authoritative for diagnostics and produces real program output
-- Stdlib reference and syntax panels
+- Full standard library reference generated from the toolchain (516 modules / 6,522 public functions) with search
 - Light/dark themes, progress tracking, responsive layout
 
 ## Versioning
@@ -72,7 +72,13 @@ node tools/test-server.js                    # HTTP smoke tests (no framework)
 node tools/lesson-audit.js --check-only      # compile every lesson + template
 node tools/lesson-audit.js                   # also execute every passing solution
 node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
+node tools/generate-stdlib-ref.js --check    # stdlib reference matches the toolchain
 ```
+
+`js/stdlib-ref.json` is generated from the pinned toolchain by
+`tools/generate-stdlib-ref.js` (curated descriptions are preserved by
+signature match) and is lazy-loaded by the reference panel. `--check` fails
+CI when it drifts from the toolchain.
 
 `tools/lesson-baseline.json` records known lesson failures so CI fails only
 on regressions. All 410 solutions and templates currently type-check; the

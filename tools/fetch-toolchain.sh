@@ -11,7 +11,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO"
 
-TAG="$(tr -d '\r\n ' < TOOLCHAIN_VERSION)"
+TAG="${TOOLCHAIN_TAG:-$(tr -d '\r\n ' < TOOLCHAIN_VERSION)}"
 VERSION="${TAG#v}"
 BASE_URL="https://dl.xiom-lang.org/releases/${TAG}"
 DEST="$REPO/.toolchain"

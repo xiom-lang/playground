@@ -10,7 +10,7 @@ var compilerRefData = {
         { cmd: "xiom build file.xi", desc: "Compile to native binary" },
         { cmd: "xiom check file.xi", desc: "Type-check only, no codegen" },
         { cmd: "xiom check --check-only file.xi", desc: "Parse + type-check only" },
-        { cmd: "xiom fmt file.xi", desc: "Format source code" },
+        { cmd: "xiom fmt file.xi", desc: "Format source code (CLI support pending; the playground reports it as unavailable)" },
         { cmd: "xiom doc file.xi", desc: "Generate documentation" },
       ]
     },

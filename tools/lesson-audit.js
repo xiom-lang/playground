@@ -43,6 +43,7 @@ const LEVEL = argValue('--level', null);
 const JSON_OUT = argValue('--json', path.join(WORK_ROOT, 'report.json'));
 const BASELINE = argValue('--baseline', null);
 const UPDATE_BASELINE = argValue('--update-baseline', null);
+const FAIL_ON_FAILURES = args.includes('--fail-on-failures');
 const CONCURRENCY = Math.max(1, Number(argValue('--concurrency', '4')));
 const TIMEOUT_CHECK = Number(argValue('--timeout-check', '30000'));
 const TIMEOUT_RUN = Number(argValue('--timeout-run', '30000'));
@@ -277,6 +278,17 @@ async function main() {
 
   const baseline = BASELINE ? loadBaseline(BASELINE) : null;
   if (UPDATE_BASELINE) writeBaseline(UPDATE_BASELINE, baseline, failures, !CHECK_ONLY);
+  if (FAIL_ON_FAILURES) {
+    const total = failures.encoding.length + failures.template.length + failures.solution.length +
+      (CHECK_ONLY ? 0 : failures.runtime.length);
+    if (total > 0) {
+      console.error('');
+      console.error('FAILURES: ' + total + ' (encoding=' + failures.encoding.length +
+        ' template=' + failures.template.length + ' solution=' + failures.solution.length +
+        (CHECK_ONLY ? '' : ' runtime=' + failures.runtime.length) + ')');
+      process.exit(2);
+    }
+  }
   if (BASELINE) {
     if (!baseline) {
       console.error('error: baseline not found: ' + BASELINE);

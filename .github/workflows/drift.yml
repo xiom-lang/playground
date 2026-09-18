@@ -1,0 +1,46 @@
+# Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+# SPDX-License-Identifier: MIT OR Apache-2.0
+#
+# Toolchain drift check: compare the pinned TOOLCHAIN_VERSION with the latest
+# release and, when they differ, run the full lesson type-check against the
+# newer toolchain. A failure means lessons or the pin need attention before
+# the next deploy.
+name: Toolchain drift
+
+on:
+  schedule:
+    - cron: '41 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve latest release
+        id: latest
+        run: |
+          TAG=$(curl -fsSL https://dl.xiom-lang.org/latest.json | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).tag))")
+          PIN=$(tr -d '\r\n ' < TOOLCHAIN_VERSION)
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "pin=$PIN" >> "$GITHUB_OUTPUT"
+          echo "latest=$TAG pinned=$PIN"
+
+      - name: Fetch latest toolchain
+        if: steps.latest.outputs.tag != steps.latest.outputs.pin
+        env:
+          TOOLCHAIN_TAG: ${{ steps.latest.outputs.tag }}
+        run: bash tools/fetch-toolchain.sh
+
+      - name: Type-check lessons against the latest toolchain
+        if: steps.latest.outputs.tag != steps.latest.outputs.pin
+        run: node tools/lesson-audit.js --check-only --quiet --fail-on-failures
+
+      - name: Drift summary
+        if: steps.latest.outputs.tag == steps.latest.outputs.pin
+        run: echo "Pinned toolchain is the latest release (${{ steps.latest.outputs.pin }}); nothing to do."

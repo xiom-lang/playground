@@ -8,7 +8,11 @@
 $ErrorActionPreference = 'Stop'
 
 $Repo = Split-Path -Parent $PSScriptRoot
-$Tag = (Get-Content -LiteralPath (Join-Path $Repo 'TOOLCHAIN_VERSION') -Raw).Trim()
+if ($env:TOOLCHAIN_TAG) {
+  $Tag = $env:TOOLCHAIN_TAG.Trim()
+} else {
+  $Tag = (Get-Content -LiteralPath (Join-Path $Repo 'TOOLCHAIN_VERSION') -Raw).Trim()
+}
 $Version = $Tag.TrimStart('v')
 $Asset = "xiom-$Version-windows-x64.zip"
 $BaseUrl = "https://dl.xiom-lang.org/releases/$Tag"

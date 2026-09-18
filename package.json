@@ -12,6 +12,8 @@
     "test": "node tools/test-server.js",
     "audit:lessons": "node tools/lesson-audit.js --check-only",
     "audit:lessons:full": "node tools/lesson-audit.js",
-    "audit:lessons:baseline": "node tools/lesson-audit.js --check-only --update-baseline tools/lesson-baseline.json"
+    "audit:lessons:baseline": "node tools/lesson-audit.js --check-only --update-baseline tools/lesson-baseline.json",
+    "stdlib:ref": "node tools/generate-stdlib-ref.js",
+    "stdlib:ref:check": "node tools/generate-stdlib-ref.js --check"
   }
 }

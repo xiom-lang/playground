@@ -1609,6 +1609,7 @@ html.light-mode .output-content {
 
 /* Footer */
 .stdlib-footer { padding: 10px 14px; border-top: 1px solid var(--border-soft); font-size: 10px; color: var(--low); text-align: center; font-family: var(--mono); }
+.stdlib-loading { padding: 24px 14px; color: var(--low); font-size: 12px; text-align: center; font-family: var(--mono); }
 
 /* On mobile, stdlib becomes full-screen overlay */
 @media (max-width: 768px) {

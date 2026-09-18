@@ -161,6 +161,16 @@ async function main() {
       assert.ok(/XIOM/i.test(res.body));
     });
 
+    await okAsync('GET /js/stdlib-ref.json serves the generated reference', async () => {
+      const res = await request('GET', '/js/stdlib-ref.json');
+      assert.strictEqual(res.status, 200);
+      assert.ok(/application\/json/.test(res.headers['content-type'] || ''));
+      const payload = JSON.parse(res.body);
+      assert.ok(payload.counts.modules >= 400, 'modules: ' + payload.counts.modules);
+      assert.ok(payload.counts.functions >= 5000, 'functions: ' + payload.counts.functions);
+      assert.ok(payload.modules.every((m) => Array.isArray(m.functions)));
+    });
+
     console.log('static containment:');
     for (const target of ['/../server.js', '/%2e%2e/server.js', '/..%2fserver.js', '/../../etc/passwd', '/.git/config', '/.kilo/worktrees']) {
       await okAsync('rejects ' + target, async () => {

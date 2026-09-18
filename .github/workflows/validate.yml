@@ -32,6 +32,9 @@ jobs:
       - name: Fetch pinned toolchain
         run: bash tools/fetch-toolchain.sh
 
+      - name: Stdlib reference is current
+        run: node tools/generate-stdlib-ref.js --check
+
       - name: Lesson audit (type checks vs baseline)
         run: node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
 
