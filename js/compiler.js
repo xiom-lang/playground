@@ -1,5 +1,10 @@
 // Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
 // SPDX-License-Identifier: MIT OR Apache-2.0
+// Compile pipeline bridge.
+//
+// The server toolchain is authoritative (it is newer than the bundled WASM).
+// The in-browser compiler is used for an instant IR preview and as an offline
+// fallback for diagnostics; the server response overwrites both when it lands.
 async function compile() {
   var screen = document.getElementById('lessonsScreen');
   if (!screen || screen.classList.contains('hidden')) return;
@@ -10,119 +15,129 @@ async function compile() {
   var statusEl = document.getElementById(ids.status);
   var btn = document.getElementById('btnRun');
 
-  // Show compiling state on button + status
   if (btn) btn.classList.add('running');
   statusEl.textContent = 'Compiling...';
   statusEl.className = 'status-bar busy';
   statusEl.style.display = '';
+  window._lastSource = source;
 
   var body = JSON.stringify({ source: source });
   var headers = { 'Content-Type': 'application/json' };
 
-  // In-browser WASM compiler (if loaded): diagnostics + LLVM IR instantly for
-  // PURE programs. Programs with `use` (stdlib imports) cannot compile in the
-  // wasm (no stdlib bundled) -- those go entirely to the server. The server
-  // /api/compile is still used to RUN the program (Output tab).
-  var wasmCompiled = false;
-  var wasmIrSet = false;
-  var pureProgram = source.indexOf('use ') === -1;
+  // 1. In-browser compiler: instant IR preview / offline diagnostics.
+  var wasmResult = null;
+  var pureProgram = source.indexOf('use ') === -1 && source.indexOf('use\t') === -1;
   if (window.xiomWasm && pureProgram) {
-    window.xiomWasm.then(function (w) {
-      if (!w) return;
-      try {
-        var res = JSON.parse(w.compile(source));
-        wasmCompiled = true;
-        var diagEl = document.getElementById(ids.diag);
-        if (diagEl) {
-          var diags = res.diagnostics || [];
-          if (diags.length > 0) {
-            diagEl.innerHTML = diags.map(function (d) {
-              var cls = d.kind === 'type_error' || d.kind === 'parse_error' || d.kind === 'lex_error' ? 'diag-error' : 'diag-warn';
-              return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' -- ' + escapeHtml(d.message) + '</div>';
-            }).join('');
-          } else if (res.success) {
-            diagEl.innerHTML = '<span style="color:#34d399">No diagnostics -- clean code. [OK] (WASM)</span>';
-          }
-          // Editor markers
-          if (window.editor && window.monaco) {
-            monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function (d) { return d.line > 0; }).map(function (d) {
-              return { severity: (d.kind === 'type_error' || d.kind === 'parse_error' || d.kind === 'lex_error') ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning, message: d.message, startLineNumber: d.line, startColumn: d.col || 1, endLineNumber: d.line, endColumn: (d.col || 1) + 15 };
-            }));
-          }
-        }
-        var irEl = document.getElementById(ids.ir);
-        if (irEl && res.ir) {
-          irEl.textContent = res.ir;
-          wasmIrSet = true;
-          irEl.classList.add('animate-in');
-        }
-        if (!res.success && !document.getElementById(ids.output).textContent) {
-          document.getElementById(ids.output).textContent = 'Compilation failed -- see Diagnostics tab.';
-        }
-      } catch (e) {
-        console.warn('[xiom-wasm] compile error, falling back to server: ' + e);
-        wasmCompiled = false;
-      }
-    }).catch(function () {});
+    try {
+      var wasm = await window.xiomWasm;
+      if (wasm) wasmResult = JSON.parse(wasm.compile(source));
+    } catch (e) {
+      console.warn('[xiom-wasm] compile failed, using server only: ' + e);
+    }
   }
+  if (wasmResult) renderWasmPreview(wasmResult, ids);
 
-  // Server /api/check: diagnostics fallback when the WASM compiler is absent.
-  if (!wasmCompiled) {
-    fetch('/api/check', { method: 'POST', headers: headers, body: body })
-      .then(function (r) { return r.json(); })
-      .then(function (check) {
-        if (wasmCompiled) return;
-        var diagEl = document.getElementById(ids.diag);
-        var diags = check.diagnostics || [];
-        if (diags.length > 0) {
-          diagEl.innerHTML = diags.map(function (d) {
-            var cls = d.kind === 'error' ? 'diag-error' : 'diag-warn';
-            return '<div class="diag-item ' + cls + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' -- ' + escapeHtml(d.message) + '</div>';
-          }).join('');
-        } else if (check.success) {
-          diagEl.innerHTML = '<span style="color:#34d399">No diagnostics -- clean code. [OK]</span>';
-        }
-        // Editor markers
-        if (window.editor && window.monaco) {
-          monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function (d) { return d.line > 0; }).map(function (d) {
-            return { severity: d.kind === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning, message: d.message, startLineNumber: d.line, startColumn: d.col || 1, endLineNumber: d.line, endColumn: (d.col || 1) + 15 };
-          }));
-        }
-        statusEl.textContent = 'Running...';
-      }).catch(function () {});
-  }
-
-  fetch('/api/compile', { method: 'POST', headers: headers, body: body })
-    .then(function(r) { return r.json(); })
-    .then(function(run) {
-      var outputEl = document.getElementById(ids.output);
-      outputEl.textContent = run.output || 'No output.';
-      outputEl.classList.add('animate-in');
-
-      var irEl = document.getElementById(ids.ir);
-      // Don't clobber the WASM-generated IR with the server's placeholder when
-      // the server only returns run output.
-      if (!wasmIrSet) {
-        irEl.textContent = run.ir ? run.ir : 'Click this tab to generate IR.';
+  // 2. Server type check (authoritative) and run happen in parallel.
+  var serverReachable = null;
+  var checkPromise = fetch('/api/check', { method: 'POST', headers: headers, body: body })
+    .then(function (r) { return r.json(); })
+    .then(function (check) {
+      serverReachable = true;
+      renderDiagnostics(check.diagnostics || [], !!check.success, ids, false);
+    })
+    .catch(function () {
+      serverReachable = false;
+      if (wasmResult) {
+        renderDiagnostics(wasmResult.diagnostics || [], !!wasmResult.success, ids, true);
       }
-
-      if (run.contracts) {
-        document.getElementById(ids.contracts).textContent = run.contracts;
-      }
-
-      var tokensEl = document.getElementById(ids.tokens);
-      if (!run.tokens) tokensEl.textContent = 'Click this tab to generate tokens.';
-
-      statusEl.innerHTML = run.success ? '[OK] Ran' : '[FAIL] Failed';
-      statusEl.className = run.success ? 'status-bar ok' : 'status-bar err';
-      if (btn) btn.classList.remove('running');
-
-      window._lastSource = source;
-    }).catch(function(e) {
-      statusEl.textContent = 'Server not running.';
-      statusEl.className = 'status-bar err';
-      if (btn) btn.classList.remove('running');
     });
+
+  var runPromise = fetch('/api/compile', { method: 'POST', headers: headers, body: body })
+    .then(function (r) { return r.json(); })
+    .then(function (run) {
+      renderRunResult(run, ids);
+      if (run.success) {
+        statusEl.innerHTML = '[OK] Ran in ' + ((run.elapsedMs || 0) / 1000).toFixed(1) + 's';
+        statusEl.className = 'status-bar ok';
+      } else if (run.timedOut) {
+        statusEl.textContent = 'Timed out. Try a smaller program.';
+        statusEl.className = 'status-bar err';
+      } else {
+        statusEl.innerHTML = '[FAIL] Failed';
+        statusEl.className = 'status-bar err';
+      }
+    })
+    .catch(function () {
+      if (statusEl.textContent === 'Compiling...') {
+        statusEl.textContent = serverReachable === false && wasmResult
+          ? 'Offline: in-browser diagnostics only. Output needs the server.'
+          : 'Server not running.';
+        statusEl.className = 'status-bar err';
+      }
+    });
+
+  await Promise.all([checkPromise, runPromise]);
+  if (btn) btn.classList.remove('running');
+}
+
+function renderWasmPreview(res, ids) {
+  var irEl = document.getElementById(ids.ir);
+  if (irEl && res.ir) {
+    irEl.textContent = res.ir;
+    irEl.classList.add('animate-in');
+    window._lastWasmIr = res.ir;
+  }
+  if (!res.success && !document.getElementById(ids.output).textContent) {
+    document.getElementById(ids.output).textContent = 'Compilation failed - see Diagnostics tab.';
+  }
+}
+
+function renderDiagnostics(diags, success, ids, fromWasm) {
+  var diagEl = document.getElementById(ids.diag);
+  if (!diagEl) return;
+  var isError = function (d) {
+    var kind = d.kind || '';
+    return kind === 'error' || kind === 'type_error' || kind === 'parse_error' || kind === 'lex_error' || (d.code || '').charAt(0) === 'E' || (d.code || '').charAt(0) === 'P' || (d.code || '').charAt(0) === 'T';
+  };
+  if (diags.length > 0) {
+    diagEl.innerHTML = diags.map(function (d) {
+      return '<div class="diag-item ' + (isError(d) ? 'diag-error' : 'diag-warn') + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' - ' + escapeHtml(d.message) + '</div>';
+    }).join('');
+  } else if (success) {
+    diagEl.innerHTML = '<span style="color:#34d399">No diagnostics - clean code. [OK]' + (fromWasm ? ' (WASM)' : '') + '</span>';
+  }
+  if (window.editor && window.monaco) {
+    monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function (d) { return d.line > 0; }).map(function (d) {
+      return {
+        severity: isError(d) ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
+        message: d.message,
+        startLineNumber: d.line,
+        startColumn: d.col || 1,
+        endLineNumber: d.line,
+        endColumn: (d.col || 1) + 15,
+      };
+    }));
+  }
+}
+
+function renderRunResult(run, ids) {
+  var outputEl = document.getElementById(ids.output);
+  outputEl.textContent = run.output || 'No output.';
+  outputEl.classList.add('animate-in');
+
+  if (run.ir) {
+    document.getElementById(ids.ir).textContent = run.ir;
+  } else if (!window._lastWasmIr) {
+    document.getElementById(ids.ir).textContent = 'Click this tab to generate IR.';
+  } else {
+    document.getElementById(ids.ir).textContent = window._lastWasmIr;
+  }
+  if (run.contracts) {
+    document.getElementById(ids.contracts).textContent = run.contracts;
+  }
+  if (!run.tokens) {
+    document.getElementById(ids.tokens).textContent = 'Click this tab to generate tokens.';
+  }
 }
 
 function escapeHtml(s) {
@@ -139,16 +154,18 @@ function highlightIR(ir) {
 }
 
 function updateTabBadgesAlt(diags, tokens, contracts, source) {
-  document.querySelectorAll('.output-tabs .tab .tab-badge').forEach(function(b){b.remove();});
+  document.querySelectorAll('.output-tabs .tab .tab-badge').forEach(function (b) { b.remove(); });
   function badge(el, n) {
     if (!el || !n) return;
-    var b = document.createElement('span'); b.className = 'tab-badge'; b.textContent = n;
+    var b = document.createElement('span');
+    b.className = 'tab-badge';
+    b.textContent = n;
     el.appendChild(b);
   }
-  document.querySelectorAll('.output-tabs .tab').forEach(function(t) {
+  document.querySelectorAll('.output-tabs .tab').forEach(function (t) {
     var dt = t.dataset.tab;
-    if (dt === 'diag') badge(t, diags.filter(function(d){return d.kind==='error'}).length);
-    if (dt === 'contracts' && (source.indexOf('requires:')>=0||source.indexOf('ensures:')>=0)) badge(t, 1);
+    if (dt === 'diag') badge(t, diags.filter(function (d) { return d.kind === 'error'; }).length);
+    if (dt === 'contracts' && (source.indexOf('requires:') >= 0 || source.indexOf('ensures:') >= 0)) badge(t, 1);
     if (dt === 'tokens' && tokens) badge(t, tokens.length);
   });
 }
@@ -162,13 +179,21 @@ function lazyLoadTab(tabName) {
   fetch('/api/' + (tabName === 'ir' ? 'ir' : 'tokens'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ source: source })
+    body: JSON.stringify({ source: source }),
   })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    el.textContent = data.success && data.output ? data.output : (data.error || 'Not available');
-  })
-  .catch(function() { el.textContent = 'Cannot reach server.'; });
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.success && data.output) {
+        el.textContent = data.output;
+      } else if (tabName === 'ir' && window._lastWasmIr) {
+        el.textContent = window._lastWasmIr + '\n\n; (in-browser compiler output; server unavailable)';
+      } else {
+        el.textContent = data.error || 'Not available';
+      }
+    })
+    .catch(function () {
+      el.textContent = (tabName === 'ir' && window._lastWasmIr) ? window._lastWasmIr : 'Cannot reach server.';
+    });
 }
 
 window.lazyLoadTab = lazyLoadTab;

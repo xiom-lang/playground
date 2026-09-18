@@ -55,11 +55,11 @@ function buildIndex(lessons) {
     levels.push({ id: lvl, name: info.name, icon: info.icon, description: info.description,
       lessons: levelMap[lvl].map(l => ({ id: l.id, title: l.title, file: l.file, duration: l.duration, concepts: l.concepts })) });
   }
-  return { version: '0.49.9', total_lessons: lessons.length, levels };
+  return { version: require('../package.json').version, total_lessons: lessons.length, levels };
 }
 
 // -- Main --
-console.log('\x1b[36m\x1b[1mXIOM Index Generator v0.49.9\x1b[0m');
+console.log('\x1b[36m\x1b[1mXIOM Index Generator v' + require('../package.json').version + '\x1b[0m');
 const lessons = collectLessons();
 console.log(`Found \x1b[32m${lessons.length}\x1b[0m lessons across \x1b[32m${new Set(lessons.map(l => l.level)).size}\x1b[0m levels.`);
 const index = buildIndex(lessons);

@@ -7,6 +7,7 @@ var currentLessonData = null;
 var lessonCatalogCache = null;
 var syntaxVisible = false;
 var compilerRefVisible = false;
+var serverInfo = null;
 
 
 function showLanding() {
@@ -112,6 +113,11 @@ function formatCode() {
   if (!source) return;
 
   var statusEl = document.getElementById('status');
+  if (serverInfo && serverInfo.capabilities && serverInfo.capabilities.format === false) {
+    statusEl.textContent = 'Formatting is not available with this toolchain.';
+    statusEl.className = 'status-bar err';
+    return;
+  }
   statusEl.textContent = 'Formatting...';
   statusEl.className = 'status-bar busy';
 
@@ -299,12 +305,42 @@ document.addEventListener('keydown', function (e) {
 window.addEventListener('load', function () {
   applyAppTheme();
   setupTabs();
+  loadServerInfo();
   if (window.loadLessonCatalog) window.loadLessonCatalog();
   checkLastProgress();
   initResizeHandle();
   applySavedTheme();
   checkOnboarding();
 });
+
+function loadServerInfo() {
+  fetch('/api/version')
+    .then(function (resp) { return resp.ok ? resp.json() : null; })
+    .then(function (info) {
+      if (!info) return;
+      serverInfo = info;
+      window.xiomServerInfo = info;
+
+      var statVersion = document.getElementById('statVersion');
+      if (statVersion) statVersion.textContent = 'Playground v' + info.server;
+
+      var footerVersion = document.getElementById('footerVersion');
+      if (footerVersion) {
+        footerVersion.textContent = 'v' + info.server + ' \u00B7 toolchain ' + info.toolchain;
+        footerVersion.title = 'Standard library ' + info.stdlib + ' \u00B7 in-browser compiler ' + info.wasm;
+      }
+
+      var statModules = document.getElementById('statModules');
+      if (statModules && info.stdlibModules) statModules.textContent = String(info.stdlibModules);
+
+      var statusEl = document.getElementById('status');
+      if (statusEl && statusEl.textContent === 'Ready.') {
+        statusEl.textContent = 'Ready. Toolchain ' + info.toolchain + '.';
+      }
+    })
+    .catch(function () { /* server info is best-effort */ });
+}
+window.loadServerInfo = loadServerInfo;
 
 function checkLastProgress() {
   var progress = window.getProgress ? window.getProgress() : [];

@@ -122,7 +122,7 @@ function padResults(count) {
   return String(count).padStart(4);
 }
 
-console.log(`${CYAN}${BOLD}XIOM Lesson Validator v0.49.9${RESET}`);
+console.log(`${CYAN}${BOLD}XIOM Lesson Validator v${require('../package.json').version}${RESET}`);
 console.log(`${DIM}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500${RESET}`);
 console.log(`Scanning lessons/ ...`);
 

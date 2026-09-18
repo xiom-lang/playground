@@ -1,62 +1,106 @@
 <!-- Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
      SPDX-License-Identifier: MIT OR Apache-2.0 -->
-# XIOM Playground v0.58.0
+# XIOM Playground
 
-Browser-based XIOM code editor and compiler. Write `.xi` code, compile to LLVM IR, see diagnostics -- all in your browser.
+Browser-based XIOM editor and lesson platform. Programs are type-checked,
+compiled, and executed by the installed XIOM toolchain through a sandboxed
+Node server; a bundled WASM compiler provides instant IR and offline
+diagnostics for pure (stdlib-free) programs.
 
-## Quick Start
+Live: https://playground.xiom-lang.org
+
+## Quick start
 
 ```bash
-cd xiom-playground
+# 1. Fetch the pinned toolchain into .toolchain/ (verifies SHA256SUMS)
+tools/fetch-toolchain.sh          # Linux/macOS/WSL/Git Bash
+powershell -File tools\fetch-toolchain.ps1   # Windows PowerShell
 
-# Node.js (recommended)
-node server.js
-# Open http://localhost:3000
-
-# Python (alternative)
-python server.py
+# 2. Start the server
+node server.js                    # or: npm start
 # Open http://localhost:3000
 ```
+
+The server resolves the compiler from `XIOM_BIN`, then `.toolchain/bin/xiom`,
+then `../target/debug/xiom` (a compiler checkout), then `PATH`. The stdlib
+resolves from `XIOM_STDLIB`, then `.toolchain/lib`, then `../stdlib`.
+
+## Endpoints
+
+| Method | Path | Purpose |
+|---|---|---|
+| POST | `/api/compile` | Type-check, compile, and run a program; returns output, diagnostics, contracts |
+| POST | `/api/check` | Type-check only (fast, no codegen) |
+| POST | `/api/ir` | LLVM IR for a program |
+| POST | `/api/tokens` | Token stream for a program |
+| POST | `/api/format` | Source formatting (reports unsupported when the toolchain has no `fmt`) |
+| GET | `/api/lessons` | Lesson catalog |
+| GET | `/api/version` | App, toolchain, stdlib, wasm versions |
+| GET | `/api/health` | Liveness and queue depth (never queued) |
+
+Request bodies are JSON and capped at 512 KB; `source` is capped at 200 KB.
+Compiles and checks run through a bounded async queue, so static files and
+health checks stay responsive while a submission compiles.
 
 ## Features
 
-- **Code editor** with line/column counter
-- **Multi-tab output**: Output, LLVM IR (syntax-highlighted), Diagnostics
-- **6 example programs**: Hello World, Fibonacci, Structs, Contracts, Option/if let, Vec/for
-- **Ctrl+Enter** to compile
-- **In-browser WASM compiler (v0.58.0)**: diagnostics + LLVM IR compile instantly in the browser (offline-capable for pure programs); the server still runs the program for the Output tab
-- **Server-side compilation** via local `xiom` binary (fallback + program execution)
+- Lesson browser with 410 interactive lessons across 9 levels
+- Monaco editor, output tabs for Output / Diagnostics / LLVM IR / Tokens / Contracts
+- Keyboard shortcut Ctrl+Enter (Cmd+Enter) to run
+- In-browser WASM compiler: instant IR preview and offline diagnostics for pure programs
+- Server toolchain is authoritative for diagnostics and produces real program output
+- Stdlib reference and syntax panels
+- Light/dark themes, progress tracking, responsive layout
 
-## Files
+## Versioning
 
-| File | Purpose |
-|------|---------|
-| `index.html` | Playground UI -- editor, tabs, IR highlighting |
-| `server.js` | Node.js dev server + `/api/compile` endpoint |
-| `server.py` | Python dev server (alternative) |
-| `js/wasm-loader.js` | Loads the in-browser WASM compiler (promise; falls back to server) |
-| `xiom_wasm.js` + `xiom_wasm_bg.wasm` | WASM compiler for browser (v0.58.0, wasm-bindgen web target) |
-| `xiom.wasm` / `xiom_v0.49.9.wasm` | Legacy WASM snapshots (v0.49.9 era) |
-| `xiom_v0.49.9.wasm` | Versioned snapshot |
+| File | Meaning |
+|---|---|
+| `TOOLCHAIN_VERSION` | The released XIOM toolchain the lessons are verified against |
+| `WASM_VERSION` | Version of the bundled `xiom_wasm_bg.wasm` |
+| `package.json` `version` | Playground app version |
 
-## Building the WASM compiler
+`tools/fetch-toolchain.*` downloads the pinned release from
+`https://dl.xiom-lang.org/releases/<tag>/` and verifies the release
+`SHA256SUMS`. `GET /api/version` reports all four values (app, toolchain,
+stdlib, wasm) and the active capability set; the UI reads it at load.
+
+## Validation
 
 ```bash
-# from the repo root
-cargo build -p xiom-wasm --target wasm32-unknown-unknown --release
-wasm-bindgen --target web --out-dir xiom-playground target/wasm32-unknown-unknown/release/xiom_wasm.wasm
+node tools/test-server.js                    # HTTP smoke tests (no framework)
+node tools/lesson-audit.js --check-only      # compile every lesson + template
+node tools/lesson-audit.js                   # also execute every passing solution
+node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
 ```
 
-Note: the in-browser compiler has no stdlib (no `use xiom.*` imports) -- it covers
-pure language programs (functions, structs, enums, generics, contracts, Vec,
-Option/Result builtins). Stdlib programs still work via the server endpoints.
+`tools/lesson-baseline.json` records known lesson failures so CI fails only
+on regressions. All 410 solutions and templates currently type-check; the
+baseline therefore contains only execution failures caused by compiler
+codegen defects (see `AUDIT.md` section 10). Regenerate it with
+`npm run audit:lessons:baseline`; the command is safe to re-run and preserves
+the execution baseline.
+
+CI (`.github/workflows/validate.yml`) runs JS syntax checks, the pinned
+toolchain fetch, the lesson audit against the baseline, and the server smoke
+tests on every push/PR; the nightly run also executes all solutions.
+
+## WASM compiler
+
+The in-browser compiler is built from the compiler repository
+(`crates/xiom-wasm`, wasm-bindgen `web` target). Replacing
+`xiom_wasm_bg.wasm`, `xiom_wasm.js`, and `xiom_wasm.d.ts` and updating
+`WASM_VERSION` is the update path until the release pipeline ships a WASM
+asset. It has no stdlib: pure programs only.
 
 ## Production
 
-For `playground.xiom-lang.org`, serve the static files with any HTTP server. The WASM compiler handles compilation in-browser.
+See `DEPLOY.md`. The container is the security boundary: the server runs
+non-root on a read-only filesystem with a tmpfs `/tmp`, dropped
+capabilities, memory/pid limits, and blocked egress.
 
 ## Requirements
 
-- Node.js 18+ (or Python 3) for dev server
-- Modern browser (Chrome, Firefox, Safari, Edge)
-- `xiom` binary installed for server-side compilation
+- Node.js 18+
+- A modern browser
+- The pinned toolchain (`tools/fetch-toolchain.*`) for server-side compilation

@@ -1,0 +1,43 @@
+# Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+# SPDX-License-Identifier: MIT OR Apache-2.0
+#
+# Playground validation: pinned toolchain, lesson audit against a known-failure
+# baseline, and server smoke tests. Nightly runs also execute every solution.
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JavaScript syntax check
+        run: |
+          for f in server.js lib/*.js tools/*.js tools/lib/*.js js/*.js; do
+            node --check "$f"
+          done
+
+      - name: Fetch pinned toolchain
+        run: bash tools/fetch-toolchain.sh
+
+      - name: Lesson audit (type checks vs baseline)
+        run: node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
+
+      - name: Server smoke tests
+        run: node tools/test-server.js
+
+      - name: Lesson audit (execute solutions)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: node tools/lesson-audit.js --baseline tools/lesson-baseline.json --concurrency 3

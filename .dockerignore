@@ -1,0 +1,15 @@
+# Build context kept out of the runtime image. The server itself only needs
+# the static assets, lessons/, and server.js.
+.git
+.gitignore
+.kilo
+.toolchain
+.toolchain.stage
+.github
+tools
+docs
+node_modules
+*.md
+server.py
+playground.code-workspace
+AUDIT.md

@@ -7,3 +7,6 @@ build/
 .DS_Store
 *.log
 *.code-workspace
+.toolchain/
+.toolchain.stage/
+tools/.syntax-cache.json
