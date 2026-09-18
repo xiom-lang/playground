@@ -868,3 +868,31 @@ Changes:
   names and signatures are indexed as "module signature"; queries now
   normalize dots to spaces. Dead `.stdlib-search` CSS was removed.
 
+## 15. Progress and history (Phase B complete, 2026-09-19)
+
+B1-B4 are implemented in `js/history.js`:
+
+- `xiom_history_v1` stores newest-first run records per lesson
+  (`{ t, ok, timeout, ms, out }`, output truncated to 400 characters), capped
+  at 20 per lesson and 400 runs total, pruned oldest-first. `recordRun()` is
+  called from the real compile path in `js/compiler.js`.
+- The narrative shows a per-lesson "Recent runs" block (pass/fail dot,
+  relative time, duration, output preview, per-lesson Clear). The landing
+  continue card prefers the lesson opened last when it is not completed,
+  shows the last session time, and the sidebar level headers now carry
+  completion rings (18px SVG, indigo, green when a level is complete).
+- `buildProgressExport()` defines the portable document; the landing actions
+  export it as `xiom-progress-YYYY-MM-DD.json` and import it back with a
+  union merge of completed lessons and a timestamp merge of history.
+- `syncProgress()` resolves `{ ok: false, synced: false, reason }` locally;
+  `docs/PROGRESS_SYNC.md` specifies the future registry endpoints, payload,
+  revision conflicts, merge policy, and privacy boundary.
+
+Verified in a real browser: a mocked `/api/compile` run produced a history
+entry through `compile()` itself, the history block rendered it, rings
+updated from 0 to 1/50, the continue card showed "Continue: Printing
+Messages" with a fresh timestamp, and an export/import round trip into
+cleared storage restored both completed lessons and all run records
+(`{ ok: true, added: 1, runs: 2 }`). The no-op sync returned and displayed
+its reason. No console errors from the new code.
+

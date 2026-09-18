@@ -40,9 +40,20 @@
       <button class="btn-secondary" onclick="openFreePlay()">Try Playground</button>
     </div>
     <div id="continueSection" class="continue-section hidden">
-      <div class="continue-prompt">You've completed <strong id="continueCount">0</strong> lessons. Pick up where you left off:</div>
+      <div class="continue-prompt" id="continuePrompt">You've completed <strong id="continueCount">0</strong> lessons. Pick up where you left off:</div>
       <button id="btnContinue" class="btn-primary continue-btn" onclick="continueLearning()">Continue Learning &#x2192;</button>
+      <div id="continueHint" class="continue-hint hidden"></div>
     </div>
+    <div class="progress-actions">
+      <button class="btn-ghost" type="button" onclick="exportProgress()">Export progress</button>
+      <label class="btn-ghost file-btn">
+        Import progress
+        <input type="file" id="progressImport" accept="application/json,.json" onchange="importProgressFromInput(this)">
+      </label>
+      <button class="btn-ghost" type="button" onclick="showSyncStatus()" title="Progress sync will arrive with accounts">Sync</button>
+      <span id="progressNotice" class="progress-notice" role="status" aria-live="polite"></span>
+    </div>
+    <div class="progress-actions-hint">Local backup in your browser &mdash; no account needed.</div>
   </div>
 
   <section class="landing-section" aria-labelledby="whyXiom">
@@ -212,6 +223,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
 <script src="js/app.js"></script>
+<script src="js/history.js"></script>
 <script src="js/completions.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/wasm-loader.js"></script>

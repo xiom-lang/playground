@@ -13,6 +13,7 @@ var serverInfo = null;
 function showLanding() {
   document.getElementById('landing').classList.remove('hidden');
   document.getElementById('lessonsScreen').classList.add('hidden');
+  if (window.checkLastProgress) window.checkLastProgress();
 }
 
 function startLearning() {
@@ -350,34 +351,61 @@ window.loadServerInfo = loadServerInfo;
 
 function checkLastProgress() {
   var progress = window.getProgress ? window.getProgress() : [];
-  if (progress.length === 0) return;
+  var last = window.lastLesson ? window.lastLesson() : null;
+  if (progress.length === 0 && !last) return;
 
   var el = document.getElementById('continueSection');
   if (!el) return;
 
   el.classList.remove('hidden');
 
-  var countEl = document.getElementById('continueCount');
-  if (countEl) countEl.textContent = progress.length;
+  var promptEl = document.getElementById('continuePrompt');
+  if (promptEl) {
+    if (progress.length > 0) {
+      var lessonWord = progress.length === 1 ? 'lesson' : 'lessons';
+      promptEl.innerHTML = 'You\'ve completed <strong id="continueCount">' + progress.length + '</strong> ' + lessonWord + '. Pick up where you left off:';
+    } else {
+      promptEl.textContent = 'Welcome back. Pick up where you left off:';
+    }
+  }
+
+  var hintEl = document.getElementById('continueHint');
+  var summary = window.historySummary ? window.historySummary() : null;
+  if (hintEl) {
+    if (last && summary && summary.lastAt) {
+      var when = window.formatRelativeTime ? window.formatRelativeTime(summary.lastAt) : '';
+      hintEl.textContent = 'Last session: ' + (last.title || last.id) + (when ? ' \u00b7 ' + when : '');
+      hintEl.classList.remove('hidden');
+    } else {
+      hintEl.classList.add('hidden');
+    }
+  }
 
   var btnEl = document.getElementById('btnContinue');
-  if (btnEl && lessonCatalogCache) {
-    var allLessons = [];
-    lessonCatalogCache.levels.forEach(function (level) {
-      level.lessons.forEach(function (lesson) {
-        allLessons.push(lesson);
-      });
-    });
+  if (!btnEl || !lessonCatalogCache) return;
 
+  var allLessons = [];
+  lessonCatalogCache.levels.forEach(function (level) {
+    level.lessons.forEach(function (lesson) { allLessons.push(lesson); });
+  });
+
+  var candidate = null;
+  if (last && last.id && last.file && progress.indexOf(last.id) === -1) {
+    candidate = { id: last.id, file: last.file, title: last.title || last.id };
+  }
+  if (!candidate) {
     for (var i = 0; i < allLessons.length; i++) {
-      if (progress.indexOf(allLessons[i].id) === -1) {
-        btnEl.setAttribute('data-lesson-id', allLessons[i].id);
-        btnEl.setAttribute('data-lesson-file', allLessons[i].file);
-        btnEl.textContent = 'Continue: ' + allLessons[i].title + ' \u2192';
-        return;
-      }
+      if (progress.indexOf(allLessons[i].id) === -1) { candidate = allLessons[i]; break; }
     }
+  }
 
+  if (candidate) {
+    btnEl.setAttribute('data-lesson-id', candidate.id);
+    btnEl.setAttribute('data-lesson-file', candidate.file);
+    btnEl.textContent = 'Continue: ' + candidate.title + ' \u2192';
+  } else {
+    btnEl.removeAttribute('data-lesson-id');
+    btnEl.removeAttribute('data-lesson-file');
     btnEl.textContent = 'All lessons completed! \u2605 Review \u2192';
   }
 }

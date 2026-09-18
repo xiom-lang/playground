@@ -55,6 +55,7 @@ function loadLessonCatalog() {
       window.lessonCatalogCache = catalog;
       renderLessonList(catalog);
       updateProgressSummary();
+      if (window.checkLastProgress) window.checkLastProgress();
     })
     .catch(function (err) {
       fetch('lessons/index.json')
@@ -64,6 +65,7 @@ function loadLessonCatalog() {
           window.lessonCatalogCache = catalog;
           renderLessonList(catalog);
           updateProgressSummary();
+          if (window.checkLastProgress) window.checkLastProgress();
         })
         .catch(function () {
           document.getElementById('lessonList').innerHTML = '<div class="lesson-error">Failed to load lessons. Is the server running?</div>';
@@ -87,11 +89,17 @@ function renderLessonList(catalog) {
     }).length;
     var totalCount = level.lessons.length;
     var completedClass = completedCount === totalCount ? ' all-done' : '';
+    var ratio = totalCount > 0 ? completedCount / totalCount : 0;
+    var dash = (43.98 * ratio).toFixed(1);
 
     header.innerHTML =
       '<span class="level-icon">' + level.icon + '</span>' +
       '<span class="level-name">' + level.name + '</span>' +
-      '<span class="level-progress' + completedClass + '">' + completedCount + ' / ' + totalCount + '</span>';
+      '<svg class="level-ring' + (completedCount === totalCount ? ' complete' : '') + '" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">' +
+      '<circle class="level-ring-track" cx="9" cy="9" r="7"></circle>' +
+      '<circle class="level-ring-fill" cx="9" cy="9" r="7" style="stroke-dasharray:' + dash + ' 43.98"></circle>' +
+      '</svg>' +
+      '<span class="level-progress' + completedClass + '" title="' + completedCount + ' of ' + totalCount + ' lessons completed">' + completedCount + ' / ' + totalCount + '</span>';
 
     container.appendChild(header);
 
@@ -159,6 +167,18 @@ function selectLesson(lessonId, lessonFile) {
     item.classList.toggle('active', item.dataset.lessonId === lessonId);
   });
 
+  if (window.rememberLesson) {
+    var title = lessonId;
+    if (lessonCatalogCache && lessonCatalogCache.levels) {
+      lessonCatalogCache.levels.forEach(function (level) {
+        level.lessons.forEach(function (lesson) {
+          if (lesson.id === lessonId) title = lesson.title;
+        });
+      });
+    }
+    window.rememberLesson(lessonId, lessonFile, title);
+  }
+
   loadLessonContent(lessonFile);
 }
 
@@ -176,6 +196,7 @@ function loadLessonContent(lessonFile) {
     .then(function (lesson) {
       currentLessonData = lesson;
       renderNarrative(lesson);
+      if (window.renderHistoryBlock) window.renderHistoryBlock(lesson.id);
       document.getElementById('lessonTitle').textContent = lesson.title;
       if (window.editor && lesson.code_template) {
         window.editor.setValue(lesson.code_template);
@@ -283,6 +304,8 @@ function renderNarrative(lesson) {
     html += '<p>' + escapeHtml(lesson.try_it) + '</p>';
     html += '</div>';
   }
+
+  html += '<div id="lessonHistory" class="history-block"></div>';
 
   panel.innerHTML = html;
 }

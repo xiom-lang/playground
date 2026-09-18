@@ -50,6 +50,7 @@ health checks stay responsive while a submission compiles.
 - In-browser WASM compiler: instant IR preview and offline diagnostics for pure programs
 - Server toolchain is authoritative for diagnostics and produces real program output
 - Expected-output match for reference solutions ("Output matches the expected result")
+- Local run history per lesson, continue-where-you-left-off, progress export/import
 - Full standard library reference generated from the toolchain (516 modules / 6,522 public functions) with search
 - Light/dark themes, progress tracking, responsive layout
 

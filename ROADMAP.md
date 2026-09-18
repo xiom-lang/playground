@@ -55,19 +55,24 @@ make editor support match what developers expect.
 
 Goal: make progress durable and reviewable without requiring an account.
 
-- [ ] B1. Local history store
-  - IndexedDB/localStorage history: per lesson, timestamped run results
-    (success, output, duration), capped and pruned.
-- [ ] B2. History UI
-  - Per-lesson history drawer (last runs, pass/fail), "continue where you
-    left off" card on the landing screen, per-level completion rings.
-- [ ] B3. Export / import
-  - Download/upload a JSON progress file; document it as the pre-account
-    backup path.
-- [ ] B4. Sync adapter contract (no server yet)
-  - A single `syncProgress()` interface that is a no-op locally and is ready
-    to call the registry service's progress API once auth exists; document
-    the endpoint contract in `docs/PROGRESS_SYNC.md`.
+- [x] B1. Local history store
+  - `js/history.js` keeps `xiom_history_v1` in localStorage: newest-first run
+    records `{ t, ok, timeout, ms, out }` per lesson, capped at 20 per lesson
+    and 400 runs total, pruned oldest-first. Runs are recorded from the real
+    compile path, and the last opened lesson is remembered for resume.
+- [x] B2. History UI
+  - Per-lesson "Recent runs" block in the narrative (pass/fail, relative
+    time, duration, output preview, per-lesson Clear). The landing continue
+    card resumes the lesson used last and shows the last session time, and
+    every level header carries a completion ring backed by the same data.
+- [x] B3. Export / import
+  - Landing progress actions export `xiom-progress-YYYY-MM-DD.json` and
+    import it back with a union merge (completed lessons plus history merged
+    by timestamp), shape validation, and a status notice.
+- [x] B4. Sync adapter contract (no server yet)
+  - `syncProgress()` is a local no-op returning `{ ok, synced, reason }`; the
+    registry progress API contract (endpoints, payload, revision conflicts,
+    merge policy, privacy) is documented in `docs/PROGRESS_SYNC.md`.
 
 ## Phase C -- Ecosystem integration (blocked on the registry)
 

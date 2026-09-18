@@ -65,6 +65,10 @@ async function compile() {
     .then(function (r) { return r.json(); })
     .then(function (run) {
       renderRunResult(run, ids);
+      if (window.recordRun && window.currentLessonId) {
+        window.recordRun(window.currentLessonId, run);
+        if (window.renderHistoryBlock) window.renderHistoryBlock(window.currentLessonId);
+      }
       if (run.success) {
         statusEl.innerHTML = '[OK] Ran in ' + ((run.elapsedMs || 0) / 1000).toFixed(1) + 's';
         statusEl.className = 'status-bar ok';
