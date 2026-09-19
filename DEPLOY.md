@@ -108,6 +108,40 @@ runs on a small host-side helper, not in the container:
 With no env configured the sign-in UI stays hidden and every existing route
 behaves as before.
 
+### User data and privacy facts (mirrored by xiom-lang.org/privacy.html)
+
+Keep this list and the website's privacy page in sync; tell the website
+session whenever one of these changes.
+
+- Server-side processing: `/api/check`, `/api/compile`, `/api/ir`,
+  `/api/tokens`, and `/api/format` receive submitted source. Programs are
+  compiled and executed inside the sandboxed container (non-root, read-only
+  rootfs, `cap_drop: ALL`, `no-new-privileges`, memory/pid limits, no network
+  egress, tmpfs `/tmp`).
+- Retention of submissions: each request gets a work directory under
+  `/tmp/xiom_pg_work/` that is deleted when the request finishes. The
+  toolchain's script cache in `/tmp/xiom_run/` holds compiled binaries plus
+  one source copy per unique program until the container restarts (ephemeral
+  tmpfs). Nothing is persisted to disk or logs.
+- Accounts (optional): GitHub OAuth with `read:user` scope; the playground
+  stores the numeric id, username, and avatar URL. The GitHub access token is
+  discarded by the host-side helper after the profile fetch.
+- Stored progress: one JSON document per account on the `playground-data`
+  volume (`/data`) containing completed lesson ids, run timestamps,
+  pass/fail, durations, and program output truncated to 400 characters. No
+  source code, no free-play code, no personal profile data beyond the GitHub
+  identity.
+- Backups: the helper/playground env files are in the nightly restic set;
+  the `playground-data` volume is **not** backed up today (ask ops to add
+  `/var/lib/docker/volumes/playground_playground-data/_data` to
+  `scripts/restic-backup.sh`). Restic retention overall is 30 daily / 12
+  monthly snapshots with a nightly prune; a 5% read-data check runs
+  Sundays.
+- Cookies: a single HttpOnly, SameSite=Lax session cookie (Secure on https)
+  with a 30-day lifetime; sign-out clears it.
+- Deletion: `DELETE /api/me` removes the stored progress document and clears
+  the cookie; export/import stays local to the browser.
+
 ## Deploy / update
 
 On the VPS: `/opt/xiom/bin/playground-deploy.sh` (from `xiom-lang/ops`,
