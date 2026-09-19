@@ -5,11 +5,11 @@
  * sweep, and gate the lesson data in CI.
  *
  * A lesson gets `expected_output` only when every execution of its solution
- * succeeds and produces byte-identical output; lessons whose output varies
- * between runs (random values, addresses, timing) are recorded in
- * `tools/expected-output-skips.json` and left without the field so CI cannot
- * become flaky. Lessons listed in `js/limitations.json` (compiler codegen
- * defects) are skipped entirely.
+ * succeeds and produces byte-identical, valid UTF-8 output; lessons whose
+ * output varies between runs (random values, addresses, timing) or decodes to
+ * replacement characters are recorded in `tools/expected-output-skips.json`
+ * and left without the field so CI cannot become flaky. Lessons listed in
+ * `js/limitations.json` (compiler codegen defects) are skipped entirely.
  *
  * Usage:
  *   node tools/generate-expected-outputs.js               # sweep + write
@@ -179,6 +179,12 @@ function classifyRuns(result) {
     return { status: 'failed', reason: String(reason).slice(0, 160) };
   }
   const outputs = runs.map((run) => normalizeOutput(run.stdout));
+  if (outputs.some((output) => output.indexOf('\uFFFD') !== -1)) {
+    // Invalid UTF-8 bytes in program output: codegen corruption, never a
+    // legitimate expected value. Decoded with replacement so the run itself
+    // still classifies.
+    return { status: 'corrupt', samples: outputs.map((output) => output.slice(0, 120)) };
+  }
   if (outputs.some((output) => output !== outputs[0])) {
     return { status: 'nondeterministic', samples: outputs.map((output) => output.slice(0, 120)) };
   }
@@ -264,7 +270,7 @@ const PY_WORKER = [
   '    try:',
   '        proc = subprocess.Popen([binary, "run", source], cwd=run_dir, env=env,',
   '                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,',
-  '                                text=True, start_new_session=True)',
+  '                                text=True, errors="replace", start_new_session=True)',
   '        try:',
   '            out, err = proc.communicate(timeout=timeout_s)',
   '            code = proc.returncode',
@@ -439,6 +445,7 @@ function writeSkips(entries) {
 
 function skipReason(verdict) {
   if (verdict.status === 'nondeterministic') return 'nondeterministic output';
+  if (verdict.status === 'corrupt') return 'corrupt output (invalid UTF-8)';
   if (verdict.status === 'too-long') return 'output too long to store';
   return 'execution failed';
 }
@@ -529,6 +536,7 @@ async function main() {
 
   const failures = [];
   const nondeterministic = [];
+  const corrupt = [];
   const tooLong = [];
   const skipById = new Map(loadSkips().lessons.map((entry) => [entry.id, entry]));
   let unchanged = 0;
@@ -546,9 +554,10 @@ async function main() {
       continue;
     }
 
-    if (verdict.status === 'nondeterministic' || verdict.status === 'too-long') {
+    if (verdict.status !== 'ok') {
       if (verdict.status === 'nondeterministic') nondeterministic.push(job.id);
-      else tooLong.push(job.id + ' (' + verdict.length + ' chars)');
+      if (verdict.status === 'corrupt') corrupt.push(job.id);
+      if (verdict.status === 'too-long') tooLong.push(job.id + ' (' + verdict.length + ' chars)');
       skipById.set(job.id, {
         id: job.id,
         level: job.level,
@@ -581,6 +590,9 @@ async function main() {
       written + ' file(s) ' + (DRY_RUN ? 'would change' : 'changed'));
     if (nondeterministic.length > 0) {
       console.log('nondeterministic (no expected_output stored): ' + nondeterministic.join(', '));
+    }
+    if (corrupt.length > 0) {
+      console.log('corrupt output (invalid UTF-8, no expected_output stored): ' + corrupt.join(', '));
     }
     if (tooLong.length > 0) {
       console.log('output too long (no expected_output stored): ' + tooLong.join(', '));

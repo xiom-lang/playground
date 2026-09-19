@@ -898,3 +898,59 @@ cleared storage restored both completed lessons and all run records
 (`{ ok: true, added: 1, runs: 2 }`). The no-op sync returned and displayed
 its reason. No console errors from the new code.
 
+## 16. v0.61.0 verification (compiler R47, pending release and pin bump)
+
+The compiler session fixed the C18/C19 repro class at `16a89615` (workspace
+version bumped to v0.61.0). A Linux build of that revision was verified
+against the playground data. The release is not published on
+dl.xiom-lang.org yet, so the pin stays v0.60.1 and main keeps v0.60.1-derived
+data; the refreshed data lives on branch `verify/toolchain-v0.61.0-data`.
+Apply it once ops publishes v0.61.0 (bump `TOOLCHAIN_VERSION` and the
+`tools/fetch-toolchain.*` assets).
+
+Fixed (verified on the fixed build):
+- C19 core: 68 lesson outputs now render correctly, for example L2-01 prints
+  "Alex\n15" (was "\n15"), L2-05 prints "21\n20" (was empty), L4-32 prints
+  "Hello, Kilo!" (was "Hello, !"), L4-50 prints account owners and balances,
+  L8-13 prints item names, L7-29 prints "true" (was "1").
+- L3-15..L3-18 became deterministic and now carry `expected_output`.
+- The compiler's own R47 lock and the playground `.to_str()` probes pass,
+  with and without `use xiom.fmt`.
+
+Still open (C18/C19 residue, 26 lessons without expected output):
+- 19 lessons print nondeterministic pointer data: L0-11, L3-01/02/07/50,
+  L5-02/05/07/09/20/24/26/29/31/35/36/43, L8-14, L8-20. Two changed shape:
+  L3-50 (`Result[Str, Str]` match binding) and L8-14 (`Map`/`Option` chains)
+  printed empty on v0.60.1 and print varying pointer values now.
+- 7 lessons emit invalid UTF-8 (output decodes to U+FFFD): L0-34, L0-49,
+  L0-50, L5-32, L5-34, L5-42, L7-09 (skip reason "corrupt output").
+- L5-21 (`Float64.to_str()` inside a generic over `Vec[T]`) still prints
+  IEEE-754 bit patterns; deterministic, so the stored expected output
+  records the bug until the erased-payload path is fixed.
+
+C17 re-run on the same build (requested by the compiler session):
+- 410/410 solutions pass `--check`. Of the 31 blocked lessons, **4 are
+  fixed** (L6-05, L6-14, L6-17, L6-18) and **27 remain**.
+- Remaining profile: 11 interface-dispatch lessons fail in codegen with
+  `C001 type 'Int' does not implement '<Interface>'` (L6-01..07, L6-13,
+  L6-16, L6-28, L6-30, L6-40) and 16 fail clang with invalid IR
+  (L2-12/14/15/16/19, L3-21/22/23, L4-26/29/33/39, L5-40, L6-31, L8-15/18).
+- No true regressions: the audit's L2-37 report was an artifact of two
+  concurrent audits sharing the old deterministic temp root. The audit now
+  uses `mkdtemp` per process, and L2-37 passes three isolated reruns.
+
+Watch item (auto-injected `xiom.fmt` closure cost), controlled sequential
+cold-compile sample (same 10 lessons, caches cleared per toolchain):
+- `.to_str()` lessons cost +2.3s to +2.5s each (L5-21 +5.5s); non-`.to_str()`
+  lessons scattered from -0.9s to +4.4s (machine noise), so the consistent
+  delta on `.to_str()` lessons is the closure cost. Full-sweep p50 rose from
+  3.9s to 7.9s (n=372, concurrency 6, cold cache), consistent with that.
+- A reachable-function-only peek would recover most of it.
+
+Stale-cache hazard found during verification: `xiom run` reuses
+`/tmp/xiom_run` binaries keyed by source content only, so the new build
+silently served binaries produced by v0.60.1 until the cache was cleared
+(the first v0.61.0 probe reproduced the old behavior exactly). Sweeps now
+clear the cache first; the driver should include the compiler build identity
+in the cache key.
+

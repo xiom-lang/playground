@@ -66,6 +66,13 @@ Audit (AUDIT.md) is fully implemented for this repository:
   shows a "Recent runs" block per lesson, a continue-where-you-left-off card
   with level rings, JSON export/import, and a no-op `syncProgress()` adapter
   whose registry contract is `docs/PROGRESS_SYNC.md`.
+- Toolchain verification (2026-09-19): a local v0.61.0 build (`16a89615`,
+  compiler R47) was verified with a full sweep and an execution audit. 68
+  expected outputs were corrected; C17 dropped from 31 to 27 blocked lessons
+  (4 fixed); 26 lessons still lack deterministic output (19 nondeterministic,
+  7 invalid UTF-8) and L5-21 still prints Float64 bit patterns. The refreshed
+  data is parked on branch `verify/toolchain-v0.61.0-data` until ops
+  publishes v0.61.0; the pin stays v0.60.1 (AUDIT.md section 16).
 - History rewrite: all commits/tags now `Lefteris Notas
   <lefterisnotas@gmail.com>`; backup bundle at
   `C:\Users\lefte\AppData\Local\Temp\kilo\playground-backup-20260918.bundle`.
@@ -91,6 +98,12 @@ The VPS owner will test Phase B after the next hourly pull.
 
 When a fix reaches a toolchain release:
 
+0. Pre-release verification on a local build:
+   `node tools/generate-expected-outputs.js --wsl --wsl-toolchain <root>`
+   then run the audit on the Linux side (section 5). Clear `/tmp/xiom_run`
+   and `~/.xiom` first: the script cache is keyed by source content only, so
+   an older build's binaries are silently reused otherwise (observed during
+   the v0.61.0 verification).
 1. Bump `TOOLCHAIN_VERSION` and refetch with `tools/fetch-toolchain.ps1`
    (Windows) or `tools/fetch-toolchain.sh` (Linux/CI).
 2. `node tools/generate-expected-outputs.js --wsl` re-executes every solution
@@ -106,6 +119,11 @@ When a fix reaches a toolchain release:
 Never hand-edit the generated files. Until step 2 runs, the nightly execution
 job reports expected-output mismatches for lessons whose output the fix
 changed; that is the intended drift signal.
+
+v0.61.0 (R47) status: verified on a local build of `16a89615`; 68 outputs
+corrected and C17 down from 31 to 27 blocked lessons (4 fixed). The release
+is not published on dl.xiom-lang.org yet, so the refreshed data is parked on
+`verify/toolchain-v0.61.0-data`; details in AUDIT.md section 16.
 
 ## 4. Architecture map
 
@@ -147,6 +165,13 @@ node tools/generate-limitations.js --check
 node tools/migrate-lessons.js          # dry run; --apply to write
 ```
 
+Linux-side audit with a specific toolchain (Node 22 lives in the WSL home;
+section 6 lists the helper env):
+
+```powershell
+wsl -d Ubuntu -- bash -lc "source /home/lefteris/xiom_fix/env.sh && cd /mnt/e/xiom-lang/playground && node tools/lesson-audit.js --baseline tools/lesson-baseline.json --json /tmp/audit.json"
+```
+
 ## 6. Environment facts and gotchas
 
 - Windows dev box; Docker Desktop engine is not running (no local image build).
@@ -163,6 +188,16 @@ node tools/migrate-lessons.js          # dry run; --apply to write
   (`subsequent-velvet`) still points at the pre-rewrite commit.
 - Keep the container sandbox intact (non-root, read-only rootfs, tmpfs,
   cap_drop, limits, egress guard).
+- Compiler script cache: `xiom run` reuses binaries under `/tmp/xiom_run`
+  (plus `~/.xiom`) keyed by source content only. After switching compiler
+  builds, clear both or the old build's binaries are served silently
+  (observed when v0.61.0 first reproduced v0.60.1 behavior). Sweep/audit
+  runs must clear the cache first.
+- WSL: Node 22.23.2 is installed without sudo at
+  `/home/lefteris/node-v22.23.2-linux-x64`; `/home/lefteris/xiom_fix/env.sh`
+  exports PATH plus `XIOM_BIN`/`XIOM_STDLIB` for the local v0.61.0 build at
+  `/home/lefteris/xiom_fix/tc`. The pinned v0.60.1 toolchain remains at
+  `/home/lefteris/xiom_audit/tc`.
 
 ## 7. Conventions
 

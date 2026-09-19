@@ -33,7 +33,10 @@ const { REPO, XIOM_BIN, TOOLCHAIN_VERSION, childEnv } = require('./lib/toolchain
 const { normalizeOutput } = require('./lib/output');
 
 const LESSONS = path.join(REPO, 'lessons');
-const WORK_ROOT = path.join(os.tmpdir(), 'xiom_lesson_audit');
+// Unique per process: two concurrent audits used to share the deterministic
+// path and delete each other's job files (observed as a spurious runtime
+// failure). mkdtemp keeps parallel runs independent.
+const WORK_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), 'xiom_lesson_audit_'));
 
 const args = process.argv.slice(2);
 function argValue(name, fallback) {
