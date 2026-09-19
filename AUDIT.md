@@ -1072,3 +1072,25 @@ measured 3-6s even for a program that never calls `.to_str()`, suggesting the
 conversion use; the planned reachable-function-only peek should help both
 the cold-compile cost and this front-end regression.
 
+Precise compiler-side findings from reading `crates/xiom` at the fix revision:
+
+- R48 already salts the script cache with the compiler build identity
+  (`compiler_cache_identity()`), which addresses the stale-cache report.
+  Verified warm runs are 6-12ms once `HOME` is writable.
+- `--opt-level` exists and is honored by the compile-only path, but the
+  script-run branch (`main.rs`, `args[1] == "run"`) is handled before global
+  option parsing, so `xiom run --opt-level=N` is rejected as a filename and
+  `xiom --opt-level=N run f.xi` treats `run` as the source. `--run` accepts
+  the flag but ignores it and compiles `a.out` uncached.
+- Effect on hello world: v0.61.0 compile-only `-O0` 2.3s vs `-O2` 7.8s
+  (3.4x faster); v0.60.1 shows no difference (3.8s vs 4.0s), so the win
+  arrives with the v0.61.0 release. If the script-run path threads the level
+  into `CompileConfig`, the level must join the cache key (or `-O0` and `-O2`
+  runs would alias).
+
+Requested, in priority order: (1) apply `--opt-level` in the script-run path
+(and/or an env var the driver can set) so the playground can request `-O0`
+for edit-run loops; (2) fix the broad fmt-closure peek before v0.61.0; (3)
+keep the script cache independent of `HOME` if cheap. The playground will
+detect the flag capability and adopt it automatically.
+
