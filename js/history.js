@@ -85,6 +85,7 @@ function recordRun(lessonId, run) {
   store.updated = new Date().toISOString();
   pruneHistory(store);
   writeHistoryStore(store);
+  if (typeof scheduleSync === 'function') scheduleSync();
 }
 
 /** Newest-first run list for a lesson (may be empty). */
@@ -363,24 +364,225 @@ function importProgressFromInput(input) {
   input.value = '';
 }
 
-/**
- * B4 adapter. There is no account system yet, so this is a local no-op; the
- * registry contract it must implement is docs/PROGRESS_SYNC.md. Keeping the
- * single entry point means the UI will not change when sync becomes real.
- */
-function syncProgress() {
-  return Promise.resolve({
-    ok: false,
-    synced: false,
-    reason: 'No account yet. Progress stays in this browser.',
+// ---------------------------------------------------------------------------
+// Optional GitHub sign-in (C2) and cross-device sync
+// ---------------------------------------------------------------------------
+
+var authState = { configured: false, user: null, checked: false };
+
+function refreshAuthState() {
+  return fetch('/api/auth/config')
+    .then(function (response) { return response.ok ? response.json() : { configured: false }; })
+    .then(function (config) {
+      authState.configured = Boolean(config && config.configured);
+      authState.user = config && config.user ? config.user : null;
+      authState.checked = true;
+      renderAuthUi();
+      var params = new URLSearchParams(window.location.search);
+      var authResult = params.get('auth');
+      if (authResult === 'ok') {
+        window.history.replaceState(null, '', window.location.pathname);
+        if (authState.user) {
+          setProgressNotice('Signed in as ' + authState.user.login + '. Syncing...', true);
+          syncProgress();
+        }
+      } else if (authResult === 'error') {
+        window.history.replaceState(null, '', window.location.pathname);
+        setProgressNotice('Sign-in failed. Please try again.', false);
+      }
+      return authState;
+    })
+    .catch(function () {
+      authState.configured = false;
+      authState.user = null;
+      renderAuthUi();
+      return authState;
+    });
+}
+
+function renderAuthUi() {
+  var signIn = document.getElementById('authSignIn');
+  var userBox = document.getElementById('authUser');
+  var signedIn = Boolean(authState.user);
+  if (signIn) signIn.classList.toggle('hidden', !authState.configured || signedIn);
+  if (userBox) userBox.classList.toggle('hidden', !signedIn);
+  if (signedIn) {
+    var name = document.getElementById('authUserName');
+    if (name) name.textContent = authState.user.login;
+    var avatar = document.getElementById('authAvatar');
+    if (avatar) {
+      avatar.src = authState.user.avatarUrl || '';
+      avatar.alt = authState.user.login + ' avatar';
+    }
+  }
+  var syncBtn = document.getElementById('progressSyncBtn');
+  if (syncBtn) syncBtn.classList.toggle('hidden', !signedIn);
+  var landingSignIn = document.getElementById('authSignInLanding');
+  if (landingSignIn) landingSignIn.classList.toggle('hidden', !authState.configured || signedIn);
+}
+
+function signIn() {
+  window.location.href = '/auth/github';
+}
+
+function signOut() {
+  fetch('/auth/logout', { method: 'POST' })
+    .catch(function () { /* clearing the cookie client-side is best effort */ })
+    .then(function () {
+      authState.user = null;
+      renderAuthUi();
+      setProgressNotice('Signed out. Progress stays in this browser.', true);
+    });
+}
+
+function documentParts(doc) {
+  return {
+    completed: (doc && doc.progress && doc.progress.completed) || [],
+    last: (doc && doc.last) || null,
+    lessons: (doc && doc.history && doc.history.lessons) || {},
+  };
+}
+
+function documentsDiffer(a, b) {
+  return JSON.stringify(documentParts(a)) !== JSON.stringify(documentParts(b));
+}
+
+function mergeDocuments(local, remote) {
+  var left = documentParts(local);
+  var right = documentParts(remote);
+  var completed = left.completed.slice();
+  right.completed.forEach(function (id) { if (completed.indexOf(id) === -1) completed.push(id); });
+  var last = left.last;
+  if (right.last && (!last || (right.last.t || 0) > (last.t || 0))) last = right.last;
+  return {
+    app: 'xiom-playground',
+    version: 1,
+    exported: new Date().toISOString(),
+    progress: { completed: completed },
+    last: last,
+    history: { version: 1, updated: new Date().toISOString(), lessons: mergeHistory(left.lessons, right.lessons) },
+  };
+}
+
+function putProgress(document, baseRevision) {
+  return fetch('/api/progress', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      baseRevision: baseRevision === undefined ? null : baseRevision,
+      document: document,
+    }),
+  }).then(function (response) {
+    if (response.status === 409) {
+      return response.json().then(function (data) {
+        return { conflict: true, revision: data.revision, document: data.document };
+      });
+    }
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    return response.json().then(function (data) {
+      return { conflict: false, revision: data.revision };
+    });
   });
 }
 
-function showSyncStatus() {
+/** Write a merged document back into local storage so remote-only data shows. */
+function applyRemoteDocument(doc) {
+  var parts = documentParts(doc);
+  try {
+    localStorage.setItem('xiom_lessons_completed', JSON.stringify(parts.completed));
+  } catch (err) { /* storage full: keep serving from memory */ }
+  var store = readHistoryStore();
+  store.lessons = parts.lessons;
+  if (parts.last) store.last = parts.last;
+  store.updated = new Date().toISOString();
+  writeHistoryStore(store);
+  if (window.lessonCatalogCache && window.renderLessonList) window.renderLessonList(window.lessonCatalogCache);
+  if (window.updateProgressSummary) window.updateProgressSummary();
+  if (window.checkLastProgress) window.checkLastProgress();
+}
+
+/**
+ * Sync with the playground backend when signed in. Local storage remains the
+ * source of truth when signed out; the merge rules match the export/import
+ * path (union of completed lessons, history merged by timestamp).
+ */
+function syncProgress() {
+  if (!authState.configured) {
+    return Promise.resolve({ ok: false, synced: false, reason: 'Sign-in is not configured on this server.' });
+  }
+  if (!authState.user) {
+    return Promise.resolve({ ok: false, synced: false, reason: 'Sign in to sync progress across devices.' });
+  }
+  var localDoc = buildProgressExport();
+  return fetch('/api/progress')
+    .then(function (response) {
+      if (response.status === 401) throw new Error('Session expired; sign in again.');
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.json();
+    })
+    .then(function (remote) {
+      var merged = mergeDocuments(localDoc, remote.document);
+      if (remote.document && !documentsDiffer(merged, remote.document)) {
+        // The server already holds the merged state; adopt it locally so a
+        // fresh browser (or a cleared localStorage) gets its progress back.
+        applyRemoteDocument(merged);
+        return { ok: true, synced: true, changed: false, revision: remote.revision };
+      }
+      return putProgress(merged, remote.revision).then(function (result) {
+        if (result.conflict) {
+          var resolved = mergeDocuments(localDoc, result.document);
+          return putProgress(resolved, result.revision).then(function (second) {
+            applyRemoteDocument(resolved);
+            return { ok: true, synced: true, changed: true, revision: second.revision };
+          });
+        }
+        applyRemoteDocument(merged);
+        return { ok: true, synced: true, changed: true, revision: result.revision };
+      });
+    })
+    .catch(function (err) {
+      return { ok: false, synced: false, reason: (err && err.message) || 'Sync failed.' };
+    });
+}
+
+var syncTimer = null;
+
+function scheduleSync() {
+  if (!authState.user) return;
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(function () {
+    syncProgress().then(function (result) {
+      if (result.ok && result.synced && result.changed) setProgressNotice('Progress synced.', true);
+    });
+  }, 4000);
+}
+
+function syncNow() {
+  if (!authState.configured) {
+    setProgressNotice('Sign-in is not configured on this server.', false);
+    return Promise.resolve({ ok: false, synced: false, reason: 'not configured' });
+  }
+  if (!authState.user) {
+    setProgressNotice('Sign in to sync progress across devices.', false);
+    return Promise.resolve({ ok: false, synced: false, reason: 'not signed in' });
+  }
+  setProgressNotice('Syncing...', true);
   return syncProgress().then(function (result) {
-    setProgressNotice(result.reason, result.ok);
+    if (result.ok && result.synced) setProgressNotice('Progress synced.', true);
+    else setProgressNotice(result.reason || 'Sync failed.', false);
     return result;
   });
+}
+
+function deleteAccount() {
+  if (!window.confirm('Delete your account and all synced progress on this server?')) return Promise.resolve(false);
+  return fetch('/api/me', { method: 'DELETE' }).then(function (response) {
+    if (!response.ok) return false;
+    authState.user = null;
+    renderAuthUi();
+    setProgressNotice('Account data deleted.', true);
+    return true;
+  }).catch(function () { return false; });
 }
 
 window.recordRun = recordRun;
@@ -397,4 +599,9 @@ window.exportProgress = exportProgress;
 window.importProgressPayload = importProgressPayload;
 window.importProgressFromInput = importProgressFromInput;
 window.syncProgress = syncProgress;
-window.showSyncStatus = showSyncStatus;
+window.syncNow = syncNow;
+window.scheduleSync = scheduleSync;
+window.refreshAuthState = refreshAuthState;
+window.signIn = signIn;
+window.signOut = signOut;
+window.deleteAccount = deleteAccount;

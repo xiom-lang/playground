@@ -50,7 +50,8 @@
         Import progress
         <input type="file" id="progressImport" accept="application/json,.json" onchange="importProgressFromInput(this)">
       </label>
-      <button class="btn-ghost" type="button" onclick="showSyncStatus()" title="Progress sync will arrive with accounts">Sync</button>
+      <button id="progressSyncBtn" class="btn-ghost hidden" type="button" onclick="syncNow()" title="Sync progress across devices">Sync now</button>
+      <button id="authSignInLanding" class="btn-ghost hidden" type="button" onclick="signIn()">Sign in with GitHub</button>
       <span id="progressNotice" class="progress-notice" role="status" aria-live="polite"></span>
     </div>
     <div class="progress-actions-hint">Local backup in your browser &mdash; no account needed.</div>
@@ -114,6 +115,19 @@
           <button onclick="toggleCompilerRef(); this.parentElement.parentElement.classList.remove('open')">&#x2699;&#xFE0F; Compiler</button>
           <button onclick="toggleStdlibPanel(); this.parentElement.parentElement.classList.remove('open')">&#x1F4D6; Standard Library</button>
           <button onclick="toggleRegistryPanel(); this.parentElement.parentElement.classList.remove('open')">&#x1F4E6; Packages</button>
+        </div>
+      </div>
+      <button id="authSignIn" class="nav-btn hidden" type="button" onclick="signIn()" title="Sign in with GitHub">Sign in</button>
+      <div id="authUser" class="header-dropdown hidden">
+        <button class="nav-btn auth-user-btn" aria-label="Account menu" onclick="this.parentElement.classList.toggle('open')">
+          <img id="authAvatar" class="auth-avatar" alt="" width="18" height="18">
+          <span id="authUserName">account</span>
+        </button>
+        <div class="header-dropdown-menu">
+          <button onclick="syncNow(); this.parentElement.parentElement.classList.remove('open')">Sync now</button>
+          <button onclick="exportProgress(); this.parentElement.parentElement.classList.remove('open')">Export progress</button>
+          <button onclick="deleteAccount(); this.parentElement.parentElement.classList.remove('open')">Delete account data</button>
+          <button onclick="signOut(); this.parentElement.parentElement.classList.remove('open')">Sign out</button>
         </div>
       </div>
       <button class="nav-btn theme-toggle" onclick="toggleEditorTheme()" title="Toggle theme" aria-label="Toggle theme">&#x1F319;</button>

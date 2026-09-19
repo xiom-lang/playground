@@ -319,6 +319,7 @@ window.addEventListener('load', function () {
   initResizeHandle();
   applySavedTheme();
   checkOnboarding();
+  if (window.refreshAuthState) window.refreshAuthState();
 });
 
 function loadServerInfo() {

@@ -13,3 +13,5 @@ node_modules
 server.py
 playground.code-workspace
 AUDIT.md
+.env
+data/

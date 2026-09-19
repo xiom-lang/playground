@@ -1668,6 +1668,21 @@ html.light-mode .output-content {
 
 .progress-actions-hint { margin-top: 8px; font-size: 11.5px; color: var(--low); }
 
+/* Signed-in account chip in the header */
+.auth-user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.auth-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+
 /* ================================================================
    FOCUS STATES
    ================================================================ */

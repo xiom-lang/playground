@@ -45,7 +45,7 @@ User programs therefore cannot write outside `/tmp`, grow without bound, or
 reach the network. Keep all of these when editing. The health check uses
 `/api/health`, which is answered even while compiles are queued.
 
-## Accounts (C2, design agreed 2026-09-19; implementation in progress)
+## Accounts (C2, implemented 2026-09-19; VPS env pending)
 
 Sign-in is optional; the playground works fully without an account. GitHub
 OAuth is playground-owned and the registry is not involved. Because the
@@ -56,19 +56,28 @@ runs on a small host-side helper, not in the container:
   `xiom-playground-auth.service`, bound to the Docker gateway on port 3400
   (never public). `GET /health`; `POST /exchange {code, redirect_uri}` with
   header `X-Auth-Helper-Key` calls GitHub, discards the token, and returns
-  `{"ok":true,"user":{"id","login","avatar_url"}}`.
+  `{"ok":true,"user":{"id","login","avatar_url"}}`. Installed and running.
 - Helper config: `/etc/xiom/playground-auth.env` (root, 0600) holds
   `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `AUTH_HELPER_KEY`, and
   `ALLOWED_REDIRECT_URI=https://playground.xiom-lang.org/auth/github/callback`.
 - Playground config: `/opt/xiom/playground.env` (root, 0600, outside the repo
   so the hourly `git reset --hard` and the Docker build context never touch
   it) holds `GITHUB_CLIENT_ID`, `AUTH_HELPER_URL=http://host.docker.internal:3400`,
-  `AUTH_HELPER_KEY`, `SESSION_SECRET`, and `PLAYGROUND_DATA_DIR=/data`.
-  Compose reads it with an absolute `env_file` path and adds
-  `extra_hosts: "host.docker.internal:host-gateway"`.
+  `AUTH_HELPER_KEY` (the same value as the helper), `SESSION_SECRET`
+  (`openssl rand -hex 32`), and `PLAYGROUND_DATA_DIR=/data`.
+  Compose reads it through an absolute `env_file` with `required: false`, so
+  the feature stays inert when the file is absent (Compose v2.24+; the VPS
+  runs Docker 28.x). `extra_hosts: host.docker.internal:host-gateway` lets the
+  container reach the helper.
 - Progress storage: named volume `playground-data` mounted at `/data` (the
   image creates `/data` owned by uid 10001); one JSON document per account,
-  written atomically. No database.
+  written atomically. No database. Sessions are stateless HMAC cookies, so
+  logout is a cookie clear; account deletion removes the stored document.
+- Endpoints: `GET /api/auth/config`, `GET /auth/github`,
+  `GET /auth/github/callback`, `POST /auth/logout`, `GET /api/me` +
+  `DELETE /api/me`, `GET/PUT /api/progress` (revision-checked, 409 on
+  conflict). State-changing requests require a same-origin Origin header when
+  present; the OAuth endpoints are rate limited per IP.
 - Egress stays blocked. Container to host-bridge traffic is locally destined
   and normally bypasses DOCKER-USER; if it is blocked on the VPS, add one
   narrow accept rule (playground subnet to the gateway, tcp/3400) above the

@@ -14,6 +14,7 @@ const assert = require('assert');
 const fs = require('fs');
 const http = require('http');
 const net = require('net');
+const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
 const { REPO, XIOM_BIN, childEnv } = require('./lib/toolchain');
@@ -46,15 +47,20 @@ async function okAsync(name, fn) {
   }
 }
 
-function request(method, requestPath, body) {
+function requestTo(port, method, requestPath, body, extraHeaders) {
   return new Promise((resolve, reject) => {
     const data = body === undefined ? null : (typeof body === 'string' ? body : JSON.stringify(body));
+    const headers = Object.assign({}, extraHeaders || {});
+    if (data !== null) {
+      headers['Content-Type'] = 'application/json';
+      headers['Content-Length'] = Buffer.byteLength(data);
+    }
     const req = http.request({
       host: HOST,
-      port: PORT,
+      port,
       path: requestPath,
       method,
-      headers: data === null ? {} : { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) },
+      headers,
     }, (res) => {
       let responseBody = '';
       res.on('data', (chunk) => { responseBody += chunk; });
@@ -65,6 +71,10 @@ function request(method, requestPath, body) {
     if (data !== null) req.write(data);
     req.end();
   });
+}
+
+function request(method, requestPath, body) {
+  return requestTo(PORT, method, requestPath, body);
 }
 
 // Raw request so the client cannot normalize "../" away.
@@ -84,11 +94,12 @@ function rawRequest(requestTarget) {
   });
 }
 
-function waitForHealth(timeoutMs) {
+function waitForHealth(timeoutMs, port) {
+  const targetPort = port || PORT;
   const deadline = Date.now() + timeoutMs;
   return new Promise((resolve, reject) => {
     const poll = () => {
-      request('GET', '/api/health')
+      requestTo(targetPort, 'GET', '/api/health')
         .then((res) => {
           if (res.status === 200) resolve(res);
           else retry();
@@ -103,16 +114,58 @@ function waitForHealth(timeoutMs) {
   });
 }
 
-function startServer() {
+function startServerWithEnv(extraEnv, port) {
   const child = spawn(process.execPath, [path.join(REPO, 'server.js')], {
     cwd: REPO,
-    env: Object.assign({}, childEnv, { PORT: String(PORT), HOST, MAX_CHECKS: '2', MAX_COMPILES: '1' }),
+    env: Object.assign({}, childEnv, { PORT: String(port || PORT), HOST, MAX_CHECKS: '2', MAX_COMPILES: '1' }, extraEnv || {}),
     stdio: ['ignore', 'pipe', 'pipe'],
     windowsHide: true,
   });
   child.stdout.on('data', (chunk) => process.stdout.write('[server] ' + chunk));
   child.stderr.on('data', (chunk) => process.stderr.write('[server] ' + chunk));
   return child;
+}
+
+function startServer() {
+  return startServerWithEnv({}, PORT);
+}
+
+/**
+ * Mock of the host-side auth helper: accepts POST /exchange with the shared
+ * key and returns the queued users in order. No GitHub involved.
+ */
+function startMockHelper(users) {
+  let index = 0;
+  const server = http.createServer((req, res) => {
+    let body = '';
+    req.on('data', (chunk) => { body += chunk; });
+    req.on('end', () => {
+      const json = (status, payload) => {
+        res.writeHead(status, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(payload));
+      };
+      if (req.method === 'POST' && req.url === '/exchange') {
+        if (req.headers['x-auth-helper-key'] !== 'test-helper-key') {
+          json(401, { ok: false, error: 'bad helper key' });
+          return;
+        }
+        let parsed = null;
+        try { parsed = JSON.parse(body); } catch { parsed = null; }
+        if (!parsed || !parsed.code || !parsed.redirect_uri) {
+          json(400, { ok: false, error: 'bad body' });
+          return;
+        }
+        const user = users[index % users.length];
+        index += 1;
+        json(200, { ok: true, user });
+        return;
+      }
+      json(404, { ok: false, error: 'no route' });
+    });
+  });
+  return new Promise((resolve) => {
+    server.listen(0, HOST, () => resolve({ server, port: server.address().port }));
+  });
 }
 
 function stopServer(child) {
@@ -127,6 +180,10 @@ function stopServer(child) {
 async function main() {
   const hasToolchain = fs.existsSync(XIOM_BIN) || /[\\/]/.test(XIOM_BIN) === false;
   const child = startServer();
+  const authPort = PORT + 137;
+  const authDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'xiom_pg_auth_'));
+  let authChild = null;
+  let helper = null;
   try {
     await waitForHealth(15000);
 
@@ -260,8 +317,179 @@ async function main() {
         });
       }
     }
+    console.log('accounts (C2, mocked helper):');
+    await okAsync('GET /api/auth/config reports unconfigured without env', async () => {
+      const res = await request('GET', '/api/auth/config');
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(JSON.parse(res.body).configured, false);
+    });
+
+    await okAsync('account routes require a session when unconfigured', async () => {
+      assert.strictEqual((await request('GET', '/api/me')).status, 401);
+      assert.strictEqual((await request('GET', '/api/progress')).status, 401);
+      assert.strictEqual((await request('PUT', '/api/progress', { document: {} })).status, 401);
+      assert.strictEqual((await request('GET', '/auth/github')).status, 503);
+    });
+
+    helper = await startMockHelper([
+      { id: 101, login: 'alice', avatar_url: 'https://example.invalid/a.png' },
+      { id: 202, login: 'bob', avatar_url: 'https://example.invalid/b.png' },
+    ]);
+    authChild = startServerWithEnv({
+      GITHUB_CLIENT_ID: 'test-client-id',
+      OAUTH_CALLBACK_URL: 'http://127.0.0.1:' + authPort + '/auth/github/callback',
+      AUTH_HELPER_URL: 'http://127.0.0.1:' + helper.port,
+      AUTH_HELPER_KEY: 'test-helper-key',
+      SESSION_SECRET: 'test-session-secret-0123456789abcdef',
+      PLAYGROUND_DATA_DIR: authDataDir,
+      COOKIE_SECURE: '0',
+    }, authPort);
+    await waitForHealth(15000, authPort);
+
+    let aliceCookie = null;
+    let revision = null;
+    const authEnv = () => ({
+      GITHUB_CLIENT_ID: 'test-client-id',
+      OAUTH_CALLBACK_URL: 'http://127.0.0.1:' + authPort + '/auth/github/callback',
+      AUTH_HELPER_URL: 'http://127.0.0.1:' + helper.port,
+      AUTH_HELPER_KEY: 'test-helper-key',
+      SESSION_SECRET: 'test-session-secret-0123456789abcdef',
+      PLAYGROUND_DATA_DIR: authDataDir,
+      COOKIE_SECURE: '0',
+    });
+
+    await okAsync('GET /api/auth/config reports configured with env', async () => {
+      const res = await requestTo(authPort, 'GET', '/api/auth/config');
+      assert.strictEqual(res.status, 200);
+      const payload = JSON.parse(res.body);
+      assert.strictEqual(payload.configured, true);
+      assert.strictEqual(payload.signedIn, false);
+      assert.strictEqual(payload.user, null);
+    });
+
+    await okAsync('sign-in redirect carries client, scope, callback and signed state', async () => {
+      const res = await requestTo(authPort, 'GET', '/auth/github');
+      assert.strictEqual(res.status, 302);
+      const location = res.headers.location;
+      assert.ok(location.startsWith('https://github.com/login/oauth/authorize?'), location);
+      const params = new URL(location).searchParams;
+      assert.strictEqual(params.get('client_id'), 'test-client-id');
+      assert.strictEqual(params.get('scope'), 'read:user');
+      assert.strictEqual(params.get('redirect_uri'), authEnv().OAUTH_CALLBACK_URL);
+      const state = params.get('state');
+      assert.ok(state && state.split('.').length === 3, 'signed state expected');
+      const callback = await requestTo(authPort, 'GET',
+        '/auth/github/callback?code=code-1&state=' + encodeURIComponent(state));
+      assert.strictEqual(callback.status, 302);
+      assert.strictEqual(callback.headers.location, '/?auth=ok');
+      const setCookie = (callback.headers['set-cookie'] || [])[0] || '';
+      assert.ok(setCookie.startsWith('xiom_session='), setCookie);
+      assert.ok(/HttpOnly/.test(setCookie) && /SameSite=Lax/.test(setCookie), setCookie);
+      aliceCookie = setCookie.split(';')[0];
+    });
+
+    await okAsync('callback rejects a tampered state', async () => {
+      const res = await requestTo(authPort, 'GET', '/auth/github/callback?code=code-1&state=aa.bb.cc');
+      assert.strictEqual(res.status, 302);
+      assert.strictEqual(res.headers.location, '/?auth=error');
+    });
+
+    await okAsync('GET /api/me returns the signed-in user', async () => {
+      const res = await requestTo(authPort, 'GET', '/api/me', undefined, { Cookie: aliceCookie });
+      assert.strictEqual(res.status, 200);
+      const payload = JSON.parse(res.body);
+      assert.strictEqual(payload.user.login, 'alice');
+      assert.strictEqual(payload.user.id, 101);
+    });
+
+    const progressDoc = {
+      app: 'xiom-playground',
+      version: 1,
+      progress: { completed: ['L0-01', 'L0-01', 'L2-05'] },
+      last: { id: 'L2-05', file: 'L2-data/L2-05.json', title: 'More Methods', t: 5 },
+      history: { version: 1, lessons: { 'L2-05': [{ t: 5, ok: true, timeout: false, ms: 1200, out: 'ok' }] } },
+    };
+
+    await okAsync('PUT /api/progress stores a sanitized document', async () => {
+      const res = await requestTo(authPort, 'PUT', '/api/progress',
+        { baseRevision: null, document: progressDoc }, { Cookie: aliceCookie });
+      assert.strictEqual(res.status, 200, res.body);
+      const payload = JSON.parse(res.body);
+      assert.ok(payload.revision);
+      revision = payload.revision;
+      const stored = JSON.parse(fs.readFileSync(path.join(authDataDir, 'accounts', '101.json'), 'utf8'));
+      assert.deepStrictEqual(stored.document.progress.completed, ['L0-01', 'L2-05']);
+      assert.strictEqual(stored.document.history.lessons['L2-05'].length, 1);
+    });
+
+    await okAsync('GET /api/progress round-trips with the revision', async () => {
+      const res = await requestTo(authPort, 'GET', '/api/progress', undefined, { Cookie: aliceCookie });
+      assert.strictEqual(res.status, 200);
+      const payload = JSON.parse(res.body);
+      assert.strictEqual(payload.revision, revision);
+      assert.deepStrictEqual(payload.document.progress.completed, ['L0-01', 'L2-05']);
+    });
+
+    await okAsync('stale baseRevision returns 409 with the current document', async () => {
+      const res = await requestTo(authPort, 'PUT', '/api/progress',
+        { baseRevision: 'stale', document: { progress: { completed: [] } } }, { Cookie: aliceCookie });
+      assert.strictEqual(res.status, 409);
+      const payload = JSON.parse(res.body);
+      assert.strictEqual(payload.error, 'revision_conflict');
+      assert.strictEqual(payload.revision, revision);
+      assert.ok(payload.document);
+    });
+
+    await okAsync('cross-origin PUT is rejected', async () => {
+      const res = await requestTo(authPort, 'PUT', '/api/progress',
+        { baseRevision: revision, document: progressDoc },
+        { Cookie: aliceCookie, Origin: 'https://evil.example' });
+      assert.strictEqual(res.status, 403);
+    });
+
+    await okAsync('second account cannot see the first account progress', async () => {
+      const start = await requestTo(authPort, 'GET', '/auth/github');
+      const state = new URL(start.headers.location).searchParams.get('state');
+      const callback = await requestTo(authPort, 'GET',
+        '/auth/github/callback?code=code-2&state=' + encodeURIComponent(state));
+      const bobCookie = ((callback.headers['set-cookie'] || [])[0] || '').split(';')[0];
+      assert.ok(bobCookie.startsWith('xiom_session='), 'bob session expected');
+      const me = await requestTo(authPort, 'GET', '/api/me', undefined, { Cookie: bobCookie });
+      assert.strictEqual(JSON.parse(me.body).user.login, 'bob');
+      const progress = await requestTo(authPort, 'GET', '/api/progress', undefined, { Cookie: bobCookie });
+      assert.strictEqual(progress.status, 200);
+      assert.strictEqual(JSON.parse(progress.body).document, null);
+    });
+
+    await okAsync('logout clears the session cookie', async () => {
+      const res = await requestTo(authPort, 'POST', '/auth/logout', undefined, { Cookie: aliceCookie });
+      assert.strictEqual(res.status, 200);
+      const setCookie = (res.headers['set-cookie'] || [])[0] || '';
+      assert.ok(/xiom_session=;/.test(setCookie) && /Max-Age=0/.test(setCookie), setCookie);
+    });
+
+    await okAsync('DELETE /api/me removes stored progress', async () => {
+      const start = await requestTo(authPort, 'GET', '/auth/github');
+      const state = new URL(start.headers.location).searchParams.get('state');
+      const callback = await requestTo(authPort, 'GET',
+        '/auth/github/callback?code=code-3&state=' + encodeURIComponent(state));
+      const cookie = ((callback.headers['set-cookie'] || [])[0] || '').split(';')[0];
+      const del = await requestTo(authPort, 'DELETE', '/api/me', undefined, { Cookie: cookie });
+      assert.strictEqual(del.status, 200);
+      const progress = await requestTo(authPort, 'GET', '/api/progress', undefined, { Cookie: cookie });
+      assert.strictEqual(JSON.parse(progress.body).document, null);
+      assert.ok(!fs.existsSync(path.join(authDataDir, 'accounts', '101.json')));
+    });
+
+    await okAsync('PUT /api/progress rejects a missing document', async () => {
+      const res = await requestTo(authPort, 'PUT', '/api/progress', { baseRevision: null }, { Cookie: aliceCookie });
+      assert.strictEqual(res.status, 400);
+    });
   } finally {
     stopServer(child);
+    stopServer(authChild);
+    if (helper) helper.server.close();
+    fs.rmSync(authDataDir, { recursive: true, force: true });
   }
 
   console.log('');

@@ -989,3 +989,54 @@ before layout.css, so the base 340px width won on narrow screens. The mobile
 override now lives in layout.css after the base rule, and both the stdlib and
 registry panels cover the viewport on phones.
 
+## 18. Accounts: optional GitHub sign-in and progress sync (C2 implemented, 2026-09-19)
+
+Option B (chosen by the owner): the GitHub token exchange runs on the
+host-side auth helper in the ops repository, so the container keeps zero
+egress and never holds the GitHub client secret. The playground side:
+
+- `lib/auth.js`: signed single-use OAuth state (HMAC, 10 min), helper client
+  (`POST /exchange` with `X-Auth-Helper-Key`, 8s timeout), and stateless
+  HMAC-signed session cookies (HttpOnly, SameSite=Lax, Secure on https,
+  30-day TTL, session secret required to be 16+ chars).
+- `lib/progress-store.js`: one JSON document per account under
+  `PLAYGROUND_DATA_DIR/accounts/<id>.json`, written with temp+rename, capped
+  at 1 MiB, sanitized to the B3 export shape (completed bounded to 5000,
+  history to 500 lessons x 20 runs x 400 chars), revision-checked writes.
+- `server.js`: `GET /api/auth/config` (reports `configured`/`signedIn`/user in
+  one request), `/auth/github`, `/auth/github/callback`, `POST /auth/logout`,
+  `GET|DELETE /api/me`, `GET|PUT /api/progress` with 409 revision conflicts,
+  same-origin checks for state-changing requests, and a per-IP throttle on
+  the OAuth endpoints. All routes are inert when the env is missing.
+- `js/history.js`: live `syncProgress()` (union of completed lessons,
+  timestamp merge of history, last-write-wins for `last`, one conflict
+  retry), debounced auto-sync after runs and completions, account chip + menu
+  (sync, export, delete account data, sign out), sign-in buttons on the
+  landing and header, and adopt-remote-state on sign-in.
+- Deployment: compose reads `/opt/xiom/playground.env` (`required: false`),
+  adds `host.docker.internal:host-gateway` and the `playground-data` volume;
+  the Dockerfile creates `/data` owned by uid 10001; `.dockerignore` excludes
+  `.env` and `data/`.
+
+Verification:
+
+- `tools/test-server.js` gained a mock helper and 14 account tests (32 total,
+  all passing): config gating, authorize redirect contents, tampered state
+  rejection, session cookie flags, `/api/me`, sanitized write, revision
+  round-trip, 409 conflicts, cross-origin rejection, per-account isolation,
+  logout cookie clearing, and account deletion.
+- Browser E2E with mocked GitHub authorize + helper (Chromium, no network):
+  sign-in from the landing, account chip with login/avatar in the header,
+  debounced sync writing `{completed,1 run,last}` to the server, sign-out, and
+  a second sign-in with cleared localStorage restoring the completed list and
+  history from the server. No console errors.
+- One bug found and fixed during E2E: when the merged document already
+  matched the server document, the client returned "no change" without
+  adopting the remote state, so a fresh browser never received its progress.
+  `syncProgress()` now applies the merged document locally in that path.
+
+Remaining: the owner writes `/opt/xiom/playground.env` (helper key + client
+id + session secret), the next hourly deploy recreates the container, and the
+VPS sign-in gets verified end to end. Compose on the VPS must be v2.24+ for
+the optional `env_file` (`docker compose version`).
+

@@ -15,7 +15,9 @@ RUN apt-get update \
       nodejs clang ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
-RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin xiomp
+RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin xiomp \
+ && mkdir -p /data \
+ && chown xiomp:xiomp /data
 
 WORKDIR /app
 COPY --chown=xiomp:xiomp . /app

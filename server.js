@@ -31,6 +31,8 @@ const fsp = require('fs/promises');
 const path = require('path');
 const os = require('os');
 const { runProcess } = require('./lib/run-xiom');
+const auth = require('./lib/auth');
+const progressStore = require('./lib/progress-store');
 
 const SERVER_VERSION = readRepoFile('package.json', (raw) => JSON.parse(raw).version) || '0.0.0';
 const PORT = Number(process.env.PORT) || 3000;
@@ -437,6 +439,40 @@ function sendError(res, err) {
   sendJson(res, status, { success: false, error: String(err && err.message || err) });
 }
 
+/** Same-origin guard for cookie-authenticated state-changing requests. */
+function sameOrigin(req) {
+  const origin = req.headers && req.headers.origin;
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === req.headers.host;
+  } catch {
+    return false;
+  }
+}
+
+// Lightweight per-IP throttle for the OAuth endpoints (the callback triggers a
+// helper call, so keep it cheap to abuse).
+const AUTH_WINDOW_MS = 10 * 60 * 1000;
+const AUTH_MAX_PER_WINDOW = 60;
+const authHits = new Map();
+
+function authRateLimited(req) {
+  const ip = (req.socket && req.socket.remoteAddress) || 'unknown';
+  const now = Date.now();
+  if (authHits.size > 1000) {
+    for (const [key, value] of authHits) {
+      if (now - value.start > AUTH_WINDOW_MS) authHits.delete(key);
+    }
+  }
+  const entry = authHits.get(ip);
+  if (!entry || now - entry.start > AUTH_WINDOW_MS) {
+    authHits.set(ip, { start: now, count: 1 });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > AUTH_MAX_PER_WINDOW;
+}
+
 function serveFile(res, method, filePath) {
   fs.stat(filePath, (statErr, stat) => {
     if (statErr || !stat.isFile()) {
@@ -529,6 +565,145 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    // --- Optional GitHub sign-in (C2); inert unless configured -------------
+    if (url === '/api/auth/config' && method === 'GET') {
+      const configured = auth.authConfigured();
+      const user = configured ? auth.userFromRequest(req) : null;
+      sendJson(res, 200, {
+        configured,
+        provider: 'github',
+        signedIn: Boolean(user),
+        user: user ? { id: user.id, login: user.login, avatarUrl: user.avatarUrl } : null,
+      });
+      return;
+    }
+
+    if (url === '/auth/github' && method === 'GET') {
+      if (authRateLimited(req)) {
+        sendJson(res, 429, { error: 'Too many sign-in attempts; try again later' });
+        return;
+      }
+      if (!auth.authConfigured()) {
+        sendJson(res, 503, { error: 'Sign-in is not configured' });
+        return;
+      }
+      res.writeHead(302, { Location: auth.authorizeUrl(auth.makeState()), 'Cache-Control': 'no-store' });
+      res.end();
+      return;
+    }
+
+    if ((url === '/auth/github/callback' || url.startsWith('/auth/github/callback?')) && method === 'GET') {
+      if (authRateLimited(req)) {
+        sendJson(res, 429, { error: 'Too many sign-in attempts; try again later' });
+        return;
+      }
+      const params = new URL(url, 'http://localhost').searchParams;
+      const fail = (reason) => {
+        console.error('auth callback: ' + reason);
+        res.writeHead(302, { Location: '/?auth=error', 'Cache-Control': 'no-store' });
+        res.end();
+      };
+      if (!auth.authConfigured()) return fail('not configured');
+      if (!auth.verifyState(params.get('state'))) return fail('invalid state');
+      if (params.get('error')) return fail('provider error: ' + params.get('error'));
+      const code = params.get('code');
+      if (!code) return fail('missing code');
+      try {
+        const user = await auth.exchangeCode(code, process.env.OAUTH_CALLBACK_URL);
+        res.writeHead(302, {
+          Location: '/?auth=ok',
+          'Set-Cookie': auth.sessionSetCookie(user),
+          'Cache-Control': 'no-store',
+        });
+        res.end();
+      } catch (err) {
+        fail(err && err.message ? err.message : String(err));
+      }
+      return;
+    }
+
+    if (url === '/auth/logout' && method === 'POST') {
+      if (!sameOrigin(req)) {
+        sendJson(res, 403, { error: 'Cross-origin request rejected' });
+        return;
+      }
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Set-Cookie': auth.sessionClearCookie(),
+        'Cache-Control': 'no-store',
+      });
+      res.end(JSON.stringify({ ok: true }));
+      return;
+    }
+
+    if (url === '/api/me' && (method === 'GET' || method === 'DELETE')) {
+      const user = auth.userFromRequest(req);
+      if (!user) {
+        sendJson(res, 401, { user: null });
+        return;
+      }
+      if (method === 'DELETE') {
+        if (!sameOrigin(req)) {
+          sendJson(res, 403, { error: 'Cross-origin request rejected' });
+          return;
+        }
+        progressStore.deleteProgress(user.id);
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Set-Cookie': auth.sessionClearCookie(),
+          'Cache-Control': 'no-store',
+        });
+        res.end(JSON.stringify({ ok: true, deleted: true }));
+        return;
+      }
+      sendJson(res, 200, { user: { id: user.id, login: user.login, avatarUrl: user.avatarUrl } });
+      return;
+    }
+
+    if (url === '/api/progress' && method === 'GET') {
+      const user = auth.userFromRequest(req);
+      if (!user) {
+        sendJson(res, 401, { error: 'Not signed in' });
+        return;
+      }
+      const stored = progressStore.readProgress(user.id);
+      if (!stored) {
+        sendJson(res, 200, { revision: null, updated: null, document: null });
+        return;
+      }
+      sendJson(res, 200, { revision: stored.revision, updated: stored.updated, document: stored.document });
+      return;
+    }
+
+    if (url === '/api/progress' && method === 'PUT') {
+      const user = auth.userFromRequest(req);
+      if (!user) {
+        sendJson(res, 401, { error: 'Not signed in' });
+        return;
+      }
+      if (!sameOrigin(req)) {
+        sendJson(res, 403, { error: 'Cross-origin request rejected' });
+        return;
+      }
+      const body = await readJson(req);
+      const result = progressStore.writeProgress(
+        user.id,
+        body.document,
+        body.baseRevision === undefined ? null : body.baseRevision
+      );
+      if (result.conflict) {
+        sendJson(res, 409, {
+          error: 'revision_conflict',
+          revision: result.current.revision,
+          updated: result.current.updated,
+          document: result.current.document,
+        });
+        return;
+      }
+      sendJson(res, 200, { ok: true, revision: result.revision, updated: result.updated });
+      return;
+    }
+
     if (method === 'POST' && (url === '/api/compile' || url === '/api/check' || url === '/api/ir' || url === '/api/tokens' || url === '/api/format')) {
       const body = await readJson(req);
       const source = sourceOf(body);
@@ -597,7 +772,9 @@ server.listen(PORT, HOST, () => {
   console.log('Compiler: ' + XIOM_BIN + ' (' + (fs.existsSync(XIOM_BIN) ? 'found' : 'NOT FOUND') + ')');
   console.log('Stdlib: ' + (process.env.XIOM_STDLIB || '(toolchain default)'));
   console.log('Work root: ' + WORK_ROOT + ' (jobs: ' + MAX_COMPILES + ', checks: ' + MAX_CHECKS + ')');
-  console.log('Endpoints: /api/compile, /api/check, /api/ir, /api/tokens, /api/format, /api/lessons, /api/version, /api/health');
+  console.log('Endpoints: /api/compile, /api/check, /api/ir, /api/tokens, /api/format, /api/lessons, /api/version, /api/health, /api/me, /api/progress');
+  console.log('Accounts: ' + (auth.authConfigured() ? 'GitHub sign-in enabled' : 'disabled (env not set)'));
+  console.log('Progress data: ' + progressStore.dataDir);
 });
 
 function shutdown(signal) {

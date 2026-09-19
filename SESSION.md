@@ -87,11 +87,13 @@ Phase C: C1 (read-only registry browser) is implemented in `js/registry.js` -
 the Packages panel browses `/index.json`, searches `/search?q=`, expands
 version metadata from `/packages/:name`, and has loading/empty/unreachable
 states. C4 conformance is recorded (playground tokens already match the
-registry/website palette). C2 is in progress: the owner registered the GitHub
-OAuth app and chose the host-side auth helper (Option B) so the container
-keeps zero egress and never holds the client secret; the contract is in
-DEPLOY.md and the ops handoff is with the owner. C3 waits on the first
-published packages. `syncProgress()` stays an internal adapter;
+registry/website palette). C2 is implemented (Option B): `lib/auth.js` +
+`lib/progress-store.js` + server routes + the account UI, with signed
+sessions, revision-checked progress documents on the `playground-data`
+volume, and mocked-helper tests (32 smoke checks). It activates when the
+owner writes `/opt/xiom/playground.env` with the helper key; the ops-side
+helper is already running. C3 waits on the first published packages.
+`syncProgress()` is live when signed in and a no-op otherwise;
 `docs/PROGRESS_SYNC.md` records that the registry offers no user-scoped APIs.
 
 Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
@@ -163,7 +165,7 @@ node tools/generate-expected-outputs.js --wsl
 #  in WSL, so the tool runs a python3 worker there)
 
 node server.js                         # local server (set XIOM_BIN/XIOM_STDLIB if needed)
-node tools/test-server.js              # 18 smoke checks
+node tools/test-server.js              # 32 smoke checks (incl. mocked C2 auth)
 node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
 node tools/lesson-audit.js             # + execute solutions (Linux; Windows clang hangs at -O2)
 node tools/generate-expected-outputs.js --check

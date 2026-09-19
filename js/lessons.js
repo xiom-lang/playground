@@ -359,6 +359,7 @@ function getProgress() {
 function markComplete() {
   if (!currentLessonId) return;
   saveProgress(currentLessonId);
+  if (window.scheduleSync) window.scheduleSync();
   if (lessonCatalogCache) {
     renderLessonList(lessonCatalogCache);
   }

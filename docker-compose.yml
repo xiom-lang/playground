@@ -20,11 +20,22 @@ services:
       - "127.0.0.1:3300:3000"
     volumes:
       - /opt/xiom/toolchain:/toolchain:ro
+      - playground-data:/data
+    # Optional accounts config (C2). The file lives outside the repo so the
+    # hourly git reset and the Docker build context never touch it; Compose
+    # v2.24+ skips it when absent, keeping the feature inert.
+    env_file:
+      - path: /opt/xiom/playground.env
+        required: false
     environment:
       - HOST=0.0.0.0
       - PORT=3000
       - XIOM_BIN=/toolchain/bin/xiom
       - XIOM_STDLIB=/toolchain/lib
+      - PLAYGROUND_DATA_DIR=/data
+    # The C2 auth helper runs on the host and is reached through the gateway.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     read_only: true
     tmpfs:
       - /tmp:size=256m
@@ -45,3 +56,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+volumes:
+  playground-data:
