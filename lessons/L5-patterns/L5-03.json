@@ -22,7 +22,7 @@
     "safe-access"
   ],
   "tips": [
-    "`.get()` is always safe — it returns `Option[T]`, never crashes on bad indices",
+    "`.get()` returns `Option[T]` instead of crashing on bad indices — handle `None` and stay in control",
     "Index 0 is the FIRST element, index `.len() - 1` is the LAST element",
     "Combine `.len()` with `.get()` when you need to iterate by index"
   ],

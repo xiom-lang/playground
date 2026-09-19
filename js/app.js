@@ -320,6 +320,7 @@ window.addEventListener('load', function () {
   applySavedTheme();
   checkOnboarding();
   if (window.refreshAuthState) window.refreshAuthState();
+  if (window.loadLandingStats) window.loadLandingStats();
 });
 
 function loadServerInfo() {
@@ -330,17 +331,11 @@ function loadServerInfo() {
       serverInfo = info;
       window.xiomServerInfo = info;
 
-      var statVersion = document.getElementById('statVersion');
-      if (statVersion) statVersion.textContent = 'Playground v' + info.server;
-
       var footerVersion = document.getElementById('footerVersion');
       if (footerVersion) {
         footerVersion.textContent = 'v' + info.server + ' \u00B7 toolchain ' + info.toolchain;
         footerVersion.title = 'Standard library ' + info.stdlib + ' \u00B7 in-browser compiler ' + info.wasm;
       }
-
-      var statModules = document.getElementById('statModules');
-      if (statModules && info.stdlibModules) statModules.textContent = String(info.stdlibModules);
 
       var statusEl = document.getElementById('status');
       if (statusEl && statusEl.textContent === 'Ready.') {
@@ -350,6 +345,74 @@ function loadServerInfo() {
     .catch(function () { /* server info is best-effort */ });
 }
 window.loadServerInfo = loadServerInfo;
+
+/**
+ * Fill the landing stats from the generated reference and lesson catalog so
+ * no cell ever shows a placeholder. Values that cannot be loaded are left
+ * hidden, and the source is labelled. This is the only place published
+ * counts are allowed to come from.
+ */
+function fillStat(cellId, valueId, value) {
+  var cell = document.getElementById(cellId);
+  var valueEl = document.getElementById(valueId);
+  if (!cell || !valueEl || value === null || value === undefined || value === '') return;
+  valueEl.textContent = typeof value === 'number' ? value.toLocaleString('en-US') : String(value);
+  cell.classList.remove('hidden');
+}
+
+function loadLandingStats() {
+  var catalogPromise = fetch('lessons/index.json')
+    .then(function (resp) { return resp.ok ? resp.json() : null; })
+    .catch(function () { return null; });
+  var limitsPromise = fetch('js/limitations.json')
+    .then(function (resp) { return resp.ok ? resp.json() : null; })
+    .catch(function () { return null; });
+  var referencePromise = fetch('js/stdlib-ref.json')
+    .then(function (resp) { return resp.ok ? resp.json() : null; })
+    .catch(function () { return null; });
+  var versionPromise = fetch('/api/version')
+    .then(function (resp) { return resp.ok ? resp.json() : null; })
+    .catch(function () { return null; });
+
+  Promise.all([catalogPromise, limitsPromise, referencePromise, versionPromise]).then(function (results) {
+    var catalog = results[0];
+    var limitations = results[1];
+    var reference = results[2];
+    var version = results[3];
+
+    if (catalog && catalog.levels) {
+      fillStat('statLevelsCell', 'statLevels', catalog.levels.length);
+      if (typeof catalog.total_lessons === 'number' && limitations && Array.isArray(limitations.lessons)) {
+        fillStat('statLessonsCell', 'statLessons', catalog.total_lessons - limitations.lessons.length);
+      }
+    }
+    if (reference && reference.counts) {
+      fillStat('statModulesCell', 'statModules', reference.counts.modules);
+      fillStat('statFunctionsCell', 'statFunctions', reference.counts.functions);
+    } else if (version && version.stdlibModules) {
+      fillStat('statModulesCell', 'statModules', version.stdlibModules);
+    }
+    if (version && version.toolchain) {
+      fillStat('statVersion', 'statToolchain', version.toolchain);
+    }
+
+    var source = document.getElementById('statsSource');
+    if (source) {
+      var shown = ['statLessonsCell', 'statLevelsCell', 'statModulesCell', 'statFunctionsCell', 'statVersion'].some(function (id) {
+        var cell = document.getElementById(id);
+        return cell && !cell.classList.contains('hidden');
+      });
+      if (shown) {
+        var label = version && version.toolchain
+          ? 'the ' + version.toolchain + ' toolchain reference and CI lesson catalog'
+          : 'the generated stdlib reference and CI lesson catalog';
+        source.textContent = 'Counts from ' + label + '. Lessons limited by known compiler bugs are excluded.';
+        source.classList.remove('hidden');
+      }
+    }
+  });
+}
+window.loadLandingStats = loadLandingStats;
 
 function checkLastProgress() {
   var progress = window.getProgress ? window.getProgress() : [];

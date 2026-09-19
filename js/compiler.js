@@ -146,7 +146,12 @@ function renderRunResult(run, ids) {
     document.getElementById(ids.ir).textContent = window._lastWasmIr;
   }
   if (run.contracts) {
-    document.getElementById(ids.contracts).textContent = run.contracts;
+    document.getElementById(ids.contracts).textContent =
+      'Runtime-checked when the program runs: contract guards abort with a structured diagnostic if a promise is broken.\n\n' +
+      'Verification export (experimental, SMT-LIB; not a proof):\n\n' + run.contracts;
+  } else {
+    document.getElementById(ids.contracts).textContent =
+      'This program has no contracts. Contracts are runtime-checked when present; the SMT-LIB verification export is experimental.';
   }
   if (!run.tokens) {
     document.getElementById(ids.tokens).textContent = 'Click this tab to generate tokens.';

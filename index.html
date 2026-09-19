@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XIOM Playground — Learn Systems Programming</title>
+<title>XIOM Playground</title>
 <link rel="icon" type="image/x-icon" href="xiom-icon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="xiom-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/editor/editor.main.css">
@@ -20,12 +20,12 @@
   <div class="onboarding-content">
     <div class="onboarding-hero">XIOM</div>
     <h2>Welcome to the XIOM Playground</h2>
-    <p>Learn systems programming from scratch &mdash; 410 interactive lessons, from "Hello World" to building real programs.</p>
+    <p>Learn XIOM from scratch with interactive lessons &mdash; each one type-checked in CI, and lessons limited by known compiler bugs are clearly badged.</p>
     <div class="onboarding-actions">
       <button class="btn-primary onboarding-start" onclick="dismissOnboarding(); startLearning();">Start Learning &rarr;</button>
       <button class="btn-secondary" onclick="dismissOnboarding(); openFreePlay();">Try Playground</button>
     </div>
-    <div class="onboarding-footer">No account needed. Free forever. Everything runs in your browser.</div>
+    <div class="onboarding-footer">No account needed &middot; free forever &middot; Run and Format compile on our servers in a sandboxed container.</div>
   </div>
 </div>
 
@@ -33,12 +33,13 @@
 <div id="landing" class="landing-screen">
   <div class="landing-hero">
     <img class="hero-logo" src="xiom-logo.png" alt="XIOM">
-    <h1 class="hero-title">Learn to Code.<br><span class="gradient-text">Build Real Things.</span></h1>
-    <p class="hero-subtitle">No experience needed. Interactive lessons. Instant feedback. Free forever.</p>
+    <h1 class="hero-title" aria-label="Try XIOM in your browser.">Try XIOM<br><span class="gradient-text">in your browser.</span></h1>
+    <p class="hero-subtitle">Write a contract; watch the compiler check it. Tokens, LLVM IR, contracts and diagnostics side by side.</p>
     <div class="hero-cta">
       <button class="btn-primary" onclick="startLearning()">Start Learning</button>
       <button class="btn-secondary" onclick="openFreePlay()">Try Playground</button>
     </div>
+    <p class="hero-transparency">Run and Format compile and execute on our servers in a sandboxed container. The Diagnostics and LLVM IR tabs also have an in-browser WASM preview for pure programs.</p>
     <div id="continueSection" class="continue-section hidden">
       <div class="continue-prompt" id="continuePrompt">You've completed <strong id="continueCount">0</strong> lessons. Pick up where you left off:</div>
       <button id="btnContinue" class="btn-primary continue-btn" onclick="continueLearning()">Continue Learning &#x2192;</button>
@@ -59,39 +60,42 @@
 
   <section class="landing-section" aria-labelledby="whyXiom">
     <h2 class="landing-section-title" id="whyXiom">Why learn with XIOM?</h2>
-    <p class="landing-section-sub">A language built to keep beginners safe, and a playground built to keep them moving.</p>
+    <p class="landing-section-sub">A language built to catch mistakes at compile time and fail loudly at runtime &mdash; with a playground that keeps learners moving.</p>
 
     <div class="feature-grid">
       <div class="feature-card">
         <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
-        <h3>Never Crash</h3>
-        <p>XIOM catches your mistakes before your program runs. No mysterious errors. No crashes.</p>
+        <h3>Fails loudly, never silently</h3>
+        <p>Contract guards and overflow checks abort with a structured diagnostic instead of corrupting state.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">&#x26A1;</div>
-        <h3>Really Fast</h3>
-        <p>Your programs run at native speed — as fast as languages used by professionals.</p>
+        <div class="feature-icon">&#x2699;&#xFE0F;</div>
+        <h3>Compiles to native code</h3>
+        <p>Your program builds to a native binary. The first run compiles it (a few seconds); running the same code again is instant.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F4DA;</div>
-        <h3>Learn by Doing</h3>
-        <p>410 interactive lessons. Write code, see results instantly. From zero to confident.</p>
+        <h3>Learn by doing</h3>
+        <p>Interactive lessons from zero to confident, with expected-output checks. Lessons limited by known compiler bugs are clearly badged.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F393;</div>
-        <h3>Free Forever</h3>
+        <h3>Free forever</h3>
         <p>No signup. No payments. No ads. Just you and the code. Open source, always free.</p>
       </div>
     </div>
+
+    <p class="ai-strip">Working with AI agents? See <a href="https://docs.xiom-lang.org/compiler/" target="_blank" rel="noopener">--ai diagnostics and the MCP server</a>.</p>
   </section>
 
   <div class="stats-bar">
-    <div class="stat"><strong>930</strong> tests</div>
-    <div class="stat"><strong>410</strong> lessons</div>
-    <div class="stat"><strong>9</strong> levels</div>
-    <div class="stat"><strong id="statModules">-</strong> stdlib modules</div>
-    <div class="stat" id="statVersion">Playground</div>
+    <div class="stat hidden" id="statLessonsCell"><strong id="statLessons">-</strong> runnable lessons</div>
+    <div class="stat hidden" id="statLevelsCell"><strong id="statLevels">-</strong> levels</div>
+    <div class="stat hidden" id="statModulesCell"><strong id="statModules">-</strong> stdlib modules</div>
+    <div class="stat hidden" id="statFunctionsCell"><strong id="statFunctions">-</strong> public functions</div>
+    <div class="stat hidden" id="statVersion"><strong id="statToolchain">-</strong> toolchain</div>
   </div>
+  <div class="stats-source hidden" id="statsSource"></div>
   <div class="landing-footer">
     <span>Playground</span>
     <span class="landing-footer-sep">|</span>
@@ -99,10 +103,27 @@
     <span class="landing-footer-sep">|</span>
     <span id="footerVersion">-</span>
   </div>
+  <div class="landing-footer landing-footer-links">
+    <a href="https://docs.xiom-lang.org/getting-started/" target="_blank" rel="noopener">Getting Started</a>
+    <span class="landing-footer-sep">&middot;</span>
+    <a href="https://docs.xiom-lang.org/contracts/" target="_blank" rel="noopener">Contracts</a>
+    <span class="landing-footer-sep">&middot;</span>
+    <a href="https://docs.xiom-lang.org/compiler/" target="_blank" rel="noopener">Compiler &amp; AI</a>
+    <span class="landing-footer-sep">&middot;</span>
+    <a href="https://docs.xiom-lang.org/api/" target="_blank" rel="noopener">Stdlib API</a>
+    <span class="landing-footer-sep">&middot;</span>
+    <a href="https://registry.xiom-lang.org" target="_blank" rel="noopener">Registry</a>
+    <span class="landing-footer-sep">&middot;</span>
+    <a href="https://docs.xiom-lang.org/AI_CONTEXT/" target="_blank" rel="noopener">AI Context</a>
+  </div>
   <div class="landing-footer landing-footer-legal">
+    <a href="https://docs.xiom-lang.org/" target="_blank" rel="noopener">Docs</a>
+    <span class="landing-footer-sep">&middot;</span>
+    <a href="https://github.com/xiom-lang" target="_blank" rel="noopener">GitHub</a>
+    <span class="landing-footer-sep">&middot;</span>
     <a href="https://xiom-lang.org/terms.html" target="_blank" rel="noopener">Terms of Use</a>
     <span class="landing-footer-sep">&middot;</span>
-    <a href="https://xiom-lang.org/privacy.html" target="_blank" rel="noopener">Privacy</a>
+    <a href="https://xiom-lang.org/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
     <span class="landing-footer-sep">&middot;</span>
     <a href="mailto:support@xiom-lang.org">support@xiom-lang.org</a>
   </div>

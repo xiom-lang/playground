@@ -66,6 +66,11 @@ Audit (AUDIT.md) is fully implemented for this repository:
   shows a "Recent runs" block per lesson, a continue-where-you-left-off card
   with level rings, JSON export/import, and a no-op `syncProgress()` adapter
   whose registry contract is `docs/PROGRESS_SYNC.md`.
+- Positioning (2026-09-19): landing, onboarding, concept cards, contracts tab
+  and the footer are aligned with the website's wording - runtime-checked
+  contracts (verification export marked experimental), no unverifiable stats
+  or performance claims, canonical cross-links, and explicit server-side
+  execution transparency (AUDIT section 20).
 - Toolchain verification (2026-09-19): a local v0.61.0 build (`16a89615`,
   compiler R47) was verified with a full sweep and an execution audit. 68
   expected outputs were corrected; C17 dropped from 31 to 27 blocked lessons

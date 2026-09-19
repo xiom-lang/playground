@@ -1128,3 +1128,40 @@ The full sweep on this build also completed in about a third of the time of
 the R47 build (roughly 10 vs 26 minutes at the same concurrency; machine load
 varies), consistent with the perf work in the batch.
 
+## 20. Positioning alignment with the website (2026-09-19)
+
+The website session defined the product wording ("XIOM - a language where
+intent is verified"; contracts are runtime-checked, the verification export
+is experimental, proof is never implied) and asked the playground to match
+it. Landed:
+
+- Hero: "Try XIOM in your browser." with the contracts/tokens/IR/diagnostics
+  subline and a transparency line naming what runs server-side (Run, Format,
+  and program execution in the sandboxed container) versus the in-browser
+  WASM preview (Diagnostics/IR for pure programs).
+- "Never Crash" is gone (contract guards and overflow checks abort by
+  design); that card is now "Fails loudly, never silently". "Really Fast" was
+  replaced with the factual "Compiles to native code", and the lessons card
+  no longer claims instant feedback.
+- Stats are data-driven from the generated reference and lesson catalog
+  (379 runnable lessons / 9 levels / 516 modules / 6,522 functions /
+  toolchain v0.60.1) with a source label; cells that cannot load stay hidden
+  instead of showing placeholders, and the hardcoded "930 tests" claim was
+  removed.
+- Contracts tab: "runtime-checked ... aborts with a structured diagnostic",
+  with the SMT-LIB output in a separate "Verification export (experimental;
+  not a proof)" block; programs without contracts get the same explanation.
+  "Proved" is gone from UI copy and from the affected lesson narratives
+  (L3-50, L4-10, L4-33, L4-50, L5-03).
+- Concept cards: "Rules That Never Break" -> "Rules That Must Hold", "Why
+  XIOM is Safe" -> "Safety by Design", both with compile-time versus runtime
+  accuracy; no comparisons with other languages and no benchmark claims.
+- Footer: canonical line (Docs, GitHub, Terms, Privacy, support@) plus
+  Getting Started, Contracts, Compiler & AI, Stdlib API, Registry, AI
+  Context; an AI strip points at the docs compiler page.
+- Onboarding modal states the sandboxed server execution instead of
+  "everything runs in your browser".
+
+Verified in a real browser (dark, light, 390x844): stats, links, contracts
+labels, and onboarding copy render as above with no console errors.
+

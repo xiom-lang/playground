@@ -272,6 +272,37 @@ html.light-mode .output-content {
   flex-wrap: wrap;
   animation: none;
 }
+.landing-footer-links {
+  margin-top: 10px;
+  font-size: 11.5px;
+  flex-wrap: wrap;
+  animation: none;
+}
+.stats-source {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--low);
+}
+.hero-transparency {
+  max-width: 520px;
+  margin: 18px auto 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--low);
+}
+.ai-strip {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--mid);
+}
+.ai-strip a {
+  color: var(--indigo);
+  font-weight: 600;
+  text-decoration: none;
+}
+.ai-strip a:hover { text-decoration: underline; }
 
 /* ---- Landing sections ---- */
 .landing-section {
