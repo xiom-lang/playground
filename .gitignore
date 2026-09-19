@@ -11,3 +11,4 @@ build/
 .toolchain.stage/
 tools/.syntax-cache.json
 a.out
+data/
