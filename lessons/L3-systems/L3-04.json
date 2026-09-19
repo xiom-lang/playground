@@ -9,7 +9,7 @@
   "analogy": "`if let` is like checking your mailbox — if there's a letter, you read it. If not, you just walk away (or do something else). You don't need a formal ceremony for an empty mailbox.",
   "code_template": "use xiom.io;\n\nfn main() -> Int {\n  let item: Option[Str] = Some(\"Magic Sword\");\n\n  // TODO: Use if let to check if item is Some — print \"Equipped: X\"\n\n  // TODO: Add an else branch to print \"No item equipped\"\n\n  // TODO: Change item to None and run again\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nfn main() -> Int {\n  let item: Option[Str] = Some(\"Magic Sword\");\n\n  if let Some(equipment) = item {\n    io.println(\"Equipped: \" + equipment.to_str());\n  } else {\n    io.println(\"No item equipped\");\n  }\n\n  let item2: Option[Str] = None;\n  if let Some(equipment) = item2 {\n    io.println(\"Equipped: \" + equipment.to_str());\n  } else {\n    io.println(\"No item equipped\");\n  }\n  return 0;\n}\n",
-  "expected_output": "Equipped:\nNo item equipped",
+  "expected_output": "Equipped: Magic Sword\nNo item equipped",
   "try_it": "Rewrite the greet function from the narrative using `match` instead of `if let`. Then add a third case where you greet VIPs differently — is `if let` or `match` better now?",
   "concepts": [
     "if-let",
