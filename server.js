@@ -183,7 +183,12 @@ function failureOutput(diagnostics, proc) {
     return 'Compilation timed out. Try a smaller program.';
   }
   if (errors.length > 0) {
-    return 'Compilation failed: ' + errors.length + ' error(s).\nCheck the Diagnostics tab for details.';
+    // Surface the first message: toolchain/driver errors (E000) have no
+    // source location and would otherwise hide behind "check Diagnostics".
+    const first = errors.find((d) => d.message) || errors[0];
+    const detail = first && first.message ? ' ' + String(first.message).split('\n')[0] : '';
+    return 'Compilation failed: ' + errors.length + ' error(s).' + detail +
+      '\nCheck the Diagnostics tab for details.';
   }
   const firstLine = String(proc && proc.stderr || '').split(/\r?\n/).find((l) => l.trim() && !/^(compiled|exit code):/.test(l.trim()));
   return firstLine ? firstLine.trim() : 'Compilation failed.';

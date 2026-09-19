@@ -289,6 +289,19 @@ async function main() {
         assert.ok(payload.diagnostics.some((d) => d.kind === 'error'));
       });
 
+      await okAsync('failure output surfaces the first diagnostic message', async () => {
+        // A syntax error fails during the check stage, so no clang runs.
+        const res = await request('POST', '/api/compile', { source: 'fn main( { }\n' });
+        const payload = JSON.parse(res.body);
+        assert.strictEqual(payload.success, false);
+        assert.ok(payload.output.startsWith('Compilation failed:'), payload.output);
+        const firstWithMessage = payload.diagnostics.find((d) => d.kind === 'error' && d.message);
+        if (firstWithMessage) {
+          const firstLine = String(firstWithMessage.message).split('\n')[0];
+          assert.ok(payload.output.indexOf(firstLine) >= 0, 'missing "' + firstLine + '" in: ' + payload.output);
+        }
+      });
+
       // Program execution is skipped on Windows: the clang shipped with the
       // Windows toolchain currently hangs optimizing the C runtime at -O2
       // (compiler finding C5/C3). CI runs these on Linux.
