@@ -1094,3 +1094,34 @@ for edit-run loops; (2) fix the broad fmt-closure peek before v0.61.0; (3)
 keep the script cache independent of `HOME` if cheap. The playground will
 detect the flag capability and adopt it automatically.
 
+## 19. Compiler preview verification (R48/R49 batch, 2026-09-19)
+
+Compiler session local main at `306073ba` (R49-3) was built in WSL and verified
+against the lesson corpus. That revision is unpushed, so main keeps the v0.60.1
+data; the refreshed data is parked on branch
+`verify/compiler-preview-306073ba` (it supersedes the earlier
+`verify/toolchain-v0.61.0-data` snapshot, which only had the R47 fixes).
+
+C17 (lessons that cannot run): **31 -> 5**. Fixed 26: L2-12/14/15/16/19,
+L3-21/22/23, L5-40, L6-01..07, L6-13/14/16/17/18, L6-28/30/31, L8-15/18.
+Remaining 5:
+
+- L4-26/29/33/39: clang fails with `invalid getelementptr indices`
+  (`getelementptr i64, i64* ...`), one IR-indexing family.
+- L6-40: `C001 type 'Int' does not implement 'Plugin'` - the documented
+  module-scoped fixpoint pre-pass gap.
+
+No regressions; 410/410 solutions type-check with zero template failures.
+
+C18/C19: expected outputs **351 -> 368** of 379 runnable lessons. The
+nondeterministic skip list shrank 26 -> 11 (L3-02, L3-50, L5-09/20/24/26/29/
+31/35/36/43) with zero corrupt/invalid-UTF-8 outputs and zero execution
+failures. L0-11 prints the friend names and is stable; L5-32/34/42 are stable
+and sane; L3-50 still prints varying pointer values; L8-14 no longer faults
+(it is now deterministic empty output, so its stored expected output is
+empty). 90 lesson files carry refreshed expected outputs.
+
+The full sweep on this build also completed in about a third of the time of
+the R47 build (roughly 10 vs 26 minutes at the same concurrency; machine load
+varies), consistent with the perf work in the batch.
+
