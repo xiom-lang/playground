@@ -9,6 +9,7 @@
   "analogy": "A shopping list Vec is like a paper checklist at the store. You write items down (push), read them in order (for/while), and cross them off (pop) as you find them. The paper grows with your list and shrinks as you shop.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  let groceries: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"apples\", \"bananas\", \"carrots\"\n  // TODO: Print \"Grocery List:\" as a header\n  // TODO: Use a while loop to print each item numbered (1. apples, 2. bananas...)\n  // TODO: Print the total number of items\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  let groceries: Vec[Str] = Vec[Str].new();\n  groceries.push(\"apples\");\n  groceries.push(\"bananas\");\n  groceries.push(\"carrots\");\n\n  io.println(\"Grocery List:\");\n  let i: Int = 0;\n  while i < groceries.len() {\n    match groceries.get(i) {\n      Some(item) => io.println(to_string(i + 1) + \". \" + item);\n      None => {}\n    }\n    i = i + 1;\n  }\n\n  io.println(\"Total items: \" + to_string(groceries.len()));\n  return 0;\n}\n",
+  "expected_output": "Grocery List:\n1. apples\n2. bananas\n3. carrots\nTotal items: 3",
   "try_it": "Add a quantity to each item by storing `\"2x milk\"` instead of just `\"milk\"`. Add a way to search for an item: loop through the list and print 'Found!' when you match. Add a `remove_item` function that takes an index and removes that item — but be careful with how removal shifts the rest of the Vec.",
   "concepts": [
     "Vec",

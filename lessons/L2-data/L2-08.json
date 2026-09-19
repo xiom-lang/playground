@@ -9,7 +9,7 @@
     "analogy":  "A Point is like a pin on a map. The distance method is like stretching a measuring tape between two pins to see how far apart they are.",
     "code_template":  "use xiom.io;\n\ntype Point = {\n  x: Float64;\n  y: Float64;\n}\n\n// TODO: Write a \u0027distance_to\u0027 method using the formula: sqrt(dx*dx + dy*dy)\n\nfn main() -\u003e Int {\n  // TODO: Create two Points and print the distance between them\n  return 0;\n}\n",
     "solution":  "use xiom.io;\n\nuse xiom.math;\ntype Point = {\n  x: Float64;\n  y: Float64;\n}\n\nfn Point.distance_to(self, other: Point) -\u003e Float64 {\n  let dx = x - other.x;\n  let dy = y - other.y;\n  return math.sqrt(dx * dx + dy * dy);\n}\n\nfn main() -\u003e Int {\n  let a = Point{ x: 1.0, y: 2.0 };\n  let b = Point{ x: 4.0, y: 6.0 };\n  let dist = a.distance_to(b);\n  io.println(dist.to_str());\n  return 0;\n}\n",
-    "expected_output": "",
+    "expected_output": "5",
     "try_it":  "Create a third Point for a friend\u0027s house. Find the distance from home to friend, and from school to friend. Which one is closer?",
     "concepts":  [
                      "coordinate-struct",

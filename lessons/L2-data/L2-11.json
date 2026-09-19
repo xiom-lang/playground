@@ -9,7 +9,7 @@
   "analogy": "An enum is like a multiple-choice question — you can only pick one option from the list. No writing in the margins, no inventing a new answer.",
   "code_template": "use xiom.io;\n\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\n// TODO: Write 'action' function — returns \"Stop\" for Red, \"Slow\" for Yellow, \"Go\" for Green\n\nfn main() -> Int {\n  // TODO: Create a TrafficLight value and print what action to take\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn action(light: TrafficLight) -> Str {\n  if light == TrafficLight.Red {\n    return \"Stop\";\n  }\n  if light == TrafficLight.Yellow {\n    return \"Slow\";\n  }\n  return \"Go\";\n}\n\nfn main() -> Int {\n  let light = TrafficLight.Red;\n  io.println(action(light).to_str());\n  return 0;\n}\n",
-  "expected_output": "",
+  "expected_output": "Stop",
   "try_it": "Add a 'Flashing' variant to the TrafficLight enum. Update the action function to return \"Proceed with caution\" for Flashing.",
   "concepts": [
     "enum",

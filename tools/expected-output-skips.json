@@ -1,38 +1,8 @@
 {
   "toolchain": "v0.60.1",
-  "generated": "2026-09-18T21:43:14.137Z",
-  "count": 28,
+  "generated": "2026-09-19T18:56:36.967Z",
+  "count": 11,
   "lessons": [
-    {
-      "id": "L0-11",
-      "level": "L0",
-      "title": "For Loops (Walking Through Things)",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L0-34",
-      "level": "L0",
-      "title": "Shopping List",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L0-49",
-      "level": "L0",
-      "title": "Rainbow Printer",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L0-50",
-      "level": "L0",
-      "title": "L0 Finale: Your Digital Business Card",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L3-01",
-      "level": "L3",
-      "title": "The Real Option Type",
-      "reason": "nondeterministic output"
-    },
     {
       "id": "L3-02",
       "level": "L3",
@@ -40,51 +10,9 @@
       "reason": "nondeterministic output"
     },
     {
-      "id": "L3-07",
+      "id": "L3-50",
       "level": "L3",
-      "title": "The Real Result Type",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L3-15",
-      "level": "L3",
-      "title": "Error Messages with ?",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L3-16",
-      "level": "L3",
-      "title": "Option to Result",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L3-17",
-      "level": "L3",
-      "title": "Real-World: User Login",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L3-18",
-      "level": "L3",
-      "title": "Real-World: Age Validator",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L5-02",
-      "level": "L5",
-      "title": "Vec Push and Pop",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L5-05",
-      "level": "L5",
-      "title": "Building a Shopping List",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L5-07",
-      "level": "L5",
-      "title": "Todo List",
+      "title": "L3 Capstone: Safe Calculator App",
       "reason": "nondeterministic output"
     },
     {
@@ -124,18 +52,6 @@
       "reason": "nondeterministic output"
     },
     {
-      "id": "L5-32",
-      "level": "L5",
-      "title": "Generic Swap",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L5-34",
-      "level": "L5",
-      "title": "Two Types of Lists",
-      "reason": "nondeterministic output"
-    },
-    {
       "id": "L5-35",
       "level": "L5",
       "title": "Collection Combinators",
@@ -148,27 +64,9 @@
       "reason": "nondeterministic output"
     },
     {
-      "id": "L5-42",
-      "level": "L5",
-      "title": "Queue with Vec",
-      "reason": "nondeterministic output"
-    },
-    {
       "id": "L5-43",
       "level": "L5",
       "title": "Stack with Vec",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L7-09",
-      "level": "L7",
-      "title": "Roman Numeral Converter",
-      "reason": "nondeterministic output"
-    },
-    {
-      "id": "L8-20",
-      "level": "L8",
-      "title": "Graduation: Your XIOM Journey",
       "reason": "nondeterministic output"
     }
   ]

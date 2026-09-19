@@ -9,7 +9,7 @@
   "analogy": "Clone is a photocopier — you get an identical, independent copy. The original stays with you, and the copy is a separate item that can be modified independently.",
   "code_template": "use xiom.io;\n\n// TODO: Create a string variable 'greeting' = \"Hello\"\n// Clone it to 'copy'\n// Print both\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
   "solution": "use xiom.io;\n\nfn main() -> Int {\n  let greeting = \"Hello\";\n  let copy = greeting.clone();\n  io.println(greeting.to_str());\n  io.println(copy.to_str());\n  return greeting.len() as Int;\n}",
-  "expected_output": "",
+  "expected_output": "Hello\nHello",
   "try_it": "Clone a Vec[Int] and add different elements to the original and the clone. Print both to confirm they're independent.",
   "concepts": [
     "clone",

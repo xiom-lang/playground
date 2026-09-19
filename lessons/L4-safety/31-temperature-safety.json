@@ -9,7 +9,7 @@
     "analogy":  "An invariant is like a bouncer at a nightclub door — once you\u0027re inside, everyone knows you belong.",
     "code_template":  "use xiom.io;\n\ntype Temperature = {\n  celsius: Float64;\n  invariant: celsius \u003e= -273.15;\n}\n\nfn Temperature.to_fahrenheit(self) -\u003e Float64 {\n  return self.celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn Temperature.to_kelvin(self) -\u003e Float64 {\n  // TODO: Convert celsius to kelvin (kelvin = celsius + 273.15)\n  return 0.0;\n}\n\nfn main() -\u003e Int {\n  let boiling: Temperature = Temperature{ celsius: 100.0 };\n  // TODO: Print boiling in kelvin using to_kelvin, return 0\n  return 0;\n}",
     "solution":  "use xiom.io;\n\ntype Temperature = {\n  celsius: Float64;\n  invariant: celsius \u003e= -273.15;\n}\n\nfn Temperature.to_fahrenheit(self) -\u003e Float64 {\n  return self.celsius * 9.0 / 5.0 + 32.0;\n}\n\nfn Temperature.to_kelvin(self) -\u003e Float64 {\n  return self.celsius + 273.15;\n}\n\nfn main() -\u003e Int {\n  let boiling: Temperature = Temperature{ celsius: 100.0 };\n  io.println(boiling.to_kelvin().to_str());\n  return 0;\n}",
-    "expected_output": "",
+    "expected_output": "373.15",
     "try_it":  "Add a `Temperature.from_fahrenheit` constructor that accepts Fahrenheit and converts back to Celsius, with a `requires` clause that prevents values below -459.67°F (absolute zero in Fahrenheit).",
     "concepts":  [
                      "invariant",

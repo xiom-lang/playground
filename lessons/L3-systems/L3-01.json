@@ -9,6 +9,7 @@
   "analogy": "Option is like a box that might be empty. You always check inside before using what's there — and the language won't let you skip the check.",
   "code_template": "use xiom.io;\n\nfn main() -> Int {\n  // TODO: Create a Some value with a test score of 88\n\n  // TODO: Create a None value of type Option[Str]\n\n  // TODO: Match on the score: print \"Passed: X\" or \"No score\"\n\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  let score = Some(88);\n  let name: Option[Str] = None;\n\n  let result = match score {\n    Some(s) => \"Passed: \" + to_string(s),\n    None => \"No score\",\n  };\n\n  io.println(result.to_str());\n  return 0;\n}\n",
+  "expected_output": "Passed: 88",
   "try_it": "Change `score` to `None` — does the output change? Then create a `Some(\"hello\")` string Option and match on it, printing the greeting or \"No greeting\".",
   "concepts": [
     "Option",

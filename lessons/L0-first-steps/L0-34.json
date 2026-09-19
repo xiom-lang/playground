@@ -9,6 +9,7 @@
   "analogy": "A for loop is like reading names off a class roster — you point to each name, say it out loud, and move to the next one until the list is done.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a list of shopping items using [ ] brackets\n  // TODO: Print a header like \"Shopping list:\"\n  // TODO: Write a for loop that goes through each item\n  // TODO: Inside the loop, print \"Buy: \" followed by the item\n  // TODO: After the loop, print \"That's everything!\"\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nuse xiom.iter;\nfn main() {\n  let groceries = [\"milk\", \"eggs\", \"bread\", \"apples\", \"cheese\"];\n\n  io.println(\"Shopping list:\");\n\n  for __i in range(0, groceries.len()) {\n    let item = groceries[__i];\n    let message = string.str_concat(\"Buy: \", item);\n    io.println(message);\n  }\n\n  io.println(\"That's everything!\");\n}\n",
+  "expected_output": "Shopping list:\nBuy: milk\nBuy: eggs\nBuy: bread\nBuy: apples\nBuy: cheese\nThat's everything!",
   "try_it": "Add 'chocolate' to the shopping list and run the program again. Then create a list of your favorite snacks and print them all with 'I love ' before each one. Can you make a list of numbers and print each one multiplied by 2 inside the loop?",
   "concepts": [
     "for",

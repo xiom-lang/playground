@@ -9,7 +9,7 @@
     "analogy":  "Comparing structs is like comparing two trading cards — you look at specific stats (fields) to decide which one is better, older, or bigger.",
     "code_template":  "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write \u0027is_older\u0027 — returns true if first person is older than second\n\n// TODO: Write \u0027same_age\u0027 — returns true if both people have the same age\n\n// TODO: Write \u0027has_longer_name\u0027 — returns true if first person\u0027s name is longer\n\nfn main() -\u003e Int {\n  // TODO: Create two people, test all three comparison functions\n  return 0;\n}\n",
     "solution":  "use xiom.io;\n\nuse xiom.string;\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn is_older(a: Person, b: Person) -\u003e Bool {\n  return a.age \u003e b.age;\n}\n\nfn same_age(a: Person, b: Person) -\u003e Bool {\n  return a.age == b.age;\n}\n\nfn has_longer_name(a: Person, b: Person) -\u003e Bool {\n  return string.str_len(a.name) \u003e string.str_len(b.name);\n}\n\nfn main() -\u003e Int {\n  let p1 = Person{ name: \"Oliver\", age: 16 };\n  let p2 = Person{ name: \"Pat\", age: 14 };\n  io.println(is_older(p1, p2).to_str());\n  io.println(same_age(p1, p2).to_str());\n  io.println(has_longer_name(p1, p2).to_str());\n  return 0;\n}\n",
-    "expected_output": "1\n0\n1",
+    "expected_output": "true\nfalse\ntrue",
     "try_it":  "Add a `youngest_of_three` function that takes three Persons and returns the name of the youngest. Test it with three different ages.",
     "concepts":  [
                      "struct-comparison",

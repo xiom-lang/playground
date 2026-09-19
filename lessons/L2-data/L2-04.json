@@ -9,7 +9,7 @@
   "analogy": "A method is like a skill attached to a character in a game — a Warrior can 'attack', a Healer can 'heal'. The skill belongs to the character type.",
   "code_template": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\n// TODO: Write an 'introduce' method that prints \"Hi, I'm [name]!\"\n\n// TODO: Write a 'birthday' method that increases age by 1\n\nfn main() -> Int {\n  // TODO: Create a Person, call introduce, call birthday, then print the new age\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn Person.introduce(self) {\n  io.println(\"Hi, I'm \" + name.to_str() + \"!\");\n}\n\nfn Person.birthday(self) {\n  age = age + 1;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Sam\", age: 14 };\n  me.introduce();\n  me.birthday();\n  io.println(me.age.to_str());\n  return 0;\n}\n",
-  "expected_output": "Hi, I'm !\n15",
+  "expected_output": "Hi, I'm Sam!\n15",
   "try_it": "Add a `greet_friend` method that takes another Person's name as a parameter and prints \"Hi [friend], I'm [name]!\"",
   "concepts": [
     "method",
