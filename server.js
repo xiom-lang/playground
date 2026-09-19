@@ -769,51 +769,6 @@ function prepareWorkRoot() {
   }
 }
 
-/**
- * Optional script-cache warmup. A cold compile costs seconds on the VPS, so
- * the first Run in an early lesson feels slow; when WARMUP_LESSONS is set we
- * compile that many lesson templates in the background (through the normal
- * compile queue and yielding whenever user work is pending) so those first
- * runs are cache hits. Inert unless WARMUP_LESSONS > 0.
- */
-const WARMUP_LESSONS = Math.max(0, Number(process.env.WARMUP_LESSONS) || 0);
-
-async function warmScriptCache() {
-  if (WARMUP_LESSONS === 0) return;
-  let catalog;
-  try {
-    catalog = JSON.parse(await fsp.readFile(path.join(SCRIPT_DIR, 'lessons', 'index.json'), 'utf8'));
-  } catch (err) {
-    console.error('warmup: lesson catalog not readable (' + err.message + '); skipping');
-    return;
-  }
-  const items = [];
-  for (const level of catalog.levels || []) {
-    for (const lesson of level.lessons || []) {
-      if (items.length >= WARMUP_LESSONS) break;
-      items.push({ id: lesson.id, file: lesson.file });
-    }
-    if (items.length >= WARMUP_LESSONS) break;
-  }
-  console.log('warmup: compiling ' + items.length + ' lesson templates in the background');
-  let cached = 0;
-  for (const item of items) {
-    while (queueState.compilesPending > 0 || queueState.checksPending > 0) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
-    try {
-      const data = JSON.parse(await fsp.readFile(path.join(SCRIPT_DIR, 'lessons', item.file), 'utf8'));
-      const source = typeof data.code_template === 'string' ? data.code_template : '';
-      if (!source) continue;
-      const result = await runCompileJob(() => runProgram(source));
-      if (result && result.success !== false) cached += 1;
-    } catch (err) {
-      console.error('warmup: ' + item.id + ' failed: ' + (err && err.message || err));
-    }
-  }
-  console.log('warmup: done (' + cached + '/' + items.length + ' templates cached)');
-}
-
 prepareWorkRoot();
 
 server.listen(PORT, HOST, () => {
@@ -825,7 +780,6 @@ server.listen(PORT, HOST, () => {
   console.log('Endpoints: /api/compile, /api/check, /api/ir, /api/tokens, /api/format, /api/lessons, /api/version, /api/health, /api/me, /api/progress');
   console.log('Accounts: ' + (auth.authConfigured() ? 'GitHub sign-in enabled' : 'disabled (env not set)'));
   console.log('Progress data: ' + progressStore.dataDir);
-  warmScriptCache().catch((err) => console.error('warmup failed: ' + ((err && err.message) || err)));
 });
 
 function shutdown(signal) {

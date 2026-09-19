@@ -48,13 +48,10 @@ reused and every run recompiles (~3-6s per run on the VPS); with it, repeat
 runs of an unchanged program finish in milliseconds. Both details are
 container-only and invisible to CI, which runs on a normal filesystem.
 
-`WARMUP_LESSONS` (compose sets 12) makes the first-run experience fast: after
-container (re)creation the server compiles the first N lesson templates in
-the background through the normal compile queue, yielding whenever user work
-is pending, so the first Run in those lessons is a cache hit (milliseconds)
-instead of a cold compile. Warmup progress appears as `warmup:` lines in
-`docker compose logs`. Edited programs still pay one cold compile each
-because the toolchain caches by source content.
+`WARMUP_LESSONS` was tried and removed: warming the script cache requires
+running `xiom run`, which executes incomplete lesson templates, so the
+playground does not do it. A compile-only cache-prime mode is on the compiler
+ask list (AUDIT section 18).
 
 Egress is blocked by
 `scripts/playground-egress-guard.sh` from `xiom-lang/ops`, which inserts
@@ -132,11 +129,16 @@ session whenever one of these changes.
   source code, no free-play code, no personal profile data beyond the GitHub
   identity.
 - Backups: the helper/playground env files are in the nightly restic set;
-  the `playground-data` volume is **not** backed up today (ask ops to add
-  `/var/lib/docker/volumes/playground_playground-data/_data` to
-  `scripts/restic-backup.sh`). Restic retention overall is 30 daily / 12
-  monthly snapshots with a nightly prune; a 5% read-data check runs
-  Sundays.
+  the `playground-data` volume is **not** backed up today. The website
+  privacy page is written for the state after ops adds it, so this is the
+  one open item (website session is holding the retention wording until then):
+  add `/var/lib/docker/volumes/playground_playground-data/_data` to
+  `scripts/restic-backup.sh` (confirm the exact name first with
+  `docker volume ls | grep playground`; the prefix follows the Compose
+  project name) and document a restore procedure in the ops backup doc -
+  a backup that has never been restored is a hope, not a backup.
+  Restic retention overall is 30 daily / 12 monthly snapshots with a nightly
+  prune; a 5% read-data check runs Sundays.
 - Cookies: a single HttpOnly, SameSite=Lax session cookie (Secure on https)
   with a 30-day lifetime; sign-out clears it.
 - Deletion: `DELETE /api/me` removes the stored progress document and clears

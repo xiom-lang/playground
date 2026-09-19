@@ -1091,8 +1091,11 @@ Precise compiler-side findings from reading `crates/xiom` at the fix revision:
 Requested, in priority order: (1) apply `--opt-level` in the script-run path
 (and/or an env var the driver can set) so the playground can request `-O0`
 for edit-run loops; (2) fix the broad fmt-closure peek before v0.61.0; (3)
-keep the script cache independent of `HOME` if cheap. The playground will
-detect the flag capability and adopt it automatically.
+keep the script cache independent of `HOME` if cheap; (4) add a compile-only
+cache-prime mode (`run --no-exec`, or have compile-only mode populate the
+script cache) so the playground can warm popular programs without executing
+user or lesson code. The playground will detect the flag capability and
+adopt it automatically.
 
 ## 19. Compiler preview verification (R48/R49 batch, 2026-09-19)
 
