@@ -83,13 +83,14 @@ Audit (AUDIT.md) is fully implemented for this repository:
 
 Phase A (A3, A4, A6) and Phase B (B1-B4) are complete. Remaining:
 
-Phase C: the registry decision (2026-09-19) unblocked C1 (public read API
-with open CORS; browse `/index.json`, search `/search?q=`, metadata
-`/packages/:name`) and C4 (playground tokens already match). C2 is
-playground-owned (own GitHub OAuth app; the registry is not an IdP) and C3
-waits on the first published packages. `syncProgress()` stays an internal
-adapter; `docs/PROGRESS_SYNC.md` records that the registry offers no
-user-scoped APIs.
+Phase C: C1 (read-only registry browser) is implemented in `js/registry.js` -
+the Packages panel browses `/index.json`, searches `/search?q=`, expands
+version metadata from `/packages/:name`, and has loading/empty/unreachable
+states. C4 conformance is recorded (playground tokens already match the
+registry/website palette). C2 is playground-owned (own GitHub OAuth app; the
+registry is not an IdP) and C3 waits on the first published packages.
+`syncProgress()` stays an internal adapter; `docs/PROGRESS_SYNC.md` records
+that the registry offers no user-scoped APIs.
 
 Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
 flags, C5/C17 codegen bugs (the 31 blocked lessons), C6 stdlib `package.xi`,
