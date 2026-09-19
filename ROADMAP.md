@@ -93,10 +93,13 @@ concern or waits for a future accounts service.
     and links to `/packages/<name>` and repositories. Loading, empty, and
     unreachable states; all registry strings render via textContent. No
     package code is downloaded or executed in the sandbox.
-- [ ] C2. Playground accounts (GitHub OAuth)
-  - Playground-owned OAuth app; the registry never vouches for users or
-    carries a session. Cross-property SSO is a post-beta decision (shared
-    cookie on the common domain or a dedicated accounts service).
+- [~] C2. Playground accounts (GitHub OAuth)
+  - Playground-owned OAuth app (client id registered 2026-09-19). Option B was
+    chosen: a host-side auth helper performs the GitHub token exchange so the
+    container keeps zero egress and never holds the client secret. Contract in
+    DEPLOY.md; implementation in progress. The registry never vouches for
+    users or carries a session; cross-property SSO is a post-beta decision
+    (shared cookie on the common domain or a dedicated accounts service).
 - [ ] C3. Package examples that run
   - "Open in playground" only for examples whose code is stdlib-only and
     sandbox-compatible; unblocks when the first real `xiom.*` packages are

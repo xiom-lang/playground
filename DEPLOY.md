@@ -45,6 +45,38 @@ User programs therefore cannot write outside `/tmp`, grow without bound, or
 reach the network. Keep all of these when editing. The health check uses
 `/api/health`, which is answered even while compiles are queued.
 
+## Accounts (C2, design agreed 2026-09-19; implementation in progress)
+
+Sign-in is optional; the playground works fully without an account. GitHub
+OAuth is playground-owned and the registry is not involved. Because the
+container has no egress and executes user programs, the GitHub token exchange
+runs on a small host-side helper, not in the container:
+
+- Host helper (ops): `/opt/xiom/playground-auth`, systemd unit
+  `xiom-playground-auth.service`, bound to the Docker gateway on port 3400
+  (never public). `GET /health`; `POST /exchange {code, redirect_uri}` with
+  header `X-Auth-Helper-Key` calls GitHub, discards the token, and returns
+  `{"ok":true,"user":{"id","login","avatar_url"}}`.
+- Helper config: `/etc/xiom/playground-auth.env` (root, 0600) holds
+  `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `AUTH_HELPER_KEY`, and
+  `ALLOWED_REDIRECT_URI=https://playground.xiom-lang.org/auth/github/callback`.
+- Playground config: `/opt/xiom/playground.env` (root, 0600, outside the repo
+  so the hourly `git reset --hard` and the Docker build context never touch
+  it) holds `GITHUB_CLIENT_ID`, `AUTH_HELPER_URL=http://host.docker.internal:3400`,
+  `AUTH_HELPER_KEY`, `SESSION_SECRET`, and `PLAYGROUND_DATA_DIR=/data`.
+  Compose reads it with an absolute `env_file` path and adds
+  `extra_hosts: "host.docker.internal:host-gateway"`.
+- Progress storage: named volume `playground-data` mounted at `/data` (the
+  image creates `/data` owned by uid 10001); one JSON document per account,
+  written atomically. No database.
+- Egress stays blocked. Container to host-bridge traffic is locally destined
+  and normally bypasses DOCKER-USER; if it is blocked on the VPS, add one
+  narrow accept rule (playground subnet to the gateway, tcp/3400) above the
+  DROP. Do not open GitHub egress.
+
+With no env configured the sign-in UI stays hidden and every existing route
+behaves as before.
+
 ## Deploy / update
 
 On the VPS: `/opt/xiom/bin/playground-deploy.sh` (from `xiom-lang/ops`,

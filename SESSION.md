@@ -87,10 +87,12 @@ Phase C: C1 (read-only registry browser) is implemented in `js/registry.js` -
 the Packages panel browses `/index.json`, searches `/search?q=`, expands
 version metadata from `/packages/:name`, and has loading/empty/unreachable
 states. C4 conformance is recorded (playground tokens already match the
-registry/website palette). C2 is playground-owned (own GitHub OAuth app; the
-registry is not an IdP) and C3 waits on the first published packages.
-`syncProgress()` stays an internal adapter; `docs/PROGRESS_SYNC.md` records
-that the registry offers no user-scoped APIs.
+registry/website palette). C2 is in progress: the owner registered the GitHub
+OAuth app and chose the host-side auth helper (Option B) so the container
+keeps zero egress and never holds the client secret; the contract is in
+DEPLOY.md and the ops handoff is with the owner. C3 waits on the first
+published packages. `syncProgress()` stays an internal adapter;
+`docs/PROGRESS_SYNC.md` records that the registry offers no user-scoped APIs.
 
 Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
 flags, C5/C17 codegen bugs (the 31 blocked lessons), C6 stdlib `package.xi`,
