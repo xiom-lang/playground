@@ -74,22 +74,38 @@ Goal: make progress durable and reviewable without requiring an account.
     registry progress API contract (endpoints, payload, revision conflicts,
     merge policy, privacy) is documented in `docs/PROGRESS_SYNC.md`.
 
-## Phase C -- Ecosystem integration (blocked on the registry)
+## Phase C -- Ecosystem integration (unblocked 2026-09-19)
 
 Goal: connect the playground to a visual registry without weakening the
 sandbox.
 
-- [ ] C1. Registry search panel (read-only)
-  - Package search and package pages embedded/linked; no package execution
-    in the sandbox (egress is blocked by design).
-- [ ] C2. Shared account (GitHub OAuth)
-  - Registry owns authentication; playground/docs consume it for optional
-    progress sync across devices.
+Auth decision (registry session, 2026-09-19): the registry is not an identity
+provider. It has no accounts and no browser sessions at beta; publishing
+authority stays with CLI/CI tokens. The playground owns its own GitHub OAuth
+app (C2) if accounts are wanted, and cross-device sync is a playground-backend
+concern or waits for a future accounts service.
+
+- [x] C1. Registry search panel (read-only)
+  - `js/registry.js` adds a Packages panel under Reference: browse from
+    `GET /index.json` (cached for the server's 60s max-age), debounced search
+    via `GET /search?q=`, inline version metadata (published date, size,
+    SHA-256 with copy, dependencies, yanked flag) via `GET /packages/:name`,
+    and links to `/packages/<name>` and repositories. Loading, empty, and
+    unreachable states; all registry strings render via textContent. No
+    package code is downloaded or executed in the sandbox.
+- [ ] C2. Playground accounts (GitHub OAuth)
+  - Playground-owned OAuth app; the registry never vouches for users or
+    carries a session. Cross-property SSO is a post-beta decision (shared
+    cookie on the common domain or a dedicated accounts service).
 - [ ] C3. Package examples that run
   - "Open in playground" only for examples whose code is stdlib-only and
-    sandbox-compatible.
-- [ ] C4. Shared design system
-  - Common tokens/components between registry UI and playground.
+    sandbox-compatible; unblocks when the first real `xiom.*` packages are
+    published (compiler/stdlib release integration).
+- [x] C4. Shared design system
+  - The playground already matches the registry/website tokens (indigo
+    `#5C6BFF` on `#08090B`, panel/line/paper palette, Inter/system stack, no
+    webfonts). Future: extract one canonical token file all three properties
+    import or copy (registry proposal).
 
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 

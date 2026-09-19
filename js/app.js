@@ -96,6 +96,7 @@ function toggleStdlibPanel() {
   if (panel.classList.contains('hidden')) {
     if (syntaxVisible) toggleSyntax();
     if (compilerRefVisible) toggleCompilerRef();
+    if (window.closeRegistryPanel) window.closeRegistryPanel();
   }
 
   panel.classList.toggle('hidden');

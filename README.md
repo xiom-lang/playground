@@ -51,6 +51,7 @@ health checks stay responsive while a submission compiles.
 - Server toolchain is authoritative for diagnostics and produces real program output
 - Expected-output match for reference solutions ("Output matches the expected result")
 - Local run history per lesson, continue-where-you-left-off, progress export/import
+- Read-only package browser for the public XIOM registry (search, versions, digests)
 - Full standard library reference generated from the toolchain (516 modules / 6,522 public functions) with search
 - Light/dark themes, progress tracking, responsive layout
 

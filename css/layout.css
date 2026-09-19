@@ -79,6 +79,19 @@
 .stdlib-panel.hidden { display: none; }
 .stdlib-panel.pinned { border-left-color: var(--indigo); }
 
+/* Mobile: persistent panels become full-screen overlays. This must live in the
+   file that loads last (layout.css) so it beats the base width above. */
+@media (max-width: 768px) {
+  .stdlib-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+  }
+}
+
 /* ---- Sidebar Hidden ---- */
 .lessons-screen.sidebar-hidden .sidebar { display: none; }
 .lessons-screen.sidebar-hidden .narrative-panel { display: none; }

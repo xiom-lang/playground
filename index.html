@@ -113,6 +113,7 @@
           <button onclick="toggleSyntax(); this.parentElement.parentElement.classList.remove('open')">&#x1F4DA; Concepts</button>
           <button onclick="toggleCompilerRef(); this.parentElement.parentElement.classList.remove('open')">&#x2699;&#xFE0F; Compiler</button>
           <button onclick="toggleStdlibPanel(); this.parentElement.parentElement.classList.remove('open')">&#x1F4D6; Standard Library</button>
+          <button onclick="toggleRegistryPanel(); this.parentElement.parentElement.classList.remove('open')">&#x1F4E6; Packages</button>
         </div>
       </div>
       <button class="nav-btn theme-toggle" onclick="toggleEditorTheme()" title="Toggle theme" aria-label="Toggle theme">&#x1F319;</button>
@@ -184,6 +185,17 @@
       </div>
       <div id="stdlibPanelContent" class="stdlib-panel-content"></div>
     </div>
+
+    <!-- REGISTRY PACKAGE PANEL (read-only public registry browser, C1) -->
+    <div id="registryPanel" class="stdlib-panel registry-panel hidden" role="dialog" aria-label="XIOM package registry">
+      <div class="stdlib-panel-header">
+        <h3>Packages</h3>
+        <input id="registrySearch" type="text" class="concept-search" placeholder="Search the registry..." oninput="searchRegistry(this.value)" aria-label="Search the package registry">
+        <button onclick="closeRegistryPanel()" aria-label="Close">✕</button>
+      </div>
+      <div class="registry-note">Read-only view of the public registry. Packages are never downloaded or run here.</div>
+      <div id="registryResults" class="stdlib-panel-content registry-results"></div>
+    </div>
   </div>
 
   <!-- SYNTAX REFERENCE PANEL (slide-in from right) -->
@@ -232,5 +244,6 @@
 <script src="js/syntax.js"></script>
 <script src="js/compiler-ref.js"></script>
 <script src="js/stdlib-ref.js"></script>
+<script src="js/registry.js"></script>
 </body>
 </html>

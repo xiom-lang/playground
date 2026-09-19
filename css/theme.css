@@ -2004,12 +2004,148 @@ a:focus-visible,
 .stdlib-fn-row { display: flex; align-items: center; gap: 10px; }
 .stdlib-fn-row .stdlib-copy { margin-left: auto; }
 
-/* On mobile, stdlib becomes full-screen overlay */
-@media (max-width: 768px) {
-  .stdlib-panel {
-    position: fixed; inset: 0; z-index: 200;
-    width: 100vw; max-width: 100vw;
-  }
+/* On mobile the persistent panels become full-screen overlays; the override
+   lives in layout.css, which loads after this file. */
+
+/* ================================================================
+   REGISTRY PACKAGE PANEL (C1, read-only)
+   ================================================================ */
+.registry-note {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--low);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.registry-results { padding: 10px 10px 14px; }
+
+.registry-status {
+  padding: 16px 4px;
+  color: var(--low);
+  font-size: 12px;
+}
+
+.registry-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+  color: var(--mid);
+  font-size: 12px;
+}
+
+.registry-empty {
+  padding: 18px 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--low);
+  font-size: 12.5px;
+  text-align: center;
+}
+
+.registry-list { display: flex; flex-direction: column; gap: 8px; }
+
+.registry-card {
+  padding: 10px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--void);
+}
+
+.registry-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.registry-name {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--indigo);
+  word-break: break-all;
+}
+
+.registry-latest {
+  padding: 1px 7px;
+  border-radius: 100px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 10px;
+  font-family: var(--mono);
+}
+
+.registry-versions { margin-left: auto; color: var(--low); font-size: 11px; }
+
+.registry-desc {
+  margin: 6px 0 0;
+  color: var(--mid);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.registry-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.registry-action {
+  padding: 4px 10px;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.registry-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.registry-version-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 0;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.registry-version { font-weight: 700; color: var(--hi); }
+.registry-published { color: var(--low); }
+.registry-size { color: var(--low); }
+
+.registry-yanked {
+  padding: 1px 6px;
+  border-radius: 100px;
+  background: rgba(240, 180, 69, 0.12);
+  color: var(--amber);
+  font-size: 10px;
+}
+
+.registry-digest {
+  color: var(--low);
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.registry-copy { padding: 3px 8px; font-size: 10.5px; }
+
+.registry-deps {
+  padding: 2px 0 6px;
+  color: var(--low);
+  font-family: var(--mono);
+  font-size: 10.5px;
 }
 
 /* ================================================================

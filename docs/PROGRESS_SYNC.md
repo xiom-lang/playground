@@ -1,9 +1,12 @@
 # Progress sync contract (B4)
 
-Status: adapter only. `syncProgress()` in `js/history.js` is a local no-op
-until the registry exposes an authenticated progress API. This document is the
-contract the playground will implement; the registry/auth session owns the
-server side.
+Status: adapter only. The registry session decided (2026-09-19) that the
+registry is not an identity provider and will have no accounts at beta, so
+there is no registry progress API to call. Cross-device sync is therefore a
+playground-backend concern or waits for a future accounts service; the
+contract below stays internal and applies to whichever backend eventually
+implements it. Publishing artifacts uses the registry's public API plus a
+publisher token issued to CI, never user accounts.
 
 ## Local data (the source of truth today)
 

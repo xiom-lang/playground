@@ -954,3 +954,38 @@ silently served binaries produced by v0.60.1 until the cache was cleared
 clear the cache first; the driver should include the compiler build identity
 in the cache key.
 
+## 17. Registry package browser (C1 complete, 2026-09-19)
+
+Registry decision (2026-09-19): the registry is not an identity provider and
+has no accounts at beta; C2 (GitHub OAuth) is playground-owned, C4 tokens
+already match (`#5C6BFF` on `#08090B`), and C3 waits on the first published
+packages. C1 was unblocked and is now implemented in `js/registry.js` plus a
+`Packages` entry under the Reference menu:
+
+- Browse: `GET /index.json`, cached client-side for 60 seconds (the server's
+  max-age); no polling.
+- Search: debounced (320ms) `GET /search?q=`, per-query cache, 300 req/min
+  budget respected.
+- Details: `GET /packages/:name` expands per-version rows (version, published
+  date, size, yanked flag, SHA-256 with copy button, dependencies) and links
+  to the registry page and repository (all `rel="noopener noreferrer"`).
+- States: loading, empty ("No packages match ..."), unreachable with Retry.
+  External strings are rendered with `textContent` only.
+- API note: `GET /packages` (list) is not deployed on prod or staging, so the
+  panel does not use it; `/index.json`, `/search`, and `/packages/:name` are
+  live with open CORS.
+
+Verified in a real browser (cached Chromium via playwright-core, since the
+Playwright MCP tools were unavailable): the panel opened and rendered the one
+published package (`xiom.staging-e2e-probe`, 2 versions), search returned the
+same result, Details expanded to version `0.0.2` with digest and copy button,
+the empty and error states rendered, and no console errors appeared except the
+intentionally aborted request used to test the error path. Screenshots checked
+in dark and light themes and at 390x844.
+
+One pre-existing layout bug was found and fixed while verifying mobile: the
+full-screen override for persistent panels lived in theme.css, which loads
+before layout.css, so the base 340px width won on narrow screens. The mobile
+override now lives in layout.css after the base rule, and both the stdlib and
+registry panels cover the viewport on phones.
+
