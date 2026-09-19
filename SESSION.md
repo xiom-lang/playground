@@ -87,14 +87,18 @@ Phase C: C1 (read-only registry browser) is implemented in `js/registry.js` -
 the Packages panel browses `/index.json`, searches `/search?q=`, expands
 version metadata from `/packages/:name`, and has loading/empty/unreachable
 states. C4 conformance is recorded (playground tokens already match the
-registry/website palette). C2 is implemented (Option B): `lib/auth.js` +
-`lib/progress-store.js` + server routes + the account UI, with signed
-sessions, revision-checked progress documents on the `playground-data`
-volume, and mocked-helper tests (32 smoke checks). It activates when the
-owner writes `/opt/xiom/playground.env` with the helper key; the ops-side
-helper is already running. C3 waits on the first published packages.
-`syncProgress()` is live when signed in and a no-op otherwise;
-`docs/PROGRESS_SYNC.md` records that the registry offers no user-scoped APIs.
+registry/website palette). C2 is done and verified on the VPS: GitHub sign-in,
+sign-out, re-sign-in, and cross-device progress sync (Option B, host-side auth
+helper; the container keeps zero egress and never holds the client secret).
+C3 waits on the first published packages. `syncProgress()` is live when signed
+in and a no-op otherwise; `docs/PROGRESS_SYNC.md` records that the registry
+offers no user-scoped APIs.
+
+Production incident fixed 2026-09-19: every program run failed with
+`cannot run '/tmp/xiom_run/...': Permission denied`. The `/tmp` tmpfs was
+mounted `noexec` (Docker's default), so the compiler could write but not
+execute its scripts. Compose now mounts `/tmp` with `exec` (still ephemeral,
+all other sandbox flags unchanged); see DEPLOY.md.
 
 Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
 flags, C5/C17 codegen bugs (the 31 blocked lessons), C6 stdlib `package.xi`,

@@ -34,7 +34,12 @@ executes user-submitted code, the container is the security boundary.
 
 `docker-compose.yml` runs the server with: non-root user, read-only root
 filesystem, `tmpfs` for `/tmp`, `cap_drop: ALL`,
-`no-new-privileges:true`, and memory and pid limits. Egress is blocked by
+`no-new-privileges:true`, and memory and pid limits. The `/tmp` tmpfs is
+mounted with `exec` on purpose: the toolchain writes compiled scripts under
+`TMPDIR` and executes them, and Docker mounts tmpfs `noexec` by default.
+Without `exec` every program run fails with
+`cannot run '/tmp/xiom_run/...': Permission denied` (production incident
+2026-09-19). Everything under `/tmp` is still ephemeral. Egress is blocked by
 `scripts/playground-egress-guard.sh` from `xiom-lang/ops`, which inserts
 an idempotent `DOCKER-USER` rule dropping container-initiated NEW
 connections. The guard runs from the deploy script and from cron at boot

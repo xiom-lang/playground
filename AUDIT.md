@@ -1035,8 +1035,18 @@ Verification:
   adopting the remote state, so a fresh browser never received its progress.
   `syncProgress()` now applies the merged document locally in that path.
 
-Remaining: the owner writes `/opt/xiom/playground.env` (helper key + client
-id + session secret), the next hourly deploy recreates the container, and the
-VPS sign-in gets verified end to end. Compose on the VPS must be v2.24+ for
-the optional `env_file` (`docker compose version`).
+Accepted on the VPS (2026-09-19): sign-in, sign-out, re-sign-in, and
+cross-device sync verified by the owner; the helper key and session secret
+live only in `/etc/xiom/playground-auth.env` and `/opt/xiom/playground.env`
+(both in the nightly restic set). Compose on the VPS is v2.24+ (needed for
+the optional `env_file`).
+
+A production incident surfaced during acceptance: every program run failed
+with `cannot run '/tmp/xiom_run/...': Permission denied (os error 13)`.
+Docker mounts tmpfs with `noexec` by default, and the toolchain writes and
+executes compiled scripts under `/tmp`, so compose now mounts
+`/tmp:size=256m,exec` (still ephemeral; every other sandbox flag unchanged).
+DEPLOY.md documents why `exec` is required. This was a container-only gap:
+CI runners and the WSL sweeps use ordinary filesystems, which is why no gate
+caught it before the VPS did.
 

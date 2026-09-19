@@ -93,15 +93,16 @@ concern or waits for a future accounts service.
     and links to `/packages/<name>` and repositories. Loading, empty, and
     unreachable states; all registry strings render via textContent. No
     package code is downloaded or executed in the sandbox.
-- [~] C2. Playground accounts (GitHub OAuth)
+- [x] C2. Playground accounts (GitHub OAuth)
   - Implemented (Option B: host-side auth helper; the container keeps zero
     egress and never holds the client secret). Signed HttpOnly sessions,
     per-account progress documents on the `playground-data` volume with
     revision-checked merges, account chip + sign-in/sync UI, and
-    mocked-helper tests. Activates when `/opt/xiom/playground.env` exists;
-    VPS verification pending. The registry never vouches for users or carries
-    a session; cross-property SSO is a post-beta decision (shared cookie on
-    the common domain or a dedicated accounts service).
+    mocked-helper tests. Verified on the VPS by the owner: sign-in, sign-out,
+    re-sign-in, and cross-device progress sync. The registry never vouches
+    for users or carries a session; cross-property SSO is a post-beta
+    decision (shared cookie on the common domain or a dedicated accounts
+    service).
 - [ ] C3. Package examples that run
   - "Open in playground" only for examples whose code is stdlib-only and
     sandbox-compatible; unblocks when the first real `xiom.*` packages are
