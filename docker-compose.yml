@@ -33,6 +33,10 @@ services:
       - XIOM_BIN=/toolchain/bin/xiom
       - XIOM_STDLIB=/toolchain/lib
       - PLAYGROUND_DATA_DIR=/data
+      # Warm the first lesson templates after container (re)creation so a new
+      # user's first Run is a cache hit instead of a cold compile (~4-6s).
+      # User compiles always take priority over warmup work.
+      - WARMUP_LESSONS=12
       # The toolchain's script cache needs a writable HOME. The rootfs
       # (including /home/xiomp) is read-only, so without this every program
       # run recompiles (~6s instead of ~10ms warm on repeat runs).

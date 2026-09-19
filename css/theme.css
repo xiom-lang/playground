@@ -266,6 +266,12 @@ html.light-mode .output-content {
 }
 .landing-footer a:hover { color: #9aa4ff; }
 .landing-footer-sep { color: var(--border); }
+.landing-footer-legal {
+  margin-top: 10px;
+  font-size: 11.5px;
+  flex-wrap: wrap;
+  animation: none;
+}
 
 /* ---- Landing sections ---- */
 .landing-section {

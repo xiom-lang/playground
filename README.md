@@ -122,3 +122,7 @@ capabilities, memory/pid limits, and blocked egress.
 - Node.js 18+
 - A modern browser
 - The pinned toolchain (`tools/fetch-toolchain.*`) for server-side compilation
+
+---
+
+Terms of Use: https://xiom-lang.org/terms.html | Privacy: https://xiom-lang.org/privacy.html | support@xiom-lang.org

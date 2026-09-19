@@ -48,6 +48,14 @@ reused and every run recompiles (~3-6s per run on the VPS); with it, repeat
 runs of an unchanged program finish in milliseconds. Both details are
 container-only and invisible to CI, which runs on a normal filesystem.
 
+`WARMUP_LESSONS` (compose sets 12) makes the first-run experience fast: after
+container (re)creation the server compiles the first N lesson templates in
+the background through the normal compile queue, yielding whenever user work
+is pending, so the first Run in those lessons is a cache hit (milliseconds)
+instead of a cold compile. Warmup progress appears as `warmup:` lines in
+`docker compose logs`. Edited programs still pay one cold compile each
+because the toolchain caches by source content.
+
 Egress is blocked by
 `scripts/playground-egress-guard.sh` from `xiom-lang/ops`, which inserts
 an idempotent `DOCKER-USER` rule dropping container-initiated NEW

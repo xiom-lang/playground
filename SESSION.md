@@ -109,6 +109,13 @@ the cold compile (~3.5s dev box, ~6s VPS). Compiler-side follow-up (session
 C3): honor `--opt-level` in script mode and/or make the cache independent of
 `HOME` to cheapen cold compiles.
 
+Compile speed: repeat runs of an unchanged program are cache hits
+(~6-12ms); edited programs pay one cold compile (3.5s dev box, ~6s VPS).
+`WARMUP_LESSONS` (compose sets 12) compiles the first lesson templates in the
+background after container (re)creation so a new user's first Run is instant
+(verified: warmed template 6ms vs 3116ms cold). Cold-compile levers remain
+compiler-side (script-run `--opt-level`, fmt peek) - AUDIT section 18/19.
+
 Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
 flags, C5/C17 codegen bugs (the 31 blocked lessons), C6 stdlib `package.xi`,
 C8 WASM release asset, C18 `Str` data through containers printing
