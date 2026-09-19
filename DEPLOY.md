@@ -39,7 +39,16 @@ mounted with `exec` on purpose: the toolchain writes compiled scripts under
 `TMPDIR` and executes them, and Docker mounts tmpfs `noexec` by default.
 Without `exec` every program run fails with
 `cannot run '/tmp/xiom_run/...': Permission denied` (production incident
-2026-09-19). Everything under `/tmp` is still ephemeral. Egress is blocked by
+2026-09-19). Everything under `/tmp` is still ephemeral.
+
+The container also sets `HOME=/tmp/xiom-home` on purpose: the toolchain's
+script cache needs a writable `HOME`, and the read-only rootfs makes
+`/home/xiomp` unwritable. With an unwritable `HOME` the cache is never
+reused and every run recompiles (~3-6s per run on the VPS); with it, repeat
+runs of an unchanged program finish in milliseconds. Both details are
+container-only and invisible to CI, which runs on a normal filesystem.
+
+Egress is blocked by
 `scripts/playground-egress-guard.sh` from `xiom-lang/ops`, which inserts
 an idempotent `DOCKER-USER` rule dropping container-initiated NEW
 connections. The guard runs from the deploy script and from cron at boot

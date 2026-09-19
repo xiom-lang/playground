@@ -100,6 +100,15 @@ mounted `noexec` (Docker's default), so the compiler could write but not
 execute its scripts. Compose now mounts `/tmp` with `exec` (still ephemeral,
 all other sandbox flags unchanged); see DEPLOY.md.
 
+Second container-only issue found while measuring run time: the toolchain's
+script cache needs a writable `HOME`, and the read-only rootfs makes
+`/home/xiomp` unwritable, so every run recompiled (~6s even for an unchanged
+program). Compose now sets `HOME=/tmp/xiom-home` on the tmpfs; repeat runs of
+an unchanged program are cache hits (milliseconds), edited programs still pay
+the cold compile (~3.5s dev box, ~6s VPS). Compiler-side follow-up (session
+C3): honor `--opt-level` in script mode and/or make the cache independent of
+`HOME` to cheapen cold compiles.
+
 Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
 flags, C5/C17 codegen bugs (the 31 blocked lessons), C6 stdlib `package.xi`,
 C8 WASM release asset, C18 `Str` data through containers printing

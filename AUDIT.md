@@ -1050,3 +1050,15 @@ DEPLOY.md documents why `exec` is required. This was a container-only gap:
 CI runners and the WSL sweeps use ordinary filesystems, which is why no gate
 caught it before the VPS did.
 
+A second container-only performance bug was found while measuring the fixed
+run: repeat runs of an unchanged program still took ~6s. Probes on the pinned
+toolchain show the script cache is content-keyed and path/mtime-insensitive,
+but only when `HOME` is writable: with an unwritable `HOME` (the read-only
+rootfs makes `/home/xiomp` unwritable) the cache is never reused, and the
+same program recompiles every time (2.9s vs 6ms in a controlled probe).
+Compose now sets `HOME=/tmp/xiom-home` on the tmpfs, so repeat runs are
+cache hits while edited programs still pay the cold compile (~3.5s for hello
+world on a dev box, ~6s on the VPS). The compiler session should consider
+making the script cache independent of `HOME` (and honoring `--opt-level` in
+script mode, compiler finding C3) so cold compiles can be cheaper.
+
