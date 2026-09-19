@@ -128,17 +128,18 @@ session whenever one of these changes.
   pass/fail, durations, and program output truncated to 400 characters. No
   source code, no free-play code, no personal profile data beyond the GitHub
   identity.
-- Backups: the helper/playground env files are in the nightly restic set;
-  the `playground-data` volume is **not** backed up today. The website
-  privacy page is written for the state after ops adds it, so this is the
-  one open item (website session is holding the retention wording until then):
-  add `/var/lib/docker/volumes/playground_playground-data/_data` to
-  `scripts/restic-backup.sh` (confirm the exact name first with
-  `docker volume ls | grep playground`; the prefix follows the Compose
-  project name) and document a restore procedure in the ops backup doc -
-  a backup that has never been restored is a hope, not a backup.
-  Restic retention overall is 30 daily / 12 monthly snapshots with a nightly
-  prune; a 5% read-data check runs Sundays.
+- Backups: the helper/playground env files and the `playground-data` volume
+  (`/var/lib/docker/volumes/playground_playground-data/_data`, confirmed as
+  `playground_playground-data`) are in the nightly restic set as of ops commit
+  `80933b2`, and the restore procedure is documented in the ops
+  `docs/VPS_BACKUP_MONITORING.md` (B5a). The restic job is prepared but not
+  yet scheduled - Backblaze B2 credentials and `/etc/xiom-backup.env` are
+  owner actions still pending - so the website privacy page keeps the interim
+  wording ("nightly backups with 30-day / 12-month retention", future tense)
+  until ops confirms the first snapshot and a restore drill; then it becomes
+  "nightly backups age out after 30 days, with 12 monthly snapshots kept".
+  Restic retention is 30 daily / 12 monthly with a nightly prune and a 5%
+  read-data check on Sundays.
 - Cookies: a single HttpOnly, SameSite=Lax session cookie (Secure on https)
   with a 30-day lifetime; sign-out clears it.
 - Deletion: `DELETE /api/me` removes the stored progress document and clears

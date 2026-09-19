@@ -202,6 +202,13 @@ function renderHistoryBlock(lessonId) {
   }
   host.appendChild(header);
 
+  if (runs.length > 0) {
+    var hint = document.createElement('div');
+    hint.className = 'history-hint';
+    hint.textContent = 'Times include native compilation. The first run of new code takes a few seconds; repeats are instant.';
+    host.appendChild(hint);
+  }
+
   if (runs.length === 0) {
     var empty = document.createElement('div');
     empty.className = 'history-empty';
