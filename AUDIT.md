@@ -1062,3 +1062,13 @@ world on a dev box, ~6s on the VPS). The compiler session should consider
 making the script cache independent of `HOME` (and honoring `--opt-level` in
 script mode, compiler finding C3) so cold compiles can be cheaper.
 
+Measured cold-compile split for hello world (WSL, caches cleared, values vary
+with machine load): on v0.60.1 the front-end (`--emit-ir`) takes ~0.9-1.0s
+while a full `run` takes 3.5-12s, so the C backend plus clang plus link
+dominate. The v0.60.1 CLI has no `--opt-level` flag at all, so the playground
+cannot lower the optimization level (C3). On v0.61.0 the front-end phase
+measured 3-6s even for a program that never calls `.to_str()`, suggesting the
+`xiom.fmt` dependency-closure peek is paid broadly rather than only on first
+conversion use; the planned reachable-function-only peek should help both
+the cold-compile cost and this front-end regression.
+
