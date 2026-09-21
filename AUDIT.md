@@ -1199,3 +1199,28 @@ one lesson:
 Refreshed data is parked on branch `verify/compiler-preview-dd4072b0`; main
 keeps the v0.60.1 data until the release is published and the pin moves.
 
+## 22. Compiler R55 verification (L6-40, 2026-09-21)
+
+Compiler session revision `d63911d9` (R55) built in WSL and verified against
+the lesson corpus. The module-scoped generic factory evidence pre-pass fixed
+the last blocked lesson, so the lesson set is fully green on the preview
+toolchain:
+
+- L6-40 compiles and runs: `Echo / Hello ... Hello`.
+- Execution audit on the complete set: **410/410 solutions type-check and
+  run**, zero runtime failures, zero template failures, zero expected-output
+  mismatches, no regressions. The regenerated baseline has empty
+  runtime/solution/template failure lists.
+- `js/limitations.json` regenerates to **zero blocked lessons**, so on the
+  release the lesson badges disappear and every lesson is runnable.
+- The full sweep now covers all 410 lessons: **409 carry an expected output**;
+  the only skip is L3-50 (nondeterministic tuple `Result` payload through
+  `?`, the one documented open compiler item).
+
+Release-ready data (lessons, skip list, baseline, limitations) is parked on
+branch `verify/compiler-preview-d63911d9`; main keeps the v0.60.1 data and the
+31 badges until the release is published and the pin moves (runbook:
+SESSION.md section 3). This branch supersedes
+`verify/compiler-preview-dd4072b0` (R52) and
+`verify/compiler-preview-306073ba` (R49).
+

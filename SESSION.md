@@ -130,12 +130,14 @@ The VPS owner will test Phase B after the next hourly pull.
 
 ### Absorbing compiler fixes (C17/C18/C19)
 
-Verified preview (2026-09-21, compiler local main `dd4072b0`, R52): expected
-outputs 368 -> 378/379 and the skip list 11 -> 1 (only L3-50 remains
-nondeterministic), blocked lessons 5 -> 1 (only L6-40). Refreshed data is
-parked on `verify/compiler-preview-dd4072b0`; re-run the sweep on the actual
-release before merging. The earlier `verify/compiler-preview-306073ba`
-snapshot (R49) is superseded. Details in AUDIT.md section 21.
+Verified preview (2026-09-21, compiler local main `d63911d9`, R55): the
+lesson set is fully green - 410/410 type-check and run, zero failures,
+limitations regenerates to 0 blocked lessons, and 409/410 lessons carry an
+expected output (only L3-50 remains nondeterministic). Release-ready data
+(lessons, skips, baseline, limitations) is parked on
+`verify/compiler-preview-d63911d9`; re-run the sweep on the actual release
+before merging. Earlier preview branches (dd4072b0, 306073ba) are superseded.
+Details in AUDIT.md section 22.
 
 When a fix reaches a toolchain release:
 
