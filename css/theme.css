@@ -278,6 +278,43 @@ html.light-mode .output-content {
   flex-wrap: wrap;
   animation: none;
 }
+
+/* Social row copied from xiom-website (.footer-social); color tokens mapped
+   to the playground palette. Keep the link order and wording in sync with the
+   website (Discord, X, Mastodon, Bluesky, Reddit, Hacker News, LinkedIn,
+   Facebook). */
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--mid);
+  transition: color var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.footer-social a:hover {
+  color: var(--hi);
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 1px rgba(92, 107, 255, 0.25);
+}
+.footer-social a:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 2px;
+}
+.footer-social svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
 .stats-source {
   margin-top: 14px;
   text-align: center;

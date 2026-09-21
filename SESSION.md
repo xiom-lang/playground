@@ -70,7 +70,9 @@ Audit (AUDIT.md) is fully implemented for this repository:
   and the footer are aligned with the website's wording - runtime-checked
   contracts (verification export marked experimental), no unverifiable stats
   or performance claims, canonical cross-links, and explicit server-side
-  execution transparency (AUDIT section 20).
+  execution transparency (AUDIT section 20). The landing footer also carries
+  the website's social row (`.footer-social`, copied from xiom-website; keep
+  the order, URLs and the Discord "open invite" wording in sync).
 - Toolchain verification (2026-09-19): a local v0.61.0 build (`16a89615`,
   compiler R47) was verified with a full sweep and an execution audit. 68
   expected outputs were corrected; C17 dropped from 31 to 27 blocked lessons
