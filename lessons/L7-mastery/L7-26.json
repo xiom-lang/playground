@@ -9,7 +9,7 @@
   "analogy": "A boxing match: two fighters trading blows, each punch dealing variable damage. Between rounds, a fighter might rest (heal). Your RPG battle is the referee counting HP instead of punches — when someone hits zero, the other hand is raised in victory.",
   "code_template": "use xiom.io;\ntype Fighter = {\n  name: Str;\n  hp: Int;\n  power: Int;\n}\n\nfn take_damage(fighter: &mut Fighter, amount: Int) {\n  // TODO: reduce HP, clamp to minimum of 0\n}\n\nfn is_alive(fighter: &Fighter) -> Bool {\n  // TODO: return true if hp > 0\n}\n\nfn main() -> Int {\n  // TODO: create two fighters, simulate 3 rounds of combat, print HP each round\n  return 0;\n}\n",
   "solution": "use xiom.io;\ntype Fighter = {\n  name: Str;\n  hp: Int;\n  power: Int;\n}\n\nfn take_damage(fighter: &mut Fighter, amount: Int) {\n  fighter.hp -= amount;\n  if fighter.hp < 0 { fighter.hp = 0; };\n}\n\nfn is_alive(fighter: &Fighter) -> Bool {\n  fighter.hp > 0\n}\n\nfn main() -> Int {\n  var hero = Fighter{ name: \"Hero\", hp: 100, power: 20 };\n  var enemy = Fighter{ name: \"Goblin\", hp: 40, power: 8 };\n\n  take_damage(&mut enemy, hero.power);\n  io.println(enemy.hp.to_str());\n  take_damage(&mut enemy, hero.power);\n  io.println(enemy.hp.to_str());\n  io.println(is_alive(&enemy).to_str());\n  return 0;\n}\n",
-  "expected_output": "20\n0\n0",
+  "expected_output": "20\n0\nfalse",
   "try_it": "Add critical hits (10% chance, 2x damage). Add a special attack that deals extra damage but has a cooldown. Add defense stat that reduces incoming damage. Implement player choice: each turn, choose 'attack' or 'heal'. Add status effects: poison (damage over time), stun (skip turn).",
   "concepts": [
     "rpg-battle",

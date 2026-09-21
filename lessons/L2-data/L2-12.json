@@ -9,6 +9,7 @@
   "analogy": "Match is like a train track switch. The train (your code) approaches, and depending on which track is selected (the enum variant), it goes to a completely different destination.",
   "code_template": "use xiom.io;\n\nenum Direction {\n  North,\n  South,\n  East,\n  West,\n}\n\n// TODO: Write 'go' function using match — return a description for each direction\n\nfn main() -> Int {\n  // TODO: Test go with two different directions\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum Direction {\n  North,\n  South,\n  East,\n  West,\n}\n\nfn go(dir: Direction) -> Str {\n  return match dir {\n    North => \"Snowy mountains ahead\",\n    South => \"Sunny beach ahead\",\n    East => \"Dense forest ahead\",\n    West => \"Vast desert ahead\",\n  };\n}\n\nfn main() -> Int {\n  io.println(go(Direction.North).to_str());\n  io.println(go(Direction.East).to_str());\n  return 0;\n}\n",
+  "expected_output": "Snowy mountains ahead\nDense forest ahead",
   "try_it": "Add Northeast, Southeast, Southwest, and Northwest directions. Use `|` to pair them: Northeast|North => \"Cold\". Test all eight directions.",
   "concepts": [
     "match",

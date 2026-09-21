@@ -9,6 +9,7 @@
   "analogy": "Exhaustive matching is like a customs checklist — every passenger (value) must go through a lane (arm). If a new country opens (new variant), the checklist is updated before any plane lands.",
   "code_template": "use xiom.io;\n\n// TODO: The enum below is missing one case in the match — fix it!\n\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn action(light: TrafficLight) -> Str {\n  return match light {\n    Red => \"Stop\",\n    Yellow => \"Slow down\",\n    // TODO: Add the missing Green arm\n    // TODO: What if you add a Blue variant? Add it and update the match.\n  };\n}\n\nfn main() -> Int {\n  io.println(action(Red).to_str());\n  io.println(action(Green).to_str());\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn action(light: TrafficLight) -> Str {\n  return match light {\n    Red => \"Stop\",\n    Yellow => \"Slow down\",\n    Green => \"Go\",\n  };\n}\n\nfn main() -> Int {\n  io.println(action(Red).to_str());\n  io.println(action(Yellow).to_str());\n  io.println(action(Green).to_str());\n  return 0;\n}\n",
+  "expected_output": "Stop\nSlow down\nGo",
   "try_it": "Create an `enum Weather { Sunny, Rainy, Cloudy, Snowy }`. Write two functions that match on Weather: `needs_umbrella` and `needs_sunscreen`. Make sure both are exhaustive. Then add a new variant `Windy` — watch the compiler tell you exactly which functions need updating.",
   "concepts": [
     "exhaustive-match",

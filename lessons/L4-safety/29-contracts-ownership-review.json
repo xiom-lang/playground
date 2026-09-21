@@ -9,6 +9,7 @@
     "analogy":  "Contracts are the blueprint — they say what the building must look like. Ownership is the building code — it ensures the structure won\u0027t collapse.",
     "code_template":  "use xiom.io;\n\n// TODO: Write fn \u0027safe_pop\u0027 that takes \u0026mut Vec[Int] and returns Int\n// requires: vec is not empty\n// ensures: vec.len() == old_len - 1\n// ensures: result was the last element\n\nfn main() -\u003e Int {\n  // TODO: Test safe_pop\n  return 0;\n}",
     "solution":  "use xiom.io;\n\nfn safe_pop(items: \u0026mut Vec[Int]) -\u003e Int\n  requires: items.len() \u003e 0;\n  ensures: items.len() == items@pre.len() - 1;\n{\n  let last = items[items.len() - 1];\n  items.pop();\n  return last;\n}\n\nfn main() -\u003e Int {\n  var data = Vec[Int].new();\n  data.push(10);\n  data.push(20);\n  data.push(30);\n  let val = safe_pop(\u0026mut data);\n  return val;\n}",
+    "expected_output": "",
     "try_it":  "Write fn \u0027safe_swap\u0027 that takes \u0026mut Vec[Int] and two indices, with requires for valid indices and ensures for the swap result. Test edge cases.",
     "concepts":  [
                      "contracts + ownership",

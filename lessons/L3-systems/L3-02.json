@@ -9,6 +9,7 @@
   "analogy": ".unwrap_or is like having a backup plan — \"I'll use my umbrella, but if I can't find it, I'll grab the spare one by the door.\"",
   "code_template": "use xiom.io;\n\nfn main() -> Int {\n  // TODO: Create an Option[Str] that is None (represents no player name)\n\n  // TODO: Use .unwrap_or(\"Player1\") to get a fallback name\n\n  // TODO: Print the final name\n\n  // TODO: Change the Option to Some(\"DragonSlayer\") and print again\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nfn main() -> Int {\n  let player_name: Option[Str] = None;\n  let final_name = player_name.unwrap_or(\"Player1\");\n  io.println(final_name.to_str());\n\n  let player_name2 = Some(\"DragonSlayer\");\n  let final_name2 = player_name2.unwrap_or(\"Player1\");\n  io.println(final_name2.to_str());\n  return 0;\n}\n",
+  "expected_output": "Player1\nDragonSlayer",
   "try_it": "Try different defaults: unwrap to 0, unwrap to an empty string \"\", unwrap to \"Unknown\". What happens when you call .unwrap_or on a Some value? Does it ever use the default?",
   "concepts": [
     "unwrap_or",

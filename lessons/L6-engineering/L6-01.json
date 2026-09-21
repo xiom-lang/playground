@@ -9,6 +9,7 @@
   "analogy": "An interface is like a job description — 'must be able to greet.' Any candidate (type) that can do the job qualifies, regardless of whether they're a Person, Robot, or Alien. The hiring manager (generic function) only cares about the skill, not the species.",
   "code_template": "use xiom.io;\n// TODO: Define interface Greetable with fn greet() -> Str\n\n// TODO: Define type Person with name: Str\n\n// TODO: Write Person.greet(self) -> Str that returns \"Hi, I'm \" + self.name\n\n// TODO: Write introduce[T: Greetable](thing: &T)\n//   Call thing.greet() and print the result\n\nfn main() -> Int {\n  // TODO: Create a Person, call introduce with it\n  return 0;\n}\n",
   "solution": "use xiom.io;\ninterface Greetable {\n  fn greet() -> Str;\n}\n\ntype Person = {\n  name: Str;\n}\n\nfn Person.greet(self) -> Str {\n  return \"Hi, I'm \" + self.name;\n}\n\nfn introduce[T: Greetable](thing: &T) {\n  io.println(thing.greet());\n}\n\nfn main() -> Int {\n  let p = Person{ name: \"Alex\" };\n  introduce(&p);\n  return 0;\n}\n",
+  "expected_output": "Hi, I'm Alex",
   "try_it": "Add a `Robot` type with a `model: Str` field. Make it implement `greet()` by returning \"Beep boop, model \" + self.model. Pass a Robot to `introduce` — it should work immediately without changing `introduce`. Then try passing an Int — what error do you get?",
   "concepts": [
     "interface",

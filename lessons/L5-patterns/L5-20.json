@@ -9,6 +9,7 @@
   "analogy": "A generic Pair is like a two-pocket folder. One pocket is labeled 'first' and the other 'second.' You decide what goes in each pocket: money and receipts (Int, Str), photos and dates (Str, Str), or tickets and stubs (Str, Bool). The folder structure is always the same — two pockets — but the contents can be anything.",
   "code_template": "use xiom.io;\ntype Pair[T,U] = {\n  first: T;\n  second: U;\n}\n\nfn main() -> Int {\n  // TODO: Create a Pair[Str,Str] with first=\"Hello\" and second=\"World\"\n  // TODO: Create a Pair[Int,Bool] with first=42 and second=true\n  // TODO: Print the fields of both pairs\n  return 0;\n}\n",
   "solution": "use xiom.io;\ntype Pair[T,U] = {\n  first: T;\n  second: U;\n}\n\nfn main() -> Int {\n  let greeting: Pair[Str,Str] = Pair[Str,Str]{ first: \"Hello\", second: \"World\" };\n  io.println(greeting.first.to_str());\n  io.println(greeting.second.to_str());\n\n  let data: Pair[Int,Bool] = Pair[Int,Bool]{ first: 42, second: true };\n  io.println(data.first.to_str());\n  io.println(data.second.to_str());\n  return 0;\n}\n",
+  "expected_output": "Hello\nWorld\n42\ntrue",
   "try_it": "Create a Pair of Str and Bool for a feature toggle: name and enabled status. Add a `describe` method on Pair[Str,Bool] that returns a descriptive string. Create a `Triple[T,U,V]` type with three fields. Write a function that takes a Vec of Pairs and returns a Pair of Vecs (separating firsts from seconds).",
   "concepts": [
     "generics",

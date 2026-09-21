@@ -9,6 +9,7 @@
   "analogy": "Payment types are like different checkout lanes: the cash lane is simple, the card lane needs a card reader, and the crypto lane needs a wallet address. Each lane has different equipment (data).",
   "code_template": "use xiom.io;\n\nenum Payment {\n  Cash,\n  CreditCard(number: Str),\n  Crypto(coin: Str),\n}\n\n// TODO: Write 'describe_payment' that returns a description for each variant\n\n// TODO: Write 'get_identifier' that returns the card number or coin name, or \"N/A\" for Cash\n\nfn main() -> Int {\n  // TODO: Test with one of each payment type\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum Payment {\n  Cash,\n  CreditCard(number: Str),\n  Crypto(coin: Str),\n}\n\nfn describe_payment(payment: Payment) -> Str {\n  return match payment {\n    Cash => \"Paid with cash\",\n    CreditCard(number) => \"Paid with card: \" + number,\n    Crypto(coin) => \"Paid with crypto: \" + coin,\n  };\n}\n\nfn get_identifier(payment: Payment) -> Str {\n  return match payment {\n    Cash => \"N/A\",\n    CreditCard(number) => number,\n    Crypto(coin) => coin,\n  };\n}\n\nfn main() -> Int {\n  io.println(describe_payment(Payment.Cash).to_str());\n  io.println(get_identifier(Payment.CreditCard(\"7890\")).to_str());\n  io.println(get_identifier(Payment.Crypto(\"Solana\")).to_str());\n  return 0;\n}\n",
+  "expected_output": "Paid with cash\n7890\nSolana",
   "try_it": "Add a `PayPal(email: Str)` variant to the Payment enum. Update both functions to handle it. Test with a PayPal payment.",
   "concepts": [
     "varied-payloads",
