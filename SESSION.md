@@ -73,6 +73,10 @@ Audit (AUDIT.md) is fully implemented for this repository:
   execution transparency (AUDIT section 20). The landing footer also carries
   the website's social row (`.footer-social`, copied from xiom-website; keep
   the order, URLs and the Discord "open invite" wording in sync).
+- Compiler-lane repro pack: `docs/COMPILER_REPROS.md` plus
+  `tools/bench-cold-compile.js` (cache-clearing cold benchmark with
+  same-machine `--compare`); reference medians for v0.60.1 and the R55
+  preview are in the doc.
 - Toolchain verification (2026-09-19): a local v0.61.0 build (`16a89615`,
   compiler R47) was verified with a full sweep and an execution audit. 68
   expected outputs were corrected; C17 dropped from 31 to 27 blocked lessons

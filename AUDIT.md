@@ -1106,6 +1106,13 @@ script cache) so the playground can warm popular programs without executing
 user or lesson code. The playground will detect the flag capability and
 adopt it automatically.
 
+Measurement harness and exact repros for the compiler lane live in
+`docs/COMPILER_REPROS.md`: `tools/bench-cold-compile.js` clears the compiler
+caches before every sample and reports `xiom run` and `xiom --emit-ir`
+medians, with `--compare` for same-machine before/after deltas. Reference
+medians there show the R55 front-end is 4-6x slower than v0.60.1 on
+`--emit-ir`, largest for `to_str` (the broad fmt peek).
+
 ## 19. Compiler preview verification (R48/R49 batch, 2026-09-19)
 
 Compiler session local main at `306073ba` (R49-3) was built in WSL and verified
