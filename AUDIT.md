@@ -1174,3 +1174,28 @@ it. Landed:
 Verified in a real browser (dark, light, 390x844): stats, links, contracts
 labels, and onboarding copy render as above with no console errors.
 
+## 21. Compiler R52 verification (erased-type payload batch, 2026-09-21)
+
+Compiler session revision `dd4072b0` (R52) built in WSL and verified against
+the lesson corpus. The C18/C19 pointer-print set is cleared and C17 is down to
+one lesson:
+
+- Expected outputs: 368 -> 378 of 379 runnable lessons; the skip list dropped
+  from 11 to 1. The only remaining nondeterministic lesson is L3-50 (tuple
+  `Result` payload through `?`), which the compiler session has bisected and
+  documented as still open.
+- L5-21 now prints float values (`1.5`, `2.5`, `3.5`) instead of IEEE-754 bit
+  patterns.
+- Formerly nondeterministic lessons verified stable and correct: L3-02,
+  L5-09, L5-20, L5-24, L5-26, L5-29, L5-31, L5-35, L5-36, L5-43.
+- Blocked lessons (C17): 5 -> 1. The audit reports 30 fixed against the
+  baseline; the L4-26/29/33/39 clang invalid-getelementptr family now runs,
+  and the only remaining runtime failure is L6-40 (`C001 Int does not
+  implement 'Plugin'`, the documented fixpoint pre-pass gap). 410/410
+  solutions type-check, zero template failures, no regressions, zero
+  expected-output mismatches.
+- 107 lesson files carry refreshed expected outputs.
+
+Refreshed data is parked on branch `verify/compiler-preview-dd4072b0`; main
+keeps the v0.60.1 data until the release is published and the pin moves.
+

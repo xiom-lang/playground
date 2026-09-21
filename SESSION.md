@@ -130,12 +130,12 @@ The VPS owner will test Phase B after the next hourly pull.
 
 ### Absorbing compiler fixes (C17/C18/C19)
 
-Verified preview (2026-09-19, compiler local main `306073ba`): C17 shrank
-31 -> 5 (remaining: L4-26/29/33/39 clang IR indexing, L6-40 fixpoint), and
-expected-output coverage rose 351 -> 368 with the skip list down to 11
-nondeterministic lessons. Refreshed data is parked on
-`verify/compiler-preview-306073ba`; re-run the sweep on the actual release
-before merging. Details in AUDIT.md section 19.
+Verified preview (2026-09-21, compiler local main `dd4072b0`, R52): expected
+outputs 368 -> 378/379 and the skip list 11 -> 1 (only L3-50 remains
+nondeterministic), blocked lessons 5 -> 1 (only L6-40). Refreshed data is
+parked on `verify/compiler-preview-dd4072b0`; re-run the sweep on the actual
+release before merging. The earlier `verify/compiler-preview-306073ba`
+snapshot (R49) is superseded. Details in AUDIT.md section 21.
 
 When a fix reaches a toolchain release:
 
