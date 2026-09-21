@@ -1,0 +1,43 @@
+# Organization workflow template: DCO sign-off check.
+# In a repository this lives at .github/workflows/dco.yml.
+# Fails when any non-merge commit in a pull request lacks a
+# "Signed-off-by:" line matching the commit author or committer.
+name: DCO
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  dco:
+    name: DCO
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify sign-off on every commit
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          fail=0
+          for c in $(git rev-list --no-merges "$BASE_SHA..$HEAD_SHA"); do
+            author=$(git show -s --format='%an <%ae>' "$c")
+            committer=$(git show -s --format='%cn <%ce>' "$c")
+            message=$(git show -s --format=%B "$c")
+            if ! printf '%s' "$message" | grep -qiF "Signed-off-by: $author" \
+               && ! printf '%s' "$message" | grep -qiF "Signed-off-by: $committer"; then
+              echo "::error::Commit $c is missing 'Signed-off-by: $author'"
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "One or more commits are not signed off. See CONTRIBUTING.md (use 'git commit -s')."
+          fi
+          exit "$fail"
