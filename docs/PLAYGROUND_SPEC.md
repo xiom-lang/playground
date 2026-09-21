@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2026 Eleftherios Notas and XIOM Foundation
+<!-- Copyright (c) 2026 Eleftherios Notas and The XIOM Authors
      SPDX-License-Identifier: MIT OR Apache-2.0 -->
 > Historical specification (v0.49.9 era). The current architecture and
 > operational details live in `README.md`, `DEPLOY.md`, and `AUDIT.md`.
