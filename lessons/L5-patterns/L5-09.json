@@ -9,6 +9,7 @@
   "analogy": "A Map is like a phone book. You look up a name (key) to find a phone number (value). You don't scan every page — you jump directly to the name. Unlike a Vec which is like a numbered list where you need to know the exact position.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  // TODO: Create a Map[Str,Str] called phonebook\n  // TODO: Insert \"Mom\" -> \"555-0100\", \"Dad\" -> \"555-0200\"\n  // TODO: Look up \"Mom\" with .get() and print the result\n  // TODO: Look up \"Stranger\" with .get() — what happens?\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn main() -> Int {\n  let phonebook: Map[Str,Str] = Map[Str,Str].new();\n  phonebook.insert(\"Mom\", \"555-0100\");\n  phonebook.insert(\"Dad\", \"555-0200\");\n\n  match phonebook.get(\"Mom\") {\n    Some(num) => io.println(num.to_str());\n    None => io.println(\"Not found\");\n  }\n\n  match phonebook.get(\"Stranger\") {\n    Some(num) => io.println(num.to_str());\n    None => io.println(\"Not found\");\n  }\n\n  return 0;\n}\n",
+  "expected_output": "555-0100\nNot found",
   "try_it": "Create a Map[Str,Int] of country populations. Add 5 countries. Look up one that exists and one that doesn't. What happens if you insert the same key twice with different values? Try creating a Map[Int,Str] where keys are ID numbers and values are names — reverse the key-value pattern.",
   "concepts": [
     "Map",

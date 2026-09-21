@@ -9,7 +9,7 @@
   "analogy": "A for loop over a Vec is like flipping through a photo album — you see each photo one at a time, in order, without worrying about which page number you're on. When you reach the last page, you stop.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  let animals: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"cat\", \"dog\", \"owl\" into animals\n  // TODO: Write a for loop to print each animal\n  // TODO: After the loop, print the total count\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nuse xiom.iter;\nfn main() -> Int {\n  let animals: Vec[Str] = Vec[Str].new();\n  animals.push(\"cat\");\n  animals.push(\"dog\");\n  animals.push(\"owl\");\n\n  for __i in range(0, animals.len()) {\n    let animal = animals[__i];\n    io.println(animal.to_str());\n  }\n\n  io.println(\"Total: \" + to_string(animals.len()));\n  return 0;\n}\n",
-  "expected_output": "\n\n\nTotal: 3",
+  "expected_output": "cat\ndog\nowl\nTotal: 3",
   "try_it": "Create a Vec with 5 numbers. Use a for loop to print each number. Then add a counter variable outside the loop and increment it inside to number each item (1: apple, 2: banana...). Try iterating over an empty Vec — what happens? Create a Vec of Bool values and iterate over them — does each iteration move the Bool or copy it?",
   "concepts": [
     "Vec",

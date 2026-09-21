@@ -9,7 +9,7 @@
   "analogy": "A Student struct is like a report card. Methods are like the summary section — they compute GPA, find the best subject, and assign letter grades without you doing the math.",
   "code_template": "use xiom.io;\n\ntype Student = {\n  name: Str;\n  math: Int;\n  science: Int;\n  english: Int;\n}\n\n// TODO: Write 'average' method — returns (math + science + english) / 3.0 as Float64\n\n// TODO: Write 'highest_subject' method — returns the name of the subject with the highest score\n\nfn main() -> Int {\n  // TODO: Create a Student, print average, print highest subject\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\ntype Student = {\n  name: Str;\n  math: Int;\n  science: Int;\n  english: Int;\n}\n\nfn Student.average(self) -> Float64 {\n  let total = math + science + english;\n  return total as Float64 / 3.0;\n}\n\nfn Student.highest_subject(self) -> Str {\n  if math >= science && math >= english {\n    return \"Math\";\n  }\n  if science >= math && science >= english {\n    return \"Science\";\n  }\n  return \"English\";\n}\n\nfn main() -> Int {\n  let s = Student{ name: \"Zara\", math: 88, science: 92, english: 85 };\n  io.println(s.average().to_str());\n  io.println(s.highest_subject().to_str());\n  return 0;\n}\n",
-  "expected_output": "",
+  "expected_output": "88.3333333333333\nScience",
   "try_it": "Add a `history` subject to the Student struct. Update `average` and `highest_subject` to include it. Test with all four subjects.",
   "concepts": [
     "data-aggregation",

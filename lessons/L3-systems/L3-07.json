@@ -9,6 +9,7 @@
   "analogy": "Result is like a delivery — either you get the package (Ok) or a note explaining why not (Err). You always know what happened AND why.",
   "code_template": "use xiom.io;\n\nfn main() -> Int {\n  // TODO: Create a Result[Int, Str] with Ok(200) — HTTP success code\n\n  // TODO: Create a Result[Int, Str] with Err(\"Server error\") — failure\n\n  // TODO: Match on the success case and print \"Status: X\" or \"Error: X\"\n\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() -> Int {\n  let success: Result[Int, Str] = Ok(200);\n  let failure: Result[Int, Str] = Err(\"Server error\");\n\n  let msg1 = match success {\n    Ok(code) => \"Status: \" + to_string(code),\n    Err(e) => \"Error: \" + e,\n  };\n  let msg2 = match failure {\n    Ok(code) => \"Status: \" + to_string(code),\n    Err(e) => \"Error: \" + e,\n  };\n\n  io.println(msg1.to_str());\n  io.println(msg2.to_str());\n  return 0;\n}\n",
+  "expected_output": "Status: 200\nError: Server error",
   "try_it": "Create a Result with a different error type — make `Result[Str, Int]` where Ok contains a message and Err contains an error code. Match on it and handle both cases differently.",
   "concepts": [
     "Result",

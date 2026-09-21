@@ -9,7 +9,7 @@
   "analogy": "A struct type is like a cookie cutter — one shape, but you can stamp out as many cookies as you want, each with different decorations.",
   "code_template": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  // TODO: Create two Person instances — one for yourself, one for a friend\n\n  // TODO: Print the name and age of BOTH people\n\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\ntype Person = {\n  name: Str;\n  age: Int;\n}\n\nfn main() -> Int {\n  let me = Person{ name: \"Alex\", age: 15 };\n  let friend = Person{ name: \"Jordan\", age: 16 };\n  io.println(me.name.to_str());\n  io.println(me.age.to_str());\n  io.println(friend.name.to_str());\n  io.println(friend.age.to_str());\n  return 0;\n}\n",
-  "expected_output": "\n15\n\n16",
+  "expected_output": "Alex\n15\nJordan\n16",
   "try_it": "Add a third person named \"Taylor\", age 13. Print all three names in a single sentence like \"Alice, Bob, and Taylor are friends!\"",
   "concepts": [
     "multiple-instances",

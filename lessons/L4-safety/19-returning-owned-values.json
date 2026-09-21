@@ -9,7 +9,7 @@
   "analogy": "Returning an owned value is like a bakery handing you a fresh loaf of bread — they made it, now it's yours to take home and use.",
   "code_template": "use xiom.io;\n\n// TODO: Write fn 'make_message' that takes Str and returns a combined string\n// Like: \"Welcome, \" + name\n// In main, call make_message and print the result\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
   "solution": "use xiom.io;\n\nfn make_message(name: Str) -> Str {\n  return \"Welcome, \" + name + \"!\";\n}\n\nfn main() -> Int {\n  let msg = make_message(\"Kilo\");\n  io.println(msg.to_str());\n  return msg.len() as Int;\n}",
-  "expected_output": "",
+  "expected_output": "Welcome, Kilo!",
   "try_it": "Write a function that builds and returns a Vec[Int] with 5 elements. Chain it through another function that doubles each value and returns the modified Vec.",
   "concepts": [
     "return ownership",

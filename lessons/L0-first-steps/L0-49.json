@@ -9,6 +9,7 @@
   "analogy": "A for loop over a list is like reading a shopping list — you go through each item one by one, handling it before moving to the next.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: create a list (array) of rainbow colors\n  // TODO: use a 'for' loop to print each color with a number before it\n}\n",
   "solution": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let colors = [\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\"];\n  var count: Int = 1;\n  for __i in range(0, colors.len()) {\n    let color = colors[__i];\n    io.println(\"1\");\n    io.println(\". \");\n    io.println(color);\n    count = count + 1;\n  }\n}\n",
+  "expected_output": "1\n.\nRed\n1\n.\nOrange\n1\n.\nYellow\n1\n.\nGreen\n1\n.\nBlue\n1\n.\nIndigo\n1\n.\nViolet",
   "try_it": "Add 'Pink' and 'Turquoise' to the list. Then create a list of your top 5 favorite foods and print them with a countdown from 5 to 1.",
   "concepts": [
     "for-loop",
