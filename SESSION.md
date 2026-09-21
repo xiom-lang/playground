@@ -56,9 +56,9 @@ Audit (AUDIT.md) is fully implemented for this repository:
   `tools/expected-output-skips.json` (compiler findings C18/C19). The Output
   tab matches reference-solution runs, `tools/lesson-audit.js` asserts stored
   outputs in the nightly job, and `--check` gates the data on every push.
-- Mobile (A4): screens <=768px never download Monaco; they get a read-only
-  program view with copy-to-clipboard, and Run/Format/examples all fall back
-  to `getMobileCodeValue()`.
+- Mobile (A4): screens <=768px never download Monaco; they get a plain-text
+  editor (16px, no iOS focus zoom) with Run and Copy, and Run/Format/examples
+  all read `getMobileCodeValue()`.
 - Visual polish (A6): labeled landing section, search empty states, indigo
   `:focus-visible` rings, theme-token fixes, one stdlib search box, and
   working dotted queries (`io.println`).

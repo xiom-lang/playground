@@ -34,11 +34,11 @@ make editor support match what developers expect.
     solution. `tools/lesson-audit.js` asserts stored outputs in the nightly
     CI job and `--check` gates the data on every push.
 - [x] A4. Mobile lesson experience
-  - Narrow screens (<=768px) never download Monaco; the editor slot becomes a
-    read-only program view with a copy-to-clipboard button, and Run plus the
-    expected-output comparison use that source. Resizing across the
-    breakpoint lazily loads Monaco (or the read-only view) without losing the
-    program text.
+  - Narrow screens (<=768px) never download Monaco; the editor slot is a
+    plain-text editor (16px to avoid iOS focus zoom) with Run and Copy
+    buttons, and Run, Format, quick examples, and the expected-output
+    comparison all use that source. Resizing across the breakpoint lazily
+    loads Monaco (or the mobile editor) without losing the program text.
 - [x] A5. Editor autocomplete (data-driven)
   - Monaco completion provider built from `js/stdlib-ref.json`: module names
     after `use xiom.`, module members after an imported alias (`io.`, `math.`),

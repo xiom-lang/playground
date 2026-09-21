@@ -989,6 +989,15 @@ before layout.css, so the base 340px width won on narrow screens. The mobile
 override now lives in layout.css after the base rule, and both the stdlib and
 registry panels cover the viewport on phones.
 
+Follow-up (2026-09-21): the read-only mobile view blocked typing on phones
+(owner report from iOS Safari and Chrome). The editor slot is now a
+plain-text `<textarea>` with `autocapitalize/autocorrect/autocomplete` off,
+16px font (prevents iOS focus zoom), and Run/Copy buttons in its bar; Monaco
+is still not downloaded on narrow screens. Verified in a touch-emulated
+390x844 browser: typing updates `getMobileCodeValue()` and
+`getActiveEditorValue()`, the mobile Run button sends the typed source to
+`/api/compile`, the output renders, and no console errors occur.
+
 ## 18. Accounts: optional GitHub sign-in and progress sync (C2 implemented, 2026-09-19)
 
 Option B (chosen by the owner): the GitHub token exchange runs on the

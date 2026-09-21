@@ -230,7 +230,16 @@ function ensureMobileCodeView() {
 
   var hint = document.createElement('span');
   hint.className = 'mobile-code-hint';
-  hint.textContent = 'Read-only on this screen';
+  hint.textContent = 'Plain-text editor';
+
+  var runButton = document.createElement('button');
+  runButton.type = 'button';
+  runButton.className = 'mobile-copy-btn mobile-run-btn';
+  runButton.textContent = 'Run';
+  runButton.setAttribute('aria-label', 'Run the program');
+  runButton.onclick = function () {
+    if (typeof compile === 'function') compile();
+  };
 
   var button = document.createElement('button');
   button.type = 'button';
@@ -241,23 +250,32 @@ function ensureMobileCodeView() {
 
   bar.appendChild(label);
   bar.appendChild(hint);
+  bar.appendChild(runButton);
   bar.appendChild(button);
 
-  var pre = document.createElement('pre');
-  pre.id = 'mobileCodePre';
-  pre.className = 'mobile-code-pre';
-  pre.setAttribute('tabindex', '0');
-  pre.setAttribute('aria-label', 'Lesson program, read-only');
+  var input = document.createElement('textarea');
+  input.id = 'mobileCodeInput';
+  input.className = 'mobile-code-input';
+  input.setAttribute('spellcheck', 'false');
+  input.setAttribute('autocapitalize', 'off');
+  input.setAttribute('autocomplete', 'off');
+  input.setAttribute('autocorrect', 'off');
+  input.setAttribute('wrap', 'off');
+  input.setAttribute('aria-label', 'Lesson program editor');
+  input.oninput = function () { mobileCodeValue = input.value; };
 
   host.appendChild(bar);
-  host.appendChild(pre);
+  host.appendChild(input);
   container.appendChild(host);
   return host;
 }
 
 function renderMobileCode() {
-  var pre = document.getElementById('mobileCodePre');
-  if (pre) pre.textContent = mobileCodeValue;
+  var input = document.getElementById('mobileCodeInput');
+  if (!input) return;
+  // Never clobber what the user is typing.
+  if (document.activeElement === input) return;
+  input.value = mobileCodeValue;
 }
 
 function showMobileCodeView() {
@@ -287,7 +305,11 @@ window.setMobileCode = function (text) {
   if (isNarrowViewport()) showMobileCodeView();
   else renderMobileCode();
 };
-window.getMobileCodeValue = function () { return mobileCodeValue; };
+window.getMobileCodeValue = function () {
+  var input = document.getElementById('mobileCodeInput');
+  if (input && isNarrowViewport()) return input.value;
+  return mobileCodeValue;
+};
 window.isNarrowViewport = isNarrowViewport;
 
 window.initLessonsEditor = function () {
