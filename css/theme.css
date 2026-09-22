@@ -73,12 +73,18 @@ html { background: var(--void); }
    LANDING PAGE
    ================================================================ */
 .landing-screen {
-  min-height: 100vh;
+  /* A constrained height (not min-height) makes this element the scroll
+     container. With only min-height it grows to its content and iOS Safari
+     clips the excess because body has overflow: hidden, so the page cannot
+     be scrolled at all. 100dvh avoids the iOS toolbar clipping. */
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 60px 20px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   position: relative;
   background: var(--void);
 }
@@ -1863,6 +1869,10 @@ a:focus-visible,
   .hero-title { font-size: 32px; }
   .feature-grid { grid-template-columns: 1fr; }
   .stats-bar { flex-wrap: wrap; gap: 16px; }
+
+  .onboarding-content { padding: 28px 22px; }
+  .onboarding-hero { font-size: 38px; margin-bottom: 8px; }
+  .onboarding-content p { margin-bottom: 18px; }
 }
 
 @media (max-width: 480px) {
@@ -2264,12 +2274,19 @@ a:focus-visible,
   position: fixed; inset: 0; background: rgba(8,9,11,0.85);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   display: flex; align-items: center; justify-content: center;
+  /* Short phones: the dialog must be scrollable, otherwise the buttons are
+     clipped with no way to reach them. margin:auto on the content keeps the
+     centering while still allowing overflow to scroll. */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 16px;
   z-index: 500; animation: fadeIn 0.3s ease-out;
 }
 .onboarding-content {
   background: var(--panel); border: 1px solid var(--border);
   border-radius: var(--radius-lg); padding: 40px; text-align: center;
   max-width: 460px; width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  margin: auto;
 }
 .onboarding-hero {
   font-size: 48px; font-weight: 700; color: var(--indigo);

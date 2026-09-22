@@ -59,6 +59,10 @@ Audit (AUDIT.md) is fully implemented for this repository:
 - Mobile (A4): screens <=768px never download Monaco; they get a plain-text
   editor (16px, no iOS focus zoom) with Run and Copy, and Run/Format/examples
   all read `getMobileCodeValue()`.
+- Mobile scrolling (2026-09-22): the landing is now an explicit scroll
+  container (`height: 100dvh` + `overflow-y: auto`; `min-height` alone let
+  iOS clip the page under the `body { overflow: hidden }` shell) and the
+  onboarding dialog scrolls on short screens. AUDIT.md section 13.
 - Visual polish (A6): labeled landing section, search empty states, indigo
   `:focus-visible` rings, theme-token fixes, one stdlib search box, and
   working dotted queries (`io.println`).

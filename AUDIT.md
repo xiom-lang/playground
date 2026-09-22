@@ -998,6 +998,21 @@ is still not downloaded on narrow screens. Verified in a touch-emulated
 `getActiveEditorValue()`, the mobile Run button sends the typed source to
 `/api/compile`, the output renders, and no console errors occur.
 
+Follow-up (2026-09-22): the landing could not be scrolled down on phones
+(owner report, iOS Safari and Chrome). Root cause: `.landing-screen` used
+only `min-height: 100vh` while `body` is `height: 100vh; overflow: hidden`,
+so the element grew past the viewport and iOS Safari clipped the excess; the
+inner `overflow-y` never engaged because the element had no height
+constraint. The onboarding dialog was also a fixed, non-scrolling flexbox, so
+on short screens its buttons could be clipped with no way to reach them. The
+landing is now a real scroll container (`height: 100vh; height: 100dvh;
+overflow-y: auto; -webkit-overflow-scrolling: touch`) and the onboarding
+modal scrolls (`overflow-y: auto` plus `margin: auto` on the dialog, tighter
+padding under 768px). Verified in a touch-emulated 390x844 browser: wheel
+scrolling moves the landing to its maximum (`scrollTop` 1200/1200), the
+social and legal footers are reachable with all 8 icons, the desktop layout
+still scrolls, and there are no console errors.
+
 ## 18. Accounts: optional GitHub sign-in and progress sync (C2 implemented, 2026-09-19)
 
 Option B (chosen by the owner): the GitHub token exchange runs on the
