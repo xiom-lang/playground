@@ -1231,3 +1231,44 @@ SESSION.md section 3). This branch supersedes
 `verify/compiler-preview-dd4072b0` (R52) and
 `verify/compiler-preview-306073ba` (R49).
 
+## 23. Release-candidate verification (R62/R63, ddb8ea62, 2026-09-22)
+
+Compiler-side commits `bef1b853` (R62, receiver-aware fmt peek), `4c90efa9`
+(R63, script-run opt-level, HOME-independent cache, stdlib pin bump) and
+`ddb8ea62` (validation record) were built in WSL and verified with the
+committed harness and the lesson corpus.
+
+Harness acceptance (same machine, 3 samples, medians in ms):
+
+| program   | pinned v0.60.1 | R55 (before R62) | RC ddb8ea62 |
+|-----------|----------------|------------------|-------------|
+| hello     | run 3956 / ir 321  | run 4916 / ir 1540 | run 4655 / ir 1480 |
+| to_str    | run 3857 / ir 395  | run 5847 / ir 2400 | run 4466 / ir 1363 |
+| loop_200  | run 4283 / ir 452  | run 6440 / ir 2662 | run 4173 / ir 1368 |
+
+- `to_str`/`hello` emit-ir ratio: 1.81x (R55) -> **0.92x** (RC); acceptance
+  was <= 1.3x. `to_str` run -22%, `loop_200` run -31% against R55.
+- Cross-check: the pinned v0.60.1 binary with the *new* stdlib measures
+  hello ir 317 ms, so the stdlib growth does not explain the RC front-end;
+  the remaining ~1.4 s emit-ir (vs ~0.3 s pinned) is compiler-side and worth
+  a note in the release, though cold run totals are only ~0.5-0.7 s slower
+  than pinned for hello/to_str because clang dominates the total.
+- R63 verified in this build: `xiom --opt-level=0 run f.xi` and
+  `xiom run -O0 f.xi` both work, same-level repeat is a cache hit (8 ms),
+  a different level recompiles (4.3 s); an unwritable HOME still caches via
+  the `$TMPDIR/xiom_jit` fallback (second run 7 ms); `lib/package.xi` is the
+  `xiom-std` manifest (C6 closed at source level).
+
+Lesson data on the release candidate: **410/410 lessons carry a
+deterministic expected output** (the skip list is now empty; L3-50 prints a
+stable `8`), the regeneration baseline is empty, `js/limitations.json` is
+empty, and the full execution audit reports 410/410 type-check + run with
+zero failures, zero mismatches and no regressions. Release-ready data is
+parked on branch `verify/release-candidate-ddb8ea62`, which supersedes
+`verify/compiler-preview-d63911d9` (R55).
+
+Remaining for the release is the owner's v0.61.0 decision (tag, and whether a
+macOS artifact ships); the playground will then bump `TOOLCHAIN_VERSION`,
+re-run the sweep + audit on the published artifact, regenerate
+baseline/limitations, and merge the branch.
+

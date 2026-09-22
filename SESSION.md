@@ -136,14 +136,15 @@ The VPS owner will test Phase B after the next hourly pull.
 
 ### Absorbing compiler fixes (C17/C18/C19)
 
-Verified preview (2026-09-21, compiler local main `d63911d9`, R55): the
-lesson set is fully green - 410/410 type-check and run, zero failures,
-limitations regenerates to 0 blocked lessons, and 409/410 lessons carry an
-expected output (only L3-50 remains nondeterministic). Release-ready data
-(lessons, skips, baseline, limitations) is parked on
-`verify/compiler-preview-d63911d9`; re-run the sweep on the actual release
-before merging. Earlier preview branches (dd4072b0, 306073ba) are superseded.
-Details in AUDIT.md section 22.
+Verified release candidate (2026-09-22, compiler `ddb8ea62`: R62 peek + R63
+opt-level/HOME/stdlib pin): harness acceptance met (to_str/hello emit-ir
+ratio 1.81x -> 0.92x, to_str run -22%), C3 route works with per-level
+caching, unwritable-HOME caching falls back to $TMPDIR, and the stdlib
+manifest is correct. Lesson corpus: **410/410 deterministic expected
+outputs, 0 blocked, 0 skipped**, audit 410/410 with zero failures. Data is
+parked on `verify/release-candidate-ddb8ea62` (supersedes the R55 branch);
+the only open item is the owner's v0.61.0 tag decision. Details in AUDIT.md
+section 23.
 
 When a fix reaches a toolchain release:
 
