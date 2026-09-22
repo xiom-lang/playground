@@ -31,9 +31,17 @@
 
 <!-- LANDING SCREEN -->
 <div id="landing" class="landing-screen">
+  <!-- Page banner: artwork and wordmark shared with xiom-website
+       (xiom-website/style.css "Page banners"). Keep the h1 semantic. -->
+  <header class="page-banner">
+    <img src="img/playground.webp" alt="" width="1539" height="510">
+    <div class="xiom-banner-text">
+      <h1 class="xiom-heading"><span class="xiom-brand" aria-hidden="true">XIOM</span><span class="xiom-section">PLAYGROUND</span></h1>
+      <span class="xiom-accent" aria-hidden="true"></span>
+    </div>
+  </header>
   <div class="landing-hero">
-    <img class="hero-logo" src="xiom-logo.png" alt="XIOM">
-    <h1 class="hero-title" aria-label="Try XIOM in your browser.">Try XIOM<br><span class="gradient-text">in your browser.</span></h1>
+    <h2 class="hero-title" aria-label="Try XIOM in your browser.">Try XIOM<br><span class="gradient-text">in your browser.</span></h2>
     <p class="hero-subtitle">Write a contract; watch the compiler check it. Tokens, LLVM IR, contracts and diagnostics side by side.</p>
     <div class="hero-cta">
       <button class="btn-primary" onclick="startLearning()">Start Learning</button>

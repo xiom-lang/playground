@@ -140,19 +140,86 @@ html.light-mode .output-content {
   animation: fadeInUp 0.8s ease-out;
 }
 
-.hero-logo {
-  width: 56px;
-  height: 56px;
-  display: block;
-  margin: 0 auto 32px;
-  opacity: 0.95;
-  filter: drop-shadow(0 0 24px rgba(92,107,255,0.45));
-  animation: markfloat 6s ease-in-out infinite;
+/* ================================================================
+   PAGE BANNER
+   Copied from xiom-website/style.css ("Page banners"); the wordmark colors
+   are intentionally fixed because the artwork is always dark. Keep this in
+   sync with the website.
+   ================================================================ */
+.page-banner {
+  position: relative;
+  overflow: hidden;
+  background: #05080f;
+  border-bottom: 1px solid var(--border);
 }
 
-@keyframes markfloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+.page-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.xiom-banner-text {
+  position: absolute;
+  left: 7%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  white-space: nowrap;
+}
+
+.xiom-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+}
+
+.xiom-brand {
+  font-family: var(--sans);
+  font-size: clamp(28px, 2.8vw, 52px);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #f3f7ff;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.08),
+    0 0 24px rgba(70, 120, 255, 0.08);
+}
+
+.xiom-section {
+  margin-top: 13px;
+  font-size: clamp(9px, 0.72vw, 14px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: #69b8ff;
+  text-shadow:
+    0 0 8px rgba(80, 150, 255, 0.3),
+    0 0 18px rgba(50, 110, 255, 0.15);
+}
+
+.xiom-accent {
+  width: 42px;
+  height: 2px;
+  margin-top: 17px;
+  background: linear-gradient(90deg, #66fff1 0%, #4cc8ff 70%, rgba(76, 200, 255, 0) 100%);
+  box-shadow:
+    0 0 7px rgba(76, 220, 255, 0.55),
+    0 0 16px rgba(76, 180, 255, 0.2);
+}
+
+/* Full-bleed inside the padded landing scroller. flex-shrink: 0 keeps the
+   artwork at its aspect ratio in the fixed-height flex column. */
+.landing-screen > .page-banner {
+  width: calc(100% + 40px);
+  margin: -60px -20px 0;
+  flex-shrink: 0;
 }
 
 .hero-title {
@@ -1865,7 +1932,6 @@ a:focus-visible,
     display: none;
   }
 
-  .hero-logo  { font-size: 48px; }
   .hero-title { font-size: 32px; }
   .feature-grid { grid-template-columns: 1fr; }
   .stats-bar { flex-wrap: wrap; gap: 16px; }
@@ -1878,11 +1944,6 @@ a:focus-visible,
 @media (max-width: 480px) {
   body {
     font-size: 14px;
-  }
-
-  .hero-logo {
-    width: 40px;
-    height: 40px;
   }
 
   .hero-title {

@@ -76,7 +76,10 @@ Audit (AUDIT.md) is fully implemented for this repository:
   or performance claims, canonical cross-links, and explicit server-side
   execution transparency (AUDIT section 20). The landing footer also carries
   the website's social row (`.footer-social`, copied from xiom-website; keep
-  the order, URLs and the Discord "open invite" wording in sync).
+  the order, URLs and the Discord "open invite" wording in sync), and the
+  landing header uses the website's page banner (`.page-banner`, artwork
+  `img/playground.webp`, wordmark XIOM / PLAYGROUND; the hero logo was
+  removed as redundant and the hero title is an h2 under the banner's h1).
 - Compiler-lane repro pack: `docs/COMPILER_REPROS.md` plus
   `tools/bench-cold-compile.js` (cache-clearing cold benchmark with
   same-machine `--compare`); reference medians for v0.60.1 and the R55
