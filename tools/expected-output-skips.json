@@ -1,13 +1,6 @@
 {
   "toolchain": "v0.60.1",
-  "generated": "2026-09-21T15:27:42.504Z",
-  "count": 1,
-  "lessons": [
-    {
-      "id": "L3-50",
-      "level": "L3",
-      "title": "L3 Capstone: Safe Calculator App",
-      "reason": "nondeterministic output"
-    }
-  ]
+  "generated": "2026-09-22T00:28:09.397Z",
+  "count": 0,
+  "lessons": []
 }
