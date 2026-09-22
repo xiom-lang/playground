@@ -240,6 +240,44 @@ async function main() {
       assert.ok(payload.lessons.every((lesson) => lesson.id && lesson.reason && lesson.title));
     });
 
+    await okAsync('runtime requires live inside the Docker build context', async () => {
+      // The runtime image excludes tools/ and docs/ (see .dockerignore), so a
+      // require from server.js that resolves into an ignored path crashes the
+      // deployed container at startup with an nginx 500. Walk the require
+      // graph and fail when any resolved file would be missing.
+      const ignored = fs.readFileSync(path.join(REPO, '.dockerignore'), 'utf8')
+        .split(/\r?\n/).map((line) => line.trim())
+        .filter((line) => line && !line.startsWith('#') && !line.startsWith('!'));
+      const patternToRegExp = (pattern) => new RegExp(
+        '^' + pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*') + '(?:/|$)'
+      );
+      const required = new Set();
+      const visit = (file) => {
+        const source = fs.readFileSync(file, 'utf8');
+        const re = /require\((['"])(\.[^'"]+)\1\)/g;
+        let match;
+        while ((match = re.exec(source)) !== null) {
+          let resolved;
+          try { resolved = require.resolve(path.resolve(path.dirname(file), match[2])); } catch { continue; }
+          if (required.has(resolved)) continue;
+          required.add(resolved);
+          if (resolved.endsWith('.js')) visit(resolved);
+        }
+      };
+      visit(path.join(REPO, 'server.js'));
+      const violations = [];
+      for (const file of required) {
+        const relative = path.relative(REPO, file).replace(/\\/g, '/');
+        for (const pattern of ignored) {
+          if (patternToRegExp(pattern).test(relative)) {
+            violations.push(relative + ' (excluded by "' + pattern + '")');
+            break;
+          }
+        }
+      }
+      assert.deepStrictEqual(violations, [], 'server requires files excluded from the image');
+    });
+
     console.log('static containment:');
     for (const target of ['/../server.js', '/%2e%2e/server.js', '/..%2fserver.js', '/../../etc/passwd', '/.git/config', '/.kilo/worktrees']) {
       await okAsync('rejects ' + target, async () => {

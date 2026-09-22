@@ -31,7 +31,7 @@ const fsp = require('fs/promises');
 const path = require('path');
 const os = require('os');
 const { runProcess } = require('./lib/run-xiom');
-const { XIOM_BIN, childEnv } = require('./tools/lib/toolchain');
+const { XIOM_BIN, childEnv } = require('./lib/toolchain');
 const auth = require('./lib/auth');
 const progressStore = require('./lib/progress-store');
 
