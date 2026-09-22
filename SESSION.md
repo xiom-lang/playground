@@ -80,6 +80,10 @@ Audit (AUDIT.md) is fully implemented for this repository:
   landing header uses the website's page banner (`.page-banner`, artwork
   `img/playground.webp`, wordmark XIOM / PLAYGROUND; the hero logo was
   removed as redundant and the hero title is an h2 under the banner's h1).
+  The primary actions (Start Learning / Try Playground) sit inside the banner
+  overlay on desktop and in a dark strip under the artwork on phones, where
+  they stack full-width; the hero below keeps the headline, subline,
+  transparency line and progress actions.
 - Compiler-lane repro pack: `docs/COMPILER_REPROS.md` plus
   `tools/bench-cold-compile.js` (cache-clearing cold benchmark with
   same-machine `--compare`); reference medians for v0.60.1 and the R55
