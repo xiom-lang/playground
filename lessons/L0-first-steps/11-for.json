@@ -9,6 +9,7 @@
   "analogy": "A for-loop is like a librarian checking each book on a shelf — they pick up one book at a time, look at it, put it back, and move to the next one, until they've checked them all.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: Create a list of your friends' names using [ ] brackets\n  // TODO: Write a for loop that goes through each name in the list\n  // TODO: Inside the loop, print a greeting for each friend\n  // TODO: After the loop, print \"Everyone has been greeted!\"\n}",
   "solution": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let friends = [\"Maya\", \"Leo\", \"Priya\", \"Kai\"];\n\n  io.println(\"Greeting my friends:\");\n\n  for __i in range(0, friends.len()) {\n    let friend = friends[__i];\n    let message = \"Hi, \" + friend + \"!\";\n    io.println(message);\n  }\n\n  io.println(\"Everyone has been greeted!\");\n}\n",
+  "expected_output": "Greeting my friends:\nHi, Maya!\nHi, Leo!\nHi, Priya!\nHi, Kai!\nEveryone has been greeted!",
   "try_it": "Add your own friends' names to the list and greet them all. Then make a list of your favorite foods and use a for loop to print each one. Try a list of numbers too — can you print each number multiplied by 2 inside the loop?",
   "concepts": [
     "for",

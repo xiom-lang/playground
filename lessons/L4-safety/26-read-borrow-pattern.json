@@ -9,6 +9,7 @@
   "analogy": "A read borrow is like asking \"Can I see that?\" — you look at it, you give it back. Nothing changed, and multiple people can look at the same time.",
   "code_template": "use xiom.io;\n\n// TODO: Write fn 'median' for &Vec[Int] that returns the middle value\n// Write fn 'range' for &Vec[Int] that returns max - min\n// requires: len > 0 for both\n// In main, create Vec, compute median and range\n\nfn main() -> Int {\n  // TODO\n  return 0;\n}",
   "solution": "use xiom.io;\nuse xiom.iter;\n\nfn min_val(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  let m = scores[0];\n  for __i in range(0, scores.len()) {\n    let s = scores[__i];\n    if s < m { m = s; } }\n  return m;\n}\n\nfn max_val(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  let m = scores[0];\n  for __i in range(0, scores.len()) {\n    let s = scores[__i];\n    if s > m { m = s; } }\n  return m;\n}\n\nfn range(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  return max_val(scores) - min_val(scores);\n}\n\nfn main() -> Int {\n  let data = Vec[Int].new();\n  data.push(10);\n  data.push(25);\n  data.push(5);\n  data.push(30);\n  return range(&data);\n}",
+  "expected_output": "",
   "try_it": "Add more read-only functions: fn std_dev(scores: &Vec[Int]) -> Float64, fn percentile(scores: &Vec[Int], p: Int) -> Int. All take &, all can coexist.",
   "concepts": [
     "read borrow pattern",

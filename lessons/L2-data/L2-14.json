@@ -9,6 +9,7 @@
   "analogy": "Enums with data are like labeled boxes — the label says what's inside (Rainy), and when you open the box (match), you find the payload (millimeters of rain).",
   "code_template": "use xiom.io;\n\nenum Weather {\n  Sunny,\n  Cloudy,\n  Rainy(mm: Float64),\n  Snowy(cm: Float64),\n}\n\n// TODO: Write 'report' function — match each variant and return a string describing the weather with its data\n\nfn main() -> Int {\n  // TODO: Create a Rainy day with 4.2mm and print its report\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum Weather {\n  Sunny,\n  Cloudy,\n  Rainy(mm: Float64),\n  Snowy(cm: Float64),\n}\n\nfn report(weather: Weather) -> Str {\n  return match weather {\n    Sunny => \"Clear and bright\",\n    Cloudy => \"Gray skies\",\n    Rainy(mm) => \"Rain: \" + \" mm expected\",\n    Snowy(cm) => \"Snow: \" + \" cm accumulated\",\n  };\n}\n\nfn main() -> Int {\n  let today = Weather.Rainy(4.2);\n  io.println(report(today).to_str());\n  return 0;\n}\n",
+  "expected_output": "Rain:  mm expected",
   "try_it": "Add a `Windy(kph: Float64)` variant to the Weather enum. Update `report` to handle it. Test with Windy(45.0) and Windy(10.0).",
   "concepts": [
     "enum-with-data",

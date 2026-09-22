@@ -9,6 +9,7 @@
   "analogy": "A Vec with push and pop is like a stack of cafeteria trays. You add trays on top (push) and take trays from the top (pop). If you reach for a tray and the stack is empty, you get nothing — and the Option tells you 'None.' You never have to guess whether you grabbed something.",
   "code_template": "use xiom.io;\nfn main() -> Int {\n  let stack: Vec[Str] = Vec[Str].new();\n  // TODO: Push \"first\", \"second\", \"third\"\n  // TODO: Pop three times, matching on Option each time\n  // TODO: Pop a fourth time to see None\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn main() -> Int {\n  let stack: Vec[Str] = Vec[Str].new();\n  stack.push(\"first\");\n  stack.push(\"second\");\n  stack.push(\"third\");\n\n  match stack.pop() {\n    Some(v) => io.println(v.to_str());\n    None => io.println(\"empty\");\n  }\n  match stack.pop() {\n    Some(v) => io.println(v.to_str());\n    None => io.println(\"empty\");\n  }\n  match stack.pop() {\n    Some(v) => io.println(v.to_str());\n    None => io.println(\"empty\");\n  }\n  match stack.pop() {\n    Some(v) => io.println(v.to_str());\n    None => io.println(\"empty\");\n  }\n  return 0;\n}\n",
+  "expected_output": "third\nsecond\nfirst\nempty",
   "try_it": "Push 5 numbers onto a Vec and pop 3 of them. Print each popped value. Then check the Vec's length before and after all the operations. What value does the FIRST pop return? Try using `if let Some(val) = stack.pop() { ... }` instead of match — it's a shorter way to handle the Option.",
   "concepts": [
     "Vec",

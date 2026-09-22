@@ -9,6 +9,7 @@
   "analogy": "Enum methods are like buttons on a remote control. Each button (variant) does something different when pressed, and the remote knows which button was pressed and what to do next.",
   "code_template": "use xiom.io;\n\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\n// TODO: Write 'next' method — Red becomes Green, Green becomes Yellow, Yellow becomes Red\n\n// TODO: Write 'instruction' method — returns \"Stop\", \"Slow\", or \"Go\"\n\nfn main() -> Int {\n  // TODO: Start at Red, cycle 3 times with next(), print instruction each time\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum TrafficLight {\n  Red,\n  Yellow,\n  Green,\n}\n\nfn TrafficLight.next(self) -> TrafficLight {\n  return match self {\n    Red => TrafficLight.Green,\n    Green => TrafficLight.Yellow,\n    Yellow => TrafficLight.Red,\n  };\n}\n\nfn TrafficLight.instruction(self) -> Str {\n  return match self {\n    Red => \"Stop\",\n    Yellow => \"Slow\",\n    Green => \"Go\",\n  };\n}\n\nfn main() -> Int {\n  let light = TrafficLight.Red;\n  let count = 0;\n  while count < 3 {\n    io.println(light.instruction().to_str());\n    light = light.next();\n    count = count + 1;\n  }\n  return 0;\n}\n",
+  "expected_output": "Stop\nGo\nSlow",
   "try_it": "Add a `cycles_until_red` method that takes a starting color and counts how many `next()` calls it takes to reach Red. Test starting from Green (should take 1), Yellow (should take 2), and Red (should take 0).",
   "concepts": [
     "enum-methods",

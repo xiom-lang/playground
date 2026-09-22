@@ -9,7 +9,7 @@
     "analogy":  "Methods on a Rectangle are like asking a room questions — \"What\u0027s your floor area?\" or \"How much baseboard do you need?\" — the room knows the answer.",
     "code_template":  "use xiom.io;\n\ntype Rectangle = {\n  width: Float64;\n  height: Float64;\n}\n\n// TODO: Write an \u0027area\u0027 method that returns width * height\n\n// TODO: Write a \u0027perimeter\u0027 method that returns 2 * (width + height)\n\nfn main() -\u003e Int {\n  // TODO: Create a Rectangle with width 7.0 and height 3.0\n  // TODO: Print its area and perimeter\n  return 0;\n}\n",
     "solution":  "use xiom.io;\n\ntype Rectangle = {\n  width: Float64;\n  height: Float64;\n}\n\nfn Rectangle.area(self) -\u003e Float64 {\n  return width * height;\n}\n\nfn Rectangle.perimeter(self) -\u003e Float64 {\n  return 2.0 * (width + height);\n}\n\nfn main() -\u003e Int {\n  let rect = Rectangle{ width: 7.0, height: 3.0 };\n  io.println(rect.area().to_str());\n  io.println(rect.perimeter().to_str());\n  return 0;\n}\n",
-    "expected_output": "",
+    "expected_output": "21\n20",
     "try_it":  "Add an `is_tall` method that returns true if the height is greater than the width. Test it with a tall rectangle and a wide rectangle.",
     "concepts":  [
                      "computed-methods",

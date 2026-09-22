@@ -229,13 +229,15 @@ async function main() {
       assert.ok(payload.modules.every((m) => m.tier === 'playground' || m.tier === 'docs' || m.tier === 'local'));
     });
 
-    await okAsync('GET /js/limitations.json lists blocked lessons', async () => {
+    await okAsync('GET /js/limitations.json matches the baseline blocked set', async () => {
       const res = await request('GET', '/js/limitations.json');
       assert.strictEqual(res.status, 200);
       const payload = JSON.parse(res.body);
-      assert.ok(payload.lessons.length >= 1);
-      assert.ok(payload.lessons.every((l) => l.id && l.reason));
-      assert.ok(payload.lessons.every((l) => l.title));
+      assert.ok(Array.isArray(payload.lessons));
+      const baseline = JSON.parse(fs.readFileSync(path.join(REPO, 'tools', 'lesson-baseline.json'), 'utf8'));
+      const expected = ((baseline.known && baseline.known.runtime) || []).slice().sort();
+      assert.deepStrictEqual(payload.lessons.map((lesson) => lesson.id).sort(), expected);
+      assert.ok(payload.lessons.every((lesson) => lesson.id && lesson.reason && lesson.title));
     });
 
     console.log('static containment:');

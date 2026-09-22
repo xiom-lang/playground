@@ -9,6 +9,7 @@
   "analogy": "The Shape enum is like a toolbox — you pull out the circle tool for circles, the rectangle tool for rectangles. Same toolbox, different tools for different jobs.",
   "code_template": "use xiom.io;\n\nenum Shape {\n  Circle(radius: Float64),\n  Rectangle(width: Float64, height: Float64),\n  Triangle(base: Float64, height: Float64),\n}\n\n// TODO: Write 'area' function — compute area based on shape type\n// Circle: pi * r * r (use 3.14 for pi)\n// Rectangle: width * height\n// Triangle: 0.5 * base * height\n\nfn main() -> Int {\n  // TODO: Create one of each shape and print all three areas\n  return 0;\n}\n",
   "solution": "use xiom.io;\n\nenum Shape {\n  Circle(radius: Float64),\n  Rectangle(width: Float64, height: Float64),\n  Triangle(base: Float64, height: Float64),\n}\n\nfn area(shape: Shape) -> Float64 {\n  return match shape {\n    Circle(radius) => 3.14 * radius * radius,\n    Rectangle(width, height) => width * height,\n    Triangle(base, height) => 0.5 * base * height,\n  };\n}\n\nfn main() -> Int {\n  let c = Shape.Circle(3.0);\n  let r = Shape.Rectangle(5.0, 2.0);\n  let t = Shape.Triangle(4.0, 6.0);\n  io.println(area(c).to_str());\n  io.println(area(r).to_str());\n  io.println(area(t).to_str());\n  return 0;\n}\n",
+  "expected_output": "28.26\n10\n12",
   "try_it": "Add a `Square(side: Float64)` variant. Its area is `side * side`. Update `area` and `describe`, then test with all four shapes.",
   "concepts": [
     "polymorphism",

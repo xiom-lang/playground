@@ -9,7 +9,7 @@
   "analogy": "A crossword puzzle where each revealed letter is a small victory. Every wrong guess draws one more part of the hangman — head, body, arms, legs. The tension builds with each empty blank. Your program is the hangman artist and the puzzle master, all in one.",
   "code_template": "use xiom.io;\ntype HangmanGame = {\n  word: Str;\n  guessed: Vec[Char];\n  lives: Int;\n  display: Str;\n}\n\nfn has_won(game: &HangmanGame) -> Bool {\n  // TODO: return true if display matches word (no underscores left)\n}\n\nfn has_lost(game: &HangmanGame) -> Bool {\n  // TODO: return true if lives <= 0\n}\n\nfn main() -> Int {\n  // TODO: create game, simulate guesses, print display after each\n  return 0;\n}\n",
   "solution": "use xiom.io;\ntype HangmanGame = {\n  word: Str;\n  guessed: Vec[Char];\n  lives: Int;\n  display: Str;\n}\n\nfn has_won(game: &HangmanGame) -> Bool {\n  var i = 0;\n  while i < game.display.len() {\n    if game.display.char_at(i) == '_' { return false; };\n    i += 1;\n  };\n  true\n}\n\nfn has_lost(game: &HangmanGame) -> Bool {\n  game.lives <= 0\n}\n\nfn main() -> Int {\n  var game = HangmanGame{\n    word: \"PYTHON\",\n    guessed: Vec[Char].new(),\n    lives: 6,\n    display: \"______\"\n  };\n  io.println(game.display.to_str());\n  io.println(has_won(&game).to_str());\n  io.println(has_lost(&game).to_str());\n  return 0;\n}\n",
-  "expected_output": "\n0\n0",
+  "expected_output": "______\nfalse\nfalse",
   "try_it": "Add a function to check if a letter was already guessed. Implement full round simulation: guess P (correct), Y (correct), X (wrong), track display changes and lives. Add ASCII art for each life lost. Add a word bank with categories.",
   "concepts": [
     "hangman",

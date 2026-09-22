@@ -9,7 +9,7 @@
   "analogy": "A wall calendar where you flip to any month of any year. Your calendar helper is the math behind the calendar: '30 days hath September...' encoded as code, leap year rules for February, and Zeller's formula to find the day of the week for any date in history.",
   "code_template": "use xiom.io;\nfn is_leap_year(year: Int) -> Bool {\n  // TODO: divisible by 400? leap. Divisible by 100? NOT leap. Divisible by 4? leap.\n}\n\nfn days_in_month(month: Int, year: Int) -> Int {\n  // TODO: return correct days for each month, handling leap year for February\n}\n\nfn main() -> Int {\n  // TODO: check if 2024 is leap, print days in Feb 2024 and Feb 2025\n  return 0;\n}\n",
   "solution": "use xiom.io;\nfn is_leap_year(year: Int) -> Bool {\n  if year % 400 == 0 { return true; };\n  if year % 100 == 0 { return false; };\n  year % 4 == 0\n}\n\nfn days_in_month(month: Int, year: Int) -> Int {\n  if month == 2 {\n    if is_leap_year(year) { return 29; };\n    return 28;\n  };\n  if month == 4 || month == 6 || month == 9 || month == 11 { return 30; };\n  31\n}\n\nfn main() -> Int {\n  io.println(is_leap_year(2024).to_str());\n  io.println(days_in_month(2, 2024).to_str());\n  io.println(days_in_month(2, 2025).to_str());\n  return 0;\n}\n",
-  "expected_output": "1\n29\n28",
+  "expected_output": "true\n29\n28",
   "try_it": "Implement day_of_week using the simpler 'Doomsday algorithm'. Print a full month calendar as a formatted grid. Calculate how many days until your next birthday. Find all Friday the 13ths in a given year.",
   "concepts": [
     "calendar",
