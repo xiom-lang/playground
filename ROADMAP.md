@@ -115,16 +115,21 @@ concern or waits for a future accounts service.
 
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 
-- C1 `--version` reports 0.58.0 for tagged releases.
+- C1 fixed in v0.61.1 (`--version` reports v0.61.1).
 - C2 `xiom fmt` unwired (playground degrades gracefully).
-- C3 Script mode ignores `--opt-level`, `--parallel`, `--incremental`.
-- C5/C17 Six codegen bug classes block 31 lessons from executing.
-- C6 Pinned stdlib tag ships the benchmark `package.xi`.
-- C8 No WASM release asset (in-browser compiler is manually copied).
-- C18 `Str` values through `Vec`/fields/`.to_str()` print nondeterministic
-  pointer data (28 lessons cannot carry an expected output).
-- C19 `Float64.to_str()` prints the IEEE-754 bit pattern instead of the value.
-- Ops: re-clone `/opt/xiom/playground` after the history rewrite if not done.
+- C3 fixed in v0.61.1 (`--opt-level` is accepted by the script-run path and
+  the cache is level-aware).
+- C5/C17 fixed: on the v0.61.1 release all 410 lessons type-check, run and
+  match their expected outputs, so `js/limitations.json` regenerates empty.
+- C6 fixed: the release `lib/package.xi` is the `xiom-std` manifest.
+- C8 No WASM release asset yet (v0.61.1 ships linux/macos/windows plus the
+  VS Code extension); the in-browser compiler is still copied manually.
+- C18/C19 fixed: every lesson produces deterministic output. Two edge
+  findings remain compiler-side and do not affect the lesson set (R64
+  all-modules stdlib test, R65 generic `T.to_str()` denormal).
+- Ops: mirror v0.61.1 to dl.xiom-lang.org and refresh `latest.json`
+  (`/releases/v0.61.1/*` 404s; latest still advertises v0.60.1) so the
+  playground can pin it.
 
 ## Acceptance for VPS testing
 

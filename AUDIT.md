@@ -1287,3 +1287,47 @@ macOS artifact ships); the playground will then bump `TOOLCHAIN_VERSION`,
 re-run the sweep + audit on the published artifact, regenerate
 baseline/limitations, and merge the branch.
 
+## 24. v0.61.1 release verification (2026-09-22)
+
+The published GitHub release `v0.61.1` (the `v0.61.0` tag is dead, nothing
+published) was downloaded from GitHub because the dl.xiom-lang.org mirror
+does not carry it yet: `/releases/v0.61.1/*` returns 404 and `latest.json`
+still advertises v0.60.1. The Linux artifact's SHA256 matched the release
+SHA256SUMS, `xiom --version` reports v0.61.1 (C1 fixed), and
+`lib/package.xi` is the `xiom-std` manifest (C6 closed at the artifact
+level).
+
+Harness (`tools/bench-cold-compile.js`, 3 samples per program, caches cleared
+before every sample, same machine):
+
+| program   | pinned v0.60.1      | v0.61.1 release     |
+|-----------|---------------------|---------------------|
+| hello     | run 3956 / ir 321   | run 3083 / ir 271   |
+| to_str    | run 3857 / ir 395   | run 3208 / ir 289   |
+| loop_200  | run 4283 / ir 452   | run 3044 / ir 320   |
+
+- `to_str`/`hello` emit-ir ratio **1.07x** (acceptance <= 1.3x; the R55
+  preview measured 1.81x), and cold runs are 20-25% faster than the pinned
+  release.
+- The local RC preview build had measured ~1.4s emit-ir; the *shipped release
+  build* matches v0.60.1, so that gap was the unoptimized local build, not
+  the artifact.
+- R63 on the release: both `--opt-level` forms work, same-level repeat is a
+  cache hit (5 ms), a different level recompiles (2.97 s), and an unwritable
+  HOME still caches via `$TMPDIR/xiom_jit` (second run 7 ms).
+- Harness robustness: one wall-clock jump produced a negative sample; the
+  tool now clamps samples at 0, and the Windows "clean TMP/TEMP" tip is in
+  `docs/COMPILER_REPROS.md`.
+
+Lesson corpus on the release artifact: the sweep reports 410/410
+deterministic with **zero output drift** against the RC preview, and the
+execution audit reports 410/410 type-check + run, zero failures, zero
+mismatches, no regressions (empty baseline). Release-ready data stays on
+branch `verify/release-v0.61.1` (byte-identical to
+`verify/release-candidate-ddb8ea62`).
+
+Absorption blocker: the mirror. Once ops publishes v0.61.1 to
+dl.xiom-lang.org and refreshes `latest.json`, the playground bumps
+`TOOLCHAIN_VERSION`, re-runs the sweep on the mirrored artifact, and merges
+the branch: `js/limitations.json` becomes empty and all 410 lessons run.
+

@@ -29,6 +29,11 @@ Options: `--lesson L0-01` (adds a lesson solution), `--program file.xi`,
 `--no-emit-ir`, `--timeout`, `--quiet`. Default programs: `hello`, `to_str`
 (the peek trigger), `loop_200` (loop + `to_str`).
 
+On Windows, set a clean `TMP`/`TEMP` before measuring: stale `.xi` trees
+under `%TEMP%` (from earlier sessions) make the front-end scan extra stdlib
+copies, inflating `--emit-ir` by ~30x and flooding W001. The harness clamps
+samples at 0 so a wall-clock jump cannot produce a negative time.
+
 Reference run from the playground dev box (WSL Ubuntu, 3 samples, medians in
 ms; absolute values are machine-specific, the ratio is the signal):
 
@@ -37,6 +42,10 @@ ms; absolute values are machine-specific, the ratio is the signal):
 | hello     | 3956        | 321             | 4916    | 1540        |
 | to_str    | 3857        | 395             | 5847    | 2400        |
 | loop_200  | 4283        | 452             | 6440    | 2662        |
+
+The same table for the published **v0.61.1 release** artifact (GitHub
+release, checksum-verified) is in AUDIT.md section 24: emit-ir 271/289/320 ms
+(to_str/hello ratio 1.07x) and run medians 3083/3208/3044 ms.
 
 The R55 front-end is 4-6x slower than the pinned release, and the gap is
 largest for `to_str`: that is the broad fmt-closure peek. A reachable-only

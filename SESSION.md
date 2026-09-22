@@ -140,15 +140,17 @@ The VPS owner will test Phase B after the next hourly pull.
 
 ### Absorbing compiler fixes (C17/C18/C19)
 
-Verified release candidate (2026-09-22, compiler `ddb8ea62`: R62 peek + R63
-opt-level/HOME/stdlib pin): harness acceptance met (to_str/hello emit-ir
-ratio 1.81x -> 0.92x, to_str run -22%), C3 route works with per-level
-caching, unwritable-HOME caching falls back to $TMPDIR, and the stdlib
-manifest is correct. Lesson corpus: **410/410 deterministic expected
-outputs, 0 blocked, 0 skipped**, audit 410/410 with zero failures. Data is
-parked on `verify/release-candidate-ddb8ea62` (supersedes the R55 branch);
-the only open item is the owner's v0.61.0 tag decision. Details in AUDIT.md
-section 23.
+Verified v0.61.1 release (2026-09-22): downloaded from GitHub (the
+dl.xiom-lang.org mirror does not carry v0.61.1 yet - asset URLs 404 and
+`latest.json` still advertises v0.60.1). Checksum OK, `xiom --version` says
+v0.61.1, harness acceptance met (to_str/hello emit-ir ratio 1.07x, cold runs
+20-25% faster than pinned), R63 forms and the HOME fallback work, and the
+lesson corpus is 410/410 deterministic with zero output drift against the RC
+preview plus a clean 410/410 execution audit. Release-ready data is on
+`verify/release-v0.61.1` (same data as `verify/release-candidate-ddb8ea62`).
+Absorption is waiting only on the ops mirror; then bump `TOOLCHAIN_VERSION`,
+re-sweep on the mirrored artifact, and merge. Details in AUDIT.md section
+24.
 
 When a fix reaches a toolchain release:
 
