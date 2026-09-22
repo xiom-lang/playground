@@ -31,6 +31,7 @@ const fsp = require('fs/promises');
 const path = require('path');
 const os = require('os');
 const { runProcess } = require('./lib/run-xiom');
+const { XIOM_BIN, childEnv } = require('./tools/lib/toolchain');
 const auth = require('./lib/auth');
 const progressStore = require('./lib/progress-store');
 
@@ -38,7 +39,6 @@ const SERVER_VERSION = readRepoFile('package.json', (raw) => JSON.parse(raw).ver
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '127.0.0.1';
 const SCRIPT_DIR = __dirname;
-const XIOM_BIN = process.env.XIOM_BIN || path.join(SCRIPT_DIR, '..', 'target', 'debug', 'xiom' + (os.platform() === 'win32' ? '.exe' : ''));
 
 // The playground directory is xiom-playground/, project root is one level up.
 const PROJECT_ROOT = path.resolve(SCRIPT_DIR, '..');
@@ -114,7 +114,9 @@ function runCompileJob(task) {
 }
 
 function runXiom(args, options) {
-  return runProcess(XIOM_BIN, args, options);
+  // childEnv carries XIOM_BIN/XIOM_STDLIB for the pinned .toolchain, matching
+  // what the tools use (the VPS sets XIOM_STDLIB explicitly).
+  return runProcess(XIOM_BIN, args, Object.assign({ env: childEnv }, options));
 }
 
 // ---------------------------------------------------------------------------
