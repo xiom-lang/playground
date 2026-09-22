@@ -78,12 +78,12 @@ Audit (AUDIT.md) is fully implemented for this repository:
   the website's social row (`.footer-social`, copied from xiom-website; keep
   the order, URLs and the Discord "open invite" wording in sync), and the
   landing header uses the website's page banner (`.page-banner`, artwork
-  `img/playground.webp`, wordmark XIOM / PLAYGROUND; the hero logo was
-  removed as redundant and the hero title is an h2 under the banner's h1).
-  Per the website guidance the banner stays identity-only (wordmark, section,
-  accent); the primary actions live in a centered CTA row in the hero below
-  it, stacking full-width on phones, followed by the transparency line and
-  progress actions.
+  `img/playground.webp`). The hero logo was removed as redundant: the banner
+  wordmark (XIOM / PLAYGROUND) stays on the left as the h1, and the headline
+  "Try XIOM in your browser." is the h2. The headline and the two primary
+  actions are centered inside the banner on a soft scrim; on phones they flow
+  under the artwork as a centered block with stacked full-width buttons. The
+  hero below keeps the subline, transparency line and progress actions.
 - Compiler-lane repro pack: `docs/COMPILER_REPROS.md` plus
   `tools/bench-cold-compile.js` (cache-clearing cold benchmark with
   same-machine `--compare`); reference medians for v0.60.1 and the R55
