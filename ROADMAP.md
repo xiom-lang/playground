@@ -127,9 +127,9 @@ concern or waits for a future accounts service.
 - C18/C19 fixed: every lesson produces deterministic output. Two edge
   findings remain compiler-side and do not affect the lesson set (R64
   all-modules stdlib test, R65 generic `T.to_str()` denormal).
-- Ops: mirror v0.61.1 to dl.xiom-lang.org and refresh `latest.json`
-  (`/releases/v0.61.1/*` 404s; latest still advertises v0.60.1) so the
-  playground can pin it.
+- Ops: v0.61.1 assets are mirrored and verified; refresh
+  `https://dl.xiom-lang.org/latest.json` (still advertising v0.60.1) so the
+  VPS deploy upgrades the container toolchain to v0.61.1.
 
 ## Acceptance for VPS testing
 

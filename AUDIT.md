@@ -1331,3 +1331,27 @@ dl.xiom-lang.org and refreshes `latest.json`, the playground bumps
 `TOOLCHAIN_VERSION`, re-runs the sweep on the mirrored artifact, and merges
 the branch: `js/limitations.json` becomes empty and all 410 lessons run.
 
+## 25. v0.61.1 absorbed (2026-09-22)
+
+`TOOLCHAIN_VERSION` is pinned to v0.61.1 and fetched from the mirror
+(`dl.xiom-lang.org/releases/v0.61.1`); the Linux artifact's SHA256
+(`2e13149c...`) matches the GitHub release digest exactly, and the Windows
+zip reports `XIOM Compiler v0.61.1`. The release-ready data from
+`verify/release-v0.61.1` is now on main:
+
+- **410/410 lessons carry a deterministic expected output**; the skip list is
+  empty and `js/limitations.json` has zero entries, so no lesson is badged or
+  has Run disabled.
+- The regenerated baseline has empty runtime/solution/template failure lists.
+- The sweep on the mirrored artifact reports 410 deterministic with zero
+  changes (already current), and the execution audit reports 410/410
+  type-check + run, zero failures, zero mismatches, no regressions.
+- Push-time CI and the nightly job now fetch v0.61.1 through the normal
+  `TOOLCHAIN_VERSION` path.
+
+One ops follow-up remains: `https://dl.xiom-lang.org/latest.json` still
+advertises v0.60.1, and the VPS deploy script upgrades the container
+toolchain from that file. The v0.61.1 assets themselves are live and
+verified; once `latest.json` is refreshed, the next hourly deploy upgrades
+the VPS and the displayed toolchain label matches the repo pin.
+

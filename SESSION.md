@@ -140,17 +140,13 @@ The VPS owner will test Phase B after the next hourly pull.
 
 ### Absorbing compiler fixes (C17/C18/C19)
 
-Verified v0.61.1 release (2026-09-22): downloaded from GitHub (the
-dl.xiom-lang.org mirror does not carry v0.61.1 yet - asset URLs 404 and
-`latest.json` still advertises v0.60.1). Checksum OK, `xiom --version` says
-v0.61.1, harness acceptance met (to_str/hello emit-ir ratio 1.07x, cold runs
-20-25% faster than pinned), R63 forms and the HOME fallback work, and the
-lesson corpus is 410/410 deterministic with zero output drift against the RC
-preview plus a clean 410/410 execution audit. Release-ready data is on
-`verify/release-v0.61.1` (same data as `verify/release-candidate-ddb8ea62`).
-Absorption is waiting only on the ops mirror; then bump `TOOLCHAIN_VERSION`,
-re-sweep on the mirrored artifact, and merge. Details in AUDIT.md section
-24.
+v0.61.1 absorbed (2026-09-22): `TOOLCHAIN_VERSION` is v0.61.1 (mirror
+checksum matches the GitHub release digest), and the full lesson set is on
+main - 410/410 deterministic expected outputs, empty skip list, empty
+`js/limitations.json`, empty baseline. Audit on the mirrored artifact:
+410/410 type-check + run, zero failures. Only follow-up: ops must refresh
+`dl.xiom-lang.org/latest.json` (still v0.60.1) so the VPS deploy upgrades its
+container toolchain. Details in AUDIT.md section 25.
 
 When a fix reaches a toolchain release:
 
