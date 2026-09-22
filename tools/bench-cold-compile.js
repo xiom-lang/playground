@@ -96,8 +96,9 @@ function runOnce(argv) {
     timeout: TIMEOUT,
     env: Object.assign({}, process.env, { XIOM_STDLIB: STDLIB }),
   });
+  // Guard against wall-clock jumps (NTP) producing negative samples.
   return {
-    ms: Date.now() - started,
+    ms: Math.max(0, Date.now() - started),
     ok: result.status === 0 && !result.error,
     status: result.status,
     timedOut: Boolean(result.error && result.error.code === 'ETIMEDOUT'),
