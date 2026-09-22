@@ -545,6 +545,34 @@ function hideLoading() {
   if (overlay) overlay.classList.add('hidden');
 }
 
+// ========== COMPILE CLOCK ==========
+// A live counter in the status bar while a server compile runs, so the native
+// compile wait on the VPS is visible instead of looking stalled. The final
+// status uses the server's elapsedMs.
+var compileClockTimer = null;
+
+function startCompileClock(prefix) {
+  var statusEl = document.getElementById('status');
+  if (!statusEl) return;
+  var started = Date.now();
+  var render = function () {
+    statusEl.textContent = prefix + ' ' + ((Date.now() - started) / 1000).toFixed(1) + 's';
+  };
+  render();
+  stopCompileClock();
+  compileClockTimer = setInterval(render, 200);
+}
+
+function stopCompileClock() {
+  if (compileClockTimer) {
+    clearInterval(compileClockTimer);
+    compileClockTimer = null;
+  }
+}
+
+window.startCompileClock = startCompileClock;
+window.stopCompileClock = stopCompileClock;
+
 function toggleShortcuts() {
   var modal = document.getElementById('shortcutModal');
   if (!modal) return;

@@ -16,12 +16,16 @@ async function compile() {
   var btn = document.getElementById('btnRun');
 
   if (btn) btn.classList.add('running');
-  statusEl.textContent = 'Compiling...';
+  if (window.startCompileClock) window.startCompileClock('Compiling...');
+  else statusEl.textContent = 'Compiling...';
   statusEl.className = 'status-bar busy';
   statusEl.style.display = '';
+  var statusSettled = false;
   window._lastSource = source;
 
   if (window.isCurrentLessonLimited && window.isCurrentLessonLimited()) {
+    if (window.stopCompileClock) window.stopCompileClock();
+    statusSettled = true;
     statusEl.textContent = 'This lesson is blocked by a known compiler bug; see the notice above.';
     statusEl.className = 'status-bar err';
     if (btn) btn.classList.remove('running');
@@ -69,6 +73,8 @@ async function compile() {
         window.recordRun(window.currentLessonId, run);
         if (window.renderHistoryBlock) window.renderHistoryBlock(window.currentLessonId);
       }
+      if (window.stopCompileClock) window.stopCompileClock();
+      statusSettled = true;
       if (run.success) {
         statusEl.innerHTML = '[OK] Ran in ' + ((run.elapsedMs || 0) / 1000).toFixed(1) + 's';
         statusEl.className = 'status-bar ok';
@@ -81,7 +87,9 @@ async function compile() {
       }
     })
     .catch(function () {
-      if (statusEl.textContent === 'Compiling...') {
+      if (!statusSettled) {
+        if (window.stopCompileClock) window.stopCompileClock();
+        statusSettled = true;
         statusEl.textContent = serverReachable === false && wasmResult
           ? 'Offline: in-browser diagnostics only. Output needs the server.'
           : 'Server not running.';

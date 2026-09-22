@@ -133,7 +133,10 @@ C3): honor `--opt-level` in script mode and/or make the cache independent of
 
 Compile speed: repeat runs of an unchanged program are cache hits
 (~6-12ms); edited programs pay one cold compile (3.5s dev box, ~6s VPS).
-A lesson-template warmup was tried and removed (warming requires
+The status bar shows a live compile clock ("Compiling... 2.4s") while the
+server works, then the server-reported total ("[OK] Ran in 2.6s"), so the
+native-compile wait (including queueing) is visible rather than looking
+stalled. A lesson-template warmup was tried and removed (warming requires
 `xiom run`, which executes incomplete templates); the compiler ask is a
 compile-only cache-prime mode. Cold-compile levers remain compiler-side
 (script-run `--opt-level`, fmt peek) - AUDIT sections 18/19.
