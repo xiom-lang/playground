@@ -435,7 +435,10 @@ function writeSkips(entries) {
   let text = JSON.stringify(payload, null, 2) + '\n';
   let existing = null;
   try { existing = fs.readFileSync(SKIPS, 'utf8'); } catch { /* first generation */ }
-  const comparable = (value) => value.replace(/"generated": "[^"]*"/, '"generated": ""');
+  // Normalize line endings before comparing: on Windows the working tree may
+  // be CRLF while the generated text uses LF, which would otherwise defeat
+  // the timestamp preservation and churn the file on every run.
+  const comparable = (value) => value.replace(/\r\n/g, '\n').replace(/"generated": "[^"]*"/, '"generated": ""');
   if (existing && comparable(existing) === comparable(text)) {
     const stamp = existing.match(/"generated": "([^"]*)"/);
     if (stamp) text = text.replace(/"generated": "[^"]*"/, '"generated": "' + stamp[1] + '"');
