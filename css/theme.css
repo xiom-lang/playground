@@ -250,6 +250,7 @@ html.light-mode .output-content {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
+  margin: 4px 0 26px;
 }
 
 /* ---- Buttons ---- */
