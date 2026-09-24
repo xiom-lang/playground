@@ -1355,3 +1355,86 @@ toolchain from that file. The v0.61.1 assets themselves are live and
 verified; once `latest.json` is refreshed, the next hourly deploy upgrades
 the VPS and the displayed toolchain label matches the repo pin.
 
+## 26. Drift signal, v0.61.3 absorption, deploy request (2026-09-24)
+
+### 26.1 Drift workflow: fail on any pin mismatch (option B, implemented)
+
+`drift.yml` used to fetch the "latest" toolchain whenever `latest.json`
+differed from `TOOLCHAIN_VERSION`. With the mirror stale at v0.60.1 and the
+pin at v0.61.1 that meant fetching the *older* toolchain, and the job never
+failed, so the mismatch stayed invisible. The workflow now classifies the
+relationship numerically and acts on it:
+
+- `latest > pin`: fetch the newer toolchain and run the full lesson
+  type-check as preview evidence, then fail with the absorption steps
+  (SESSION.md section 3.1).
+- `latest < pin`: never fetch; fail with the ops request to refresh
+  `latest.json` (mirror metadata behind the pin).
+- equal: green.
+
+Validation: the YAML parses (PyYAML), every `run:` block passes `bash -n`,
+and the resolve step was executed against the live mirror: it classified the
+then-current v0.60.1/v0.61.1 state as `older`, wrote the correct
+`$GITHUB_OUTPUT` fields and step summary. The failure is intentional and
+loud: GitHub notifies the owner on the red scheduled run.
+
+### 26.2 Option C: repo pin as the deploy source (requested)
+
+Recorded in SESSION.md section 3.2 and DEPLOY.md. Requested change for
+`xiom-lang/ops` `scripts/playground-deploy.sh` (installed at
+`/opt/xiom/bin/playground-deploy.sh`): after the `git reset --hard`, read
+`PIN="$(tr -d '\r\n ' < "$WORK/TOOLCHAIN_VERSION")"`, compare it with
+`$TOOLCHAIN/.mirror-tag` as today, and install
+`https://dl.xiom-lang.org/releases/$PIN/xiom-${PIN#v}-linux-x64.tar.gz`
+instead of the `latest.json` tag. `latest.json` stays the mirror index for
+the website and other consumers; a release is then adopted by one reviewed
+pin-bump commit, and the deployed container always matches CI and the sweep
+data.
+
+### 26.3 v0.61.3 release verification
+
+`v0.61.3` (published 2026-09-23, 18 commits over v0.61.1) is the R64/R65
+batch: the AI-context pack (`AI_CONTEXT.md`, MCP topic), SMT/contract-proof
+fixes, target-accurate `xiom.env.OS/ARCH/FAMILY` constants (R65), a
+`-fPIC`-linked JIT fix, CI/encoding repairs and the `stdlib-v0.61.3` pin.
+
+Artifact: the mirror `SHA256SUMS` is byte-identical to the GitHub release
+copy, the linux tarball verifies at `f6be5ab5...`, `xiom --version` reports
+v0.61.3, and `lib/package.xi` is the `xiom-std` 0.61.3 manifest (C6 stays
+closed). Sweep on the mirrored artifact: **410/410 lessons deterministic,
+zero output drift against v0.61.1** (every `expected_output` stayed
+byte-identical; the skip list stays empty), and the full execution audit
+reports 410/410 type-check + run, zero failures, empty baseline.
+`js/stdlib-ref.json` regenerates with the same surface (516 modules, 6,523
+functions) and only its version metadata changes.
+
+Cold-compile harness (`tools/bench-cold-compile.js`, WSL, 3 samples per
+program, caches cleared per sample, same machine; the v0.61.1 column is a
+rerun because the first pass measured hello at 8160 ms, a first-touch
+outlier):
+
+| program   | v0.61.1 run | v0.61.3 run | v0.61.1 emit-ir | v0.61.3 emit-ir |
+|-----------|-------------|-------------|-----------------|-----------------|
+| hello     | 4290        | 3575        | 353             | 318             |
+| to_str    | 4243        | 4168        | 410             | 383             |
+| loop_200  | 4122        | 4075        | 509             | 459             |
+
+Run medians are equal or better and emit-ir is 7-11% faster; the
+`to_str`/`hello` emit-ir ratio is 1.20x (acceptance <= 1.3x). No
+regressions.
+
+### 26.4 Notes for the other lanes
+
+- C8 stays open for a curious reason: the v0.61.3 `SHA256SUMS` lists
+  `xiom-wasm-0.61.3.wasm`, but the asset 404s on GitHub
+  (`releases/download/v0.61.3/...`) and on the mirror
+  (`releases/v0.61.3/...`), and the GitHub release asset list omits it. The
+  release pipeline should upload it; the in-browser compiler update path
+  waits on that file.
+- The mirror index (`latest.json`, `releases/index.json`) is stale at
+  v0.60.1 while the v0.61.1 and v0.61.3 directories are live, so the
+  `dl-deploy.sh` cron or its `/opt/xiom/dl-state/last-tag` state needs a
+  look. The owner has been asked to refresh `latest.json` to v0.61.3; once
+  the VPS redeploys, `/api/version` must report v0.61.3 with
+  `capabilities.format` true.
+

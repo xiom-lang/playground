@@ -1,9 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-24. Branch `main`, commit `518e0d4` (this handoff updates
-SESSION.md only), working tree clean, all commits pushed to `origin/main`.
-Production is healthy (`https://playground.xiom-lang.org/api/health` -> 200)
-but the container still runs toolchain v0.60.1 -- see "Toolchain currency".
+Last updated: 2026-09-24 (v0.61.3 absorption). Branch `main`, working tree
+clean, all commits pushed to `origin/main` (the drift-workflow change and the
+absorption are the two latest commits; see `git log`). Production is healthy
+(`https://playground.xiom-lang.org/api/health` -> 200) but the container still
+runs toolchain v0.60.1 until `latest.json` is refreshed -- see section 3.
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -36,15 +37,19 @@ Audit (AUDIT.md) is fully implemented for this repository. Current shape:
   `tools/lesson-baseline.json` are empty (no badges, Run enabled everywhere).
   12 non-UTF-8 files were fixed earlier; `tools/migrate-lessons.js` remains
   idempotent.
-- Toolchain: `TOOLCHAIN_VERSION` = v0.61.1 (mirror checksum matches the GitHub
-  release digest); `tools/fetch-toolchain.sh|.ps1` verify SHA256SUMS and
+- Toolchain: `TOOLCHAIN_VERSION` = v0.61.3 (mirror checksum matches the GitHub
+  release digest; the two SHA256SUMS files are identical);
+  `tools/fetch-toolchain.sh|.ps1` verify SHA256SUMS and
   support `TOOLCHAIN_TAG`; `/api/version` reads `XIOM_TOOLCHAIN_VERSION` ->
   `/toolchain/.mirror-tag` -> repo file. v0.61.1 fixed C1 (`--version`),
   C2 (`xiom fmt` now works - verified through `/api/format`), C3
   (`--opt-level` in the script-run path with level-aware caching), C6 (the
   release `lib/package.xi` is the `xiom-std` manifest), and C17/C18/C19 (all
   410 lessons run, deterministic output). `capabilities.format` is true with
-  this toolchain.
+  this toolchain. v0.61.3 (2026-09-23, R64/R65 batch) ships the AI-context
+  pack, target-accurate `xiom.env` constants, a JIT `-fPIC` link fix and the
+  `stdlib-v0.61.3` pin; the stdlib surface is unchanged (516 modules, 6,523
+  functions) and all 410 lessons keep identical outputs (AUDIT section 26).
 - Expected outputs (A3): `tools/generate-expected-outputs.js` sweeps every
   solution twice on Linux and stores `expected_output`; 410/410 deterministic,
   skip list empty (`tools/expected-output-skips.json`). The Output tab matches
@@ -94,45 +99,40 @@ superseded snapshots and can be deleted once nobody needs the history.
 ## 3. Next work
 
 Roadmap: Phase A and Phase B are complete. Phase C: C1 done, C2 done, C4
-conformance done; **C3** ("package examples that run") waits on the first real
-`xiom.*` packages being published by the compiler/stdlib sessions. Phase C is
-otherwise finished.
+conformance done; **C3** ("package examples that run") still waits on the
+first real `xiom.*` packages. The public registry was re-checked on
+2026-09-24 and carries only `xiom.staging-e2e-probe`, so C3 stays open. Phase
+C is otherwise finished.
 
-### Open decision: how the toolchain stays current
+### Toolchain currency: decision C + B (2026-09-24)
 
-Facts as of 2026-09-24:
+The owner decision is **C + B**:
 
-- The repo pins `TOOLCHAIN_VERSION` = v0.61.1; push CI, the nightly audit and
-  the sweep tools all use that pin.
-- The **VPS deploy script does not read the repo pin**. It reads
-  `https://dl.xiom-lang.org/latest.json` and syncs `/opt/xiom/toolchain` with
-  that tag. `latest.json` still advertises **v0.60.1** even though the v0.61.1
-  assets are mirrored and checksum-verified, so the container is stuck on
-  v0.60.1 while the repo is on v0.61.1 (the server's `/api/version` reports
-  the container toolchain truthfully, so the UI label is v0.60.1 there).
-- The weekly `drift.yml` compares `latest.json` with the pin and, when they
-  differ, type-checks lessons with the "latest" toolchain. With a stale
-  `latest.json` it now fetches the *older* v0.60.1, so the check is useless
-  until the mirror metadata is fixed. It also never fails or notifies today.
+- **B is implemented.** `.github/workflows/drift.yml` now fails the weekly
+  job on any `latest.json` != `TOOLCHAIN_VERSION` drift instead of silently
+  checking the wrong toolchain:
+  - `latest > pin`: fetch the newer toolchain and type-check all lessons as
+    preview evidence, then fail with the absorption steps (section 3.1).
+  - `latest < pin`: fail with the ops request; the older toolchain is never
+    fetched (exactly the failure mode that hid the stale mirror so far).
+  - equal: green.
+  Validated by YAML parse, `bash -n` on every run block and a live resolve
+  against the mirror (AUDIT section 26).
+- **C is requested from the ops session** (section 3.2 holds the exact change
+  request). `playground-deploy.sh` should read `TOOLCHAIN_VERSION` from the
+  playground checkout for the container toolchain; `latest.json` remains the
+  mirror index. Until it lands, the VPS deploy still tracks `latest.json`.
 
-Options for the next session (owner decision):
+Immediate owner action: refresh `https://dl.xiom-lang.org/latest.json` to
+**v0.61.3** (its assets are already live and checksum-verified; the v0.61.1
+tag is superseded). After the next hourly deploy the container should report
+v0.61.3: `curl -s https://playground.xiom-lang.org/api/version` must show
+`"toolchain":"v0.61.3"` and `"capabilities":{"format":true}`. Note the mirror
+index files (`latest.json`, `releases/index.json`) are stale at v0.60.1 and
+missing v0.61.3, so the `dl-deploy.sh` cron on the VPS needs a look too.
 
-- A. Keep the manual pin and the absorption runbook (section 3.1). Each
-  release requires a sweep + audit + baseline refresh, so an automatic bump
-  would break the nightly expected-output assertions if it ran alone.
-- B. Keep the manual pin but automate the *signal*: make the drift workflow
-  open an issue (or fail loudly) when `latest.json` != `TOOLCHAIN_VERSION`,
-  so a release is never silently missed.
-- C. Make the repo pin the single source of truth for the VPS as well: ops
-  changes `playground-deploy.sh` to read `TOOLCHAIN_VERSION` from the
-  playground checkout instead of `latest.json` (the deploy already has the
-  repo). Then the deployed compiler always matches CI/the repo pin, and a
-  release is adopted by one reviewed commit. `latest.json` remains the mirror
-  index (and the website's version source).
-
-Recommended: **C + B**. C removes the manual ops step and the current
-mismatch; B keeps drift visible for other consumers. Either way, the immediate
-ops action is to refresh `latest.json` to v0.61.1 so the VPS upgrades.
+Last absorbed release: **v0.61.3 on 2026-09-24** (R64/R65 batch; no lesson
+output changes; bench before/after in AUDIT section 26).
 
 ### 3.1 Absorbing a compiler release (runbook)
 
@@ -158,13 +158,41 @@ Never hand-edit generated files. Until step 3 runs, the nightly reports
 expected-output mismatches for lessons whose output changed: that is the
 intended drift signal.
 
-### 3.2 Compiler-side follow-ups (not this repo)
+### 3.2 Ops change request: option C (playground-deploy.sh)
 
-- C8: no WASM release asset yet (v0.61.1 ships linux/macos/windows plus the
-  VS Code extension); the in-browser compiler is still copied manually at
-  v0.58.0.
-- R64 (all-modules stdlib test) and R65-era edge cases remain queued in the
-  compiler lane with repros; they do not affect the lesson set.
+Handed to the owner 2026-09-24; ops repo `xiom-lang/ops`,
+`scripts/playground-deploy.sh` (installed on the VPS as
+`/opt/xiom/bin/playground-deploy.sh`). Requested change, after the
+`git reset --hard FETCH_HEAD` that already brings the repo pin into
+`$WORK`:
+
+- Read the pin and use it for the installed toolchain:
+  `PIN="$(tr -d '\r\n ' < "$WORK/TOOLCHAIN_VERSION")"`; compare it with
+  `$TOOLCHAIN/.mirror-tag` as today (keep that file name: `/api/version`
+  reads it), and construct the asset URL from the pin instead of
+  `latest.json`:
+  `url="https://dl.xiom-lang.org/releases/$PIN/xiom-${PIN#v}-linux-x64.tar.gz"`.
+- Keep the staged download and swap exactly as is, so a missing asset leaves
+  the running toolchain untouched (`curl -fsSL` fails and the script exits
+  non-zero).
+- `latest.json` stays the mirror index for the website and other consumers;
+  it is no longer deploy input.
+- Then a release is adopted by one reviewed commit to this repo (the pin
+  bump), and the container always matches CI and the sweep data.
+
+Safety note: with C in place, a pin bump whose release is not yet on the
+mirror makes the hourly deploy fail loudly while the old toolchain keeps
+running -- intended, and the drift workflow (B) reports the same drift
+weekly.
+
+### 3.3 Compiler-side follow-ups (not this repo)
+
+- C8: the v0.61.3 SHA256SUMS lists `xiom-wasm-0.61.3.wasm`, but the file
+  404s on both GitHub and the mirror (release-pipeline upload gap); the
+  in-browser compiler is still the manual v0.58.0 copy. Flagged to the
+  compiler/ops owner (AUDIT section 26).
+- R64 (all-modules stdlib test / AI-context pack) and R65 (target-accurate
+  `xiom.env` constants) shipped in v0.61.3; neither changes lesson output.
 - The `xiom.fmt` reachable-only peek and script-run `--opt-level` are already
   fixed and measured (AUDIT sections 18, 24).
 

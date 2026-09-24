@@ -159,6 +159,16 @@ Toolchain selection on the VPS follows `https://dl.xiom-lang.org/latest.json`
 the lessons are verified against in CI; it is expected to track the latest
 release closely but is not what the VPS installs.
 
+Requested change (ops, 2026-09-24, option C): `playground-deploy.sh` should
+read `TOOLCHAIN_VERSION` from the playground checkout (`$WORK` after the
+`git reset --hard`) and install `releases/$PIN/xiom-${PIN#v}-linux-x64.tar.gz`
+from the mirror, keeping `latest.json` as the mirror index for the website
+and other consumers. Then the deployed compiler always matches the repo pin
+and a release is adopted by one reviewed commit. Until it lands, the owner
+must refresh `latest.json` on every release; it is currently stale at v0.60.1
+while v0.61.3 is the pinned, mirrored release, so the container still serves
+v0.60.1. The exact request is in `SESSION.md` section 3.2.
+
 Hestia template: `xiom-playground` (nginx-only host, templates live in
 `/usr/local/hestia/data/templates/web/nginx/php-fpm/`) proxying the domain
 to `127.0.0.1:3300`:

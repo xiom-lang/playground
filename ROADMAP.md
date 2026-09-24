@@ -1,6 +1,6 @@
 # XIOM Playground -- Roadmap
 
-Status as of 2026-09-18. The audit (`AUDIT.md`) is fully implemented for this
+Status as of 2026-09-24. The audit (`AUDIT.md`) is fully implemented for this
 repository; only cross-repo compiler/stdlib findings remain (C1-C17). This
 roadmap covers the product work agreed for the playground.
 
@@ -106,7 +106,9 @@ concern or waits for a future accounts service.
 - [ ] C3. Package examples that run
   - "Open in playground" only for examples whose code is stdlib-only and
     sandbox-compatible; unblocks when the first real `xiom.*` packages are
-    published (compiler/stdlib release integration).
+    published (compiler/stdlib release integration). Registry checked
+    2026-09-24: only `xiom.staging-e2e-probe` is published, so C3 stays
+    open.
 - [x] C4. Shared design system
   - The playground already matches the registry/website tokens (indigo
     `#5C6BFF` on `#08090B`, panel/line/paper palette, Inter/system stack, no
@@ -123,14 +125,17 @@ concern or waits for a future accounts service.
 - C5/C17 fixed: on the v0.61.1 release all 410 lessons type-check, run and
   match their expected outputs, so `js/limitations.json` regenerates empty.
 - C6 fixed: the release `lib/package.xi` is the `xiom-std` manifest.
-- C8 No WASM release asset yet (v0.61.1 ships linux/macos/windows plus the
-  VS Code extension); the in-browser compiler is still copied manually.
-- C18/C19 fixed: every lesson produces deterministic output. Two edge
-  findings remain compiler-side and do not affect the lesson set (R64
-  all-modules stdlib test, R65 generic `T.to_str()` denormal).
-- Ops: v0.61.1 assets are mirrored and verified; refresh
-  `https://dl.xiom-lang.org/latest.json` (still advertising v0.60.1) so the
-  VPS deploy upgrades the container toolchain to v0.61.1.
+- C8 Still open: the v0.61.3 SHA256SUMS lists `xiom-wasm-0.61.3.wasm`, but
+  the asset 404s on GitHub and on the mirror; the in-browser compiler is
+  still the manual v0.58.0 copy.
+- C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
+  stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
+  constants) shipped in v0.61.3 and do not affect the lesson set.
+- Ops: v0.61.3 assets are mirrored and checksum-verified; `latest.json` is
+  stale at v0.60.1. Requested: (a) refresh it to v0.61.3 so the VPS deploy
+  upgrades the container toolchain, and (b) land option C so
+  `playground-deploy.sh` reads `TOOLCHAIN_VERSION` from the repo instead of
+  `latest.json` (SESSION.md section 3.2).
 
 ## Acceptance for VPS testing
 
