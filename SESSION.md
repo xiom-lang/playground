@@ -1,10 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-19. Branch `main`, commit `f718ae6`, working tree clean,
-all commits pushed to `origin/main`.
+Last updated: 2026-09-24. Branch `main`, commit `518e0d4` (this handoff updates
+SESSION.md only), working tree clean, all commits pushed to `origin/main`.
+Production is healthy (`https://playground.xiom-lang.org/api/health` -> 200)
+but the container still runs toolchain v0.60.1 -- see "Toolchain currency".
 
-Read with `ROADMAP.md` (next work), `AUDIT.md` (findings, C1-C19), `README.md`
-and `DEPLOY.md`.
+Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
+records), `README.md` and `DEPLOY.md`.
 
 ## 1. Repository and scope
 
@@ -14,151 +16,125 @@ through the pinned XIOM toolchain in a sandboxed container; a bundled WASM
 compiler covers pure programs only.
 
 Other sessions own: `xiom-lang/ops` (VPS, Docker host, deploy scripts),
-`xiom-lang/registry` (packages; auth later), `xiom-lang/website` (docs).
-The compiler/stdlib repos (`E:\xiom-lang\xiom`, `E:\xiom-lang\stdlib`) hold
-the C1-C17 findings from `AUDIT.md`; they are not edited from this session
-unless the owner asks.
+`xiom-lang/registry` (packages; no accounts by design), `xiom-lang/website`
+(site + docs). The compiler/stdlib repos (`E:\xiom-lang\xiom`,
+`E:\xiom-lang\stdlib`) hold the C-findings from `AUDIT.md`; do not edit them
+from this session unless the owner asks.
 
 ## 2. State: what is already done
 
-Audit (AUDIT.md) is fully implemented for this repository:
+Audit (AUDIT.md) is fully implemented for this repository. Current shape:
 
 - Runtime hardening: path-traversal containment, 512 KB body cap, async
   compile/check queues (compiles 1, checks 2), per-request work dirs under
   `<tmp>/xiom_pg_work/`, process-tree kill on timeout, 30 s compile budget,
-  `/api/version`, `/api/health`, format capability probe, warning/error
-  diagnostics, cache policy (no-cache for code/HTML, immutable for wasm/images).
-- Lessons: all 410 solutions and templates type-check (was 225/343); 12
-  non-UTF-8 files fixed; 379 solutions execute on Linux; 31 remain blocked by
-  compiler codegen bugs (C17). Migration tool `tools/migrate-lessons.js` is
-  idempotent; baseline in `tools/lesson-baseline.json`.
-- Versioning: `TOOLCHAIN_VERSION` (v0.60.1), `WASM_VERSION` (v0.58.0),
-  `package.json` v0.61.0; `/api/version` reads the toolchain tag from
-  `XIOM_TOOLCHAIN_VERSION` -> `/toolchain/.mirror-tag` -> repo file.
-- Automation: `tools/fetch-toolchain.sh|.ps1` (SHA256SUMS verified,
-  `TOOLCHAIN_TAG` override), `tools/lesson-audit.js` (baseline gate,
-  `--fail-on-failures`), `tools/test-server.js` (18 checks),
-  `.github/workflows/validate.yml` (syntax, stdlib/limitations freshness,
-  lesson audit, smoke tests) and `drift.yml` (weekly latest.json check).
-- Stdlib reference: `tools/generate-stdlib-ref.js` -> `js/stdlib-ref.json`
-  (516 modules, 6,522 public functions; tiers `playground` 17 top-level /
-  `docs` 61 / `local` 204; docs URLs; 527 curated descriptions). Panel in
-  `js/stdlib-ref.js` is lazy and tiered with search, docs links, and
-  copy-to-editor.
-- Editor: `js/completions.js` provides data-driven Monaco completions
-  (modules after `use xiom.`, members after imported aliases, methods after
-  `.`, keywords/types, signature snippets).
-- Known limitations: `tools/generate-limitations.js` -> `js/limitations.json`
-  (31 lessons with reasons); lesson list badges them and disables Run.
+  `/api/version`, `/api/health`, warning/error diagnostics, no-cache for
+  code/HTML, immutable for wasm/images. The Dockerfile creates `/data` and
+  `.dockerignore` keeps the image slim (see the gotcha in section 6).
+- Lessons: all 410 solutions and templates type-check; all 410 execute and
+  match a stored expected output. `js/limitations.json` and
+  `tools/lesson-baseline.json` are empty (no badges, Run enabled everywhere).
+  12 non-UTF-8 files were fixed earlier; `tools/migrate-lessons.js` remains
+  idempotent.
+- Toolchain: `TOOLCHAIN_VERSION` = v0.61.1 (mirror checksum matches the GitHub
+  release digest); `tools/fetch-toolchain.sh|.ps1` verify SHA256SUMS and
+  support `TOOLCHAIN_TAG`; `/api/version` reads `XIOM_TOOLCHAIN_VERSION` ->
+  `/toolchain/.mirror-tag` -> repo file. v0.61.1 fixed C1 (`--version`),
+  C2 (`xiom fmt` now works - verified through `/api/format`), C3
+  (`--opt-level` in the script-run path with level-aware caching), C6 (the
+  release `lib/package.xi` is the `xiom-std` manifest), and C17/C18/C19 (all
+  410 lessons run, deterministic output). `capabilities.format` is true with
+  this toolchain.
 - Expected outputs (A3): `tools/generate-expected-outputs.js` sweeps every
-  solution twice on Linux and stores `expected_output`; 351/379 runnable
-  lessons are deterministic, the 28 with varying output are listed in
-  `tools/expected-output-skips.json` (compiler findings C18/C19). The Output
-  tab matches reference-solution runs, `tools/lesson-audit.js` asserts stored
-  outputs in the nightly job, and `--check` gates the data on every push.
-- Mobile (A4): screens <=768px never download Monaco; they get a plain-text
-  editor (16px, no iOS focus zoom) with Run and Copy, and Run/Format/examples
-  all read `getMobileCodeValue()`.
-- Mobile scrolling (2026-09-22): the landing is now an explicit scroll
-  container (`height: 100dvh` + `overflow-y: auto`; `min-height` alone let
-  iOS clip the page under the `body { overflow: hidden }` shell) and the
-  onboarding dialog scrolls on short screens. AUDIT.md section 13.
-- Visual polish (A6): labeled landing section, search empty states, indigo
-  `:focus-visible` rings, theme-token fixes, one stdlib search box, and
-  working dotted queries (`io.println`).
-- Progress (B1-B4): `js/history.js` stores capped per-lesson run history,
-  shows a "Recent runs" block per lesson, a continue-where-you-left-off card
-  with level rings, JSON export/import, and a no-op `syncProgress()` adapter
-  whose registry contract is `docs/PROGRESS_SYNC.md`.
-- Positioning (2026-09-19): landing, onboarding, concept cards, contracts tab
-  and the footer are aligned with the website's wording - runtime-checked
-  contracts (verification export marked experimental), no unverifiable stats
-  or performance claims, canonical cross-links, and explicit server-side
-  execution transparency (AUDIT section 20). The landing footer also carries
-  the website's social row (`.footer-social`, copied from xiom-website; keep
-  the order, URLs and the Discord "open invite" wording in sync), and the
-  landing header uses the website's page banner (`.page-banner`, artwork
-  `img/playground.webp`). The hero logo was removed as redundant: the banner
-  wordmark (XIOM / PLAYGROUND) stays on the left as the h1, and the headline
-  "Try XIOM in your browser." is the h2. The headline and the two primary
-  actions are centered inside the banner on a soft scrim; on phones they flow
-  under the artwork as a centered block with stacked full-width buttons. The
-  hero below keeps the subline, transparency line and progress actions.
-- Compiler-lane repro pack: `docs/COMPILER_REPROS.md` plus
-  `tools/bench-cold-compile.js` (cache-clearing cold benchmark with
-  same-machine `--compare`); reference medians for v0.60.1 and the R55
-  preview are in the doc.
-- Toolchain verification (2026-09-19): a local v0.61.0 build (`16a89615`,
-  compiler R47) was verified with a full sweep and an execution audit. 68
-  expected outputs were corrected; C17 dropped from 31 to 27 blocked lessons
-  (4 fixed); 26 lessons still lack deterministic output (19 nondeterministic,
-  7 invalid UTF-8) and L5-21 still prints Float64 bit patterns. The refreshed
-  data is parked on branch `verify/toolchain-v0.61.0-data` until ops
-  publishes v0.61.0; the pin stays v0.60.1 (AUDIT.md section 16).
-- History rewrite: all commits/tags now `Lefteris Notas
-  <lefterisnotas@gmail.com>`; backup bundle at
-  `C:\Users\lefte\AppData\Local\Temp\kilo\playground-backup-20260918.bundle`.
-  If `/opt/xiom/playground` on the VPS was not re-cloned after the rewrite,
-  pulls there will fail until it is (ops session).
+  solution twice on Linux and stores `expected_output`; 410/410 deterministic,
+  skip list empty (`tools/expected-output-skips.json`). The Output tab matches
+  reference-solution runs; `tools/lesson-audit.js` asserts stored outputs in
+  the nightly job and `--check` gates the data on every push.
+- Compiler-lane tooling: `docs/COMPILER_REPROS.md` (exact C3/C6 repros, the
+  harness recipe) and `tools/bench-cold-compile.js` (cache-clearing cold
+  benchmark with same-machine `--compare`; reference medians for v0.60.1,
+  R55 and the v0.61.1 release are in AUDIT section 24).
+- Expected-output/A2-style UI: lesson badges come from limitations (now none);
+  stdlib reference regenerated for v0.61.1 (516 modules, 6,523 functions).
+- Accounts (C2): GitHub sign-in with a host-side auth helper (Option B; the
+  container keeps zero egress and never holds the client secret), signed
+  HttpOnly sessions, per-account progress documents on the `playground-data`
+  volume with revision-checked merges, account chip and sync UI. Verified on
+  the VPS by the owner. Contract in DEPLOY.md; policy facts in the same file.
+- Registry browser (C1): `js/registry.js` Packages panel (browse
+  `/index.json`, search `/search?q=`, metadata `/packages/:name`, graceful
+  loading/empty/unreachable states; no package execution).
+- Progress/history (B1-B4): `js/history.js` capped per-lesson run history,
+  "Recent runs" block, continue-where-you-left-off card with level rings,
+  JSON export/import, and `syncProgress()` (live when signed in).
+- Mobile (A4): screens <=768px never download Monaco; a plain-text editor
+  (16px, no iOS zoom) with Run/Copy, and Run/Format/examples read
+  `getMobileCodeValue()`. Landing scrolls inside a `100dvh` container and the
+  onboarding dialog scrolls on short screens.
+- Landing: website page banner (`img/playground.webp`; wordmark XIOM /
+  PLAYGROUND left as the h1) with the headline "Try XIOM in your browser."
+  (h2) and the two primary actions centered inside the banner on a soft scrim;
+  on phones they flow under the artwork with stacked full-width buttons.
+  Footer carries the website social row and canonical legal links. Positioning
+  aligned with the website wording (AUDIT section 20).
+- Run feedback: the status bar shows a live compile clock
+  ("Compiling... 2.4s") during the server compile, then the server-reported
+  total ("[OK] Ran in 2.6s").
+- Reliability fixes worth remembering: `/tmp` tmpfs must be `exec`; the
+  toolchain cache needs a writable `HOME` (`HOME=/tmp/xiom-home`);
+  `lib/toolchain.js` must stay inside the image (`tools/` is excluded from the
+  build context - enforced by a test); mobile scroll and the 500 outage were
+  both caught by browser/layout verification (AUDIT sections 13, 23-25).
 
-## 3. Next work (ROADMAP.md)
+Data branches (parking for release absorption, not merged):
+`verify/release-v0.61.1` (absorbed into main; kept for reference). Older
+branches (`verify/compiler-preview-*`, `verify/toolchain-v0.61.0-data`) are
+superseded snapshots and can be deleted once nobody needs the history.
 
-Phase A (A3, A4, A6) and Phase B (B1-B4) are complete. Remaining:
+## 3. Next work
 
-Phase C: C1 (read-only registry browser) is implemented in `js/registry.js` -
-the Packages panel browses `/index.json`, searches `/search?q=`, expands
-version metadata from `/packages/:name`, and has loading/empty/unreachable
-states. C4 conformance is recorded (playground tokens already match the
-registry/website palette). C2 is done and verified on the VPS: GitHub sign-in,
-sign-out, re-sign-in, and cross-device progress sync (Option B, host-side auth
-helper; the container keeps zero egress and never holds the client secret).
-C3 waits on the first published packages. `syncProgress()` is live when signed
-in and a no-op otherwise; `docs/PROGRESS_SYNC.md` records that the registry
-offers no user-scoped APIs.
+Roadmap: Phase A and Phase B are complete. Phase C: C1 done, C2 done, C4
+conformance done; **C3** ("package examples that run") waits on the first real
+`xiom.*` packages being published by the compiler/stdlib sessions. Phase C is
+otherwise finished.
 
-Production incident fixed 2026-09-19: every program run failed with
-`cannot run '/tmp/xiom_run/...': Permission denied`. The `/tmp` tmpfs was
-mounted `noexec` (Docker's default), so the compiler could write but not
-execute its scripts. Compose now mounts `/tmp` with `exec` (still ephemeral,
-all other sandbox flags unchanged); see DEPLOY.md.
+### Open decision: how the toolchain stays current
 
-Second container-only issue found while measuring run time: the toolchain's
-script cache needs a writable `HOME`, and the read-only rootfs makes
-`/home/xiomp` unwritable, so every run recompiled (~6s even for an unchanged
-program). Compose now sets `HOME=/tmp/xiom-home` on the tmpfs; repeat runs of
-an unchanged program are cache hits (milliseconds), edited programs still pay
-the cold compile (~3.5s dev box, ~6s VPS). Compiler-side follow-up (session
-C3): honor `--opt-level` in script mode and/or make the cache independent of
-`HOME` to cheapen cold compiles.
+Facts as of 2026-09-24:
 
-Compile speed: repeat runs of an unchanged program are cache hits
-(~6-12ms); edited programs pay one cold compile (3.5s dev box, ~6s VPS).
-The status bar shows a live compile clock ("Compiling... 2.4s") while the
-server works, then the server-reported total ("[OK] Ran in 2.6s"), so the
-native-compile wait (including queueing) is visible rather than looking
-stalled. A lesson-template warmup was tried and removed (warming requires
-`xiom run`, which executes incomplete templates); the compiler ask is a
-compile-only cache-prime mode. Cold-compile levers remain compiler-side
-(script-run `--opt-level`, fmt peek) - AUDIT sections 18/19.
+- The repo pins `TOOLCHAIN_VERSION` = v0.61.1; push CI, the nightly audit and
+  the sweep tools all use that pin.
+- The **VPS deploy script does not read the repo pin**. It reads
+  `https://dl.xiom-lang.org/latest.json` and syncs `/opt/xiom/toolchain` with
+  that tag. `latest.json` still advertises **v0.60.1** even though the v0.61.1
+  assets are mirrored and checksum-verified, so the container is stuck on
+  v0.60.1 while the repo is on v0.61.1 (the server's `/api/version` reports
+  the container toolchain truthfully, so the UI label is v0.60.1 there).
+- The weekly `drift.yml` compares `latest.json` with the pin and, when they
+  differ, type-checks lessons with the "latest" toolchain. With a stale
+  `latest.json` it now fetches the *older* v0.60.1, so the check is useless
+  until the mirror metadata is fixed. It also never fails or notifies today.
 
-Cross-repo (compiler session): C1 `--version`, C2 `xiom fmt`, C3 script-mode
-flags, C5/C17 codegen bugs (the 31 blocked lessons), C6 stdlib `package.xi`,
-C8 WASM release asset, C18 `Str` data through containers printing
-nondeterministic pointer values (28 lessons cannot carry an expected output),
-C19 `.to_str()` on `Str`/`Float64` returning empty or bit-pattern values.
-The VPS owner will test Phase B after the next hourly pull.
+Options for the next session (owner decision):
 
-### Absorbing compiler fixes (C17/C18/C19)
+- A. Keep the manual pin and the absorption runbook (section 3.1). Each
+  release requires a sweep + audit + baseline refresh, so an automatic bump
+  would break the nightly expected-output assertions if it ran alone.
+- B. Keep the manual pin but automate the *signal*: make the drift workflow
+  open an issue (or fail loudly) when `latest.json` != `TOOLCHAIN_VERSION`,
+  so a release is never silently missed.
+- C. Make the repo pin the single source of truth for the VPS as well: ops
+  changes `playground-deploy.sh` to read `TOOLCHAIN_VERSION` from the
+  playground checkout instead of `latest.json` (the deploy already has the
+  repo). Then the deployed compiler always matches CI/the repo pin, and a
+  release is adopted by one reviewed commit. `latest.json` remains the mirror
+  index (and the website's version source).
 
-v0.61.1 absorbed (2026-09-22): `TOOLCHAIN_VERSION` is v0.61.1 (mirror
-checksum matches the GitHub release digest), and the full lesson set is on
-main - 410/410 deterministic expected outputs, empty skip list, empty
-`js/limitations.json`, empty baseline. Audit on the mirrored artifact:
-410/410 type-check + run, zero failures. Only follow-up: ops must refresh
-`dl.xiom-lang.org/latest.json` (still v0.60.1) so the VPS deploy upgrades its
-container toolchain. Details in AUDIT.md section 25.
+Recommended: **C + B**. C removes the manual ops step and the current
+mismatch; B keeps drift visible for other consumers. Either way, the immediate
+ops action is to refresh `latest.json` to v0.61.1 so the VPS upgrades.
 
-When a fix reaches a toolchain release:
+### 3.1 Absorbing a compiler release (runbook)
 
 0. Pre-release verification on a local build:
    `node tools/generate-expected-outputs.js --wsl --wsl-toolchain <root>`
@@ -166,116 +142,129 @@ When a fix reaches a toolchain release:
    and `~/.xiom` first: the script cache is keyed by source content only, so
    an older build's binaries are silently reused otherwise (observed during
    the v0.61.0 verification).
-1. Bump `TOOLCHAIN_VERSION` and refetch with `tools/fetch-toolchain.ps1`
+1. Download the release artifact, verify SHA256SUMS, and check
+   `xiom --version` plus `lib/package.xi`.
+2. Bump `TOOLCHAIN_VERSION` and refetch with `tools/fetch-toolchain.ps1`
    (Windows) or `tools/fetch-toolchain.sh` (Linux/CI).
-2. `node tools/generate-expected-outputs.js --wsl` re-executes every solution
-   and rewrites `expected_output` plus `tools/expected-output-skips.json`:
-   newly deterministic lessons lose their skip entry, C17-fixed lessons join
-   the runnable set.
-3. On Linux, `node tools/lesson-audit.js --update-baseline
-   tools/lesson-baseline.json` refreshes the known-failure lists, then
-   `node tools/generate-limitations.js` regenerates the lesson badges.
-4. Run the gate in section 8 and commit the refreshed data together with the
-   toolchain bump.
+3. `node tools/generate-expected-outputs.js --wsl` re-executes every solution
+   and rewrites `expected_output` plus `tools/expected-output-skips.json`.
+4. On Linux: `node tools/lesson-audit.js --update-baseline
+   tools/lesson-baseline.json`, then `node tools/generate-limitations.js`;
+   regenerate `js/stdlib-ref.json` (`node tools/generate-stdlib-ref.js`) if
+   the stdlib changed.
+5. Run the gate (section 8) and commit the refreshed data with the bump.
 
-Never hand-edit the generated files. Until step 2 runs, the nightly execution
-job reports expected-output mismatches for lessons whose output the fix
-changed; that is the intended drift signal.
+Never hand-edit generated files. Until step 3 runs, the nightly reports
+expected-output mismatches for lessons whose output changed: that is the
+intended drift signal.
 
-v0.61.0 (R47) status: verified on a local build of `16a89615`; 68 outputs
-corrected and C17 down from 31 to 27 blocked lessons (4 fixed). The release
-is not published on dl.xiom-lang.org yet, so the refreshed data is parked on
-`verify/toolchain-v0.61.0-data`; details in AUDIT.md section 16.
+### 3.2 Compiler-side follow-ups (not this repo)
+
+- C8: no WASM release asset yet (v0.61.1 ships linux/macos/windows plus the
+  VS Code extension); the in-browser compiler is still copied manually at
+  v0.58.0.
+- R64 (all-modules stdlib test) and R65-era edge cases remain queued in the
+  compiler lane with repros; they do not affect the lesson set.
+- The `xiom.fmt` reachable-only peek and script-run `--opt-level` are already
+  fixed and measured (AUDIT sections 18, 24).
 
 ## 4. Architecture map
 
 - `server.js`: zero-dep HTTP server; endpoints `/api/compile`, `/api/check`,
   `/api/ir`, `/api/tokens`, `/api/format`, `/api/lessons`, `/api/version`,
-  `/api/health`; safe static serving from the repo dir.
-- `lib/run-xiom.js`: shared spawn with timeout + process-tree kill.
-- `js/`: `app.js` (shell, version footer, theme, continue card), `history.js`
-  (run history, export/import, sync adapter), `editor.js` (Monaco, mobile
-  read-only view), `completions.js`, `compiler.js` (WASM preview + server
-  authority + expected-output match), `lessons.js` (catalog, narrative,
-  limitations, rings), `stdlib-ref.js` (tiered panel), `wasm-loader.js`,
+  `/api/health`, `/api/auth/config`, `/auth/github(callback)`,
+  `/auth/logout`, `/api/me`, `/api/progress`; safe static serving from the
+  repo dir; resolves the toolchain through `lib/toolchain.js`.
+- `lib/`: `run-xiom.js` (spawn + timeout + process-tree kill),
+  `toolchain.js` (toolchain resolution shared with the tools; must stay out
+  of `.dockerignore`), `auth.js`, `progress-store.js`.
+- `js/`: `app.js` (shell, version footer, theme, continue card, compile
+  clock), `history.js`, `editor.js` (Monaco + mobile editor), `completions.js`,
+  `compiler.js` (WASM preview + server authority + expected-output match),
+  `lessons.js`, `stdlib-ref.js`, `registry.js`, `wasm-loader.js`,
   `compiler-ref.js`, `syntax.js`.
 - `tools/`: `lesson-audit.js`, `generate-expected-outputs.js`,
-  `expected-output-skips.json`, `migrate-lessons.js`, `lesson-patches.js`,
-  `generate-stdlib-ref.js`, `generate-limitations.js`, `fetch-toolchain.*`,
-  `test-server.js`, `lib/toolchain.js`, `lib/output.js`.
+  `generate-stdlib-ref.js`, `generate-limitations.js`, `bench-cold-compile.js`,
+  `migrate-lessons.js`, `lesson-patches.js`, `fetch-toolchain.*`,
+  `test-server.js`, `lib/toolchain.js` (re-export), `lib/output.js`.
 - Data: `js/stdlib-ref.json`, `js/limitations.json`,
   `tools/lesson-baseline.json`, `tools/expected-output-skips.json`,
-  `TOOLCHAIN_VERSION`, `WASM_VERSION`.
-- Docs: `docs/PROGRESS_SYNC.md` (registry progress API contract).
+  `TOOLCHAIN_VERSION`, `WASM_VERSION`, `img/playground.webp`.
+- Docs: `docs/PROGRESS_SYNC.md`, `docs/COMPILER_REPROS.md`.
 
 ## 5. Commands
 
 ```powershell
-# Dev toolchain is already in .toolchain/ (Windows). Program execution must
-# run on Linux; the expected-output sweep drives WSL Ubuntu itself:
-node tools/generate-expected-outputs.js --wsl
-# (toolchain persists at /home/lefteris/xiom_audit/tc; Node is NOT installed
-#  in WSL, so the tool runs a python3 worker there)
-
-node server.js                         # local server (set XIOM_BIN/XIOM_STDLIB if needed)
-node tools/test-server.js              # 32 smoke checks (incl. mocked C2 auth)
+# Windows dev: the pinned toolchain lives in .toolchain/; program execution
+# must run on Linux (Windows clang hangs at -O2).
+node server.js                         # local server (resolves .toolchain)
+node tools/test-server.js              # 34 smoke checks (1 Windows skip)
 node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
-node tools/lesson-audit.js             # + execute solutions (Linux; Windows clang hangs at -O2)
 node tools/generate-expected-outputs.js --check
 node tools/generate-stdlib-ref.js --check
 node tools/generate-limitations.js --check
-node tools/migrate-lessons.js          # dry run; --apply to write
+node tools/bench-cold-compile.js       # cold-compile benchmark
+
+# Linux execution (WSL): sweep and audit against a toolchain root:
+node tools/generate-expected-outputs.js --wsl --wsl-toolchain /home/lefteris/xiom_mirror/tc
+wsl -d Ubuntu -- bash -lc "cd /mnt/e/xiom-lang/playground && node tools/lesson-audit.js --baseline tools/lesson-baseline.json"
+# WSL has Node 22 at /home/lefteris/node-v22.23.2-linux-x64 (section 6).
 ```
 
-Linux-side audit with a specific toolchain (Node 22 lives in the WSL home;
-section 6 lists the helper env):
-
-```powershell
-wsl -d Ubuntu -- bash -lc "source /home/lefteris/xiom_fix/env.sh && cd /mnt/e/xiom-lang/playground && node tools/lesson-audit.js --baseline tools/lesson-baseline.json --json /tmp/audit.json"
-```
+Toolchain roots used so far: `/home/lefteris/xiom_audit/tc` (pinned v0.60.1),
+`/home/lefteris/xiom_mirror/tc` (mirrored v0.61.1), plus local-build previews
+under `/home/lefteris/xiom_pre*/tc`. Wipe `/tmp/xiom_run` and `~/.xiom` when
+switching between them.
 
 ## 6. Environment facts and gotchas
 
-- Windows dev box; Docker Desktop engine is not running (no local image build).
-- Windows clang hangs optimizing the C runtime at default `-O2`, so program
-  execution must be verified in WSL/Linux; `tools/test-server.js` skips
-  execution tests on Windows unless `XIOM_TEST_RUN_WINDOWS=1`.
-- `%TEMP%\kilo` holds the audit scratch work (probe scripts, wsl sweep
-  wrappers, backup bundle); treat as ephemeral.
-- Browser cache: server sends `no-cache` for JS/CSS/HTML now; wasm/images are
-  cached a day. Hard-reload if an old script lingers.
-- `editor.action.insertSnippet` does not exist in Monaco 0.52; use
-  `executeEdits` + `setSelection` (as `insertStdlibSnippet` does).
-- `.kilo/` worktrees are dev state: never edit them. One stale worktree
-  (`subsequent-velvet`) still points at the pre-rewrite commit.
-- Keep the container sandbox intact (non-root, read-only rootfs, tmpfs,
-  cap_drop, limits, egress guard).
+- Windows dev box; the Docker engine is not running locally, so container
+  behavior is verified via a simulated build context (copy the repo applying
+  `.dockerignore`, run `node server.js` there) and on the VPS.
+- `.dockerignore` excludes `tools/`, `docs/`, `*.md`, `.toolchain`, `.github`,
+  `.kilo`, `data/`. Runtime code must never require a file from those paths;
+  `tools/test-server.js` walks server.js's require graph and fails if it does
+  (this guard exists because the v0.61.1-era require of `tools/lib/toolchain`
+  crash-looped the deployed container with an nginx 500).
+- The VPS toolchain comes from `dl.xiom-lang.org/latest.json` (currently still
+  v0.60.1); CI and the tools use the repo pin. See the decision in section 3.
 - Compiler script cache: `xiom run` reuses binaries under `/tmp/xiom_run`
-  (plus `~/.xiom`) keyed by source content only. After switching compiler
-  builds, clear both or the old build's binaries are served silently
-  (observed when v0.61.0 first reproduced v0.60.1 behavior). Sweep/audit
-  runs must clear the cache first.
-- WSL: Node 22.23.2 is installed without sudo at
-  `/home/lefteris/node-v22.23.2-linux-x64`; `/home/lefteris/xiom_fix/env.sh`
-  exports PATH plus `XIOM_BIN`/`XIOM_STDLIB` for the local v0.61.0 build at
-  `/home/lefteris/xiom_fix/tc`. The pinned v0.60.1 toolchain remains at
-  `/home/lefteris/xiom_audit/tc`.
+  (plus `~/.xiom`) keyed by source content only; clear both when switching
+  builds. Compose sets `HOME=/tmp/xiom-home` so the cache works on the
+  read-only rootfs, and `/tmp` is mounted with `exec` (a noexec tmpfs made
+  every run fail with EACCES).
+- Windows harness trap: stale `.xi` trees under `%TEMP%` inflate the
+  front-end ~30x (the compiler scans them); keep TMP/TEMP clean when
+  benchmarking.
+- `%TEMP%\kilo` holds scratch scripts and the history backup bundle; treat as
+  ephemeral. `.kilo/` worktrees are dev state: never edit them.
+- Browser cache: JS/CSS/HTML are `no-cache`; wasm/images cached a day.
+- `editor.action.insertSnippet` does not exist in Monaco 0.52; use
+  `executeEdits` + `setSelection`.
+- Keep the container sandbox intact (non-root, read-only rootfs, tmpfs
+  `exec`, cap_drop, limits, no egress).
+- Repo hygiene: `a.out` and `data/` are gitignored; local generation runs
+  must not leave artifacts in the repo.
 
 ## 7. Conventions
 
 - Commits: conventional messages, repo-local identity
-  `Lefteris Notas <lefterisnotas@gmail.com>` (already configured; verify with
-  `git log -1 --format='%an <%ae>'` before pushing).
+  `Lefteris Notas <lefterisnotas@gmail.com>` (verify with
+  `git log -1 --format='%an <%ae>'`). Use `git commit -s`: a DCO workflow
+  checks sign-off on pull requests (direct pushes to main are unaffected).
 - Frontend JS is ES5-style, no bundler, no dependencies; tools are
   zero-dependency Node (>=18); docs stay ASCII.
-- Per tranche: implement, verify, update `ROADMAP.md`/`AUDIT.md` statuses,
-  commit, push to `origin/main` (normal push, never force).
+- Per tranche: implement, verify in a real browser or on Linux as
+  appropriate, update `ROADMAP.md`/`AUDIT.md` statuses, commit, push to
+  `origin/main` (normal push, never force).
 - Generated data is never hand-edited: regenerate and run the `--check` gates.
+- Never weaken the sandbox; never store secrets in the repo (they live in
+  `/opt/xiom/playground.env` and the host helper env on the VPS).
 
 ## 8. Verification gate before commit
 
 1. `node --check` on every JS file (server, lib, tools, js).
-2. `node tools/test-server.js` (expect 18 passed, 1 Windows skip).
+2. `node tools/test-server.js` (expect 34 passed, 1 Windows skip).
 3. `node tools/generate-stdlib-ref.js --check`,
    `node tools/generate-limitations.js --check` and
    `node tools/generate-expected-outputs.js --check`.

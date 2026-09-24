@@ -116,7 +116,8 @@ concern or waits for a future accounts service.
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 
 - C1 fixed in v0.61.1 (`--version` reports v0.61.1).
-- C2 `xiom fmt` unwired (playground degrades gracefully).
+- C2 fixed in v0.61.1 (`xiom fmt` works; verified through `/api/format`, and
+  `/api/version` reports `capabilities.format: true`).
 - C3 fixed in v0.61.1 (`--opt-level` is accepted by the script-run path and
   the cache is level-aware).
 - C5/C17 fixed: on the v0.61.1 release all 410 lessons type-check, run and
