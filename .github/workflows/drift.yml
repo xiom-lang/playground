@@ -1,10 +1,19 @@
 # Copyright (c) 2026 Eleftherios Notas and The XIOM Authors
 # SPDX-License-Identifier: MIT OR Apache-2.0
 #
-# Toolchain drift check: compare the pinned TOOLCHAIN_VERSION with the latest
-# release and, when they differ, run the full lesson type-check against the
-# newer toolchain. A failure means lessons or the pin need attention before
-# the next deploy.
+# Toolchain drift check: compare the pinned TOOLCHAIN_VERSION with the tag
+# dl.xiom-lang.org/latest.json advertises, and fail the job on any mismatch
+# so a release is never silently missed.
+#
+# - latest == pin: nothing to do.
+# - latest >  pin: a released toolchain is not absorbed yet. Type-check the
+#   lessons against it as evidence, then fail with the absorption steps.
+# - latest <  pin: latest.json is older than the repo pin (stale mirror
+#   metadata). Never fetch the older toolchain; fail with the ops request.
+#
+# Adoption stays manual on purpose: every release needs a lesson sweep, an
+# execution audit and a baseline refresh (SESSION.md section 3.1), so this
+# workflow signals only.
 name: Toolchain drift
 
 on:
@@ -22,25 +31,46 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Resolve latest release
+      - name: Resolve latest release and compare with the pin
         id: latest
         run: |
           TAG=$(curl -fsSL https://dl.xiom-lang.org/latest.json | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).tag))")
           PIN=$(tr -d '\r\n ' < TOOLCHAIN_VERSION)
+          RELATION=$(node -e "const f=v=>v.replace(/^v/,'').split(/[.-]/).slice(0,3).map(x=>parseInt(x,10)||0); const [a,b]=process.argv.slice(1).map(f); for (let i=0;i<3;i++){ if (a[i]!==b[i]) { console.log(a[i]>b[i]?'newer':'older'); process.exit(0);} } console.log('same');" "$TAG" "$PIN")
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "pin=$PIN" >> "$GITHUB_OUTPUT"
-          echo "latest=$TAG pinned=$PIN"
+          echo "relation=$RELATION" >> "$GITHUB_OUTPUT"
+          echo "latest=$TAG pinned=$PIN relation=$RELATION"
+          {
+            echo "## Toolchain drift"
+            echo ""
+            echo "| item | value |"
+            echo "|---|---|"
+            echo "| mirror latest.json | \`$TAG\` |"
+            echo "| repository pin | \`$PIN\` |"
+            echo "| relation | \`$RELATION\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Fetch latest toolchain
-        if: steps.latest.outputs.tag != steps.latest.outputs.pin
+      - name: Fetch latest toolchain (preview)
+        if: steps.latest.outputs.relation == 'newer'
         env:
           TOOLCHAIN_TAG: ${{ steps.latest.outputs.tag }}
         run: bash tools/fetch-toolchain.sh
 
-      - name: Type-check lessons against the latest toolchain
-        if: steps.latest.outputs.tag != steps.latest.outputs.pin
+      - name: Type-check lessons against the latest toolchain (preview)
+        if: steps.latest.outputs.relation == 'newer'
         run: node tools/lesson-audit.js --check-only --quiet --fail-on-failures
 
       - name: Drift summary
-        if: steps.latest.outputs.tag == steps.latest.outputs.pin
+        if: steps.latest.outputs.relation == 'same'
         run: echo "Pinned toolchain is the latest release (${{ steps.latest.outputs.pin }}); nothing to do."
+
+      - name: Fail on toolchain drift
+        if: always() && (steps.latest.outputs.relation == 'newer' || steps.latest.outputs.relation == 'older')
+        run: |
+          if [ "${{ steps.latest.outputs.relation }}" = "newer" ]; then
+            echo "::error::Toolchain drift: ${{ steps.latest.outputs.tag }} is newer than the repo pin ${{ steps.latest.outputs.pin }}. Absorb the release (SESSION.md section 3.1): bump TOOLCHAIN_VERSION, re-run the sweep and the execution audit, refresh baseline/limitations/stdlib-ref, then commit and push."
+          else
+            echo "::error::Toolchain drift: latest.json advertises ${{ steps.latest.outputs.tag }} but the repo pin is ${{ steps.latest.outputs.pin }}. Refresh dl.xiom-lang.org/latest.json (ops) so the VPS deploy and other consumers see the current release."
+          fi
+          exit 1
