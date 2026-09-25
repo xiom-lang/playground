@@ -35,10 +35,11 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
 - [x] CI: `validate.yml` builds the wrapper, runs the denial suite with
       `--require-net` per push, and the nightly execution audit runs with
       the sandbox required.
-- [ ] Linux lesson audit 410/410 under `XIOM_SANDBOX=require`.
+- [x] Linux lesson audit 410/410 under `XIOM_SANDBOX=require` (local WSL,
+      2026-09-25; the nightly CI job re-runs it).
 - [ ] VPS canary: deploy, check `/api/health`, run the in-container denial
       suite and the crafted public-API probes (ops).
-- [ ] Update `DEPLOY.md` sandbox section and `SESSION.md` status.
+- [x] Update `DEPLOY.md` sandbox section and `SESSION.md` status.
 
 ## P2 -- data-plane containment (defense in depth)
 

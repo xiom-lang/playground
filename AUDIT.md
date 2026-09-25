@@ -1675,6 +1675,12 @@ Production (ABI 4, ops probe): the TCP rules are active there; ops re-runs
 the in-container denial suite and the crafted public-API probes after the
 deploy (recipe in `docs/OPS_SECURITY_REQUEST.md`).
 
+CI (GitHub `ubuntu-latest`, kernel ABI 7, 2026-09-25): the denial suite
+reports `tcp=denied (EACCES from connect(2))` and every other probe ok,
+warm repeat 2 ms; the server suite runs 40/40 with the sandbox in require
+mode. The nightly job re-runs the 410-lesson execution audit under the
+wrapper.
+
 ### 29.3 Rollback and residual
 
 - Rollback: `XIOM_SANDBOX=off` plus a redeploy. The environment whitelist,

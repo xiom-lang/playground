@@ -416,10 +416,12 @@ bind denials inside the live container), rotated `SESSION_SECRET` and
   `tools/test-server.js` (require-mode health + confinement tests), and
   `validate.yml` (denial suite per push with `--require-net`; nightly
   410-lesson execution audit under the wrapper).
-- Evidence: denial suite green, warm repeat 21 ms, test-server 40/40 in
+- Evidence: denial suite green, warm repeat 12-21 ms, test-server 40/40 in
   require mode, and the full execution audit **410/410 with no
   regressions** through the wrapper (AUDIT section 29). Local WSL kernel is
-  ABI 3, so the TCP rule is exercised on ABI 4 hosts/CI/production.
+  ABI 3, so the TCP rule is exercised on ABI 4 hosts/CI/production. CI on
+  the ABI 7 runner confirms `tcp=denied (EACCES from connect(2))`, all
+  other denials, warm 2 ms, and test-server 40/40.
 - **Open:** the owner deploys (hourly pull or `playground-deploy.sh`) and
   ops runs the in-container denial suite plus the crafted public-API probes
   and reads `/api/health`; recipe in `docs/OPS_SECURITY_REQUEST.md`. Until
