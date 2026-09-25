@@ -116,3 +116,24 @@ Expected: every probe `ok` (escape dir `/data`, `tcp-connect` denied on ABI
 connection): every access must be denied and `/api/health` must stay ok. The
 rollback is `XIOM_SANDBOX=off` plus a redeploy; the env whitelist and the
 rotated secrets stay in force.
+
+## P1 verified live (ops, 2026-09-25)
+
+Deploy `f5fccef`: startup `mode=require active=true landlock_abi=4`; the
+in-container denial suite passes with `--require-net` (escape read/write,
+proc/etc and the spawned shell denied, `tcp=denied` with EACCES from
+`connect(2)`, warm-run 9 ms); `/api/health` reports
+`{"mode":"require","active":true,"landlock":4,"error":null}`; in-container
+egress still `timeout=blocked`; the public-API escape program prints
+`data=denied / proc=denied / tmp=ok / spawn=ok / spawnproc=denied`. P1
+acceptance is met.
+
+## P2 design sent (2026-09-25)
+
+`docs/P2_STATE_HELPER_DESIGN.md` in the playground repo: extend this helper
+with opaque session tokens (minted only by a successful `/exchange`) and
+`/session` + `/progress` endpoints backed by
+`/opt/xiom/playground-state/`, so the container drops `SESSION_SECRET` and
+the `/data` mount. The playground lane waits for ops confirmation that the
+endpoints are live before landing the client, the mock-helper tests and the
+cutover.

@@ -124,19 +124,22 @@ checklist: `docs/checklists/security-hardening.md`.
 
 - [x] D1. Immediate containment: compiler-child environment whitelist,
   canary test, and the audit record (AUDIT section 28, commit `162e041`).
-- [~] D2. Per-execution filesystem sandbox: Landlock wrapper around every
+- [x] D2. Per-execution filesystem sandbox: Landlock wrapper around every
   compiler child (allow `/tmp` read-write, `/app` and `/toolchain`
   read-only; deny `/data`, `/proc`, `/sys`, TCP), fail closed when
-  unavailable, denial tests plus the full Linux lesson audit. Implemented
-  and locally verified (AUDIT section 29); waiting on the VPS deploy and
-  ops verification.
-- [ ] D3. Data-plane containment: move session signing and the progress
+  unavailable, denial tests plus the full Linux lesson audit. Verified
+  live on the VPS (deploy `f5fccef`, ops report: `require`, ABI 4, all
+  probes ok, escape program denied); rollback is `XIOM_SANDBOX=off`.
+- [~] D3. Data-plane containment: move session signing and the progress
   store host-side so the web container holds no long-lived secrets and no
-  multi-tenant data.
+  multi-tenant data. Protocol design sent to ops
+  (`docs/P2_STATE_HELPER_DESIGN.md`); ops implements the helper, then the
+  playground lands the client and the cutover.
 - [ ] D4. Abuse controls: per-IP rate limits on the compile endpoints and
   queue/rejection counters on `/api/health`.
-- [ ] D5. Owner/ops: rotate `SESSION_SECRET`/`AUTH_HELPER_KEY`, verify the
-  container egress guard from inside, and confirm the kernel Landlock ABI.
+- [x] D5. Owner/ops: rotate `SESSION_SECRET`/`AUTH_HELPER_KEY`, verify the
+  container egress guard from inside, and confirm the kernel Landlock ABI
+  (all three done 2026-09-25).
 
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 

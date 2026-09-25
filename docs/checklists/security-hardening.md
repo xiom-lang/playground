@@ -1,7 +1,7 @@
 # Security hardening checklist (P0-P3)
 
 Reference: `docs/SECURITY_HARDENING.md` (plan),
-`docs/OPS_SECURITY_REQUEST.md` (ops relay), `AUDIT.md` section 28
+`docs/OPS_SECURITY_REQUEST.md` (ops relay), `AUDIT.md` sections 28-29
 (evidence). ASCII only; check an item only when its evidence exists.
 
 ## P0 -- immediate containment (landed 2026-09-25)
@@ -10,11 +10,11 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
       `userChildEnv()`), commit `162e041`.
 - [x] Canary test in `tools/test-server.js`; Linux suite 38/38.
 - [x] Findings and measurements recorded in `AUDIT.md` section 28.
-- [ ] Owner/ops: rotate `SESSION_SECRET` and `AUTH_HELPER_KEY` and restart
-      the playground and auth helper.
-- [ ] Ops: verify the container egress guard from inside the container
-      (node connect probe in the ops request) and confirm the guard
-      survives reboot.
+- [x] Owner/ops: rotate `SESSION_SECRET` and `AUTH_HELPER_KEY` and restart
+      the playground and auth helper (ops, 2026-09-25).
+- [x] Ops: verify the container egress guard from inside the container
+      (`timeout=blocked` in the 2026-09-25 report) and confirm the guard
+      survives reboot (30 s + 90 s @reboot hook).
 
 ## P1 -- Landlock wrapper (playground repo)
 
@@ -37,19 +37,28 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
       the sandbox required.
 - [x] Linux lesson audit 410/410 under `XIOM_SANDBOX=require` (local WSL,
       2026-09-25; the nightly CI job re-runs it).
-- [ ] VPS canary: deploy, check `/api/health`, run the in-container denial
-      suite and the crafted public-API probes (ops).
+- [x] VPS canary: deploy, check `/api/health`, run the in-container denial
+      suite and the crafted public-API probes (ops, deploy `f5fccef`:
+      `mode=require active=true landlock=4`, all probes ok, TCP EACCES,
+      warm 9 ms, escape program denied). P1 acceptance met.
 - [x] Update `DEPLOY.md` sandbox section and `SESSION.md` status.
 
 ## P2 -- data-plane containment (defense in depth)
 
-- [ ] Owner decision: move sessions/progress host-side, or accept the
-      container-resident store once P1 is verified.
-- [ ] If moving: helper endpoints for session verify/sign and progress
-      read/write, with the playground as a thin client.
-- [ ] Export/backup existing `/data` documents before the migration.
-- [ ] Remove `SESSION_SECRET`/`AUTH_HELPER_KEY` and the `/data` mount from
-      the web container; rotate again at cutover.
+- [x] Owner/ops decision: move sessions and progress host-side (ops hosts
+      the service).
+- [x] Endpoint/protocol design sent to ops:
+      `docs/P2_STATE_HELPER_DESIGN.md` (opaque session tokens, helper-minted
+      on OAuth exchange; progress proxy with revision semantics; host store
+      at `/opt/xiom/playground-state`; container drops `SESSION_SECRET` and
+      `/data`).
+- [ ] Ops: implement the helper endpoints and the state directory; confirm
+      the deployment is live.
+- [ ] Playground: async `userFromRequest` with cache, per-boot OAuth state
+      key, progress-store helper client, mock-helper protocol tests.
+- [ ] Cutover: snapshot `/data`, copy documents host-side, deploy, verify
+      sign-in and progress round-trips, confirm no `SESSION_SECRET` and no
+      `/data` mount in the container.
 - [ ] Update the privacy facts in `DEPLOY.md` and tell the website lane.
 
 ## P3 -- abuse controls and monitoring

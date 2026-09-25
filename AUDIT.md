@@ -1675,6 +1675,16 @@ Production (ABI 4, ops probe): the TCP rules are active there; ops re-runs
 the in-container denial suite and the crafted public-API probes after the
 deploy (recipe in `docs/OPS_SECURITY_REQUEST.md`).
 
+P1 verified live on the VPS (deploy `f5fccef`, ops report 2026-09-25):
+startup `Sandbox: mode=require active=true landlock_abi=4`;
+`tools/verify-sandbox.js --require-net` all probes ok (escape read/write,
+`/proc`, `/etc`, spawned shell denied, `tcp=denied` with EACCES from
+`connect(2)`, warm-run 9 ms); `/api/health` returns
+`{"mode":"require","active":true,"landlock":4,"error":null}`; egress from
+inside the container still `timeout=blocked`; the public-API escape program
+prints `data=denied / proc=denied / tmp=ok / spawn=ok / spawnproc=denied`.
+P1 acceptance is met; rollback stays `XIOM_SANDBOX=off` plus redeploy.
+
 CI (GitHub `ubuntu-latest`, kernel ABI 7, 2026-09-25): the denial suite
 reports `tcp=denied (EACCES from connect(2))` and every other probe ok,
 warm repeat 2 ms; the server suite runs 40/40 with the sandbox in require

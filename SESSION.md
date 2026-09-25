@@ -1,10 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-25 (P1 Landlock sandbox implemented). Branch `main`,
+Last updated: 2026-09-25 (P1 verified live on the VPS). Branch `main`,
 working tree clean, all commits pushed to `origin/main`. Production is
 healthy but still runs toolchain v0.60.1 until `latest.json` is refreshed
-(section 3). **P1 is built and locally verified; the VPS deploy and ops
-verification are pending (section 10).**
+(section 3). **P1 Landlock sandbox is live and verified (section 10); P2
+design sent to ops (`docs/P2_STATE_HELPER_DESIGN.md`).**
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -428,6 +428,32 @@ bind denials inside the live container), rotated `SESSION_SECRET` and
   that deploy, the running container still lacks the wrapper, so `/data`
   and `/proc` remain reachable inside it. P2 starts after P1 passes
   (`docs/checklists/security-hardening.md`).
+
+### P1 verified live on the VPS (ops report, 2026-09-25)
+
+Deploy `f5fccef`: startup `Sandbox: mode=require active=true
+landlock_abi=4`; `verify-sandbox --require-net` all probes ok (control,
+tmp-rw, escape read/write denied, proc/etc denied, spawned shell denied,
+`tcp=denied` EACCES from `connect(2)`, warm-run 9 ms); `/api/health`
+`{"mode":"require","active":true,"landlock":4,"error":null}`; in-container
+egress still blocked; the public-API escape program prints
+`data=denied / proc=denied / tmp=ok / spawn=ok / spawnproc=denied`. P1
+acceptance met; rollback stays `XIOM_SANDBOX=off` + redeploy.
+
+### P2 design sent to ops (2026-09-25)
+
+`docs/P2_STATE_HELPER_DESIGN.md`: extend the existing playground auth helper
+(same unit, bind, port 3400, helper key) with opaque session tokens and
+progress storage on the host (`/opt/xiom/playground-state`). The container
+drops `SESSION_SECRET` and the `/data` mount; cookie verification is a
+cached helper lookup; progress read/write proxies to the helper with the
+existing revision/conflict semantics; the OAuth state moves to a per-boot
+random key. Sessions are minted only by a completed OAuth exchange, so a
+compromised container cannot forge identities or read the store without
+live tokens. Cutover: snapshot `/data`, copy the account documents host-side,
+deploy the helper endpoints and the container update, users sign in once.
+The playground side (async `userFromRequest`, the progress-store client,
+the mock helper and tests) starts when ops confirms the helper is live.
 
 Plan and relay for this audit:
 
