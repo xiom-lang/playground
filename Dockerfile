@@ -22,6 +22,12 @@ RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin xiomp \
 WORKDIR /app
 COPY --chown=xiomp:xiomp . /app
 
+# P1: build the Landlock wrapper that confines every compiler child. The
+# build fails here if the helper does not compile, so an image can never
+# ship without a working sandbox binary (the server also fails closed in
+# require mode when it cannot execute the toolchain through it).
+RUN clang -O2 -Wall -Wextra -o /usr/local/bin/xiom-sandbox /app/sandbox/xiom-sandbox.c
+
 USER xiomp
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0

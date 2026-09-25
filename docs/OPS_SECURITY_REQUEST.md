@@ -89,3 +89,30 @@ on the pinned v0.61.3 Linux toolchain showed:
   (410/410), and a warm repeat run of an unchanged program stays in the
   millisecond range.
 - `/api/health` reports the sandbox mode so drift is visible.
+
+## P1 delivered (2026-09-25) -- in-container verification recipe
+
+The image now builds `/usr/local/bin/xiom-sandbox` (clang, build fails if it
+does not compile) and `docker-compose.yml` sets `XIOM_SANDBOX=require` with
+`XIOM_SANDBOX_BIN=/usr/local/bin/xiom-sandbox`. `/api/health` reports
+`sandbox: {mode, active, landlock, error}`.
+
+After the playground deploys (hourly pull or `playground-deploy.sh`), verify
+inside the running container:
+
+```
+docker cp tools/verify-sandbox.js xiom-playground:/tmp/verify-sandbox.js
+docker exec xiom-playground node /tmp/verify-sandbox.js \
+  --sandbox /usr/local/bin/xiom-sandbox --toolchain /toolchain --require-net
+docker exec xiom-playground node -e \
+  "require('http').get('http://127.0.0.1:3000/api/health',r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>{const j=JSON.parse(d);console.log(JSON.stringify(j.sandbox))})})"
+```
+
+Expected: every probe `ok` (escape dir `/data`, `tcp-connect` denied on ABI
+4, warm-run in milliseconds), and `sandbox: {"mode":"require","active":true,
+"landlock":4,...}`. Then submit the crafted program through the public API
+(`/api/compile` with a source that reads `/data/accounts/*`,
+`/proc/1/environ`, spawns `sh -c 'cat /proc/...'` and opens a TCP
+connection): every access must be denied and `/api/health` must stay ok. The
+rollback is `XIOM_SANDBOX=off` plus a redeploy; the env whitelist and the
+rotated secrets stay in force.

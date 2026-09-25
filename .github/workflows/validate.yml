@@ -32,6 +32,14 @@ jobs:
       - name: Fetch pinned toolchain
         run: bash tools/fetch-toolchain.sh
 
+      - name: Landlock sandbox denial suite
+        run: |
+          cc -O2 -Wall -Wextra -o sandbox/xiom-sandbox sandbox/xiom-sandbox.c
+          rm -rf /tmp/xiom-toolchain
+          cp -a .toolchain /tmp/xiom-toolchain
+          mkdir -p /tmp/xiom-home
+          node tools/verify-sandbox.js --sandbox sandbox/xiom-sandbox --toolchain /tmp/xiom-toolchain --require-net
+
       - name: Stdlib reference is current
         run: node tools/generate-stdlib-ref.js --check
 
@@ -47,6 +55,11 @@ jobs:
       - name: Server smoke tests
         run: node tools/test-server.js
 
-      - name: Lesson audit (execute solutions)
+      - name: Lesson audit (execute solutions, sandboxed)
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          XIOM_BIN: ${{ github.workspace }}/sandbox/xiom-sandbox
+          XIOM_SANDBOX_TARGET: /tmp/xiom-toolchain/bin/xiom
+          XIOM_STDLIB: /tmp/xiom-toolchain/lib
+          HOME: /tmp/xiom-home
         run: node tools/lesson-audit.js --baseline tools/lesson-baseline.json --concurrency 3

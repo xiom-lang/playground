@@ -175,9 +175,35 @@ function stopServer(child) {
 
 async function main() {
   const hasToolchain = fs.existsSync(XIOM_BIN) || /[\\/]/.test(XIOM_BIN) === false;
+
+  // P1: on Linux with the wrapper built, start the server in require mode and
+  // stage the toolchain under /tmp (the only read-write path the Landlock
+  // policy allows). Windows skips execution entirely, so it starts with the
+  // sandbox off and the other sandbox assertions are skipped.
+  const sandboxBin = process.env.XIOM_SANDBOX_BIN || path.join(REPO, 'sandbox', 'xiom-sandbox');
+  const sandboxMode = process.platform === 'linux' &&
+    process.env.XIOM_SANDBOX !== 'off' &&
+    fs.existsSync(XIOM_BIN) &&
+    fs.existsSync(sandboxBin);
+  let sandboxToolchain = null;
+  const serverEnv = { XIOM_TEST_CANARY: 'canary-do-not-leak' };
+  if (sandboxMode) {
+    sandboxToolchain = process.env.XIOM_TEST_SANDBOX_TOOLCHAIN || path.join(os.tmpdir(), 'xiom-toolchain');
+    if (!fs.existsSync(path.join(sandboxToolchain, 'bin', 'xiom'))) {
+      fs.rmSync(sandboxToolchain, { recursive: true, force: true });
+      fs.cpSync(path.dirname(path.dirname(XIOM_BIN)), sandboxToolchain, { recursive: true });
+    }
+    serverEnv.XIOM_SANDBOX = 'require';
+    serverEnv.XIOM_SANDBOX_BIN = sandboxBin;
+    serverEnv.XIOM_BIN = path.join(sandboxToolchain, 'bin', 'xiom');
+    serverEnv.XIOM_STDLIB = path.join(sandboxToolchain, 'lib');
+  } else {
+    serverEnv.XIOM_SANDBOX = 'off';
+  }
+
   // The canary proves that user programs cannot read the server's own
   // environment (see the env-scrub test in the execution block).
-  const child = startServerWithEnv({ XIOM_TEST_CANARY: 'canary-do-not-leak' }, PORT);
+  const child = startServerWithEnv(serverEnv, PORT);
   const authPort = PORT + 137;
   const authDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'xiom_pg_auth_'));
   let authChild = null;
@@ -382,6 +408,69 @@ async function main() {
           assert.ok(payload.output.indexOf('env-scrubbed') >= 0, 'unexpected output: ' + payload.output);
           assert.ok(payload.output.indexOf('canary-do-not-leak') === -1, 'server env leaked: ' + payload.output);
         });
+
+        if (sandboxMode) {
+          await okAsync('GET /api/health reports the Landlock sandbox', async () => {
+            const res = await request('GET', '/api/health');
+            assert.strictEqual(res.status, 200);
+            const payload = JSON.parse(res.body);
+            assert.strictEqual(payload.sandbox.mode, 'require', JSON.stringify(payload.sandbox));
+            assert.strictEqual(payload.sandbox.active, true, JSON.stringify(payload.sandbox));
+            assert.ok(payload.sandbox.landlock >= 3, JSON.stringify(payload.sandbox));
+          });
+
+          await okAsync('POST /api/compile confines submissions (files, proc, network)', async () => {
+            // A canary outside the allowlist (with /data preferred when it
+            // exists) that a sandboxed submission must not be able to read or
+            // write, plus /proc, a spawned shell and a TCP connect.
+            const escapeDir = fs.existsSync('/data') ? '/data' : '/var/tmp';
+            const escapeRoot = path.join(escapeDir, 'xiom-pg-sandbox-test');
+            let canary = null;
+            try {
+              fs.mkdirSync(escapeRoot, { recursive: true });
+              canary = path.join(escapeRoot, 'canary.txt');
+              fs.writeFileSync(canary, 'sandbox-canary', 'utf8');
+            } catch {
+              canary = null;
+            }
+            const health = JSON.parse((await request('GET', '/api/health')).body);
+            const expectTcp = Number(health.sandbox.landlock) >= 4;
+            const source = [
+              'use xiom.io;',
+              'use xiom.net;',
+              'use xiom.process;',
+              'fn main() {',
+              canary
+                ? '  match io.read_file(' + JSON.stringify(canary) + ') { Ok(s) => io.println("escape=LEAK"), Err(e) => io.println("escape=denied") }'
+                : '  io.println("escape=skipped")',
+              '  match io.read_file("/proc/self/status") { Ok(s) => io.println("proc=LEAK"), Err(e) => io.println("proc=denied") }',
+              '  match io.write_file("/tmp/xiom-pg-sandbox-control.txt", "ok") { Ok(u) => io.println("tmp=ok"), Err(e) => io.println("tmp=FAIL") }',
+              '  let args = Vec[Str].new();',
+              '  args.push("-c");',
+              '  args.push("cat /proc/self/status > /tmp/xiom-pg-sandbox-spawn.txt 2>/dev/null");',
+              '  match process.spawn_command("sh", &args) { Ok(p) => io.println("spawn=ok"), Err(e) => io.println("spawn=err") }',
+              '  match io.read_file("/tmp/xiom-pg-sandbox-spawn.txt") { Ok(s) => { if s.len() == 0 { io.println("spawnproc=denied") } else { io.println("spawnproc=LEAK") } }, Err(e) => io.println("spawnproc=denied") }',
+              expectTcp
+                ? '  match net.tcp_connect("1.1.1.1", 443) { Ok(s) => io.println("tcp=REACHABLE"), Err(e) => io.println("tcp=denied") }'
+                : '  io.println("tcp=skipped")',
+              '}',
+              '',
+            ].join('\n');
+            const res = await request('POST', '/api/compile', { source });
+            assert.strictEqual(res.status, 200);
+            const payload = JSON.parse(res.body);
+            assert.strictEqual(payload.success, true, JSON.stringify(payload.diagnostics));
+            const out = payload.output;
+            assert.ok(out.indexOf('proc=denied') >= 0, 'proc not denied: ' + out);
+            assert.ok(out.indexOf('tmp=ok') >= 0, 'tmp write failed: ' + out);
+            assert.ok(out.indexOf('spawnproc=denied') >= 0, 'spawned shell leaked /proc: ' + out);
+            if (canary) assert.ok(out.indexOf('escape=denied') >= 0, 'escape canary reachable: ' + out);
+            if (expectTcp) assert.ok(out.indexOf('tcp=denied') >= 0, 'tcp reachable: ' + out);
+          });
+        } else {
+          skipped.push('sandbox execution tests (Linux + sandbox/xiom-sandbox required)');
+          console.log('  skip sandbox tests (build sandbox/xiom-sandbox on Linux to enable)');
+        }
 
         await okAsync('health stays responsive during a compile', async () => {
           const compile = request('POST', '/api/compile', { source: 'use xiom.io;\nfn main() {\n  var i = 0;\n  while i < 50 { io.println("tick"); i = i + 1; }\n}\n' }).catch(() => null);

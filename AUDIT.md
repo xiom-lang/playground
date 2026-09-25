@@ -1601,3 +1601,85 @@ acceptance, rollback), `docs/OPS_SECURITY_REQUEST.md` (ops message), and
 - CI and the tools: the sweeps run trusted lesson code, not submissions.
 - The lesson corpus: unchanged by this audit (the L6-16 tip is copy only).
 
+## 29. Landlock sandbox (P1) implementation (2026-09-25)
+
+Ops cleared P1: VPS kernel 6.8.0-139 with `CONFIG_SECURITY_LANDLOCK=y` and
+LSM `landlock,lockdown,yama,...`; inside the live container's seccomp
+profile a probe reported ABI 4 with `restrict_self` ok and real read,
+connect and bind denials; the egress guard is now boot-durable; and
+`SESSION_SECRET`/`AUTH_HELPER_KEY` were rotated.
+
+### 29.1 What was built
+
+- `sandbox/xiom-sandbox.c`: dependency-free Landlock wrapper. Sets
+  `no_new_privs`, applies a deny-by-default ruleset, then execs the target
+  so the policy is inherited by the driver, clang, the linker, the produced
+  program and anything they spawn:
+  - read-write: `/tmp`;
+  - read+execute: `/usr`, `/bin`, `/sbin`, `/lib`, `/lib64`, `/app`,
+    `/toolchain`;
+  - read: `/etc/ld.so.cache`, `/dev/zero`, `/dev/urandom`; read-write:
+    `/dev/null`;
+  - everything else is denied, including `/data`, `/proc`, `/sys`, the rest
+    of `/etc` and `/dev`.
+  ABI-aware: `REFER` from ABI 2, `TRUNCATE` from ABI 3, TCP connect/bind
+  handled from ABI 4. `--probe` prints JSON with the ABI and the
+  `restrict_self` result; `-- CMD ARGS` execs a command; without `--` the
+  target comes from `XIOM_SANDBOX_TARGET`, so the audit and tools can run
+  sandboxed through `XIOM_BIN` alone. Exit codes: 125 policy failure, 126
+  Landlock unavailable, 127 exec failure.
+- `Dockerfile`: compiles it to `/usr/local/bin/xiom-sandbox` with the image
+  clang; the image build fails if the helper does not compile.
+- `docker-compose.yml`: `XIOM_SANDBOX=require` and
+  `XIOM_SANDBOX_BIN=/usr/local/bin/xiom-sandbox` (version-controlled).
+- `server.js`: modes `require`/`auto`/`off`; a startup probe plus an
+  end-to-end `xiom --version` canary through the wrapper; `require` refuses
+  to execute compile/check/ir/tokens/format when either fails, and
+  `/api/health` reports `sandbox: {mode, active, landlock, error}`. The P0
+  environment whitelist still applies to every child.
+- `tools/verify-sandbox.js`: control, `/tmp` read-write, escape read/write
+  (canary outside the allowlist, `/data` preferred when present), `/proc`,
+  `/etc`, spawned-shell and TCP probes plus warm-run timing; JSON output
+  and a non-zero exit on any escape; `--require-net` turns ABI < 4 into a
+  failure.
+- `tools/test-server.js`: on Linux with the wrapper built it stages the
+  toolchain under `/tmp` (the only read-write path the policy allows;
+  production uses `/toolchain`), starts the server in `require` mode and
+  asserts the health fields plus a consolidated confinement submission.
+- `.github/workflows/validate.yml`: builds the wrapper and runs the denial
+  suite with `--require-net` on every push; the nightly execution audit
+  runs all 410 lessons under the wrapper.
+
+### 29.2 Verification (2026-09-25)
+
+Local (WSL Ubuntu, kernel 6.6.87, Landlock ABI 3, toolchain v0.61.3 staged
+at `/tmp/xiom-toolchain`):
+
+- `cc -O2 -Wall -Wextra -Werror` builds the wrapper with no warnings.
+- `tools/verify-sandbox.js`: control ok, tmp-rw ok, escape-read denied,
+  escape-write denied, proc-read denied, etc-read denied, spawn-proc
+  denied, warm repeat 21 ms; `tcp-connect` skipped on ABI 3 (kernel 6.6 has
+  no net rules) and enforced on ABI 4 hosts and in CI.
+- `node tools/test-server.js` with the server in `require` mode: 40/40,
+  including `GET /api/health reports the Landlock sandbox` and
+  `POST /api/compile confines submissions (files, proc, network)`.
+- Full execution audit through the wrapper (all 410 lessons type-check and
+  run): **410/410, no regressions against the baseline**.
+- Windows dev box (no Landlock): 34 passed + 1 execution skip; the server
+  defaults to `auto` and falls back to unsandboxed execution with a
+  startup note.
+
+Production (ABI 4, ops probe): the TCP rules are active there; ops re-runs
+the in-container denial suite and the crafted public-API probes after the
+deploy (recipe in `docs/OPS_SECURITY_REQUEST.md`).
+
+### 29.3 Rollback and residual
+
+- Rollback: `XIOM_SANDBOX=off` plus a redeploy. The environment whitelist,
+  the rotated secrets and every container flag stay in force. `auto`
+  remains the dev default; `require` is version-controlled in compose.
+- Residual after P1: kernel or Landlock bugs (P2 host-side sessions and
+  progress store is the next containment layer), CPU abuse within the
+  limits (P3), and shared `/tmp` cache side channels (content-keyed, no
+  secrets).
+

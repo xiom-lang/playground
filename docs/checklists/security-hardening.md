@@ -18,25 +18,26 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
 
 ## P1 -- Landlock wrapper (playground repo)
 
-- [ ] Ops: confirm `uname -r` and `CONFIG_SECURITY_LANDLOCK=y` (5.13+;
-      ABI 4 for TCP rules needs 6.7+). If older, take option 2 (host-side
-      runner) instead.
-- [ ] Add `sandbox/xiom-sandbox.c` with the documented allowlist
+- [x] Ops: kernel 6.8.0-139, `CONFIG_SECURITY_LANDLOCK=y`, ABI 4 confirmed
+      inside the live container (2026-09-25).
+- [x] Add `sandbox/xiom-sandbox.c` with the documented allowlist
       (`/tmp` rw; `/app` + `/toolchain` ro; loader paths; `/dev/null`,
       `/dev/zero`, `/dev/urandom`; deny `/data`, `/proc`, `/sys`, TCP).
-- [ ] Dockerfile compiles the wrapper with the image clang; a compile
+- [x] Dockerfile compiles the wrapper with the image clang; a compile
       failure fails the image build.
-- [ ] `server.js`: `XIOM_SANDBOX=require|auto|off`, spawn the wrapper,
+- [x] `server.js`: `XIOM_SANDBOX=require|auto|off`, spawn the wrapper,
       fail closed in `require` mode.
-- [ ] `/api/health` reports `sandbox` mode and the Landlock ABI.
-- [ ] `tools/verify-sandbox.js`: denial probes (data, proc, env, write
+- [x] `/api/health` reports `sandbox` mode and the Landlock ABI.
+- [x] `tools/verify-sandbox.js`: denial probes (data, proc, env, write
       outside /tmp, spawned shell, TCP) plus a warm-run timing check.
-- [ ] `tools/test-server.js`: Linux execution tests for the denials.
-- [ ] CI: run `tools/verify-sandbox.js` on ubuntu-latest per push; run the
-      Linux lesson audit with `XIOM_SANDBOX=require` nightly.
-- [ ] Linux lesson audit 410/410 with the sandbox required.
-- [ ] VPS canary: deploy with `require`, check `/api/health`, run the
-      probes against production.
+- [x] `tools/test-server.js`: Linux execution tests for the denials;
+      server started in `require` mode with the toolchain staged under /tmp.
+- [x] CI: `validate.yml` builds the wrapper, runs the denial suite with
+      `--require-net` per push, and the nightly execution audit runs with
+      the sandbox required.
+- [ ] Linux lesson audit 410/410 under `XIOM_SANDBOX=require`.
+- [ ] VPS canary: deploy, check `/api/health`, run the in-container denial
+      suite and the crafted public-API probes (ops).
 - [ ] Update `DEPLOY.md` sandbox section and `SESSION.md` status.
 
 ## P2 -- data-plane containment (defense in depth)

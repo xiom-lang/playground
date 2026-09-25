@@ -65,16 +65,49 @@ without bound, or reach the network. Keep all of these when editing. The
 health check uses `/api/health`, which is answered even while compiles are
 queued.
 
-In-container isolation limits (audited 2026-09-25, AUDIT section 28): the
-server and every submitted program share one uid, so a program can read or
-overwrite other accounts' progress documents on `/data`, and same-uid
-process inspection can reach the server's environment (the compose
-`env_file` secrets). Compiler children now receive a whitelisted
-environment (`server.js`, `userChildEnv()`), which closes the direct
-`io.env_var`/`getenv` leak, but that is defense in depth only. Until
-per-execution isolation lands (Landlock wrapper or a separate runner, see
-AUDIT 28.4), keep new secrets and multi-tenant data out of the container
-uid's reach, and rotate `SESSION_SECRET`/`AUTH_HELPER_KEY`.
+### Landlock wrapper (P1, implemented 2026-09-25)
+
+Every compiler child -- the driver, clang, the linker, the produced program
+and anything they spawn -- runs through `sandbox/xiom-sandbox`, a small
+Landlock helper built into the image (`Dockerfile` compiles it with clang;
+the build fails if it does not compile). The policy is deny-by-default:
+
+- read-write: `/tmp` only (work dirs, script cache, `HOME=/tmp/xiom-home`);
+- read+execute: `/usr`, `/bin`, `/sbin`, `/lib`, `/lib64`, `/app`,
+  `/toolchain`; read: `/etc/ld.so.cache`, `/dev/zero`, `/dev/urandom`;
+  read-write: `/dev/null`;
+- denied: `/data`, `/proc`, `/sys`, the rest of `/etc` and `/dev`, and
+  every other path; TCP `connect`/`bind` are denied too (Landlock ABI 4,
+  kernel 6.7+; the VPS is 6.8 and ops verified the denials in the live
+  container).
+
+Modes, from `XIOM_SANDBOX` (set to `require` in `docker-compose.yml`):
+
+- `require` -- fail closed. The server probes the wrapper (`--probe`) and
+  runs an end-to-end `xiom --version` canary at startup; when either fails,
+  `/api/compile`, `/api/check`, `/api/ir`, `/api/tokens` and `/api/format`
+  refuse to execute and say why.
+- `auto` -- default for local dev/CI: sandbox when the canary works,
+  otherwise run with a startup warning.
+- `off` -- the rollback switch (`XIOM_SANDBOX=off` + redeploy). The env
+  whitelist and secret rotation stay in force.
+
+`/api/health` reports `sandbox: {mode, active, landlock, error}`; ops reads
+it after deploys. The denial suite is `tools/verify-sandbox.js` (control,
+`/tmp` read-write, escape read/write, `/proc`, `/etc`, spawned shell, TCP,
+warm-run timing); CI runs it on every push and the nightly job executes all
+410 lessons under the wrapper. The env whitelist from P0
+(`server.js`, `userChildEnv()`) remains defense in depth.
+
+In-container isolation limits before P1 (audited 2026-09-25, AUDIT section
+28): the server and every submitted program share one uid, so a program
+could read or overwrite other accounts' progress documents on `/data`, and
+same-uid process inspection could reach the server's environment (the
+compose `env_file` secrets). P1 closes both through the kernel policy; the
+environment whitelist and the rotated secrets remain in force, and P2
+(host-side sessions/progress) is the next layer if the owner wants it.
+Until the P1 image is deployed and verified on the VPS, treat `/data` and
+the server environment as reachable from submissions.
 
 ## Accounts (C2, implemented 2026-09-19; VPS env pending)
 

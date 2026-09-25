@@ -9,6 +9,7 @@ build/
 *.code-workspace
 .toolchain/
 .toolchain.stage/
+sandbox/xiom-sandbox
 tools/.syntax-cache.json
 a.out
 data/

@@ -33,6 +33,10 @@ services:
       - XIOM_BIN=/toolchain/bin/xiom
       - XIOM_STDLIB=/toolchain/lib
       - PLAYGROUND_DATA_DIR=/data
+      # P1: user code must run under the Landlock wrapper; the server fails
+      # closed (no execution) when it is missing. Rollback: set to `off`.
+      - XIOM_SANDBOX=require
+      - XIOM_SANDBOX_BIN=/usr/local/bin/xiom-sandbox
       # The toolchain's script cache needs a writable HOME. The rootfs
       # (including /home/xiomp) is read-only, so without this every program
       # run recompiles (~6s instead of ~10ms warm on repeat runs).

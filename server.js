@@ -30,6 +30,7 @@ const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
 const os = require('os');
+const { spawnSync } = require('child_process');
 const { runProcess } = require('./lib/run-xiom');
 const { XIOM_BIN, childEnv } = require('./lib/toolchain');
 const auth = require('./lib/auth');
@@ -134,11 +135,107 @@ function userChildEnv() {
   return env;
 }
 
+// ---------------------------------------------------------------------------
+// Landlock sandbox (P1)
+// ---------------------------------------------------------------------------
+// Every compiler child -- the driver, clang, the linker, the produced program
+// and anything they spawn -- runs through sandbox/xiom-sandbox, which applies
+// a deny-by-default Landlock policy (/tmp read-write; /app, /toolchain and
+// the loader read-only; /data, /proc, /sys and TCP denied). Modes:
+//   require -- fail closed: no executions at all when the sandbox is missing;
+//   auto    -- sandbox when it demonstrably works (dev boxes, CI);
+//   off     -- rollback switch; the env whitelist still applies.
+// The wrapper is also validated end-to-end with a `xiom --version` canary so
+// a sandbox that cannot even exec the compiler never silently "works".
+
+const SANDBOX_MODE = (() => {
+  const raw = String(process.env.XIOM_SANDBOX || 'auto').toLowerCase();
+  return raw === 'require' || raw === 'off' ? raw : 'auto';
+})();
+
+const SANDBOX_BIN = (() => {
+  if (process.platform !== 'linux') return null; // Landlock is Linux-only
+  const candidates = [
+    process.env.XIOM_SANDBOX_BIN,
+    path.join(SCRIPT_DIR, 'sandbox', 'xiom-sandbox'),
+    '/usr/local/bin/xiom-sandbox',
+  ].filter(Boolean);
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+})();
+
+// ABI 3 handles every filesystem right; ABI 4 adds the TCP rules.
+const SANDBOX_MIN_ABI = Math.max(1, Number(process.env.XIOM_SANDBOX_MIN_ABI) || 3);
+
+const sandbox = { mode: SANDBOX_MODE, bin: SANDBOX_BIN, abi: null, canary: false, error: null };
+
+function probeSandbox() {
+  if (SANDBOX_MODE === 'off') {
+    sandbox.error = 'disabled by XIOM_SANDBOX=off';
+    return;
+  }
+  if (!SANDBOX_BIN) {
+    sandbox.error = 'xiom-sandbox binary not found';
+    return;
+  }
+  const probe = spawnSync(SANDBOX_BIN, ['--probe'], { encoding: 'utf8', timeout: 5000 });
+  if (probe.status !== 0 || !probe.stdout) {
+    sandbox.error = String((probe.stderr || 'sandbox probe failed').trim().split('\n')[0]);
+    return;
+  }
+  try {
+    sandbox.abi = Number(JSON.parse(probe.stdout).landlock_abi) || null;
+  } catch {
+    sandbox.error = 'sandbox probe returned invalid JSON';
+    return;
+  }
+  if (!sandbox.abi || sandbox.abi < SANDBOX_MIN_ABI) {
+    sandbox.error = 'landlock ABI ' + sandbox.abi + ' < required ' + SANDBOX_MIN_ABI;
+    return;
+  }
+  const canary = spawnSync(SANDBOX_BIN, ['--', XIOM_BIN, '--version'], {
+    encoding: 'utf8',
+    timeout: 15000,
+    env: userChildEnv(),
+  });
+  sandbox.canary = canary.status === 0;
+  if (!sandbox.canary) {
+    const detail = String((canary.stderr || canary.stdout || 'no output').trim().split('\n')[0]);
+    sandbox.error = 'sandbox cannot exec the toolchain: ' + detail;
+    return;
+  }
+  sandbox.error = null;
+}
+
+function sandboxActive() {
+  if (SANDBOX_MODE === 'off') return false;
+  if (SANDBOX_MODE === 'require') return sandbox.canary && sandbox.abi >= SANDBOX_MIN_ABI;
+  return sandbox.canary;
+}
+
 function runXiom(args, options) {
+  if (SANDBOX_MODE === 'require' && !sandboxActive()) {
+    // Fail closed: no user code runs when the promised confinement cannot be
+    // applied (AUDIT section 28 is exactly the failure this prevents).
+    return Promise.resolve({
+      success: false,
+      code: -1,
+      signal: null,
+      spawnError: true,
+      stdout: '',
+      stderr: 'error: execution disabled: xiom-sandbox unavailable (' + (sandbox.error || 'unknown reason') + ')',
+      timedOut: false,
+    });
+  }
   // childEnv carries XIOM_BIN/XIOM_STDLIB for the pinned .toolchain, matching
   // what the tools use (the VPS sets XIOM_STDLIB explicitly); userChildEnv()
   // keeps server-only variables out of every compiler child.
-  return runProcess(XIOM_BIN, args, Object.assign({ env: userChildEnv() }, options));
+  const sandboxed = sandboxActive();
+  const bin = sandboxed ? SANDBOX_BIN : XIOM_BIN;
+  const argv = sandboxed ? ['--', XIOM_BIN].concat(args) : args;
+  return runProcess(bin, argv, Object.assign({ env: userChildEnv() }, options));
 }
 
 // ---------------------------------------------------------------------------
@@ -611,6 +708,12 @@ const server = http.createServer(async (req, res) => {
         server: SERVER_VERSION,
         uptimeSeconds: Math.round(process.uptime()),
         queue: { checksPending: queueState.checksPending, compilesPending: queueState.compilesPending },
+        sandbox: {
+          mode: sandbox.mode,
+          active: sandboxActive(),
+          landlock: sandbox.abi,
+          error: sandbox.error,
+        },
       });
       return;
     }
@@ -835,6 +938,11 @@ function prepareWorkRoot() {
 }
 
 prepareWorkRoot();
+probeSandbox();
+if (SANDBOX_MODE === 'require' && !sandboxActive()) {
+  console.error('SANDBOX REQUIRED BUT INACTIVE: ' + (sandbox.error || 'unknown reason') +
+    ' -- compiler endpoints will refuse to run user code.');
+}
 
 server.listen(PORT, HOST, () => {
   console.log('XIOM Playground Server v' + SERVER_VERSION);
@@ -842,6 +950,9 @@ server.listen(PORT, HOST, () => {
   console.log('Compiler: ' + XIOM_BIN + ' (' + (fs.existsSync(XIOM_BIN) ? 'found' : 'NOT FOUND') + ')');
   console.log('Stdlib: ' + (process.env.XIOM_STDLIB || '(toolchain default)'));
   console.log('Work root: ' + WORK_ROOT + ' (jobs: ' + MAX_COMPILES + ', checks: ' + MAX_CHECKS + ')');
+  console.log('Sandbox: mode=' + sandbox.mode + ' active=' + sandboxActive() +
+    ' landlock_abi=' + (sandbox.abi == null ? 'n/a' : sandbox.abi) +
+    (sandbox.error ? ' (' + sandbox.error + ')' : ''));
   console.log('Endpoints: /api/compile, /api/check, /api/ir, /api/tokens, /api/format, /api/lessons, /api/version, /api/health, /api/me, /api/progress');
   console.log('Accounts: ' + (auth.authConfigured() ? 'GitHub sign-in enabled' : 'disabled (env not set)'));
   console.log('Progress data: ' + progressStore.dataDir);

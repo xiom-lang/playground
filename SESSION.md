@@ -1,10 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-25 (security audit of stdlib reach). Branch `main`,
+Last updated: 2026-09-25 (P1 Landlock sandbox implemented). Branch `main`,
 working tree clean, all commits pushed to `origin/main`. Production is
 healthy but still runs toolchain v0.60.1 until `latest.json` is refreshed
-(section 3). **Open security action for the owner: section 10** (rotate the
-account secrets and isolate user-program execution).
+(section 3). **P1 is built and locally verified; the VPS deploy and ops
+verification are pending (section 10).**
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -219,7 +219,11 @@ weekly.
 - Data: `js/stdlib-ref.json`, `js/limitations.json`,
   `tools/lesson-baseline.json`, `tools/expected-output-skips.json`,
   `TOOLCHAIN_VERSION`, `WASM_VERSION`, `img/playground.webp`.
-- Docs: `docs/PROGRESS_SYNC.md`, `docs/COMPILER_REPROS.md`.
+- `sandbox/xiom-sandbox.c`: Landlock wrapper (P1), built by the Dockerfile
+  and invoked by `server.js` for every compiler child.
+- Docs: `docs/PROGRESS_SYNC.md`, `docs/COMPILER_REPROS.md`,
+  `docs/SECURITY_HARDENING.md`, `docs/OPS_SECURITY_REQUEST.md`,
+  `docs/checklists/security-hardening.md`.
 
 ## 5. Commands
 
@@ -377,17 +381,45 @@ section 28. Summary:
   (`server.js` `userChildEnv()`), so the one-line `io.env_var("SESSION_SECRET")`
   leak is closed; a canary test covers it (suite 38/38 on Linux).
 - **Open, needs the owner/ops (AUDIT 28.4):**
-  1. Rotate `SESSION_SECRET` and `AUTH_HELPER_KEY` -- assume exposure, since
-     arbitrary code ran with the inherited environment on the public site.
-  2. Isolate each execution so programs cannot read the server env or
-     `/data`: a Landlock wrapper around the run child, or a separate
-     ephemeral runner with its own uid and no `/data` mount. Today a
-     submission can read/overwrite every account's progress document and
-     read the server's exec-time environ through `/proc` (verified).
-  3. If isolation is deferred, move the progress store and secrets behind
-     the host helper so the container holds neither.
+  1. ~~Rotate `SESSION_SECRET` and `AUTH_HELPER_KEY`~~ -- done by ops
+     2026-09-25 (the other points stand).
+  2. ~~Isolate each execution~~ -- P1 is implemented and locally verified;
+     the remaining steps are the VPS deploy and the ops in-container
+     verification (see below).
+  3. If P1 verification fails, fall back to the host-side runner or move
+     the progress store and secrets behind the host helper (P2).
 - The website privacy page may need a note if isolation is deferred; the
   fact list in DEPLOY.md is unchanged until the owner decides.
+
+### P1 Landlock sandbox: implemented and locally verified (2026-09-25)
+
+Ops confirmed the VPS kernel 6.8 + Landlock ABI 4 (with real read/connect/
+bind denials inside the live container), rotated `SESSION_SECRET` and
+`AUTH_HELPER_KEY`, and made the egress guard boot-durable.
+
+- `sandbox/xiom-sandbox.c`: deny-by-default Landlock policy, ABI-aware,
+  `no_new_privs`, execs the target so the driver, clang, the linker, the
+  program and anything they spawn inherit it. `--probe` reports the ABI;
+  `--` wraps a command; `XIOM_SANDBOX_TARGET` covers the tools/audit.
+- `server.js`: `XIOM_SANDBOX=require|auto|off`, startup probe + canary,
+  fail-closed endpoints, `/api/health` reports
+  `sandbox: {mode, active, landlock, error}`.
+- `docker-compose.yml` sets `require` (version-controlled); the Dockerfile
+  builds the wrapper and fails if it does not compile.
+- `tools/verify-sandbox.js` (denial suite + warm-run timing),
+  `tools/test-server.js` (require-mode health + confinement tests), and
+  `validate.yml` (denial suite per push with `--require-net`; nightly
+  410-lesson execution audit under the wrapper).
+- Evidence: denial suite green, warm repeat 21 ms, test-server 40/40 in
+  require mode, and the full execution audit **410/410 with no
+  regressions** through the wrapper (AUDIT section 29). Local WSL kernel is
+  ABI 3, so the TCP rule is exercised on ABI 4 hosts/CI/production.
+- **Open:** the owner deploys (hourly pull or `playground-deploy.sh`) and
+  ops runs the in-container denial suite plus the crafted public-API probes
+  and reads `/api/health`; recipe in `docs/OPS_SECURITY_REQUEST.md`. Until
+  that deploy, the running container still lacks the wrapper, so `/data`
+  and `/proc` remain reachable inside it. P2 starts after P1 passes
+  (`docs/checklists/security-hardening.md`).
 
 Plan and relay for this audit:
 

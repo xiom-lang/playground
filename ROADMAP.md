@@ -124,10 +124,12 @@ checklist: `docs/checklists/security-hardening.md`.
 
 - [x] D1. Immediate containment: compiler-child environment whitelist,
   canary test, and the audit record (AUDIT section 28, commit `162e041`).
-- [ ] D2. Per-execution filesystem sandbox: Landlock wrapper around every
+- [~] D2. Per-execution filesystem sandbox: Landlock wrapper around every
   compiler child (allow `/tmp` read-write, `/app` and `/toolchain`
   read-only; deny `/data`, `/proc`, `/sys`, TCP), fail closed when
-  unavailable, denial tests plus the full Linux lesson audit.
+  unavailable, denial tests plus the full Linux lesson audit. Implemented
+  and locally verified (AUDIT section 29); waiting on the VPS deploy and
+  ops verification.
 - [ ] D3. Data-plane containment: move session signing and the progress
   store host-side so the web container holds no long-lived secrets and no
   multi-tenant data.
