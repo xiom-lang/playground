@@ -303,8 +303,8 @@ switching between them.
 ## 8. Verification gate before commit
 
 1. `node --check` on every JS file (server, lib, tools, js).
-2. `node tools/test-server.js` (36 passed + 1 Windows execution skip on the
-   dev box; 42 passed on Linux/CI, where the execution tests run).
+2. `node tools/test-server.js` (41 passed + 1 Windows execution skip on the
+   dev box; 47 passed on Linux/CI, where the execution tests run).
 3. `node tools/generate-stdlib-ref.js --check`,
    `node tools/generate-limitations.js --check` and
    `node tools/generate-expected-outputs.js --check`.
@@ -454,6 +454,25 @@ live tokens. Cutover: snapshot `/data`, copy the account documents host-side,
 deploy the helper endpoints and the container update, users sign in once.
 The playground side (async `userFromRequest`, the progress-store client,
 the mock helper and tests) starts when ops confirms the helper is live.
+
+### P2 client landed behind the mode flag (2026-09-25)
+
+`PLAYGROUND_STATE=helper` now switches the container to the host-side state
+protocol while the default stays `local`, so main is deployable either way:
+`lib/auth.js` keeps the HMAC path in local mode and, in helper mode, uses
+opaque tokens from `/exchange`, a cached `GET /session` lookup, host-side
+logout, and a per-boot OAuth state key (no `SESSION_SECRET`).
+`lib/progress-store.js` proxies `GET/PUT/DELETE /progress` with the
+caller's bearer token, keeping the revision/conflict shapes and the
+container-side sanitization. The mock helper implements the full protocol
+and five helper-mode tests cover sign-in, `/api/me`, progress round-trip +
+409 + revoke, forged cookies and logout. Suite: 41 + 1 Windows skip, 47/47
+on Linux with the sandbox required (AUDIT section 31).
+
+Remaining for P2: ops implements and confirms the helper endpoints, then
+the cutover per `docs/P2_STATE_HELPER_DESIGN.md` / the DEPLOY state-modes
+section (snapshot, migrate documents, flip compose, drop `SESSION_SECRET`
+and `/data`, rotate again, verify, privacy-facts update).
 
 ### P3 abuse controls landed (2026-09-25)
 

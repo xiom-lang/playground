@@ -132,9 +132,11 @@ checklist: `docs/checklists/security-hardening.md`.
   probes ok, escape program denied); rollback is `XIOM_SANDBOX=off`.
 - [~] D3. Data-plane containment: move session signing and the progress
   store host-side so the web container holds no long-lived secrets and no
-  multi-tenant data. Protocol design sent to ops
-  (`docs/P2_STATE_HELPER_DESIGN.md`); ops implements the helper, then the
-  playground lands the client and the cutover.
+  multi-tenant data. Design sent to ops
+  (`docs/P2_STATE_HELPER_DESIGN.md`); the playground client is implemented
+  behind `PLAYGROUND_STATE=helper` with full mock-helper tests (AUDIT
+  section 31). Remaining: ops helper endpoints, cutover, privacy-facts
+  update.
 - [x] D4. Abuse controls: per-IP token buckets on the five compiler
   endpoints (429 + `Retry-After`) and queue/rejection counters on
   `/api/health` (AUDIT section 30). The alert wiring stays with ops.

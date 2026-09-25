@@ -54,8 +54,9 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
       `/data`).
 - [ ] Ops: implement the helper endpoints and the state directory; confirm
       the deployment is live.
-- [ ] Playground: async `userFromRequest` with cache, per-boot OAuth state
-      key, progress-store helper client, mock-helper protocol tests.
+- [x] Playground: async `userFromRequest` with cache, per-boot OAuth state
+      key, progress-store helper client, mock-helper protocol tests
+      (`PLAYGROUND_STATE=helper`; AUDIT section 31).
 - [ ] Cutover: snapshot `/data`, copy documents host-side, deploy, verify
       sign-in and progress round-trips, confirm no `SESSION_SECRET` and no
       `/data` mount in the container.

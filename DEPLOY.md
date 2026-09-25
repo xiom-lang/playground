@@ -161,6 +161,32 @@ runs on a small host-side helper, not in the container:
   narrow accept rule (playground subnet to the gateway, tcp/3400) above the
   DROP. Do not open GitHub egress.
 
+### State modes (P2, client implemented 2026-09-25)
+
+`PLAYGROUND_STATE` selects where sessions and progress live:
+
+- unset or `local` (current) -- sessions are stateless HMAC cookies signed
+  with `SESSION_SECRET`; progress documents live on the `playground-data`
+  volume at `/data`. The helper only performs the OAuth code exchange.
+- `helper` -- the helper mints an opaque session token on `/exchange` and
+  owns `GET /session`, `POST /session/logout`, `GET/PUT/DELETE /progress`
+  backed by `/opt/xiom/playground-state/` (see
+  `docs/P2_STATE_HELPER_DESIGN.md`). The container then needs no
+  `SESSION_SECRET` and hides no multi-tenant data; cookie verification is a
+  cached helper lookup (positive 60 s, negative 10 s; `SESSION_CACHE_MS`)
+  and the OAuth state is signed with a key generated at startup.
+
+Cutover to `helper`: snapshot `/data`, copy
+`/data/accounts/*.json` to `/opt/xiom/playground-state/accounts/`, install
+the helper endpoints and confirm them live, then set
+`PLAYGROUND_STATE=helper` in the compose environment, drop `SESSION_SECRET`
+from `/opt/xiom/playground.env`, remove the `/data` mount, rotate
+`AUTH_HELPER_KEY` again, and deploy. Users sign in once. Verify sign-in,
+`/api/me`, a progress round-trip with a 409 conflict, `DELETE /api/me`, a
+forged cookie (401), and `docker inspect` showing no `/data` mount and no
+`SESSION_SECRET`. Rollback: restore the previous compose/env (local mode)
+and the pre-cutover volume snapshot; the host store is additive.
+
 With no env configured the sign-in UI stays hidden and every existing route
 behaves as before.
 

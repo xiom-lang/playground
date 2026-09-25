@@ -821,7 +821,8 @@ const server = http.createServer(async (req, res) => {
     // --- Optional GitHub sign-in (C2); inert unless configured -------------
     if (url === '/api/auth/config' && method === 'GET') {
       const configured = auth.authConfigured();
-      const user = configured ? auth.userFromRequest(req) : null;
+      const session = configured ? await auth.userFromRequest(req) : null;
+      const user = session ? session.user : null;
       sendJson(res, 200, {
         configured,
         provider: 'github',
@@ -862,10 +863,10 @@ const server = http.createServer(async (req, res) => {
       const code = params.get('code');
       if (!code) return fail('missing code');
       try {
-        const user = await auth.exchangeCode(code, process.env.OAUTH_CALLBACK_URL);
+        const session = await auth.exchangeCode(code, process.env.OAUTH_CALLBACK_URL);
         res.writeHead(302, {
           Location: '/?auth=ok',
-          'Set-Cookie': auth.sessionSetCookie(user),
+          'Set-Cookie': auth.sessionSetCookie(session),
           'Cache-Control': 'no-store',
         });
         res.end();
@@ -880,6 +881,7 @@ const server = http.createServer(async (req, res) => {
         sendJson(res, 403, { error: 'Cross-origin request rejected' });
         return;
       }
+      await auth.endSession(req);
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
         'Set-Cookie': auth.sessionClearCookie(),
@@ -890,17 +892,19 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (url === '/api/me' && (method === 'GET' || method === 'DELETE')) {
-      const user = auth.userFromRequest(req);
-      if (!user) {
+      const session = await auth.userFromRequest(req);
+      if (!session) {
         sendJson(res, 401, { user: null });
         return;
       }
+      const user = session.user;
       if (method === 'DELETE') {
         if (!sameOrigin(req)) {
           sendJson(res, 403, { error: 'Cross-origin request rejected' });
           return;
         }
-        progressStore.deleteProgress(user.id);
+        await progressStore.deleteProgress(session);
+        await auth.endSession(req);
         res.writeHead(200, {
           'Content-Type': 'application/json; charset=utf-8',
           'Set-Cookie': auth.sessionClearCookie(),
@@ -914,12 +918,12 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (url === '/api/progress' && method === 'GET') {
-      const user = auth.userFromRequest(req);
-      if (!user) {
+      const session = await auth.userFromRequest(req);
+      if (!session) {
         sendJson(res, 401, { error: 'Not signed in' });
         return;
       }
-      const stored = progressStore.readProgress(user.id);
+      const stored = await progressStore.readProgress(session);
       if (!stored) {
         sendJson(res, 200, { revision: null, updated: null, document: null });
         return;
@@ -929,8 +933,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (url === '/api/progress' && method === 'PUT') {
-      const user = auth.userFromRequest(req);
-      if (!user) {
+      const session = await auth.userFromRequest(req);
+      if (!session) {
         sendJson(res, 401, { error: 'Not signed in' });
         return;
       }
@@ -939,8 +943,8 @@ const server = http.createServer(async (req, res) => {
         return;
       }
       const body = await readJson(req);
-      const result = progressStore.writeProgress(
-        user.id,
+      const result = await progressStore.writeProgress(
+        session,
         body.document,
         body.baseRevision === undefined ? null : body.baseRevision
       );
@@ -1044,7 +1048,9 @@ server.listen(PORT, HOST, () => {
     (RATE_LIMIT_BURST > 0 ? '' : ' (disabled)'));
   console.log('Endpoints: /api/compile, /api/check, /api/ir, /api/tokens, /api/format, /api/lessons, /api/version, /api/health, /api/me, /api/progress');
   console.log('Accounts: ' + (auth.authConfigured() ? 'GitHub sign-in enabled' : 'disabled (env not set)'));
-  console.log('Progress data: ' + progressStore.dataDir);
+  console.log(auth.stateMode === 'helper'
+    ? 'State: helper sessions/progress (' + (process.env.AUTH_HELPER_URL || 'not configured') + ')'
+    : 'Progress data: ' + progressStore.dataDir);
 });
 
 function shutdown(signal) {

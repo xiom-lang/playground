@@ -1738,3 +1738,37 @@ and refill 60 s; two checks pass, the third returns 429 with a positive
 `check=2, rateLimited=1, burst=2`. Suite: 36 passed + 1 Windows execution
 skip on the dev box, 42 passed on Linux with the sandbox in require mode.
 
+## 31. P2 client: helper sessions and progress (2026-09-25)
+
+The playground side of P2 (`docs/P2_STATE_HELPER_DESIGN.md`) is implemented
+behind `PLAYGROUND_STATE=helper`, so main stays deployable with the current
+local mode until ops confirms the helper endpoints are live:
+
+- `lib/auth.js`: two modes. `local` is the previous behavior (stateless
+  HMAC cookies with `SESSION_SECRET`, helper `/exchange` for the code
+  exchange). `helper` drops `SESSION_SECRET`: `/exchange` must return an
+  opaque token, cookie verification is a cached helper `GET /session`
+  (positive 60 s, negative 10 s), `endSession()` revokes host-side and
+  drops the cache entry, and the OAuth state is signed with a key generated
+  at startup (a restart only invalidates a pending sign-in).
+- `lib/progress-store.js`: two modes with the same public API and
+  revision/conflict shapes; `helper` proxies `GET/PUT/DELETE /progress`
+  with the caller's bearer token, so the container stores no documents.
+  Sanitization and the 1 MiB cap stay in the container.
+- `server.js`: the auth routes await the session, pass the session object
+  to the store, and revoke on logout; the startup log prints
+  `State: helper sessions/progress (...)`.
+- `tools/test-server.js`: the mock helper now implements the whole P2
+  protocol (opaque tokens, session lookup/logout, progress with revision
+  conflicts). Five helper-mode tests run against a dedicated server with
+  no `SESSION_SECRET`: opaque cookie on callback, `/api/me` via the helper,
+  progress round-trip + 409 + revoke-on-DELETE, forged cookie 401, and
+  logout revoking host-side. Suite: 41 passed + 1 Windows execution skip,
+  47 passed on Linux with the sandbox required.
+
+Remaining for P2: ops implements the endpoints and confirms them live; then
+the cutover (compose switches to `PLAYGROUND_STATE=helper`, drops
+`SESSION_SECRET` and the `/data` mount; documents migrate from
+`/data/accounts` to `/opt/xiom/playground-state/accounts`; rotate again),
+the verification recipe in the design doc, and the privacy-facts update.
+

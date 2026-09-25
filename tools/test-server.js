@@ -11,6 +11,7 @@
 'use strict';
 
 const assert = require('assert');
+const crypto = require('crypto');
 const fs = require('fs');
 const http = require('http');
 const net = require('net');
@@ -127,11 +128,15 @@ function startServerWithEnv(extraEnv, port) {
 }
 
 /**
- * Mock of the host-side auth helper: accepts POST /exchange with the shared
- * key and returns the queued users in order. No GitHub involved.
+ * Mock of the host-side auth/state helper. `/exchange` keeps the legacy
+ * response and (P2) also mints an opaque session token; `/session`,
+ * `/session/logout` and `/progress` back the container's helper mode with
+ * in-memory sessions and documents.
  */
 function startMockHelper(users) {
   let index = 0;
+  const sessions = new Map(); // token -> { user, expiresAt }
+  const docs = new Map();     // userId -> { revision, updated, document }
   const server = http.createServer((req, res) => {
     let body = '';
     req.on('data', (chunk) => { body += chunk; });
@@ -140,6 +145,10 @@ function startMockHelper(users) {
         res.writeHead(status, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(payload));
       };
+      const bearer = /^Bearer\s+(.+)$/i.exec(req.headers.authorization || '');
+      const token = bearer ? bearer[1] : null;
+      const session = token ? sessions.get(token) : null;
+
       if (req.method === 'POST' && req.url === '/exchange') {
         if (req.headers['x-auth-helper-key'] !== 'test-helper-key') {
           json(401, { ok: false, error: 'bad helper key' });
@@ -153,9 +162,85 @@ function startMockHelper(users) {
         }
         const user = users[index % users.length];
         index += 1;
-        json(200, { ok: true, user });
+        const minted = 'tok-' + crypto.randomBytes(12).toString('hex');
+        const expiresAt = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+        sessions.set(minted, { user, expiresAt });
+        json(200, { ok: true, token: minted, expiresAt, user });
         return;
       }
+
+      if (req.method === 'GET' && req.url === '/session') {
+        if (!session) {
+          json(401, { ok: false, error: 'invalid session' });
+          return;
+        }
+        json(200, { ok: true, user: session.user, expiresAt: session.expiresAt });
+        return;
+      }
+
+      if (req.method === 'POST' && req.url === '/session/logout') {
+        if (token) sessions.delete(token);
+        json(200, { ok: true });
+        return;
+      }
+
+      if (req.url === '/progress') {
+        if (!session) {
+          json(401, { ok: false, error: 'invalid session' });
+          return;
+        }
+        const id = session.user.id;
+        const stored = docs.get(id) || null;
+        if (req.method === 'GET') {
+          if (!stored) {
+            json(200, { ok: true, found: false });
+            return;
+          }
+          json(200, {
+            ok: true,
+            found: true,
+            revision: stored.revision,
+            updated: stored.updated,
+            document: stored.document,
+          });
+          return;
+        }
+        if (req.method === 'PUT') {
+          let parsed = null;
+          try { parsed = JSON.parse(body); } catch { parsed = null; }
+          if (!parsed || !parsed.document || typeof parsed.document !== 'object') {
+            json(400, { ok: false, error: 'bad body' });
+            return;
+          }
+          const expected = parsed.baseRevision === undefined || parsed.baseRevision === null
+            ? null
+            : String(parsed.baseRevision);
+          if (stored && String(stored.revision) !== expected) {
+            json(409, {
+              ok: false,
+              error: 'revision mismatch',
+              revision: stored.revision,
+              updated: stored.updated,
+              document: stored.document,
+            });
+            return;
+          }
+          const record = {
+            revision: 'rev-' + crypto.randomBytes(8).toString('hex'),
+            updated: new Date().toISOString(),
+            document: parsed.document,
+          };
+          docs.set(id, record);
+          json(200, { ok: true, revision: record.revision, updated: record.updated });
+          return;
+        }
+        if (req.method === 'DELETE') {
+          docs.delete(id);
+          json(200, { ok: true });
+          return;
+        }
+      }
+
       json(404, { ok: false, error: 'no route' });
     });
   });
@@ -648,6 +733,93 @@ async function main() {
       const res = await requestTo(authPort, 'PUT', '/api/progress', { baseRevision: null }, { Cookie: aliceCookie });
       assert.strictEqual(res.status, 400);
     });
+
+    // --- P2 helper mode: opaque sessions and host-side progress -----------
+    const helperStatePort = PORT + 173;
+    const helperStateChild = startServerWithEnv({
+      PLAYGROUND_STATE: 'helper',
+      GITHUB_CLIENT_ID: 'test-client-id',
+      OAUTH_CALLBACK_URL: 'http://127.0.0.1:' + helperStatePort + '/auth/github/callback',
+      AUTH_HELPER_URL: 'http://127.0.0.1:' + helper.port,
+      AUTH_HELPER_KEY: 'test-helper-key',
+      COOKIE_SECURE: '0',
+      XIOM_SANDBOX: 'off',
+    }, helperStatePort);
+    try {
+      const stateDeadline = Date.now() + 15000;
+      for (;;) {
+        try {
+          const res = await requestTo(helperStatePort, 'GET', '/api/health');
+          if (res.status === 200) break;
+        } catch { /* still starting */ }
+        if (Date.now() > stateDeadline) throw new Error('helper-mode server did not start');
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+
+      let stateCookie = null;
+
+      await okAsync('helper mode signs in with an opaque session token', async () => {
+        const start = await requestTo(helperStatePort, 'GET', '/auth/github');
+        const state = new URL(start.headers.location).searchParams.get('state');
+        const callback = await requestTo(helperStatePort, 'GET',
+          '/auth/github/callback?code=code-h1&state=' + encodeURIComponent(state));
+        assert.strictEqual(callback.status, 302);
+        assert.strictEqual(callback.headers.location, '/?auth=ok');
+        const setCookie = (callback.headers['set-cookie'] || [])[0] || '';
+        const value = setCookie.split(';')[0].replace('xiom_session=', '');
+        assert.ok(value.startsWith('tok-'), setCookie);
+        assert.ok(value.indexOf('.') === -1, 'opaque token expected: ' + value);
+        stateCookie = setCookie.split(';')[0];
+      });
+
+      await okAsync('helper mode resolves /api/me through the helper', async () => {
+        const res = await requestTo(helperStatePort, 'GET', '/api/me', undefined, { Cookie: stateCookie });
+        assert.strictEqual(res.status, 200);
+        const payload = JSON.parse(res.body);
+        assert.ok(payload.user && typeof payload.user.login === 'string' && payload.user.login.length > 0, res.body);
+      });
+
+      await okAsync('helper mode progress round-trips and conflicts', async () => {
+        const put = await requestTo(helperStatePort, 'PUT', '/api/progress',
+          { baseRevision: null, document: { progress: { completed: ['L0-01'] } } },
+          { Cookie: stateCookie });
+        assert.strictEqual(put.status, 200, put.body);
+        const revision = JSON.parse(put.body).revision;
+        assert.ok(revision);
+        const get = await requestTo(helperStatePort, 'GET', '/api/progress', undefined, { Cookie: stateCookie });
+        assert.strictEqual(get.status, 200);
+        assert.strictEqual(JSON.parse(get.body).revision, revision);
+        const stale = await requestTo(helperStatePort, 'PUT', '/api/progress',
+          { baseRevision: 'stale', document: { progress: { completed: [] } } },
+          { Cookie: stateCookie });
+        assert.strictEqual(stale.status, 409, stale.body);
+        assert.ok(JSON.parse(stale.body).document, stale.body);
+        const del = await requestTo(helperStatePort, 'DELETE', '/api/me', undefined, { Cookie: stateCookie });
+        assert.strictEqual(del.status, 200, del.body);
+        const after = await requestTo(helperStatePort, 'GET', '/api/progress', undefined, { Cookie: stateCookie });
+        assert.strictEqual(after.status, 401, 'session must be revoked after DELETE /api/me');
+      });
+
+      await okAsync('helper mode rejects a forged cookie', async () => {
+        const res = await requestTo(helperStatePort, 'GET', '/api/me', undefined,
+          { Cookie: 'xiom_session=tok-000000000000000000000000' });
+        assert.strictEqual(res.status, 401);
+      });
+
+      await okAsync('helper mode logout revokes the token host-side', async () => {
+        const start = await requestTo(helperStatePort, 'GET', '/auth/github');
+        const state = new URL(start.headers.location).searchParams.get('state');
+        const callback = await requestTo(helperStatePort, 'GET',
+          '/auth/github/callback?code=code-h2&state=' + encodeURIComponent(state));
+        const cookie = ((callback.headers['set-cookie'] || [])[0] || '').split(';')[0];
+        const logout = await requestTo(helperStatePort, 'POST', '/auth/logout', undefined, { Cookie: cookie });
+        assert.strictEqual(logout.status, 200);
+        const me = await requestTo(helperStatePort, 'GET', '/api/me', undefined, { Cookie: cookie });
+        assert.strictEqual(me.status, 401, 'revoked session must not resolve');
+      });
+    } finally {
+      stopServer(helperStateChild);
+    }
 
     // --- P3: per-IP rate limiting (own server with tight limits) -----------
     const ratePort = PORT + 271;
