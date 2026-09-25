@@ -1,10 +1,11 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-25 (P1 verified live on the VPS). Branch `main`,
-working tree clean, all commits pushed to `origin/main`. Production is
-healthy but still runs toolchain v0.60.1 until `latest.json` is refreshed
-(section 3). **P1 Landlock sandbox is live and verified (section 10); P2
-design sent to ops (`docs/P2_STATE_HELPER_DESIGN.md`).**
+Last updated: 2026-09-25 (P2 client landed; toolchain currency closed).
+Branch `main`, working tree clean, all commits pushed to `origin/main`.
+Production is healthy and now runs **toolchain v0.61.3** with P1 (Landlock
+`require`, ABI 4) and P3 (rate limits + `abuse` monitor field) live. P2:
+ops accepted the design and is implementing the helper; the cutover window
+follows (section 10).
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -104,7 +105,7 @@ first real `xiom.*` packages. The public registry was re-checked on
 2026-09-24 and carries only `xiom.staging-e2e-probe`, so C3 stays open. Phase
 C is otherwise finished.
 
-### Toolchain currency: decision C + B (2026-09-24)
+### Toolchain currency: decision C + B (2026-09-24; C landed 2026-09-25)
 
 The owner decision is **C + B**:
 
@@ -118,21 +119,19 @@ The owner decision is **C + B**:
   - equal: green.
   Validated by YAML parse, `bash -n` on every run block and a live resolve
   against the mirror (AUDIT section 26).
-- **C is requested from the ops session** (section 3.2 holds the exact change
-  request). `playground-deploy.sh` should read `TOOLCHAIN_VERSION` from the
-  playground checkout for the container toolchain; `latest.json` remains the
-  mirror index. Until it lands, the VPS deploy still tracks `latest.json`.
-
-Immediate owner action: refresh `https://dl.xiom-lang.org/latest.json` to
-**v0.61.3** (its assets are already live and checksum-verified; the v0.61.1
-tag is superseded). After the next hourly deploy the container should report
-v0.61.3: `curl -s https://playground.xiom-lang.org/api/version` must show
-`"toolchain":"v0.61.3"` and `"capabilities":{"format":true}`. Note the mirror
-index files (`latest.json`, `releases/index.json`) are stale at v0.60.1 and
-missing v0.61.3, so the `dl-deploy.sh` cron on the VPS needs a look too.
+- **C landed (ops, 2026-09-25).** `playground-deploy.sh` installs the
+  compiler from the repo pin (`releases/$PIN/...`), with `latest.json` only
+  as a fallback and a missing pinned archive failing the deploy; the mirror
+  deploy picks the newest release by `published_at`, so `latest.json`
+  tracks the current release again. The VPS container now reports
+  `toolchain v0.61.3`, `stdlib 0.61.3`, `capabilities.format: true`
+  (verified 2026-09-25), so the deployed compiler matches CI and the sweep
+  data. Details and history: section 3.2 and AUDIT 26.2.
 
 Last absorbed release: **v0.61.3 on 2026-09-24** (R64/R65 batch; no lesson
-output changes; bench before/after in AUDIT section 26).
+output changes; bench before/after in AUDIT section 26). The next release
+is absorbed by the section 3.1 runbook plus one pin-bump commit; the drift
+workflow (B) signals it weekly.
 
 ### 3.1 Absorbing a compiler release (runbook)
 
@@ -158,7 +157,15 @@ Never hand-edit generated files. Until step 3 runs, the nightly reports
 expected-output mismatches for lessons whose output changed: that is the
 intended drift signal.
 
-### 3.2 Ops change request: option C (playground-deploy.sh)
+### 3.2 Ops change request: option C (playground-deploy.sh) -- landed 2026-09-25
+
+Ops implemented this on 2026-09-25: `playground-deploy.sh` reads the pin
+from `$WORK/TOOLCHAIN_VERSION` and installs
+`releases/$PIN/xiom-${PIN#v}-linux-x64.tar.gz` (with `latest.json` only as a
+fallback and a missing pinned archive failing the deploy), and
+`dl-deploy.sh` selects the newest release by `published_at`. The container
+and `/api/version` now report v0.61.3. The request below is kept for
+history.
 
 Handed to the owner 2026-09-24; ops repo `xiom-lang/ops`,
 `scripts/playground-deploy.sh` (installed on the VPS as
@@ -473,6 +480,25 @@ Remaining for P2: ops implements and confirms the helper endpoints, then
 the cutover per `docs/P2_STATE_HELPER_DESIGN.md` / the DEPLOY state-modes
 section (snapshot, migrate documents, flip compose, drop `SESSION_SECRET`
 and `/data`, rotate again, verify, privacy-facts update).
+
+### P2 accepted by ops (2026-09-25)
+
+Ops accepts `docs/P2_STATE_HELPER_DESIGN.md` and implements the endpoints by
+extending the existing auth helper (same port/key, constant-time compare,
+sessions in `sessions.json`, documents under `/opt/xiom/playground-state/`
+0600/0700 with atomic writes, absolute 30-day TTL). When ops confirms them
+live, the owner schedules the cutover window; the playground client is
+already landed and tested behind `PLAYGROUND_STATE=helper`.
+
+### P3 monitor field confirmed (2026-09-25)
+
+Ops wires an external UptimeRobot keyword monitor (VPS cron mail is rejected
+by SPF) on the literal `"abuse":"ok"` in `/api/health`. The field flips to
+`"saturated"` when the compile queue has been continuously busy for
+`ABUSE_BUSY_MS` (default 180 s) or the limiter rejected `ABUSE_REJECTIONS`
+requests within `ABUSE_WINDOW_MS` (default 50 in 5 min); the raw counters
+stay in the payload. Verified by the suite (idle `"ok"`, burst instance
+flips after its 429).
 
 ### P3 abuse controls landed (2026-09-25)
 

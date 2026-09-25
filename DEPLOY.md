@@ -123,6 +123,16 @@ code from reaching the server port. `/api/health` exposes
 `rateLimit: {burst, refillMs, buckets}` so the uptime check can alert on
 sustained queue saturation or a rejection spike.
 
+External monitoring field: `/api/health` carries a single keyword-friendly
+field, `"abuse":"ok"` or `"abuse":"saturated"` (ops runs an UptimeRobot
+keyword monitor on the literal `"abuse":"ok"`; local cron mail is rejected
+by SPF, so alerts come from external infrastructure). `saturated` means the
+compile queue has been continuously busy for `ABUSE_BUSY_MS` (default
+180000) or the rate limiter rejected `ABUSE_REJECTIONS` requests within
+`ABUSE_WINDOW_MS` (default 50 within 300000). Both knobs plus
+`RATE_LIMIT_BURST`/`RATE_LIMIT_REFILL_MS` can be tuned in the compose
+environment; the raw counters stay in the payload for diagnosis.
+
 ## Accounts (C2, implemented 2026-09-19; VPS env pending)
 
 Sign-in is optional; the playground works fully without an account. GitHub
@@ -238,21 +248,19 @@ On the VPS: `/opt/xiom/bin/playground-deploy.sh` (from `xiom-lang/ops`,
 `/opt/xiom/toolchain` on first run, then `docker compose up -d --build`.
 It runs hourly from `/etc/cron.d/xiom-deploy` (minute 29).
 
-Toolchain selection on the VPS follows `https://dl.xiom-lang.org/latest.json`
-(the ops script records the tag in `/opt/xiom/toolchain/.mirror-tag`, which
-`/api/version` reads). `TOOLCHAIN_VERSION` in this repository is the version
-the lessons are verified against in CI; it is expected to track the latest
-release closely but is not what the VPS installs.
-
-Requested change (ops, 2026-09-24, option C): `playground-deploy.sh` should
-read `TOOLCHAIN_VERSION` from the playground checkout (`$WORK` after the
-`git reset --hard`) and install `releases/$PIN/xiom-${PIN#v}-linux-x64.tar.gz`
-from the mirror, keeping `latest.json` as the mirror index for the website
-and other consumers. Then the deployed compiler always matches the repo pin
-and a release is adopted by one reviewed commit. Until it lands, the owner
-must refresh `latest.json` on every release; it is currently stale at v0.60.1
-while v0.61.3 is the pinned, mirrored release, so the container still serves
-v0.60.1. The exact request is in `SESSION.md` section 3.2.
+Toolchain selection is repo-pinned as of 2026-09-25 (option C landed):
+`playground-deploy.sh` reads `TOOLCHAIN_VERSION` from the playground
+checkout (`$WORK` after the `git reset --hard`) and installs
+`releases/$PIN/xiom-${PIN#v}-linux-x64.tar.gz` from the mirror, recording
+the tag in `/opt/xiom/toolchain/.mirror-tag` (which `/api/version` reads).
+`latest.json` is consulted only as a fallback, and a missing pinned archive
+fails the deploy instead of silently serving a different compiler. The
+mirror deploy (`dl-deploy.sh`) picks the newest release by `published_at`
+rather than GitHub's `releases/latest` flag, so `latest.json` tracks the
+current release for the website and other consumers. The VPS now runs
+v0.61.3 (`/api/version` confirms toolchain and stdlib 0.61.3,
+`capabilities.format: true`). A release is adopted by one reviewed pin-bump
+commit; the exact request and history are in `SESSION.md` section 3.
 
 Hestia template: `xiom-playground` (nginx-only host, templates live in
 `/usr/local/hestia/data/templates/web/nginx/php-fpm/`) proxying the domain

@@ -75,6 +75,28 @@ const RATE_LIMIT_IDLE_MS = 10 * 60 * 1000;
 const counters = { compile: 0, check: 0, ir: 0, tokens: 0, format: 0, rateLimited: 0 };
 const rateBuckets = new Map(); // ip -> { tokens, updated }
 
+// External monitoring (P3): /api/health reports abuse "ok" unless the
+// compile queue has been continuously busy for ABUSE_BUSY_MS or the rate
+// limiter has rejected ABUSE_REJECTIONS requests within ABUSE_WINDOW_MS.
+// UptimeRobot keyword-matches the literal "abuse":"ok".
+const ABUSE_BUSY_MS = Math.max(1000, Number(process.env.ABUSE_BUSY_MS) || 180000);
+const ABUSE_REJECTIONS = Math.max(1, Number(process.env.ABUSE_REJECTIONS) || 50);
+const ABUSE_WINDOW_MS = Math.max(1000, Number(process.env.ABUSE_WINDOW_MS) || 300000);
+const rejectionTimes = [];
+let busySince = 0;
+
+function abuseStatus() {
+  const now = Date.now();
+  while (rejectionTimes.length > 0 && now - rejectionTimes[0] > ABUSE_WINDOW_MS) {
+    rejectionTimes.shift();
+  }
+  if (rejectionTimes.length >= ABUSE_REJECTIONS) return 'saturated';
+  if (queueState.compilesPending > 0 && busySince > 0 && now - busySince >= ABUSE_BUSY_MS) {
+    return 'saturated';
+  }
+  return 'ok';
+}
+
 function isPrivatePeer(address) {
   if (!address) return false;
   if (address === '::1' || address.startsWith('127.') || address.startsWith('10.') ||
@@ -119,6 +141,7 @@ function rateLimitRetryMs(req) {
   const ip = clientIp(req);
   if (takeRateToken(ip)) return 0;
   counters.rateLimited++;
+  rejectionTimes.push(Date.now());
   const bucket = rateBuckets.get(ip);
   return Math.max(1000, Math.ceil((1 - bucket.tokens) * RATE_LIMIT_REFILL_MS));
 }
@@ -189,7 +212,11 @@ function runCheckJob(task) {
 
 function runCompileJob(task) {
   queueState.compilesPending++;
-  return scheduleCompile(task).finally(() => { queueState.compilesPending--; });
+  if (queueState.compilesPending === 1) busySince = Date.now();
+  return scheduleCompile(task).finally(() => {
+    queueState.compilesPending--;
+    if (queueState.compilesPending === 0) busySince = 0;
+  });
 }
 
 // The server's own environment can hold account secrets from
@@ -788,6 +815,7 @@ const server = http.createServer(async (req, res) => {
         queue: { checksPending: queueState.checksPending, compilesPending: queueState.compilesPending },
         counters: Object.assign({}, counters),
         rateLimit: { burst: RATE_LIMIT_BURST, refillMs: RATE_LIMIT_REFILL_MS, buckets: rateBuckets.size },
+        abuse: abuseStatus(),
         sandbox: {
           mode: sandbox.mode,
           active: sandboxActive(),

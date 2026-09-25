@@ -160,11 +160,11 @@ checklist: `docs/checklists/security-hardening.md`.
 - C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
   stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
   constants) shipped in v0.61.3 and do not affect the lesson set.
-- Ops: v0.61.3 assets are mirrored and checksum-verified; `latest.json` is
-  stale at v0.60.1. Requested: (a) refresh it to v0.61.3 so the VPS deploy
-  upgrades the container toolchain, and (b) land option C so
-  `playground-deploy.sh` reads `TOOLCHAIN_VERSION` from the repo instead of
-  `latest.json` (SESSION.md section 3.2).
+- Ops: v0.61.3 assets are mirrored and checksum-verified, `latest.json` is
+  current again, and the deploy installs from the repo pin (option C landed
+  2026-09-25); the container runs v0.61.3. The weekly drift workflow now
+  reports equal-or-newer and will fail loudly on the next release until it
+  is absorbed.
 
 ## Acceptance for VPS testing
 

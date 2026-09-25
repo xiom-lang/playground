@@ -303,6 +303,7 @@ async function main() {
       const payload = JSON.parse(res.body);
       assert.strictEqual(payload.status, 'ok');
       assert.ok(payload.queue);
+      assert.strictEqual(payload.abuse, 'ok', 'health abuse field must be "ok" when idle');
     });
 
     await okAsync('GET /api/version reports toolchain and capabilities', async () => {
@@ -827,6 +828,7 @@ async function main() {
       XIOM_SANDBOX: 'off',
       RATE_LIMIT_BURST: '2',
       RATE_LIMIT_REFILL_MS: '60000',
+      ABUSE_REJECTIONS: '1',
     }, ratePort);
     try {
       const deadline = Date.now() + 15000;
@@ -866,6 +868,10 @@ async function main() {
         assert.strictEqual(payload.counters.rateLimited, 1, JSON.stringify(payload.counters));
         assert.strictEqual(payload.rateLimit.burst, 2);
         assert.ok(payload.queue && payload.queue.checksPending >= 0, JSON.stringify(payload.queue));
+        // ABUSE_REJECTIONS=1 on this instance: the rejection above flips the
+        // keyword field the external monitor watches.
+        assert.strictEqual(payload.abuse, 'saturated', JSON.stringify(payload));
+        assert.ok(JSON.stringify(payload).indexOf('"abuse":"saturated"') >= 0, 'keyword shape must be exact');
       });
     } finally {
       stopServer(rateChild);

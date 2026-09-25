@@ -138,7 +138,8 @@ the `/data` mount. The playground client is already implemented behind
 `PLAYGROUND_STATE=helper` (default `local`, so main is deployable either
 way) with full mock-helper tests; once ops confirms the endpoints are live,
 the cutover follows the steps in `DEPLOY.md` (snapshot, migrate documents,
-flip the compose env, rotate again, verify).
+flip the compose env, rotate again, verify). Ops accepted this design on
+2026-09-25 and is implementing the endpoints.
 
 ## P3 landed (2026-09-25)
 
@@ -150,8 +151,17 @@ one token per 4 s; `RATE_LIMIT_BURST=0` disables), returning 429 with
 queue depth, rejection spikes, or a stalled queue. Tune the two env knobs
 in compose if real traffic needs different values.
 
-Open ops reminder (toolchain currency): `latest.json` still advertises
-v0.60.1 while the repo pins and the playground tests v0.61.3, so the
-container keeps running the older toolchain. Refreshing it (or landing
-option C in `playground-deploy.sh`) also unblocks the weekly drift
-workflow, which fails loudly until then.
+Toolchain currency: resolved by ops on 2026-09-25 (option C landed) --
+`playground-deploy.sh` installs from the repo pin with `latest.json` only
+as a fallback, `dl-deploy.sh` picks the newest release by `published_at`,
+and the container reports `toolchain v0.61.3`, `stdlib 0.61.3`,
+`capabilities.format: true`.
+
+Monitor field confirmed for the external keyword monitor (2026-09-25):
+`/api/health` carries `"abuse":"ok"` when healthy and flips to
+`"abuse":"saturated"` when the compile queue has been continuously busy
+for `ABUSE_BUSY_MS` (default 180 s) or the rate limiter rejected
+`ABUSE_REJECTIONS` requests within `ABUSE_WINDOW_MS` (default 50 in 5 min).
+Point the UptimeRobot keyword monitor at the literal `"abuse":"ok"`; the
+knobs plus `RATE_LIMIT_BURST`/`RATE_LIMIT_REFILL_MS` are tunable in
+compose, and the raw `counters`/`rateLimit` fields stay for diagnosis.

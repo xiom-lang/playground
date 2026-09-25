@@ -1391,6 +1391,13 @@ the website and other consumers; a release is then adopted by one reviewed
 pin-bump commit, and the deployed container always matches CI and the sweep
 data.
 
+**Landed 2026-09-25 (ops).** `playground-deploy.sh` now installs from the
+repo pin (with `latest.json` only as a fallback, and a missing pinned
+archive failing the deploy), and `dl-deploy.sh` picks the newest release by
+`published_at` instead of GitHub's `releases/latest` flag (which had frozen
+on v0.60.1 because v0.61.3 was created as a draft). The VPS container
+reports `toolchain v0.61.3`, `stdlib 0.61.3`, `capabilities.format: true`.
+
 ### 26.3 v0.61.3 release verification
 
 `v0.61.3` (published 2026-09-23, 18 commits over v0.61.1) is the R64/R65
@@ -1431,12 +1438,12 @@ regressions.
   (`releases/v0.61.3/...`), and the GitHub release asset list omits it. The
   release pipeline should upload it; the in-browser compiler update path
   waits on that file.
-- The mirror index (`latest.json`, `releases/index.json`) is stale at
-  v0.60.1 while the v0.61.1 and v0.61.3 directories are live, so the
-  `dl-deploy.sh` cron or its `/opt/xiom/dl-state/last-tag` state needs a
-  look. The owner has been asked to refresh `latest.json` to v0.61.3; once
-  the VPS redeploys, `/api/version` must report v0.61.3 with
-  `capabilities.format` true.
+- The mirror index (`latest.json`, `releases/index.json`) was stale at
+  v0.60.1 while the v0.61.1 and v0.61.3 directories were live, because
+  `releases/latest` had frozen on the draft-era v0.60.1. Resolved
+  2026-09-25 (ops): `dl-deploy.sh` now selects the newest release by
+  `published_at`, the VPS deploy installs from the repo pin, and
+  `/api/version` reports v0.61.3 with `capabilities.format: true`.
 
 ## 27. Crash-exit reporting and lesson semicolon compliance (2026-09-25)
 
@@ -1731,6 +1738,17 @@ server port anyway because the P1 policy denies TCP connect.
 rateLimited}` and `rateLimit: {burst, refillMs, buckets}` for ops alerting;
 buckets are pruned after 10 idle minutes and the map is swept past 10k
 entries.
+
+The same section carries a keyword-friendly monitor field,
+`abuse: "ok" | "saturated"` -- `saturated` when the compile queue has been
+continuously busy for `ABUSE_BUSY_MS` (default 180 s) or the limiter
+rejected `ABUSE_REJECTIONS` requests inside `ABUSE_WINDOW_MS` (default 50 in
+5 min). Ops watches the literal `"abuse":"ok"` with an external UptimeRobot
+keyword monitor (local cron mail from the VPS is rejected by SPF, so alerts
+must come from external infrastructure). Verified by the suite: the idle
+server reports `"ok"`, and the dedicated burst-2 instance with
+`ABUSE_REJECTIONS=1` flips to `"saturated"` after its 429, with the exact
+JSON substring asserted.
 
 Verification: `tools/test-server.js` starts a dedicated server with burst 2
 and refill 60 s; two checks pass, the third returns 429 with a positive
