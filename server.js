@@ -196,6 +196,37 @@ function failureOutput(diagnostics, proc) {
   return firstLine ? firstLine.trim() : 'Compilation failed.';
 }
 
+// The driver prints a trailing `exit code: N` line for every `xiom run`
+// (0 on success). A runtime fault is reported as -1 there while the driver
+// itself still exits 0 on Linux; on Windows the raw status (for example
+// 0xC000001D for the fault trap) arrives as the process exit. Either way the
+// program died, which is not the same as "ran with no output".
+const REPORTED_EXIT_RE = /(?:^|\n)\s*exit code:\s*(-?\d+)\s*(?:\n|$)/;
+
+function runFailure(proc) {
+  if (!proc || proc.timedOut || proc.spawnError) return null;
+  if (proc.signal) return { signal: proc.signal };
+  if (typeof proc.code === 'number' && proc.code !== 0) return { code: proc.code };
+  const match = REPORTED_EXIT_RE.exec(String(proc.stderr || ''));
+  if (match && Number(match[1]) !== 0) return { code: Number(match[1]) };
+  return null;
+}
+
+function formatExitCode(code) {
+  if (code === -1) return '-1'; // the driver's fault-trap sentinel
+  const unsigned = code >>> 0;
+  return unsigned > 255 ? code + ' / 0x' + unsigned.toString(16).toUpperCase() : String(code);
+}
+
+function crashOutput(failure, stdout) {
+  const cause = failure.signal
+    ? 'signal ' + failure.signal
+    : 'exit code ' + formatExitCode(failure.code);
+  const message = 'Program crashed (' + cause + ').';
+  const partial = String(stdout || '').replace(/\s+$/, '');
+  return partial ? partial + '\n' + message : message + ' The program died before producing output.';
+}
+
 // ---------------------------------------------------------------------------
 // Programs
 // ---------------------------------------------------------------------------
@@ -234,13 +265,23 @@ async function runProgram(source) {
       elapsedMs: Date.now() - started,
     };
 
-    if (!proc.success) {
+    const errors = result.diagnostics.filter((d) => d.kind === 'error');
+    const failure = runFailure(proc);
+    if (proc.timedOut || errors.length > 0) {
+      result.output = failureOutput(result.diagnostics, proc);
+      result.runError = result.output;
+    } else if (failure) {
+      // Compiles, then dies: surface the exit instead of an empty output.
+      result.success = false;
+      result.output = crashOutput(failure, proc.stdout);
+      result.runError = result.output;
+    } else if (!proc.success) {
       result.output = failureOutput(result.diagnostics, proc);
       result.runError = result.output;
     } else if (!result.output) {
       result.output = 'Program ran with no output.';
     }
-    if (proc.success) result.runOutput = result.output;
+    if (result.success) result.runOutput = result.output;
 
     if (source.includes('requires:') || source.includes('ensures:') || source.includes('invariant:')) {
       const verify = await runXiom(['--verify', file], { cwd: dir, timeoutMs: CHECK_TIMEOUT_MS });

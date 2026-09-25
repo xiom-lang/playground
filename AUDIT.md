@@ -1438,3 +1438,69 @@ regressions.
   the VPS redeploys, `/api/version` must report v0.61.3 with
   `capabilities.format` true.
 
+## 27. Crash-exit reporting and lesson semicolon compliance (2026-09-25)
+
+### 27.1 A crashed run is no longer "ran with no output"
+
+Relay repro (compiler lane, 2026-09-25): two mutually recursive functions
+with no base case compile, then die in the XIOM runtime fault trap:
+
+```
+fn a() { b(); }
+fn b() { a(); }
+fn main() { a(); }
+```
+
+Measured on the mirrored v0.61.3 Linux toolchain: the driver prints
+`  compiled: /tmp/xiom_run/...` and `  exit code: -1` on stderr and itself
+exits 0, stdout is empty. `/api/compile` therefore reported "Program ran
+with no output." with `success: true` -- indistinguishable from a real
+empty run. On Windows the same program exits `0xC000001D` (-1073741795).
+The same masked signature (driver exit 0, stderr `exit code: -1`, empty
+stdout) appears for an out-of-bounds `Vec.get`, integer division by zero,
+and `Option.unwrap()` on `None`, so this is the general runtime-fault path,
+not a recursion-specific one.
+
+Fix:
+
+- `lib/run-xiom.js` now returns `signal` (children killed by a signal) and
+  `spawnError` (spawn failures) alongside `code`; `success` additionally
+  requires no signal.
+- `server.js` classifies a run failure before the empty-output fallback:
+  a non-zero process code, a signal, or a non-zero `exit code: N` line in
+  the driver stderr becomes
+  `Program crashed (exit code ...).` (`0xC000001D` renders as
+  `-1073741795 / 0xC000001D`; the driver's fault sentinel stays `-1`). The
+  result carries `success: false`, `runError` set and `runOutput: null`, so
+  the expected-output comparison cannot match and run history records a
+  failure. Partial stdout is kept and the crash line is appended.
+- Compile errors, timeouts and genuine empty runs keep their existing
+  messages (`Compilation failed...`, `Compilation timed out...`,
+  `Program ran with no output.`).
+- `tools/test-server.js` runs the repro in the execution tests (Linux/CI;
+  Windows skips execution because its clang hangs at -O2). This is also the
+  pointer to the queued compiler-side W002 lint: once it warns on
+  unconditional cycles, this crash becomes a compile-time warning instead
+  of only a runtime report.
+
+Verification: `node tools/test-server.js` on Linux (WSL, v0.61.3): 37
+passed, 0 failed, including the new crash test. End-to-end payloads from a
+live server:
+
+- crash: `{"success":false,"output":"Program crashed (exit code -1). The program died before producing output.","runError":"Program crashed (exit code -1). The program died before producing output.","runOutput":null}`
+- empty: `{"success":true,"output":"Program ran with no output.","runError":null}`
+
+### 27.2 Lesson semicolon compliance (relay guidance, verified)
+
+Guidance (owner decision, relay 2026-09-25): `;` separates statements and
+only a block's final value-producing expression may omit it. All 410
+lessons' `solution` and `code_template` fields and every narrative ```xiom
+fence were scanned (line-based with comments stripped; one-line and
+multi-line blocks). Result: **zero unit-context statements lack `;`**; the
+only non-semicolon block tails are deliberate values -- function returns
+such as `self.text.clone()`, match arms like `Some(result)`, if-expression
+values. L0, L1 and the L2 narratives are completely clean; the value tails
+appear from L3 onward where functions return values. No lesson content
+changed, so the stored `expected_output` data and the baseline stay valid;
+the existing audit remains the proof at every run.
+

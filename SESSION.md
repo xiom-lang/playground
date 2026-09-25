@@ -203,7 +203,8 @@ weekly.
   `/api/health`, `/api/auth/config`, `/auth/github(callback)`,
   `/auth/logout`, `/api/me`, `/api/progress`; safe static serving from the
   repo dir; resolves the toolchain through `lib/toolchain.js`.
-- `lib/`: `run-xiom.js` (spawn + timeout + process-tree kill),
+- `lib/`: `run-xiom.js` (spawn + timeout + process-tree kill + exit
+  code/signal reporting),
   `toolchain.js` (toolchain resolution shared with the tools; must stay out
   of `.dockerignore`), `auth.js`, `progress-store.js`.
 - `js/`: `app.js` (shell, version footer, theme, continue card, compile
@@ -292,7 +293,8 @@ switching between them.
 ## 8. Verification gate before commit
 
 1. `node --check` on every JS file (server, lib, tools, js).
-2. `node tools/test-server.js` (expect 34 passed, 1 Windows skip).
+2. `node tools/test-server.js` (34 passed + 1 Windows execution skip on the
+   dev box; 37 passed on Linux/CI, where the execution tests run).
 3. `node tools/generate-stdlib-ref.js --check`,
    `node tools/generate-limitations.js --check` and
    `node tools/generate-expected-outputs.js --check`.
@@ -332,3 +334,26 @@ compiler warn on the unconditional-cycle shape before it ever runs.
 release exists -- the compiler side is pre-flight green and waiting on the
 stdlib lane's release; bump and refresh `latest.json` per section 3 after the
 release is published.
+
+### Follow-up implemented (2026-09-25)
+
+- **Crash reporting fixed.** `lib/run-xiom.js` now also returns `signal`
+  (signal-terminated children) and `spawnError`; `server.js` classifies a run
+  that died -- a non-zero process exit, a signal, or the driver's masked
+  `exit code: -1` on stderr (the Linux fault-trap path) -- as
+  `Program crashed (exit code ...).` with `success:false`, `runError` set and
+  `runOutput: null`, so it can never match an expected output and run history
+  records a failure. Genuine empty runs keep "Program ran with no output."
+  The exact repro, the Windows `0xC000001D` status and the shared signature
+  of out-of-bounds/div-zero/unwrap faults are recorded in AUDIT section 27.
+  `tools/test-server.js` gained a Linux execution test for the repro; the
+  suite is 37/37 on Linux and 34 + 1 Windows skip on the dev box.
+- **Semicolon guidance verified, no lesson edits needed.** Every
+  `solution` and `code_template` field of all 410 lessons, plus every
+  narrative ```xiom fence, was scanned (comments stripped, one-line and
+  multi-line blocks): no statement that precedes another statement or a
+  block end is missing `;`; the only non-semicolon block tails are
+  deliberate value-producing expressions (function returns, match arms,
+  if-values). L0 and L1 are fully clean, as are the L2 narratives. Future
+  lesson edits follow the rule; the compiler-side `P001` note and the W002
+  unconditional-cycle lint remain queued.

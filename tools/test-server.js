@@ -358,6 +358,20 @@ async function main() {
           assert.ok(payload.output.indexOf('audit-hello') >= 0, 'unexpected output: ' + payload.output);
         });
 
+        await okAsync('POST /api/compile reports a crashed run, not empty output', async () => {
+          // Mutually recursive functions with no base case compile, then die
+          // in the runtime fault trap: the Linux driver exits 0 with
+          // `exit code: -1` on stderr, Windows reports 0xC000001D on the
+          // process. The runner must name the crash.
+          const source = 'fn a() { b(); }\nfn b() { a(); }\nfn main() { a(); }\n';
+          const res = await request('POST', '/api/compile', { source });
+          assert.strictEqual(res.status, 200);
+          const payload = JSON.parse(res.body);
+          assert.strictEqual(payload.success, false, JSON.stringify(payload));
+          assert.ok(/Program crashed \(exit code /.test(payload.output), 'unexpected output: ' + payload.output);
+          assert.ok(payload.output.indexOf('ran with no output') === -1, payload.output);
+        });
+
         await okAsync('health stays responsive during a compile', async () => {
           const compile = request('POST', '/api/compile', { source: 'use xiom.io;\nfn main() {\n  var i = 0;\n  while i < 50 { io.println("tick"); i = i + 1; }\n}\n' }).catch(() => null);
           await new Promise((resolve) => setTimeout(resolve, 150));
