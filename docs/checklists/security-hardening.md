@@ -63,9 +63,11 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
 
 ## P3 -- abuse controls and monitoring
 
-- [ ] Per-IP token bucket for the compile/check/ir/tokens/format
-      endpoints, in-memory, zero dependency; 429 responses counted.
-- [ ] `/api/health` exposes queue depth and rejection counters.
+- [x] Per-IP token bucket for the compile/check/ir/tokens/format
+      endpoints, in-memory, zero dependency; 429 responses counted
+      (`server.js`, `RATE_LIMIT_BURST`/`RATE_LIMIT_REFILL_MS`).
+- [x] `/api/health` exposes queue depth and rejection counters
+      (`counters` + `rateLimit`; verified by `tools/test-server.js`).
 - [ ] Alert on sustained queue saturation or compile-volume spikes through
-      the existing uptime check.
-- [ ] Document the counters in README/DEPLOY.
+      the existing uptime check (ops).
+- [x] Document the counters in `DEPLOY.md` (abuse-controls section).

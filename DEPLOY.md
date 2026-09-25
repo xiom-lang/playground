@@ -109,6 +109,20 @@ environment whitelist and the rotated secrets remain in force, and P2
 Until the P1 image is deployed and verified on the VPS, treat `/data` and
 the server environment as reachable from submissions.
 
+### Abuse controls (P3, implemented 2026-09-25)
+
+The five compiler endpoints (`/api/compile`, `/api/check`, `/api/ir`,
+`/api/tokens`, `/api/format`) are rate limited per client IP with a token
+bucket: burst 10, refill one token every 4 s (`RATE_LIMIT_BURST`,
+`RATE_LIMIT_REFILL_MS`; `RATE_LIMIT_BURST=0` disables). Over the limit they
+return 429 with `Retry-After` and a compile-shaped body so the UI explains
+the wait. The client IP is read from `X-Forwarded-For` only when the peer
+is private/loopback (the TLS proxy or the host); P1 also prevents submitted
+code from reaching the server port. `/api/health` exposes
+`counters: {compile, check, ir, tokens, format, rateLimited}` and
+`rateLimit: {burst, refillMs, buckets}` so the uptime check can alert on
+sustained queue saturation or a rejection spike.
+
 ## Accounts (C2, implemented 2026-09-19; VPS env pending)
 
 Sign-in is optional; the playground works fully without an account. GitHub

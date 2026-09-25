@@ -648,6 +648,56 @@ async function main() {
       const res = await requestTo(authPort, 'PUT', '/api/progress', { baseRevision: null }, { Cookie: aliceCookie });
       assert.strictEqual(res.status, 400);
     });
+
+    // --- P3: per-IP rate limiting (own server with tight limits) -----------
+    const ratePort = PORT + 271;
+    const rateChild = startServerWithEnv({
+      XIOM_SANDBOX: 'off',
+      RATE_LIMIT_BURST: '2',
+      RATE_LIMIT_REFILL_MS: '60000',
+    }, ratePort);
+    try {
+      const deadline = Date.now() + 15000;
+      for (;;) {
+        try {
+          const health = await requestTo(ratePort, 'GET', '/api/health');
+          if (health.status === 200) break;
+        } catch { /* still starting */ }
+        if (Date.now() > deadline) throw new Error('rate-limit server did not start');
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+
+      await okAsync('rate limits the compiler endpoints per client IP', async () => {
+        const statuses = [];
+        let limited = null;
+        for (let i = 0; i < 3; i++) {
+          const res = await requestTo(ratePort, 'POST', '/api/check', { source: 'fn main( { }\n' });
+          statuses.push(res.status);
+          if (res.status === 429) {
+            limited = JSON.parse(res.body);
+            assert.ok(res.headers['retry-after'], 'Retry-After header expected');
+          }
+        }
+        assert.deepStrictEqual(statuses.slice(0, 2), [200, 200], 'first two requests: ' + statuses);
+        assert.strictEqual(statuses[2], 429, 'third request should be limited: ' + statuses);
+        assert.strictEqual(limited.error, 'rate_limited');
+        assert.ok(limited.retryAfterMs > 0 && limited.retryAfterMs <= 60000, JSON.stringify(limited));
+        assert.strictEqual(limited.success, false);
+        assert.ok(limited.output.indexOf('Too many requests') >= 0, JSON.stringify(limited));
+      });
+
+      await okAsync('GET /api/health exposes queue and rate-limit counters', async () => {
+        const res = await requestTo(ratePort, 'GET', '/api/health');
+        assert.strictEqual(res.status, 200);
+        const payload = JSON.parse(res.body);
+        assert.strictEqual(payload.counters.check, 2, JSON.stringify(payload.counters));
+        assert.strictEqual(payload.counters.rateLimited, 1, JSON.stringify(payload.counters));
+        assert.strictEqual(payload.rateLimit.burst, 2);
+        assert.ok(payload.queue && payload.queue.checksPending >= 0, JSON.stringify(payload.queue));
+      });
+    } finally {
+      stopServer(rateChild);
+    }
   } finally {
     stopServer(child);
     stopServer(authChild);

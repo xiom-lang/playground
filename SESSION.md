@@ -303,8 +303,8 @@ switching between them.
 ## 8. Verification gate before commit
 
 1. `node --check` on every JS file (server, lib, tools, js).
-2. `node tools/test-server.js` (34 passed + 1 Windows execution skip on the
-   dev box; 37 passed on Linux/CI, where the execution tests run).
+2. `node tools/test-server.js` (36 passed + 1 Windows execution skip on the
+   dev box; 42 passed on Linux/CI, where the execution tests run).
 3. `node tools/generate-stdlib-ref.js --check`,
    `node tools/generate-limitations.js --check` and
    `node tools/generate-expected-outputs.js --check`.
@@ -454,6 +454,18 @@ live tokens. Cutover: snapshot `/data`, copy the account documents host-side,
 deploy the helper endpoints and the container update, users sign in once.
 The playground side (async `userFromRequest`, the progress-store client,
 the mock helper and tests) starts when ops confirms the helper is live.
+
+### P3 abuse controls landed (2026-09-25)
+
+Per-IP token buckets on the five compiler endpoints (burst 10, refill 4 s,
+`RATE_LIMIT_BURST`/`RATE_LIMIT_REFILL_MS`, `0` disables), 429 with
+`Retry-After` and a compile-shaped body the UI can show, X-Forwarded-For
+trusted only from private/loopback peers, and `/api/health` now carries
+`counters` plus `rateLimit` for ops alerting. Verified by the test suite
+(36 + 1 Windows skip; 42/42 on Linux with the sandbox required) and
+recorded in AUDIT section 30. Ops can tune the knobs in compose and wire
+the queue-depth/rejection alert; the uptime check already polls
+`/api/health`.
 
 Plan and relay for this audit:
 

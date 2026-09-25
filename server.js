@@ -59,6 +59,84 @@ const COMPILE_TIMEOUT_MS = Number(process.env.XIOM_COMPILE_TIMEOUT_MS) || 30000;
 const MAX_CHECKS = Math.max(1, Number(process.env.MAX_CHECKS) || 2);
 const MAX_COMPILES = Math.max(1, Number(process.env.MAX_COMPILES) || 1);
 
+// ---------------------------------------------------------------------------
+// Per-IP rate limiting (P3)
+// ---------------------------------------------------------------------------
+// Every compiler endpoint spawns the toolchain and the compile queue is
+// small (MAX_COMPILES), so without a limit one client can starve everyone
+// else. A token bucket per client IP allows a burst (RATE_LIMIT_BURST) and
+// refills one token per RATE_LIMIT_REFILL_MS; RATE_LIMIT_BURST=0 disables
+// it. X-Forwarded-For is trusted only when the request arrives from a
+// private/loopback peer (the TLS proxy or the host), never from a direct
+// public source.
+const RATE_LIMIT_BURST = Math.max(0, Number(process.env.RATE_LIMIT_BURST) || 10);
+const RATE_LIMIT_REFILL_MS = Math.max(100, Number(process.env.RATE_LIMIT_REFILL_MS) || 4000);
+const RATE_LIMIT_IDLE_MS = 10 * 60 * 1000;
+const counters = { compile: 0, check: 0, ir: 0, tokens: 0, format: 0, rateLimited: 0 };
+const rateBuckets = new Map(); // ip -> { tokens, updated }
+
+function isPrivatePeer(address) {
+  if (!address) return false;
+  if (address === '::1' || address.startsWith('127.') || address.startsWith('10.') ||
+      address.startsWith('192.168.') || address.startsWith('fd') || address.startsWith('fe80:')) {
+    return true;
+  }
+  const match = /^172\.(\d+)\./.exec(address);
+  return Boolean(match) && Number(match[1]) >= 16 && Number(match[1]) <= 31;
+}
+
+function clientIp(req) {
+  const peer = (req.socket && req.socket.remoteAddress) || '';
+  if (isPrivatePeer(peer)) {
+    const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    if (/^[0-9a-fA-F:.]{3,45}$/.test(forwarded)) return forwarded;
+  }
+  return peer || 'unknown';
+}
+
+function takeRateToken(ip) {
+  const now = Date.now();
+  let bucket = rateBuckets.get(ip);
+  if (!bucket) {
+    bucket = { tokens: RATE_LIMIT_BURST, updated: now };
+    rateBuckets.set(ip, bucket);
+  }
+  bucket.tokens = Math.min(RATE_LIMIT_BURST, bucket.tokens + (now - bucket.updated) / RATE_LIMIT_REFILL_MS);
+  bucket.updated = now;
+  if (bucket.tokens < 1) return false;
+  bucket.tokens -= 1;
+  return true;
+}
+
+function rateLimitRetryMs(req) {
+  if (RATE_LIMIT_BURST <= 0) return 0;
+  if (rateBuckets.size > 10000) {
+    const cutoff = Date.now() - RATE_LIMIT_IDLE_MS;
+    for (const [ip, bucket] of rateBuckets) {
+      if (bucket.updated < cutoff) rateBuckets.delete(ip);
+    }
+  }
+  const ip = clientIp(req);
+  if (takeRateToken(ip)) return 0;
+  counters.rateLimited++;
+  const bucket = rateBuckets.get(ip);
+  return Math.max(1000, Math.ceil((1 - bucket.tokens) * RATE_LIMIT_REFILL_MS));
+}
+
+function sendRateLimited(res, retryAfterMs) {
+  const seconds = Math.ceil(retryAfterMs / 1000);
+  const message = 'Too many requests. Try again in ' + seconds + 's.';
+  res.setHeader('Retry-After', String(seconds));
+  sendJson(res, 429, {
+    error: 'rate_limited',
+    retryAfterMs,
+    success: false,
+    output: message,
+    runError: message,
+    diagnostics: [{ code: 'R429', kind: 'error', line: 0, col: 0, message }],
+  });
+}
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'application/javascript; charset=utf-8',
@@ -708,6 +786,8 @@ const server = http.createServer(async (req, res) => {
         server: SERVER_VERSION,
         uptimeSeconds: Math.round(process.uptime()),
         queue: { checksPending: queueState.checksPending, compilesPending: queueState.compilesPending },
+        counters: Object.assign({}, counters),
+        rateLimit: { burst: RATE_LIMIT_BURST, refillMs: RATE_LIMIT_REFILL_MS, buckets: rateBuckets.size },
         sandbox: {
           mode: sandbox.mode,
           active: sandboxActive(),
@@ -878,6 +958,13 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (method === 'POST' && (url === '/api/compile' || url === '/api/check' || url === '/api/ir' || url === '/api/tokens' || url === '/api/format')) {
+      const retryAfterMs = rateLimitRetryMs(req);
+      if (retryAfterMs) {
+        sendRateLimited(res, retryAfterMs);
+        return;
+      }
+      const counterName = url.slice(5);
+      if (counters[counterName] !== undefined) counters[counterName]++;
       const body = await readJson(req);
       const source = sourceOf(body);
 
@@ -953,6 +1040,8 @@ server.listen(PORT, HOST, () => {
   console.log('Sandbox: mode=' + sandbox.mode + ' active=' + sandboxActive() +
     ' landlock_abi=' + (sandbox.abi == null ? 'n/a' : sandbox.abi) +
     (sandbox.error ? ' (' + sandbox.error + ')' : ''));
+  console.log('Rate limit: burst=' + RATE_LIMIT_BURST + ' refill=' + RATE_LIMIT_REFILL_MS + 'ms' +
+    (RATE_LIMIT_BURST > 0 ? '' : ' (disabled)'));
   console.log('Endpoints: /api/compile, /api/check, /api/ir, /api/tokens, /api/format, /api/lessons, /api/version, /api/health, /api/me, /api/progress');
   console.log('Accounts: ' + (auth.authConfigured() ? 'GitHub sign-in enabled' : 'disabled (env not set)'));
   console.log('Progress data: ' + progressStore.dataDir);

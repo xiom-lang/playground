@@ -1713,3 +1713,28 @@ of the denial suite actually caught this: it reported `tcp=REACHABLE` on a
 runner where a raw `connect(2)` would have been denied, and the probe was
 replaced with the raw form (the fix is in the same commit as this note).
 
+## 30. Abuse controls: per-IP rate limiting (P3) (2026-09-25)
+
+Every compiler endpoint spawns the toolchain and the queues hold one
+compile (`MAX_COMPILES`) and two checks, so an unthrottled client can
+starve every other user. `server.js` now keeps a token bucket per client
+IP: burst 10 and one token per 4 s by default (`RATE_LIMIT_BURST`,
+`RATE_LIMIT_REFILL_MS`; `RATE_LIMIT_BURST=0` disables). The compiler
+endpoints (`/api/compile`, `/api/check`, `/api/ir`, `/api/tokens`,
+`/api/format`) return 429 with `Retry-After` and a compile-shaped payload
+(`success:false`, `output`, an `R429` diagnostic) so the UI shows the
+reason. The client IP comes from `X-Forwarded-For` only when the peer is
+private/loopback (the TLS proxy or the host); user code cannot reach the
+server port anyway because the P1 policy denies TCP connect.
+
+`/api/health` now exposes `counters: {compile, check, ir, tokens, format,
+rateLimited}` and `rateLimit: {burst, refillMs, buckets}` for ops alerting;
+buckets are pruned after 10 idle minutes and the map is swept past 10k
+entries.
+
+Verification: `tools/test-server.js` starts a dedicated server with burst 2
+and refill 60 s; two checks pass, the third returns 429 with a positive
+`retryAfterMs` and the `Retry-After` header, and health reports
+`check=2, rateLimited=1, burst=2`. Suite: 36 passed + 1 Windows execution
+skip on the dev box, 42 passed on Linux with the sandbox in require mode.
+

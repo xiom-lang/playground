@@ -135,8 +135,9 @@ checklist: `docs/checklists/security-hardening.md`.
   multi-tenant data. Protocol design sent to ops
   (`docs/P2_STATE_HELPER_DESIGN.md`); ops implements the helper, then the
   playground lands the client and the cutover.
-- [ ] D4. Abuse controls: per-IP rate limits on the compile endpoints and
-  queue/rejection counters on `/api/health`.
+- [x] D4. Abuse controls: per-IP token buckets on the five compiler
+  endpoints (429 + `Retry-After`) and queue/rejection counters on
+  `/api/health` (AUDIT section 30). The alert wiring stays with ops.
 - [x] D5. Owner/ops: rotate `SESSION_SECRET`/`AUTH_HELPER_KEY`, verify the
   container egress guard from inside, and confirm the kernel Landlock ABI
   (all three done 2026-09-25).

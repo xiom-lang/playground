@@ -137,3 +137,19 @@ with opaque session tokens (minted only by a successful `/exchange`) and
 the `/data` mount. The playground lane waits for ops confirmation that the
 endpoints are live before landing the client, the mock-helper tests and the
 cutover.
+
+## P3 landed (2026-09-25)
+
+Per-IP rate limiting is live for the compiler endpoints (burst 10, refill
+one token per 4 s; `RATE_LIMIT_BURST=0` disables), returning 429 with
+`Retry-After`. `/api/health` now exposes
+`counters: {compile, check, ir, tokens, format, rateLimited}` and
+`rateLimit: {burst, refillMs, buckets}`; the uptime check can alert on
+queue depth, rejection spikes, or a stalled queue. Tune the two env knobs
+in compose if real traffic needs different values.
+
+Open ops reminder (toolchain currency): `latest.json` still advertises
+v0.60.1 while the repo pins and the playground tests v0.61.3, so the
+container keeps running the older toolchain. Refreshing it (or landing
+option C in `playground-deploy.sh`) also unblocks the weekly drift
+workflow, which fails loudly until then.
