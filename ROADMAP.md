@@ -1,6 +1,6 @@
 # XIOM Playground -- Roadmap
 
-Status as of 2026-09-24. The audit (`AUDIT.md`) is fully implemented for this
+Status as of 2026-09-25. The audit (`AUDIT.md`) is fully implemented for this
 repository; only cross-repo compiler/stdlib findings remain (C1-C17). This
 roadmap covers the product work agreed for the playground.
 
@@ -114,6 +114,27 @@ concern or waits for a future accounts service.
     `#5C6BFF` on `#08090B`, panel/line/paper palette, Inter/system stack, no
     webfonts). Future: extract one canonical token file all three properties
     import or copy (registry proposal).
+
+## Phase D -- Security hardening (owner-requested 2026-09-25)
+
+Goal: submitted programs must not be able to reach server secrets, other
+users' data, or the network, without weakening the host boundary. Plan:
+`docs/SECURITY_HARDENING.md`; ops relay: `docs/OPS_SECURITY_REQUEST.md`;
+checklist: `docs/checklists/security-hardening.md`.
+
+- [x] D1. Immediate containment: compiler-child environment whitelist,
+  canary test, and the audit record (AUDIT section 28, commit `162e041`).
+- [ ] D2. Per-execution filesystem sandbox: Landlock wrapper around every
+  compiler child (allow `/tmp` read-write, `/app` and `/toolchain`
+  read-only; deny `/data`, `/proc`, `/sys`, TCP), fail closed when
+  unavailable, denial tests plus the full Linux lesson audit.
+- [ ] D3. Data-plane containment: move session signing and the progress
+  store host-side so the web container holds no long-lived secrets and no
+  multi-tenant data.
+- [ ] D4. Abuse controls: per-IP rate limits on the compile endpoints and
+  queue/rejection counters on `/api/health`.
+- [ ] D5. Owner/ops: rotate `SESSION_SECRET`/`AUTH_HELPER_KEY`, verify the
+  container egress guard from inside, and confirm the kernel Landlock ABI.
 
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 

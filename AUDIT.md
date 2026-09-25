@@ -1590,6 +1590,10 @@ control. The container must be treated as hostile to the assets inside it.
    the host helper so the container holds neither multi-tenant data nor
    session secrets.
 
+Plan, relay and checklist: `docs/SECURITY_HARDENING.md` (phases,
+acceptance, rollback), `docs/OPS_SECURITY_REQUEST.md` (ops message), and
+`docs/checklists/security-hardening.md`.
+
 ### 28.5 What is not affected
 
 - The host: every probe ran inside the container boundary; egress stays

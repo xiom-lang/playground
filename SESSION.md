@@ -388,3 +388,17 @@ section 28. Summary:
      the host helper so the container holds neither.
 - The website privacy page may need a note if isolation is deferred; the
   fact list in DEPLOY.md is unchanged until the owner decides.
+
+Plan and relay for this audit:
+
+- `docs/SECURITY_HARDENING.md` -- production-grade plan: P1 Landlock
+  wrapper around every compiler child (deny `/data`, `/proc`, network;
+  fail closed), P2 data-plane containment (sessions/progress host-side so
+  the web container holds no long-lived secrets), P3 per-IP rate limits
+  and health counters. Acceptance criteria and rollback per phase.
+- `docs/OPS_SECURITY_REQUEST.md` -- the message for the ops lane: rotate
+  `SESSION_SECRET`/`AUTH_HELPER_KEY`, verify the egress guard from inside
+  the container, confirm the kernel Landlock ABI, and decide between the
+  Landlock wrapper and a host-side runner service.
+- `docs/checklists/security-hardening.md` -- the step-by-step execution
+  checklist for P0-P3.
