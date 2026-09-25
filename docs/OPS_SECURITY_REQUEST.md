@@ -134,9 +134,11 @@ acceptance is met.
 with opaque session tokens (minted only by a successful `/exchange`) and
 `/session` + `/progress` endpoints backed by
 `/opt/xiom/playground-state/`, so the container drops `SESSION_SECRET` and
-the `/data` mount. The playground lane waits for ops confirmation that the
-endpoints are live before landing the client, the mock-helper tests and the
-cutover.
+the `/data` mount. The playground client is already implemented behind
+`PLAYGROUND_STATE=helper` (default `local`, so main is deployable either
+way) with full mock-helper tests; once ops confirms the endpoints are live,
+the cutover follows the steps in `DEPLOY.md` (snapshot, migrate documents,
+flip the compose env, rotate again, verify).
 
 ## P3 landed (2026-09-25)
 
