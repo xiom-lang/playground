@@ -1,10 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-24 (v0.61.3 absorption). Branch `main`, working tree
-clean, all commits pushed to `origin/main` (the drift-workflow change and the
-absorption are the two latest commits; see `git log`). Production is healthy
-(`https://playground.xiom-lang.org/api/health` -> 200) but the container still
-runs toolchain v0.60.1 until `latest.json` is refreshed -- see section 3.
+Last updated: 2026-09-25 (security audit of stdlib reach). Branch `main`,
+working tree clean, all commits pushed to `origin/main`. Production is
+healthy but still runs toolchain v0.60.1 until `latest.json` is refreshed
+(section 3). **Open security action for the owner: section 10** (rotate the
+account secrets and isolate user-program execution).
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -357,3 +357,34 @@ release is published.
   if-values). L0 and L1 are fully clean, as are the L2 narratives. Future
   lesson edits follow the rule; the compiler-side `P001` note and the W002
   unconditional-cycle lint remain queued.
+- **Beginner copy:** L0-01 states the rule, L0-02/L0-12 repeat it in common
+  mistakes, and L0-08/L0-10/L0-28/L0-33 cover the if/while-condition trap.
+  L6-16, where the value-tail form first appears, gained a tip explaining
+  why the final expression skips `return` and `;` (AUDIT section 27.2).
+
+## 10. Security audit: stdlib reach from submitted programs (2026-09-25)
+
+Owner request: audit what a compiled submission can do via the stdlib (`io`,
+directory creation, process, ...). Findings and evidence are in AUDIT
+section 28. Summary:
+
+- **Working capabilities (measured):** `io.env_var` read the server's
+  secrets before the fix; `io.read_file`/`io.fs_*` read regular files;
+  `io.write_file`/`io.create_dir` write under `/tmp`; `process.spawn_command`
+  runs shell commands; user code can declare `extern "C"` and call libc
+  (`system()` verified). Egress stays blocked by the ops guard.
+- **Fixed here:** compiler children now get a whitelisted environment
+  (`server.js` `userChildEnv()`), so the one-line `io.env_var("SESSION_SECRET")`
+  leak is closed; a canary test covers it (suite 38/38 on Linux).
+- **Open, needs the owner/ops (AUDIT 28.4):**
+  1. Rotate `SESSION_SECRET` and `AUTH_HELPER_KEY` -- assume exposure, since
+     arbitrary code ran with the inherited environment on the public site.
+  2. Isolate each execution so programs cannot read the server env or
+     `/data`: a Landlock wrapper around the run child, or a separate
+     ephemeral runner with its own uid and no `/data` mount. Today a
+     submission can read/overwrite every account's progress document and
+     read the server's exec-time environ through `/proc` (verified).
+  3. If isolation is deferred, move the progress store and secrets behind
+     the host helper so the container holds neither.
+- The website privacy page may need a note if isolation is deferred; the
+  fact list in DEPLOY.md is unchanged until the owner decides.

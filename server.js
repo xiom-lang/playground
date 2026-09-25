@@ -113,10 +113,32 @@ function runCompileJob(task) {
   return scheduleCompile(task).finally(() => { queueState.compilesPending--; });
 }
 
+// The server's own environment can hold account secrets from
+// /opt/xiom/playground.env (SESSION_SECRET, AUTH_HELPER_KEY, ...) and the
+// progress-store path. Submitted programs run as the same uid, so only the
+// variables the toolchain needs may be passed down: `getenv`-based helpers
+// such as io.env_var would otherwise dump the server's secrets in one line.
+const CHILD_ENV_KEYS = [
+  'PATH', 'HOME', 'TMPDIR', 'TMP', 'TEMP', 'LANG', 'LC_ALL', 'LANGUAGE', 'TZ',
+  // Windows dev hosts only: spawning native tools needs the system vars.
+  'SystemRoot', 'SystemDrive', 'ComSpec', 'PATHEXT', 'USERPROFILE', 'HOMEDRIVE', 'HOMEPATH',
+];
+
+function userChildEnv() {
+  const env = {};
+  for (const key of CHILD_ENV_KEYS) {
+    if (childEnv[key] !== undefined) env[key] = childEnv[key];
+  }
+  env.XIOM_BIN = XIOM_BIN;
+  if (childEnv.XIOM_STDLIB) env.XIOM_STDLIB = childEnv.XIOM_STDLIB;
+  return env;
+}
+
 function runXiom(args, options) {
   // childEnv carries XIOM_BIN/XIOM_STDLIB for the pinned .toolchain, matching
-  // what the tools use (the VPS sets XIOM_STDLIB explicitly).
-  return runProcess(XIOM_BIN, args, Object.assign({ env: childEnv }, options));
+  // what the tools use (the VPS sets XIOM_STDLIB explicitly); userChildEnv()
+  // keeps server-only variables out of every compiler child.
+  return runProcess(XIOM_BIN, args, Object.assign({ env: userChildEnv() }, options));
 }
 
 // ---------------------------------------------------------------------------

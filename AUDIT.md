@@ -1504,3 +1504,96 @@ appear from L3 onward where functions return values. No lesson content
 changed, so the stored `expected_output` data and the baseline stay valid;
 the existing audit remains the proof at every run.
 
+Teaching copy: L0-01 states the rule ("Every statement ends with a
+semicolon"), L0-02/L0-12 repeat it in common mistakes, and L0-08/L0-10/
+L0-28/L0-33 cover the if/while-condition semicolon trap. The value-tail form
+first appears in L6-16 (`fn Note.read(&self) -> Str { self.text.clone() }`),
+whose tips now explain that the final expression is the function's value and
+therefore skips `return` and `;`. No other lesson needed a change.
+
+## 28. Security audit: stdlib reach from submitted programs (2026-09-25)
+
+Owner request: what can a submitted program do through the stdlib (`io`,
+directory creation, process, ...) once it compiles?
+
+### 28.1 Method
+
+- Enumerated the v0.61.3 surface from `js/stdlib-ref.json`. The
+  `playground`/`docs`/`local` tier is a reference-panel grouping only, not a
+  compile-time restriction: every module in `/toolchain/lib` is reachable
+  with `use`.
+- Read the shipped stdlib sources (`io/io.xi`, `io/fs.xi`) and executed
+  probes with the Linux v0.61.3 toolchain in WSL.
+- Audited the container wiring (`docker-compose.yml`, `Dockerfile`) for what
+  the server uid can reach.
+
+### 28.2 Capabilities that work (measured)
+
+| capability | API used | result |
+|---|---|---|
+| read env vars | `io.env_var("SESSION_SECRET")` | printed the secret before the fix below |
+| read files | `io.read_file`, `io.fs_read_text` | regular files read fine; `/proc/*/environ` returns empty through this API because procfs reports size 0 |
+| write/append files, create dirs | `io.write_file`, `io.create_dir` | works under `/tmp`; the same uid also owns `/data` |
+| spawn processes | `process.spawn_command("sh", ...)` | works; ran `id -u` and wrote a file |
+| network | `net.http_get`, tcp | compiles; egress is blocked by the ops `DOCKER-USER` guard (container assumption unchanged, worth re-verifying on the VPS) |
+| arbitrary C | user-declared `extern "C"` + `system()` | works: `system("id -u > /tmp/f")` executed |
+
+### 28.3 Findings
+
+F1 (high, fixed in part) - the server environment leaked to programs. The
+server inherits the compose `env_file` (`SESSION_SECRET`,
+`AUTH_HELPER_KEY`, `GITHUB_CLIENT_ID`) and every compiler child inherited
+the whole environment, so a one-line program could print the session secret
+(measured). With `SESSION_SECRET` an attacker can forge session cookies;
+`AUTH_HELPER_KEY` gives access to the host-side auth helper.
+
+Fix landed: `server.js` spawns every compiler child with a small whitelist
+(`PATH`, `HOME`, `TMPDIR`/`TEMP`, locale, `XIOM_BIN`, `XIOM_STDLIB`), so
+`getenv`-based helpers no longer see server variables. `tools/test-server.js`
+starts the server with a canary variable and asserts a submitted program
+cannot read it (suite 38/38 on Linux, 34 + 1 Windows skip). This is defense
+in depth, not a complete fix - see F3.
+
+F2 (high, open) - the progress store is readable and writable by submitted
+programs. `/data` is owned by the container uid (`Dockerfile` chowns it to
+`xiomp`, uid 10001) and programs run as that same uid, so a program can list
+`/data/accounts`, read every account document, overwrite it with a forged
+revision, or delete it. That breaks per-account privacy and lets one user
+corrupt other users' progress.
+
+F3 (high, residual) - env scrubbing is bypassable by same-uid process
+inspection. A program can spawn `/bin/sh` and read
+`/proc/<ancestor>/environ` (the server's exec-time environment), which still
+holds the compose secrets. Verified on the dev kernel with Yama
+`ptrace_scope=1`: a child read its ancestor's exec-time environ. Since user
+code can also declare its own `extern "C"` (F4), no stdlib/import filter can
+prevent this. The container protects the host; it does not isolate the
+server's assets from submitted code.
+
+F4 (informational) - user code can declare `extern "C"` and call libc
+(`system()` verified), so "restrict allowed modules" is not a viable
+control. The container must be treated as hostile to the assets inside it.
+
+### 28.4 Required owner/ops actions
+
+1. Rotate `SESSION_SECRET` and `AUTH_HELPER_KEY` (rotation signs everyone
+   out). Assume exposure: arbitrary code execution with the inherited
+   environment has been possible for as long as the service has run.
+2. Add per-execution isolation so programs cannot read the server env or
+   `/data`. Options, by effort:
+   - Landlock wrapper around the `xiom run` child: allow `/tmp`, `/app`
+     and `/toolchain` read-only, deny `/data` and `/proc` (unprivileged,
+     needs a small helper binary in the image).
+   - A separate runner service/container (ephemeral per run) with its own
+     uid, no `/data` mount and no server env.
+3. If isolation is deferred: move the progress store and the secrets behind
+   the host helper so the container holds neither multi-tenant data nor
+   session secrets.
+
+### 28.5 What is not affected
+
+- The host: every probe ran inside the container boundary; egress stays
+  blocked and `/tmp` stays a size-limited tmpfs.
+- CI and the tools: the sweeps run trusted lesson code, not submissions.
+- The lesson corpus: unchanged by this audit (the L6-16 tip is copy only).
+

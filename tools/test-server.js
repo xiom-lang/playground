@@ -126,10 +126,6 @@ function startServerWithEnv(extraEnv, port) {
   return child;
 }
 
-function startServer() {
-  return startServerWithEnv({}, PORT);
-}
-
 /**
  * Mock of the host-side auth helper: accepts POST /exchange with the shared
  * key and returns the queued users in order. No GitHub involved.
@@ -179,7 +175,9 @@ function stopServer(child) {
 
 async function main() {
   const hasToolchain = fs.existsSync(XIOM_BIN) || /[\\/]/.test(XIOM_BIN) === false;
-  const child = startServer();
+  // The canary proves that user programs cannot read the server's own
+  // environment (see the env-scrub test in the execution block).
+  const child = startServerWithEnv({ XIOM_TEST_CANARY: 'canary-do-not-leak' }, PORT);
   const authPort = PORT + 137;
   const authDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'xiom_pg_auth_'));
   let authChild = null;
@@ -370,6 +368,19 @@ async function main() {
           assert.strictEqual(payload.success, false, JSON.stringify(payload));
           assert.ok(/Program crashed \(exit code /.test(payload.output), 'unexpected output: ' + payload.output);
           assert.ok(payload.output.indexOf('ran with no output') === -1, payload.output);
+        });
+
+        await okAsync('POST /api/compile scrubs the server env from programs', async () => {
+          // The server is started with XIOM_TEST_CANARY in its environment
+          // (see startServerWithEnv below); a submitted program must not be
+          // able to read it through io.env_var or any getenv-based helper.
+          const source = 'use xiom.io;\nfn main() {\n  match io.env_var("XIOM_TEST_CANARY") {\n    Some(v) => io.println("leaked:" + v),\n    None => io.println("env-scrubbed"),\n  }\n}\n';
+          const res = await request('POST', '/api/compile', { source });
+          assert.strictEqual(res.status, 200);
+          const payload = JSON.parse(res.body);
+          assert.strictEqual(payload.success, true, JSON.stringify(payload.diagnostics));
+          assert.ok(payload.output.indexOf('env-scrubbed') >= 0, 'unexpected output: ' + payload.output);
+          assert.ok(payload.output.indexOf('canary-do-not-leak') === -1, 'server env leaked: ' + payload.output);
         });
 
         await okAsync('health stays responsive during a compile', async () => {

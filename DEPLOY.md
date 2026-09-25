@@ -60,9 +60,21 @@ connections. The guard runs from the deploy script and from cron at boot
 (an internal Docker network cannot publish a port on Docker 28.x, which is
 why the guard exists).
 
-User programs therefore cannot write outside `/tmp`, grow without bound, or
-reach the network. Keep all of these when editing. The health check uses
-`/api/health`, which is answered even while compiles are queued.
+User programs therefore cannot write outside `/tmp` and `/data`, grow
+without bound, or reach the network. Keep all of these when editing. The
+health check uses `/api/health`, which is answered even while compiles are
+queued.
+
+In-container isolation limits (audited 2026-09-25, AUDIT section 28): the
+server and every submitted program share one uid, so a program can read or
+overwrite other accounts' progress documents on `/data`, and same-uid
+process inspection can reach the server's environment (the compose
+`env_file` secrets). Compiler children now receive a whitelisted
+environment (`server.js`, `userChildEnv()`), which closes the direct
+`io.env_var`/`getenv` leak, but that is defense in depth only. Until
+per-execution isolation lands (Landlock wrapper or a separate runner, see
+AUDIT 28.4), keep new secrets and multi-tenant data out of the container
+uid's reach, and rotate `SESSION_SECRET`/`AUTH_HELPER_KEY`.
 
 ## Accounts (C2, implemented 2026-09-19; VPS env pending)
 

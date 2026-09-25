@@ -22,7 +22,8 @@
   "tips": [
     "Use `T: A + B` to require multiple interfaces - this is 'interface composition'",
     "Each interface should be small and focused - don't cram unrelated methods together",
-    "A type can implement any number of interfaces independently"
+    "A type can implement any number of interfaces independently",
+    "A function can end with its result: `self.text.clone()` is the value, so it skips `return` and the `;`. Any statement before it still ends with `;`"
   ],
   "common_mistakes": [
     "Trying to combine interfaces by making one giant interface - use + instead",
