@@ -193,6 +193,12 @@ weekly.
   compiler/ops owner (AUDIT section 26).
 - R64 (all-modules stdlib test / AI-context pack) and R65 (target-accurate
   `xiom.env` constants) shipped in v0.61.3; neither changes lesson output.
+- `net.tcp_connect(host, port)` returns `Ok` even when nothing is
+  listening (verified with no listener on `127.0.0.1:1`, sandboxed and
+  unsandboxed), so it cannot be used to detect connection failures. The
+  compiler/stdlib lane should check whether this is a stub or an
+  error-swallowing bug (AUDIT section 29.4); the sandbox denial suite uses
+  a raw `connect(2)` probe instead.
 - The `xiom.fmt` reachable-only peek and script-run `--opt-level` are already
   fixed and measured (AUDIT sections 18, 24).
 

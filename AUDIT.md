@@ -1641,7 +1641,9 @@ connect and bind denials; the egress guard is now boot-durable; and
   (canary outside the allowlist, `/data` preferred when present), `/proc`,
   `/etc`, spawned-shell and TCP probes plus warm-run timing; JSON output
   and a non-zero exit on any escape; `--require-net` turns ABI < 4 into a
-  failure.
+  failure. The TCP probe compiles a raw `connect(2)` C program and runs it
+  through the wrapper, because the stdlib's `tcp_connect` is not a
+  trustworthy indicator (see 29.4).
 - `tools/test-server.js`: on Linux with the wrapper built it stages the
   toolchain under `/tmp` (the only read-write path the policy allows;
   production uses `/toolchain`), starts the server in `require` mode and
@@ -1682,4 +1684,16 @@ deploy (recipe in `docs/OPS_SECURITY_REQUEST.md`).
   progress store is the next containment layer), CPU abuse within the
   limits (P3), and shared `/tmp` cache side channels (content-keyed, no
   secrets).
+
+### 29.4 Compiler-side finding
+
+`net.tcp_connect(host, port)` in v0.61.3 returns `Ok` even when nothing is
+listening: connecting to `127.0.0.1:1` (no listener) produced `Ok`, both
+sandboxed and unsandboxed, so the API cannot be used to detect connection
+failures. The sandbox TCP probe therefore uses a raw `connect(2)` program.
+The compiler/stdlib lane should check whether this is a stub or an
+error-swallowing bug; it does not affect the lesson set. The first CI run
+of the denial suite actually caught this: it reported `tcp=REACHABLE` on a
+runner where a raw `connect(2)` would have been denied, and the probe was
+replaced with the raw form (the fix is in the same commit as this note).
 

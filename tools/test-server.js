@@ -419,10 +419,13 @@ async function main() {
             assert.ok(payload.sandbox.landlock >= 3, JSON.stringify(payload.sandbox));
           });
 
-          await okAsync('POST /api/compile confines submissions (files, proc, network)', async () => {
+          await okAsync('POST /api/compile confines submissions (files, proc, shell)', async () => {
             // A canary outside the allowlist (with /data preferred when it
             // exists) that a sandboxed submission must not be able to read or
-            // write, plus /proc, a spawned shell and a TCP connect.
+            // write, plus /proc and a spawned shell. TCP is verified at the
+            // kernel level by tools/verify-sandbox.js: the stdlib's
+            // tcp_connect reports Ok even on failure, so it cannot be used
+            // as a probe here.
             const escapeDir = fs.existsSync('/data') ? '/data' : '/var/tmp';
             const escapeRoot = path.join(escapeDir, 'xiom-pg-sandbox-test');
             let canary = null;
@@ -433,11 +436,8 @@ async function main() {
             } catch {
               canary = null;
             }
-            const health = JSON.parse((await request('GET', '/api/health')).body);
-            const expectTcp = Number(health.sandbox.landlock) >= 4;
             const source = [
               'use xiom.io;',
-              'use xiom.net;',
               'use xiom.process;',
               'fn main() {',
               canary
@@ -450,9 +450,6 @@ async function main() {
               '  args.push("cat /proc/self/status > /tmp/xiom-pg-sandbox-spawn.txt 2>/dev/null");',
               '  match process.spawn_command("sh", &args) { Ok(p) => io.println("spawn=ok"), Err(e) => io.println("spawn=err") }',
               '  match io.read_file("/tmp/xiom-pg-sandbox-spawn.txt") { Ok(s) => { if s.len() == 0 { io.println("spawnproc=denied") } else { io.println("spawnproc=LEAK") } }, Err(e) => io.println("spawnproc=denied") }',
-              expectTcp
-                ? '  match net.tcp_connect("1.1.1.1", 443) { Ok(s) => io.println("tcp=REACHABLE"), Err(e) => io.println("tcp=denied") }'
-                : '  io.println("tcp=skipped")',
               '}',
               '',
             ].join('\n');
@@ -465,7 +462,6 @@ async function main() {
             assert.ok(out.indexOf('tmp=ok') >= 0, 'tmp write failed: ' + out);
             assert.ok(out.indexOf('spawnproc=denied') >= 0, 'spawned shell leaked /proc: ' + out);
             if (canary) assert.ok(out.indexOf('escape=denied') >= 0, 'escape canary reachable: ' + out);
-            if (expectTcp) assert.ok(out.indexOf('tcp=denied') >= 0, 'tcp reachable: ' + out);
           });
         } else {
           skipped.push('sandbox execution tests (Linux + sandbox/xiom-sandbox required)');

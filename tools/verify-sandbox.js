@@ -122,6 +122,76 @@ function checkPatch(tag, result, expected, results) {
   return pass;
 }
 
+// Raw connect(2) probe: proves the Landlock network rule at the kernel level
+// (the XIOM stdlib's tcp_connect reports Ok even on failure, so it cannot be
+// used here). connect() must fail with EACCES; a timeout is not a denial.
+const TCP_PROBE_C = [
+  '#include <arpa/inet.h>',
+  '#include <errno.h>',
+  '#include <fcntl.h>',
+  '#include <netinet/in.h>',
+  '#include <poll.h>',
+  '#include <stdio.h>',
+  '#include <string.h>',
+  '#include <sys/socket.h>',
+  '#include <unistd.h>',
+  'int main(void) {',
+  '  int fd = socket(AF_INET, SOCK_STREAM, 0);',
+  '  if (fd < 0) { printf("tcp=socket:%s\\n", strerror(errno)); return 0; }',
+  '  struct sockaddr_in addr;',
+  '  memset(&addr, 0, sizeof(addr));',
+  '  addr.sin_family = AF_INET;',
+  '  addr.sin_port = htons(443);',
+  '  inet_pton(AF_INET, "1.1.1.1", &addr.sin_addr);',
+  '  fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK);',
+  '  int rc = connect(fd, (struct sockaddr *)&addr, sizeof(addr));',
+  '  if (rc == 0) { printf("tcp=reachable\\n"); return 0; }',
+  '  if (errno == EACCES || errno == EPERM) { printf("tcp=denied\\n"); return 0; }',
+  '  if (errno == EINPROGRESS) {',
+  '    struct pollfd p = { fd, POLLOUT, 0 };',
+  '    if (poll(&p, 1, 5000) > 0) {',
+  '      int err = 0; socklen_t len = sizeof(err);',
+  '      getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &len);',
+  '      if (err == 0) printf("tcp=reachable\\n");',
+  '      else if (err == EACCES || err == EPERM) printf("tcp=denied\\n");',
+  '      else printf("tcp=error:%s\\n", strerror(err));',
+  '      return 0;',
+  '    }',
+  '    printf("tcp=timeout\\n"); return 0;',
+  '  }',
+  '  printf("tcp=error:%s\\n", strerror(errno));',
+  '  return 0;',
+  '}',
+  '',
+].join('\n');
+
+function compileTcpProbe(ctx) {
+  const src = path.join(WORK, 'tcp_probe.c');
+  const bin = path.join(WORK, 'tcp_probe');
+  fs.mkdirSync(WORK, { recursive: true });
+  fs.writeFileSync(src, TCP_PROBE_C, 'utf8');
+  for (const cc of ['cc', 'clang', 'gcc']) {
+    const out = spawnSync(cc, ['-O2', '-o', bin, src], { encoding: 'utf8', timeout: 60000 });
+    if (out.status === 0 && fs.existsSync(bin)) return bin;
+  }
+  return null;
+}
+
+function runTcpProbe(ctx, probe) {
+  const started = Date.now();
+  const proc = spawnSync(ctx.sandbox, ['--', probe], {
+    encoding: 'utf8',
+    timeout: 30000,
+    env: { PATH: process.env.PATH || '/usr/bin:/bin', HOME: HOME, TMPDIR: os.tmpdir() },
+  });
+  return {
+    status: proc.status,
+    stdout: String(proc.stdout || ''),
+    stderr: String(proc.stderr || ''),
+    ms: Date.now() - started,
+  };
+}
+
 function main() {
   if (process.platform !== 'linux') {
     console.log('verify-sandbox: skipped (Landlock is Linux-only; platform=' + process.platform + ')');
@@ -209,13 +279,30 @@ function main() {
     '    Err(e) => io.println("spawnproc=denied"),\n  }\n}\n'),
     'spawnproc=denied', results);
 
-  // 6. TCP connect (kernel rule on ABI >= 4).
+  // 6. TCP connect (kernel rule on ABI >= 4). The XIOM stdlib's
+  // tcp_connect is not a trustworthy probe -- it returns Ok even for a
+  // closed port in v0.61.3 -- so this compiles a raw connect(2) probe and
+  // runs it through the wrapper instead.
   if (abi >= 4) {
-    checkPatch('tcp-connect', runProgram(ctx, 'tcp-connect',
-      'use xiom.io;\nuse xiom.net;\nfn main() {\n' +
-      '  match net.tcp_connect("1.1.1.1", 443) {\n' +
-      '    Ok(s) => io.println("tcp=REACHABLE"),\n    Err(e) => io.println("tcp=denied"),\n  }\n}\n'),
-      'tcp=denied', results);
+    const tcpProbe = compileTcpProbe(ctx);
+    if (tcpProbe) {
+      const tcp = runTcpProbe(ctx, tcpProbe);
+      const denied = tcp.stdout.indexOf('tcp=denied') >= 0;
+      results.push({
+        probe: 'tcp-connect',
+        pass: denied,
+        detail: denied ? 'tcp=denied (EACCES from connect(2))' :
+          'expected kernel denial, got: ' + JSON.stringify((tcp.stdout || tcp.stderr).trim()).slice(0, 200),
+        ms: tcp.ms,
+      });
+    } else {
+      results.push({
+        probe: 'tcp-connect',
+        pass: !opts.requireNet,
+        detail: 'skipped: no C compiler available to build the raw connect probe',
+        ms: 0,
+      });
+    }
   } else {
     results.push({
       probe: 'tcp-connect',
