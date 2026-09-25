@@ -299,3 +299,36 @@ switching between them.
 4. `node tools/lesson-audit.js --check-only --baseline
    tools/lesson-baseline.json` (expect "No regressions against baseline").
 5. `git status --porcelain` empty after staging; identity correct.
+
+## 9. Relay from the compiler lane (2026-09-25)
+
+**Statement semicolons -- owner decision: option (a), the Rust-like tail
+form, STAYS.** `;` separates statements; ONLY a block's final expression (its
+value) may omit it; a statement before another statement needs the separator
+(`P001` otherwise). Lesson guidance: make every statement end with `;` in
+multi-statement solutions/templates (L0-first-steps and L1-foundations above
+all), and use a tail expression only deliberately where a value is produced.
+The compiler now states this in the canonical `AI_CONTEXT.md` and the MCP
+`xiom_language_guide`; a `P001` note pointing at the missing separator is
+queued in the compiler's Stage 6. This is a consistency/documentation change,
+not a semantic one: single-statement bodies without the final `;` remain
+valid, so existing lessons keep working (the lesson baseline gate is the
+proof at the next run).
+
+**Runner UX -- crash reporting (owner probe, 2026-09-25):** a program that
+crashes is currently reported as "Program ran with no output". Repro: two
+mutually recursive functions with no base case (`fn a() { b(); }` /
+`fn b() { a(); }`) die in the XIOM runtime's fault trap -- Windows exit
+`0xC000001D` (`-1073741795`), stdout empty. The runner should surface a
+non-zero/crash exit ("program crashed (exit ...)") instead of only the empty
+output, so learners can tell "ran with no output" from "died". The compiler
+lane classified it as NOT a compiler bug (the program cannot terminate) and
+recorded the runner-side fix in its SESSION under the website/playground
+cross-lane status. An infinite-recursion warning lint is queued in the
+compiler's Stage 6 (`docs/STAGE6_LINT_WAVE.md`, W002), which will let the
+compiler warn on the unconditional-cycle shape before it ever runs.
+
+**Toolchain:** `TOOLCHAIN_VERSION` stays v0.61.3 until the combined v0.62.0
+release exists -- the compiler side is pre-flight green and waiting on the
+stdlib lane's release; bump and refresh `latest.json` per section 3 after the
+release is published.
