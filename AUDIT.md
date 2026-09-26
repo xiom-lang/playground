@@ -1731,7 +1731,19 @@ first CI run of the denial suite actually caught this: it reported
 `tcp=REACHABLE` on a runner where a raw `connect(2)` would have been
 denied, and the probe was replaced with the raw form (the fix is in the
 same commit as this note). Relayed to the compiler lane 2026-09-26 with
-the repro and the suspected builtin; status pending the next release.
+the repro and the suspected builtin.
+
+Compiler response (2026-09-26): the root cause is signedness; a
+compiler-side fix landed (m146), and the pinned stdlib still needs the
+`Int32` extern declarations. The wasm asset release (C8) does not fix it.
+
+Playground confirmation (2026-09-26): calling the builtin directly with
+`fn xiom_socket_connect(...) -> Int` against the refused port prints
+`connect_result=4294967295` (0xFFFFFFFF, the 32-bit -1 zero-extended), so
+the wrapper's `result < 0` check never fires. Both the compiler fix and
+signed-32-bit extern declarations are required; re-check at the next
+absorption once a release carries both. The sandbox denial suite is
+unaffected (raw `connect(2)` probe).
 
 ## 30. Abuse controls: per-IP rate limiting (P3) (2026-09-25)
 

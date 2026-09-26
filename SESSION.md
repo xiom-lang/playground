@@ -8,7 +8,9 @@ limits + `abuse` field, external monitor healthy) and **P2 helper mode**
 lane's backup sentence (the page still says the store is not in the
 off-site set; the first post-cutover backup ran 2026-09-26), the ops
 window-close after C7 has been deployed 24-48 h (scheduled, nothing needed
-here), and the compiler-lane items (C8 wasm asset, `net.tcp_connect`).
+here), and the compiler-lane items (C8 wasm asset; `net.tcp_connect`
+root-caused -- compiler fix m146 landed, stdlib `Int32` externs pending,
+re-check at the next absorption).
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -582,8 +584,20 @@ value, so the runtime builtin is the suspect -- confirm it surfaces
 `connect(2)`'s result/errno (or a negative sentinel) and waits on
 non-blocking sockets before returning success. Impact: programs cannot
 detect failed connections, and our first sandbox TCP probe was invalidated
-by this. Status: pending the next release, which the owner relays also
-carries the `xiom-wasm` asset (C8).
+by this.
+
+**Compiler response (2026-09-26):** root cause is signedness; a
+compiler-side fix landed (m146), and the pinned stdlib still needs the
+`Int32` extern declarations. The wasm asset release (C8) does not fix it.
+
+**Playground confirmation (2026-09-26):** declaring the builtin directly as
+`fn xiom_socket_connect(...) -> Int` and connecting to the refused port
+prints `connect_result=4294967295` (0xFFFFFFFF, the 32-bit -1
+zero-extended), so `result < 0` in the current wrapper never triggers.
+The fix therefore needs both the compiler change and signed-32-bit extern
+declarations in the stdlib; re-check at the next absorption (pin bump,
+SESSION 3.1) once a release carries both. Our sandbox denial suite is
+unaffected (raw `connect(2)` probe).
 
 ### 11.2 Registry: first real xiom.* packages (C3)
 

@@ -162,6 +162,12 @@ checklist: `docs/checklists/security-hardening.md`.
   the asset 404s on GitHub and on the mirror; the in-browser compiler is
   still the manual v0.58.0 copy. The compiler lane is working toward a new
   release that includes the wasm asset (owner relay 2026-09-26, pending).
+- `net.tcp_connect` signedness (AUDIT 29.4, SESSION 11.1): root cause
+  confirmed (the builtin's -1 surfaces as 4294967295 through the current
+  `-> Int` declaration, so the wrapper's negative check never fires). The
+  compiler-side fix landed (m146); the pinned stdlib still needs the
+  `Int32` extern declarations, and the wasm release does not carry the
+  fix. Re-check at the next absorption (SESSION 3.1).
 - C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
   stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
   constants) shipped in v0.61.3 and do not affect the lesson set.
