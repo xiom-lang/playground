@@ -159,6 +159,13 @@ workflow (B) signals it weekly.
    regenerate `js/stdlib-ref.json` (`node tools/generate-stdlib-ref.js`) if
    the stdlib changed.
 5. Run the gate (section 8) and commit the refreshed data with the bump.
+6. Pending compiler fixes to re-verify at each absorption until they land:
+   `net.tcp_connect("127.0.0.1", 1)` with no listener must return `Err`
+   (the signedness fix needs the compiler m146 change plus the stdlib
+   `Int32` extern declarations, SESSION 11.1); if it still prints `Ok`,
+   note it in AUDIT 29.4 and skip. The direct-builtin probe from 11.1 is
+   the quickest check (`connect_result` must be negative, not
+   4294967295).
 
 Never hand-edit generated files. Until step 3 runs, the nightly reports
 expected-output mismatches for lessons whose output changed: that is the
