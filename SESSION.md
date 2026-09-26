@@ -208,9 +208,11 @@ weekly.
 - `net.tcp_connect(host, port)` returns `Ok` even when nothing is
   listening (verified with no listener on `127.0.0.1:1`, sandboxed and
   unsandboxed), so it cannot be used to detect connection failures. The
-  compiler/stdlib lane should check whether this is a stub or an
-  error-swallowing bug (AUDIT section 29.4); the sandbox denial suite uses
-  a raw `connect(2)` probe instead.
+  stdlib wrapper (`lib/xiom/net/net.xi` lines 49-78) checks the return of
+  `xiom_socket_connect` correctly, so the suspect is the runtime builtin.
+  The sandbox denial suite uses a raw `connect(2)` probe instead.
+  Relayed to the compiler lane 2026-09-26 with the repro and the suspected
+  builtin; status pending the next release (AUDIT section 29.4).
 - The `xiom.fmt` reachable-only peek and script-run `--opt-level` are already
   fixed and measured (AUDIT sections 18, 24).
 
@@ -434,12 +436,10 @@ bind denials inside the live container), rotated `SESSION_SECRET` and
   ABI 3, so the TCP rule is exercised on ABI 4 hosts/CI/production. CI on
   the ABI 7 runner confirms `tcp=denied (EACCES from connect(2))`, all
   other denials, warm 2 ms, and test-server 40/40.
-- **Open:** the owner deploys (hourly pull or `playground-deploy.sh`) and
-  ops runs the in-container denial suite plus the crafted public-API probes
-  and reads `/api/health`; recipe in `docs/OPS_SECURITY_REQUEST.md`. Until
-  that deploy, the running container still lacks the wrapper, so `/data`
-  and `/proc` remain reachable inside it. P2 starts after P1 passes
-  (`docs/checklists/security-hardening.md`).
+- **Resolved 2026-09-25:** deployed (`f5fccef`) and verified live by ops --
+  see "P1 verified live on the VPS" below; the nightly CI (2026-09-26) also
+  runs the denial suite and the 410/410 execution audit with the sandbox
+  required.
 
 ### P1 verified live on the VPS (ops report, 2026-09-25)
 
@@ -566,3 +566,33 @@ Plan and relay for this audit:
   Landlock wrapper and a host-side runner service.
 - `docs/checklists/security-hardening.md` -- the step-by-step execution
   checklist for P0-P3.
+
+## 11. Cross-lane relays (2026-09-26)
+
+Both relays below were sent through the owner; this records the exact asks
+for the next handoff.
+
+### 11.1 Compiler: net.tcp_connect reports success on a failed connect
+
+Repro: `net.tcp_connect("127.0.0.1", 1)` with no listener prints `Ok` on the
+v0.61.3 mirrored toolchain (sandboxed with the Landlock wrapper and
+unsandboxed); the stdlib wrapper (`lib/xiom/net/net.xi` lines 49-78)
+returns `Err` correctly when `xiom_socket_connect` returns a negative
+value, so the runtime builtin is the suspect -- confirm it surfaces
+`connect(2)`'s result/errno (or a negative sentinel) and waits on
+non-blocking sockets before returning success. Impact: programs cannot
+detect failed connections, and our first sandbox TCP probe was invalidated
+by this. Status: pending the next release, which the owner relays also
+carries the `xiom-wasm` asset (C8).
+
+### 11.2 Registry: first real xiom.* packages (C3)
+
+Index re-checked 2026-09-26: only `xiom.staging-e2e-probe` (versions
+yanked). Asks: (1) the first real package name(s)/version(s) and timing;
+(2) a stable public index contract (same shape as the probe, no auth for a
+read-only consumer); (3) the no-egress consumption path -- the playground
+container has no egress by design, so package sources must be vendored in
+the toolchain archive, mounted as a read-only cache by ops, or supported by
+a documented offline cache layout; (4) production vs staging. On unblock:
+pick an example package, wire a stdlib-only and sandbox-compatible example,
+add a test, and update ROADMAP C3.

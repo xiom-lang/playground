@@ -107,8 +107,12 @@ concern or waits for a future accounts service.
   - "Open in playground" only for examples whose code is stdlib-only and
     sandbox-compatible; unblocks when the first real `xiom.*` packages are
     published (compiler/stdlib release integration). Registry checked
-    2026-09-24: only `xiom.staging-e2e-probe` is published, so C3 stays
-    open.
+    2026-09-24 and again 2026-09-26: only `xiom.staging-e2e-probe` is
+    published, so C3 stays open. Relay sent to the registry 2026-09-26
+    asking for the first real package(s)/timing, the index contract, the
+    no-egress consumption path (vendored toolchain archive, ops-mounted
+    read-only cache, or a documented offline layout), and production vs
+    staging (SESSION section 11.2).
 - [x] C4. Shared design system
   - The playground already matches the registry/website tokens (indigo
     `#5C6BFF` on `#08090B`, panel/line/paper palette, Inter/system stack, no
@@ -156,7 +160,8 @@ checklist: `docs/checklists/security-hardening.md`.
 - C6 fixed: the release `lib/package.xi` is the `xiom-std` manifest.
 - C8 Still open: the v0.61.3 SHA256SUMS lists `xiom-wasm-0.61.3.wasm`, but
   the asset 404s on GitHub and on the mirror; the in-browser compiler is
-  still the manual v0.58.0 copy.
+  still the manual v0.58.0 copy. The compiler lane is working toward a new
+  release that includes the wasm asset (owner relay 2026-09-26, pending).
 - C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
   stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
   constants) shipped in v0.61.3 and do not affect the lesson set.

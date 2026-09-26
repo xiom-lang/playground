@@ -1722,12 +1722,16 @@ execution audit **410/410 with no regressions** under the wrapper.
 `net.tcp_connect(host, port)` in v0.61.3 returns `Ok` even when nothing is
 listening: connecting to `127.0.0.1:1` (no listener) produced `Ok`, both
 sandboxed and unsandboxed, so the API cannot be used to detect connection
-failures. The sandbox TCP probe therefore uses a raw `connect(2)` program.
-The compiler/stdlib lane should check whether this is a stub or an
-error-swallowing bug; it does not affect the lesson set. The first CI run
-of the denial suite actually caught this: it reported `tcp=REACHABLE` on a
-runner where a raw `connect(2)` would have been denied, and the probe was
-replaced with the raw form (the fix is in the same commit as this note).
+failures. The stdlib wrapper (`lib/xiom/net/net.xi` lines 49-78) returns
+`Err` correctly when `xiom_socket_connect` returns a negative value, so the
+runtime builtin is the suspect. The sandbox TCP probe therefore uses a raw
+`connect(2)` program. The compiler/stdlib lane should check whether this is
+a stub or an error-swallowing bug; it does not affect the lesson set. The
+first CI run of the denial suite actually caught this: it reported
+`tcp=REACHABLE` on a runner where a raw `connect(2)` would have been
+denied, and the probe was replaced with the raw form (the fix is in the
+same commit as this note). Relayed to the compiler lane 2026-09-26 with
+the repro and the suspected builtin; status pending the next release.
 
 ## 30. Abuse controls: per-IP rate limiting (P3) (2026-09-25)
 
