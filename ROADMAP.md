@@ -160,12 +160,11 @@ checklist: `docs/checklists/security-hardening.md`.
 - C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
   stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
   constants) shipped in v0.61.3 and do not affect the lesson set.
-- Ops: v0.61.3 assets are mirrored and checksum-verified; the deploy
-  installs from the repo pin (option C landed 2026-09-25) and the container
-  runs v0.61.3. `dl-deploy.sh` was fixed to pick the newest release by
-  `published_at`; the index still said v0.60.1 on 2026-09-26 until its next
-  run, so the weekly drift job reports `latest < pin` (index-only) until
-  then.
+- Ops: toolchain currency closed (2026-09-25/26) -- v0.61.3 assets are
+  mirrored and checksum-verified, the deploy installs from the repo pin
+  (option C), `latest.json` advertises v0.61.3, and the drift workflow is
+  green at `relation=same`. It will fail loudly on the next release until
+  it is absorbed via the SESSION 3.1 runbook plus one pin-bump commit.
 
 ## Acceptance for VPS testing
 

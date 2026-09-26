@@ -259,12 +259,11 @@ the tag in `/opt/xiom/toolchain/.mirror-tag` (which `/api/version` reads).
 fails the deploy instead of silently serving a different compiler. The
 mirror deploy (`dl-deploy.sh`) now selects the newest release by
 `published_at` instead of GitHub's frozen `releases/latest` flag; the index
-still advertised v0.60.1 on 2026-09-26 (the fixed script had not run yet),
-which no longer affects the container but is worth checking on the VPS
-(ops `290717a` pulled, dl cron log). The VPS runs v0.61.3
-(`/api/version` confirms toolchain and stdlib 0.61.3,
-`capabilities.format: true`). A release is adopted by one reviewed pin-bump
-commit; the exact request and history are in `SESSION.md` section 3.
+advertises v0.61.3 and the drift workflow reports `relation=same` (verified
+2026-09-26). The VPS runs v0.61.3 (`/api/version` confirms toolchain and
+stdlib 0.61.3, `capabilities.format: true`). A release is adopted by one
+reviewed pin-bump commit; the exact request and history are in `SESSION.md`
+section 3.
 
 Hestia template: `xiom-playground` (nginx-only host, templates live in
 `/usr/local/hestia/data/templates/web/nginx/php-fpm/`) proxying the domain

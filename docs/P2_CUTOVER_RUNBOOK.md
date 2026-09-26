@@ -14,9 +14,12 @@ Preconditions (do not start until all are true):
   healthy with P1 (`sandbox.mode=require`) and P3 (`abuse` field) live.
 - A Contabo snapshot (or at least a volume copy) is taken, and the window
   is agreed: expect a one-time sign-in reset for users.
-- Substitutions used below: `GW` = Docker gateway (see the auth-helper
-  doc discovery block), `AUTH_USER` = the helper's system user
-  (`xiom-auth` in the current install).
+- Substitutions used below: `GW` = the helper's `AUTH_BIND`, i.e. the
+  **default-bridge gateway** (`172.17.0.1` on the VPS) -- derive it with
+  `docker network inspect bridge --format '{{range .IPAM.Config}}{{.Gateway}}{{end}}'`;
+  do not use the playground network gateway or the curls hit nothing.
+  `AUTH_USER` = the helper's system user (`xiom-auth` in the current
+  install).
 
 ## C1. Capture the pre-cutover state
 
@@ -60,8 +63,14 @@ ls -l /opt/xiom/playground-state/accounts | head
 GIT_SSH_COMMAND="ssh -i /root/.ssh/xiom_ops -o IdentitiesOnly=yes" \
   git -C /opt/xiom/ops pull --ff-only
 install -m 0755 /opt/xiom/ops/services/playground-auth/server.py /opt/xiom/playground-auth/server.py
+install -m 0644 /opt/xiom/ops/services/playground-auth/xiom-playground-auth.service /etc/systemd/system/xiom-playground-auth.service
+# The shipped unit uses ReadWritePaths=-/opt/xiom/playground-state: the `-`
+# prefix makes systemd tolerate an absent path. Keep it -- without the
+# prefix the unit fails with 226/NAMESPACE when the directory is missing.
+systemctl daemon-reload
 systemctl restart xiom-playground-auth.service
 sleep 1
+# GW must be the default-bridge gateway (the helper's AUTH_BIND).
 curl -s "http://$GW:3400/health"; echo
 # Unauthenticated contract spot checks: session endpoints must 401,
 # logout is idempotent, and the key stays required on /exchange.

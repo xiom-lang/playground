@@ -123,14 +123,12 @@ The owner decision is **C + B**:
   compiler from the repo pin (`releases/$PIN/...`), with `latest.json` only
   as a fallback and a missing pinned archive failing the deploy; the mirror
   deploy selects the newest release by `published_at`, so the draft-flag
-  freeze is fixed. The VPS container now reports `toolchain v0.61.3`,
-  `stdlib 0.61.3`, `capabilities.format: true` (verified 2026-09-25), so
-  the deployed compiler matches CI and the sweep data. Note the index
-  itself still advertised v0.60.1 on 2026-09-26 -- the dl run had not
-  applied the new script yet -- so the Monday drift run will report
-  `latest < pin` (index stale, container unaffected) until that run
-  happens; check the VPS pulled ops `290717a` and the dl cron log.
-  Details and history: section 3.2 and AUDIT 26.2.
+  freeze is fixed. The VPS container reports `toolchain v0.61.3`,
+  `stdlib 0.61.3`, `capabilities.format: true` (verified 2026-09-25), and
+  `latest.json` now advertises v0.61.3 as well (verified 2026-09-26). A
+  manual dispatch of the drift workflow confirms `latest=v0.61.3
+  pinned=v0.61.3 relation=same` and green. Details and history: section
+  3.2 and AUDIT 26.2.
 
 Last absorbed release: **v0.61.3 on 2026-09-24** (R64/R65 batch; no lesson
 output changes; bench before/after in AUDIT section 26). The next release
@@ -498,6 +496,18 @@ sessions in `sessions.json`, documents under `/opt/xiom/playground-state/`
 0600/0700 with atomic writes, absolute 30-day TTL). When ops confirms them
 live, the owner schedules the cutover window; the playground client is
 already landed and tested behind `PLAYGROUND_STATE=helper`.
+
+**Helper live 2026-09-26 (ops):** service active with a clean start, state
+dir `/opt/xiom/playground-state` created 0700 owned by `xiom-auth`, and the
+C4 contract checks all pass (`/health` ok; `/session` 401 without/with a
+bad bearer; `/progress` 401; logout 200; bad helper key 401; container-side
+`http://host.docker.internal:3400/health` 200; ops local contract test
+23/23 including null/stale-base 409s, delete idempotence, second-account
+isolation, store mode 0600). The C1-C6 window in
+`docs/P2_CUTOVER_RUNBOOK.md` is ready to schedule with the owner; ops runs
+the VPS steps. Runbook notes from the ops dry run: `GW` is the
+default-bridge gateway (the helper's `AUTH_BIND`), and the unit's
+`ReadWritePaths=-/opt/xiom/playground-state` needs the `-` prefix.
 
 ### P3 monitor field confirmed (2026-09-25)
 

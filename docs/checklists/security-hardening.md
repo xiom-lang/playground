@@ -52,8 +52,9 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
       on OAuth exchange; progress proxy with revision semantics; host store
       at `/opt/xiom/playground-state`; container drops `SESSION_SECRET` and
       `/data`).
-- [ ] Ops: implement the helper endpoints and the state directory; confirm
-      the deployment is live.
+- [x] Ops: implement the helper endpoints and the state directory; confirm
+      the deployment is live (2026-09-26: service active, state dir 0700
+      owned by xiom-auth, C4 checks pass, ops contract test 23/23).
 - [x] Playground: async `userFromRequest` with cache, per-boot OAuth state
       key, progress-store helper client, mock-helper protocol tests
       (`PLAYGROUND_STATE=helper`; AUDIT section 31).

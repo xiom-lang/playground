@@ -136,10 +136,9 @@ with opaque session tokens (minted only by a successful `/exchange`) and
 `/opt/xiom/playground-state/`, so the container drops `SESSION_SECRET` and
 the `/data` mount. The playground client is already implemented behind
 `PLAYGROUND_STATE=helper` (default `local`, so main is deployable either
-way) with full mock-helper tests; once ops confirms the endpoints are live,
-the cutover follows the steps in `DEPLOY.md` (snapshot, migrate documents,
-flip the compose env, rotate again, verify). Ops accepted this design on
-2026-09-25 and is implementing the endpoints.
+way) with full mock-helper tests. Ops confirmed the helper live on
+2026-09-26 (C4 checks pass, local contract test 23/23); the C1-C6 window in
+`docs/P2_CUTOVER_RUNBOOK.md` is ready to schedule with the owner.
 
 ## P3 landed (2026-09-25)
 
