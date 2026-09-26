@@ -1,11 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-25 (P2 client landed; toolchain currency closed).
-Branch `main`, working tree clean, all commits pushed to `origin/main`.
-Production is healthy and now runs **toolchain v0.61.3** with P1 (Landlock
-`require`, ABI 4) and P3 (rate limits + `abuse` monitor field) live. P2:
-ops accepted the design and is implementing the helper; the cutover window
-follows (section 10).
+Last updated: 2026-09-26 (P2 cutover executed). Branch `main`, working tree
+clean, all commits pushed to `origin/main`. Production runs **toolchain
+v0.61.3** with P1 (`sandbox: require`, ABI 4), P3 (rate limits + `abuse`
+field) and **P2 helper mode** (sessions/progress host-side, verified
+2026-09-26). Remaining: the owner's UptimeRobot monitor wiring, the website
+privacy-page sync after the rollback window, and the compiler-lane items
+(C8 wasm asset, `net.tcp_connect`).
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -503,11 +504,18 @@ C4 contract checks all pass (`/health` ok; `/session` 401 without/with a
 bad bearer; `/progress` 401; logout 200; bad helper key 401; container-side
 `http://host.docker.internal:3400/health` 200; ops local contract test
 23/23 including null/stale-base 409s, delete idempotence, second-account
-isolation, store mode 0600). The C1-C6 window in
-`docs/P2_CUTOVER_RUNBOOK.md` is ready to schedule with the owner; ops runs
-the VPS steps. Runbook notes from the ops dry run: `GW` is the
-default-bridge gateway (the helper's `AUTH_BIND`), and the unit's
-`ReadWritePaths=-/opt/xiom/playground-state` needs the `-` prefix.
+isolation, store mode 0600).
+
+**Cutover executed and verified 2026-09-26 (ops):** helper mode live
+(`State: helper sessions/progress`), `SESSION_SECRET` removed,
+`AUTH_HELPER_KEY` rotated and matching, forged cookie 401, `/api/health`
+keeps `sandbox.mode=require` and `abuse:ok`, browser sign-in and progress
+sync confirmed writing host-side. The pre-P2 env and `/data` backup are
+preserved for the 24-48 h rollback window. C7 landed in the repo (compose
+drops the `/data` mount and `PLAYGROUND_DATA_DIR`; the named volume stays
+unmounted for rollback) and the privacy facts in `DEPLOY.md` are updated;
+the website page sync is handed to the website lane in the 2026-09-26
+report. Remaining: owner's UptimeRobot keyword monitor on `"abuse":"ok"`.
 
 ### P3 monitor field confirmed (2026-09-25)
 

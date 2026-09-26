@@ -1,5 +1,13 @@
 # P2 cutover runbook: helper-backed sessions and progress (2026-09-26)
 
+Status: **executed and verified 2026-09-26** (ops). Helper mode is live
+(`State: helper sessions/progress`), `SESSION_SECRET` removed,
+`AUTH_HELPER_KEY` rotated and matching, forged cookie 401, `/api/health`
+keeps `sandbox.mode=require` and `abuse:ok`, and browser sign-in + progress
+sync write host-side. The pre-P2 env and the `/data` backup are preserved
+for rollback. C7 (the compose cleanup) landed in the playground repo; the
+24-48 h rollback window is open.
+
 Paste-ready steps for the owner/ops, in the style of
 `xiom-lang/ops/docs/PLAYGROUND_AUTH_HELPER.md`. Design and protocol:
 `docs/P2_STATE_HELPER_DESIGN.md`. Client and tests are already landed
@@ -125,13 +133,15 @@ reloading. Confirm the document landed host-side:
 ls -l /opt/xiom/playground-state/accounts/ | tail -3
 ```
 
-## C7. Phase-2 cleanup and privacy facts
+## C7. Phase-2 cleanup and privacy facts (landed 2026-09-26)
 
 After 24-48 h of stable helper mode:
 
 - Land the playground cleanup commit: drop the `playground-data:/data`
   volume and `PLAYGROUND_DATA_DIR` from `docker-compose.yml` (the image no
-  longer needs `/data`). The next hourly deploy applies it.
+  longer needs `/data`). The next hourly deploy applies it. **Done in the
+  repo** (the named volume declaration stays, unmounted, so the pre-cutover
+  documents remain on disk for rollback).
 - Update the "User data and privacy facts" list in `DEPLOY.md` and the
   mirrored website page: progress documents are stored by the host-side
   playground service under `/opt/xiom/playground-state`, not on a volume
@@ -145,6 +155,9 @@ After 24-48 h of stable helper mode:
 # Restore the pre-P2 env (puts SESSION_SECRET and the local mode back) and
 # drop the helper-mode line.
 cp "/opt/xiom/backups/playground-$(date +%F)/playground.env.pre-p2" /opt/xiom/playground.env
+# After C7 the compose no longer mounts /data: re-add the service mount
+# (`- playground-data:/data`) and `PLAYGROUND_DATA_DIR=/data`, for example
+# with `git revert` of the C7 compose commit, or restore the pre-P2 compose.
 docker compose -f /opt/xiom/playground/docker-compose.yml up -d --force-recreate
 # Progress written during the window lives host-side only; copy it back so
 # the local mode sees it too (additive, safe).

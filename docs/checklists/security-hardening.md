@@ -58,10 +58,13 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
 - [x] Playground: async `userFromRequest` with cache, per-boot OAuth state
       key, progress-store helper client, mock-helper protocol tests
       (`PLAYGROUND_STATE=helper`; AUDIT section 31).
-- [ ] Cutover: snapshot `/data`, copy documents host-side, deploy, verify
-      sign-in and progress round-trips, confirm no `SESSION_SECRET` and no
-      `/data` mount in the container.
-- [ ] Update the privacy facts in `DEPLOY.md` and tell the website lane.
+- [x] Cutover: restore the pre-P2 env and recreate; the host store is
+      additive (executed 2026-09-26: helper mode live, `SESSION_SECRET`
+      removed, key rotated, forged cookie 401, health unchanged, browser
+      sign-in + host-side progress writes confirmed).
+- [x] Update the privacy facts in `DEPLOY.md` and tell the website lane
+      (`DEPLOY.md` updated; website-page sync handed to the website lane in
+      the 2026-09-26 report; do it after the rollback window).
 
 ## P3 -- abuse controls and monitoring
 

@@ -1799,3 +1799,16 @@ the cutover (compose switches to `PLAYGROUND_STATE=helper`, drops
 `/data/accounts` to `/opt/xiom/playground-state/accounts`; rotate again),
 the verification recipe in the design doc, and the privacy-facts update.
 
+**Cutover executed and verified 2026-09-26 (ops + owner).** Helper mode is
+live (`State: helper sessions/progress`), `SESSION_SECRET` removed from the
+container env, `AUTH_HELPER_KEY` rotated and matching on both sides, a
+forged cookie returns 401, `/api/health` keeps `sandbox.mode=require` and
+`abuse:ok`, and browser sign-in plus progress sync were confirmed writing
+to the host store. The pre-P2 env and the `/data` backup are preserved for
+the 24-48 h rollback window. C7 landed in the repo: `docker-compose.yml`
+drops the `playground-data:/data` mount and `PLAYGROUND_DATA_DIR`, keeping
+the named volume declaration unmounted for rollback; the runbook C8
+restores the env copy, re-adds the mount and copies host-side documents
+back. The privacy facts in DEPLOY.md now describe the host store; the
+mirrored website page is handed to the website lane.
+

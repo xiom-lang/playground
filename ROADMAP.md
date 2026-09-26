@@ -130,13 +130,12 @@ checklist: `docs/checklists/security-hardening.md`.
   unavailable, denial tests plus the full Linux lesson audit. Verified
   live on the VPS (deploy `f5fccef`, ops report: `require`, ABI 4, all
   probes ok, escape program denied); rollback is `XIOM_SANDBOX=off`.
-- [~] D3. Data-plane containment: move session signing and the progress
-  store host-side so the web container holds no long-lived secrets and no
-  multi-tenant data. Design sent to ops
-  (`docs/P2_STATE_HELPER_DESIGN.md`); the playground client is implemented
-  behind `PLAYGROUND_STATE=helper` with full mock-helper tests (AUDIT
-  section 31). Remaining: ops helper endpoints, cutover, privacy-facts
-  update.
+- [x] D3. Data-plane containment: sessions and the progress store moved
+  host-side so the web container holds no long-lived secrets and no
+  multi-tenant data. Cutover executed and verified 2026-09-26 (helper mode
+  live, `SESSION_SECRET` removed, forged cookie 401, host-side writes
+  confirmed); the compose cleanup (C7) dropped the `/data` mount and
+  `PLAYGROUND_DATA_DIR` (AUDIT section 31).
 - [x] D4. Abuse controls: per-IP token buckets on the five compiler
   endpoints (429 + `Retry-After`) and queue/rejection counters on
   `/api/health` (AUDIT section 30). The alert wiring stays with ops.

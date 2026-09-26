@@ -171,33 +171,32 @@ runs on a small host-side helper, not in the container:
   narrow accept rule (playground subnet to the gateway, tcp/3400) above the
   DROP. Do not open GitHub egress.
 
-### State modes (P2, client implemented 2026-09-25)
+### State modes (P2, helper mode live since 2026-09-26)
 
 `PLAYGROUND_STATE` selects where sessions and progress live:
 
-- unset or `local` (current) -- sessions are stateless HMAC cookies signed
-  with `SESSION_SECRET`; progress documents live on the `playground-data`
-  volume at `/data`. The helper only performs the OAuth code exchange.
-- `helper` -- the helper mints an opaque session token on `/exchange` and
-  owns `GET /session`, `POST /session/logout`, `GET/PUT/DELETE /progress`
-  backed by `/opt/xiom/playground-state/` (see
-  `docs/P2_STATE_HELPER_DESIGN.md`). The container then needs no
-  `SESSION_SECRET` and hides no multi-tenant data; cookie verification is a
-  cached helper lookup (positive 60 s, negative 10 s; `SESSION_CACHE_MS`)
-  and the OAuth state is signed with a key generated at startup.
+- `helper` (production since 2026-09-26) -- the helper mints an opaque
+  session token on `/exchange` and owns `GET /session`,
+  `POST /session/logout`, `GET/PUT/DELETE /progress` backed by
+  `/opt/xiom/playground-state/` (see `docs/P2_STATE_HELPER_DESIGN.md`). The
+  container holds no `SESSION_SECRET` and no multi-tenant data; cookie
+  verification is a cached helper lookup (positive 60 s, negative 10 s;
+  `SESSION_CACHE_MS`) and the OAuth state is signed with a key generated at
+  startup.
+- unset or `local` (dev and rollback) -- sessions are stateless HMAC
+  cookies signed with `SESSION_SECRET`; progress documents live on the
+  `playground-data` volume at `/data`. The helper only performs the OAuth
+  code exchange. The compose file no longer mounts the volume (C7,
+  2026-09-26); a rollback re-adds it, see the runbook C8.
 
-Cutover to `helper`: follow `docs/P2_CUTOVER_RUNBOOK.md` (paste-ready:
-backup, seed `/opt/xiom/playground-state`, install and verify the helper
-endpoints, rotate `AUTH_HELPER_KEY`, add `PLAYGROUND_STATE=helper` to
-`/opt/xiom/playground.env` and recreate the container, verify, then the
-phase-2 compose cleanup). Summary: snapshot `/data`, copy
-`/data/accounts/*.json` to `/opt/xiom/playground-state/accounts/`, confirm
-the helper endpoints live, then flip the mode; users sign in once. Verify
-sign-in, `/api/me`, a progress round-trip with a 409 conflict,
-`DELETE /api/me`, a forged cookie (401), the startup log line
-`State: helper sessions/progress (...)`, and `docker inspect` showing no
-`SESSION_SECRET`. Rollback: restore the pre-P2 env copy and recreate; the
-host store is additive and can be copied back to the volume.
+Cutover history: executed and verified 2026-09-26 per
+`docs/P2_CUTOVER_RUNBOOK.md` -- helper mode live
+(`State: helper sessions/progress`), `SESSION_SECRET` removed,
+`AUTH_HELPER_KEY` rotated, forged cookie 401, `/api/health` unchanged
+(`sandbox.mode=require`, `abuse:ok`), browser sign-in and progress sync
+writing host-side. The pre-P2 env and the `/data` backup are preserved for
+the 24-48 h rollback window; rollback restores the env copy, re-adds the
+`/data` mount, and copies the host-side documents back.
 
 With no env configured the sign-in UI stays hidden and every existing route
 behaves as before.
@@ -220,15 +219,20 @@ session whenever one of these changes.
 - Accounts (optional): GitHub OAuth with `read:user` scope; the playground
   stores the numeric id, username, and avatar URL. The GitHub access token is
   discarded by the host-side helper after the profile fetch.
-- Stored progress: one JSON document per account on the `playground-data`
-  volume (`/data`) containing completed lesson ids, run timestamps,
-  pass/fail, durations, and program output truncated to 400 characters. No
-  source code, no free-play code, no personal profile data beyond the GitHub
-  identity.
-- Backups: the helper/playground env files and the `playground-data` volume
+- Stored progress: one JSON document per account, stored by the host-side
+  playground service under `/opt/xiom/playground-state/accounts/` (mode
+  0600, atomic writes; since the P2 cutover 2026-09-26), containing
+  completed lesson ids, run timestamps, pass/fail, durations, and program
+  output truncated to 400 characters. No source code, no free-play code, no
+  personal profile data beyond the GitHub identity. The web container holds
+  no copy.
+- Backups: the helper/playground env files, the new host state directory
+  `/opt/xiom/playground-state`, and (until the rollback window closes) the
+  pre-P2 `playground-data` volume
   (`/var/lib/docker/volumes/playground_playground-data/_data`, confirmed as
-  `playground_playground-data`) are in the nightly restic set as of ops commit
-  `80933b2`, and the restore procedure is documented in the ops
+  `playground_playground-data`) belong in the nightly restic set -- ops
+  extended it for the volume as of commit `80933b2` and needs to add the
+  state directory. The restore procedure is documented in the ops
   `docs/VPS_BACKUP_MONITORING.md` (B5a). The restic job is prepared but not
   yet scheduled - Backblaze B2 credentials and `/etc/xiom-backup.env` are
   owner actions still pending - so the website privacy page keeps the interim

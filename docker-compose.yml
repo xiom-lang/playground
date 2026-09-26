@@ -20,7 +20,10 @@ services:
       - "127.0.0.1:3300:3000"
     volumes:
       - /opt/xiom/toolchain:/toolchain:ro
-      - playground-data:/data
+      # C7 (2026-09-26): the pre-P2 playground-data volume is no longer
+      # mounted -- sessions and progress live host-side since the cutover
+      # (docs/P2_CUTOVER_RUNBOOK.md). The named volume declaration below is
+      # kept so the pre-cutover documents stay on disk for rollback.
     # Optional accounts config (C2). The file lives outside the repo so the
     # hourly git reset and the Docker build context never touch it; Compose
     # v2.24+ skips it when absent, keeping the feature inert.
@@ -32,7 +35,6 @@ services:
       - PORT=3000
       - XIOM_BIN=/toolchain/bin/xiom
       - XIOM_STDLIB=/toolchain/lib
-      - PLAYGROUND_DATA_DIR=/data
       # P1: user code must run under the Landlock wrapper; the server fails
       # closed (no execution) when it is missing. Rollback: set to `off`.
       - XIOM_SANDBOX=require
@@ -74,4 +76,6 @@ services:
         max-file: "3"
 
 volumes:
+  # Pre-P2 document store, kept (no longer mounted) for rollback. Remove
+  # only after the owner confirms the rollback window has closed.
   playground-data:

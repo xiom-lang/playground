@@ -137,8 +137,12 @@ with opaque session tokens (minted only by a successful `/exchange`) and
 the `/data` mount. The playground client is already implemented behind
 `PLAYGROUND_STATE=helper` (default `local`, so main is deployable either
 way) with full mock-helper tests. Ops confirmed the helper live on
-2026-09-26 (C4 checks pass, local contract test 23/23); the C1-C6 window in
-`docs/P2_CUTOVER_RUNBOOK.md` is ready to schedule with the owner.
+2026-09-26 (C4 checks pass, local contract test 23/23), the cutover was
+executed and verified the same day (helper mode live, forged cookie 401,
+host-side writes confirmed), and the playground landed C7 (compose drops
+the `/data` mount and `PLAYGROUND_DATA_DIR`). The pre-P2 env and `/data`
+backup stay for the rollback window; the website privacy-page sync is the
+remaining handoff.
 
 ## P3 landed (2026-09-25)
 
