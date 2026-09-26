@@ -138,7 +138,8 @@ checklist: `docs/checklists/security-hardening.md`.
   `PLAYGROUND_DATA_DIR` (AUDIT section 31).
 - [x] D4. Abuse controls: per-IP token buckets on the five compiler
   endpoints (429 + `Retry-After`) and queue/rejection counters on
-  `/api/health` (AUDIT section 30). The alert wiring stays with ops.
+  `/api/health` (AUDIT section 30). The owner wired the external keyword
+  monitor on `"abuse":"ok"` (2026-09-26, reports healthy).
 - [x] D5. Owner/ops: rotate `SESSION_SECRET`/`AUTH_HELPER_KEY`, verify the
   container egress guard from inside, and confirm the kernel Landlock ABI
   (all three done 2026-09-25).

@@ -73,6 +73,10 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
       (`server.js`, `RATE_LIMIT_BURST`/`RATE_LIMIT_REFILL_MS`).
 - [x] `/api/health` exposes queue depth and rejection counters
       (`counters` + `rateLimit`; verified by `tools/test-server.js`).
-- [ ] Alert on sustained queue saturation or compile-volume spikes through
-      the existing uptime check (ops).
+- [x] Alert on sustained queue saturation or compile-volume spikes through
+      the existing uptime check (owner wired the external UptimeRobot
+      keyword monitor on `"abuse":"ok"`, 2026-09-26, reports healthy).
 - [x] Document the counters in `DEPLOY.md` (abuse-controls section).
+- [ ] Ops: close the 24-48 h rollback window once C7 has been deployed
+      (remove the retained `playground_playground-data` volume and the
+      pre-P2 env copy; keep the accounts backup until the owner signs off).

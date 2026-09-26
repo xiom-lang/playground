@@ -1757,7 +1757,9 @@ keyword monitor (local cron mail from the VPS is rejected by SPF, so alerts
 must come from external infrastructure). Verified by the suite: the idle
 server reports `"ok"`, and the dedicated burst-2 instance with
 `ABUSE_REJECTIONS=1` flips to `"saturated"` after its 429, with the exact
-JSON substring asserted.
+JSON substring asserted. The owner wired the external UptimeRobot keyword
+monitor on `"abuse":"ok"` and confirmed it reports healthy on production
+(2026-09-26); P3 is closed.
 
 Verification: `tools/test-server.js` starts a dedicated server with burst 2
 and refill 60 s; two checks pass, the third returns 429 with a positive

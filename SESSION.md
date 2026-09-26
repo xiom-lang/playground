@@ -1,12 +1,14 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-26 (P2 cutover executed). Branch `main`, working tree
-clean, all commits pushed to `origin/main`. Production runs **toolchain
-v0.61.3** with P1 (`sandbox: require`, ABI 4), P3 (rate limits + `abuse`
-field) and **P2 helper mode** (sessions/progress host-side, verified
-2026-09-26). Remaining: the owner's UptimeRobot monitor wiring, the website
-privacy-page sync after the rollback window, and the compiler-lane items
-(C8 wasm asset, `net.tcp_connect`).
+Last updated: 2026-09-26 (P2 cutover executed; P3 monitor wired). Branch
+`main`, working tree clean, all commits pushed to `origin/main`. Production
+runs **toolchain v0.61.3** with P1 (`sandbox: require`, ABI 4), P3 (rate
+limits + `abuse` field, external monitor healthy) and **P2 helper mode**
+(sessions/progress host-side, verified 2026-09-26). Remaining: the website
+lane's backup sentence (the page still says the store is not in the
+off-site set; the first post-cutover backup ran 2026-09-26), the ops
+window-close after C7 has been deployed 24-48 h (scheduled, nothing needed
+here), and the compiler-lane items (C8 wasm asset, `net.tcp_connect`).
 
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
@@ -526,6 +528,18 @@ by SPF) on the literal `"abuse":"ok"` in `/api/health`. The field flips to
 requests within `ABUSE_WINDOW_MS` (default 50 in 5 min); the raw counters
 stay in the payload. Verified by the suite (idle `"ok"`, burst instance
 flips after its 429).
+
+**Monitor wired 2026-09-26 (owner):** the UptimeRobot keyword monitor
+reports healthy (`abuse:ok` on production). P3 is closed; no playground
+action remains.
+
+**Post-cutover ops state (2026-09-26):** `/opt/xiom/playground-state` is in
+the nightly restic set (ops updated the script/runbook; the owner ran the
+first backup with a dump check), and ops scheduled the window-close cleanup
+once C7 has been deployed for 24-48 h: remove the retained
+`playground_playground-data` volume and the pre-P2 env copy, keeping the
+accounts backup until the owner signs off. Nothing needed from the
+playground lane for the window close.
 
 ### P3 abuse controls landed (2026-09-25)
 

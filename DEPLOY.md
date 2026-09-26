@@ -226,21 +226,21 @@ session whenever one of these changes.
   output truncated to 400 characters. No source code, no free-play code, no
   personal profile data beyond the GitHub identity. The web container holds
   no copy.
-- Backups: the helper/playground env files, the new host state directory
+- Backups: the helper/playground env files, the host state directory
   `/opt/xiom/playground-state`, and (until the rollback window closes) the
   pre-P2 `playground-data` volume
   (`/var/lib/docker/volumes/playground_playground-data/_data`, confirmed as
-  `playground_playground-data`) belong in the nightly restic set -- ops
-  extended it for the volume as of commit `80933b2` and needs to add the
-  state directory. The restore procedure is documented in the ops
-  `docs/VPS_BACKUP_MONITORING.md` (B5a). The restic job is prepared but not
-  yet scheduled - Backblaze B2 credentials and `/etc/xiom-backup.env` are
-  owner actions still pending - so the website privacy page keeps the interim
-  wording ("nightly backups with 30-day / 12-month retention", future tense)
-  until ops confirms the first snapshot and a restore drill; then it becomes
-  "nightly backups age out after 30 days, with 12 monthly snapshots kept".
-  Restic retention is 30 daily / 12 monthly with a nightly prune and a 5%
-  read-data check on Sundays.
+  `playground_playground-data`) are in the nightly restic set -- ops
+  extended it for the volume as of commit `80933b2` and added the state
+  directory on 2026-09-26, and the owner ran the first post-cutover backup
+  with a dump check proving the documents are inside the repository. The
+  restore procedure is documented in the ops `docs/VPS_BACKUP_MONITORING.md`
+  (B5a). Retention wording: the website privacy page should not claim the
+  store is unbacked-up; use the interim "included in the backup set, first
+  snapshot/restore drill pending confirmation" until ops confirms both,
+  then flip to "nightly backups age out after 30 days, with 12 monthly
+  snapshots kept". Restic retention is 30 daily / 12 monthly with a nightly
+  prune and a 5% read-data check on Sundays.
 - Cookies: a single HttpOnly, SameSite=Lax session cookie (Secure on https)
   with a 30-day lifetime; sign-out clears it.
 - Deletion: `DELETE /api/me` removes the stored progress document and clears

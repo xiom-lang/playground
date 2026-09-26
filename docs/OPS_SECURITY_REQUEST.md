@@ -168,3 +168,5 @@ for `ABUSE_BUSY_MS` (default 180 s) or the rate limiter rejected
 Point the UptimeRobot keyword monitor at the literal `"abuse":"ok"`; the
 knobs plus `RATE_LIMIT_BURST`/`RATE_LIMIT_REFILL_MS` are tunable in
 compose, and the raw `counters`/`rateLimit` fields stay for diagnosis.
+The owner wired the monitor on 2026-09-26 and it reports healthy; P3 is
+closed.
