@@ -186,16 +186,18 @@ runs on a small host-side helper, not in the container:
   cached helper lookup (positive 60 s, negative 10 s; `SESSION_CACHE_MS`)
   and the OAuth state is signed with a key generated at startup.
 
-Cutover to `helper`: snapshot `/data`, copy
-`/data/accounts/*.json` to `/opt/xiom/playground-state/accounts/`, install
-the helper endpoints and confirm them live, then set
-`PLAYGROUND_STATE=helper` in the compose environment, drop `SESSION_SECRET`
-from `/opt/xiom/playground.env`, remove the `/data` mount, rotate
-`AUTH_HELPER_KEY` again, and deploy. Users sign in once. Verify sign-in,
-`/api/me`, a progress round-trip with a 409 conflict, `DELETE /api/me`, a
-forged cookie (401), and `docker inspect` showing no `/data` mount and no
-`SESSION_SECRET`. Rollback: restore the previous compose/env (local mode)
-and the pre-cutover volume snapshot; the host store is additive.
+Cutover to `helper`: follow `docs/P2_CUTOVER_RUNBOOK.md` (paste-ready:
+backup, seed `/opt/xiom/playground-state`, install and verify the helper
+endpoints, rotate `AUTH_HELPER_KEY`, add `PLAYGROUND_STATE=helper` to
+`/opt/xiom/playground.env` and recreate the container, verify, then the
+phase-2 compose cleanup). Summary: snapshot `/data`, copy
+`/data/accounts/*.json` to `/opt/xiom/playground-state/accounts/`, confirm
+the helper endpoints live, then flip the mode; users sign in once. Verify
+sign-in, `/api/me`, a progress round-trip with a 409 conflict,
+`DELETE /api/me`, a forged cookie (401), the startup log line
+`State: helper sessions/progress (...)`, and `docker inspect` showing no
+`SESSION_SECRET`. Rollback: restore the pre-P2 env copy and recreate; the
+host store is additive and can be copied back to the volume.
 
 With no env configured the sign-in UI stays hidden and every existing route
 behaves as before.
@@ -255,10 +257,12 @@ checkout (`$WORK` after the `git reset --hard`) and installs
 the tag in `/opt/xiom/toolchain/.mirror-tag` (which `/api/version` reads).
 `latest.json` is consulted only as a fallback, and a missing pinned archive
 fails the deploy instead of silently serving a different compiler. The
-mirror deploy (`dl-deploy.sh`) picks the newest release by `published_at`
-rather than GitHub's `releases/latest` flag, so `latest.json` tracks the
-current release for the website and other consumers. The VPS now runs
-v0.61.3 (`/api/version` confirms toolchain and stdlib 0.61.3,
+mirror deploy (`dl-deploy.sh`) now selects the newest release by
+`published_at` instead of GitHub's frozen `releases/latest` flag; the index
+still advertised v0.60.1 on 2026-09-26 (the fixed script had not run yet),
+which no longer affects the container but is worth checking on the VPS
+(ops `290717a` pulled, dl cron log). The VPS runs v0.61.3
+(`/api/version` confirms toolchain and stdlib 0.61.3,
 `capabilities.format: true`). A release is adopted by one reviewed pin-bump
 commit; the exact request and history are in `SESSION.md` section 3.
 

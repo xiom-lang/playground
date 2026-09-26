@@ -8,8 +8,10 @@
 # - latest == pin: nothing to do.
 # - latest >  pin: a released toolchain is not absorbed yet. Type-check the
 #   lessons against it as evidence, then fail with the absorption steps.
-# - latest <  pin: latest.json is older than the repo pin (stale mirror
-#   metadata). Never fetch the older toolchain; fail with the ops request.
+# - latest <  pin: the mirror index (latest.json) is behind the repo pin.
+#   Deploys follow the pin (option C), so the container is unaffected, but
+#   the website and other index consumers are stale. Never fetch the older
+#   toolchain; fail so the index gets refreshed.
 #
 # Adoption stays manual on purpose: every release needs a lesson sweep, an
 # execution audit and a baseline refresh (SESSION.md section 3.1), so this
@@ -71,6 +73,6 @@ jobs:
           if [ "${{ steps.latest.outputs.relation }}" = "newer" ]; then
             echo "::error::Toolchain drift: ${{ steps.latest.outputs.tag }} is newer than the repo pin ${{ steps.latest.outputs.pin }}. Absorb the release (SESSION.md section 3.1): bump TOOLCHAIN_VERSION, re-run the sweep and the execution audit, refresh baseline/limitations/stdlib-ref, then commit and push."
           else
-            echo "::error::Toolchain drift: latest.json advertises ${{ steps.latest.outputs.tag }} but the repo pin is ${{ steps.latest.outputs.pin }}. Refresh dl.xiom-lang.org/latest.json (ops) so the VPS deploy and other consumers see the current release."
+            echo "::error::Toolchain drift: latest.json advertises ${{ steps.latest.outputs.tag }} but the repo pin is ${{ steps.latest.outputs.pin }}. Deploys follow the repo pin (option C), so the container is unaffected; refresh the mirror index for the website and other consumers (dl-deploy.sh pull/cron on the VPS)."
           fi
           exit 1

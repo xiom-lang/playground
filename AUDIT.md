@@ -1393,10 +1393,14 @@ data.
 
 **Landed 2026-09-25 (ops).** `playground-deploy.sh` now installs from the
 repo pin (with `latest.json` only as a fallback, and a missing pinned
-archive failing the deploy), and `dl-deploy.sh` picks the newest release by
-`published_at` instead of GitHub's `releases/latest` flag (which had frozen
-on v0.60.1 because v0.61.3 was created as a draft). The VPS container
-reports `toolchain v0.61.3`, `stdlib 0.61.3`, `capabilities.format: true`.
+archive failing the deploy), and `dl-deploy.sh` selects the newest release
+by `published_at` instead of GitHub's `releases/latest` flag (which had
+frozen on v0.60.1 because v0.61.3 was created as a draft). The VPS
+container reports `toolchain v0.61.3`, `stdlib 0.61.3`,
+`capabilities.format: true`. The mirror index itself still advertised
+v0.60.1 on 2026-09-26 (the fixed dl script had not run yet); that now only
+affects the website and other index consumers, and the weekly drift job
+reports it until the next dl run.
 
 ### 26.3 v0.61.3 release verification
 
@@ -1440,10 +1444,12 @@ regressions.
   waits on that file.
 - The mirror index (`latest.json`, `releases/index.json`) was stale at
   v0.60.1 while the v0.61.1 and v0.61.3 directories were live, because
-  `releases/latest` had frozen on the draft-era v0.60.1. Resolved
-  2026-09-25 (ops): `dl-deploy.sh` now selects the newest release by
-  `published_at`, the VPS deploy installs from the repo pin, and
-  `/api/version` reports v0.61.3 with `capabilities.format: true`.
+  `releases/latest` had frozen on the draft-era v0.60.1. Fixed at the
+  script level 2026-09-25 (ops): `dl-deploy.sh` now selects the newest
+  release by `published_at`, and the VPS deploy installs from the repo pin,
+  so `/api/version` reports v0.61.3 with `capabilities.format: true`. The
+  index itself still read v0.60.1 on 2026-09-26 until the fixed dl script's
+  next run.
 
 ## 27. Crash-exit reporting and lesson semicolon compliance (2026-09-25)
 
@@ -1697,6 +1703,10 @@ reports `tcp=denied (EACCES from connect(2))` and every other probe ok,
 warm repeat 2 ms; the server suite runs 40/40 with the sandbox in require
 mode. The nightly job re-runs the 410-lesson execution audit under the
 wrapper.
+
+Nightly CI (2026-09-26, scheduled): green with the sandbox required -- the
+denial suite all ok (`tcp=denied` EACCES, warm-run 3 ms) and the full
+execution audit **410/410 with no regressions** under the wrapper.
 
 ### 29.3 Rollback and residual
 

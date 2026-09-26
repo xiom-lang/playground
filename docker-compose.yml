@@ -37,6 +37,10 @@ services:
       # closed (no execution) when it is missing. Rollback: set to `off`.
       - XIOM_SANDBOX=require
       - XIOM_SANDBOX_BIN=/usr/local/bin/xiom-sandbox
+      # P2 state mode is intentionally NOT set here: the cutover and its
+      # rollback are controlled by adding/removing `PLAYGROUND_STATE=helper`
+      # in /opt/xiom/playground.env (env_file), so no code change is needed
+      # in the window. See docs/P2_CUTOVER_RUNBOOK.md.
       # The toolchain's script cache needs a writable HOME. The rootfs
       # (including /home/xiomp) is read-only, so without this every program
       # run recompiles (~6s instead of ~10ms warm on repeat runs).

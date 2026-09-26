@@ -122,11 +122,15 @@ The owner decision is **C + B**:
 - **C landed (ops, 2026-09-25).** `playground-deploy.sh` installs the
   compiler from the repo pin (`releases/$PIN/...`), with `latest.json` only
   as a fallback and a missing pinned archive failing the deploy; the mirror
-  deploy picks the newest release by `published_at`, so `latest.json`
-  tracks the current release again. The VPS container now reports
-  `toolchain v0.61.3`, `stdlib 0.61.3`, `capabilities.format: true`
-  (verified 2026-09-25), so the deployed compiler matches CI and the sweep
-  data. Details and history: section 3.2 and AUDIT 26.2.
+  deploy selects the newest release by `published_at`, so the draft-flag
+  freeze is fixed. The VPS container now reports `toolchain v0.61.3`,
+  `stdlib 0.61.3`, `capabilities.format: true` (verified 2026-09-25), so
+  the deployed compiler matches CI and the sweep data. Note the index
+  itself still advertised v0.60.1 on 2026-09-26 -- the dl run had not
+  applied the new script yet -- so the Monday drift run will report
+  `latest < pin` (index stale, container unaffected) until that run
+  happens; check the VPS pulled ops `290717a` and the dl cron log.
+  Details and history: section 3.2 and AUDIT 26.2.
 
 Last absorbed release: **v0.61.3 on 2026-09-24** (R64/R65 batch; no lesson
 output changes; bench before/after in AUDIT section 26). The next release
@@ -447,6 +451,10 @@ egress still blocked; the public-API escape program prints
 `data=denied / proc=denied / tmp=ok / spawn=ok / spawnproc=denied`. P1
 acceptance met; rollback stays `XIOM_SANDBOX=off` + redeploy.
 
+Nightly CI (2026-09-26): the scheduled run is green with the sandbox
+required -- denial suite ok (`tcp=denied` EACCES, warm-run 3 ms) and the
+full execution audit **410/410 with no regressions** through the wrapper.
+
 ### P2 design sent to ops (2026-09-25)
 
 `docs/P2_STATE_HELPER_DESIGN.md`: extend the existing playground auth helper
@@ -477,9 +485,10 @@ and five helper-mode tests cover sign-in, `/api/me`, progress round-trip +
 on Linux with the sandbox required (AUDIT section 31).
 
 Remaining for P2: ops implements and confirms the helper endpoints, then
-the cutover per `docs/P2_STATE_HELPER_DESIGN.md` / the DEPLOY state-modes
-section (snapshot, migrate documents, flip compose, drop `SESSION_SECRET`
-and `/data`, rotate again, verify, privacy-facts update).
+the cutover per `docs/P2_CUTOVER_RUNBOOK.md` (paste-ready: backup, seed the
+host store, install/verify the helper, rotate the key, flip
+`PLAYGROUND_STATE=helper` via `/opt/xiom/playground.env`, verify, phase-2
+compose cleanup, rollback).
 
 ### P2 accepted by ops (2026-09-25)
 
