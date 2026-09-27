@@ -162,10 +162,13 @@ workflow (B) signals it weekly.
 6. Pending compiler fixes to re-verify at each absorption until they land:
    `net.tcp_connect("127.0.0.1", 1)` with no listener must return `Err`
    (the signedness fix needs the compiler m146 change plus the stdlib
-   `Int32` extern declarations, SESSION 11.1); if it still prints `Ok`,
-   note it in AUDIT 29.4 and skip. The direct-builtin probe from 11.1 is
-   the quickest check (`connect_result` must be negative, not
-   4294967295).
+   `Int32` extern declarations, merged as `c193bc4`; alone the stdlib
+   change is behavior-neutral on the current pin, so only a release
+   pairing both flips the check). If it still prints `Ok`, note it in
+   AUDIT 29.4 and skip; if the pin bumps before a stdlib release, target
+   stdlib `origin/main` at or after `c193bc4`. The direct-builtin probe
+   from 11.1 is the quickest check (`connect_result` must be negative,
+   not 4294967295).
 
 Never hand-edit generated files. Until step 3 runs, the nightly reports
 expected-output mismatches for lessons whose output changed: that is the
@@ -606,13 +609,17 @@ declarations in the stdlib; re-check at the next absorption (pin bump,
 SESSION 3.1) once a release carries both. Our sandbox denial suite is
 unaffected (raw `connect(2)` probe).
 
-**Update 2026-09-27 (compiler relay + local check):** the stdlib's `Int32`
-extern declaration is committed as `c193bc4` (`fix(net): extern returns
-Int32 (m146 prep)`), and `git ls-remote` shows it on the stdlib
-`origin/main`; it will ship in the first compiler release whose pin
-carries that ref together with m146. The pending wasm-asset release
-includes neither. Absorption step 6 re-verifies `tcp_connect` against
-that pin.
+**Update 2026-09-27 (compiler + stdlib relays):** the stdlib's `Int32`
+extern declarations are merged and pushed as `c193bc4` (`fix(net): extern
+returns Int32 (m146 prep)`) across all four declarations (`net.xi`,
+`http.xi`, `socket.xi`, `websocket.xi`), present in the stdlib tip
+`1fbb45a`; `git ls-remote` confirms it on the stdlib `origin/main`. Alone
+it is behavior-neutral on the v0.61.3 pin (the `-1` -> `4294967295`
+widening persists), so a refused-port connect only surfaces as `Err` in
+the first compiler release that pairs m146 with stdlib >= `c193bc4`. Until
+a stdlib release is cut (queue F, gated on 100% + tag), absorption step 6
+may target stdlib `origin/main` at or after `c193bc4` whenever the pin
+bumps. The pending wasm-asset release includes neither half.
 
 ### 11.2 Registry: first real xiom.* packages (C3)
 

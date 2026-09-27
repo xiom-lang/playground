@@ -183,10 +183,13 @@ AUDIT section 32.
 - `net.tcp_connect` signedness (AUDIT 29.4, SESSION 11.1): root cause
   confirmed (the builtin's -1 surfaces as 4294967295 through the current
   `-> Int` declaration, so the wrapper's negative check never fires). The
-  compiler-side fix landed (m146); the stdlib `Int32` externs are on
-  stdlib main as `c193bc4`. Both ship in the first release whose pin
-  carries that ref; the wasm release carries neither. Absorption step 6
-  re-verifies `tcp_connect` against that pin.
+  compiler-side fix landed (m146); the stdlib `Int32` externs are merged
+  and pushed (`c193bc4`, stdlib tip `1fbb45a`). The stdlib change alone is
+  behavior-neutral on the pin; the check flips to `Err` only in the first
+  release pairing m146 with stdlib >= `c193bc4`. Absorption step 6
+  re-verifies `tcp_connect` against that pin (or against stdlib
+  `origin/main` at/after `c193bc4` when the pin bumps before a stdlib
+  release).
 - C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
   stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
   constants) shipped in v0.61.3 and do not affect the lesson set.

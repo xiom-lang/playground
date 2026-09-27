@@ -1745,12 +1745,16 @@ signed-32-bit extern declarations are required; re-check at the next
 absorption once a release carries both. The sandbox denial suite is
 unaffected (raw `connect(2)` probe).
 
-Update 2026-09-27: the stdlib commit `c193bc4` (`fix(net): extern returns
-Int32 (m146 prep)`) is on the stdlib `origin/main` (verified with
-`git ls-remote`); it ships in the first compiler release whose pin carries
-that ref together with m146. The pending wasm-asset release includes
-neither. Absorption step 6 (SESSION 3.1) re-verifies `tcp_connect` against
-that pin.
+Update 2026-09-27: the stdlib's `Int32` extern declarations are merged and
+pushed as `c193bc4` (`fix(net): extern returns Int32 (m146 prep)`) across
+`net.xi`, `http.xi`, `socket.xi` and `websocket.xi`, present in the stdlib
+tip `1fbb45a` and on `origin/main` (verified with `git ls-remote`). Alone
+it is behavior-neutral on the v0.61.3 pin -- the `-1` -> `4294967295`
+widening persists -- so the refused-port check only surfaces `Err` in the
+first compiler release that pairs m146 with stdlib >= `c193bc4`. Until a
+stdlib release is cut (queue F, gated on 100% + tag), absorption step 6
+may target stdlib `origin/main` at or after `c193bc4` whenever the pin
+bumps. The pending wasm-asset release includes neither half.
 
 ## 32. Lesson prose snippet audit: io.println is text-only (2026-09-26)
 
