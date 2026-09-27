@@ -1894,8 +1894,7 @@ Conversion scoping and floats (owner question, verified on v0.61.3):
 (the conversion binds to `2` and the result is joined, not added); the
 whole expression must stay inside the call. `to_string` is Int-only:
 `to_string(2 + 2.5)` prints 4, while `float_to_string(2 + 2.5)` prints
-4.5. `(2 + 2.5).to_str()` compiled but printed an empty line on the pin
-(worth a compiler-lane probe). Teaching fix landed: L0-02 gained the
+4.5. `(2 + 2.5).to_str()` hits the W005 stub and prints 0 on the pin; use `float_to_string(2.0 + 2.5)` or an annotated Float64 local (mixed Int + Float64 arithmetic needs explicit float operands). Teaching fix landed: L0-02 gained the
 "whole calculation inside the conversion" tip and mistake; L1-06 gained
 the Int-vs-Float conversion tip (`to_string` vs `float_to_string`).
 
