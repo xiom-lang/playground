@@ -1889,6 +1889,16 @@ Compiler answers (2026-09-27, relay):
   The `Iterator` warning is Range-only diagnostic noise (semantics are
   correct) and is logged as a compiler-side polish item.
 
+Conversion scoping and floats (owner question, verified on v0.61.3):
+`to_string(12 + 2)` prints 14, but `12 + 2.to_string()` prints **122**
+(the conversion binds to `2` and the result is joined, not added); the
+whole expression must stay inside the call. `to_string` is Int-only:
+`to_string(2 + 2.5)` prints 4, while `float_to_string(2 + 2.5)` prints
+4.5. `(2 + 2.5).to_str()` compiled but printed an empty line on the pin
+(worth a compiler-lane probe). Teaching fix landed: L0-02 gained the
+"whole calculation inside the conversion" tip and mistake; L1-06 gained
+the Int-vs-Float conversion tip (`to_string` vs `float_to_string`).
+
 ## 30. Abuse controls: per-IP rate limiting (P3) (2026-09-25)
 
 Every compiler endpoint spawns the toolchain and the queues hold one

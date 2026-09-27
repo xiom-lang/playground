@@ -19,7 +19,8 @@
   "tips": [
     "Arguments match parameters by position — first to first, second to second",
     "Use descriptive parameter names so callers know what goes where",
-    "Each parameter needs its own type annotation: `(x: Int, y: Str)` not `(x, y: Str)`"
+    "Each parameter needs its own type annotation: `(x: Int, y: Str)` not `(x, y: Str)`",
+    "`to_string` is for whole numbers only. For decimals use `float_to_string(...)`: `io.println(float_to_string(2 + 2.5))` prints 4.5, while `to_string(2 + 2.5)` gives 4 because it is an Int conversion."
   ],
   "common_mistakes": [
     "Swapping argument order accidentally — `subtract(3, 10)` gives -7, not 7",
