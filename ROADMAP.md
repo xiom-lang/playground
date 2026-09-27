@@ -171,6 +171,35 @@ AUDIT section 32.
   the prose audit found no lesson solution or template missing a
   separator.
 
+## Backlog -- owner-approved, not started (2026-09-27)
+
+Direction agreed: the sandbox stays the security boundary and the stdlib
+is NOT filtered (source filtering is bypassable via user-declared
+`extern "C"` and would fight the learning mission). Instead, make the
+sandbox legible:
+
+- B1. Capability tiers in `js/stdlib-ref.json`: generated `full` /
+  `limited` / `blocked` metadata per module/function (net = blocked by
+  policy; io file APIs = `/tmp` only, ephemeral; process spawn =
+  contained; env = whitelist; `/proc`/`/data` unreachable). Generate in
+  `tools/generate-stdlib-ref.js` (never hand-edit the JSON) and surface as
+  badges plus a one-line note in the reference panel.
+- B2. Friendly sandbox-denial messages: map kernel denials (EACCES on
+  connect/open, fault-trap exits) in the runner to plain-language output
+  ("the playground has no network access", "only /tmp is writable")
+  instead of raw errnos.
+- B3. `docs/SANDBOX_CAPABILITIES.md`: one honest page (no network,
+  temporary files only, resource limits, host-side sessions/progress,
+  where each restriction comes from), linked from the panel and SESSION.
+- B4. A short "Playground vs a real compiler" note in the L8 ecosystem
+  lessons, driven by B1's tiers.
+- B5. (Carried) Finish the Phase E prose sweep L2-L8 including run
+  verification for direct `for x in Vec`; see AUDIT 32.
+
+Ops etiquette for these: they are playground-only changes -- no ops
+requests, no container/VPS changes. Batch any ops ask (currently only the
+rollback-window close) instead of sending per-item requests.
+
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 
 - C1 fixed in v0.61.1 (`--version` reports v0.61.1).

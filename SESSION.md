@@ -648,6 +648,17 @@ pending fix? Prose still teaches the direct form in 40 places; L0's five
 affected lessons were rewritten and executed; the remaining 35 are in the
 Phase E sweep (AUDIT 32.1).
 
+### 11.4 Compiler: is a bare-literal `12.to_str()` guaranteed? (2026-09-27)
+
+Verified on v0.61.3: `to_string(Int)` and `int_to_string(Int)` work,
+`to_string(Bool)` does not exist, and the `.to_str()` method works on Int,
+Bool and Float64 including on bare literals (`12.to_str()` prints 12) and
+parenthesized expressions. The owner flagged the literal-after-number shape
+as fragile; L0-02 now teaches `to_string(12)` for whole numbers with a note
+that variables can use `age.to_str()`. Ask: is the bare-literal method form
+guaranteed by the grammar, or should lessons prefer `to_string(...)` /
+parenthesized receivers?
+
 ## 12. Lesson content QA (2026-09-26)
 
 Owner report: L0-02 claimed numbers print without quotes, but
@@ -667,3 +678,24 @@ computed values -- outputs unchanged, so `expected_output` and the
 baseline stay valid). Details, counts and the remaining sweep:
 AUDIT section 32 and ROADMAP Phase E. Sweep command:
 `node tools/audit-snippets.js --level Lx --imports`.
+
+## 13. Backlog and waiting state (2026-09-27)
+
+Owner-approved direction: keep the sandbox as the security boundary and do
+NOT filter the stdlib (source filtering is bypassable via user-declared
+`extern "C"` and would fight the learning mission). Make the sandbox
+legible instead. Parked in ROADMAP's backlog section:
+
+- B1 capability tiers (`full`/`limited`/`blocked`) generated in
+  `tools/generate-stdlib-ref.js` and surfaced in the reference panel;
+- B2 friendly sandbox-denial messages in the runner;
+- B3 `docs/SANDBOX_CAPABILITIES.md`;
+- B4 a "Playground vs a real compiler" note in the L8 lessons;
+- B5 finish the Phase E prose sweep L2-L8 with run verification.
+
+These are playground-only changes: no ops requests for them, and any ops
+ask (currently just the rollback-window close) is batched, not sent
+per-item. Status: waiting on the compiler-lane replies to relays 11.1
+(tcp_connect verification target), 11.3 (direct for-in semantics and the
+`Iterator` warning) and 11.4 (is bare-literal `12.to_str()` guaranteed).
+No further playground changes until those answers arrive.
