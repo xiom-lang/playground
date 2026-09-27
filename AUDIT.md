@@ -1847,6 +1847,23 @@ is meant to work (and the `Iterator` warning is a pending fix). The
 remaining 35 occurrences are part of the Phase E sweep and must be
 verified by *running* them, since compilation alone misses this class.
 
+### 32.2 Level sweep progress (2026-09-27)
+
+- L0: clean; all 87 prose programs compile (detailed in 32.1).
+- L1: the same position-driven pass fixed the real classes (wraps,
+  missing imports, one direct-for-in rewrite). Before: 18/81 compiled;
+  after: 44/81. The 37 remaining are all the **excerpt class**: fences that
+  show a `main` calling functions defined elsewhere in the lesson
+  (`greet`, `sum_to`, `print_table`, ...), so they cannot stand alone by
+  design and are not content errors. Policy for the rest of the sweep:
+  compile failures whose only errors are `undefined variable '<name>'` /
+  `unknown type '<name>'` are reported as `excerpt` (illustrative), while
+  `error[P001]`, Str-mismatch and other type errors stay failures. The
+  audit tool should grow that third bucket before sweeping L2-L8; L2-L8
+  still carry the known real classes (match-arrow `->`, missing
+  semicolons, malformed samples, remaining println(non-Str)) plus direct
+  for-in occurrences that need run-verification.
+
 Conversion forms (owner question, verified on v0.61.3 by compile+run):
 `to_string(Int)` works (`to_string(12 + 4)` prints 16), `int_to_string(Int)`
 works, and the `.to_str()` method works on Int, Bool and Float64 -- including
