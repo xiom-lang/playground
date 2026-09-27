@@ -633,6 +633,21 @@ a documented offline cache layout; (4) production vs staging. On unblock:
 pick an example package, wire a stdlib-only and sandbox-compatible example,
 add a test, and update ROADMAP C3.
 
+### 11.3 Compiler: direct `for x in Vec` iterates zero times (2026-09-27)
+
+While sweeping lesson prose (section 12), we found that on v0.61.3
+`for x in ["a","b","c"] { io.println(x) }` compiles, runs, and prints
+nothing; when the body needs the element as `Str` the compiler reports the
+binder as `Int` (`argument type mismatch ... found Int`). Every lesson
+solution already uses the indexed idiom
+`for __i in range(0, v.len()) { let x = v[__i]; ... }` (with
+`use xiom.iter;`), which works but prints
+`xiom: warning: unknown type 'Iterator' -- defaulting to i64`. Ask: is
+direct iteration supposed to work, and is the `Iterator` warning a known
+pending fix? Prose still teaches the direct form in 40 places; L0's five
+affected lessons were rewritten and executed; the remaining 35 are in the
+Phase E sweep (AUDIT 32.1).
+
 ## 12. Lesson content QA (2026-09-26)
 
 Owner report: L0-02 claimed numbers print without quotes, but

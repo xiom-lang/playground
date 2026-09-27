@@ -1824,6 +1824,42 @@ these fixes reports 87 complete programs: 9 ok, 16 excerpt-only
 lessons, overwhelmingly `println(non-Str)`. Sweep command:
 `node tools/audit-snippets.js --level Lx --imports`.
 
+### 32.1 L0 swept clean and a second language finding (2026-09-27)
+
+L0 is now fully clean: all 87 prose programs compile, the
+`println(non-Str)` wraps and missing module imports were applied
+mechanically (position-driven fixer over the compiler's own diagnostics),
+and one `argument 2` case was rewritten to the solution's idiom. The
+lesson solutions still execute to the unchanged `expected_output`.
+
+Second finding, for the compiler lane: **direct `for x in vec` does not
+walk a `Vec`**. On v0.61.3, `for x in ["a","b","c"] { io.println(x) }`
+compiles, runs, and iterates zero times; when the body uses the element as
+a `Str` the compiler reports `argument type mismatch ... found Int`, i.e.
+the binder is typed as an index. Every lesson solution already avoids the
+form; the working idiom is `for __i in range(0, v.len()) { let x = v[__i];
+... }` with `use xiom.iter;` (which prints `xiom: warning: unknown type
+'Iterator' -- defaulting to i64`). Prose still teaches the direct form in
+40 places across L0-L5; the five L0 lessons (L0-11, L0-24, L0-34, L0-49,
+L0-50) were rewritten to the indexed idiom and executed to confirm the
+items print. Relayed to the compiler lane: ask whether direct iteration
+is meant to work (and the `Iterator` warning is a pending fix). The
+remaining 35 occurrences are part of the Phase E sweep and must be
+verified by *running* them, since compilation alone misses this class.
+
+Conversion forms (owner question, verified on v0.61.3 by compile+run):
+`to_string(Int)` works (`to_string(12 + 4)` prints 16), `int_to_string(Int)`
+works, and the `.to_str()` method works on Int, Bool and Float64 -- including
+on literals and parenthesized expressions (`12.to_str()` prints 12,
+`(12).to_str()` prints 12, `(1.5).to_str()` prints 1.5). `to_string(Bool)`
+does NOT exist (`expected Int, found Bool`), so `.to_str()` stays the general
+conversion and `to_string` is the Int-only helper. L0-02 now teaches
+`to_string(12)` for whole numbers (unambiguous) and mentions `age.to_str()`
+for variables; the solutions keep working identically. One full audit run
+reported four transient compiler crashes on L1-45..L1-48 checks (exit -1,
+~700 ms, empty stderr); a scoped re-run and the next full run were clean, so
+they were resource-related, not content-related.
+
 ## 30. Abuse controls: per-IP rate limiting (P3) (2026-09-25)
 
 Every compiler endpoint spawns the toolchain and the queues hold one

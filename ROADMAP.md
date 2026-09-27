@@ -158,9 +158,14 @@ AUDIT section 32.
 
 - [~] E1. Prose snippet sweep: baseline 418 complete `fn main` programs in
   prose, 406 failing standalone (213 excerpt-only missing module lines,
-  197 real). Fixed L0-01/02/03/04/07 (number/boolean printing via
-  `.to_str()`, computed solutions, the semicolon exception note).
-  Remaining: the rest of L0, L1-L8, and the match-arm `->` vs `=>` group.
+  197 real). **L0 is clean: all 87 programs compile** after mechanical
+  `println(non-Str)` wraps, import additions and the loop-idiom rewrite;
+  the five loop lessons now use `range` + index and were executed to
+  confirm the items print. Remaining: L1-L8 (match-arm `->` group,
+  missing semicolons, malformed samples) and the other 35 direct
+  `for x in vec` prose occurrences, which must be verified by running
+  (compilation misses zero-iteration loops). Second compiler-lane finding:
+  direct `for x in Vec` iterates zero times on v0.61.3 (AUDIT 32.1).
 - [x] E2. Semicolon teaching: L0-01 states the habit and the exception,
   L0-02 keeps `;` on every statement, L6-16 explains the value-tail form;
   the prose audit found no lesson solution or template missing a
