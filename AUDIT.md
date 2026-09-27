@@ -1877,6 +1877,18 @@ reported four transient compiler crashes on L1-45..L1-48 checks (exit -1,
 ~700 ms, empty stderr); a scoped re-run and the next full run were clean, so
 they were resource-related, not content-related.
 
+Compiler answers (2026-09-27, relay):
+- Bare-literal conversion is guaranteed: `12.to_str()`, `(12).to_str()` and
+  `12.to_string()` all compile and run (12|12|12); member access binds to
+  the literal, not to a float. L0-02 teaches the bare `.to_str()` form
+  again, with `to_string(12)` noted as the Int-only alternative.
+- Direct `for x in Vec` is supported and correct on current main (element
+  type inferred, zero warnings); the zero-iteration behaviour is the
+  v0.61.3 pin, so the range+index rewrites stay until the next absorption
+  moves the pin, after which the cleaner direct form can be revisited.
+  The `Iterator` warning is Range-only diagnostic noise (semantics are
+  correct) and is logged as a compiler-side polish item.
+
 ## 30. Abuse controls: per-IP rate limiting (P3) (2026-09-25)
 
 Every compiler endpoint spawns the toolchain and the queues hold one

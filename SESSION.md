@@ -661,6 +661,15 @@ parenthesized receivers?
 
 ## 12. Lesson content QA (2026-09-26)
 
+**Compiler answers received (2026-09-27):** (a) bare-literal conversion is
+guaranteed -- `12.to_str()`, `(12).to_str()` and `12.to_string()` all work,
+member access binds to the literal; L0-02 back to the bare `.to_str()` form
+with `to_string(12)` as the Int-only alternative. (b) Direct `for x in Vec`
+is supported and correct on current main; the zero-iteration behaviour is
+the v0.61.3 pin, so the range+index rewrites stay until the pin moves
+(revisit after the next absorption); the `Iterator` warning is Range-only
+noise, safe for lessons, logged for compiler polish.
+
 Owner report: L0-02 claimed numbers print without quotes, but
 `io.println` is text-only (`io.println(1)` is a type error on v0.61.3).
 A corpus check with the new `tools/audit-snippets.js` extracted 418
