@@ -319,7 +319,7 @@ async function main() {
       const res = await request('GET', '/api/lessons');
       assert.strictEqual(res.status, 200);
       const payload = JSON.parse(res.body);
-      assert.strictEqual(payload.total_lessons, 410);
+      assert.strictEqual(payload.total_lessons, 411);
     });
 
     await okAsync('GET /index.html serves the app', async () => {

@@ -30,8 +30,8 @@
     "Spelling io.println wrong — it's println, not printline",
     "Writing the last line without `;` — it happens to work when it is the function's final value, but keep the habit: end every instruction with `;` until you learn the exception (L6)."
   ],
-  "next_lesson": "L0-02",
+  "next_lesson": "L0-01b",
   "related": [
-    "L0-02"
+    "L0-01b"
   ]
 }

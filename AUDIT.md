@@ -1875,7 +1875,7 @@ conversion and `to_string` is the Int-only helper. L0-02 now teaches
 for variables; the solutions keep working identically. One full audit run
 reported four transient compiler crashes on L1-45..L1-48 checks (exit -1,
 ~700 ms, empty stderr); a scoped re-run and the next full run were clean, so
-they were resource-related, not content-related.
+they were resource-related, not content-related; the pattern recurred on 2026-09-27 while adding the L0-01b bridge lesson (L4-13/14/23/24, then L4-44/45), with scoped L0/L4 runs clean, pointing at machine load rather than lesson content.
 
 Compiler answers (2026-09-27, relay):
 - Bare-literal conversion is guaranteed: `12.to_str()`, `(12).to_str()` and

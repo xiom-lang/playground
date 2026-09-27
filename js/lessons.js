@@ -467,9 +467,10 @@ function jumpToLevel(levelId) {
 function updateProgressSummary() {
   var progress = getProgress();
   var el = document.getElementById('progressSummary');
-  if (el) el.textContent = progress.length + '/410';
+  var total = (window.lessonCatalogCache && window.lessonCatalogCache.total_lessons) || 411;
+  if (el) el.textContent = progress.length + '/' + total;
   var fill = document.getElementById('progressFill');
-  if (fill) fill.style.width = (progress.length / 410 * 100) + '%';
+  if (fill) fill.style.width = (progress.length / total * 100) + '%';
 }
 
 function filterLessons(query) {

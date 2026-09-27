@@ -44,7 +44,7 @@ health checks stay responsive while a submission compiles.
 
 ## Features
 
-- Lesson browser with 410 interactive lessons across 9 levels
+- Lesson browser with 411 interactive lessons across 9 levels
 - Monaco editor, output tabs for Output / Diagnostics / LLVM IR / Tokens / Contracts
 - Keyboard shortcut Ctrl+Enter (Cmd+Enter) to run
 - In-browser WASM compiler: instant IR preview and offline diagnostics for pure programs
@@ -93,7 +93,7 @@ signature match) and is lazy-loaded by the reference panel. `--check` fails
 CI when it drifts from the toolchain.
 
 `tools/lesson-baseline.json` records known lesson failures so CI fails only
-on regressions. All 410 solutions and templates currently type-check; the
+on regressions. All 411 solutions and templates currently type-check; the
 baseline therefore contains only execution failures caused by compiler
 codegen defects (see `AUDIT.md` section 10). Regenerate it with
 `npm run audit:lessons:baseline`; the command is safe to re-run and preserves
