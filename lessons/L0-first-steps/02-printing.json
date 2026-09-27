@@ -18,14 +18,14 @@
     "string"
   ],
   "tips": [
-    "Text goes inside double quotes `\"...\"`. To print a whole number, turn it into text with `.to_str()`: `io.println(12.to_str())`. (The Int-only `to_string(12)` works too.)",
+    "Text goes inside double quotes `\"...\"`. To print a whole number, turn it into text with `.to_str()`: `io.println(12.to_str())`. If you must mix text and values, convert each value (`\"total: \" + (12 + 2).to_str()`).",
     "The computer runs your instructions in the exact order you write them, top to bottom.",
     "Each `io.println` call starts a new line — three calls gives you three lines of output.",
     "Mixing text and numbers in your output makes your program feel like a real conversation.",
     "Put the whole calculation inside the conversion: `io.println(to_string(12 + 2))` prints 14. Writing `12 + 2.to_string()` does something else — it joins \"12\" and \"2\" into \"122\"."
   ],
   "common_mistakes": [
-    "Printing a number without turning it into text: `io.println(42)` is a type error; write `io.println(42.to_str())` (the Int-only `to_string(42)` also works).",
+    "Splitting a calculation with a conversion: `12 + 2.to_string()` joins \"12\" and \"2\" into \"122\"; keep the math together inside `to_string(...)` or convert both operands with `.to_str()`.",
     "Forgetting to add a second `io.println` call — remember, every message needs its own instruction.",
     "Writing multiple messages inside one `io.println` separated by commas — XIOM prints only one thing per call.",
     "Forgetting the semicolon `;` at the end of any `io.println` line.",
