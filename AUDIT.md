@@ -1745,6 +1745,81 @@ signed-32-bit extern declarations are required; re-check at the next
 absorption once a release carries both. The sandbox denial suite is
 unaffected (raw `connect(2)` probe).
 
+Update 2026-09-27: the stdlib commit `c193bc4` (`fix(net): extern returns
+Int32 (m146 prep)`) is on the stdlib `origin/main` (verified with
+`git ls-remote`); it ships in the first compiler release whose pin carries
+that ref together with m146. The pending wasm-asset release includes
+neither. Absorption step 6 (SESSION 3.1) re-verifies `tcp_connect` against
+that pin.
+
+## 32. Lesson prose snippet audit: io.println is text-only (2026-09-26)
+
+Owner report: L0-02 claimed "Numbers do NOT need quotes" and implied
+`io.println(1)` works; in XIOM `io.println(msg: Str)` is text-only, so
+`io.println(1)` is a type error (verified on v0.61.3: `argument 1 type
+mismatch: expected Str, found Int`). A corpus-wide check found the same
+assumption in prose examples across levels, plus a set of genuine syntax
+bugs the solutions/templates never had (the existing audit only compiles
+`solution` and `code_template`).
+
+Method: new `tools/audit-snippets.js` extracts every complete `fn main`
+fence from lesson prose (narrative, story, why, analogy, tips,
+common_mistakes, try_it) and compiles it with the pinned toolchain, one
+snippet per temp directory (the compiler indexes the source's parent
+directory, so a flat directory of hundreds of snippets is very slow and
+hangs across 9p mounts). `--imports` retries an undefined-module failure
+with the matching `use` line to separate the excerpt convention from real
+errors; `--json` records the report.
+
+Baseline (2026-09-26, all levels):
+
+- 418 complete programs in prose; **406 fail to compile standalone**
+  (12 pass).
+- Failure classes (deduplicated tags):
+  - 121 missing module line(s) (`io`/`string`/`math`) -- the prose-excerpt
+    convention; a single-import retry shows 16 compile immediately, and
+    multi-module snippets need all their imports to confirm.
+  - **106 print a non-Str value** (`io.println(Int/Bool/Float64)`) -- the
+    reported misconception, spread across every level.
+  - 76 undefined local function/variable and 18 unknown type -- excerpts
+    that reference definitions from elsewhere in the lesson.
+  - 36 method-on-receiver failures from missing context (`insert`, `get`,
+    `int_to_str`, `str_length`, ...).
+  - 13 match arms written with `->` instead of `=>` (L5 group), 4 missing
+    `;` in multi-statement snippets, 7 other P001 malformed samples
+    (L3-05, L4-08, L5-43, L6-15, L6-24), 4 `use` misused as an identifier
+    (L6-25/31/33/40), 2 Int/Float64 mixes without `as` (L2-14/16).
+  - 19 other.
+- Real-error distribution after the import retry: L0 66, L1 38, L2 18,
+  L3 38, L4 22, L5 8, L6 7 snippets (before fixes).
+
+Fixed and compile-verified in this tranche (beginner path and the reported
+lesson):
+
+- L0-01: a tip and a mistake now state the semicolon habit and its single
+  exception (the last line of a function may be its result and skip `;`;
+  keep the habit until L6 explains it).
+- L0-02: the "Printing Numbers" and "Text vs Numbers" sections, tips,
+  common mistakes and try_it now teach that `io.println` prints text and
+  numbers need `.to_str()`; the template TODO and the solution demonstrate
+  it (`io.println(25.to_str())`, output unchanged).
+- L0-03: the samples and the solution now compute
+  (`"5 + 3 = " + (5 + 3).to_str()`) instead of printing hand-written
+  answers, and the try_it is achievable as written.
+- L0-04 and L0-07: the samples print variables/booleans with `.to_str()`,
+  and the solutions print the computed values instead of hard-coded
+  "12"/"false"/"true" (outputs unchanged, so `expected_output` and the
+  baseline stay valid).
+- All ten patched prose programs compile; the modified solutions still
+  match `expected_output` (full audit below).
+
+Remaining (tracked as ROADMAP Phase E): the rest of L0, the L1-L6 classes
+above (including the 13 match-arm arrows), and L7/L8. The L0 re-audit after
+these fixes reports 87 complete programs: 9 ok, 16 excerpt-only
+(missing-import retry), and 62 still failing -- all in the other L0
+lessons, overwhelmingly `println(non-Str)`. Sweep command:
+`node tools/audit-snippets.js --level Lx --imports`.
+
 ## 30. Abuse controls: per-IP rate limiting (P3) (2026-09-25)
 
 Every compiler endpoint spawns the toolchain and the queues hold one

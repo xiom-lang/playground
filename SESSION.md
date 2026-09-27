@@ -606,6 +606,14 @@ declarations in the stdlib; re-check at the next absorption (pin bump,
 SESSION 3.1) once a release carries both. Our sandbox denial suite is
 unaffected (raw `connect(2)` probe).
 
+**Update 2026-09-27 (compiler relay + local check):** the stdlib's `Int32`
+extern declaration is committed as `c193bc4` (`fix(net): extern returns
+Int32 (m146 prep)`), and `git ls-remote` shows it on the stdlib
+`origin/main`; it will ship in the first compiler release whose pin
+carries that ref together with m146. The pending wasm-asset release
+includes neither. Absorption step 6 re-verifies `tcp_connect` against
+that pin.
+
 ### 11.2 Registry: first real xiom.* packages (C3)
 
 Index re-checked 2026-09-26: only `xiom.staging-e2e-probe` (versions
@@ -617,3 +625,23 @@ the toolchain archive, mounted as a read-only cache by ops, or supported by
 a documented offline cache layout; (4) production vs staging. On unblock:
 pick an example package, wire a stdlib-only and sandbox-compatible example,
 add a test, and update ROADMAP C3.
+
+## 12. Lesson content QA (2026-09-26)
+
+Owner report: L0-02 claimed numbers print without quotes, but
+`io.println` is text-only (`io.println(1)` is a type error on v0.61.3).
+A corpus check with the new `tools/audit-snippets.js` extracted 418
+complete `fn main` programs from lesson prose: 406 fail standalone, 213
+only for a missing module line (the excerpt convention), and 197 for real
+reasons -- dominantly printed non-Str values, plus missing `;`,
+`->` where a match arm needs `=>`, and a few malformed samples.
+
+Fixed and compile-verified: L0-01 (semicolon habit + tail-expression
+exception note), L0-02 (number printing via `.to_str()`; tips, mistakes,
+try_it, template and solution corrected), L0-03 (samples and solution now
+compute instead of printing hand-written answers), L0-04 and L0-07
+(samples print variables/booleans with `.to_str()`; solutions print the
+computed values -- outputs unchanged, so `expected_output` and the
+baseline stay valid). Details, counts and the remaining sweep:
+AUDIT section 32 and ROADMAP Phase E. Sweep command:
+`node tools/audit-snippets.js --level Lx --imports`.

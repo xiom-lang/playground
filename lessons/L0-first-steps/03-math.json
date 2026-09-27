@@ -5,12 +5,12 @@
   "duration": "8 min",
   "story": "Your friend asks you to split a pizza bill. The pizza costs $24 and there are 4 of you. Instead of doing math in your head, wouldn't it be great to have a helper that calculates anything instantly?",
   "why": "Every app you use runs on math. Once you know how to make the computer calculate for you, you can build programs that actually do useful work.",
-  "narrative": "## Computers Love Math\n\nComputers were built to do math, and they're incredible at it. In XIOM, whole numbers are called **integers**.\n\n### The Four Basic Operations\n\n```xiom\nuse xiom.io;\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  io.println(\"10 - 4 = 6\");\n  io.println(\"7 * 6 = 42\");\n  io.println(\"20 / 4 = 5\");\n}\n```\n\nThe symbols look familiar: `+` add, `-` subtract, `*` multiply, `/` divide. You don't need to calculate yourself — just type the numbers and the computer does the work.\n\n### Multiplication Before Addition\n\nJust like in math class, `*` and `/` happen before `+` and `-`. Use parentheses `()` to change the order:\n\n```xiom\nio.println(\"2 + 3 * 4 = 14\");\nio.println(\"(2 + 3) * 4 = 20\");\n```\n\nSame numbers, different parentheses, different answers!",
+  "narrative": "## Computers Love Math\n\nComputers were built to do math, and they're incredible at it. In XIOM, whole numbers are called **integers**.\n\n### The Four Basic Operations\n\n```xiom\nuse xiom.io;\nfn main() {\n  io.println(\"5 + 3 = \" + (5 + 3).to_str());\n  io.println(\"10 - 4 = \" + (10 - 4).to_str());\n  io.println(\"7 * 6 = \" + (7 * 6).to_str());\n  io.println(\"20 / 4 = \" + (20 / 4).to_str());\n}\n```\n\nThe symbols look familiar: `+` add, `-` subtract, `*` multiply, `/` divide. You don't need to calculate yourself — just type the numbers and the computer does the work.\n\n### Multiplication Before Addition\n\nJust like in math class, `*` and `/` happen before `+` and `-`. Use parentheses `()` to change the order:\n\n```xiom\nio.println(\"2 + 3 * 4 = \" + (2 + 3 * 4).to_str());\nio.println(\"(2 + 3) * 4 = \" + ((2 + 3) * 4).to_str());\n```\n\nSame numbers, different parentheses, different answers!",
   "analogy": "The computer is like a super-fast calculator that never makes mistakes.",
   "code_template": "use xiom.io;\n\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  // TODO: Print a subtraction, like \"20 - 7 = 13\"\n  // TODO: Print a multiplication, like \"6 * 9 = 54\"\n  // TODO: Print a division, like \"100 / 4 = 25\"\n}",
-  "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"5 + 3 = 8\");\n  io.println(\"20 - 7 = 13\");\n  io.println(\"6 * 9 = 54\");\n  io.println(\"100 / 4 = 25\");\n}",
+  "solution": "use xiom.io;\n\nfn main() {\n  io.println(\"5 + 3 = \" + (5 + 3).to_str());\n  io.println(\"20 - 7 = \" + (20 - 7).to_str());\n  io.println(\"6 * 9 = \" + (6 * 9).to_str());\n  io.println(\"100 / 4 = \" + (100 / 4).to_str());\n}",
   "expected_output": "5 + 3 = 8\n20 - 7 = 13\n6 * 9 = 54\n100 / 4 = 25",
-  "try_it": "Calculate how many seconds are in a day: 24 * 60 * 60. Print the answer. Then try seconds in a week.",
+  "try_it": "Calculate how many seconds are in a day with `io.println((24 * 60 * 60).to_str());`. Then try seconds in a week the same way.",
   "concepts": [
     "addition",
     "subtraction",
@@ -22,7 +22,7 @@
     "Use * for multiplication, not x.",
     "Use / for division.",
     "Parentheses work just like in math class.",
-    "Always put your math result inside quotes in io.println()."
+    "To print a calculation, turn it into text: `io.println((24 * 60 * 60).to_str())`, or mix it with a label: `\"seconds: \" + (24 * 60 * 60).to_str()`."
   ],
   "common_mistakes": [
     "Using x instead of * for multiplication.",

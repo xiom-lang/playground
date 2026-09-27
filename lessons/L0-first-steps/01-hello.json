@@ -19,7 +19,7 @@
     "comment"
   ],
   "tips": [
-    "Every statement ends with a semicolon ;",
+    "Every instruction ends with `;`. Later you will meet one exception: the last line of a function may be its result and skip the `;`; for now, always finish with `;`.",
     "Text in quotes is called a string",
     "Comments with // are ignored by the computer",
     "use xiom.io; goes at the very top of your file"
@@ -27,7 +27,8 @@
   "common_mistakes": [
     "Forgetting the semicolon ; at the end",
     "Missing the closing double quote",
-    "Spelling io.println wrong — it's println, not printline"
+    "Spelling io.println wrong — it's println, not printline",
+    "Writing the last line without `;` — it happens to work when it is the function's final value, but keep the habit: end every instruction with `;` until you learn the exception (L6)."
   ],
   "next_lesson": "L0-02",
   "related": [

@@ -148,6 +148,24 @@ checklist: `docs/checklists/security-hardening.md`.
   container egress guard from inside, and confirm the kernel Landlock ABI
   (all three done 2026-09-25).
 
+## Phase E -- Lesson content QA (owner-requested 2026-09-26)
+
+Goal: every code example in lesson prose compiles against the pinned
+toolchain, and beginner lessons teach the real language (text-only
+`io.println`, the semicolon habit and its tail-expression exception).
+Tool: `tools/audit-snippets.js` (`--level Lx --imports`), recorded in
+AUDIT section 32.
+
+- [~] E1. Prose snippet sweep: baseline 418 complete `fn main` programs in
+  prose, 406 failing standalone (213 excerpt-only missing module lines,
+  197 real). Fixed L0-01/02/03/04/07 (number/boolean printing via
+  `.to_str()`, computed solutions, the semicolon exception note).
+  Remaining: the rest of L0, L1-L8, and the match-arm `->` vs `=>` group.
+- [x] E2. Semicolon teaching: L0-01 states the habit and the exception,
+  L0-02 keeps `;` on every statement, L6-16 explains the value-tail form;
+  the prose audit found no lesson solution or template missing a
+  separator.
+
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 
 - C1 fixed in v0.61.1 (`--version` reports v0.61.1).
@@ -165,9 +183,10 @@ checklist: `docs/checklists/security-hardening.md`.
 - `net.tcp_connect` signedness (AUDIT 29.4, SESSION 11.1): root cause
   confirmed (the builtin's -1 surfaces as 4294967295 through the current
   `-> Int` declaration, so the wrapper's negative check never fires). The
-  compiler-side fix landed (m146); the pinned stdlib still needs the
-  `Int32` extern declarations, and the wasm release does not carry the
-  fix. Re-check at the next absorption (SESSION 3.1).
+  compiler-side fix landed (m146); the stdlib `Int32` externs are on
+  stdlib main as `c193bc4`. Both ship in the first release whose pin
+  carries that ref; the wasm release carries neither. Absorption step 6
+  re-verifies `tcp_connect` against that pin.
 - C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
   stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
   constants) shipped in v0.61.3 and do not affect the lesson set.
