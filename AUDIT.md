@@ -1983,3 +1983,47 @@ restores the env copy, re-adds the mount and copies host-side documents
 back. The privacy facts in DEPLOY.md now describe the host store; the
 mirrored website page is handed to the website lane.
 
+
+## 33. v0.62.0 absorption attempt: verified, held on two blocker (2026-09-28)
+
+Release v0.62.0 is on the mirror (latest.json 2026-09-28T14:50:59Z); the
+linux tarball verifies at 98d9cbe3 and the WASM_VERSION artifact at
+6df21583 (matches SHA256SUMS). The absorption was executed end to end and
+then **held**: the working tree was reverted to v0.61.3 so production is
+not moved onto this release yet.
+
+Verified with the staged v0.62.0 toolchain:
+
+- **Step 6 fixed**: `net.tcp_connect("127.0.0.1", 1)` with no listener now
+  returns `Err` (m146 + stdlib Int32 fix confirmed in the release). Close
+  this item at the next successful absorption.
+- Strict contract clauses: `requires: 1` errors with `contract clause must
+  be Bool, found Int (strict mode)`; exact arity errors (`'add' expects 2
+  argument(s), found 1`). A static scan found no non-Bool contract clauses
+  in lesson prose, and the full check-only audit reported no regressions,
+  so solutions and templates are clean under strict mode.
+- Sweep: 411/411 lessons ran (0 skipped); three lessons changed
+  `expected_output`; the stdlib surface grew to 516 modules / **6,932**
+  functions (from 6,523); baseline and limitations regenerated.
+- Direct `for x in Vec` now works on the pin (prints a, b, c); `range`
+  still emits the Range-only `Iterator` warning.
+- Bench (same machine, 3 samples): run deltas -10% to +3%, emit-ir deltas
+  -16% to +19% (loop_200 worst at +19%); no regressions.
+
+Blocker 1 -- `opt` invocation warning on **every run**:
+`warning: LLVM IR verification failed: The 'opt -passname' syntax for the
+new pass manager is not supported, please use 'opt -passes=<pipeline>'`.
+The toolchain bundles no LLVM (`tc/bin` has only xiom* and z3) and uses
+the host `clang`/`opt`; WSL and the production image both ship LLVM 18, so
+this would surface in the playground UI on every program (the runner
+parses `warning:` lines into diagnostics). Relayed to the compiler lane:
+switch the verification to `-passes=...`, skip it when `opt` is missing or
+incompatible, or bundle the expected LLVM.
+
+Blocker 2 -- C8 wasm glue: the wasm asset is now published and verified,
+but the v0.62.0 wasm uses a different wasm-bindgen ABI (1 import / 10
+exports -> 3 imports / 73 exports; import and export sets differ), so the
+v0.58.0 glue in this repo is incompatible. The matching `xiom_wasm.js` and
+`.d.ts` are not in the release or the compiler tree (only the `.wasm`
+exists under tmp/sprintc/wasmfix). Relayed: publish the wasm-bindgen glue
+with the release (or ship it in the tarball next to bin/xiom-wasm.wasm).

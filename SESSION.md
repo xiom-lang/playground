@@ -708,3 +708,29 @@ per-item. Status: waiting on the compiler-lane replies to relays 11.1
 (tcp_connect verification target), 11.3 (direct for-in semantics and the
 `Iterator` warning) and 11.4 (is bare-literal `12.to_str()` guaranteed).
 No further playground changes until those answers arrive.
+
+## 14. v0.62.0 absorption attempt and relay (2026-09-28)
+
+Release v0.62.0 landed on the mirror; we executed the full absorption
+(step 6 tcp_connect fixed, strict contracts and exact arity verified, 411/411
+sweep, stdlib surface 6,932 functions, bench within noise) and then **held
+it**: the tree is back at v0.61.3 because two blockers would degrade
+production.
+
+- **opt warning on every run**: v0.62.0's IR verification calls `opt` with
+  the removed `-passname` syntax; the toolchain bundles no LLVM and uses
+  the host's (LLVM 18 here and in the container), so every program would
+  show `warning: LLVM IR verification failed ...` in the UI. Relayed to
+  the compiler lane for a fix (use `-passes=`, skip when incompatible, or
+  bundle LLVM).
+- **C8 glue**: the wasm asset is published and checksum-verified, but the
+  ABI changed (1/10 -> 3/73 imports/exports), so the v0.58.0 glue is
+  incompatible; the matching `xiom_wasm.js`/`.d.ts` are not published
+  anywhere we can see. Relayed to the compiler lane.
+
+Everything verified in the attempt is recorded in AUDIT section 33; the
+step-6 `tcp_connect` fix is confirmed present in the v0.62.0 artifact and
+closes at the next successful absorption (likely v0.62.1 with the `opt`
+fix). Until then: pin stays v0.61.3, backlog B1-B5 unchanged, and the
+for-in idiom can be simplified back to direct iteration once the pin
+moves.
