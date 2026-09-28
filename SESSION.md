@@ -1,8 +1,8 @@
 # XIOM Playground -- Session Handoff
 
 Last updated: 2026-09-28 (Phase E prose sweep complete L0-L8; backlog
-B1-B5 implemented). Branch `main` at `11c5f39` plus this session's commits
-(see the header of the newest commit), working tree clean, all commits
+B1-B5 implemented). Branch `main` at/after `9a8a104` (sweep commit; a
+header-only docs commit may follow), working tree clean, all commits
 pushed to `origin/main`. Production runs **toolchain v0.62.1** (stdlib
 0.62.0, wasm v0.62.1, `capabilities.format: true`) with P1 Landlock
 (`require`, ABI 4), P3 rate limits + external `abuse` monitor, P2
