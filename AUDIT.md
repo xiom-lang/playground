@@ -2054,3 +2054,19 @@ contains `/opt/xiom/playground-state/accounts/7309356.json`; the source
 list no longer carries the removed volume). Post-check: playground 200,
 `abuse:ok`, `sandbox.mode=require`, `landlock 4`. The accounts backup is
 kept until owner sign-off. P2 is fully closed.
+### 32.3 L2 swept; the audit tool learns the excerpt bucket (2026-09-28)
+
+L2 (structs, enums, matching): 52 prose programs; 10 compiled before the
+mechanical pass and 15 after (Str wraps, missing imports). The remaining 37
+are all **excerpt class** -- fences whose `main` uses lesson-local types and
+enums (`Shape`, `OrderStatus`, `MyOption`, ...) or functions
+(`divide_safely`, `find_item`) defined elsewhere in the lesson. L2-16's
+`cannot mix Float64 with Int` errors are cascades of the undefined `Shape`
+enum and disappear in context, so no real errors remain in L2.
+
+`tools/audit-snippets.js` now reports three buckets: `missing-import`
+(single `use` retry succeeds), `excerpt` (remaining errors are
+`undefined variable '<name>'` / `unknown type '<name>'`, i.e. lesson-local
+symbols), and `failures` (everything else, which still sets exit code 1).
+Per-level sweeps can therefore show "0 failures" honestly while the excerpt
+count stays visible.

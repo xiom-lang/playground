@@ -80,7 +80,7 @@ function main() {
     process.exit(2);
   }
   const catalog = JSON.parse(fs.readFileSync(path.join(REPO, 'lessons', 'index.json'), 'utf8'));
-  const report = { generated: new Date().toISOString(), compiler: XIOM, snippets: 0, compiled: 0, ok: 0, missingImport: 0, failures: [] };
+  const report = { generated: new Date().toISOString(), compiler: XIOM, snippets: 0, compiled: 0, ok: 0, missingImport: 0, excerpts: [], failures: [] };
 
   for (const level of catalog.levels) {
     if (opts.levels.length > 0 && !opts.levels.includes(level.id)) continue;
@@ -107,11 +107,19 @@ function main() {
             if (mod) {
               const retry = check(MODULES[mod] + '\n\n' + code, tag + '-imp');
               if (retry.ok) { report.missingImport += 1; continue; }
-              report.failures.push({ lesson: lesson.id, field, index, error: firstError(retry.output) });
+              if (/undefined variable '|unknown type '/.test(retry.output)) {
+                report.excerpts.push({ lesson: lesson.id, field, index, error: firstError(retry.output) });
+              } else {
+                report.failures.push({ lesson: lesson.id, field, index, error: firstError(retry.output) });
+              }
               continue;
             }
           }
-          report.failures.push({ lesson: lesson.id, field, index, error: firstError(first.output) });
+          if (/undefined variable '|unknown type '/.test(first.output)) {
+            report.excerpts.push({ lesson: lesson.id, field, index, error: firstError(first.output) });
+          } else {
+            report.failures.push({ lesson: lesson.id, field, index, error: firstError(first.output) });
+          }
         }
       }
     }
@@ -119,7 +127,7 @@ function main() {
 
   if (!opts.quiet) {
     console.log('snippets: ' + report.snippets + ', complete programs: ' + report.compiled);
-    console.log('  ok: ' + report.ok + ', missing-import (excerpt): ' + report.missingImport +
+    console.log('  ok: ' + report.ok + ', missing-import: ' + report.missingImport + ', excerpt (undefined local): ' + report.excerpts.length +
       ', failing: ' + report.failures.length);
     for (const f of report.failures) {
       console.log('  ' + f.lesson + ' [' + f.field + ' #' + f.index + '] ' + f.error);
