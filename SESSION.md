@@ -744,7 +744,7 @@ surface 6,932 functions, baseline and generated data refreshed, Windows
 audit green, bench within load noise. C8 absorbed: the release ships the
 wasm glue, `WASM_VERSION` is v0.62.1, the loader uses the new file names,
 and the Node functional test passes (`XIOM v0.62.1 (WASM)`, pure program
-compiles); the owner should confirm the browser console line.
+compiles); the owner confirmed the browser console line on production (`[xiom-wasm] in-browser compiler ready: XIOM v0.62.1 (WASM)`).
 
 Lesson-content note: direct `for x in Vec` works on this pin, so the
 `range`+index workarounds can be simplified back to direct iteration during

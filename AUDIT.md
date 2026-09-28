@@ -2044,6 +2044,4 @@ C8 is absorbed too: `WASM_VERSION` is v0.62.1 and `js/wasm-loader.js` loads
 the release-named set; the Node functional test reports `get_version()` =
 `XIOM v0.62.1 (WASM)` and compiles a pure program to IR (stdlib programs
 still fall back to the server, as before). Browser console verification
-("[xiom-wasm] in-browser compiler ready: XIOM v0.62.1 (WASM)") is requested
-from the owner; the headless dump-dom probe cannot observe the async module
-resolution.
+("[xiom-wasm] in-browser compiler ready: XIOM v0.62.1 (WASM)") passed on production (owner log, 2026-09-28): `[xiom-wasm] in-browser compiler ready: XIOM v0.62.1 (WASM)`. The rest of that console log is browser-extension noise (contentscript/ObjectMultiplex, MetaMask, Acrobat, Edge tracking prevention).
