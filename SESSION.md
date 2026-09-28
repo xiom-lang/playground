@@ -1,17 +1,14 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-26 (P2 cutover executed; P3 monitor wired). Branch
-`main`, working tree clean, all commits pushed to `origin/main`. Production
-runs **toolchain v0.61.3** with P1 (`sandbox: require`, ABI 4), P3 (rate
-limits + `abuse` field, external monitor healthy) and **P2 helper mode**
-(sessions/progress host-side, verified 2026-09-26). Remaining: the website
-lane's backup sentence (the page still says the store is not in the
-off-site set; the first post-cutover backup ran 2026-09-26), the ops
-window-close after C7 has been deployed 24-48 h (scheduled, nothing needed
-here), and the compiler-lane items (C8 wasm asset; `net.tcp_connect`
-root-caused -- compiler fix m146 landed, stdlib `Int32` externs pending,
-re-check at the next absorption).
-
+Last updated: 2026-09-28 (v0.62.1 absorbed; L0-L2 prose sweeps done). Branch
+`main` at `e1ca8dd`, working tree clean, all commits pushed to
+`origin/main`. Production runs **toolchain v0.62.1** (stdlib 0.62.0, wasm
+v0.62.1, `capabilities.format: true`) with P1 Landlock (`require`, ABI 4),
+P3 rate limits + external `abuse` monitor, P2 host-side state and the
+repo-pinned VPS deploy (option C). Security P0-P3 is fully closed (the
+rollback window closed 2026-09-28). Phase E prose sweep: L0 clean, L1 and
+L2 swept with only excerpt-class remainders; L3-L8 next. Handoff detail:
+section 17.
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
 
@@ -774,3 +771,52 @@ Ops closed the P2 rollback window the same day: the retained
 restic snapshot 3052c07f contains the host state document and the dump is
 valid, and production is healthy (`abuse:ok`, `sandbox.mode=require`,
 landlock 4). The accounts backup stays until owner sign-off (AUDIT 31.1).
+## 17. Handoff (2026-09-28)
+
+State: pin **v0.62.1** (stdlib 0.62.0); step 6 (`tcp_connect` refused port
+returns Err), strict contracts/arity and wasm glue all absorbed; the wasm
+loader is browser-verified on production (`[xiom-wasm] in-browser compiler
+ready: XIOM v0.62.1 (WASM)`); footer footnote/copy and app version fixed
+(b1a2f13). Security: P1 (Landlock, `require`, ABI 4), P2 (host-side state;
+rollback window closed by ops 2026-09-28; accounts backup kept until owner
+sign-off), P3 (rate limits + monitor) all closed. AUDIT 30/31/32/33 carry
+the evidence.
+
+Phase E prose sweep (the main open tranche): `tools/audit-snippets.js`
+reports `ok` / `missing-import` / `excerpt` (undefined lesson-local
+symbols) / `failures`; only failures exit 1. Level status: L0 clean
+(87/87 compile); L1 15/81 -> 44/81 after fixes, rest excerpt; L2 10/52 ->
+15/52, rest excerpt (zero real errors). The mechanical pipeline is
+committed under `tools/snippet-sweep/`:
+  1. `node tools/snippet-sweep/extract-level.js Lx` -> `%TEMP%\kilo\lvlfix\Lx\snippets` + `manifest.json`
+  2. `wsl -d Ubuntu -- bash /mnt/c/Users/lefte/AppData/Local/Temp/kilo/compile-dir.sh <win-snippets-dir> <win-out-dir>`
+     (the script copies to /tmp first -- checking on /mnt/c makes the compiler index the parent dir and hang)
+  3. `node tools/snippet-sweep/fix-level.js Lx` (position-driven wraps, `->`->`=>`, imports, `for x in y` loops)
+  4. repeat 1-2 to verify, then handle manual leftovers (AUDIT 32.2/32.3 policy).
+Known targets: L3 malformed samples (L3-05 `expected '{', found if`, L3-08
+return mismatch, L3-15/17/19 `str_length` receivers, L3-38 `random_int`)
+plus excerpt refs; L4 `insert`/`get` receiver context; L5 the 13 match-arrow
+`->`->`=>`; L6-38 missing `;`, L6-25/31/33/40 `use` as identifier, L6-15/24
+malformed; L7-01/40 `;`; L8-10 `mod` sample. Run loop snippets to verify
+outputs (compilation cannot see zero-iteration loops), and note that direct
+`for x in Vec` works on v0.62.1, so the L0 range+index rewrites may be
+simplified back to direct iteration when convenient.
+
+Backlog B1-B5 (ROADMAP): capability tiers in the stdlib reference, friendly
+sandbox-denial messages, `docs/SANDBOX_CAPABILITIES.md`, the L8 note, B5 =
+this sweep. C3: registry answered (330 signed packages live, public stable
+index); waiting on their `scripts/export-bundle.js` (we approved it as the
+C3 deliverable, pinned set `xiom.hello@0.1.0` + `xiom.csv@0.1.0`); then one
+batched ops ask to mount it read-only and wire an offline example with a
+test (`xiom pkg` local-packages fallback). Compiler polish remaining
+(informational): Range-only `Iterator` warning, W005 stub behind
+`(2 + 2.5).to_str()` printing 0.
+
+Environment/gotchas: Windows `.toolchain` is v0.62.1; the Linux sweep
+toolchain lives at `/home/lefteris/xiom_v0621/tc` in WSL (node at
+`/home/lefteris/node-v22.23.2-linux-x64/bin`); clear `/tmp/xiom_run` and
+`~/.xiom` when switching builds; sweeps/audits run from Windows (the
+`--wsl` flag is Windows-only); lesson-audit check-only takes ~20-25 min and
+has intermittently crashed under machine load (exit -1, no diagnostics --
+transient, re-run); never pipe binary through PowerShell (hash from files
+instead). Gate: section 8 (all four steps) plus CI.
