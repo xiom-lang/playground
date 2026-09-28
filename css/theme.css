@@ -2222,6 +2222,19 @@ a:focus-visible,
 .tier-docs { color: var(--indigo); border: 1px solid rgba(92, 107, 255, 0.35); background: var(--indigo-soft); }
 .tier-local { color: var(--low); border: 1px solid var(--border); background: var(--panel-2); }
 
+.cap-badge {
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.cap-limited { color: var(--amber); border: 1px solid var(--border); background: var(--panel-2); }
+.cap-blocked { color: var(--error); border: 1px solid var(--border); background: var(--panel-2); }
+.stdlib-cap-note { font-size: 10px; color: var(--low); margin: 4px 0 2px; line-height: 1.4; }
+
 .stdlib-docs-link {
   margin-left: 8px;
   font-size: 10px;

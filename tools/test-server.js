@@ -19,6 +19,7 @@ const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
 const { REPO, XIOM_BIN, childEnv } = require('./lib/toolchain');
+const { friendlyDenial, messages: denialMessages } = require('../lib/denials');
 
 const PORT = 3400 + Math.floor(Math.random() * 200);
 const HOST = '127.0.0.1';
@@ -337,6 +338,30 @@ async function main() {
       assert.ok(payload.counts.functions >= 5000, 'functions: ' + payload.counts.functions);
       assert.ok(payload.modules.every((m) => Array.isArray(m.functions)));
       assert.ok(payload.modules.every((m) => m.tier === 'playground' || m.tier === 'docs' || m.tier === 'local'));
+      const netModule = payload.modules.find((m) => m.name === 'net');
+      assert.strictEqual(netModule.capability, 'blocked', 'net must be blocked in the sandbox');
+      assert.ok(netModule.capabilityNote, 'blocked modules carry a note');
+      const ioFs = payload.modules.find((m) => m.name === 'io.fs');
+      assert.strictEqual(ioFs.capability, 'limited', 'io.fs must be limited to /tmp');
+      const ioRead = payload.modules.find((m) => m.name === 'io').functions.find((f) => f.sig.indexOf('read_file(') === 0);
+      assert.strictEqual(ioRead.capability, 'limited', 'io.read_file must be limited');
+    });
+
+    ok('friendlyDenial maps kernel denials to plain language', () => {
+      assert.strictEqual(
+        friendlyDenial("error: Permission denied (os error 13) while calling connect(2)"),
+        denialMessages.network);
+      assert.strictEqual(
+        friendlyDenial('PermissionDenied: EACCES opening /data/accounts/1.json'),
+        denialMessages.protectedPath);
+      assert.strictEqual(
+        friendlyDenial('failed to write /etc/hosts: Permission denied'),
+        denialMessages.write);
+      assert.strictEqual(
+        friendlyDenial('read_file: Permission denied (os error 13)'),
+        denialMessages.read);
+      assert.strictEqual(friendlyDenial('CONTRACT VIOLATION: requires failed'), '');
+      assert.strictEqual(friendlyDenial(''), '');
     });
 
     await okAsync('GET /js/limitations.json matches the baseline blocked set', async () => {

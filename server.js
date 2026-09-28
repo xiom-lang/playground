@@ -35,6 +35,7 @@ const { runProcess } = require('./lib/run-xiom');
 const { XIOM_BIN, childEnv } = require('./lib/toolchain');
 const auth = require('./lib/auth');
 const progressStore = require('./lib/progress-store');
+const { friendlyDenial } = require('./lib/denials');
 
 const SERVER_VERSION = readRepoFile('package.json', (raw) => JSON.parse(raw).version) || '0.0.0';
 const PORT = Number(process.env.PORT) || 3000;
@@ -416,6 +417,8 @@ function failureOutput(diagnostics, proc) {
     return 'Compilation failed: ' + errors.length + ' error(s).' + detail +
       '\nCheck the Diagnostics tab for details.';
   }
+  const denial = friendlyDenial(proc && proc.stderr);
+  if (denial) return denial;
   const firstLine = String(proc && proc.stderr || '').split(/\r?\n/).find((l) => l.trim() && !/^(compiled|exit code):/.test(l.trim()));
   return firstLine ? firstLine.trim() : 'Compilation failed.';
 }
@@ -442,12 +445,18 @@ function formatExitCode(code) {
   return unsigned > 255 ? code + ' / 0x' + unsigned.toString(16).toUpperCase() : String(code);
 }
 
-function crashOutput(failure, stdout) {
+function crashOutput(failure, stdout, stderr) {
+  const partial = String(stdout || '').replace(/\s+$/, '');
+  const denial = friendlyDenial(stderr) || friendlyDenial(partial);
+  if (denial) {
+    // A kernel denial is not a bug in the program: name the sandbox rule
+    // instead of the raw errno or a generic crash.
+    return partial ? partial + '\n' + denial : denial;
+  }
   const cause = failure.signal
     ? 'signal ' + failure.signal
     : 'exit code ' + formatExitCode(failure.code);
   const message = 'Program crashed (' + cause + ').';
-  const partial = String(stdout || '').replace(/\s+$/, '');
   return partial ? partial + '\n' + message : message + ' The program died before producing output.';
 }
 
@@ -497,7 +506,7 @@ async function runProgram(source) {
     } else if (failure) {
       // Compiles, then dies: surface the exit instead of an empty output.
       result.success = false;
-      result.output = crashOutput(failure, proc.stdout);
+      result.output = crashOutput(failure, proc.stdout, proc.stderr);
       result.runError = result.output;
     } else if (!proc.success) {
       result.output = failureOutput(result.diagnostics, proc);

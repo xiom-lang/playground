@@ -43,6 +43,23 @@ function tierBadge(mod) {
   return '';
 }
 
+// Sandbox capability badge: modules carry full/limited/blocked, functions
+// get one only when they differ from their module's default.
+function capBadge(capability, note) {
+  if (!capability || capability === 'full') return '';
+  var title = note ? ' title="' + escAttr(note) + '"' : '';
+  return '<span class="cap-badge cap-' + capability + '"' + title + '>' + capability + '</span>';
+}
+
+function capNote() {
+  return '<div class="stdlib-cap-note">Sandbox: network is blocked &middot; files are /tmp-only and cleared between runs &middot; processes run contained &middot; the environment is a whitelist. ' +
+    '<a class="stdlib-docs-link" href="https://github.com/xiom-lang/playground/blob/main/docs/SANDBOX_CAPABILITIES.md" target="_blank" rel="noopener">Details</a></div>';
+}
+
+function escAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function docsLink(mod) {
   if (!mod.docs) return '';
   return '<a class="stdlib-docs-link" href="' + mod.docs + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">docs</a>';
@@ -106,6 +123,7 @@ function showStdlibRef() {
     var html = '<input type="text" class="concept-search" placeholder="Search all ' + data.counts.functions +
       ' functions..." oninput="filterStdlib(this.value)">';
     html += '<div class="stdlib-wasm-legend"><span class="wasm-badge wasm-full">* WASM</span> <span class="wasm-badge wasm-partial">[WARN] Limited</span> <span class="wasm-badge wasm-none">[FAIL] None</span></div>';
+    html += capNote();
     html += '<div class="stdlib-modules">';
     data.modules.forEach(function (mod) {
       var w = mod.wasm || '*';
@@ -114,6 +132,7 @@ function showStdlibRef() {
       html += '<span class="stdlib-module-arrow">v</span>';
       html += '<span class="stdlib-module-name">' + mod.name + '</span>';
       html += tierBadge(mod);
+      html += capBadge(mod.capability, mod.capabilityNote);
       html += '<span class="wasm-badge wasm-' + (w === '*' ? 'full' : w === '[WARN]' ? 'partial' : 'none') + '">' + w + '</span>';
       html += '<span class="stdlib-module-desc">' + esc(mod.desc || '') + '</span>';
       html += docsLink(mod);
@@ -123,6 +142,7 @@ function showStdlibRef() {
         var fw = fn.wasm || w;
         html += '<div class="stdlib-fn" data-stdlib-search="' + mod.name + ' ' + fn.sig.toLowerCase() + ' ' + (fn.desc || '').toLowerCase() + '">';
         html += '<code>' + esc(fn.sig) + '</code>';
+        html += capBadge(fn.capability, fn.capabilityNote);
         html += '<span class="wasm-badge wasm-' + (fw === '*' ? 'full' : fw === '[WARN]' ? 'partial' : 'none') + '" title="WASM: ' + (fw === '*' ? 'Full' : fw === '[WARN]' ? 'Limited' : 'Unavailable') + '">' + fw + '</span>';
         html += '<span class="stdlib-fn-desc">' + esc(fn.desc || '') + '</span>';
         html += copyButton(fn.sig);
@@ -205,6 +225,7 @@ function showStdlibPanel() {
     html += '<div class="stdlib-tier-bar">' + tierToggleButton(data) +
       '<span class="stdlib-tier-hint">Default view: modules you can use in the sandbox and lessons. ' +
       '<a class="stdlib-docs-link" href="https://xiom-lang.org" target="_blank" rel="noopener">Download the compiler</a> for OS, memory, and network modules.</span></div>';
+    html += capNote();
     html += '</div>';
 
     html += '<div class="stdlib-modules">';
@@ -216,6 +237,7 @@ function showStdlibPanel() {
       html += '<span class="stdlib-mod-card-arrow">></span>';
       html += '<span class="stdlib-mod-card-name">' + esc(mod.name) + '</span>';
       html += tierBadge(mod);
+      html += capBadge(mod.capability, mod.capabilityNote);
       html += '<span class="stdlib-mod-card-badge">' + functions.length + '</span>';
       html += '</div>';
       html += '<span class="stdlib-mod-card-desc">' + esc(mod.desc || '') + '</span>';
@@ -225,6 +247,7 @@ function showStdlibPanel() {
       functions.forEach(function (fn) {
         html += '<div class="stdlib-fn-row" data-stdlib-search="' + mod.name + ' ' + fn.sig.toLowerCase() + ' ' + (fn.desc || '').toLowerCase() + '" id="stdlib-fn-' + mod.name.replace(/[^a-zA-Z0-9]/g, '-') + '-' + fn.sig.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 30) + '">';
         html += '<code>' + esc(fn.sig) + '</code>';
+        html += capBadge(fn.capability, fn.capabilityNote);
         html += '<span>' + esc(fn.desc || '') + '</span>';
         html += copyButton(fn.sig);
         html += '</div>';

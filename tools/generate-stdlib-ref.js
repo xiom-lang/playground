@@ -51,6 +51,66 @@ function moduleTier(name) {
   return 'local';
 }
 
+// ---------------------------------------------------------------------------
+// Sandbox capability tiers
+// ---------------------------------------------------------------------------
+// `full` runs normally, `limited` runs with a restriction, `blocked` never
+// runs in the playground sandbox (the container policy denies it). Every
+// module carries a default; a function gets explicit metadata only when its
+// capability differs from its module's.
+
+const CAP_NOTES = {
+  blocked: 'Network access is blocked by the playground sandbox.',
+  files: 'Files: /tmp only, cleared between runs.',
+  proc: 'Processes run contained in the sandbox.',
+  env: 'The environment is a fixed whitelist.',
+  paths: '/proc and /data are unreachable; /tmp is the only writable path.',
+};
+
+const IO_FILE_FNS = new Set([
+  'read_file', 'write_file', 'append_file', 'file_exists', 'is_dir',
+  'create_dir', 'list_dir', 'remove_file', 'copy_file', 'rename', 'open',
+  'metadata', 'set_permissions', 'write_file_bytes', 'read_file_bytes',
+  'file_size', 'file_modified_time', 'move_file', 'dir_exists',
+  'create_dir_all', 'list_dir_recursive', 'read_file_lines',
+  'write_file_lines', 'append_line',
+]);
+const FILE_MODULES = new Set(['io.fs', 'os.file', 'os.dir', 'os.sync_io']);
+const OS_ENV_FNS = new Set(['env_set', 'env_unset']);
+const OS_PROC_FNS = new Set([
+  'ChildProcess', 'ChildProcess.wait', 'ChildProcess.kill', 'ChildProcess.id',
+  'on_signal', 'raise_signal',
+]);
+const OS_PATH_FNS = new Set([
+  'current_dir', 'set_current_dir', 'temp_dir', 'home_dir', 'walk_dir',
+  'walk_dir_filtered', 'watch_file', 'watch_dir', 'FileWatcher.poll',
+  'FileWatcher.close', 'current_exe_path',
+]);
+
+function functionCapability(moduleName, sig) {
+  const parent = moduleName.split('.')[0];
+  const name = sig.split('(')[0].trim();
+  if (parent === 'net') return { capability: 'blocked', note: CAP_NOTES.blocked };
+  if (FILE_MODULES.has(moduleName)) return { capability: 'limited', note: CAP_NOTES.files };
+  if (moduleName === 'io') {
+    if (IO_FILE_FNS.has(name)) return { capability: 'limited', note: CAP_NOTES.files };
+    if (name === 'env_var') return { capability: 'limited', note: CAP_NOTES.env };
+  }
+  if (parent === 'env') return { capability: 'limited', note: CAP_NOTES.env };
+  if (moduleName === 'process') {
+    if (name === 'env_var') return { capability: 'limited', note: CAP_NOTES.env };
+    if (/spawn|kill|wait|is_running|command_exists/.test(name)) {
+      return { capability: 'limited', note: CAP_NOTES.proc };
+    }
+  }
+  if (parent === 'os') {
+    if (OS_ENV_FNS.has(name)) return { capability: 'limited', note: CAP_NOTES.env };
+    if (OS_PROC_FNS.has(name)) return { capability: 'limited', note: CAP_NOTES.proc };
+    if (OS_PATH_FNS.has(name)) return { capability: 'limited', note: CAP_NOTES.paths };
+  }
+  return null; // full
+}
+
 function moduleDocsUrl(name) {
   const parent = name.split('.')[0];
   if (!DOCS_PAGES.has(parent)) return '';
@@ -309,9 +369,25 @@ function build(stdlibDir) {
     counts: { modules: ordered.length, functions: functionCount },
     modules: ordered.map((name) => {
       const meta = curated.modules.get(name) || { desc: '', wasm: '' };
-      const functions = modules.get(name).map((item) => {
+      const capabilities = modules.get(name).map((item) => functionCapability(name, item.sig));
+      let moduleCapability = 'full';
+      let moduleNote = '';
+      if (capabilities.length && capabilities.every((c) => c && c.capability === 'blocked')) {
+        moduleCapability = 'blocked';
+      } else if (capabilities.length && capabilities.every((c) => c && c.capability === 'limited')) {
+        moduleCapability = 'limited';
+      }
+      if (moduleCapability !== 'full') {
+        moduleNote = (capabilities.find((c) => c && c.note) || {}).note || '';
+      }
+      const functions = modules.get(name).map((item, index) => {
         const out = { sig: item.sig, desc: item.desc || '' };
         if (item.wasm) out.wasm = item.wasm;
+        const cap = capabilities[index];
+        if (cap && cap.capability !== moduleCapability) {
+          out.capability = cap.capability;
+          if (cap.note) out.capabilityNote = cap.note;
+        }
         return out;
       });
       const mod = {
@@ -320,8 +396,10 @@ function build(stdlibDir) {
         wasm: meta.wasm || '*',
         tier: moduleTier(name),
         docs: moduleDocsUrl(name),
+        capability: moduleCapability,
         functions,
       };
+      if (moduleNote) mod.capabilityNote = moduleNote;
       return mod;
     }),
   };
