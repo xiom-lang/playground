@@ -61,7 +61,7 @@ health checks stay responsive while a submission compiles.
 | File | Meaning |
 |---|---|
 | `TOOLCHAIN_VERSION` | The released XIOM toolchain the lessons are verified against |
-| `WASM_VERSION` | Version of the bundled `xiom_wasm_bg.wasm` |
+| `WASM_VERSION` | Version of the bundled `xiom-wasm_bg.wasm` |
 | `package.json` `version` | Playground app version |
 
 `tools/fetch-toolchain.*` downloads the pinned release from
@@ -107,7 +107,7 @@ tests on every push/PR; the nightly run also executes all solutions.
 
 The in-browser compiler is built from the compiler repository
 (`crates/xiom-wasm`, wasm-bindgen `web` target). Replacing
-`xiom_wasm_bg.wasm`, `xiom_wasm.js`, and `xiom_wasm.d.ts` and updating
+`xiom-wasm_bg.wasm`, `xiom-wasm.js`, and `xiom-wasm.d.ts` (shipped with the release since v0.62.1) and updating
 `WASM_VERSION` is the update path until the release pipeline ships a WASM
 asset. It has no stdlib: pure programs only.
 

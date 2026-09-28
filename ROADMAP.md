@@ -246,3 +246,13 @@ badges match `tools/lesson-baseline.json` (CI enforces).
 - Blocker 1: v0.62.0 emits the host-LLVM `opt -passname` warning on every run (the toolchain bundles no LLVM; the container is LLVM 18 too).
 - Blocker 2: the wasm ABI changed and the matching wasm-bindgen glue is not published (C8 stays open on the glue, not the asset).
 - Pin stays v0.61.3 until a fixed release; both items are relayed to the compiler lane and recorded in SESSION 14.
+
+## v0.62.1 absorbed (2026-09-28)
+
+Pin v0.62.1 landed after v0.62.0 was held: the host-LLVM `opt` warning is
+fixed, step 6 closes (`tcp_connect` refused port returns Err), and C8 is
+absorbed (the release ships the wasm glue; `WASM_VERSION` v0.62.1; loader
+updated; Node test passes, browser console check requested from the owner).
+Sweep 411/411, stdlib surface 6,932 functions, baseline refreshed, audit
+green. Direct `for x in Vec` works on the pin now, so the Phase E sweep can
+simplify the `range`+index workarounds back to direct iteration.

@@ -298,7 +298,7 @@ down.
 ## Updating the WASM module
 
 The in-browser compiler comes from the compiler repository
-(`crates/xiom-wasm`). Replacing `xiom_wasm_bg.wasm` plus its `.js` glue and
+(`crates/xiom-wasm`). Since v0.62.1 the release ships the glue set; replacing `xiom-wasm_bg.wasm` plus its `.js` glue and
 updating `WASM_VERSION`, then committing, is the update path until the
 release pipeline ships it as a release asset. The UI reads the version from
 `/api/version`.

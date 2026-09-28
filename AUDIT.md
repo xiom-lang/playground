@@ -2027,3 +2027,23 @@ v0.58.0 glue in this repo is incompatible. The matching `xiom_wasm.js` and
 `.d.ts` are not in the release or the compiler tree (only the `.wasm`
 exists under tmp/sprintc/wasmfix). Relayed: publish the wasm-bindgen glue
 with the release (or ship it in the tarball next to bin/xiom-wasm.wasm).
+
+### 33.1 v0.62.1 absorbed (2026-09-28)
+
+v0.62.1 clears both blockers: the LLVM-18 `opt` warning is gone (verified:
+a hello run on the staged artifact has no warning) and the release ships the
+wasm glue (`xiom-wasm.js`, `xiom-wasm.d.ts`, `xiom-wasm_bg.wasm`, all
+checksum-verified; the release also carries `xiom-wasm-0.62.1.wasm`, a
+different build from the glue's `_bg` file). The full absorption completed:
+pin v0.62.1, sweep 411/411 with 0 skipped, stdlib surface 516 modules /
+6,932 functions, baseline refreshed, Windows check-only audit green, bench
+within machine-load noise (run deltas +20% / +10% / -8% under heavy load).
+Step 6 closes: refused-port `tcp_connect` returns `Err`.
+
+C8 is absorbed too: `WASM_VERSION` is v0.62.1 and `js/wasm-loader.js` loads
+the release-named set; the Node functional test reports `get_version()` =
+`XIOM v0.62.1 (WASM)` and compiles a pure program to IR (stdlib programs
+still fall back to the server, as before). Browser console verification
+("[xiom-wasm] in-browser compiler ready: XIOM v0.62.1 (WASM)") is requested
+from the owner; the headless dump-dom probe cannot observe the async module
+resolution.

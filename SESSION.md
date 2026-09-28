@@ -734,3 +734,19 @@ closes at the next successful absorption (likely v0.62.1 with the `opt`
 fix). Until then: pin stays v0.61.3, backlog B1-B5 unchanged, and the
 for-in idiom can be simplified back to direct iteration once the pin
 moves.
+
+## 15. v0.62.1 absorbed (2026-09-28)
+
+Both v0.62.0 blockers are fixed and the pin is **v0.62.1**. Verified: no
+`opt` warning, refused-port `tcp_connect` returns Err (step 6 closed),
+strict contracts/arity clean across 411 lessons, sweep 411/411, stdlib
+surface 6,932 functions, baseline and generated data refreshed, Windows
+audit green, bench within load noise. C8 absorbed: the release ships the
+wasm glue, `WASM_VERSION` is v0.62.1, the loader uses the new file names,
+and the Node functional test passes (`XIOM v0.62.1 (WASM)`, pure program
+compiles); the owner should confirm the browser console line.
+
+Lesson-content note: direct `for x in Vec` works on this pin, so the
+`range`+index workarounds can be simplified back to direct iteration during
+the L2-L8 sweep (Phase E); `range` stays valid but warns. Ops deploys the
+new pin on the next hourly run (repo-pinned toolchain, option C).
