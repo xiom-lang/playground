@@ -406,7 +406,8 @@ function loadLandingStats() {
         var label = version && version.toolchain
           ? 'the ' + version.toolchain + ' toolchain reference and CI lesson catalog'
           : 'the generated stdlib reference and CI lesson catalog';
-        source.textContent = 'Counts from ' + label + '. Lessons limited by known compiler bugs are excluded.';
+        var excluded = limitations && Array.isArray(limitations.lessons) ? limitations.lessons.length : 0;
+        source.textContent = 'Counts from ' + label + (excluded > 0 ? '. Lessons limited by known compiler bugs are excluded.' : '. All lessons run against the pinned toolchain.');
         source.classList.remove('hidden');
       }
     }
