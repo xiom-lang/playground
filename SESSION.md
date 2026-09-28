@@ -623,15 +623,18 @@ bumps. The pending wasm-asset release includes neither half.
 
 ### 11.2 Registry: first real xiom.* packages (C3)
 
-Index re-checked 2026-09-26: only `xiom.staging-e2e-probe` (versions
-yanked). Asks: (1) the first real package name(s)/version(s) and timing;
-(2) a stable public index contract (same shape as the probe, no auth for a
-read-only consumer); (3) the no-egress consumption path -- the playground
-container has no egress by design, so package sources must be vendored in
-the toolchain archive, mounted as a read-only cache by ops, or supported by
-a documented offline cache layout; (4) production vs staging. On unblock:
-pick an example package, wire a stdlib-only and sandbox-compatible example,
-add a test, and update ROADMAP C3.
+Answered 2026-09-28 (registry): production carries ~330 real `xiom.*`
+packages (e.g. `xiom.hello@0.1.0`, `xiom.csv@0.1.0`, all signed); `GET
+/index.json` is the stable public contract and artifacts are public via
+`GET /packages/<name>/<version>/package.tar.gz`, so a pinned consumer can
+verify sha256 + ed25519 from the index alone. `xiom-std@0.62.0` is gated on
+the stdlib release workflow, not needed for C3. The no-egress path does not
+exist yet: the registry offers `scripts/export-bundle.js` producing
+`index.json` + `artifacts/<name>/<version>/package.tar.gz` + `bundle.json`
+(hashes/signatures/source URLs) plus `OFFLINE.md`, exportable from
+production and pinned by sha256; queued as the C3 deliverable. The
+playground consumes it through `xiom pkg`'s local-packages fallback
+(`<repo>/packages/xiom-<pkg>/` or `XIOM_HOME/packages/<pkg>-<ver>/`).
 
 ### 11.3 Compiler: direct `for x in Vec` iterates zero times (2026-09-27)
 
@@ -750,3 +753,24 @@ Lesson-content note: direct `for x in Vec` works on this pin, so the
 `range`+index workarounds can be simplified back to direct iteration during
 the L2-L8 sweep (Phase E); `range` stays valid but warns. Ops deploys the
 new pin on the next hourly run (repo-pinned toolchain, option C).
+## 16. C3 unblocked and the P2 rollback window closed (2026-09-28)
+
+Registry answered the four C3 questions: packages are live and the index
+contract is public and stable, so C3 no longer waits on a first publish.
+The remaining piece is the offline path: registry will build
+`scripts/export-bundle.js` (vendored `index.json` + tarballs + `bundle.json`
++ `OFFLINE.md`, exported from production, pinned by sha256). When it lands
+the plan is: ops mounts the bundle read-only at a fixed path (one batched
+ops request), the playground installs the vendored packages into
+`XIOM_HOME/packages/` at startup (or the example vendors them under
+`<repo>/packages/xiom-<pkg>/` via `xiom pkg`'s local fallback), and a
+package example (`xiom.hello`, `xiom.csv`) becomes the C3 "Open in
+playground" entry with an offline test. Verified here: 330 packages in the
+index, `xiom.hello@0.1.0` carries sha256 + signature, and `xiom-pkg`
+documents the local-packages fallback.
+
+Ops closed the P2 rollback window the same day: the retained
+`playground_playground-data` volume and the pre-P2 env copy are removed,
+restic snapshot 3052c07f contains the host state document and the dump is
+valid, and production is healthy (`abuse:ok`, `sandbox.mode=require`,
+landlock 4). The accounts backup stays until owner sign-off (AUDIT 31.1).

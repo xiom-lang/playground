@@ -2045,3 +2045,12 @@ the release-named set; the Node functional test reports `get_version()` =
 `XIOM v0.62.1 (WASM)` and compiles a pure program to IR (stdlib programs
 still fall back to the server, as before). Browser console verification
 ("[xiom-wasm] in-browser compiler ready: XIOM v0.62.1 (WASM)") passed on production (owner log, 2026-09-28): `[xiom-wasm] in-browser compiler ready: XIOM v0.62.1 (WASM)`. The rest of that console log is browser-extension noise (contentscript/ObjectMultiplex, MetaMask, Acrobat, Edge tracking prevention).
+### 31.1 P2 rollback window closed (2026-09-28, ops)
+
+Ops verified the playground mounts only `/opt/xiom/toolchain` (no `/data`,
+no legacy volume), removed the retained `playground_playground-data` volume
+and the pre-P2 env copy, and proved restic coverage (snapshot 3052c07f
+contains `/opt/xiom/playground-state/accounts/7309356.json`; the source
+list no longer carries the removed volume). Post-check: playground 200,
+`abuse:ok`, `sandbox.mode=require`, `landlock 4`. The accounts backup is
+kept until owner sign-off. P2 is fully closed.

@@ -77,6 +77,4 @@ Reference: `docs/SECURITY_HARDENING.md` (plan),
       the existing uptime check (owner wired the external UptimeRobot
       keyword monitor on `"abuse":"ok"`, 2026-09-26, reports healthy).
 - [x] Document the counters in `DEPLOY.md` (abuse-controls section).
-- [ ] Ops: close the 24-48 h rollback window once C7 has been deployed
-      (remove the retained `playground_playground-data` volume and the
-      pre-P2 env copy; keep the accounts backup until the owner signs off).
+- [x] Ops: close the 24-48 h rollback window once C7 has been deployed (closed 2026-09-28: the retained `playground_playground-data` volume and the pre-P2 env copy were removed, restic coverage verified, accounts backup kept until owner sign-off).

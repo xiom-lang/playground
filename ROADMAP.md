@@ -256,3 +256,15 @@ updated; Node test passes, browser console check requested from the owner).
 Sweep 411/411, stdlib surface 6,932 functions, baseline refreshed, audit
 green. Direct `for x in Vec` works on the pin now, so the Phase E sweep can
 simplify the `range`+index workarounds back to direct iteration.
+## C3 status (2026-09-28)
+
+Registry answered the four questions: ~330 real signed `xiom.*` packages
+are live on production, the index contract is stable/public, and the
+no-egress path is queued as the registry's `scripts/export-bundle.js`
+(vendored index + tarballs + bundle.json + OFFLINE.md, exported from
+production, pinned by sha256). Playground plan: receive the bundle, one
+batched ops ask to mount it read-only, install the vendored packages into
+`XIOM_HOME/packages/` (or vendor under `<repo>/packages/xiom-<pkg>/` via
+`xiom pkg`'s local fallback), then wire a package example (`xiom.hello`,
+`xiom.csv`) with an offline test and close C3. The P2 rollback window was
+closed by ops the same day (AUDIT 31.1).
