@@ -1,0 +1,8 @@
+[
+ {
+  "file": "lessons/L1-foundations/L1-19.json",
+  "old": "fn roll_two_dice() -> Int {\n  let die1 = roll_d6();\n  let die2 = roll_d6();\n  return die1 + die2;\n}\n\nfn roll_until_six() {\n  let mut rolls = 0;\n  let mut result = 0;\n  while result != 6 {\n    result = roll_d6();\n    rolls = rolls + 1;\n  }\n  io.println(\"Took \" + \" rolls to get a 6!\");\n  io.println(rolls);\n}\n\nfn main() -> Int {\n  io.println(roll_two_dice());\n  return 0;\n}\n",
+  "new": "fn roll_two_dice() -> Int {\n  let die1 = roll_d6();\n  let die2 = roll_d6();\n  return die1 + die2;\n}\n\nfn roll_until_six() {\n  var rolls = 0;\n  var result = 0;\n  while result != 6 {\n    result = roll_d6();\n    rolls = rolls + 1;\n  }\n  io.println(\"Took \" + rolls.to_str() + \" rolls to get a 6!\");\n  io.println(rolls.to_str());\n}\n\nfn main() -> Int {\n  io.println(roll_two_dice().to_str());\n  return 0;\n}\n",
+  "why": "let mut -> var; missing .to_str(); restore the rolls value in the message"
+ }
+]

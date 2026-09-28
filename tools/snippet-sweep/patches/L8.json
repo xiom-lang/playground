@@ -1,0 +1,8 @@
+[
+ {
+  "file": "lessons/L8-ecosystem/L8-10.json",
+  "old": "mod my_project {\n  // Types\n  pub type AppState { /* fields */ }\n\n  // Core functions\n  pub fn init() -> AppState { /* setup */ }\n  pub fn update(state: &mut AppState) { /* game loop */ }\n  pub fn render(state: &AppState) { /* display */ }\n}\n\nfn main() -> Int {\n  use my_project;\n  let mut state = my_project.init();\n  my_project.update(&mut state);\n  my_project.render(&state);\n  return 0;\n}\n",
+  "new": "use xiom.io;\n\nmodule my_project {\n  pub type AppState = {\n    ticks: Int;\n  }\n\n  pub fn init() -> AppState {\n    return AppState{ ticks: 0 };\n  }\n\n  pub fn update(state: &mut AppState) {\n    state.ticks += 1;\n  }\n\n  pub fn render(state: &AppState) {\n    io.println(\"tick \" + state.ticks.to_str());\n  }\n}\n\nfn main() -> Int {\n  var state = my_project.init();\n  my_project.update(&mut state);\n  my_project.render(&state);\n  return 0;\n}\n",
+  "why": "mod -> module, real fields, top-level use, no `use` inside main"
+ }
+]

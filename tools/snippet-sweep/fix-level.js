@@ -4,6 +4,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { replaceAll } = require('./json-replace');
 const REPO = 'E:/xiom-lang/playground';
 const LEVEL = process.argv[2];
 const WORK = path.join(process.env.TEMP, 'kilo', 'lvlfix', LEVEL);
@@ -18,6 +19,9 @@ for (const f of fs.readdirSync(path.join(WORK, OUTDIR))) {
 }
 const ARG_RE = /argument 1 type mismatch: expected Str, found/;
 const ARROW_RE = /expected '=>', found ->/;
+// v0.62.1 stdlib renamed these helpers; the prose sweep migrates the calls
+// the same way the lesson solutions already spell them.
+const RENAME_RE = /cannot call '(int_to_str|float_to_str|bool_to_str|str_length)' on this expression/;
 
 function parseErrors(text) {
   const out = []; const re = /error\[([A-Z0-9]+)\]: (\d+):(\d+): ([^\n]*)/g; let m;
@@ -31,6 +35,28 @@ function findCall(line, col) {
     while (i >= 0) { if (i <= col - 1 + 2 && i > best) { best = i; name = n; } i = line.indexOf(n, i + 1); }
   }
   return best >= 0 ? { index: best, name } : null;
+}
+function rewriteCall(line, name) {
+  const needle = 'string.' + name + '(';
+  const start = line.indexOf(needle);
+  if (start < 0) return null;
+  const open = start + needle.length - 1;
+  let depth = 0;
+  for (let i = open; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { i++; while (i < line.length && !(line[i] === '"' && line[i - 1] !== '\\')) i++; continue; }
+    if (ch === '(') depth++; else if (ch === ')') {
+      depth--;
+      if (depth === 0) {
+        const inner = line.slice(open + 1, i);
+        const repl = name === 'str_length'
+          ? 'string.str_len(' + inner + ')'
+          : (/^[A-Za-z_]\w*$/.test(inner) ? inner + '.to_str()' : '(' + inner + ').to_str()');
+        return line.slice(0, start) + repl + line.slice(i + 1);
+      }
+    }
+  }
+  return null;
 }
 function wrapArg(line, call) {
   const open = call.index + call.name.length - 1;
@@ -83,6 +109,12 @@ for (const item of manifest) {
       if (w) { lines[li] = w; changed = true; } else remaining.push(e);
       continue;
     }
+    const rm = RENAME_RE.exec(e.message);
+    if (rm) {
+      const r = rewriteCall(lines[li], rm[1]);
+      if (r) { lines[li] = r; changed = true; } else remaining.push(e);
+      continue;
+    }
     if (ARROW_RE.test(e.message)) {
       const pos = e.col - 1;
       if (lines[li].slice(pos, pos + 2) === '->') { lines[li] = lines[li].slice(0, pos) + '=>' + lines[li].slice(pos + 2); changed = true; } else remaining.push(e);
@@ -91,12 +123,19 @@ for (const item of manifest) {
     remaining.push(e);
   }
   let code = lines.join('\n');
-  if (modules.length) code = modules.map((m) => 'use xiom.' + m + ';').join('\n') + '\n\n' + code;
+  if (modules.length) {
+    const needed = modules.filter((m) => code.indexOf('use xiom.' + m + ';') < 0);
+    if (needed.length) code = needed.map((m) => 'use xiom.' + m + ';').join('\n') + '\n\n' + code;
+  }
   const looped = loops(code);
   if (looped) code = looped;
   if (changed || modules.length || looped) {
     if (!repl.has(item.lessonFile)) repl.set(item.lessonFile, new Map());
-    repl.get(item.lessonFile).set(item.code, code);
+    const fileMap = repl.get(item.lessonFile);
+    const prev = fileMap.get(item.code);
+    if (!prev) fileMap.set(item.code, { newCode: code });
+    else if (prev.newCode !== code) prev.conflict = true; // identical text, different fix
+
     if (remaining.length) manual.push(item.tag + ': ' + remaining.map((r) => r.line + ':' + r.col + ' ' + r.message.slice(0, 60)).join(' | '));
   } else if (remaining.length) {
     manual.push(item.tag + ': ' + remaining.map((r) => r.line + ':' + r.col + ' ' + r.message.slice(0, 60)).join(' | '));
@@ -105,10 +144,11 @@ for (const item of manifest) {
 for (const [file, map] of repl) {
   const full = path.join(REPO, 'lessons', file);
   let raw = fs.readFileSync(full, 'utf8');
-  for (const [oldC, newC] of map) {
-    const o = JSON.stringify(oldC).slice(1, -1); const n = JSON.stringify(newC).slice(1, -1);
-    if (raw.indexOf(o) < 0) { console.log('MISS ' + file); continue; }
-    raw = raw.replace(o, n);
+  for (const [oldC, entry] of map) {
+    if (entry.conflict) { console.log('CONFLICT ' + file); continue; }
+    const res = replaceAll(raw, oldC, entry.newCode);
+    if (res.count === 0) { console.log('MISS ' + file); continue; }
+    raw = res.text;
   }
   fs.writeFileSync(full, raw, 'utf8');
   console.log('patched ' + file + ' (' + map.size + ')');

@@ -1,0 +1,32 @@
+[
+ {
+  "file": "lessons/L3-systems/L3-05.json",
+  "old": "fn find_valid_score(name: Str) -> Option[Int] {\n  let score = if name == \"Alice\" { Some(85) }\n    else if name == \"Bob\" { Some(105) }  // invalid!\n    else { None };\n\n  if let Some(s) = score {\n    if s >= 0 && s <= 100 {\n      return Some(s);\n    }\n  }\n  return None;\n}\n\nfn main() -> Int {\n  io.println(find_valid_score(\"Alice\").unwrap_or(-1));  // 85\n  io.println(find_valid_score(\"Bob\").unwrap_or(-1));    // -1 (score 105 was invalid)\n  io.println(find_valid_score(\"Dave\").unwrap_or(-1));   // -1 (not found)\n  return 0;\n}\n",
+  "new": "fn find_valid_score(name: Str) -> Option[Int] {\n  let score = if name == \"Alice\" { Some(85) }\n    else { if name == \"Bob\" { Some(105) } else { None } };  // Bob's 105 is invalid!\n\n  if let Some(s) = score {\n    if s >= 0 && s <= 100 {\n      return Some(s);\n    }\n  }\n  return None;\n}\n\nfn main() -> Int {\n  io.println(find_valid_score(\"Alice\").unwrap_or(-1).to_str());  // 85\n  io.println(find_valid_score(\"Bob\").unwrap_or(-1).to_str());    // -1 (score 105 was invalid)\n  io.println(find_valid_score(\"Dave\").unwrap_or(-1).to_str());   // -1 (not found)\n  return 0;\n}\n",
+  "why": "else-if expression -> nested else block; wrap println Int args"
+ },
+ {
+  "file": "lessons/L3-systems/L3-08.json",
+  "old": "use xiom.io;\n\nfn get_grade_label(result: Result[Int, Str]) -> Str {\n  return match result {\n    Ok(score) => {\n      if score >= 90 { return \"Grade: A\"; }\n      if score >= 80 { return \"Grade: B\"; }\n      return \"Grade: C\";\n    },\n    Err(e) => \"Could not calculate: \" + e,\n  };\n}\n\nfn main() -> Int {\n  io.println(get_grade_label(Ok(95)));   // Grade: A\n  io.println(get_grade_label(Ok(72)));   // Grade: C\n  io.println(get_grade_label(Err(\"No data\")));  // Could not calculate: No data\n  return 0;\n}\n",
+  "new": "use xiom.io;\n\nfn get_grade_label(result: Result[Int, Str]) -> Str {\n  return match result {\n    Ok(score) => {\n      let label = if score >= 90 { \"Grade: A\" }\n        else { if score >= 80 { \"Grade: B\" } else { \"Grade: C\" } };\n      label\n    },\n    Err(e) => \"Could not calculate: \" + e,\n  };\n}\n\nfn main() -> Int {\n  io.println(get_grade_label(Ok(95)));   // Grade: A\n  io.println(get_grade_label(Ok(72)));   // Grade: C\n  io.println(get_grade_label(Err(\"No data\")));  // Could not calculate: No data\n  return 0;\n}\n",
+  "why": "match arm block returns -> value-producing if/else"
+ },
+ {
+  "file": "lessons/L3-systems/L3-10.json",
+  "old": "use xiom.io;\nuse xiom.string;\n\nfn get_age_input(input: Str) -> Str {\n  let parsed = string.str_to_int(input);\n  return match parsed {\n    Ok(age) => {\n      if age >= 0 && age <= 120 {\n        return \"Age is \" + age.to_str();\n      }\n      return \"Age out of range: \" + age.to_str();\n    },\n    Err(e) => \"Invalid number: \" + e,\n  };\n}\n\nfn main() -> Int {\n  io.println(get_age_input(\"25\"));     // Age is 25\n  io.println(get_age_input(\"abc\"));    // Invalid number: ...\n  io.println(get_age_input(\"200\"));    // Age out of range: 200\n  return 0;\n}\n",
+  "new": "use xiom.io;\nuse xiom.string;\n\nfn get_age_input(input: Str) -> Str {\n  let parsed = string.str_to_int(input);\n  let label = match parsed {\n    Ok(age) => {\n      let text = if age >= 0 && age <= 120 { \"Age is \" + age.to_str() } else { \"Age out of range: \" + age.to_str() };\n      text\n    },\n    Err(e) => \"Invalid number: \" + e,\n  };\n  return label;\n}\n\nfn main() -> Int {\n  io.println(get_age_input(\"25\"));     // Age is 25\n  io.println(get_age_input(\"abc\"));    // Invalid number: ...\n  io.println(get_age_input(\"200\"));    // Age out of range: 200\n  return 0;\n}\n",
+  "why": "match arm block returns -> value-producing if/else"
+ },
+ {
+  "file": "lessons/L3-systems/L3-20.json",
+  "old": "use xiom.io;\nuse xiom.string;\n\nfn check_data(maybe_num: Option[Int], maybe_text: Result[Str, Str]) -> Str {\n  return match (maybe_num, maybe_text) {\n    (Some(n), Ok(t)) => {\n      return \"Got number \" + n.to_str() + \" and text '\" + t + \"'\";\n    },\n    (Some(n), Err(e)) => {\n      return \"Number is \" + n.to_str() + \" but text failed: \" + e;\n    },\n    (None, Ok(t)) => {\n      return \"No number but text is '\" + t + \"'\";\n    },\n    (None, Err(e)) => {\n      return \"Nothing worked: \" + e;\n    },\n  };\n}\n\nfn main() -> Int {\n  io.println(check_data(Some(42), Ok(\"success\")));\n  io.println(check_data(Some(7), Err(\"bad text\")));\n  io.println(check_data(None, Ok(\"data\")));\n  io.println(check_data(None, Err(\"all broken\")));\n  return 0;\n}\n",
+  "new": "use xiom.io;\nuse xiom.string;\n\nfn check_data(maybe_num: Option[Int], maybe_text: Result[Str, Str]) -> Str {\n  return match (maybe_num, maybe_text) {\n    (Some(n), Ok(t)) => \"Got number \" + n.to_str() + \" and text '\" + t + \"'\",\n    (Some(n), Err(e)) => \"Number is \" + n.to_str() + \" but text failed: \" + e,\n    (None, Ok(t)) => \"No number but text is '\" + t + \"'\",\n    (None, Err(e)) => \"Nothing worked: \" + e,\n  };\n}\n\nfn main() -> Int {\n  io.println(check_data(Some(42), Ok(\"success\")));\n  io.println(check_data(Some(7), Err(\"bad text\")));\n  io.println(check_data(None, Ok(\"data\")));\n  io.println(check_data(None, Err(\"all broken\")));\n  return 0;\n}\n",
+  "why": "match arm block returns -> expression arms"
+ },
+ {
+  "file": "lessons/L3-systems/38-random-challenge.json",
+  "old": "use xiom.math;\n\nfn main() -> Int {\n  let a = math.random_int(1, 10);\n  let b = math.random_int(1, 10);\n  // Imagine the user guessed a + b (always correct!)\n  let guess = a + b;\n  match check_answer(a, b, guess) {\n    Ok(msg) => { return 1; }\n    Err(msg) => { return 0; }\n  }\n}\n",
+  "new": "use xiom.math;\n\nfn main() -> Int {\n  let a = math.random_range(1, 11);\n  let b = math.random_range(1, 11);\n  // Imagine the user guessed a + b (always correct!)\n  let guess = a + b;\n  match check_answer(a, b, guess) {\n    Ok(msg) => { return 1; }\n    Err(msg) => { return 0; }\n  }\n}\n",
+  "why": "math.random_int -> math.random_range (v0.62.1 API)"
+ }
+]

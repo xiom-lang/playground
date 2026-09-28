@@ -1,0 +1,56 @@
+[
+ {
+  "file": "lessons/L6-engineering/L6-10.json",
+  "old": "use xiom.io;\n\nmodule models {\n  pub type User = {\n    name: Str;\n    email: Str;\n  }\n\n  pub fn new_user(name: Str, email: Str) -> User {\n    return User{ name: name, email: email };\n  }\n}\n\nmodule validation {\n  pub fn is_valid_email(email: Str) -> Bool {\n    return email.contains(\"@\") & email.contains(\".\");\n  }\n}\n\nmodule display {\n  pub fn show_user(user: &models.User) {\n    io.println(user.name + \" <\" + user.email + \">\");\n  }\n}\n\nmodule app {\n  pub fn register_user(name: Str, email: Str) -> Str {\n    if validation.is_valid_email(email) {\n      let user = models.new_user(name, email);\n      display.show_user(&user);\n      return \"Registered!\";\n    }\n    return \"Invalid email\";\n  }\n}\n\nfn main() -> Int {\n  let result = app.register_user(\"Alex\", \"alex@site.com\");\n  io.println(result);\n\n  let bad_result = app.register_user(\"Bob\", \"bad_email\");\n  io.println(bad_result);\n  return 0;\n}\n",
+  "new": "use xiom.io;\nuse xiom.string;\n\nmodule models {\n  pub type User = {\n    name: Str;\n    email: Str;\n  }\n\n  pub fn new_user(name: Str, email: Str) -> User {\n    return User{ name: name, email: email };\n  }\n}\n\nmodule validation {\n  pub fn is_valid_email(email: Str) -> Bool {\n    return string.str_contains(email, \"@\") & string.str_contains(email, \".\");\n  }\n}\n\nmodule display {\n  pub fn show_user(name: Str, email: Str) {\n    io.println(name + \" <\" + email + \">\");\n  }\n}\n\nmodule app {\n  pub fn register_user(name: Str, email: Str) -> Str {\n    if validation.is_valid_email(email) {\n      let user = models.new_user(name, email);\n      display.show_user(user.name, user.email);\n      return \"Registered!\";\n    }\n    return \"Invalid email\";\n  }\n}\n\nfn main() -> Int {\n  let result = app.register_user(\"Alex\", \"alex@site.com\");\n  io.println(result);\n\n  let bad_result = app.register_user(\"Bob\", \"bad_email\");\n  io.println(bad_result);\n  return 0;\n}\n",
+  "why": "cross-module type identity: pass fields; str_contains"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-15.json",
+  "old": "module models {\n  pub type Task = {\n    title: Str;\n    done: Bool;\n  }\n\n  pub fn new_task(title: Str) -> Task {\n    return Task{ title: title, done: false };\n  }\n\n  pub fn mark_done(task: &mut Task) {\n    task.done = true;\n  }\n}\n\nmodule tasks {\n  pub interface TaskStore {\n    fn add(task: models.Task);\n    fn count() -> Int;\n  }\n\n  pub type ListStore = {\n    items: Vec[models.Task];\n  }\n\n  pub fn ListStore.new() -> ListStore {\n    return ListStore{ items: Vec[models.Task].new() };\n  }\n\n  pub fn ListStore.add(self: &mut ListStore, task: models.Task) {\n    self.items.push(task);\n  }\n\n  pub fn ListStore.count(self) -> Int {\n    return self.items.len();\n  }\n\n  pub fn create_default_store() -> ListStore {\n    return ListStore.new();\n  }\n}\n\nmodule display {\n  pub interface Displayable {\n    fn display() -> Str;\n  }\n\n  pub fn models.Task.display(self) -> Str {\n    let status = \"[ ]\";\n    if self.done { status = \"[x]\"; }\n    return status + \" \" + self.title;\n  }\n\n  pub fn show_all[T: Displayable](items: &Vec[T]) {\n    let i = 0;\n    while i < items.len() {\n      let item = match items.get(i) { Some(v) => v, None => continue };\n      io.println(item.display());\n      i = i + 1;\n    }\n  }\n}\n\nfn main() -> Int {\n  var store = tasks.create_default_store();\n  store.add(&mut store, models.new_task(\"Learn interfaces\"));\n  store.add(&mut store, models.new_task(\"Master modules\"));\n\n  io.println(string.int_to_str(store.count(&store)));\n  return 0;\n}\n",
+  "new": "use xiom.io;\n\ntype Task = {\n  title: Str;\n  done: Bool;\n}\n\nmodule models {\n  pub fn new_task(title: Str) -> Task {\n    return Task{ title: title, done: false };\n  }\n\n  pub fn mark_done(task: &mut Task) {\n    task.done = true;\n  }\n\n  pub fn Task.display(self) -> Str {\n    var status = \"[ ]\";\n    if self.done { status = \"[x]\"; }\n    return status + \" \" + self.title;\n  }\n}\n\nmodule tasks {\n  pub interface TaskStore {\n    fn add(task: Task);\n    fn count() -> Int;\n  }\n\n  pub type ListStore = {\n    items: Vec[Task];\n  }\n\n  pub fn ListStore.new() -> ListStore {\n    return ListStore{ items: Vec[Task].new() };\n  }\n\n  pub fn ListStore.add(&mut self, task: Task) {\n    self.items.push(task);\n  }\n\n  pub fn ListStore.count(self) -> Int {\n    return self.items.len();\n  }\n\n  pub fn create_default_store() -> ListStore {\n    return ListStore.new();\n  }\n}\n\nmodule display {\n  pub interface Displayable {\n    fn display() -> Str;\n  }\n\n  pub fn show_all[T: Displayable](items: &Vec[T]) {\n    var i = 0;\n    while i < items.len() {\n      let item = items[i];\n      io.println(item.display());\n      i = i + 1;\n    }\n  }\n}\n\nfn main() -> Int {\n  var store = tasks.create_default_store();\n  store.add(models.new_task(\"Learn interfaces\"));\n  store.add(models.new_task(\"Master modules\"));\n\n  io.println(store.count().to_str());\n  return 0;\n}\n",
+  "why": "module receivers; shared type at top level; io import"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-24.json",
+  "old": "type Counter {\n  value: Int;\n}\n\ninvariant { self.value >= 0; }\n\nfn Counter.increment(&mut self) {\n  self.value += 1;\n}\n\n// main test\nfn main() -> Int {\n  let mut c = Counter{ value: 0 };\n  c.increment();\n  assert(c.value == 1);\n  let mut c2 = Counter{ value: -5 };  // violates invariant!\n  return 0;\n}\n",
+  "new": "type Counter = {\n  value: Int;\n  invariant: value >= 0;\n}\n\nfn Counter.increment(&mut self) {\n  self.value += 1;\n}\n\n// main test\nfn main() -> Int {\n  var c = Counter{ value: 0 };\n  c.increment();\n  assert(c.value == 1);\n  var c2 = Counter{ value: -5 };  // violates invariant!\n  return 0;\n}\n",
+  "why": "invariant syntax in type; var; mod-style fixes"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-25.json",
+  "old": "fn main() -> Int {\n  use my_math;\n  use my_string;\n  use my_collections;\n\n  let fib = my_math.fibonacci(10);\n  let rev = my_string.reverse(\"hello\");\n  io.println(fib);\n  io.println(rev);\n  return 0;\n}\n",
+  "new": "use my_math;\nuse my_string;\nuse my_collections;\n\nfn main() -> Int {\n  let fib = my_math.fibonacci(10);\n  let rev = my_string.reverse(\"hello\");\n  io.println(fib);\n  io.println(rev);\n  return 0;\n}\n",
+  "why": "move use lines to top level"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-31.json",
+  "old": "fn main() -> Int {\n  use game;\n  let mut hero = game.player.create(\"Aria\");\n  game.player.heal(&mut hero, 20);\n  io.println(hero.health);\n  return 0;\n}\n",
+  "new": "use game;\n\nfn main() -> Int {\n  var hero = game.player.create(\"Aria\");\n  game.player.heal(&mut hero, 20);\n  io.println(hero.health);\n  return 0;\n}\n",
+  "why": "move use line to top level; var"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-33.json",
+  "old": "fn main() -> Int {\n  use cache;\n  let mut c = cache.create(5);\n  cache.insert(&mut c, \"key1\");\n  io.println(cache.lookup(&c, \"key1\"));\n  return 0;\n}\n",
+  "new": "fn main() -> Int {\n  var c = cache.create(5);\n  cache.insert(&mut c, \"key1\");\n  io.println(cache.lookup(&c, \"key1\"));\n  return 0;\n}\n",
+  "why": "drop misplaced use; var (module defined above)"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-38.json",
+  "old": "fn main() -> Int {\n  let mut passed = 0;\n  if test_add() { passed += 1; };\n  if test_divide() { passed += 1; };\n  if test_power() { passed += 1; };\n  io.println(passed);\n  return 0;\n}\n",
+  "new": "fn main() -> Int {\n  var passed = 0;\n  if test_add() { passed += 1; };\n  if test_divide() { passed += 1; };\n  if test_power() { passed += 1; };\n  io.println(passed.to_str());\n  return 0;\n}\n",
+  "why": "var instead of let mut; wrap println"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-40.json",
+  "old": "fn main() -> Int {\n  use plugin_manager;\n  let mut pm = plugin_manager.create[UpperCasePlugin]();\n  pm.register(UpperCasePlugin{});\n  let names = pm.list_plugins();\n  io.println(names);\n  return 0;\n}\n",
+  "new": "use plugin_manager;\n\nfn main() -> Int {\n  var pm = plugin_manager.create[UpperCasePlugin]();\n  pm.register(UpperCasePlugin{});\n  let names = pm.list_plugins();\n  io.println(names);\n  return 0;\n}\n",
+  "why": "move use line to top level; var"
+ },
+ {
+  "file": "lessons/L6-engineering/L6-33.json",
+  "old": "mod cache {\n  type CacheData {\n    store: Vec[Str];\n    max_size: Int;\n  }\n\n  pub fn create(max: Int) -> CacheData {\n    CacheData{ store: Vec[Str].new(), max_size: max }\n  }\n\n  pub fn insert(c: &mut CacheData, item: Str) -> Bool {\n    if c.store.len() >= c.max_size {\n      return false;\n    };\n    c.store.push(item);\n    true\n  }\n\n  pub fn lookup(c: &CacheData, item: Str) -> Bool {\n    let mut i = 0;\n    while i < c.store.len() {\n      if c.store.get(i).unwrap() == item {\n        return true;\n      };\n      i += 1;\n    };\n    false\n  }\n\n  pub fn size(c: &CacheData) -> Int {\n    c.store.len()\n  }\n}\n",
+  "new": "module cache {\n  type CacheData = {\n    store: Vec[Str];\n    max_size: Int;\n  }\n\n  pub fn create(max: Int) -> CacheData {\n    CacheData{ store: Vec[Str].new(), max_size: max }\n  }\n\n  pub fn insert(c: &mut CacheData, item: Str) -> Bool {\n    if c.store.len() >= c.max_size {\n      return false;\n    };\n    c.store.push(item);\n    true\n  }\n\n  pub fn lookup(c: &CacheData, item: Str) -> Bool {\n    var i = 0;\n    while i < c.store.len() {\n      if c.store.get(i).unwrap() == item {\n        return true;\n      };\n      i += 1;\n    };\n    false\n  }\n\n  pub fn size(c: &CacheData) -> Int {\n    c.store.len()\n  }\n}\n",
+  "why": "definitions fence: module keyword, type =, var"
+ }
+]

@@ -1,14 +1,16 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-28 (v0.62.1 absorbed; L0-L2 prose sweeps done). Branch
-`main` at `e1ca8dd`, working tree clean, all commits pushed to
-`origin/main`. Production runs **toolchain v0.62.1** (stdlib 0.62.0, wasm
-v0.62.1, `capabilities.format: true`) with P1 Landlock (`require`, ABI 4),
-P3 rate limits + external `abuse` monitor, P2 host-side state and the
-repo-pinned VPS deploy (option C). Security P0-P3 is fully closed (the
-rollback window closed 2026-09-28). Phase E prose sweep: L0 clean, L1 and
-L2 swept with only excerpt-class remainders; L3-L8 next. Handoff detail:
-section 17.
+Last updated: 2026-09-28 (Phase E prose sweep complete L0-L8; backlog
+B1-B5 implemented). Branch `main` at `11c5f39` plus this session's commits
+(see the header of the newest commit), working tree clean, all commits
+pushed to `origin/main`. Production runs **toolchain v0.62.1** (stdlib
+0.62.0, wasm v0.62.1, `capabilities.format: true`) with P1 Landlock
+(`require`, ABI 4), P3 rate limits + external `abuse` monitor, P2
+host-side state and the repo-pinned VPS deploy (option C). Security P0-P3
+is fully closed (the rollback window closed and the retained pre-P2
+backup deleted on owner sign-off). The sandbox capability tiers ship in
+the reference panel; the only open item is C3 (registry bundle). Handoff
+detail: section 17.
 Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
 records), `README.md` and `DEPLOY.md`.
 
@@ -688,26 +690,27 @@ baseline stay valid). Details, counts and the remaining sweep:
 AUDIT section 32 and ROADMAP Phase E. Sweep command:
 `node tools/audit-snippets.js --level Lx --imports`.
 
-## 13. Backlog and waiting state (2026-09-27)
+## 13. Backlog and waiting state (2026-09-28)
 
-Owner-approved direction: keep the sandbox as the security boundary and do
-NOT filter the stdlib (source filtering is bypassable via user-declared
-`extern "C"` and would fight the learning mission). Make the sandbox
-legible instead. Parked in ROADMAP's backlog section:
+Backlog B1-B5 is implemented (ROADMAP's backlog section; AUDIT 32.4):
 
 - B1 capability tiers (`full`/`limited`/`blocked`) generated in
-  `tools/generate-stdlib-ref.js` and surfaced in the reference panel;
-- B2 friendly sandbox-denial messages in the runner;
-- B3 `docs/SANDBOX_CAPABILITIES.md`;
-- B4 a "Playground vs a real compiler" note in the L8 lessons;
-- B5 finish the Phase E prose sweep L2-L8 with run verification.
+  `tools/generate-stdlib-ref.js`, regenerated into `js/stdlib-ref.json`,
+  and surfaced as panel badges plus a one-line sandbox note;
+- B2 friendly sandbox-denial messages in the runner (`lib/denials.js`);
+- B3 `docs/SANDBOX_CAPABILITIES.md`, linked from the panel;
+- B4 a "Playground vs a real compiler" note in L8-20;
+- B5 the Phase E prose sweep finished L2-L8 (AUDIT 32.4).
 
-These are playground-only changes: no ops requests for them, and any ops
-ask (currently just the rollback-window close) is batched, not sent
-per-item. Status: waiting on the compiler-lane replies to relays 11.1
-(tcp_connect verification target), 11.3 (direct for-in semantics and the
-`Iterator` warning) and 11.4 (is bare-literal `12.to_str()` guaranteed).
-No further playground changes until those answers arrive.
+These were playground-only changes: no ops requests, no container/VPS
+changes. Compiler lane replied (2026-09-28): `tcp_connect`, the wasm
+glue, strict mode and the `opt` warning are shipped; the Range-only
+`Iterator` warning and the W005 float-to-str stub are queued as polish
+with the tier-2 lints. Nothing playground-side is blocked on the compiler
+lane.
+
+Waiting: C3 only -- the registry's `scripts/export-bundle.js` output has
+not arrived; the ops mount request is batched for when it does.
 
 ## 14. v0.62.0 absorption attempt and relay (2026-09-28)
 
@@ -771,52 +774,54 @@ Ops closed the P2 rollback window the same day: the retained
 restic snapshot 3052c07f contains the host state document and the dump is
 valid, and production is healthy (`abuse:ok`, `sandbox.mode=require`,
 landlock 4). The accounts backup stays until owner sign-off (AUDIT 31.1).
-## 17. Handoff (2026-09-28)
+## 17. Handoff (2026-09-28, end of session)
 
-State: pin **v0.62.1** (stdlib 0.62.0); step 6 (`tcp_connect` refused port
-returns Err), strict contracts/arity and wasm glue all absorbed; the wasm
-loader is browser-verified on production (`[xiom-wasm] in-browser compiler
-ready: XIOM v0.62.1 (WASM)`); footer footnote/copy and app version fixed
-(b1a2f13). Security: P1 (Landlock, `require`, ABI 4), P2 (host-side state;
-rollback window closed by ops 2026-09-28; accounts backup kept until owner
-sign-off), P3 (rate limits + monitor) all closed. AUDIT 30/31/32/33 carry
-the evidence.
+State: pin **v0.62.1** (stdlib 0.62.0); the wasm loader is
+browser-verified on production; security P0-P3 closed (P2 rollback window
+closed and the retained pre-P2 backup deleted on owner sign-off). Phase E
+prose sweep is complete: the full-corpus audit ended at 199 ok + 73
+missing-import + 144 excerpt + 5 failing, the five were fixed (L1-19
+`let mut`; L2-05/07/08/09 missing `.to_str()`), L1+L2 re-audited to 0
+failing, and all levels re-verified (L8 1/1, L7 4 excerpt, L6 9/25, L5
+39/54, L4 33/43, L3 56/71, L0 90/90; all residuals excerpt-class).
+Loop-fence runs: 40 executed, 39 clean; the failure exposed C21
+(reference iteration passes `--check` but fails codegen), and the 10
+prose fences teaching it were rewritten to while+index/while+get and
+re-run. Backlog B1-B5 shipped (capability tiers and panel badges,
+friendly sandbox denials, SANDBOX_CAPABILITIES.md, the L8 note). AUDIT
+32.4 records the sweep, the rename classes and findings C20/C21.
 
-Phase E prose sweep (the main open tranche): `tools/audit-snippets.js`
-reports `ok` / `missing-import` / `excerpt` (undefined lesson-local
-symbols) / `failures`; only failures exit 1. Level status: L0 clean
-(87/87 compile); L1 15/81 -> 44/81 after fixes, rest excerpt; L2 10/52 ->
-15/52, rest excerpt (zero real errors). The mechanical pipeline is
-committed under `tools/snippet-sweep/`:
-  1. `node tools/snippet-sweep/extract-level.js Lx` -> `%TEMP%\kilo\lvlfix\Lx\snippets` + `manifest.json`
-  2. `wsl -d Ubuntu -- bash /mnt/c/Users/lefte/AppData/Local/Temp/kilo/compile-dir.sh <win-snippets-dir> <win-out-dir>`
-     (the script copies to /tmp first -- checking on /mnt/c makes the compiler index the parent dir and hang)
-  3. `node tools/snippet-sweep/fix-level.js Lx` (position-driven wraps, `->`->`=>`, imports, `for x in y` loops)
-  4. repeat 1-2 to verify, then handle manual leftovers (AUDIT 32.2/32.3 policy).
-Known targets: L3 malformed samples (L3-05 `expected '{', found if`, L3-08
-return mismatch, L3-15/17/19 `str_length` receivers, L3-38 `random_int`)
-plus excerpt refs; L4 `insert`/`get` receiver context; L5 the 13 match-arrow
-`->`->`=>`; L6-38 missing `;`, L6-25/31/33/40 `use` as identifier, L6-15/24
-malformed; L7-01/40 `;`; L8-10 `mod` sample. Run loop snippets to verify
-outputs (compilation cannot see zero-iteration loops), and note that direct
-`for x in Vec` works on v0.62.1, so the L0 range+index rewrites may be
-simplified back to direct iteration when convenient.
+Next work:
+1. C3 (only open item): when the registry delivers the bundle, send the
+   single batched ops mount request, install/vendor `xiom.hello@0.1.0` +
+   `xiom.csv@0.1.0`, wire an offline example with a sandboxed test, and
+   close C3 (plan in ROADMAP's C3 status).
+2. Optional cleanup: simplify the L0 range+index loop rewrites back to
+   direct `for x in Vec` (works on v0.62.1) and run the five loop lessons
+   to confirm outputs; re-run `audit-snippets --level L0` after.
+3. Optional: if the compiler lane fixes C20 (module-local type identity
+   across modules, AUDIT 32.4), L6-10/L6-15 prose can pass structs
+   between modules again instead of the top-level shared type.
 
-Backlog B1-B5 (ROADMAP): capability tiers in the stdlib reference, friendly
-sandbox-denial messages, `docs/SANDBOX_CAPABILITIES.md`, the L8 note, B5 =
-this sweep. C3: registry answered (330 signed packages live, public stable
-index); waiting on their `scripts/export-bundle.js` (we approved it as the
-C3 deliverable, pinned set `xiom.hello@0.1.0` + `xiom.csv@0.1.0`); then one
-batched ops ask to mount it read-only and wire an offline example with a
-test (`xiom pkg` local-packages fallback). Compiler polish remaining
-(informational): Range-only `Iterator` warning, W005 stub behind
-`(2 + 2.5).to_str()` printing 0.
+Sweep recipe (if a level needs a re-run): `tools/snippet-sweep/`
+`extract-level.js` -> WSL `compile-dir.sh` -> `fix-level.js` -> re-extract
+and recompile to verify; manual leftovers go through `patch-lesson.js`
+with a JSON under `tools/snippet-sweep/patches/` (recorded per level);
+`dedupe-imports.js` cleans repeated import blocks. Cross-check with
+`node tools/audit-snippets.js --imports` (buckets `ok` / `missing-import`
+/ `excerpt` / `failures`; only failures exit 1).
 
 Environment/gotchas: Windows `.toolchain` is v0.62.1; the Linux sweep
 toolchain lives at `/home/lefteris/xiom_v0621/tc` in WSL (node at
-`/home/lefteris/node-v22.23.2-linux-x64/bin`); clear `/tmp/xiom_run` and
-`~/.xiom` when switching builds; sweeps/audits run from Windows (the
-`--wsl` flag is Windows-only); lesson-audit check-only takes ~20-25 min and
-has intermittently crashed under machine load (exit -1, no diagnostics --
+`/home/lefteris/node-v22.23.2-linux-x64/bin`); `/tmp` is wiped between
+WSL invocations on this machine now, so recreate `/tmp/xiom-toolchain`
+inside the same bash command (the compile script does this automatically
+when the directory is missing); clear `/tmp/xiom_run` and `~/.xiom` when
+switching builds; sweeps/audits run from Windows (the `--wsl` flag is
+Windows-only); lesson-audit check-only takes ~20-25 min and has
+intermittently crashed under machine load (exit -1, no diagnostics --
 transient, re-run); never pipe binary through PowerShell (hash from files
-instead). Gate: section 8 (all four steps) plus CI.
+instead). A stray `/tmp/xiom61/lib` from an older session can add
+duplicate-module warnings when compiling with `/tmp` as the source
+parent; the compile script's isolated copy avoids it. Gate: section 8
+(all four steps) plus CI.

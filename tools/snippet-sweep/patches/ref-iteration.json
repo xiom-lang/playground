@@ -1,0 +1,68 @@
+[
+ {
+  "file": "lessons/L4-safety/18-borrowing-in-practice.json",
+  "old": "fn print_and_clear(items: &mut Vec[Str]) {\n  for item in &items {       // Read-like iteration\n    io.println(item);\n  }\n  while items.len() > 0 {   // Write: clear items\n    items.pop();\n  }\n}\n",
+  "new": "fn print_and_clear(items: &mut Vec[Str]) {\n  let i = 0;\n  while i < items.len() {    // Read-like iteration\n    io.println(items[i]);\n    i = i + 1;\n  }\n  while items.len() > 0 {   // Write: clear items\n    items.pop();\n  }\n}\n",
+  "why": "ref iteration -> while+index"
+ },
+ {
+  "file": "lessons/L4-safety/24-vec-and-ownership.json",
+  "old": "fn sum_items(items: &Vec[Int]) -> Int {\n  let total = 0;\n  for item in items {  // Iterates over &Int references\n    total = total + item;\n  }\n  return total;\n}\n",
+  "new": "fn sum_items(items: &Vec[Int]) -> Int {\n  let total = 0;\n  let i = 0;\n  while i < items.len() {  // Reads each element through the borrow\n    total = total + items[i];\n    i = i + 1;\n  }\n  return total;\n}\n",
+  "why": "ref iteration -> while+index"
+ },
+ {
+  "file": "lessons/L4-safety/26-read-borrow-pattern.json",
+  "old": "fn average(scores: &Vec[Int]) -> Float64\n  requires: scores.len() > 0;\n{\n  let sum = 0.0;\n  for score in scores {\n    sum = sum + (score as Float64);\n  }\n  return sum / (scores.len() as Float64);\n}\n\nfn max(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  let max_val = scores[0];\n  for score in scores {\n    if score > max_val { max_val = score; }\n  }\n  return max_val;\n}\n",
+  "new": "fn average(scores: &Vec[Int]) -> Float64\n  requires: scores.len() > 0;\n{\n  let sum = 0.0;\n  let i = 0;\n  while i < scores.len() {\n    sum = sum + (scores[i] as Float64);\n    i = i + 1;\n  }\n  return sum / (scores.len() as Float64);\n}\n\nfn max(scores: &Vec[Int]) -> Int\n  requires: scores.len() > 0;\n{\n  let max_val = scores[0];\n  let i = 0;\n  while i < scores.len() {\n    if scores[i] > max_val { max_val = scores[i]; }\n    i = i + 1;\n  }\n  return max_val;\n}\n",
+  "why": "ref iteration -> while+index"
+ },
+ {
+  "file": "lessons/L4-safety/30-mid-review-safe-and-sound.json",
+  "old": "fn report(account: &Account) {\n  io.println(account.owner + \": $\" + account.balance);\n}\n\nfn total_balance(accounts: &Vec[Account]) -> Float64 {\n  let sum = 0.0;\n  for a in accounts {\n    sum = sum + a.balance;\n  }\n  return sum;\n}\n",
+  "new": "fn report(account: &Account) {\n  io.println(account.owner + \": $\" + account.balance.to_str());\n}\n\nfn total_balance(accounts: &Vec[Account]) -> Float64 {\n  let sum = 0.0;\n  let i = 0;\n  while i < accounts.len() {\n    sum = sum + accounts[i].balance;\n    i = i + 1;\n  }\n  return sum;\n}\n",
+  "why": "ref iteration -> while+index; wrap Float64 println"
+ },
+ {
+  "file": "lessons/L4-safety/44-borrow-patterns.json",
+  "old": "fn sum_all(items: &Vec[Int]) -> Int {\n  let total = 0;\n  for item in items {\n    total = total + item;\n  }\n  return total;\n}\n",
+  "new": "fn sum_all(items: &Vec[Int]) -> Int {\n  let total = 0;\n  let i = 0;\n  while i < items.len() {\n    total = total + items[i];\n    i = i + 1;\n  }\n  return total;\n}\n",
+  "why": "ref iteration -> while+index"
+ },
+ {
+  "file": "lessons/L4-safety/44-borrow-patterns.json",
+  "old": "fn process_order(inv: &mut Inventory, orders: &Vec[Int])\n  requires: orders.len() > 0;\n{\n  for qty in orders {\n    sell(inv, qty);\n  }\n}\n",
+  "new": "fn process_order(inv: &mut Inventory, orders: &Vec[Int])\n  requires: orders.len() > 0;\n{\n  let i = 0;\n  while i < orders.len() {\n    sell(inv, orders[i]);\n    i = i + 1;\n  }\n}\n",
+  "why": "ref iteration -> while+index"
+ },
+ {
+  "file": "lessons/L5-patterns/L5-29.json",
+  "old": "fn main() -> Int {\n  let friends: Vec[Str] = Vec[Str].new();\n\n  friends.push(\"Tom\");\n  friends.push(\"Lisa\");\n  friends.push(\"Aisha\");\n\n  for friend in &friends {\n    io.println(\"Friend: \" + friend);\n  }\n  return 0;\n}\n",
+  "new": "fn main() -> Int {\n  let friends: Vec[Str] = Vec[Str].new();\n\n  friends.push(\"Tom\");\n  friends.push(\"Lisa\");\n  friends.push(\"Aisha\");\n\n  let i = 0;\n  while i < friends.len() {\n    let friend = match friends.get(i) { Some(n) => n, None => \"\" };\n    io.println(\"Friend: \" + friend);\n    i = i + 1;\n  }\n  return 0;\n}\n",
+  "why": "ref iteration -> while+get (solution idiom)"
+ },
+ {
+  "file": "lessons/L5-patterns/L5-29.json",
+  "old": "fn remove_friend(friends: &mut Vec[Str], name: Str) {\n  let kept: Vec[Str] = Vec[Str].new();\n  for f in &friends {\n    if f != name {\n      kept.push(f);\n    }\n  }\n  // Replace original with filtered list\n  friends.pop();  // clear\n}\n",
+  "new": "fn remove_friend(friends: &mut Vec[Str], name: Str) {\n  let kept: Vec[Str] = Vec[Str].new();\n  let i = 0;\n  while i < friends.len() {\n    let f = match friends.get(i) { Some(n) => n, None => \"\" };\n    if f != name {\n      kept.push(f);\n    }\n    i = i + 1;\n  }\n  // Replace original with filtered list\n  friends.pop();  // clear\n}\n",
+  "why": "ref iteration -> while+get (solution idiom)"
+ },
+ {
+  "file": "lessons/L5-patterns/L5-29.json",
+  "old": "fn is_friend(friends: &Vec[Str], name: Str) -> Bool {\n  for f in friends {\n    if f == name {\n      return true;\n    }\n  }\n  return false;\n}\n",
+  "new": "fn is_friend(friends: &Vec[Str], name: Str) -> Bool {\n  let i = 0;\n  while i < friends.len() {\n    let f = match friends.get(i) { Some(n) => n, None => \"\" };\n    if f == name {\n      return true;\n    }\n    i = i + 1;\n  }\n  return false;\n}\n",
+  "why": "ref iteration -> while+get (solution idiom)"
+ },
+ {
+  "file": "lessons/L5-patterns/L5-29.json",
+  "old": "The `for friend in &friends` loop borrows each element, so you can read without moving. Use `&` when you just want to look.",
+  "new": "Walking the Vec by index with `.get(i)` reads each element through the borrow, so you can look without moving the list.",
+  "why": "sentence matched the rewritten loop"
+ },
+ {
+  "file": "lessons/L5-patterns/L5-29.json",
+  "old": "Use `for item in &vec` to read every element — the `&` borrows so you don't lose ownership",
+  "new": "Read every element with `.get(i)` in a while loop — it borrows, so you do not lose ownership of the Vec",
+  "why": "tip no longer teaches broken ref iteration"
+ }
+]

@@ -2052,8 +2052,11 @@ no legacy volume), removed the retained `playground_playground-data` volume
 and the pre-P2 env copy, and proved restic coverage (snapshot 3052c07f
 contains `/opt/xiom/playground-state/accounts/7309356.json`; the source
 list no longer carries the removed volume). Post-check: playground 200,
-`abuse:ok`, `sandbox.mode=require`, `landlock 4`. The accounts backup is
-kept until owner sign-off. P2 is fully closed.
+`abuse:ok`, `sandbox.mode=require`, `landlock 4`. P2 is fully closed.
+Ops deleted the retained pre-P2 backup
+(`/opt/xiom/backups/playground-2026-09-26/`) on owner sign-off
+(2026-09-28); the live store is untouched and restic-covered, and no
+rollback artifacts remain.
 ### 32.3 L2 swept; the audit tool learns the excerpt bucket (2026-09-28)
 
 L2 (structs, enums, matching): 52 prose programs; 10 compiled before the
@@ -2070,3 +2073,72 @@ enum and disappear in context, so no real errors remain in L2.
 symbols), and `failures` (everything else, which still sets exit code 1).
 Per-level sweeps can therefore show "0 failures" honestly while the excerpt
 count stays visible.
+
+### 32.4 L3-L8 swept on v0.62.1; stdlib renames and a module-type finding (2026-09-28)
+
+Phase E finished (B5). Every remaining level was swept with the committed
+pipeline (extract -> WSL compile -> mechanical fix -> re-extract/recompile
+-> `audit-snippets --imports`). Full-corpus audit before the last fixes:
+1366 snippets, 421 complete programs: 199 ok, 73 missing-import, 144
+excerpt, 5 failing; the five (L1-19 `let mut`, L2-05/07/08/09 missing
+`.to_str()` wraps) were fixed afterwards and re-verified.
+
+Per level after the sweep: L3 56/71 ok + 15 excerpt; L4 33/43 + 10; L5
+39/54 + 15; L6 9/25 + 16; L7 0/4 + 4; L8 1/1. All residuals are excerpt
+class (lesson-local symbols defined in another fence); the L3 audit run
+reported `failing: 0`.
+
+What the v0.62.1 compiler changed for the prose:
+
+- `string.int_to_str`, `string.float_to_str`, `string.bool_to_str` and
+  `string.str_length` no longer exist; the solutions already used
+  `.to_str()` / `string.str_len`. The fixer migrates the old calls
+  mechanically (`tools/snippet-sweep/fix-level.js`).
+- `math.random_int` is gone; `math.random_range(lo, hi)` (exclusive hi)
+  is the current helper (L3-38 prose fixed).
+- `Set.remove` returns unit, so `(set.remove(x)).to_str()` cannot work
+  (L5-14 prose now calls it as a statement).
+- `else if` is not valid in expression position (`let x = if ... else if
+  ...`); it nests as `else { if ... }` (L3-05).
+- a match-arm block whose statements are bare `return`s has type `()`;
+  value-producing arms or a `let` plus a tail expression are the
+  compile-safe forms (L3-08, L3-10, L3-20).
+- `let mut` does not exist (`var`); `self: &mut T` receivers are invalid
+  (`&mut self`); `mod` is not a keyword (`module`); `type X {` needs `=`;
+  `use` cannot appear inside `fn main` (L6-25/31/33/40, L8-10).
+
+Tooling: `tools/snippet-sweep/json-replace.js` (tolerant `\\uXXXX`
+replacement), `patch-lesson.js` (reviewable manual patches, recorded under
+`tools/snippet-sweep/patches/`), and `dedupe-imports.js` (collapses
+import blocks the older fixer rounds duplicated). The fixer now skips
+imports already present and replaces duplicate snippets in every field.
+
+Finding C20 (compiler lane; repro from the `l615b`/`l610c` probes): a
+struct declared inside a `module` does not unify with its qualified name
+across module boundaries. `models.new_user` returning `User` cannot be
+passed to `display.show_user(user: &models.User)` ("expected models.User,
+found User"), and `-> models.User` inside the declaring module is likewise
+distinct from `User`. The L6 prose uses a top-level shared type for
+cross-module values until this is fixed.
+
+Run verification (loops): all 40 prose fences that compile and contain a
+loop were executed under v0.62.1 (isolated dirs, 30 s timeout). 39 passed;
+L5-29's `for friend in &friends` failed codegen, and a scan found 10
+fences teaching reference iteration (`for x in &v`, or `for x in param`
+with `&Vec`/`&mut Vec` parameters) across L4-18/24/26/30/44 and L5-29.
+Every output was inspected for zero-iteration prints; the runnable ones
+print their items as expected. Finding C21 (compiler lane): reference
+iteration type-checks but codegen rejects `%struct.Vec*` element
+resolution, so `--check` and `audit-snippets` cannot detect it. The 10
+prose fences were rewritten to while+index (or while+get, matching the
+L5-29 solution) and all re-verified by compiling and running them with
+small drivers; no lesson solution or template used reference iteration.
+L0 was re-verified on the current pin: 90/90 prose programs compile.
+
+L1+L2 re-audit after the five fixes: 35 ok + 26 missing-import + 72
+excerpt + 0 failing.
+
+Relays recorded: the compiler lane queued the Range-only `Iterator`
+warning (the range rewrites print it) and the W005 float-to-str stub as
+polish (2026-09-28); ops deleted the retained pre-P2 backup on owner
+sign-off (31.1).

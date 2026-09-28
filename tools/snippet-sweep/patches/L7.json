@@ -1,0 +1,14 @@
+[
+ {
+  "file": "lessons/L7-mastery/L7-01.json",
+  "old": "fn main() -> Int {\n  let primes = generate_primes(20);\n  let mut i = 0;\n  while i < primes.len() {\n    io.println(primes.get(i).unwrap());\n    i += 1;\n  };\n  return 0;\n}\n",
+  "new": "fn main() -> Int {\n  let primes = generate_primes(20);\n  var i = 0;\n  while i < primes.len() {\n    io.println(primes.get(i).unwrap());\n    i += 1;\n  };\n  return 0;\n}\n",
+  "why": "var instead of let mut"
+ },
+ {
+  "file": "lessons/L7-mastery/L7-40.json",
+  "old": "fn main() -> Int {\n  let mut running = true;\n  while running {\n    show_menu();\n    let choice = 1;\n\n    if choice == 0 {\n      running = false;\n      io.println(\"Goodbye!\");\n    } else {\n      run_app(choice);\n    };\n  };\n  return 0;\n}\n",
+  "new": "fn main() -> Int {\n  var running = true;\n  while running {\n    show_menu();\n    let choice = 1;\n\n    if choice == 0 {\n      running = false;\n      io.println(\"Goodbye!\");\n    } else {\n      run_app(choice);\n    };\n  };\n  return 0;\n}\n",
+  "why": "var instead of let mut"
+ }
+]

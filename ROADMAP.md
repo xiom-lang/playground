@@ -156,49 +156,59 @@ toolchain, and beginner lessons teach the real language (text-only
 Tool: `tools/audit-snippets.js` (`--level Lx --imports`), recorded in
 AUDIT section 32.
 
-- [~] E1. Prose snippet sweep: baseline 418 complete `fn main` programs in
-  prose, 406 failing standalone (213 excerpt-only missing module lines,
-  197 real). **L0 is clean: all 87 programs compile** after mechanical
-  `println(non-Str)` wraps, import additions and the loop-idiom rewrite;
-  the five loop lessons now use `range` + index and were executed to
-  confirm the items print. Remaining: L1-L8 (match-arm `->` group,
-  missing semicolons, malformed samples) and the other 35 direct
-  `for x in vec` prose occurrences, which must be verified by running
-  (compilation misses zero-iteration loops). Second compiler-lane finding:
-  direct `for x in Vec` iterates zero times on v0.61.3 (AUDIT 32.1).
+- [x] E1. Prose snippet sweep complete (2026-09-28, AUDIT 32.4). All
+  levels swept with the committed pipeline against v0.62.1; full-corpus
+  audit: 199 ok + 73 missing-import + 144 excerpt + 5 failing, and the
+  five failures (L1-19 `let mut`; L2-05/07/08/09 missing `.to_str()`)
+  were then fixed and re-verified. L8's template fence compiles (B4 note
+  added). The v0.62.1 stdlib renames that made older prose fail
+  (`int_to_str`/`float_to_str`/`bool_to_str`/`str_length`,
+  `math.random_int`, `Set.remove` returning unit) are migrated
+  mechanically; finder classes (module-local types/functions defined in
+  another fence) stay excerpt-class by design. Direct `for x in Vec`
+  works on v0.62.1; the L0 range+index rewrites may be simplified back
+  when convenient (optional, tracked in SESSION 17).
+  Run verification: all 40 runnable loop fences executed (39 rc=0; the
+  one failure, L5-29's `for friend in &friends`, exposed finding C21) and
+  every output was checked for zero-iteration prints. The 10 prose fences
+  that iterated over references were rewritten to while+index /
+  while+get, matching each lesson's own solution; all re-verified by
+  executing with small drivers.
 - [x] E2. Semicolon teaching: L0-01 states the habit and the exception,
   L0-02 keeps `;` on every statement, L6-16 explains the value-tail form;
   the prose audit found no lesson solution or template missing a
   separator.
 
-## Backlog -- owner-approved, not started (2026-09-27)
+## Backlog -- implemented 2026-09-28 (B1-B5)
 
 Direction agreed: the sandbox stays the security boundary and the stdlib
 is NOT filtered (source filtering is bypassable via user-declared
 `extern "C"` and would fight the learning mission). Instead, make the
 sandbox legible:
 
-- B1. Capability tiers in `js/stdlib-ref.json`: generated `full` /
-  `limited` / `blocked` metadata per module/function (net = blocked by
-  policy; io file APIs = `/tmp` only, ephemeral; process spawn =
-  contained; env = whitelist; `/proc`/`/data` unreachable). Generate in
-  `tools/generate-stdlib-ref.js` (never hand-edit the JSON) and surface as
-  badges plus a one-line note in the reference panel.
-- B2. Friendly sandbox-denial messages: map kernel denials (EACCES on
-  connect/open, fault-trap exits) in the runner to plain-language output
-  ("the playground has no network access", "only /tmp is writable")
-  instead of raw errnos.
-- B3. `docs/SANDBOX_CAPABILITIES.md`: one honest page (no network,
-  temporary files only, resource limits, host-side sessions/progress,
-  where each restriction comes from), linked from the panel and SESSION.
-- B4. A short "Playground vs a real compiler" note in the L8 ecosystem
-  lessons, driven by B1's tiers.
-- B5. (Carried) Finish the Phase E prose sweep L2-L8 including run
-  verification for direct `for x in Vec`; see AUDIT 32.
+- [x] B1. Capability tiers: `tools/generate-stdlib-ref.js` emits
+  `capability` (`full`/`limited`/`blocked`, with a note) per module and,
+  when it differs, per function; the reference panel renders badges plus
+  a one-line sandbox note. Regenerated `js/stdlib-ref.json`: 29 blocked
+  modules (all `net.*`), 2 limited modules (`io.fs`, `env`), 57 limited
+  functions (io file APIs, process/env/os paths).
+- [x] B2. Friendly sandbox denials: `lib/denials.js` maps EACCES/EPERM
+  signatures (connect, read/write, /proc and /data) to plain language;
+  wired into the crash and failure output paths; unit-tested in
+  `tools/test-server.js`.
+- [x] B3. `docs/SANDBOX_CAPABILITIES.md`: network blocked, `/tmp` only
+  and ephemeral, contained processes, env whitelist, resource limits,
+  host-side accounts/progress, and where each rule comes from; linked
+  from the reference panel.
+- [x] B4. "Playground vs a real compiler" note in L8-20, driven by B1's
+  tiers (L8-10's template fence also compiles now).
+- [x] B5. Phase E prose sweep L2-L8 completed (see E1 and AUDIT 32.4).
 
 Ops etiquette for these: they are playground-only changes -- no ops
-requests, no container/VPS changes. Batch any ops ask (currently only the
-rollback-window close) instead of sending per-item requests.
+requests, no container/VPS changes. Batch any ops ask (the rollback-window
+close and the pre-P2 backup removal were both handled by ops; the C3
+bundle mount is the one remaining batched ask) instead of sending
+per-item requests.
 
 ## Cross-repo (compiler / stdlib / ops, tracked in AUDIT.md)
 
@@ -227,6 +237,22 @@ rollback-window close) instead of sending per-item requests.
 - C18/C19 fixed: every lesson produces deterministic output. R64 (all-modules
   stdlib test / AI-context pack) and R65 (target-accurate `xiom.env`
   constants) shipped in v0.61.3 and do not affect the lesson set.
+- C21 (new, 2026-09-28, found by the loop-fence run): `for x in &vec`
+  and `for x in <param: &Vec[T]>` pass the type checker but fail codegen
+  ("codegen: unsupported: `for` over '%struct.Vec*' (element type could
+  not be resolved)"), so `--check` and the snippet audit cannot see it.
+  By-value `for x in vec` and while/range+index run correctly. The 10
+  affected prose fences now use while+index; solutions were unaffected.
+- C20 (new, 2026-09-28, from the L3-L8 sweep): a struct type declared
+  inside a `module` does not unify with its qualified name across module
+  boundaries (`fn models.new_user(...) -> User` passed to a function in
+  another module expecting `&models.User` errors "expected models.User,
+  found User"; even `-> models.User` inside the declaring module
+  mismatches `User`). Repro and affected lessons: AUDIT 32.4. Lessons use
+  a top-level shared type for cross-module data until this is fixed.
+- Compiler polish (relayed 2026-09-28, queued by the compiler lane): the
+  Range-only `Iterator` warning and the W005 float-to-str stub; both are
+  informational for the playground today.
 - Ops: toolchain currency closed (2026-09-25/26) -- v0.61.3 assets are
   mirrored and checksum-verified, the deploy installs from the repo pin
   (option C), `latest.json` advertises v0.61.3, and the drift workflow is
@@ -267,4 +293,10 @@ batched ops ask to mount it read-only, install the vendored packages into
 `XIOM_HOME/packages/` (or vendor under `<repo>/packages/xiom-<pkg>/` via
 `xiom pkg`'s local fallback), then wire a package example (`xiom.hello`,
 `xiom.csv`) with an offline test and close C3. The P2 rollback window was
-closed by ops the same day (AUDIT 31.1).
+closed by ops the same day (AUDIT 31.1), and ops deleted the retained
+pre-P2 backup on owner sign-off (2026-09-28, AUDIT 31.1).
+
+Status 2026-09-28 (end of day): the bundle has not been delivered yet;
+C3 stays waiting on the registry's `scripts/export-bundle.js` output.
+The ops mount request is batched and will be sent with the bundle's
+sha256, so no separate message has gone out.

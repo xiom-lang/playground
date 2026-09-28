@@ -1,0 +1,8 @@
+[
+ {
+  "file": "lessons/L4-safety/L4-08.json",
+  "old": "type Score = {\n  value: Int;\n  invariant: value >= 0;\n}\n\nfn bad_deduct(self: Score, points: Int) -> Int\n  requires: points >= 0;\n{\n  return self.value - points;\n}\n\nfn main() -> Int {\n  let s = Score { value: 10 };\n  let result = s.bad_deduct(20);\n  return 0;\n}\n",
+  "new": "type Score = {\n  value: Int;\n  invariant: value >= 0;\n}\n\nfn bad_deduct(s: Score, points: Int) -> Int\n  requires: points >= 0;\n{\n  return s.value - points;\n}\n\nfn main() -> Int {\n  let s = Score { value: 10 };\n  let result = s.bad_deduct(20);\n  return 0;\n}\n",
+  "why": "self is a reserved receiver name; rename the parameter to s"
+ }
+]
