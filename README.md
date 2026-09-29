@@ -53,7 +53,8 @@ health checks stay responsive while a submission compiles.
 - Local run history per lesson, continue-where-you-left-off, progress export/import
 - Optional GitHub sign-in for cross-device progress sync (off until configured)
 - Read-only package browser for the public XIOM registry (search, versions, digests)
-- Full standard library reference generated from the toolchain (516 modules / 6,522 public functions) with search
+- Offline registry packages: `use xiom.<pkg>;` resolves from the read-only bundle mount (353 packages) or the two vendored pins, with no network (`docs/SANDBOX_CAPABILITIES.md`)
+- Full standard library reference generated from the toolchain (516 modules / 6,535 functions) with search
 - Light/dark themes, progress tracking, responsive layout
 
 ## Versioning

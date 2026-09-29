@@ -916,6 +916,12 @@ async function main() {
         // keyword field the external monitor watches.
         assert.strictEqual(payload.abuse, 'saturated', JSON.stringify(payload));
         assert.ok(JSON.stringify(payload).indexOf('"abuse":"saturated"') >= 0, 'keyword shape must be exact');
+        // C3: the package subsystem status is visible to monitoring; the
+        // vendored baseline is always present, the bundle count depends on
+        // the mount (0 without XIOM_PACKAGE_BUNDLE).
+        assert.ok(payload.packages, 'health must expose packages');
+        assert.strictEqual(payload.packages.vendored, 2, JSON.stringify(payload.packages));
+        assert.strictEqual(typeof payload.packages.bundlePackages, 'number');
       });
     } finally {
       stopServer(rateChild);

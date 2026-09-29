@@ -847,6 +847,7 @@ const server = http.createServer(async (req, res) => {
           landlock: sandbox.abi,
           error: sandbox.error,
         },
+        packages: packages.status(),
       });
       return;
     }

@@ -170,6 +170,9 @@ export hits the registry rate limiter and needs an ops window.
 The bundle is read by the server process only, never by a sandboxed
 compiler child, so the Landlock policy needs no new path, and every
 artifact is sha256-verified against `bundle.json` before extraction.
+`/api/health` exposes `packages: { bundle, bundlePackages, vendored }`:
+`bundlePackages` drops to 0 if the mount disappears while the vendored
+baseline still works, so monitoring can alert on that transition.
 Without the mount the two vendored packages (`xiom.hello`, `xiom.csv`;
 `packages/README.md` carries the provenance hashes) still work. Refresh a
 vendored package by re-extracting its artifact and updating the hash

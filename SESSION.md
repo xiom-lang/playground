@@ -924,6 +924,12 @@ Playground implementation:
   `/api/check` and runs through `/api/compile` in the live sandbox with
   the expected output (greeting, `rows: 3`, the three CSV rows,
   `rectangular: true`); `sandbox.mode=require`, landlock 4.
+- Ops observability (2026-09-29): `/api/health` now exposes
+  `packages: { bundle, bundlePackages, vendored }`, so a lost mount shows
+  as `bundlePackages: 0` while the vendored baseline keeps working; the
+  suite asserts the block. The footer social row gained Instagram
+  (`https://www.instagram.com/xiom.language/`, matching the website,
+  after Facebook).
 
 ### 18.2 Ops request (delivered 2026-09-29)
 

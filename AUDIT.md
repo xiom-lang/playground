@@ -2203,7 +2203,11 @@ paths, since a relative single-file path yields an empty parent.
 Ops follow-up (SESSION 18.2): ops exported a newer bundle on the VPS (352
 artifacts / 15.75 MB, 353 packages), mounted it read-only at
 `/registry-bundle`, set `XIOM_PACKAGE_BUNDLE=/registry-bundle` and
-recreated the container. Production checks from this lane resolve and run
+recreated the container. `/api/health` now reports
+`packages: { bundle, bundlePackages, vendored }` so monitoring catches a
+lost mount (bundlePackages 0) while the vendored baseline still serves;
+the suite asserts the block, and the footer social row matches the
+website's Instagram addition. Production checks from this lane resolve and run
 both `xiom.bmp` (not vendored here) and `xiom.loss` (published after our
 local export) in the live sandbox, proving the mounted catalog is in use.
 The mount and env var are upstreamed in `docker-compose.yml` (validated
