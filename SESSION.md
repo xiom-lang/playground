@@ -958,11 +958,14 @@ sandbox.
 > the VPS bundle). The mount and `XIOM_PACKAGE_BUNDLE=/registry-bundle`
 > are now upstream in `docker-compose.yml` (validated with `docker
 > compose config`; explicit environment wins over `env_file`, so no gap
-> when you remove the playground.env line). Delete
-> `docker-compose.override.yml` and the env-file line whenever
-> convenient; the next hourly deploy merges the repo compose. Refresh
-> recipe noted in DEPLOY.md, including the rate-limiter caveat for cold
-> exports. No further ops action pending from the playground lane.
+> when you remove the playground.env line). Please delete
+> `docker-compose.override.yml` before the next hourly deploy (17:29 UTC)
+> and the playground.env line at your convenience -- with both files
+> defining the same mount, the merged compose could report a duplicate
+> mount at container create; the running container is unaffected either
+> way. Refresh recipe noted in DEPLOY.md, including the rate-limiter
+> caveat for cold exports. No further ops action pending from the
+> playground lane.
 
 ### 18.3 Compiler request (C22, via the owner)
 
