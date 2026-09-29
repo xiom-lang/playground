@@ -990,6 +990,13 @@ container mounts the bundle read-only (`rw=false`), and a post-cleanup
 check from this lane still resolves and runs `xiom.bmp` and `xiom.loss`.
 No ops-side gaps remain; the C3 ops thread is closed.
 
+**Registry reminder (received 2026-09-29, after C3 was delivered):**
+"vendor the pinned bundle and wire the offline example + sandboxed test"
+-- superseded: both pins are vendored in `packages/`, the example
+(`examples/packages/main.xi`) and the sandboxed tests are wired, and the
+full catalog is mounted and verified. No action needed; an ack is
+optional.
+
 ### 18.3 Compiler request (C22, via the owner)
 
 > Playground -> compiler (2026-09-29): C22 -- `xiom run` cannot resolve
@@ -1006,3 +1013,17 @@ No ops-side gaps remain; the C3 ops thread is closed.
 > (`lib/packages.js stageForRun`) and will delete it once the run path
 > adds the script's parent directory (with the existing grandparent
 > guard) as a catalog source dir, mirroring `check_source`.
+
+**Resolved upstream (2026-09-29):** the compiler lane fixed C22 on main
+(commit `563aaff2`), verified against our exact packages shape (the run
+path now adds the script's parent plus the guarded grandparent before
+compiling the temp copy); it ships in **v0.62.2**, not v0.62.1. Follow-up
+for the next pin bump: delete `stageForRun` once the pin is at or above
+`563aaff2` (until then it is harmless but produces W001 duplicate-module
+warnings, never failures). Field notes from the compiler lane: (a) on a
+loaded dev machine a package run can take minutes because the catalog
+churns over stale stdlib copies in `%TEMP%` (slowness, not deadlock);
+production is clean -- measured package runs on the live sandbox are
+5.0-7.5 s against a 30 s timeout; (b) v0.62.2 also carries the atomics
+performance fix (PERF-1) and is the release to target for the public
+benchmark.

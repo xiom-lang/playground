@@ -285,6 +285,19 @@ updated; Node test passes, browser console check requested from the owner).
 Sweep 411/411, stdlib surface 6,932 functions, baseline refreshed, audit
 green. Direct `for x in Vec` works on the pin now, so the Phase E sweep can
 simplify the `range`+index workarounds back to direct iteration.
+
+## v0.62.2 tracking (2026-09-29)
+
+The compiler lane fixed C22 (`xiom run` now adds the script's parent
+directory to the catalog) on main at `563aaff2`; it ships in v0.62.2,
+together with the PERF-1 atomics fix (the release to target for the
+public benchmark). On the next pin bump:
+
+- delete `packages.stageForRun` and its `runProgram` call (the run path
+  resolves work-dir packages directly at >= 563aaff2; the bridge only
+  produces W001 duplicate-module warnings by then);
+- re-run the package tests (`tools/test-server.js`) and the production
+  E2E checks (`xiom.bmp`, `xiom.loss`, the hello/csv example).
 ## C3 status (2026-09-29: delivered)
 
 The registry exported the bundle and it was independently verified from

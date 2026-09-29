@@ -2192,6 +2192,11 @@ resolves sibling modules and packages while `xiom run ./main.xi` fails
 with `undefined variable`. The `stageForRun` bridge stages package sources
 into `<tmp>/xiom_run/packages` until the run path adds the script's
 directory (mirroring `check_source`, including the guarded grandparent).
+Fixed upstream on compiler main `563aaff2` (verified against the same
+packages shape; ships in v0.62.2): delete the bridge at the next pin
+bump. Production timing with the bridge today: package runs through
+`/api/compile` take 5.0-7.5 s (30 s timeout), including a bundle-only
+package and a cold run.
 
 Operational note recorded while reproducing: `check_source` adds the
 source's parent plus the grandparent when the grandparent holds at least
