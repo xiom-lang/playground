@@ -2199,6 +2199,10 @@ The mount and env var are upstreamed in `docker-compose.yml` (validated
 with `docker compose config`), so the temporary override ops used before
 the hourly deploy can be deleted; the 17:29 UTC deploy recreated the
 container from the repo compose alone and both package checks plus the
-hello/csv example still pass. The mount is read by the server only (never
-by a sandboxed compiler child), so the Landlock policy is unchanged; the
-two vendored packages work even without the mount.
+hello/csv example still pass. Ops closed the loop the same day: the
+override and the `playground.env` line were removed and the service was
+redeployed from `6a2e5cf`, so the compose alone defines the mount
+(`rw=false`) and the explicit env; post-cleanup checks still resolve and
+run `xiom.bmp` and `xiom.loss`. The mount is read by the server only
+(never by a sandboxed compiler child), so the Landlock policy is
+unchanged; the two vendored packages work even without the mount.

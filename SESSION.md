@@ -969,6 +969,13 @@ plus the hello/csv example still pass -- the mount is carried upstream.
 > caveat for cold exports. No further ops action pending from the
 > playground lane.
 
+**Closed (2026-09-29):** ops removed the override and the
+`XIOM_PACKAGE_BUNDLE` line from `playground.env` and redeployed from
+`6a2e5cf`; the compose alone carries the mount and the explicit env, the
+container mounts the bundle read-only (`rw=false`), and a post-cleanup
+check from this lane still resolves and runs `xiom.bmp` and `xiom.loss`.
+No ops-side gaps remain; the C3 ops thread is closed.
+
 ### 18.3 Compiler request (C22, via the owner)
 
 > Playground -> compiler (2026-09-29): C22 -- `xiom run` cannot resolve
