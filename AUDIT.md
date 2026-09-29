@@ -2197,6 +2197,8 @@ both `xiom.bmp` (not vendored here) and `xiom.loss` (published after our
 local export) in the live sandbox, proving the mounted catalog is in use.
 The mount and env var are upstreamed in `docker-compose.yml` (validated
 with `docker compose config`), so the temporary override ops used before
-the hourly deploy can be deleted. The mount is read by the server only
-(never by a sandboxed compiler child), so the Landlock policy is
-unchanged; the two vendored packages work even without the mount.
+the hourly deploy can be deleted; the 17:29 UTC deploy recreated the
+container from the repo compose alone and both package checks plus the
+hello/csv example still pass. The mount is read by the server only (never
+by a sandboxed compiler child), so the Landlock policy is unchanged; the
+two vendored packages work even without the mount.

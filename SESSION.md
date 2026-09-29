@@ -948,7 +948,9 @@ config`), so ops deletes the override and the playground.env line once
 the hourly deploy has shipped it. Production verified from this lane:
 `/api/check` + `/api/compile` resolve and run `xiom.bmp` (not vendored in
 this repo) and `xiom.loss` (published after our local export) in the live
-sandbox.
+sandbox. The 17:29 UTC deploy after the upstream landed recreated the
+container from the repo compose (no override) and both package checks
+plus the hello/csv example still pass -- the mount is carried upstream.
 
 **Reply for ops (via the owner):**
 
