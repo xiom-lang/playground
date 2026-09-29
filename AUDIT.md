@@ -2189,8 +2189,14 @@ one `.xi` file directly. The server's `prepareWorkRoot()` guard keeps
 verification should use a clean directory tree and absolute (or `./`)
 paths, since a relative single-file path yields an empty parent.
 
-Ops follow-up batched in SESSION 18.2: extract the bundle to
-`/opt/xiom/registry-bundle`, mount it read-only at `/registry-bundle`, and
-set `XIOM_PACKAGE_BUNDLE=/registry-bundle`. The mount is read by the
-server only (never by a sandboxed compiler child), so the Landlock policy
-is unchanged; the two vendored packages work before the mount lands.
+Ops follow-up (SESSION 18.2): ops exported a newer bundle on the VPS (352
+artifacts / 15.75 MB, 353 packages), mounted it read-only at
+`/registry-bundle`, set `XIOM_PACKAGE_BUNDLE=/registry-bundle` and
+recreated the container. Production checks from this lane resolve and run
+both `xiom.bmp` (not vendored here) and `xiom.loss` (published after our
+local export) in the live sandbox, proving the mounted catalog is in use.
+The mount and env var are upstreamed in `docker-compose.yml` (validated
+with `docker compose config`), so the temporary override ops used before
+the hourly deploy can be deleted. The mount is read by the server only
+(never by a sandboxed compiler child), so the Landlock policy is
+unchanged; the two vendored packages work even without the mount.

@@ -145,21 +145,32 @@ stages them next to `xiom run`'s temp copy (`stageForRun`, a bridge for
 compiler finding C22 -- remove it when the run path passes the script's
 directory).
 
-VPS setup (one batched ops request, SESSION 18.2):
+Host setup: extract the registry bundle to `/opt/xiom/registry-bundle`.
+The compose file in this repository carries the read-only bind mount
+(`/opt/xiom/registry-bundle:/registry-bundle:ro`) and sets
+`XIOM_PACKAGE_BUNDLE=/registry-bundle` in `environment:` (explicit
+environment wins over `env_file`), so no override file is needed; ops ran
+a temporary `docker-compose.override.yml` before this landed and deletes
+it once the hourly deploy has shipped the mount upstream. Ops exported
+the live bundle on the VPS (352 artifacts / 15.75 MB, 353 packages;
+`--latest-only`) and verified it offline.
 
-1. `registry-bundle.tar.gz` (8,108,574 B, sha256
-   `aed9703a4abbc0b11ee13b9b21def1fb992a51766c97c9186e367c3a97367da5`)
-   is extracted to `/opt/xiom/registry-bundle` (`index.json` sha256
-   `02280fa79e28c34a76a0c9e02a57eb47bfa570cf17698d4f60ad8238c723a21d`,
-   342 artifacts / 14,804,564 B).
-2. The playground compose service gets a read-only bind mount:
-   `/opt/xiom/registry-bundle:/registry-bundle:ro`.
-3. `/opt/xiom/playground.env` (root, 0600, outside the repo) adds
-   `XIOM_PACKAGE_BUNDLE=/registry-bundle`.
+Refresh after registry publishes:
+
+```sh
+docker run --rm -v /opt/xiom/registry:/repo:ro \
+  -v /opt/xiom/registry-bundle:/out node:22-alpine \
+  node /repo/scripts/export-bundle.js \
+  --registry https://registry.xiom-lang.org --latest-only --out /out --quiet
+```
+
+Re-runs into the same directory reuse existing bytes; a cold or full
+export hits the registry rate limiter and needs an ops window.
 
 The bundle is read by the server process only, never by a sandboxed
-compiler child, so the Landlock policy needs no new path. Without the
-mount the two vendored packages (`xiom.hello`, `xiom.csv`;
+compiler child, so the Landlock policy needs no new path, and every
+artifact is sha256-verified against `bundle.json` before extraction.
+Without the mount the two vendored packages (`xiom.hello`, `xiom.csv`;
 `packages/README.md` carries the provenance hashes) still work. Refresh a
 vendored package by re-extracting its artifact and updating the hash
 table. `node tools/prepare-packages.js <file.xi> <dir>` reproduces the

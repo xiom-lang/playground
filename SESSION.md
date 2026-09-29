@@ -923,7 +923,7 @@ Playground implementation:
   the expected output (greeting, `rows: 3`, the three CSV rows,
   `rectangular: true`); `sandbox.mode=require`, landlock 4.
 
-### 18.2 Ops request (batched, via the owner)
+### 18.2 Ops request (delivered 2026-09-29)
 
 > Playground -> ops (2026-09-29): one batched request for the C3 offline
 > package catalog. (1) Place `registry-bundle.tar.gz` (8,108,574 B,
@@ -936,6 +936,33 @@ Playground implementation:
 > (root, 0600, outside the repo). (4) Restart the service once. No
 > egress, no writable mounts, and the sandbox policy is untouched; the
 > two vendored packages keep working if the mount is not added.
+
+**Delivered (2026-09-29):** ops exported a newer bundle on the VPS (352
+artifacts / 15.75 MB, 353 packages; offline `--verify` clean), mounted it
+read-only at `/registry-bundle`, set `XIOM_PACKAGE_BUNDLE` and recreated
+the container (health 200, `abuse:ok`, sandbox `require`, egress guard
+re-armed). The mount initially lived in an untracked
+`docker-compose.override.yml`; the repo now carries the mount and the env
+var upstream (`docker-compose.yml`, validated with `docker compose
+config`), so ops deletes the override and the playground.env line once
+the hourly deploy has shipped it. Production verified from this lane:
+`/api/check` + `/api/compile` resolve and run `xiom.bmp` (not vendored in
+this repo) and `xiom.loss` (published after our local export) in the live
+sandbox.
+
+**Reply for ops (via the owner):**
+
+> Playground -> ops (2026-09-29): thanks -- the mount is verified live
+> from here (`xiom.bmp` and `xiom.loss` check and run in the sandbox;
+> `xiom.loss` is newer than the local export, so we know we are reading
+> the VPS bundle). The mount and `XIOM_PACKAGE_BUNDLE=/registry-bundle`
+> are now upstream in `docker-compose.yml` (validated with `docker
+> compose config`; explicit environment wins over `env_file`, so no gap
+> when you remove the playground.env line). Delete
+> `docker-compose.override.yml` and the env-file line whenever
+> convenient; the next hourly deploy merges the repo compose. Refresh
+> recipe noted in DEPLOY.md, including the rate-limiter caveat for cold
+> exports. No further ops action pending from the playground lane.
 
 ### 18.3 Compiler request (C22, via the owner)
 

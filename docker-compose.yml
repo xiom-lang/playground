@@ -20,6 +20,13 @@ services:
       - "127.0.0.1:3300:3000"
     volumes:
       - /opt/xiom/toolchain:/toolchain:ro
+      # C3 (2026-09-29): offline registry package catalog, exported from
+      # production with the registry's scripts/export-bundle.js
+      # (--latest-only). Read by the server process only, never by a
+      # sandboxed compiler child, so the Landlock policy needs no new path;
+      # every artifact is sha256-verified against bundle.json before
+      # extraction. A missing path leaves the vendored packages working.
+      - /opt/xiom/registry-bundle:/registry-bundle:ro
       # C7 (2026-09-26): the pre-P2 playground-data volume is no longer
       # mounted -- sessions and progress live host-side since the cutover
       # (docs/P2_CUTOVER_RUNBOOK.md). The named volume declaration below is
@@ -35,6 +42,9 @@ services:
       - PORT=3000
       - XIOM_BIN=/toolchain/bin/xiom
       - XIOM_STDLIB=/toolchain/lib
+      # C3: offline package catalog; resolved at startup (see DEPLOY.md
+      # "Offline packages"). Explicit environment wins over env_file.
+      - XIOM_PACKAGE_BUNDLE=/registry-bundle
       # P1: user code must run under the Landlock wrapper; the server fails
       # closed (no execution) when it is missing. Rollback: set to `off`.
       - XIOM_SANDBOX=require
