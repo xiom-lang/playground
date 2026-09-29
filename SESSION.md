@@ -668,6 +668,21 @@ production and pinned by sha256; queued as the C3 deliverable. The
 playground consumes it through `xiom pkg`'s local-packages fallback
 (`<repo>/packages/xiom-<pkg>/` or `XIOM_HOME/packages/<pkg>-<ver>/`).
 
+**Playground -> registry (2026-09-29, relayed through the owner):** the
+exact message text for the relay:
+
+> Playground -> registry (2026-09-29): C3 is the playground's only open
+> item and it is blocked on the offline bundle. `scripts/export-bundle.js`
+> and `OFFLINE.md` are in place, but no `bundle.json`/artifacts have been
+> produced yet. Please export the bundle against
+> `https://registry.xiom-lang.org` (at least `--latest-only`) covering
+> `xiom.hello@0.1.0` and `xiom.csv@0.1.0` - vendored `index.json` +
+> `artifacts/<name>/<version>/package.tar.gz` + `bundle.json` +
+> `OFFLINE.md`, sha256-pinned - and reply with the bundle's location and
+> sha256. The playground then sends its single batched ops mount request
+> (read-only) and wires the offline example with a sandboxed test to close
+> C3. No other registry action is pending from this lane.
+
 ### 11.3 Compiler: direct `for x in Vec` iterates zero times (2026-09-27)
 
 While sweeping lesson prose (section 12), we found that on v0.61.3
