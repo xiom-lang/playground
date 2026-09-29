@@ -464,6 +464,14 @@ async function main() {
         assert.ok(payload.diagnostics.some((d) => d.kind === 'error'));
       });
 
+      await okAsync('offline packages resolve in check (C3)', async () => {
+        const source = fs.readFileSync(path.join(REPO, 'examples', 'packages', 'main.xi'), 'utf8');
+        const res = await request('POST', '/api/check', { source });
+        assert.strictEqual(res.status, 200);
+        const payload = JSON.parse(res.body);
+        assert.strictEqual(payload.success, true, JSON.stringify(payload.diagnostics));
+      });
+
       await okAsync('failure output surfaces the first diagnostic message', async () => {
         // A syntax error fails during the check stage, so no clang runs.
         const res = await request('POST', '/api/compile', { source: 'fn main( { }\n' });
@@ -491,6 +499,17 @@ async function main() {
           const payload = JSON.parse(res.body);
           assert.strictEqual(payload.success, true, JSON.stringify(payload.diagnostics));
           assert.ok(payload.output.indexOf('audit-hello') >= 0, 'unexpected output: ' + payload.output);
+        });
+
+        await okAsync('offline packages run in the sandbox (C3)', async () => {
+          const source = fs.readFileSync(path.join(REPO, 'examples', 'packages', 'main.xi'), 'utf8');
+          const res = await request('POST', '/api/compile', { source });
+          assert.strictEqual(res.status, 200);
+          const payload = JSON.parse(res.body);
+          assert.strictEqual(payload.success, true, JSON.stringify(payload.diagnostics));
+          for (const expected of ['Hello from xiom.hello!', 'Ada,36', 'rectangular: true']) {
+            assert.ok(payload.output.indexOf(expected) >= 0, 'missing "' + expected + '" in: ' + payload.output);
+          }
         });
 
         await okAsync('POST /api/compile reports a crashed run, not empty output', async () => {

@@ -36,6 +36,7 @@ const { XIOM_BIN, childEnv } = require('./lib/toolchain');
 const auth = require('./lib/auth');
 const progressStore = require('./lib/progress-store');
 const { friendlyDenial } = require('./lib/denials');
+const packages = require('./lib/packages');
 
 const SERVER_VERSION = readRepoFile('package.json', (raw) => JSON.parse(raw).version) || '0.0.0';
 const PORT = Number(process.env.PORT) || 3000;
@@ -361,6 +362,14 @@ async function withWorkDir(task) {
 function writeSource(dir, source) {
   const file = path.join(dir, 'main.xi');
   fs.writeFileSync(file, source, 'utf8');
+  // Offline packages (C3): copy the sources of every `use xiom.<pkg>;` the
+  // submission imports next to the file, which is where the compiler's
+  // single-file module discovery finds them.
+  try {
+    packages.prepareForSource(source, dir);
+  } catch (err) {
+    console.error('[packages] ' + (err && err.message ? err.message : err));
+  }
   return file;
 }
 
@@ -482,6 +491,13 @@ async function checkProgram(source) {
 async function runProgram(source) {
   return withWorkDir(async (dir) => {
     const file = writeSource(dir, source);
+    // `xiom run` compiles a temp copy under <tmp>/xiom_run, so packages must
+    // also be visible there (compiler finding C22; see lib/packages.js).
+    try {
+      packages.stageForRun(dir);
+    } catch (err) {
+      console.error('[packages] ' + (err && err.message ? err.message : err));
+    }
     const started = Date.now();
     const proc = await runXiom(['run', file], { cwd: dir, timeoutMs: COMPILE_TIMEOUT_MS });
     const result = {
@@ -1077,6 +1093,7 @@ server.listen(PORT, HOST, () => {
   console.log('URL: http://' + HOST + ':' + PORT);
   console.log('Compiler: ' + XIOM_BIN + ' (' + (fs.existsSync(XIOM_BIN) ? 'found' : 'NOT FOUND') + ')');
   console.log('Stdlib: ' + (process.env.XIOM_STDLIB || '(toolchain default)'));
+  console.log('Packages: ' + packages.describe());
   console.log('Work root: ' + WORK_ROOT + ' (jobs: ' + MAX_COMPILES + ', checks: ' + MAX_CHECKS + ')');
   console.log('Sandbox: mode=' + sandbox.mode + ' active=' + sandboxActive() +
     ' landlock_abi=' + (sandbox.abi == null ? 'n/a' : sandbox.abi) +

@@ -2142,3 +2142,52 @@ Relays recorded: the compiler lane queued the Range-only `Iterator`
 warning (the range rewrites print it) and the W005 float-to-str stub as
 polish (2026-09-28); ops deleted the retained pre-P2 backup on owner
 sign-off (31.1).
+
+### 33.2 C3 offline packages delivered and verified (2026-09-29)
+
+The registry exported the `--latest-only` bundle from production and the
+playground verified it independently: transfer tarball
+`registry-bundle.tar.gz`, 8,108,574 B, sha256 `aed9703a...67da5`;
+`index.json`, 441,830 B, sha256 `02280fa7...3a21d`; every one of the 342
+artifacts re-hashed against `bundle.json` (14,804,564 B, zero mismatches);
+both pins confirmed (`xiom.hello@0.1.0` sha256 `2fc7a2aa...d6e8`,
+`xiom.csv@0.1.0` sha256 `8d779431...abb5`).
+
+Implementation: `packages/xiom-hello/` and `packages/xiom-csv/` vendored
+byte-for-byte from the verified artifacts; `lib/packages.js` parses
+`use xiom.<pkg>` imports, refuses stdlib shadowing, resolves from the
+mounted bundle (`XIOM_PACKAGE_BUNDLE`; artifacts sha256-verified before
+extraction, cached per package) or the vendored trees, and copies
+`package.xi` + `src/` into the request work dir under a 2 MB cap;
+`server.js` prepares them for the check stage and stages them next to
+`xiom run`'s temp copy for the execute stage (`stageForRun`);
+`examples/packages/main.xi` exercises both packages;
+`tools/prepare-packages.js` exposes the resolver as a CLI.
+
+Verification: the example type-checks and runs under the pinned v0.62.1
+(WSL output: greeting, `rows: 3`, three CSV rows, `rectangular: true`);
+a bundle-only package (`xiom.bmp@0.1.0`, 6,418 B artifact) extracts and
+type-checks through the same path; extraction output is byte-identical to
+the vendored trees; `tools/test-server.js` is 43 passed / 0 failed /
+1 skipped locally (the skip is Windows execution; CI runs it on Linux).
+
+Finding C22 (compiler lane, relayed via SESSION 18.3): `xiom run` reads
+the script text and compiles a temp copy under `<tmp>/xiom_run`, so the
+catalog never sees the script's directory -- `xiom --check ./main.xi`
+resolves sibling modules and packages while `xiom run ./main.xi` fails
+with `undefined variable`. The `stageForRun` bridge stages package sources
+into `<tmp>/xiom_run/packages` until the run path adds the script's
+directory (mirroring `check_source`, including the guarded grandparent).
+
+Operational note recorded while reproducing: `check_source` adds the
+source's parent plus the grandparent when the grandparent holds at least
+one `.xi` file directly. The server's `prepareWorkRoot()` guard keeps
+`.xi` files out of `WORK_ROOT` for exactly this reason; developer
+verification should use a clean directory tree and absolute (or `./`)
+paths, since a relative single-file path yields an empty parent.
+
+Ops follow-up batched in SESSION 18.2: extract the bundle to
+`/opt/xiom/registry-bundle`, mount it read-only at `/registry-bundle`, and
+set `XIOM_PACKAGE_BUNDLE=/registry-bundle`. The mount is read by the
+server only (never by a sandboxed compiler child), so the Landlock policy
+is unchanged; the two vendored packages work before the mount lands.

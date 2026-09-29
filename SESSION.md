@@ -1,11 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-29 (Phase E prose sweep complete L0-L8; backlog
-B1-B5 implemented; production verified). Branch `main` at/after `2849693`
-(this header-only commit follows it), working tree clean, all commits
-pushed to `origin/main`; CI green (Validate + CodeQL). The 00:29 UTC VPS
-pull shipped the new commits: production serves the swept lessons and the
-capability metadata, and a live `/api/check` round-trips. Production runs **toolchain v0.62.1** (stdlib
+Last updated: 2026-09-29 (C3 delivered: offline packages vendored, wired
+and tested; Phase E sweep and B1-B5 complete; production verified).
+Branch `main` at/after this section 18 commit, working tree clean, all
+commits pushed to `origin/main`; CI green (Validate + CodeQL). Production
+serves the swept lessons and the capability metadata, and a live
+`/api/check` round-trips. The one batched ops mount request is in section
+18.2; the C22 compiler relay is in section 18.3. Production runs **toolchain v0.62.1** (stdlib
 0.62.0, wasm v0.62.1, `capabilities.format: true`) with P1 Landlock
 (`require`, ABI 4), P3 rate limits + external `abuse` monitor, P2
 host-side state and the repo-pinned VPS deploy (option C). Security P0-P3
@@ -757,8 +758,12 @@ glue, strict mode and the `opt` warning are shipped; the Range-only
 with the tier-2 lints. Nothing playground-side is blocked on the compiler
 lane.
 
-Waiting: C3 only -- the registry's `scripts/export-bundle.js` output has
-not arrived; the ops mount request is batched for when it does.
+C3 delivered 2026-09-29 (section 18): the registry bundle is exported and
+independently verified, the playground resolves packages offline (vendored
+pins plus the mounted bundle when present), and the example plus sandboxed
+tests are green. Waiting: the one batched ops mount request (section 18.2)
+and the compiler run-path fix C22 (section 18.3); neither blocks the
+current offline functionality.
 
 ## 14. v0.62.0 absorption attempt and relay (2026-09-28)
 
@@ -847,10 +852,9 @@ registry re-dispatch pending on their side); the pin is unchanged and
 `/api/version` reports `stdlib: 0.62.0` (516 modules).
 
 Next work:
-1. C3 (only open item): when the registry delivers the bundle, send the
-   single batched ops mount request, install/vendor `xiom.hello@0.1.0` +
-   `xiom.csv@0.1.0`, wire an offline example with a sandboxed test, and
-   close C3 (plan in ROADMAP's C3 status).
+1. C3 is delivered and wired (section 18). Follow-ups: send the batched
+   ops mount request (18.2) when convenient, and remove the
+   `stageForRun` bridge once the compiler ships C22 (18.3).
 2. Optional cleanup: simplify the L0 range+index loop rewrites back to
    direct `for x in Vec` (works on v0.62.1) and run the five loop lessons
    to confirm outputs; re-run `audit-snippets --level L0` after.
@@ -880,3 +884,68 @@ instead). A stray `/tmp/xiom61/lib` from an older session can add
 duplicate-module warnings when compiling with `/tmp` as the source
 parent; the compile script's isolated copy avoids it. Gate: section 8
 (all four steps) plus CI.
+
+## 18. C3 delivered: offline package catalog (2026-09-29)
+
+### 18.1 Bundle and wiring
+
+The registry exported the bundle (production source, `--latest-only`) and
+it was independently verified from the playground side:
+
+- `registry-bundle.tar.gz`, 8,108,574 B, sha256
+  `aed9703a4abbc0b11ee13b9b21def1fb992a51766c97c9186e367c3a97367da5`.
+- `index.json`, 441,830 B, sha256
+  `02280fa79e28c34a76a0c9e02a57eb47bfa570cf17698d4f60ad8238c723a21d`.
+- 342 artifacts / 14,804,564 B: every sha256 and size in `bundle.json`
+  re-checked; both pins confirmed (`xiom.hello@0.1.0` sha256
+  `2fc7a2aa...d6e8`; `xiom.csv@0.1.0` sha256 `8d779431...abb5`).
+
+Playground implementation:
+
+- `packages/xiom-hello/` and `packages/xiom-csv/` vendored byte-for-byte
+  from the verified artifacts (provenance in `packages/README.md`).
+- `lib/packages.js`: parses `use xiom.<pkg>` imports, refuses to shadow
+  stdlib modules, resolves from the mounted bundle (`XIOM_PACKAGE_BUNDLE`,
+  sha256-verified extraction with a per-package cache) or the vendored
+  trees, and copies `package.xi` + `src/` into the submission work dir
+  (2 MB cap). `tools/prepare-packages.js` is the same resolver as a CLI.
+- `server.js` prepares packages when the submission is written (the check
+  stage resolves them) and stages them next to `xiom run`'s temp copy
+  (`stageForRun`, bridge for C22).
+- `examples/packages/main.xi` uses both packages; `tools/test-server.js`
+  checks offline resolution cross-platform and runs the example where
+  execution is enabled (43 passed / 0 failed / 1 skipped locally; the run
+  path verified in WSL against v0.62.1 with the expected output).
+- A bundle-only package (`xiom.bmp@0.1.0`, 6,418 B artifact) was extracted
+  and type-checked through the same path.
+
+### 18.2 Ops request (batched, via the owner)
+
+> Playground -> ops (2026-09-29): one batched request for the C3 offline
+> package catalog. (1) Place `registry-bundle.tar.gz` (8,108,574 B,
+> sha256 `aed9703a...67da5`) on the VPS and extract it to
+> `/opt/xiom/registry-bundle` (the directory form is also available;
+> `index.json` sha256 `02280fa7...3a21d`). (2) Add a read-only bind mount
+> to the playground compose service:
+> `/opt/xiom/registry-bundle:/registry-bundle:ro`. (3) Add
+> `XIOM_PACKAGE_BUNDLE=/registry-bundle` to `/opt/xiom/playground.env`
+> (root, 0600, outside the repo). (4) Restart the service once. No
+> egress, no writable mounts, and the sandbox policy is untouched; the
+> two vendored packages keep working if the mount is not added.
+
+### 18.3 Compiler request (C22, via the owner)
+
+> Playground -> compiler (2026-09-29): C22 -- `xiom run` cannot resolve
+> sibling modules or packages. Repro on v0.62.1: with
+> `<dir>/main.xi` importing `<dir>/packages/xiom-hello/src/hello.xi`
+> (module `xiom.hello`), `xiom --check ./main.xi` passes but
+> `xiom run ./main.xi` fails with `undefined variable 'hello'`. Cause:
+> the run path reads the script text and compiles a temp copy under
+> `std::env::temp_dir()/xiom_run` (main.rs ~358-448), so the catalog
+> source dirs come from the temp file's location, never the script's
+> directory. Impact: the playground's execute stage cannot run package
+> imports while the check stage can. The playground stages package
+> sources into `<tmp>/xiom_run/packages` as a bridge
+> (`lib/packages.js stageForRun`) and will delete it once the run path
+> adds the script's parent directory (with the existing grandparent
+> guard) as a catalog source dir, mirroring `check_source`.

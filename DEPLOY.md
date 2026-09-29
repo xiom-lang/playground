@@ -133,6 +133,38 @@ compile queue has been continuously busy for `ABUSE_BUSY_MS` (default
 `RATE_LIMIT_BURST`/`RATE_LIMIT_REFILL_MS` can be tuned in the compose
 environment; the raw counters stay in the payload for diagnosis.
 
+## Offline packages (C3, implemented 2026-09-29)
+
+Submissions can import signed registry packages with no network access.
+`lib/packages.js` parses `use xiom.<pkg>;`, resolves the package from the
+read-only bundle mount (`XIOM_PACKAGE_BUNDLE`, sha256-verified against
+`bundle.json` before extraction) or from the vendored trees in
+`packages/`, and copies `package.xi` + `src/` into the request's work
+directory. The check stage resolves them directly; the execute stage also
+stages them next to `xiom run`'s temp copy (`stageForRun`, a bridge for
+compiler finding C22 -- remove it when the run path passes the script's
+directory).
+
+VPS setup (one batched ops request, SESSION 18.2):
+
+1. `registry-bundle.tar.gz` (8,108,574 B, sha256
+   `aed9703a4abbc0b11ee13b9b21def1fb992a51766c97c9186e367c3a97367da5`)
+   is extracted to `/opt/xiom/registry-bundle` (`index.json` sha256
+   `02280fa79e28c34a76a0c9e02a57eb47bfa570cf17698d4f60ad8238c723a21d`,
+   342 artifacts / 14,804,564 B).
+2. The playground compose service gets a read-only bind mount:
+   `/opt/xiom/registry-bundle:/registry-bundle:ro`.
+3. `/opt/xiom/playground.env` (root, 0600, outside the repo) adds
+   `XIOM_PACKAGE_BUNDLE=/registry-bundle`.
+
+The bundle is read by the server process only, never by a sandboxed
+compiler child, so the Landlock policy needs no new path. Without the
+mount the two vendored packages (`xiom.hello`, `xiom.csv`;
+`packages/README.md` carries the provenance hashes) still work. Refresh a
+vendored package by re-extracting its artifact and updating the hash
+table. `node tools/prepare-packages.js <file.xi> <dir>` reproduces the
+prepared layout locally; the example is `examples/packages/main.xi`.
+
 ## Accounts (C2, implemented 2026-09-19; VPS env pending)
 
 Sign-in is optional; the playground works fully without an account. GitHub

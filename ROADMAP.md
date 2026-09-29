@@ -282,7 +282,22 @@ updated; Node test passes, browser console check requested from the owner).
 Sweep 411/411, stdlib surface 6,932 functions, baseline refreshed, audit
 green. Direct `for x in Vec` works on the pin now, so the Phase E sweep can
 simplify the `range`+index workarounds back to direct iteration.
-## C3 status (2026-09-28)
+## C3 status (2026-09-29: delivered)
+
+The registry exported the bundle and it was independently verified from
+the playground side (transfer tarball sha256, `index.json` digest, all 342
+artifacts re-hashed; SESSION 18.1). Playground implementation shipped:
+vendored `packages/xiom-hello|xiom-csv` from the verified artifacts,
+`lib/packages.js` (import parsing, sha-verified bundle extraction with a
+cache, stdlib-shadowing guard, work-dir copies), server wiring for the
+check stage plus the `stageForRun` bridge for the execute stage,
+`examples/packages/main.xi`, and sandboxed tests (check cross-platform,
+run where execution is enabled). Two follow-ups: the one batched ops mount
+request (SESSION 18.2: extract `/opt/xiom/registry-bundle`, read-only bind
+mount `/registry-bundle`, `XIOM_PACKAGE_BUNDLE=/registry-bundle`) and the
+compiler run-path fix C22 (SESSION 18.3), which retires the bridge.
+
+## C3 background (2026-09-28)
 
 Registry answered the four questions: ~330 real signed `xiom.*` packages
 are live on production, the index contract is stable/public, and the
