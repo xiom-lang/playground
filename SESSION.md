@@ -622,6 +622,20 @@ a stdlib release is cut (queue F, gated on 100% + tag), absorption step 6
 may target stdlib `origin/main` at or after `c193bc4` whenever the pin
 bumps. The pending wasm-asset release includes neither half.
 
+**Update 2026-09-29 (stdlib release cut):** the stdlib lane published
+`stdlib-v0.62.0` (run 36495200067: Ubuntu and Windows gates, package and
+GitHub Release all green; the staging canary's version pin-PR PAT gap
+stayed known-red under continue-on-error). Assets, verified from the
+playground side against the GitHub API and the downloaded `SHA256SUMS`:
+`xiom-std-0.62.0.tar.gz` (1,055,855 B,
+sha256 `1d379b5d1e2a3fb10445bfd6d1ba55f482e9fe08dd6bbc64b0ecf2da166d9324`)
+matches the sums file; release published 2026-09-29T00:10:41Z, subject sha
+`0e631018100b157539614cc92fc471f22663baff`, ref
+`refs/tags/stdlib-v0.62.0`. The registry lane is re-dispatching the
+publish to finish verification. Nothing changes for the playground pin:
+toolchain v0.62.1 already bundles stdlib 0.62.0 (`/api/version` reports
+`stdlib: 0.62.0`, 516 modules).
+
 ### 11.2 Registry: first real xiom.* packages (C3)
 
 Answered 2026-09-28 (registry): production carries ~330 real `xiom.*`
@@ -796,7 +810,9 @@ Deploy check (2026-09-29, after the 00:29 UTC pull): production serves
 the swept lesson JSONs (L8-10 `module`, L5-29 while+get, L4-24/30
 rewrites, L1-19/L2-05 fixes), the capability metadata in
 `js/stdlib-ref.json`/panel JS/CSS, and `/api/check` round-trips on the
-deployed API.
+deployed API. Same day: the stdlib lane cut `stdlib-v0.62.0` (assets live,
+registry re-dispatch pending on their side); the pin is unchanged and
+`/api/version` reports `stdlib: 0.62.0` (516 modules).
 
 Next work:
 1. C3 (only open item): when the registry delivers the bundle, send the
