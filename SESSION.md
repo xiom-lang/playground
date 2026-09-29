@@ -930,6 +930,12 @@ Playground implementation:
   suite asserts the block. The footer social row gained Instagram
   (`https://www.instagram.com/xiom.language/`, matching the website,
   after Facebook).
+- Production re-check after the 19:29 UTC deploy (2026-09-29):
+  `/api/health` reports `packages.bundle=/registry-bundle`,
+  `bundlePackages=352`, `vendored=2`; the Instagram link is live with the
+  website's markup; `/api/auth/config` reports `configured:true` (the
+  accounts env is fully configured in production, so DEPLOY.md's old
+  "VPS env pending" heading is retired).
 
 ### 18.2 Ops request (delivered 2026-09-29)
 

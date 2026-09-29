@@ -179,7 +179,7 @@ vendored package by re-extracting its artifact and updating the hash
 table. `node tools/prepare-packages.js <file.xi> <dir>` reproduces the
 prepared layout locally; the example is `examples/packages/main.xi`.
 
-## Accounts (C2, implemented 2026-09-19; VPS env pending)
+## Accounts (C2, implemented 2026-09-19; configured in production)
 
 Sign-in is optional; the playground works fully without an account. GitHub
 OAuth is playground-owned and the registry is not involved. Because the
