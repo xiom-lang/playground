@@ -636,6 +636,23 @@ publish to finish verification. Nothing changes for the playground pin:
 toolchain v0.62.1 already bundles stdlib 0.62.0 (`/api/version` reports
 `stdlib: 0.62.0`, 516 modules).
 
+**Playground cross-check of the release asset (2026-09-29):** downloaded
+`xiom-std-0.62.0.tar.gz` (sha256 verified above) and compared it
+file-by-file with the stdlib bundled in the pinned toolchain
+(`.toolchain/lib`): of the 531 files that differ, 521 differ only by CRLF
+line endings (Windows toolchain packaging; byte-identical after
+normalization) and 10 carry real differences -
+`math/{matrices,number_systems,primitives,queueing}.xi`,
+`num/{base,convert,float,precision_integer,precision_rational}.xi`,
+`regex/syntax.xi`. The release side carries additional `ensures:` clauses
+(a later contract-annotation pass) plus small code changes (e.g.
+`math/primitives.xi` frexp normalization now uses `f >= 2.0` / `f < 1.0`),
+so the tag points at commits newer than the snapshot embedded in
+toolchain v0.62.1. No action for the current pin (the playground consumes
+the toolchain, never the tarball), but re-run the lesson output audit at
+the next pin bump: contract additions and the primitives changes can
+alter edge-case behavior.
+
 ### 11.2 Registry: first real xiom.* packages (C3)
 
 Answered 2026-09-28 (registry): production carries ~330 real `xiom.*`
