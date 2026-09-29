@@ -855,9 +855,11 @@ Next work:
 1. C3 is delivered and wired (section 18). Follow-ups: send the batched
    ops mount request (18.2) when convenient, and remove the
    `stageForRun` bridge once the compiler ships C22 (18.3).
-2. Optional cleanup: simplify the L0 range+index loop rewrites back to
-   direct `for x in Vec` (works on v0.62.1) and run the five loop lessons
-   to confirm outputs; re-run `audit-snippets --level L0` after.
+2. Range cleanup: done 2026-09-29 -- 11 prose fences reverted to direct
+   `for x in Vec` (L0-11 x3, L0-24 fence 1, L0-34 x2, L0-49, L0-50,
+   L1-37, L1-38, L5-13); L0-24 fence 2 (numeric range) and L5-04/L5-16
+   (vec used after the loop) keep the indexed form. Levels recompiled and
+   loop fences re-executed; see AUDIT 32.4's follow-up paragraph.
 3. Optional: if the compiler lane fixes C20 (module-local type identity
    across modules, AUDIT 32.4), L6-10/L6-15 prose can pass structs
    between modules again instead of the top-level shared type.

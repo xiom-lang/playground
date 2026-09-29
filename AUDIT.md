@@ -2138,6 +2138,17 @@ L0 was re-verified on the current pin: 90/90 prose programs compile.
 L1+L2 re-audit after the five fixes: 35 ok + 26 missing-import + 72
 excerpt + 0 failing.
 
+Range-cleanup follow-up (2026-09-29): with direct `for x in v` working on
+the pin, the v0.61.3-era `range`+index workaround was reverted in the 11
+prose fences where the vec is not used after the loop (L0-11 x3, L0-24
+fence 1, L0-34 x2, L0-49, L0-50, L1-37, L1-38, L5-13), dropping the now
+unused `use xiom.iter;`. Kept indexed: L0-24 fence 2 (a numeric `range`
+loop) and L5-04/L5-16 (the vec is used after the loop). All three levels
+recompiled unchanged (L0 90/90, L1 44/81, L5 39/54) and the runnable loop
+fences were executed again; outputs match the indexed versions and the
+rewritten fences no longer print the `Iterator` warning. Patches are
+recorded in `tools/snippet-sweep/patches/range-cleanup.json`.
+
 Relays recorded: the compiler lane queued the Range-only `Iterator`
 warning (the range rewrites print it) and the W005 float-to-str stub as
 polish (2026-09-28); ops deleted the retained pre-P2 backup on owner

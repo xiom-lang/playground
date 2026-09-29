@@ -166,8 +166,11 @@ AUDIT section 32.
   `math.random_int`, `Set.remove` returning unit) are migrated
   mechanically; finder classes (module-local types/functions defined in
   another fence) stay excerpt-class by design. Direct `for x in Vec`
-  works on v0.62.1; the L0 range+index rewrites may be simplified back
-  when convenient (optional, tracked in SESSION 17).
+  works on v0.62.1, and the v0.61.3-era `range`+index workaround has been
+  reverted in the 11 prose fences where it was safe (L0-11 x3, L0-24,
+  L0-34 x2, L0-49, L0-50, L1-37, L1-38, L5-13); the three remaining
+  indexed loops are a numeric `range` loop and the two vecs used after
+  their loop (L0-24 fence 2, L5-04, L5-16).
   Run verification: all 40 runnable loop fences executed (39 rc=0; the
   one failure, L5-29's `for friend in &friends`, exposed finding C21) and
   every output was checked for zero-iteration prints. The 10 prose fences

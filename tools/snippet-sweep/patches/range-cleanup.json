@@ -1,0 +1,74 @@
+[
+ {
+  "file": "lessons/L0-first-steps/11-for.json",
+  "old": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let names = [\"Alex\", \"Jordan\", \"Sam\", \"Taylor\"];\n\n  for __i in range(0, names.len()) {\n    let name = names[__i];\n    io.println((name).to_str());\n  }\n}\n",
+  "new": "use xiom.io;\n\nfn main() {\n  let names = [\"Alex\", \"Jordan\", \"Sam\", \"Taylor\"];\n\n  for name in names {\n    io.println(name);\n  }\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L0-first-steps/11-for.json",
+  "old": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let scores = [95, 87, 92, 78, 100];\n\n  for __i in range(0, scores.len()) {\n    let score = scores[__i];\n    io.println((score).to_str());\n  }\n}\n",
+  "new": "use xiom.io;\n\nfn main() {\n  let scores = [95, 87, 92, 78, 100];\n\n  for score in scores {\n    io.println(score.to_str());\n  }\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L0-first-steps/11-for.json",
+  "old": "use xiom.iter;\nfn main() {\n  let friends = [\"Maya\", \"Leo\", \"Priya\", \"Kai\"];\n\n  io.println(\"Taking attendance:\");\n\n  for __i in range(0, friends.len()) {\n    let friend = friends[__i];\n    let greeting = \"Hello, \" + friend + \"!\";\n    io.println(greeting);\n  }\n\n  io.println(\"Everyone is here!\");\n}\n",
+  "new": "use xiom.io;\nfn main() {\n  let friends = [\"Maya\", \"Leo\", \"Priya\", \"Kai\"];\n\n  io.println(\"Taking attendance:\");\n\n  for friend in friends {\n    let greeting = \"Hello, \" + friend + \"!\";\n    io.println(greeting);\n  }\n\n  io.println(\"Everyone is here!\");\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L0-first-steps/L0-24.json",
+  "old": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let guests: Vec[Str] = [\"Mia\", \"Jay\", \"Priya\"];\n  for __i in range(0, guests.len()) {\n    let guest = guests[__i];\n    io.print(\"Welcome, \");\n    io.println((guest).to_str());\n  }\n}\n",
+  "new": "use xiom.io;\n\nfn main() {\n  let guests: Vec[Str] = [\"Mia\", \"Jay\", \"Priya\"];\n  for guest in guests {\n    io.print(\"Welcome, \");\n    io.println(guest);\n  }\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L0-first-steps/L0-34.json",
+  "old": "use xiom.io;\nuse xiom.iter;\nuse xiom.string;\n\nfn main() {\n  let groceries = [\"milk\", \"eggs\", \"bread\", \"apples\", \"cheese\"];\n\n  io.println(\"Shopping list:\");\n\n  for __i in range(0, groceries.len()) {\n    let item = groceries[__i];\n    let message = string.str_concat(\"Buy: \", item);\n    io.println(message);\n  }\n\n  io.println(\"That's everything!\");\n}\n",
+  "new": "use xiom.io;\nuse xiom.string;\n\nfn main() {\n  let groceries = [\"milk\", \"eggs\", \"bread\", \"apples\", \"cheese\"];\n\n  io.println(\"Shopping list:\");\n\n  for item in groceries {\n    let message = string.str_concat(\"Buy: \", item);\n    io.println(message);\n  }\n\n  io.println(\"That's everything!\");\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L0-first-steps/L0-34.json",
+  "old": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let prices = [3, 5, 2, 8, 4];\n\n  for __i in range(0, prices.len()) {\n    let price = prices[__i];\n    io.println((price).to_str());\n  }\n}\n",
+  "new": "use xiom.io;\n\nfn main() {\n  let prices = [3, 5, 2, 8, 4];\n\n  for price in prices {\n    io.println(price.to_str());\n  }\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L0-first-steps/L0-49.json",
+  "old": "use xiom.io;\nuse xiom.iter;\n\nfn main() {\n  let colors = [\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\"];\n  var count: Int = 1;\n\n  io.println(\"The Colors of the Rainbow:\");\n  for __i in range(0, colors.len()) {\n    let color = colors[__i];\n    io.println((count).to_str());\n    io.println(\". \");\n    io.println((color).to_str());\n    count = count + 1;\n  }\n}\n",
+  "new": "use xiom.io;\n\nfn main() {\n  let colors = [\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\"];\n  var count: Int = 1;\n\n  io.println(\"The Colors of the Rainbow:\");\n  for color in colors {\n    io.println((count).to_str());\n    io.println(\". \");\n    io.println(color);\n    count = count + 1;\n  }\n}\n",
+  "why": "direct for-in (counter is tracked separately)"
+ },
+ {
+  "file": "lessons/L1-foundations/L1-37.json",
+  "old": "use xiom.io;\nuse xiom.iter;\n\nfn main() -> Int {\n  let numbers = [15, -7, 0, 42, -3, 8];\n  for __i in range(0, numbers.len()) {\n    let n = numbers[__i];\n    let kind = classify(n);\n    let even = is_even(n);\n    let by3 = is_divisible_by(n, 3);\n\n    io.println(\"Number analyzed!\");\n  }\n  return 0;\n}\n",
+  "new": "use xiom.io;\n\nfn main() -> Int {\n  let numbers = [15, -7, 0, 42, -3, 8];\n  for n in numbers {\n    let kind = classify(n);\n    let even = is_even(n);\n    let by3 = is_divisible_by(n, 3);\n\n    io.println(\"Number analyzed!\");\n  }\n  return 0;\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L1-foundations/L1-38.json",
+  "old": "use xiom.io;\nuse xiom.iter;\n\nfn main() -> Int {\n  let years = [2024, 1900, 2000, 2023];\n  for __i in range(0, years.len()) {\n    let y = years[__i];\n    if is_leap_year(y) {\n      io.println(\"Leap year!\");\n    } else {\n      io.println(\"Not a leap year.\");\n    }\n  }\n  return 0;\n}\n",
+  "new": "use xiom.io;\n\nfn main() -> Int {\n  let years = [2024, 1900, 2000, 2023];\n  for y in years {\n    if is_leap_year(y) {\n      io.println(\"Leap year!\");\n    } else {\n      io.println(\"Not a leap year.\");\n    }\n  }\n  return 0;\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L5-patterns/L5-13.json",
+  "old": "use xiom.io;\n\nuse xiom.iter;\nfn main() -> Int {\n  let text: Vec[Str] = Vec[Str].new();\n  text.push(\"hello\");\n  text.push(\"world\");\n  text.push(\"hello\");\n\n  let counts: Map[Str,Int] = Map[Str,Int].new();\n  for __i in range(0, text.len()) {\n    let word = text[__i];\n    match counts.get(word) {\n      Some(n) => counts.insert(word, n + 1);\n      None => counts.insert(word, 1);\n    }\n  }\n\n  match counts.get(\"hello\") {\n    Some(n) => io.println(\"hello: \" + n.to_str());\n    None => {}\n  }\n  match counts.get(\"world\") {\n    Some(n) => io.println(\"world: \" + n.to_str());\n    None => {}\n  }\n\n  return 0;\n}\n",
+  "new": "use xiom.io;\n\nfn main() -> Int {\n  let text: Vec[Str] = Vec[Str].new();\n  text.push(\"hello\");\n  text.push(\"world\");\n  text.push(\"hello\");\n\n  let counts: Map[Str,Int] = Map[Str,Int].new();\n  for word in text {\n    match counts.get(word) {\n      Some(n) => counts.insert(word, n + 1);\n      None => counts.insert(word, 1);\n    }\n  }\n\n  match counts.get(\"hello\") {\n    Some(n) => io.println(\"hello: \" + n.to_str());\n    None => {}\n  }\n  match counts.get(\"world\") {\n    Some(n) => io.println(\"world: \" + n.to_str());\n    None => {}\n  }\n\n  return 0;\n}\n",
+  "why": "direct for-in (vec unused after the loop)"
+ },
+ {
+  "file": "lessons/L0-first-steps/L0-50.json",
+  "old": "use xiom.io;\nuse xiom.iter;\nuse xiom.string;\nuse xiom.math;\n\nfn main() {",
+  "new": "use xiom.io;\nuse xiom.string;\nuse xiom.math;\n\nfn main() {",
+  "why": "drop xiom.iter (no range remains)"
+ },
+ {
+  "file": "lessons/L0-first-steps/L0-50.json",
+  "old": "  for __i in range(0, skills.len()) {\n    let skill = skills[__i];\n    io.println(\"* \");\n    io.println((skill).to_str());\n  }",
+  "new": "  for skill in skills {\n    io.println(\"* \");\n    io.println(skill);\n  }",
+  "why": "direct for-in (vec unused after the loop)"
+ }
+]

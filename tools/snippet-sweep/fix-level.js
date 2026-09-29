@@ -71,6 +71,10 @@ function wrapArg(line, call) {
   if (!inner || inner.startsWith('"') || inner.endsWith('.to_str()')) return null;
   return line.slice(0, open + 1) + '(' + inner + ').to_str()' + line.slice(end);
 }
+// Pin-dependent: this rewrite exists for toolchains where direct
+// `for x in Vec` iterates zero times (pre-0.62). On the v0.62.1 pin direct
+// iteration works and is preferred; only apply this when sweeping against
+// an older toolchain.
 function loops(code) {
   const lines = code.split('\n'); const out = []; let changed = false;
   for (const line of lines) {
