@@ -2170,6 +2170,9 @@ a bundle-only package (`xiom.bmp@0.1.0`, 6,418 B artifact) extracts and
 type-checks through the same path; extraction output is byte-identical to
 the vendored trees; `tools/test-server.js` is 43 passed / 0 failed /
 1 skipped locally (the skip is Windows execution; CI runs it on Linux).
+Production verification after the 15:29 UTC pull: the example passes
+`/api/check` and `/api/compile` on the live sandbox with the expected
+output (`sandbox.mode=require`, landlock 4).
 
 Finding C22 (compiler lane, relayed via SESSION 18.3): `xiom run` reads
 the script text and compiles a temp copy under `<tmp>/xiom_run`, so the

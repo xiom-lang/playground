@@ -918,6 +918,10 @@ Playground implementation:
   path verified in WSL against v0.62.1 with the expected output).
 - A bundle-only package (`xiom.bmp@0.1.0`, 6,418 B artifact) was extracted
   and type-checked through the same path.
+- Production deploy verified after the 15:29 UTC pull: the example passes
+  `/api/check` and runs through `/api/compile` in the live sandbox with
+  the expected output (greeting, `rows: 3`, the three CSV rows,
+  `rectangular: true`); `sandbox.mode=require`, landlock 4.
 
 ### 18.2 Ops request (batched, via the owner)
 
