@@ -1,9 +1,11 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-28 (Phase E prose sweep complete L0-L8; backlog
-B1-B5 implemented). Branch `main` at/after `9a8a104` (sweep commit; a
-header-only docs commit may follow), working tree clean, all commits
-pushed to `origin/main`. Production runs **toolchain v0.62.1** (stdlib
+Last updated: 2026-09-29 (Phase E prose sweep complete L0-L8; backlog
+B1-B5 implemented; production verified). Branch `main` at/after `2849693`
+(this header-only commit follows it), working tree clean, all commits
+pushed to `origin/main`; CI green (Validate + CodeQL). The 00:29 UTC VPS
+pull shipped the new commits: production serves the swept lessons and the
+capability metadata, and a live `/api/check` round-trips. Production runs **toolchain v0.62.1** (stdlib
 0.62.0, wasm v0.62.1, `capabilities.format: true`) with P1 Landlock
 (`require`, ABI 4), P3 rate limits + external `abuse` monitor, P2
 host-side state and the repo-pinned VPS deploy (option C). Security P0-P3
@@ -790,6 +792,11 @@ prose fences teaching it were rewritten to while+index/while+get and
 re-run. Backlog B1-B5 shipped (capability tiers and panel badges,
 friendly sandbox denials, SANDBOX_CAPABILITIES.md, the L8 note). AUDIT
 32.4 records the sweep, the rename classes and findings C20/C21.
+Deploy check (2026-09-29, after the 00:29 UTC pull): production serves
+the swept lesson JSONs (L8-10 `module`, L5-29 while+get, L4-24/30
+rewrites, L1-19/L2-05 fixes), the capability metadata in
+`js/stdlib-ref.json`/panel JS/CSS, and `/api/check` round-trips on the
+deployed API.
 
 Next work:
 1. C3 (only open item): when the registry delivers the bundle, send the
