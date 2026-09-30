@@ -48,6 +48,13 @@ reused and every run recompiles (~3-6s per run on the VPS); with it, repeat
 runs of an unchanged program finish in milliseconds. Both details are
 container-only and invisible to CI, which runs on a normal filesystem.
 
+Interactive runs compile at `-O0` (`server.js` passes it on the run path):
+the script-run default was `-O2`, which roughly tripled compile latency
+for lesson-sized programs (measured on the pin: ~3.6-4.0s -> ~1.3s cold;
+unchanged sources stay instant through the script cache, which keys on the
+level, so the first run after a change recompiles once). Lessons never
+need optimized binaries.
+
 `WARMUP_LESSONS` was tried and removed: warming the script cache requires
 running `xiom run`, which executes incomplete lesson templates, so the
 playground does not do it. A compile-only cache-prime mode is on the compiler

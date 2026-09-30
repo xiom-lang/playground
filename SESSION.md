@@ -1027,3 +1027,22 @@ production is clean -- measured package runs on the live sandbox are
 5.0-7.5 s against a 30 s timeout; (b) v0.62.2 also carries the atomics
 performance fix (PERF-1) and is the release to target for the public
 benchmark.
+
+## 19. Interactive run latency: -O0 (2026-09-30)
+
+The server ran `xiom run` with no optimization flag, so the script path
+defaulted to `-O2` for every fresh or changed submission. Benchmarked on
+the pinned toolchain with a cold script cache: a small lesson 4.0s ->
+1.3s and a larger lesson 3.6s -> 1.3s with `-O0`; unchanged sources stay
+instant (~11ms) through the script cache, which keys on the level, so the
+first run after this deploy recompiles each program once at `-O0`.
+
+`server.js` now passes `-O0` on the interactive run path (R51/R63 accept
+the short spelling; lessons never need optimized binaries). The crash
+path is unchanged (`exit code: -1` and the W002 recursion-cycle warning),
+the suite is 43/0/1 locally, and CI exercises execution on Linux. Windows
+execution stays skipped: forcing it with `XIOM_TEST_RUN_WINDOWS=1` still
+times out at `-O0`, so the toolchain's clang pathology is not
+level-specific. Model: scripting mode (`xiom run`) with the on-disk
+script cache -- not the `--jit` flag; `xiom build`/watch would use the
+same front-end/clang pipeline and do not reduce per-edit latency.

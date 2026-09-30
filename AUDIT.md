@@ -2226,3 +2226,17 @@ redeployed from `6a2e5cf`, so the compose alone defines the mount
 run `xiom.bmp` and `xiom.loss`. The mount is read by the server only
 (never by a sandboxed compiler child), so the Landlock policy is
 unchanged; the two vendored packages work even without the mount.
+
+### 33.3 Interactive run latency: -O0 (2026-09-30)
+
+The server's run path passed no optimization flag, so `xiom run` used its
+`-O2` default for every fresh or changed submission. Benchmarked on the
+pinned toolchain (same programs, cold script cache): small lesson 4.0s ->
+1.3s and a larger lesson 3.6s -> 1.3s with `-O0`; an unchanged source is
+an ~11ms cache hit either way (the script cache keys on the level, so the
+first run after this change recompiles once). `server.js` now passes
+`-O0` (R51/R63 accept the short spelling). The crash path is unchanged at
+`-O0` (`exit code: -1` plus the W002 recursion-cycle warning), and the
+suite is 43/0/1 locally with CI executing on Linux. Windows execution
+stays skipped: forcing it with `XIOM_TEST_RUN_WINDOWS=1` still times out
+at `-O0`, so the toolchain's clang pathology is not level-specific.

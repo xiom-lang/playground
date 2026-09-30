@@ -499,7 +499,13 @@ async function runProgram(source) {
       console.error('[packages] ' + (err && err.message ? err.message : err));
     }
     const started = Date.now();
-    const proc = await runXiom(['run', file], { cwd: dir, timeoutMs: COMPILE_TIMEOUT_MS });
+    // R51/R63: interactive runs use -O0. The script-run path otherwise
+    // defaults to -O2, which roughly triples compile latency for lesson-sized
+    // programs (measured on the pin: ~3.6-4.0s -> ~1.3s cold; unchanged
+    // sources are instant via the script cache keyed on the level). Lessons
+    // never need optimized binaries, and -O0 keeps trap/overflow behaviour
+    // predictable.
+    const proc = await runXiom(['run', '-O0', file], { cwd: dir, timeoutMs: COMPILE_TIMEOUT_MS });
     const result = {
       success: proc.success,
       stages: {},
