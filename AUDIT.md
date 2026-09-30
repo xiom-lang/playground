@@ -2240,3 +2240,29 @@ first run after this change recompiles once). `server.js` now passes
 suite is 43/0/1 locally with CI executing on Linux. Windows execution
 stays skipped: forcing it with `XIOM_TEST_RUN_WINDOWS=1` still times out
 at `-O0`, so the toolchain's clang pathology is not level-specific.
+
+### 33.4 v0.62.1 silently miscompiles three solutions at -O2 (2026-09-30)
+
+Switching the run path to `-O0` exposed that the pinned v0.62.1 produces
+**wrong answers at the default -O2** for three lessons on this host,
+deterministically (`--no-cache`, repeated runs):
+
+| Lesson | -O2 / default | -O0 (correct) |
+|---|---|---|
+| L6-15 (count by category) | 3 | 2 (two "personal" notes) |
+| L7-39 (pending count) | 3 | 2 (one of three marked done) |
+| L8-09 (quick meals) | 0 | 2 (two recipes under 30 min) |
+
+The affected shapes are borrowed-struct routines that index/`.get()`
+vectors, compare string fields, call `.set()`/`.push()` in loops, and
+return counts or vectors; small reductions of the same programs do not
+reproduce it, so the trigger is subtler than a single operation. The
+GitHub runner's -O2 output for L7-39/L8-09 differed from this host's
+(its nightly flagged the *stored* outputs as mismatched while this host
+matched them), so the failure is host-LLVM-dependent -- the toolchain
+links the host's clang. Consequence: the lesson-audit and
+generate-expected-outputs tools now execute at `-O0` (matching the
+server), and the three `expected_output` values were regenerated
+tool-driven to 2/2/2; a full WSL execution audit then reports 0
+mismatches. Relay to the compiler lane as finding C23 with the three
+solutions as repros; v0.62.2 is the target for a fix.

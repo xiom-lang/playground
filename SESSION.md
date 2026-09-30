@@ -990,12 +990,14 @@ container mounts the bundle read-only (`rw=false`), and a post-cleanup
 check from this lane still resolves and runs `xiom.bmp` and `xiom.loss`.
 No ops-side gaps remain; the C3 ops thread is closed.
 
-**Registry reminder (received 2026-09-29, after C3 was delivered):**
-"vendor the pinned bundle and wire the offline example + sandboxed test"
--- superseded: both pins are vendored in `packages/`, the example
+**Registry reminders (received 2026-09-29 and 2026-09-30, after C3 was
+delivered):** both carry no new artifact (the local bundle is unchanged:
+generatedAt 2026-09-29T14:20:10Z, 342 packages) and are superseded -- both
+pins are vendored in `packages/`, the example
 (`examples/packages/main.xi`) and the sandboxed tests are wired, and the
 full catalog is mounted and verified. No action needed; an ack is
-optional.
+optional. If a *new* export is intended, ask for its location and
+sha256.
 
 ### 18.3 Compiler request (C22, via the owner)
 
@@ -1046,3 +1048,29 @@ times out at `-O0`, so the toolchain's clang pathology is not
 level-specific. Model: scripting mode (`xiom run`) with the on-disk
 script cache -- not the `--jit` flag; `xiom build`/watch would use the
 same front-end/clang pipeline and do not reduce per-edit latency.
+
+**Finding C23 -- v0.62.1 silently wrong at -O2 (2026-09-30):** the
+level switch exposed three solutions that print wrong answers at the
+default `-O2` on this host, deterministically (`--no-cache`, repeats):
+L6-15 counts 3 instead of 2, L7-39 counts 3 instead of 2, L8-09 counts 0
+instead of 2; all three are correct at `-O0`. The GitHub runner's -O2
+output differed from this host's, so the failure is host-LLVM-dependent
+(the toolchain links the host clang). `tools/lesson-audit.js` and
+`tools/generate-expected-outputs.js` now run solutions at `-O0` (native
+and the embedded WSL worker), the three `expected_output` values were
+regenerated tool-driven (all "2"), and the full WSL execution audit
+reports 0 mismatches. Relay text for the compiler lane:
+
+> Playground -> compiler (2026-09-30): C23 -- v0.62.1 miscompiles at -O2.
+> Three lesson solutions produce silently wrong answers at the default
+> optimization level but are correct at -O0, deterministically and with
+> `--no-cache`: `lessons/L6-engineering/L6-15.json` (count_by_category:
+> 3 vs 2), `lessons/L7-mastery/L7-39.json` (pending count: 3 vs 2),
+> `lessons/L8-09` (quick meals: 0 vs 2). Shapes: borrowed structs holding
+> Vecs, indexed/`.get()` reads, string-field compares, `.set()`/`.push()`
+> in loops, counts/vectors returned. Small reductions of the same
+> programs do not reproduce, and the GitHub runner's -O2 output differed
+> from a WSL host's, so it is host-LLVM-dependent (the host clang is
+> linked). Repro: `xiom run` vs `xiom run -O0` on the three solutions at
+> the pin. The playground now runs everything at -O0, so this does not
+> block us, but it is a correctness bug at the default level.

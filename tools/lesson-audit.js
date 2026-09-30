@@ -114,7 +114,10 @@ async function runSource(source, id) {
   const file = path.join(dir, 'main.xi');
   fs.writeFileSync(file, source, 'utf8');
   const started = Date.now();
-  const proc = await runProcess(XIOM_BIN, ['run', file], { cwd: dir, env: childEnv, timeoutMs: TIMEOUT_RUN });
+  // -O0 matches the server's interactive runs and, on the v0.62.1 pin, the
+  // default -O2 miscompiles some solutions on some hosts (see AUDIT 33.4:
+  // L7-39/L8-09 silently print wrong answers at -O2 here).
+  const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], { cwd: dir, env: childEnv, timeoutMs: TIMEOUT_RUN });
   fs.rmSync(dir, { recursive: true, force: true });
   return {
     ok: proc.success,

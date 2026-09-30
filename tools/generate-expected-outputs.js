@@ -216,7 +216,10 @@ async function nativeRun(job, runIndex) {
   const file = path.join(dir, 'main.xi');
   fs.writeFileSync(file, job.solution, 'utf8');
   const started = Date.now();
-  const proc = await runProcess(XIOM_BIN, ['run', file], { cwd: dir, env: childEnv, timeoutMs: TIMEOUT });
+  // -O0 matches the server's interactive runs and, on the v0.62.1 pin, the
+  // default -O2 miscompiles some solutions on some hosts (see AUDIT 33.4:
+  // L7-39/L8-09 silently print wrong answers at -O2 here).
+  const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], { cwd: dir, env: childEnv, timeoutMs: TIMEOUT });
   fs.rmSync(dir, { recursive: true, force: true });
   return {
     ok: proc.success,
@@ -268,7 +271,8 @@ const PY_WORKER = [
   '    err = ""',
   '    proc = None',
   '    try:',
-  '        proc = subprocess.Popen([binary, "run", source], cwd=run_dir, env=env,',
+  '        # -O0 matches the server; -O2 miscompiles some solutions on some hosts (AUDIT 33.4).',
+    '        proc = subprocess.Popen([binary, "run", "-O0", source], cwd=run_dir, env=env,',
   '                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,',
   '                                text=True, errors="replace", start_new_session=True)',
   '        try:',
