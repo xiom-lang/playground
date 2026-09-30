@@ -272,7 +272,14 @@ async function main() {
     fs.existsSync(XIOM_BIN) &&
     fs.existsSync(sandboxBin);
   let sandboxToolchain = null;
-  const serverEnv = { XIOM_TEST_CANARY: 'canary-do-not-leak' };
+  const serverEnv = {
+    XIOM_TEST_CANARY: 'canary-do-not-leak',
+    // Functional tests are not the rate limiter's test bed (the dedicated
+    // burst-2 instance further down is): with -O0 compiles at ~1.3s, the
+    // default burst of 10 can exhaust mid-suite and turn sandbox assertions
+    // into 429s.
+    RATE_LIMIT_BURST: '10000',
+  };
   if (sandboxMode) {
     sandboxToolchain = process.env.XIOM_TEST_SANDBOX_TOOLCHAIN || path.join(os.tmpdir(), 'xiom-toolchain');
     if (!fs.existsSync(path.join(sandboxToolchain, 'bin', 'xiom'))) {
