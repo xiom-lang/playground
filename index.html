@@ -29,6 +29,39 @@
   </div>
 </div>
 
+<div id="whatsNewModal" class="onboarding-modal hidden" role="dialog" aria-modal="true" aria-labelledby="whatsNewTitle">
+  <div class="onboarding-content info-content">
+    <button class="info-close" type="button" onclick="closeWhatsNew()" aria-label="Close">&#x2715;</button>
+    <h2 id="whatsNewTitle">What's new</h2>
+    <div id="whatsNewList"></div>
+    <div class="onboarding-footer">The playground deploys on every merge; the pinned versions are in the page footer.</div>
+  </div>
+</div>
+
+<div id="helpModal" class="onboarding-modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="onboarding-content info-content">
+    <button class="info-close" type="button" onclick="closeHelp()" aria-label="Close">&#x2715;</button>
+    <h2 id="helpTitle">Progress &amp; sync</h2>
+    <h3 class="info-section">Your progress lives in this browser</h3>
+    <ul class="info-list">
+      <li>Lessons, code, run history and completion are stored locally in this browser. No account is needed for any of it.</li>
+      <li><strong>Export progress</strong> downloads a JSON backup (buttons on the landing page, or the account menu when signed in). Use it before clearing site data or moving to another browser.</li>
+      <li><strong>Import progress</strong> merges a JSON backup lesson by lesson; newer work wins, so re-importing is safe.</li>
+    </ul>
+    <h3 class="info-section">GitHub sign-in is optional &mdash; only for sync</h3>
+    <ul class="info-list">
+      <li>Signing in lets the same progress follow you across devices. Everything keeps working signed out.</li>
+      <li>Synced documents live on our host-side service; the sandbox never sees them. <strong>Sync now</strong> pushes or pulls on demand.</li>
+      <li><strong>Delete account data</strong> removes the server copy of your progress. <strong>Sign out</strong> stops syncing and keeps everything local.</li>
+    </ul>
+    <h3 class="info-section">Where your code runs</h3>
+    <ul class="info-list">
+      <li>Run and Format execute on our servers inside a sandboxed container: no network, temporary files only, contained processes. <a href="https://github.com/xiom-lang/playground/blob/main/docs/SANDBOX_CAPABILITIES.md" target="_blank" rel="noopener">Sandbox capabilities</a>.</li>
+      <li>Keyboard shortcuts: press <strong>?</strong> in the editor or use the ? button in the header.</li>
+    </ul>
+  </div>
+</div>
+
 <!-- LANDING SCREEN -->
 <div id="landing" class="landing-screen">
   <!-- Page banner: artwork and wordmark shared with xiom-website
@@ -125,6 +158,8 @@
     <a href="https://registry.xiom-lang.org" target="_blank" rel="noopener">Registry</a>
     <span class="landing-footer-sep">&middot;</span>
     <a href="https://docs.xiom-lang.org/AI_CONTEXT/" target="_blank" rel="noopener">AI Context</a>
+    <span class="landing-footer-sep">&middot;</span>
+    <a href="#" onclick="openWhatsNew(); return false;">What's new</a>
   </div>
   <div class="landing-footer landing-footer-legal">
     <a href="https://docs.xiom-lang.org/" target="_blank" rel="noopener">Docs</a>
@@ -164,6 +199,13 @@
           <button onclick="toggleCompilerRef(); this.parentElement.parentElement.classList.remove('open')">&#x2699;&#xFE0F; Compiler</button>
           <button onclick="toggleStdlibPanel(); this.parentElement.parentElement.classList.remove('open')">&#x1F4D6; Standard Library</button>
           <button onclick="toggleRegistryPanel(); this.parentElement.parentElement.classList.remove('open')">&#x1F4E6; Packages</button>
+        </div>
+      </div>
+      <div class="header-dropdown">
+        <button class="nav-btn" onclick="this.parentElement.classList.toggle('open')" aria-label="Help and updates">Help &#x25BE;</button>
+        <div class="header-dropdown-menu">
+          <button onclick="openWhatsNew(); this.parentElement.parentElement.classList.remove('open')">&#x2728; What's new</button>
+          <button onclick="openHelp(); this.parentElement.parentElement.classList.remove('open')">&#x2753; Progress &amp; sync</button>
         </div>
       </div>
       <button id="authSignIn" class="nav-btn hidden" type="button" onclick="signIn()" title="Sign in with GitHub">Sign in</button>
@@ -300,6 +342,7 @@
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
 <script src="js/app.js"></script>
 <script src="js/history.js"></script>
+<script src="js/help.js"></script>
 <script src="js/completions.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/wasm-loader.js"></script>

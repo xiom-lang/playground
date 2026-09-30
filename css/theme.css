@@ -2554,3 +2554,20 @@ a:focus-visible,
   font-size: 11px; color: var(--hi); min-width: 100px; text-align: center;
 }
 .shortcut-row span { color: var(--mid); }
+
+/* Information dialogs: "What's new" and "Progress & sync". They reuse the
+   onboarding overlay and content card, with scrolling for longer text. */
+.info-content { max-width: 560px; text-align: left; max-height: 82vh; overflow-y: auto; position: relative; }
+.info-content h2 { text-align: center; margin-bottom: 6px; }
+.info-content h3.info-section { margin: 16px 0 6px; font-size: 14px; }
+.info-date { color: var(--low); font-size: 11px; font-family: var(--mono); letter-spacing: 0.04em; }
+.info-list { margin: 0 0 10px 18px; padding: 0; color: var(--mid); font-size: 13px; line-height: 1.65; }
+.info-list li { margin-bottom: 6px; }
+.info-content a { color: var(--indigo); }
+.info-close {
+  position: absolute; top: 10px; right: 12px; background: none; border: none;
+  color: var(--mid); font-size: 16px; cursor: pointer; padding: 4px 8px;
+}
+.info-close:hover { color: var(--hi); }
+.info-release { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+.info-release:first-child { border-top: none; margin-top: 0; padding-top: 0; }

@@ -298,6 +298,36 @@ public benchmark). On the next pin bump:
   produces W001 duplicate-module warnings by then);
 - re-run the package tests (`tools/test-server.js`) and the production
   E2E checks (`xiom.bmp`, `xiom.loss`, the hello/csv example).
+## UX / gamification ideas (owner, 2026-09-30)
+
+Shipped in this round: a "What's new" dialog (curated `js/help.js`,
+entry points in the header Help menu and the landing footer) and a
+"Progress & sync" help dialog that explains local progress, JSON
+export/import and the optional GitHub sync (what is stored where, and how
+to delete it).
+
+Owner's ideas for later, with a suggested order (keep everything usable
+signed out, syncable through the existing progress documents, and free of
+punishing/streak-pressure patterns):
+
+1. Make completion visible: per-lesson checkmarks already exist; add
+   level completion rings/percentages on the landing and a subtle
+   "lesson complete" transition. Low risk, immediate delight.
+2. Achievements / XP: local-first achievements derived from progress
+   (first run, first loop, 10 lessons, a level cleared, contracts first
+   violation caught...). XP is derived, never authoritative; sync via the
+   progress document. Requires a small achievement engine + icons.
+3. Auto-validation surfacing: expected-output matching already runs; show
+   it as a first-class "Validated" state with a reveal for the reference
+   solution after N attempts (avoid spoilers by default).
+4. Graduation certificate: client-side generated (canvas/PNG or print
+   CSS) from verified completions; a shareable artifact, no server data.
+   Do this last, once 1-3 are stable.
+
+Open questions to settle before building: whether achievements sync as
+part of progress or stay device-local; how much motion/celebration is
+acceptable on the landing; certificate design/branding with the website.
+
 ## C3 status (2026-09-29: delivered)
 
 The registry exported the bundle and it was independently verified from

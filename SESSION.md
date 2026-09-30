@@ -1074,3 +1074,19 @@ reports 0 mismatches. Relay text for the compiler lane:
 > linked). Repro: `xiom run` vs `xiom run -O0` on the three solutions at
 > the pin. The playground now runs everything at -O0, so this does not
 > block us, but it is a correctness bug at the default level.
+## 20. UX: What's new + Progress & sync help (2026-09-30)
+
+The header gained a Help menu (What's new / Progress & sync) and the
+landing footer a "What's new" link. `js/help.js` holds the curated
+release list (`XIOM_WHATS_NEW`, newest first) and renders it into
+`whatsNewModal`; `helpModal` explains that progress is local-first, how
+export/import JSON works (merge by lesson/revision), what GitHub sign-in
+stores (host-side progress documents, delete/sign-out semantics), where
+code runs (sandbox, linked to SANDBOX_CAPABILITIES), and the shortcuts.
+Both dialogs reuse the onboarding overlay and close on Escape; CSS lives
+at the end of `theme.css` (`.info-*`). Verified in headless Edge (dialogs
+open and render three releases; the landing shows the Help menu, the
+footer link and `js/help.js`); the suite asserts the markup and script
+(44/0/1 locally). Owner's gamification ideas and a suggested staging are
+captured in ROADMAP "UX / gamification ideas (owner, 2026-09-30)".
+Keep `XIOM_WHATS_NEW` updated whenever a user-visible change ships.

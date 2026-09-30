@@ -333,7 +333,17 @@ async function main() {
     await okAsync('GET /index.html serves the app', async () => {
       const res = await request('GET', '/index.html');
       assert.strictEqual(res.status, 200);
-      assert.ok(/XIOM/i.test(res.body));
+      assert.ok(res.body.indexOf('XIOM') >= 0 && res.body.indexOf('Playground') >= 0);
+    });
+
+    await okAsync('help and What\'s new ship in the app', async () => {
+      const page = await request('GET', '/index.html');
+      assert.ok(page.body.indexOf('whatsNewModal') >= 0, 'whatsNewModal missing');
+      assert.ok(page.body.indexOf('helpModal') >= 0, 'helpModal missing');
+      assert.ok(page.body.indexOf('openWhatsNew()') >= 0, 'no entry point');
+      const help = await request('GET', '/js/help.js');
+      assert.strictEqual(help.status, 200);
+      assert.ok(help.body.indexOf('XIOM_WHATS_NEW') >= 0 && help.body.indexOf('openHelp') >= 0);
     });
 
     await okAsync('GET /js/stdlib-ref.json serves the generated reference', async () => {
