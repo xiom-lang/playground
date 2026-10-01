@@ -1083,6 +1083,11 @@ reductions) and `run.sh`, which runs each file at `-O0`/`-O2` with
 `--no-cache` and prints whether `-O2` differs. Verified on the
 reporter host: `2/3`, `2/3`, `2/0` - "C23 present: yes". `run.sh` is
 also the acceptance check for the v0.62.2 absorption (expect "no").
+
+**Compiler confirmation (2026-10-01):** C23 reproduced exactly with the
+pack's recipe; narrowed to the O1/O2 delta and now at the LLVM pass
+level. `run.sh` is the agreed acceptance check when the fix ships; no
+playground action until then.
 ## 20. UX: What's new + Progress & sync help (2026-09-30)
 
 The header gained a Help menu (What's new / Progress & sync) and the
