@@ -1074,6 +1074,15 @@ reports 0 mismatches. Relay text for the compiler lane:
 > linked). Repro: `xiom run` vs `xiom run -O0` on the three solutions at
 > the pin. The playground now runs everything at -O0, so this does not
 > block us, but it is a correctness bug at the default level.
+
+**C23 repro pack (2026-10-01):** the compiler lane acknowledged C23 and
+asked for the lesson JSONs or reductions. `tools/compiler-repros/c23/`
+now carries byte-exact copies of the three solutions, a README (symptom
+table, host details: WSL2 + Ubuntu clang 18.1.3, non-triggering
+reductions) and `run.sh`, which runs each file at `-O0`/`-O2` with
+`--no-cache` and prints whether `-O2` differs. Verified on the
+reporter host: `2/3`, `2/3`, `2/0` - "C23 present: yes". `run.sh` is
+also the acceptance check for the v0.62.2 absorption (expect "no").
 ## 20. UX: What's new + Progress & sync help (2026-09-30)
 
 The header gained a Help menu (What's new / Progress & sync) and the
