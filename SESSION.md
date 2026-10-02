@@ -1156,3 +1156,16 @@ Relay text for the compiler lane:
 > extern call (-> Int, then as *UInt8) materialising a temporary and
 > passing its address. This blocks text-input lessons in the playground;
 > run.sh should print `C24 fixed: yes` once fixed.
+
+## 23. Algorithm Lab proposal (2026-10-02)
+
+Owner proposed a visualization mode: algorithm lessons whose execution is
+shown step by step (sorting bars, pathfinding grids, ...) with paced CSS
+animation. Assessment: feasible without server changes - the algorithm is
+a normal XIOM program that emits a compact trace to stdout, and the
+frontend replays it with play/pause/step/speed controls; the animation
+derives from the real program, so users can edit and re-run what they
+watch. Full design, staging (v1 sorting -> v2 pathfinding -> v3
+structures/recursion) and constraints are in ROADMAP "Algorithm
+visualization". Status: proposed, awaiting owner go-ahead before any
+implementation; not started.

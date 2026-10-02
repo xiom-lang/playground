@@ -298,6 +298,55 @@ public benchmark). On the next pin bump:
   produces W001 duplicate-module warnings by then);
 - re-run the package tests (`tools/test-server.js`) and the production
   E2E checks (`xiom.bmp`, `xiom.loss`, the hello/csv example).
+## Algorithm visualization ("Algorithm Lab") - proposed (owner, 2026-10-02)
+
+Idea: a third mode next to Lessons and the free playground where
+algorithms run as normal XIOM programs, but their execution is shown step
+by step in the browser - bars swapping, grid cells filling, paths
+drawing - paced so a human can follow. Target audience: the same
+beginners the lessons serve; no CS background assumed.
+
+**Feasible with the current architecture, no server changes.** The
+sandbox already runs arbitrary programs and the playground captures
+stdout, so the lesson program itself can emit a compact, deterministic
+trace and the frontend replays it:
+
+1. The algorithm is a normal, runnable XIOM program that prints one
+   line per event (e.g. `v1|swap|i=0|j=1`, `v1|visit|x=3|y=7`). Nothing
+   pre-baked: the animation is always derived from the real program's
+   output, and users can edit and re-run the code they are watching.
+2. The frontend parses the trace and replays it with CSS transitions /
+   canvas at a chosen speed, with play/pause, step forward/back, reset
+   and a speed slider (step mode also satisfies reduced-motion and makes
+   "why did it do that?" replayable).
+3. Each entry carries a small visualizer spec mapping event types to
+   drawing (bars, grid, pointers, call stack). The lesson catalog,
+   Monaco editor, run pipeline and expected-output checks are reused;
+   the final trace line is deterministic, so auto-validation keeps
+   working.
+
+Staging:
+
+- **v1 - Sorting Lab**: bubble/insertion/selection over 8-16 bars, trace
+  protocol v1 (`init|compare|swap|set|done`), player controls, keyboard
+  stepping, `prefers-reduced-motion`, both themes.
+- **v2 - Pathfinding**: small grid (BFS/DFS, then Dijkstra with
+  weights), user-drawn walls, visit/backtrack/frontier events.
+- **v3 - Structures + recursion**: stack/queue/linked list, parenthesis
+  matching, binary search, recursion trees (factorial, Hanoi); later a
+  side-by-side "compare two algorithms" view.
+
+Constraints and guardrails: zero-dependency ES5 frontend (DOM/canvas
+only, no bundlers), ASCII docs, accessible controls (ARIA labels, no
+color-only signals), stdout kept bounded (a few thousand trace lines,
+summarize beyond) and parsed as data only - never interpolated into
+HTML or eval'd. Keep complexity notation optional and one idea per view
+so it stays beginner-friendly.
+
+Open questions: distinct top-level screen vs. a lesson type; pipe fields
+vs. JSON for traces (pipe is cheaper to parse in ES5 and shorter in
+stdout); whether the Lab shares progress/achievements with lessons.
+
 ## Input lessons (blocked on C24, 2026-10-02)
 
 Teaching text input (`io.read_line()`, plus `io.read_int()`/`read_float()
