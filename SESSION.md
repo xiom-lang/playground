@@ -1117,3 +1117,42 @@ pinned and reported alongside. The suite asserts the app version matches
 package.json and is semver; "What's new" gained the 1.0 entry. Verified
 live after the 14:29 UTC deploy: `/api/version` `server: "1.0.0"` and the
 browser-rendered footer `v1.0.0 · toolchain v0.62.1`.
+
+## 22. Input lessons blocked on C24 (2026-10-02)
+
+The owner asked about teaching input (`read_line`) so lessons show
+text-based I/O like a real program. Findings:
+
+- Correct API: `io.read_line() -> Str`; `io.read_int()` / `io.read_float()`
+  return `Result`. The runner already supports piped stdin
+  (`runProcess(..., { input })`) and the server currently closes stdin
+  (EOF, so no hangs). Safety is unchanged: stdin is data only, and the
+  sandbox (no network, /tmp-only files, contained processes, timeouts)
+  is orthogonal.
+- BUT on the pin, `io.read_line()` is broken (C24): run mode prints an
+  empty string, compile mode aborts in glibc. Root cause in AUDIT 33.5;
+  repro pack `tools/compiler-repros/c24/` with `run.sh` as the acceptance
+  check ("C24 fixed: no" today).
+- Plan once fixed: (1) `/api/compile` accepts a bounded `stdin` string
+  and passes it through `runXiom`; (2) an Input box in the run panel;
+  (3) lessons gain an optional `sample_input` used by the audit and the
+  expected-output generator so auto-validated input lessons stay
+  deterministic; (4) an early lesson teaching `read_line`/`read_int`,
+  then practice exercises. Tracked in ROADMAP "Input lessons".
+
+Relay text for the compiler lane:
+
+> Playground -> compiler (2026-10-02): C24 -- io.read_line() is broken on
+> v0.62.1. Repro pack at tools/compiler-repros/c24 (read_line.xi +
+> run.sh). Run mode: `printf 'Ada\n' | xiom run --no-cache -O0
+> read_line.xi` prints `got: []`, exit 0. Compile mode: `xiom -o prog.exe
+> read_line.xi; printf 'Ada\n' | ./prog.exe` aborts with "Fatal error:
+> glibc detected an invalid stdio handle" (rc 134). Disassembly shows
+> xiom_stdin returns the correct FILE* but the caller does
+> `mov %al,0x7(%rsp); lea 0x7(%rsp),%rdx` -- it truncates the pointer to a
+> byte and passes its address to fgets. The stdlib call site is
+> `fgets(buf, 4096, xiom_stdin() as *UInt8)` (io.xi / console.xi); every
+> stdin function shares it. Looks like pointer-cast lowering for the
+> extern call (-> Int, then as *UInt8) materialising a temporary and
+> passing its address. This blocks text-input lessons in the playground;
+> run.sh should print `C24 fixed: yes` once fixed.

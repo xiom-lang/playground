@@ -298,6 +298,26 @@ public benchmark). On the next pin bump:
   produces W001 duplicate-module warnings by then);
 - re-run the package tests (`tools/test-server.js`) and the production
   E2E checks (`xiom.bmp`, `xiom.loss`, the hello/csv example).
+## Input lessons (blocked on C24, 2026-10-02)
+
+Teaching text input (`io.read_line()`, plus `io.read_int()`/`read_float()
+Result variants) is wanted and safe, but the pinned toolchain's stdin
+functions are broken (compiler finding C24, AUDIT 33.5): run mode prints
+an empty line, compile mode aborts in glibc. Acceptance check:
+`bash tools/compiler-repros/c24/run.sh` must print `C24 fixed: yes`.
+
+Once fixed, the playground work is small and already designed:
+
+1. `/api/compile` accepts a bounded `stdin` string (e.g. 64 KB) and passes
+   it through `runXiom` (which already supports an `input` option).
+2. The run panel gets a collapsible "Program input" box (sticky value,
+   passed on Run).
+3. Lessons gain an optional `sample_input` field; the audit and the
+   expected-output generator pass it so input lessons stay deterministic
+   and auto-validated.
+4. An early lesson teaches `read_line`/`read_int`, followed by practice
+   exercises.
+
 ## Product versioning (2026-10-02)
 
 The playground app now versions independently of the toolchain pin:

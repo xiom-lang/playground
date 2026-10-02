@@ -2266,3 +2266,17 @@ server), and the three `expected_output` values were regenerated
 tool-driven to 2/2/2; a full WSL execution audit then reports 0
 mismatches. Relay to the compiler lane as finding C23 with the three
 solutions as repros; v0.62.2 is the target for a fix.
+### 33.5 io.read_line() is broken on v0.62.1 (C24, 2026-10-02)
+
+While evaluating stdin-based lessons, `io.read_line()` returned an empty
+string for piped input, and the compile-mode binary aborted with "Fatal
+error: glibc detected an invalid stdio handle" (rc 134). Disassembly
+shows `xiom_stdin` returning the correct FILE*, but the caller truncating
+the pointer into a one-byte stack slot and passing its address to `fgets`
+(`mov %al,0x7(%rsp); lea 0x7(%rsp),%rdx`), so every stdin function gets a
+bogus handle. Repro pack: `tools/compiler-repros/c24/` (`read_line.xi`,
+README with the disassembly and both failure modes, `run.sh` acceptance
+check -> "C24 fixed: no" on the pin). The playground cannot teach text
+input until this is fixed; the stdin plumbing (API field, input box) and
+input lessons wait for the fix, and the runner already accepts an `input`
+option so the server side is a small follow-up.

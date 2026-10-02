@@ -12,7 +12,10 @@ filesystem is a temporary scratch pad, and process spawning is contained.
 
 - Numbers, strings, collections, generics, contracts, pattern matching, and
   the rest of the language and stdlib surface: compute anything.
-- Console input and output (`io.print`, `io.println`, `io.read_line`).
+- Console output (`io.print`, `io.println`). Console input exists in the
+  stdlib (`io.read_line`, `io.read_int`) but is broken on the pinned
+  toolchain (compiler finding C24, AUDIT 33.5), so lessons do not use it
+  yet; when fixed, input arrives as ordinary data through the runner.
 - Random numbers, time, hashing, sorting, text processing.
 - Reading the toolchain and the standard library (read-only).
 
