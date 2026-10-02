@@ -314,11 +314,15 @@ async function main() {
       assert.strictEqual(payload.abuse, 'ok', 'health abuse field must be "ok" when idle');
     });
 
-    await okAsync('GET /api/version reports toolchain and capabilities', async () => {
+    await okAsync('GET /api/version reports app, toolchain and capabilities', async () => {
       const res = await request('GET', '/api/version');
       assert.strictEqual(res.status, 200);
       const payload = JSON.parse(res.body);
-      assert.ok(typeof payload.server === 'string' && payload.server.length > 0);
+      // The app version is the playground's own semver (package.json);
+      // toolchain/stdlib/wasm are the pinned components.
+      const pkg = JSON.parse(fs.readFileSync(path.join(REPO, 'package.json'), 'utf8'));
+      assert.strictEqual(payload.server, pkg.version);
+      assert.match(payload.server, /^\d+\.\d+\.\d+$/);
       assert.ok(typeof payload.toolchain === 'string' && payload.toolchain.length > 0);
       assert.ok(payload.capabilities && typeof payload.capabilities.format === 'boolean');
     });

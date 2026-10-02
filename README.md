@@ -63,12 +63,20 @@ health checks stay responsive while a submission compiles.
 |---|---|
 | `TOOLCHAIN_VERSION` | The released XIOM toolchain the lessons are verified against |
 | `WASM_VERSION` | Version of the bundled `xiom-wasm_bg.wasm` |
-| `package.json` `version` | Playground app version |
+| `package.json` `version` | Playground app version (independent product line) |
+
+The app version is the playground's own semver, separate from the toolchain
+pin: it started its 1.x line at 1.0.0 on 2026-10-02 and **2.0 is reserved
+for the gamified learning milestone** (achievements, XP, certificates - see
+ROADMAP's "UX / gamification ideas"). Bug fixes ship as patch releases,
+features as minor ones; the pinned toolchain/stdlib/wasm move only when
+their upgrades are absorbed.
 
 `tools/fetch-toolchain.*` downloads the pinned release from
 `https://dl.xiom-lang.org/releases/<tag>/` and verifies the release
-`SHA256SUMS`. `GET /api/version` reports all four values (app, toolchain,
-stdlib, wasm) and the active capability set; the UI reads it at load.
+`SHA256SUMS`. `GET /api/version` reports the app version plus the pinned
+toolchain, stdlib and wasm versions and the active capability set; the UI
+reads it at load and shows `v<app> · toolchain <toolchain>` in the footer.
 
 ## Validation
 

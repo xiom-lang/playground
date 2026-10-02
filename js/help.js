@@ -8,6 +8,14 @@
 
 var XIOM_WHATS_NEW = [
   {
+    date: '2026-10-02',
+    title: 'Playground 1.0',
+    items: [
+      'The playground now has its own version line, shown in the footer: starting at 1.0.0, with 2.0 reserved for the gamified learning update.',
+      'The app version moves independently of the toolchain pin, so playground fixes no longer wait for a compiler release.',
+    ],
+  },
+  {
     date: '2026-09-30',
     title: 'Faster runs, accurate results',
     items: [

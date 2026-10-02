@@ -298,6 +298,14 @@ public benchmark). On the next pin bump:
   produces W001 duplicate-module warnings by then);
 - re-run the package tests (`tools/test-server.js`) and the production
   E2E checks (`xiom.bmp`, `xiom.loss`, the hello/csv example).
+## Product versioning (2026-10-02)
+
+The playground app now versions independently of the toolchain pin:
+`package.json` started a 1.0.0 line (shown in the footer, reported by
+`/api/version` as `server`). **2.0 is reserved for the gamified learning
+milestone below**; 1.x takes patches for fixes and minor releases for
+features. Toolchain/stdlib/wasm stay separately pinned components.
+
 ## UX / gamification ideas (owner, 2026-09-30)
 
 Shipped in this round: a "What's new" dialog (curated `js/help.js`,
