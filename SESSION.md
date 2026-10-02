@@ -1104,3 +1104,16 @@ footer link and `js/help.js`); the suite asserts the markup and script
 (44/0/1 locally). Owner's gamification ideas and a suggested staging are
 captured in ROADMAP "UX / gamification ideas (owner, 2026-09-30)".
 Keep `XIOM_WHATS_NEW` updated whenever a user-visible change ships.
+
+## 21. Playground product versioning: 1.0.0 (2026-10-02)
+
+`package.json` now carries the playground's own semver, independent of the
+toolchain pin: 1.0.0 today (server version, `/api/version` `server`
+field, footer "v1.0.0 · toolchain v0.62.1"), with **2.0 reserved for the
+gamified learning milestone** (ROADMAP "Product versioning" and "UX /
+gamification ideas"). Policy: patch = fixes, minor = features, toolchain
+upgrades do not bump the app line; toolchain/stdlib/wasm stay separately
+pinned and reported alongside. The suite asserts the app version matches
+package.json and is semver; "What's new" gained the 1.0 entry. Verified
+live after the 14:29 UTC deploy: `/api/version` `server: "1.0.0"` and the
+browser-rendered footer `v1.0.0 · toolchain v0.62.1`.
