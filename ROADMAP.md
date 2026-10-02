@@ -298,7 +298,7 @@ public benchmark). On the next pin bump:
   produces W001 duplicate-module warnings by then);
 - re-run the package tests (`tools/test-server.js`) and the production
   E2E checks (`xiom.bmp`, `xiom.loss`, the hello/csv example).
-## Algorithm visualization ("Algorithm Lab") - proposed (owner, 2026-10-02)
+## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Idea: a third mode next to Lessons and the free playground where
 algorithms run as normal XIOM programs, but their execution is shown step
@@ -343,6 +343,50 @@ summarize beyond) and parsed as data only - never interpolated into
 HTML or eval'd. Keep complexity notation optional and one idea per view
 so it stays beginner-friendly.
 
+### What can be visualized
+
+Everything here is pure computation (no stdin), so the Lab is unaffected
+by the C24 blocker. The catalog, grouped by the tier we would ship it in
+- every entry maps to one of a handful of reusable drawing primitives:
+**bars**, **sorted cells + pointers**, **grid**, **graph (nodes/edges)**,
+**tree**, **matrix/table**, **call stack**, **timeline/queue**.
+
+Tier 1 - beginner (v1 candidates; one idea per view):
+
+- Sorting: bubble, insertion, selection (bars; compare/swap events).
+- Searching: linear scan, binary search (sorted bars with lo/mid/hi
+  pointers).
+- Grid traversal: BFS, DFS, flood fill (cells visited/frontier).
+- Data structures: stack push/pop, queue enqueue/dequeue, linked-list
+  traversal (boxes + arrows).
+- Numbers: sieve of Eratosthenes (grid cancellation), Euclid's GCD (two
+  values per step), Collatz trajectory (timeline).
+- Recursion: factorial call stack, Towers of Hanoi (pegs).
+
+Tier 2 - intermediate (v2):
+
+- Sorting: merge (split/merge tree), quick (pivot partitions), heap
+  (tree + backing array), counting/radix (buckets).
+- Pathfinding on weighted grids: Dijkstra, A*; maze generation
+  (randomized DFS/Prim).
+- DP: Fibonacci memo vs tabulation, coin change, knapsack, LCS, edit
+  distance (matrix fill order).
+- Trees: BST insert/search/delete, heapify/extract, trie insert/lookup.
+- Strings: naive and KMP matching, palindrome expansion.
+- Graphs: topological sort, cycle detection, union-find (Kruskal/Prim),
+  Dijkstra over an adjacency list.
+- Greedy: activity selection (timeline), Huffman tree building.
+
+Tier 3 - advanced (v3):
+
+- Graphs: Bellman-Ford relaxation, Floyd-Warshall matrix, Tarjan SCC,
+  max flow (augmenting paths), bipartite matching.
+- Structures: segment tree, Fenwick tree, LRU cache + hash collisions,
+  AVL/red-black rotations (only if they render legibly).
+- Geometry: convex hull (gift wrapping / Graham scan), closest pair.
+- Strings/DP: Rabin-Karp hashing, LIS O(n log n), matrix-chain order,
+  regex NFA simulation.
+
 Open questions: distinct top-level screen vs. a lesson type; pipe fields
 vs. JSON for traces (pipe is cheaper to parse in ES5 and shorter in
 stdout); whether the Lab shares progress/achievements with lessons.
@@ -371,9 +415,21 @@ Once fixed, the playground work is small and already designed:
 
 The playground app now versions independently of the toolchain pin:
 `package.json` started a 1.0.0 line (shown in the footer, reported by
-`/api/version` as `server`). **2.0 is reserved for the gamified learning
-milestone below**; 1.x takes patches for fixes and minor releases for
-features. Toolchain/stdlib/wasm stay separately pinned components.
+`/api/version` as `server`). 1.x takes patches for fixes and minor
+releases for features. Toolchain/stdlib/wasm stay separately pinned
+components.
+
+**The 2.0 phase is the "Learning Experience" release** and groups the two
+owner-approved workstreams:
+
+1. **Gamified learning** - achievements/XP, visible completion, optional
+   certificate (see "UX / gamification ideas").
+2. **Algorithm Lab** - step-by-step visualizations of the algorithms the
+   lessons teach, driven by real program traces (see "Algorithm Lab").
+
+Both are planned as separate tranches under the same 2.0 milestone; the
+version is bumped when the first of them ships (minor bumps for partial
+landings, 2.0.0 when both are in).
 
 ## UX / gamification ideas (owner, 2026-09-30)
 

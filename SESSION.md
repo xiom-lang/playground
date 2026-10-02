@@ -1169,3 +1169,15 @@ watch. Full design, staging (v1 sorting -> v2 pathfinding -> v3
 structures/recursion) and constraints are in ROADMAP "Algorithm
 visualization". Status: proposed, awaiting owner go-ahead before any
 implementation; not started.
+
+## 24. Algorithm Lab approved for the 2.0 phase (2026-10-02)
+
+Owner approved the Algorithm Lab and asked for it to be planned under the
+**2.0 "Learning Experience" phase** together with gamification. The
+roadmap now defines 2.0 as both workstreams (version bumps when the first
+ships, 2.0.0 when both are in) and carries the full algorithm catalog
+grouped in three tiers, each entry mapped to one of the reusable drawing
+primitives (bars, cells+pointers, grid, graph, tree, matrix, call stack,
+timeline). All candidates are pure computation, so the Lab is unaffected
+by the C24 stdin blocker. Status: approved, not started; v1 = trace
+protocol + sorting/searching/grid basics.
