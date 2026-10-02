@@ -1,10 +1,112 @@
 # XIOM Playground -- Roadmap
 
-Status as of 2026-09-25. The audit (`AUDIT.md`) is fully implemented for this
-repository; only cross-repo compiler/stdlib findings remain (C1-C17). This
+Status as of 2026-10-02. The audit (`AUDIT.md`) is fully implemented for this
+repository; only cross-repo compiler/stdlib findings remain (C1-C24). This
 roadmap covers the product work agreed for the playground.
 
 Legend: `[ ]` todo, `[~]` in progress, `[x]` done.
+
+## Release phase plan (2026-10-02)
+
+The playground versions independently of the toolchain pin (see "Product
+versioning"). This is the ordered plan with every open item folded in;
+the sections below hold the detailed specs.
+
+### 1.0.x -- maintenance (now)
+
+- Patches for fixes and docs; production hygiene.
+- Compiler follow-ups are **with the compiler lane**: C23 (-O2
+  miscompile) and C24 (stdin) are expected in the next toolchain release
+  (v0.62.2). The playground absorbs the pin when it ships (see "v0.62.2
+  tracking" and `tools/compiler-repros/`).
+
+### 1.1.0 -- input + toolchain refresh (blocked on v0.62.2)
+
+- Absorb v0.62.2: `tools/compiler-repros/c23/run.sh` must print
+  `C23 present: no`; delete `packages.stageForRun`; re-run the package
+  tests and the full gate.
+- Wire stdin end-to-end: `/api/compile` gains a bounded `stdin` field,
+  the run panel gains an Input box, lessons gain `sample_input` used by
+  the audit and expected-output generator (runner support already
+  exists).
+- First input lesson (`read_line`/`read_int`) plus practice exercises.
+- Acceptance: an input lesson runs and auto-validates in the playground.
+
+### 2.0.0 -- Algorithm Lab (the visualization release)
+
+- Split player: code + visualization, executing-line highlight via
+  `// @step` annotations; play/pause/step/speed; reduced-motion.
+- Trace protocol v1 and the drawing primitives (bars, cells+pointers,
+  grid, graph, tree, matrix, call stack, timeline).
+- Tier 1 algorithms: bubble/insertion/selection, linear/binary search,
+  BFS/DFS/flood fill, stack/queue/linked list, sieve/GCD/Collatz,
+  factorial/Hanoi.
+- Compare mode: two panes, one shared clock by steps-per-second,
+  desktop side by side / mobile stacked, per-pane counters.
+- Acceptance: every Lab algorithm animates from its real program's
+  trace, the highlight follows the steps, compare races honestly.
+
+### 2.1.0 -- Lab expansion
+
+- Tier 2 algorithms: merge/quick/heap/counting/radix sort; Dijkstra,
+  A*, maze generation; DP (knapsack, LCS, edit distance, coin change);
+  BST/heap/trie; KMP; topological sort, cycle detection, union-find
+  (Kruskal/Prim); activity selection; Huffman.
+
+### 2.2.0 -- Gamified learning
+
+- Visible completion (level rings/percentages on the landing), light
+  "lesson complete" transitions.
+- Achievements/XP derived from progress (local-first, synced through the
+  existing progress documents), validation surfacing with a delayed
+  reference-solution reveal, graduation certificate (client-side).
+- Guardrails: works signed out, no streak/timer pressure, accessible.
+
+### 2.3.0 -- Lab advanced
+
+- Tier 3 algorithms: Bellman-Ford, Floyd-Warshall, Tarjan SCC, max
+  flow, bipartite matching; segment tree, Fenwick, LRU/hash collisions;
+  convex hull, closest pair; Rabin-Karp, LIS O(n log n), matrix chain,
+  regex NFA.
+- Compare presets across all tiers.
+
+### 3.0 -- future (unscoped)
+
+- Ideas beyond the above (community challenges, shareable profiles,
+  any new owner direction). Not planned yet.
+
+## Graphics needed (for the designer, 2026-10-02)
+
+Two sets, phase-tagged. Preferences: SVG first (scalable, themeable);
+PNG only where noted. Flat geometric style matching the XIOM wordmark,
+indigo accent (#5C6BFF) on transparent, no embedded text, readable on
+both light and dark themes, consistent stroke weight across a set.
+
+**2.0 -- Algorithm Lab (12 assets)**
+
+1-8. Category icons, 24x24 SVG, single color (`currentColor`): sorting
+     (bars), searching (lens over cells), pathfinding (grid + path),
+     graph (nodes/edges), tree (binary tree), dynamic programming
+     (matrix fill), strings (pattern over text), call stack (frames).
+9.   Lab hero/empty-state illustration, 800x500, transparent: an
+     abstract "algorithm running" scene (bars and paths in motion).
+10.  Compare-mode illustration, 800x500: two panels racing.
+11.  Landing feature-card illustration for the Lab, 640x400.
+12.  Social/OG image for the 2.0 launch, 1200x630 PNG, with clear space
+     for a title.
+
+**2.2 -- Gamification (23 assets)**
+
+13-24. Achievement badges, 12 x 512x512 PNG + SVG source: first program
+       run, first lesson, level 0 complete, first loop, contract
+       violation caught, 10 lessons, 50 lessons, all lessons,
+       first Lab visualization, first compare, package used, sandbox
+       explorer (final list can be tuned when the phase starts).
+25-33. Level emblems, 9 x 512x512 (one per lesson level, L0-L8),
+       matching the level themes.
+34.  Graduation certificate design, A4 landscape, print-ready
+     (SVG or PDF).
+35.  Certificate seal/emblem.
 
 ## Phase A -- Learning experience (this repository)
 
@@ -103,7 +205,7 @@ concern or waits for a future accounts service.
     for users or carries a session; cross-property SSO is a post-beta
     decision (shared cookie on the common domain or a dedicated accounts
     service).
-- [ ] C3. Package examples that run
+- [x] C3. Package examples that run (delivered 2026-09-29; see "C3 status")
   - "Open in playground" only for examples whose code is stdlib-only and
     sandbox-compatible; unblocks when the first real `xiom.*` packages are
     published (compiler/stdlib release integration). Registry checked
@@ -451,19 +553,14 @@ The playground app now versions independently of the toolchain pin:
 releases for features. Toolchain/stdlib/wasm stay separately pinned
 components.
 
-**The 2.0 phase is the "Learning Experience" release** and groups the two
-owner-approved workstreams:
+**The 2.0.0 release is the Algorithm Lab** - the visualization feature
+(split player, line highlight, Tier 1 algorithms, compare mode; see
+"Algorithm Lab"). Gamified learning follows in **2.2.0** ("UX /
+gamification ideas"), and the Lab expands in 2.1.0/2.3.0. The full
+ordered plan is the "Release phase plan" above; partial landings bump the
+minor, the feature-complete Lab lands as 2.0.0.
 
-1. **Gamified learning** - achievements/XP, visible completion, optional
-   certificate (see "UX / gamification ideas").
-2. **Algorithm Lab** - step-by-step visualizations of the algorithms the
-   lessons teach, driven by real program traces (see "Algorithm Lab").
-
-Both are planned as separate tranches under the same 2.0 milestone; the
-version is bumped when the first of them ships (minor bumps for partial
-landings, 2.0.0 when both are in).
-
-## UX / gamification ideas (owner, 2026-09-30)
+## UX / gamification ideas (2.2.0 phase, owner 2026-09-30)
 
 Shipped in this round: a "What's new" dialog (curated `js/help.js`,
 entry points in the header Help menu and the landing footer) and a

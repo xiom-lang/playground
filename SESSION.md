@@ -1191,3 +1191,22 @@ with two panes (desktop side by side, mobile stacked) running presets
 from one shared clock at the same steps-per-second, since step counts
 differ by design. Compare mode is the first v2 increment; v1 ships the
 split player + highlight with sorting.
+
+## 25. Release phase plan + graphics request (2026-10-02)
+
+Owner set the phase order: **2.0.0 is the Algorithm Lab** (the
+visualization release), not the last item. ROADMAP now opens with a
+"Release phase plan" covering every open item: 1.0.x maintenance (C23/C24
+with the compiler lane, expected in v0.62.2) -> 1.1.0 input lessons +
+toolchain refresh -> 2.0.0 Algorithm Lab (split player + highlight +
+comparison mode) -> 2.1.0 Lab expansion (Tier 2) -> 2.2.0 gamification
+-> 2.3.0 Lab advanced (Tier 3) -> 3.0 future/unscoped. README and the
+Product versioning section were aligned (2.0 = Lab, gamification = 2.2).
+
+A "Graphics needed" section lists the designer request in two sets:
+12 assets for 2.0 (8 category icons 24x24 SVG, Lab hero 800x500,
+compare illustration 800x500, landing feature-card 640x400, OG image
+1200x630 PNG) and 23 for 2.2 (12 achievement badges 512x512 + SVG,
+9 level emblems 512x512, A4-landscape certificate + seal). Style brief:
+flat geometric, indigo #5C6BFF on transparent, no embedded text,
+readable on both themes, consistent stroke weight.

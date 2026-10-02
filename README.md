@@ -66,11 +66,12 @@ health checks stay responsive while a submission compiles.
 | `package.json` `version` | Playground app version (independent product line) |
 
 The app version is the playground's own semver, separate from the toolchain
-pin: it started its 1.x line at 1.0.0 on 2026-10-02 and **2.0 is the
-"Learning Experience" phase** - gamified learning (achievements, XP,
-certificates) plus the Algorithm Lab visualizations (see ROADMAP). Bug
-fixes ship as patch releases, features as minor ones; the pinned
-toolchain/stdlib/wasm move only when their upgrades are absorbed.
+pin: it started its 1.x line at 1.0.0 on 2026-10-02. **2.0.0 is the
+Algorithm Lab** - the step-by-step visualization feature - with input
+lessons in 1.1.0, the Lab expansion in 2.1.0 and gamified learning in
+2.2.0 (see ROADMAP's "Release phase plan"). Bug fixes ship as patch
+releases, features as minor ones; the pinned toolchain/stdlib/wasm move
+only when their upgrades are absorbed.
 
 `tools/fetch-toolchain.*` downloads the pinned release from
 `https://dl.xiom-lang.org/releases/<tag>/` and verifies the release
