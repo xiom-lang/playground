@@ -312,13 +312,16 @@ stdout, so the lesson program itself can emit a compact, deterministic
 trace and the frontend replays it:
 
 1. The algorithm is a normal, runnable XIOM program that prints one
-   line per event (e.g. `v1|swap|i=0|j=1`, `v1|visit|x=3|y=7`). Nothing
-   pre-baked: the animation is always derived from the real program's
-   output, and users can edit and re-run the code they are watching.
-2. The frontend parses the trace and replays it with CSS transitions /
-   canvas at a chosen speed, with play/pause, step forward/back, reset
-   and a speed slider (step mode also satisfies reduced-motion and makes
-   "why did it do that?" replayable).
+   line per event (e.g. `v1|swap|i=0|j=1|step=swap`,
+   `v1|visit|x=3|y=7|step=visit`); the `step` name ties the event to the
+   annotated source line for the highlight. Nothing pre-baked: the
+   animation is always derived from the real program's output, and users
+   can edit and re-run the code they are watching.
+2. The frontend parses the trace and replays it in a **split view** -
+   code on one side, visualization on the other - with play/pause, step
+   forward/back, reset and a speed slider, and the **executing line(s)
+   highlighted** in step (step mode also satisfies reduced-motion and
+   makes "why did it do that?" replayable). See "Player" below.
 3. Each entry carries a small visualizer spec mapping event types to
    drawing (bars, grid, pointers, call stack). The lesson catalog,
    Monaco editor, run pipeline and expected-output checks are reused;
@@ -328,13 +331,42 @@ trace and the frontend replays it:
 Staging:
 
 - **v1 - Sorting Lab**: bubble/insertion/selection over 8-16 bars, trace
-  protocol v1 (`init|compare|swap|set|done`), player controls, keyboard
-  stepping, `prefers-reduced-motion`, both themes.
-- **v2 - Pathfinding**: small grid (BFS/DFS, then Dijkstra with
-  weights), user-drawn walls, visit/backtrack/frontier events.
+  protocol v1 (`init|compare|swap|set|done`), split view with the
+  executing-line highlight, player controls, keyboard stepping,
+  `prefers-reduced-motion`, both themes.
+- **v2 - Compare mode first, then Pathfinding**: the two-pane compare
+  player (below) with sorting presets, then a grid (BFS/DFS, then
+  Dijkstra with weights), user-drawn walls, visit/backtrack/frontier
+  events.
 - **v3 - Structures + recursion**: stack/queue/linked list, parenthesis
-  matching, binary search, recursion trees (factorial, Hanoi); later a
-  side-by-side "compare two algorithms" view.
+  matching, binary search, recursion trees (factorial, Hanoi), with
+  compare presets across all previous tiers.
+
+### Player: split screen + executing-line highlight (v1 requirement)
+
+The Lab player is a split view: the code (Monaco, editable) on one side,
+the visualization on the other, responsive (mobile stacks them with the
+code pane collapsible and sticky step controls). The line(s) that
+produced the current step follow the trace.
+
+The mapping is **annotation-driven, so no compiler support is needed**:
+trace-emitting lines carry a `// @step <name>` comment, trace events
+carry that name, and the client highlights the annotated line(s) with a
+Monaco decoration as it replays. Lesson tooling validates that every step
+name emitted by the expected trace has an annotation, so renames cannot
+silently break the highlight; algorithms without annotations still
+visualize, just without the code follow-along.
+
+### Compare mode (first v2 increment)
+
+Two players load presets from the catalog (e.g. bubble vs quick) and run
+from **one shared clock at the same steps-per-second**, so the faster
+algorithm visibly finishes first; per-pane counters (steps, compares,
+swaps) and a combined result line make the difference concrete. Desktop:
+side by side; mobile: stacked with a pane switcher. Each pane keeps its
+own code (highlight included) and can be swapped to another preset via a
+dropdown. Step counts differ by design, so synchronization is by rate,
+not by index - that is the teaching point, not a bug to paper over.
 
 Constraints and guardrails: zero-dependency ES5 frontend (DOM/canvas
 only, no bundlers), ASCII docs, accessible controls (ARIA labels, no

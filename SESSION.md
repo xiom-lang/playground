@@ -1181,3 +1181,13 @@ primitives (bars, cells+pointers, grid, graph, tree, matrix, call stack,
 timeline). All candidates are pure computation, so the Lab is unaffected
 by the C24 stdin blocker. Status: approved, not started; v1 = trace
 protocol + sorting/searching/grid basics.
+
+Owner additions to the Algorithm Lab (2026-10-02, recorded in ROADMAP):
+the player must be split-screen with the executing line(s) highlighted as
+steps advance (annotation-driven `// @step <name>` mapping in the source;
+the trace carries `step=<name>`; tooling validates annotations against the
+expected trace - no compiler support needed), and a later compare mode
+with two panes (desktop side by side, mobile stacked) running presets
+from one shared clock at the same steps-per-second, since step counts
+differ by design. Compare mode is the first v2 increment; v1 ships the
+split player + highlight with sorting.
