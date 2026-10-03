@@ -13,13 +13,17 @@ var serverInfo = null;
 function showLanding() {
   document.getElementById('landing').classList.remove('hidden');
   document.getElementById('lessonsScreen').classList.add('hidden');
+  document.getElementById('labScreen').classList.add('hidden');
+  if (window.labLeave) window.labLeave();
   if (window.checkLastProgress) window.checkLastProgress();
 }
 
 function startLearning() {
   document.getElementById('landing').classList.add('hidden');
+  document.getElementById('labScreen').classList.add('hidden');
   document.getElementById('lessonsScreen').classList.remove('hidden');
   document.getElementById('lessonsScreen').classList.remove('sidebar-hidden');
+  if (window.labLeave) window.labLeave();
   if (window.loadLessonCatalog) {
     window.loadLessonCatalog();
   }
@@ -39,9 +43,11 @@ function toggleSidebar() {
 
 function openFreePlay() {
   document.getElementById('landing').classList.add('hidden');
+  document.getElementById('labScreen').classList.add('hidden');
   var screen = document.getElementById('lessonsScreen');
   screen.classList.add('sidebar-hidden');
   screen.classList.remove('hidden');
+  if (window.labLeave) window.labLeave();
   if (!window.editor && window.initLessonsEditor) {
     window.initLessonsEditor();
   } else if (window.editor) {
@@ -633,6 +639,7 @@ function toggleEditorTheme() {
   overlay.textContent = currentAppTheme === 'dark' ? '\uD83C\uDF19 Dark mode' : '\u2600\uFE0F Light mode';
   overlay.style.opacity = '1';
   setTimeout(function () { overlay.style.opacity = '0'; }, 1200);
+  if (window.labOnThemeChange) window.labOnThemeChange();
 }
 
 function updateThemeButtons() {

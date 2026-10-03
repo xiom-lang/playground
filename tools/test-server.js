@@ -29,6 +29,7 @@ const {
   LAB_TRACE_MAX_EVENTS,
 } = require('../js/lab-trace');
 const { createLabPlayer } = require('../js/lab-player');
+const { labVizCreate, labVizApply, labVizSupportedTypes } = require('../js/lab-viz');
 
 const PORT = 3400 + Math.floor(Math.random() * 200);
 const HOST = '127.0.0.1';
@@ -473,11 +474,13 @@ async function main() {
       assert.strictEqual(player.getState().status, 'ready');
       player.play();
       assert.strictEqual(player.getState().status, 'playing');
-      now = 250;
-      assert.strictEqual(player.tick(now), 2);
-      assert.strictEqual(player.getState().index, 2);
+      now = 100;
+      assert.strictEqual(player.tick(now), 0, 'the first tick adopts its clock');
       now = 350;
-      assert.strictEqual(player.tick(now), 1);
+      assert.strictEqual(player.tick(now), 2, '250ms at 10 steps/s is two steps');
+      assert.strictEqual(player.getState().index, 2);
+      now = 400;
+      assert.strictEqual(player.tick(now), 1, 'the partial 50ms must not be lost');
       assert.strictEqual(player.getState().status, 'done');
       assert.strictEqual(player.tick(now + 1000), 0, 'a finished player does not advance');
     });
@@ -534,6 +537,38 @@ async function main() {
       assert.strictEqual(player.setSpeed(1000), 64);
       assert.strictEqual(player.setSpeed(0), 1);
       assert.strictEqual(player.setSpeed(12.6), 13);
+    });
+
+    ok('lab viz applies bar events and covers every view type', () => {
+      const renderer = labVizCreate({ type: 'bars' });
+      labVizApply(renderer, { event: 'init', fields: { vals: '5,3,8' }, step: 'init' });
+      assert.deepStrictEqual(renderer.state.values, [5, 3, 8]);
+      labVizApply(renderer, { event: 'swap', fields: { i: '0', j: '1' }, step: 'swap' });
+      assert.deepStrictEqual(renderer.state.values, [3, 5, 8]);
+      labVizApply(renderer, { event: 'mark', fields: { i: '2', role: 'sorted' }, step: 'sorted' });
+      assert.strictEqual(renderer.state.roles[2], 'sorted');
+
+      const supported = labVizSupportedTypes();
+      const index = JSON.parse(fs.readFileSync(path.join(REPO, 'lessons', 'lab', 'index.json'), 'utf8'));
+      for (const category of index.categories) {
+        for (const entry of category.entries) {
+          assert.ok(supported.indexOf(entry.view.type) >= 0, entry.id + ' uses unsupported view ' + entry.view.type);
+        }
+      }
+    });
+
+    await okAsync('the Lab screen and player ship in the app shell', async () => {
+      const page = await request('GET', '/index.html');
+      for (const marker of ['labScreen', 'labCanvasA', 'labCanvasB', 'labCompareToggle', 'labPlay', 'labStepBack', 'labStepFwd', 'labReset', 'labScrub', 'openLab()']) {
+        assert.ok(page.body.indexOf(marker) >= 0, marker + ' missing from index.html');
+      }
+      for (const asset of ['js/lab-trace.js', 'js/lab-player.js', 'js/lab-viz.js', 'js/lab.js', 'css/lab.css']) {
+        const res = await request('GET', '/' + asset);
+        assert.strictEqual(res.status, 200, asset + ' should be served');
+      }
+      const labJs = await request('GET', '/js/lab.js');
+      assert.ok(labJs.body.indexOf('createDecorationsCollection') >= 0, 'line highlight must use Monaco decorations');
+      assert.ok(labJs.body.indexOf('lab-step-line') >= 0, 'decoration class missing');
     });
 
     await okAsync('GET /lessons/lab/index.json serves the Lab catalog', async () => {

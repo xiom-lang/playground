@@ -40,6 +40,9 @@ jobs:
           mkdir -p /tmp/xiom-home
           node tools/verify-sandbox.js --sandbox sandbox/xiom-sandbox --toolchain /tmp/xiom-toolchain --require-net
 
+      - name: Lesson catalog is current
+        run: node tools/generate-index.js --check
+
       - name: Stdlib reference is current
         run: node tools/generate-stdlib-ref.js --check
 

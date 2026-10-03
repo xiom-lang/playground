@@ -1,8 +1,9 @@
 # XIOM Playground -- Roadmap
 
-Status as of 2026-10-02. The audit (`AUDIT.md`) is fully implemented for this
-repository; only cross-repo compiler/stdlib findings remain (C1-C24). This
-roadmap covers the product work agreed for the playground.
+Status as of 2026-10-04. The audit (`AUDIT.md`) is fully implemented for this
+repository; only cross-repo compiler/stdlib findings remain (C1-C25). The
+roadmap covers the product work agreed for the playground. **2.0.0 Algorithm
+Lab is complete** (see AUDIT 34).
 
 Legend: `[ ]` todo, `[~]` in progress, `[x]` done.
 
@@ -39,19 +40,29 @@ the sections below hold the detailed specs.
   empty HOME until it ships; delete that workaround then
   (`tools/compiler-repros/c25/run.sh` must print `C25 fixed: yes`).
 
-### 2.0.0 -- Algorithm Lab (the visualization release)
+### 2.0.0 -- Algorithm Lab (COMPLETE 2026-10-04)
 
-- Split player: code + visualization, executing-line highlight via
-  `// @step` annotations; play/pause/step/speed; reduced-motion.
-- Trace protocol v1 and the drawing primitives (bars, cells+pointers,
-  grid, graph, tree, matrix, call stack, timeline).
-- Tier 1 algorithms: bubble/insertion/selection, linear/binary search,
-  BFS/DFS/flood fill, stack/queue/linked list, sieve/GCD/Collatz,
-  factorial/Hanoi.
-- Compare mode: two panes, one shared clock by steps-per-second,
-  desktop side by side / mobile stacked, per-pane counters.
-- Acceptance: every Lab algorithm animates from its real program's
-  trace, the highlight follows the steps, compare races honestly.
+- [x] Split player: code + visualization, executing-line highlight via
+  `// @step` annotations; play/pause/step/speed; reduced-motion (no
+  autoplay, transitions off).
+- [x] Trace protocol v1 (`docs/LAB_PROTOCOL.md`) and all eight drawing
+  primitives (bars, cells+pointers, grid, graph, tree, matrix, call stack,
+  timeline) in `js/lab-viz.js`.
+- [x] Tier 1 algorithms: 16 real runnable programs under
+  `lessons/lab/programs/` (bubble/insertion/selection, linear/binary
+  search, BFS/DFS/flood fill, stack/queue/linked list, sieve/GCD/Collatz,
+  factorial/Hanoi), catalog generated from the manifest.
+- [x] Compare mode: two panes, one shared clock by steps-per-second
+  (sync by rate, not index), per-pane counters, desktop side by side /
+  mobile stacked.
+- [x] Acceptance (AUDIT 34): every Lab algorithm animates from its real
+  program's trace (16/16 audit-clean, deterministic across runs), the
+  highlight follows the steps (headless Edge: step 6 `swap` -> source
+  line 35), compare races honestly (11 vs 12 steps on one clock),
+  both themes, mobile stacking, keyboard stepping and reduced motion
+  verified in the browser.
+- App version bumped to **2.0.0**; catalogs regenerated (`lessons/index.json`,
+  `lessons/lab/index.json`).
 
 ### 2.1.0 -- Lab expansion
 
@@ -435,6 +446,11 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   `C25 fixed: yes`, and re-run the stdin suite test and the L1-51 audit
   (AUDIT 33.7).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
+
+Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;
+protocol reference: `docs/LAB_PROTOCOL.md`). This section is the original
+design and stays as reference; the 2.1.0 entry in the phase plan lists what
+comes next.
 
 Idea: a third mode next to Lessons and the free playground where
 algorithms run as normal XIOM programs, but their execution is shown step

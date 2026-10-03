@@ -1,22 +1,20 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-03 (v0.62.3 absorbed; program input / 1.1.0
-complete and live; C23/C24/C25 fixed upstream). Branch `main` at/after
-`d23a907`, working tree clean, all commits pushed to `origin/main`; CI
-green (Validate + CodeQL). Production runs **playground 1.0.0** +
-**toolchain v0.62.3** (stdlib 0.62.0, wasm v0.62.3,
+Last updated: 2026-10-04 (**2.0.0 Algorithm Lab complete** and released).
+Branch `main` at/after `e0f9ab5`, working tree clean, all commits pushed to
+`origin/main`; CI green (Validate + CodeQL). Production runs **playground
+2.0.0** + **toolchain v0.62.3** (stdlib 0.62.0, wasm v0.62.3,
 `capabilities.format: true`) with P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the
 repo-pinned VPS deploy (option C). Security P0-P3 fully closed. All
-previous tranches are complete: Phase E sweep, B1-B5, C3, the range
-cleanup, the v0.62.3 absorption (C23 + C24 verified; C22 bridge deleted)
-and **1.1.0 program input** (stdin end-to-end, lesson L1-51, 412
-lessons). C25 is fixed upstream (`3bc59dbc`, next release) and the
-fresh-HOME workaround is queued for removal at that pin bump. The next
-milestone is **2.0.0 - Algorithm Lab**, approved and designed; it starts
-on the owner's go-ahead. Handoff detail and the ready-to-paste
-next-session prompt: section 27.
+previous tranches are complete, including the **2.0.0 Algorithm Lab**
+(trace protocol v1, eight primitives, 16 Tier 1 programs, split player
+with `// @step` highlight, compare mode; AUDIT 34). C25 is fixed upstream
+(`3bc59dbc`, next release) and the fresh-HOME workaround is queued for
+removal at that pin bump. The next milestone is **2.1.0 - Lab expansion**
+(Tier 2 algorithms), pending the owner's go-ahead. Handoff detail and the
+ready-to-paste next-session prompt: section 28.
 Read with `ROADMAP.md` (phase plan + specs), `AUDIT.md` (findings and
 verification records), `README.md` and `DEPLOY.md`.
 
@@ -1305,7 +1303,7 @@ fresh-HOME workaround in `server.js`, `tools/lesson-audit.js` and
 `c25/run.sh` -> `C25 fixed: yes`, and re-run the stdin suite test and the
 L1-51 audit. Tracked in ROADMAP.
 
-## 27. Handoff 2026-10-03 (current) -- next-session prompt
+## 27. Handoff 2026-10-03 (historical -- executed) -- next-session prompt
 
 ### State
 
@@ -1404,6 +1402,97 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
    removal + `c25/run.sh` acceptance + re-run input tests (Task 2 above).
 2. 2.0.0 Algorithm Lab v1 as scoped (Task 1 above); keep the trace protocol
    pipe-delimited, the highlight annotation-driven, and compare sync by rate.
+3. Optional C20: if the compiler lane fixes module-local type identity,
+   L6-10/L6-15 prose can pass structs across modules again.
+4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style
+   brief for 2.0 (12 assets) and 2.2 (23 assets).
+
+## 28. Handoff 2026-10-04 (current) -- next-session prompt
+
+### State
+
+- Playground **2.0.0** (`package.json`), toolchain/wasm **v0.62.3**,
+  **412 lessons** + **16 Lab programs**, production live and verified
+  (health green, sandbox `require`/ABI 4, packages 352).
+- Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
+  (`docs/LAB_PROTOCOL.md`), parser and player (`js/lab-trace.js`,
+  `js/lab-player.js`), eight canvas primitives (`js/lab-viz.js`), the Lab
+  screen (`js/lab.js`, `#labScreen`, `css/lab.css`), catalog tooling
+  (`tools/generate-lab-index.js`, `tools/lab-audit.js`), 16 Tier 1
+  programs audit-clean on v0.62.3, browser-verified via headless Edge
+  (highlight follows, compare, themes, mobile, keyboard, reduced motion).
+  Details: AUDIT 34.
+- Compiler findings: C20 (module type identity; open, optional), C25
+  (fixed upstream `3bc59dbc`, ships next release; the fresh-HOME
+  workaround is still in place).
+- Waiting on: the next toolchain release (remove the C25 workaround at
+  that pin bump); owner go-ahead for **2.1.0 Lab expansion**; designer
+  assets (ROADMAP "Graphics needed" - 12 for 2.0, 23 for 2.2).
+- Verification/records: AUDIT 34 (2.0.0), AUDIT 33.3-33.7 (C22-C25,
+  absorption, input), SESSION 18-27, ROADMAP phase plan.
+
+### Next-session prompt (paste-ready)
+
+```text
+You are the playground session for xiom-lang/playground at E:\xiom-lang\playground.
+
+Read SESSION.md section 28 (handoff + this prompt), ROADMAP.md ("Release phase
+plan", "Algorithm Lab", "Graphics needed", "v0.62.3 tracking"), AUDIT.md
+sections 33.3-33.7 and 34, then verify state first: git fetch; tree clean;
+HEAD == origin/main (expect at/after e0f9ab5); run the section 8 gate; curl
+https://playground.xiom-lang.org/api/version (expect playground 2.0.0,
+toolchain v0.62.3, wasm v0.62.3) and /api/health (sandbox.mode=require,
+landlock 4, abuse:ok, packages.bundlePackages ~352). Also open the Lab once
+(https://playground.xiom-lang.org/, Algorithm Lab) and confirm a trace plays.
+
+Task 1 (primary, on owner go-ahead) - 2.1.0 Lab expansion (Tier 2):
+  add real trace programs + entries for merge/quick/heap/counting/radix
+  sort; Dijkstra, A*, maze generation; knapsack, LCS, edit distance, coin
+  change; BST, heap, trie; KMP; topological sort, cycle detection,
+  union-find (Kruskal/Prim); activity selection; Huffman. Reuse protocol v1
+  and the existing primitives (graph/tree/matrix finally carry the
+  algorithmic load); extend primitives only where a program needs it.
+  Same workflow: manifest + programs, audit twice on the pin, tests,
+  browser verification, docs.
+
+Task 2 (only if the next toolchain release exists and contains 3bc59dbc):
+  absorb it - bump TOOLCHAIN_VERSION/WASM_VERSION, fetch through the dl
+  mirror, run tools/compiler-repros/c25/run.sh (expect "C25 fixed: yes"),
+  delete the fresh-HOME workaround (server.js run path, tools/lesson-audit.js,
+  tools/generate-expected-outputs.js native + WSL worker), re-run the stdin
+  suite test and the L1-51 audit, and record the absorption.
+
+Per tranche: implement; verify execution on Linux/WSL and UI in a real
+browser; update ROADMAP/AUDIT/SESSION; run the full gate (node --check,
+tools/test-server.js, generator --checks, lab-audit, lesson-audit
+--check-only, plus execution audits where relevant); commit -s with a
+conventional message; push origin main (never force); verify HEAD ==
+origin/main and CI green; production deploys by the hourly VPS pull at
+minute 29.
+
+Constraints unchanged: zero-dependency Node tools and ES5 frontend; no
+bundlers; both themes; ASCII docs; never edit .kilo/ worktrees; never weaken
+the container sandbox; do not edit compiler/ops/registry/website repos (relay
+requests to the owner); never hand-edit generated JSONs (js/stdlib-ref.json,
+js/limitations.json, tools/lesson-baseline.json, tools/expected-output-skips.json,
+lessons/lab/index.json, lessons/lab/entries/*); main must stay deployable.
+
+Environment: Windows .toolchain is v0.62.3; the Linux sweep/audit toolchain
+is /home/lefteris/xiom_v0623/tc in WSL (node at
+/home/lefteris/node-v22.23.2-linux-x64/bin); the WSL default distro is
+docker-desktop, so every command must use `wsl -d Ubuntu -e bash -lc ...`;
+lab-audit on Windows: `node tools/lab-audit.js --wsl --wsl-toolchain
+/home/lefteris/xiom_v0623/tc`; WSL /tmp is wiped between invocations;
+lesson-audit check-only takes ~20-25 min and can intermittently crash under
+load (re-run); browser verification uses headless Edge ("C:\Program Files
+(x86)\Microsoft\Edge\Application\msedge.exe") driven over the DevTools
+protocol from a zero-dep Node script (Monaco loads from the CDN).
+
+### Follow-up checklist
+
+1. 2.1.0 Lab expansion on owner go-ahead (Task 1 above).
+2. Next toolchain release: pin bump + C25 workaround removal + c25/run.sh
+   acceptance + re-run input tests (Task 2 above).
 3. Optional C20: if the compiler lane fixes module-local type identity,
    L6-10/L6-15 prose can pass structs across modules again.
 4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style

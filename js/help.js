@@ -8,6 +8,15 @@
 
 var XIOM_WHATS_NEW = [
   {
+    date: '2026-10-04',
+    title: 'Algorithm Lab (2.0)',
+    items: [
+      'New Algorithm Lab: watch real XIOM programs run step by step - bars swapping, mazes flooding, call stacks growing - with the executing line highlighted in the source.',
+      'Compare mode races two algorithms on one shared clock, with per-pane counters for steps, compares and swaps.',
+      'Play, step forward/back, scrub and speed control; keyboard shortcuts (Space, arrows, R); works on mobile and respects reduced motion.',
+    ],
+  },
+  {
     date: '2026-10-02',
     title: 'Playground 1.0',
     items: [

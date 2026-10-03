@@ -1,10 +1,18 @@
 // Copyright (c) 2026 Eleftherios Notas and The XIOM Authors
 // SPDX-License-Identifier: MIT OR Apache-2.0
+/**
+ * Generate lessons/index.json from the lesson files.
+ *
+ * Usage:
+ *   node tools/generate-index.js           # write
+ *   node tools/generate-index.js --check   # assert the catalog is current
+ */
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
 
+const CHECK = process.argv.includes('--check');
 const LESSONS_DIR = path.join(__dirname, '..', 'lessons');
 const INDEX_FILE = path.join(LESSONS_DIR, 'index.json');
 
@@ -59,11 +67,22 @@ function buildIndex(lessons) {
 }
 
 // -- Main --
+const index = buildIndex(collectLessons());
+const text = JSON.stringify(index, null, 2) + '\n';
+
+if (CHECK) {
+  const current = fs.existsSync(INDEX_FILE) ? fs.readFileSync(INDEX_FILE, 'utf-8').replace(/\r\n/g, '\n') : null;
+  if (current !== text) {
+    console.error('lessons/index.json is stale; run: node tools/generate-index.js');
+    process.exit(1);
+  }
+  console.log('lessons/index.json is up to date (' + index.total_lessons + ' lessons).');
+  process.exit(0);
+}
+
 console.log('\x1b[36m\x1b[1mXIOM Index Generator v' + require('../package.json').version + '\x1b[0m');
-const lessons = collectLessons();
-console.log(`Found \x1b[32m${lessons.length}\x1b[0m lessons across \x1b[32m${new Set(lessons.map(l => l.level)).size}\x1b[0m levels.`);
-const index = buildIndex(lessons);
-fs.writeFileSync(INDEX_FILE, JSON.stringify(index, null, 2), 'utf-8');
+console.log(`Found \x1b[32m${index.total_lessons}\x1b[0m lessons across \x1b[32m${new Set(index.levels.map(l => l.id)).size}\x1b[0m levels.`);
+fs.writeFileSync(INDEX_FILE, text, 'utf-8');
 console.log(`Wrote \x1b[32mindex.json\x1b[0m with \x1b[32m${index.total_lessons}\x1b[0m lessons.\n`);
 for (const level of index.levels) {
   console.log(`  \x1b[36m${level.id}\x1b[0m ${level.icon} ${level.name}: \x1b[32m${level.lessons.length}\x1b[0m`);

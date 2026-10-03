@@ -1,22 +1,24 @@
 {
-  "version": "0.49.9",
+  "version": "2.0.0",
   "total_lessons": 412,
   "levels": [
     {
       "id": "L0",
       "name": "First Steps",
       "icon": "🌱",
-      "description": "Printing, numbers, variables — your first steps into programming.",
+      "description": "Printing, numbers, variables -- your first steps into programming.",
       "lessons": [
         {
           "id": "L0-01",
-          "title": "Hello, XIOM!",
+          "title": "Your First Program",
           "file": "L0-first-steps/01-hello.json",
-          "duration": "10 min",
+          "duration": "6 min",
           "concepts": [
-            "println",
-            "main function",
-            "strings"
+            "use",
+            "fn",
+            "main",
+            "io.println",
+            "comment"
           ]
         },
         {
@@ -27,7 +29,8 @@
           "concepts": [
             "io.println",
             "sequential execution",
-            "order"
+            "order",
+            "string"
           ]
         },
         {
@@ -48,7 +51,6 @@
           "file": "L0-first-steps/03-math.json",
           "duration": "8 min",
           "concepts": [
-            "Int",
             "addition",
             "subtraction",
             "multiplication",
@@ -2788,7 +2790,7 @@
       "id": "L4",
       "name": "XIOM Magic",
       "icon": "🛡️",
-      "description": "Contracts, ownership, borrowing — what makes XIOM unique.",
+      "description": "Contracts, ownership, borrowing -- what makes XIOM unique.",
       "lessons": [
         {
           "id": "L4-01",
@@ -3443,7 +3445,7 @@
       "id": "L5",
       "name": "Collections",
       "icon": "📋",
-      "description": "Vec, Map, Set, generics — working with many things at once.",
+      "description": "Vec, Map, Set, generics -- working with many things at once.",
       "lessons": [
         {
           "id": "L5-01",
@@ -4205,7 +4207,7 @@
       "id": "L6",
       "name": "Engineering",
       "icon": "🔧",
-      "description": "Interfaces, modules, libraries — writing professional code.",
+      "description": "Interfaces, modules, libraries -- writing professional code.",
       "lessons": [
         {
           "id": "L6-01",
@@ -4763,7 +4765,7 @@
       "id": "L7",
       "name": "Practice",
       "icon": "🎮",
-      "description": "Coding katas — games, calculators, tools, and simulators.",
+      "description": "Coding katas -- games, calculators, tools, and simulators.",
       "lessons": [
         {
           "id": "L7-01",
@@ -5314,7 +5316,7 @@
       "id": "L8",
       "name": "Showcase",
       "icon": "🌟",
-      "description": "Grand finale — build impressive single-file programs.",
+      "description": "Grand finale -- build impressive single-file programs.",
       "lessons": [
         {
           "id": "L8-01",

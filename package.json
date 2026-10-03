@@ -1,6 +1,6 @@
 {
   "name": "xiom-playground",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "XIOM Playground - browser lessons and a sandboxed server that compiles and runs XIOM programs",
   "license": "MIT OR Apache-2.0",
@@ -13,6 +13,8 @@
     "audit:lessons": "node tools/lesson-audit.js --check-only",
     "audit:lessons:full": "node tools/lesson-audit.js",
     "audit:lessons:baseline": "node tools/lesson-audit.js --check-only --update-baseline tools/lesson-baseline.json",
+    "index": "node tools/generate-index.js",
+    "index:check": "node tools/generate-index.js --check",
     "stdlib:ref": "node tools/generate-stdlib-ref.js",
     "stdlib:ref:check": "node tools/generate-stdlib-ref.js --check",
     "limitations": "node tools/generate-limitations.js",

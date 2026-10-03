@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/editor/editor.main.css">
 <link rel="stylesheet" href="css/theme.css">
 <link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/lab.css">
 </head>
 <body>
 
@@ -77,6 +78,7 @@
       <div class="hero-cta">
         <button class="btn-primary" onclick="startLearning()">Start Learning</button>
         <button class="btn-secondary" onclick="openFreePlay()">Try Playground</button>
+        <button class="btn-secondary" onclick="openLab()">Algorithm Lab</button>
       </div>
     </div>
   </header>
@@ -192,6 +194,7 @@
     <span id="lessonTitle" class="lesson-header-title">Lessons</span>
     <div class="header-actions">
       <button id="btnToggleSidebar" class="nav-btn desktop-only" onclick="toggleSidebar()" title="Toggle sidebar" aria-label="Toggle sidebar">&#x2630; Lessons</button>
+      <button class="nav-btn" type="button" onclick="openLab()" title="Step-by-step algorithm visualizations">Algorithm Lab</button>
       <div class="header-dropdown">
         <button class="nav-btn" onclick="this.parentElement.classList.toggle('open')" aria-label="Reference panels">Reference &#x25BE;</button>
         <div class="header-dropdown-menu">
@@ -349,6 +352,79 @@
   </div>
 </div>
 
+<!-- ALGORITHM LAB SCREEN (hidden initially) -->
+<div id="labScreen" class="lab-screen hidden">
+  <header class="header">
+    <button class="back-btn" onclick="showLanding()" aria-label="Back to home">&#x2190; XIOM</button>
+    <span id="labTitle" class="lesson-header-title">Algorithm Lab</span>
+    <div class="header-actions">
+      <button id="labCompareToggle" class="nav-btn" type="button" onclick="labToggleCompare()" aria-pressed="false" title="Race two algorithms on one shared clock">Compare</button>
+      <button class="nav-btn theme-toggle" onclick="toggleEditorTheme()" title="Toggle theme" aria-label="Toggle theme">&#x1F319;</button>
+      <button id="labRunBtn" class="btn-run" onclick="labRun()" aria-label="Run the program and load its trace">Run &#x25B8;</button>
+    </div>
+  </header>
+
+  <div class="lab-layout">
+    <aside id="labList" class="lab-list" aria-label="Algorithm library"></aside>
+    <div class="lab-main">
+      <div class="lab-panes" id="labPanes">
+        <section class="lab-pane" id="labPaneA" aria-label="Algorithm pane A">
+          <div class="lab-pane-head">
+            <select id="labPresetA" class="lab-preset" onchange="labSelectPreset('A', this.value)" aria-label="Algorithm for pane A"></select>
+            <div id="labCountersA" class="lab-counters">steps 0</div>
+          </div>
+          <div class="lab-pane-body">
+            <div id="labCodePaneA" class="lab-code-pane collapsed">
+              <div class="lab-code-head">
+                <span>Program &middot; // @step highlights follow the trace</span>
+                <button id="labCodeToggleA" class="lab-code-toggle" type="button" onclick="labToggleCode('A')">Show code</button>
+              </div>
+              <div id="labEditorA" class="lab-editor"></div>
+            </div>
+            <div class="lab-view">
+              <canvas id="labCanvasA" class="lab-canvas" aria-label="Algorithm visualization A"></canvas>
+              <div id="labStatusA" class="lab-status" role="status" aria-live="polite">Open an algorithm to load its trace.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lab-pane hidden" id="labPaneB" aria-label="Algorithm pane B">
+          <div class="lab-pane-head">
+            <select id="labPresetB" class="lab-preset" onchange="labSelectPreset('B', this.value)" aria-label="Algorithm for pane B"></select>
+            <div id="labCountersB" class="lab-counters">steps 0</div>
+          </div>
+          <div class="lab-pane-body">
+            <div id="labCodePaneB" class="lab-code-pane collapsed">
+              <div class="lab-code-head">
+                <span>Program &middot; // @step highlights follow the trace</span>
+                <button id="labCodeToggleB" class="lab-code-toggle" type="button" onclick="labToggleCode('B')">Show code</button>
+              </div>
+              <div id="labEditorB" class="lab-editor"></div>
+            </div>
+            <div class="lab-view">
+              <canvas id="labCanvasB" class="lab-canvas" aria-label="Algorithm visualization B"></canvas>
+              <div id="labStatusB" class="lab-status" role="status" aria-live="polite">Enable Compare to race two algorithms.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="lab-controls" role="group" aria-label="Playback controls">
+        <button id="labPlay" class="lab-btn" type="button" onclick="labToggle()" title="Play or pause (Space)" aria-label="Play">&#x25B6;</button>
+        <button id="labStepBack" class="lab-btn" type="button" onclick="labStepBack()" title="Step back (Left arrow)" aria-label="Step back">&#x27E8;</button>
+        <button id="labStepFwd" class="lab-btn" type="button" onclick="labStepFwd()" title="Step forward (Right arrow)" aria-label="Step forward">&#x27E9;</button>
+        <button id="labReset" class="lab-btn" type="button" onclick="labReset()" title="Reset (R)" aria-label="Reset">&#x21BA;</button>
+        <label class="lab-speed" for="labSpeed">Speed
+          <input id="labSpeed" type="range" min="1" max="32" step="1" value="8" oninput="labSetSpeed(this.value)" aria-label="Steps per second">
+          <span id="labSpeedLabel" class="lab-speed-label">8/s</span>
+        </label>
+        <input id="labScrub" class="lab-scrub" type="range" min="0" max="0" value="0" oninput="labSeek(this.value)" aria-label="Trace position">
+        <span id="labPosition" class="lab-position">0 / 0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
 <script src="js/app.js"></script>
 <script src="js/history.js"></script>
@@ -358,6 +434,10 @@
 <script src="js/wasm-loader.js"></script>
 <script src="js/compiler.js"></script>
 <script src="js/lessons.js"></script>
+<script src="js/lab-trace.js"></script>
+<script src="js/lab-player.js"></script>
+<script src="js/lab-viz.js"></script>
+<script src="js/lab.js"></script>
 <script src="js/syntax.js"></script>
 <script src="js/compiler-ref.js"></script>
 <script src="js/stdlib-ref.js"></script>

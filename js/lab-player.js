@@ -89,7 +89,9 @@ function createLabPlayer(options) {
     if (index >= total) return false;
     if (status !== 'playing') {
       status = 'playing';
-      lastTs = now();
+      // The next tick adopts its clock. Callers may pass requestAnimationFrame
+      // timestamps or Date.now(); mixing them mid-flight would corrupt deltas.
+      lastTs = null;
       notify();
     }
     return true;
@@ -161,13 +163,23 @@ function createLabPlayer(options) {
   function tick(ts) {
     if (status !== 'playing') return 0;
     var stamp = typeof ts === 'number' ? ts : now();
+    if (lastTs == null) {
+      lastTs = stamp;
+      return 0;
+    }
     var delta = stamp - lastTs;
-    if (delta < 0) delta = 0;
-    lastTs = stamp;
+    if (delta < 0) {
+      lastTs = stamp;
+      return 0;
+    }
     var steps = Math.floor(delta * speed / 1000);
-    if (steps < 1) return 0;
+    if (steps < 1) return 0; // keep the partial time for the next tick
     if (steps > LAB_PLAYER_MAX_TICK_STEPS) steps = LAB_PLAYER_MAX_TICK_STEPS;
+    // Consume only the time the applied steps represent, so slow speeds are
+    // accurate and fast speeds do not overshoot.
+    lastTs = lastTs + (steps * 1000) / speed;
     advance(steps);
+    if (status === 'done') lastTs = stamp;
     return steps;
   }
 
