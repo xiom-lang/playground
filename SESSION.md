@@ -1234,3 +1234,14 @@ checklist (1.1.0) is in ROADMAP "v0.62.3 tracking"; AUDIT 33.3/33.4/33.5
 updated. The full lesson audit on the v0.62.3 asset is running (results
 land in AUDIT/SESSION when it finishes). Next: pin + wasm bump once the
 mirror syncs, delete `stageForRun`, then the input features.
+
+Absorption executed same day (details in AUDIT 33.6): TOOLCHAIN_VERSION and
+WASM_VERSION -> v0.62.3; Windows toolchain fetched (dl synced) and the
+wasm bundle replaced + browser-verified ("XIOM v0.62.3 (WASM)"); C22
+bridge (`stageForRun`) deleted; stdlib-ref/limitations regenerated;
+L2-51's custom enum now uses qualified `DivResult.Ok(n)` patterns (bare
+`Ok`/`Err` bind to the prelude since v0.62.3); five expected outputs
+refreshed (compiler no longer emits spurious blank lines: L6-17, L8-10,
+L8-11, L8-12, L8-13). Full lesson audit on v0.62.3: no regressions; suite
+44/0/1. Remaining for 1.1.0: wire stdin (API field + Input box +
+sample_input) and add the first input lesson - now unblocked.

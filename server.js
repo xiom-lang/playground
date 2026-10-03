@@ -491,13 +491,6 @@ async function checkProgram(source) {
 async function runProgram(source) {
   return withWorkDir(async (dir) => {
     const file = writeSource(dir, source);
-    // `xiom run` compiles a temp copy under <tmp>/xiom_run, so packages must
-    // also be visible there (compiler finding C22; see lib/packages.js).
-    try {
-      packages.stageForRun(dir);
-    } catch (err) {
-      console.error('[packages] ' + (err && err.message ? err.message : err));
-    }
     const started = Date.now();
     // R51/R63: interactive runs use -O0. The script-run path otherwise
     // defaults to -O2, which roughly triples compile latency for lesson-sized

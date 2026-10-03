@@ -2291,3 +2291,35 @@ via `inttoptr`). Verified from this lane against the official Linux asset:
 `tools/compiler-repros/c24/run.sh` prints `C24 fixed: yes` (`got: [Ada]`
 in run and compile mode). Input features are unblocked pending the dl
 mirror sync and the pin bump (ROADMAP "v0.62.3 tracking").
+
+### 33.6 v0.62.3 absorbed (2026-10-03)
+
+The playground pin moved from v0.62.1 to **v0.62.3**, which carries the C23
+(-O2 miscompile) and C24 (stdin pointer FFI) fixes. Absorbed and verified:
+
+- Pins: `TOOLCHAIN_VERSION` and `WASM_VERSION` -> v0.62.3; the Windows
+  toolchain fetched through the dl mirror once it synced (checksum-
+  verified by `tools/fetch-toolchain.ps1`); the root wasm bundle replaced
+  from the official assets and browser-verified in headless Edge
+  ("XIOM v0.62.3 (WASM)").
+- Acceptance checks on the official Linux asset: `c23/run.sh` ->
+  `C23 present: no` (l6-15/l7-39/l8-09 print 2 at -O2 and -O0);
+  `c24/run.sh` -> `C24 fixed: yes` (`got: [Ada]` in run and compile mode).
+- C22 bridge deleted: `packages.stageForRun` and its `runProgram` call are
+  gone; `xiom run` resolves work-dir packages directly since
+  `563aaff2`.
+- Behavior change handled: bare `Ok`/`Err` patterns now resolve to the
+  prelude `Result`, so custom enums need qualified patterns
+  (`DivResult.Ok(n)`); L2-51's solution and narrative were updated
+  (patches under `tools/snippet-sweep/patches/v0623-enum-patterns.json`,
+  probe-verified on the pin). Five lessons' expected outputs changed
+  because the compiler stopped emitting spurious blank lines (L6-17,
+  L8-10, L8-11, L8-12, L8-13); regenerated tool-driven on v0.62.3 (3
+  deterministic runs each).
+- Generated data: `js/stdlib-ref.json` and `js/limitations.json`
+  regenerated (only their toolchain-version lines changed; the surface is
+  still 516 modules / 6,535 functions).
+- Verification: full lesson audit on v0.62.3 reports **no regressions**
+  (baseline refreshed to the v0.62.3 toolchain); `tools/test-server.js` is
+  44 passed / 0 failed / 1 skipped locally; the full prose snippet audit
+  reports 204 ok + 72 missing-import + 145 excerpt + 0 failing.

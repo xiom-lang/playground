@@ -1,0 +1,26 @@
+[
+ {
+  "file": "lessons/L2-data/L2-51-safe-division-chain.json",
+  "old": "    Ok(n) => { return safe_divide(n, c); }",
+  "new": "    DivResult.Ok(n) => { return safe_divide(n, c); }",
+  "why": "qualified variant pattern (solution)"
+ },
+ {
+  "file": "lessons/L2-data/L2-51-safe-division-chain.json",
+  "old": "    Ok(n) => { return n; }",
+  "new": "    DivResult.Ok(n) => { return n; }",
+  "why": "qualified variant pattern (solution main)"
+ },
+ {
+  "file": "lessons/L2-data/L2-51-safe-division-chain.json",
+  "old": "  Ok(n) => { safe_divide(n, 2); }",
+  "new": "  DivResult.Ok(n) => { safe_divide(n, 2); }",
+  "why": "qualified variant pattern (narrative)"
+ },
+ {
+  "file": "lessons/L2-data/L2-51-safe-division-chain.json",
+  "old": "chain_divide(100, 5, 2);   // Ok(10)",
+  "new": "chain_divide(100, 5, 2);   // DivResult.Ok(10)",
+  "why": "qualified comment (narrative)"
+ }
+]

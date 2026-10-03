@@ -407,19 +407,20 @@ Verified early against the official Linux asset (staged at
 - `tools/compiler-repros/c24/run.sh` -> `C24 fixed: yes` (`got: [Ada]`
   in run and compile mode).
 
-Absorption checklist for the pin bump (1.1.0):
+Absorption executed 2026-10-03 (details in AUDIT 33.6):
 
-- `TOOLCHAIN_VERSION` -> v0.62.3, `WASM_VERSION` -> v0.62.3, replace the
-  root `xiom-wasm.js` / `xiom-wasm.d.ts` / `xiom-wasm_bg.wasm` from the
-  verified assets; run `tools/fetch-toolchain.ps1` once the mirror syncs.
-- delete `packages.stageForRun` and its `runProgram` call (C22 fixed at
-  `563aaff2`; the bridge only produces W001 noise by then);
-- regenerate/verify the generated data (`generate-stdlib-ref.js --check`,
-  `generate-limitations.js --check`, `generate-expected-outputs.js
-  --check`), run the full lesson audit on the new pin (started
-  2026-10-03, results in AUDIT), and re-run `tools/test-server.js`;
-- re-run the production E2E checks after deploy (`xiom.bmp`, `xiom.loss`,
-  the hello/csv example).
+- [x] `TOOLCHAIN_VERSION` and `WASM_VERSION` -> v0.62.3; the Windows
+  toolchain fetched once the dl mirror synced; the root wasm bundle
+  replaced and browser-verified ("XIOM v0.62.3 (WASM)").
+- [x] `packages.stageForRun` and its `runProgram` call deleted (C22).
+- [x] Generated data regenerated (`js/stdlib-ref.json`,
+  `js/limitations.json`), five expected outputs refreshed and L2-51's
+  enum patterns qualified (bare `Ok`/`Err` now bind to the prelude).
+- [x] Full lesson audit on v0.62.3: no regressions; suite 44/0/1; prose
+  snippet audit recorded with the absorption commit.
+- [ ] Re-run the production E2E checks after the deploy (`xiom.bmp`,
+  `xiom.loss`, the hello/csv example) and confirm `/api/version` reports
+  toolchain v0.62.3.
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Idea: a third mode next to Lessons and the free playground where
