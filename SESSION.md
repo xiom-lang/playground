@@ -1295,3 +1295,14 @@ served `L1-51` carries `sample_input` "Ada\n36\n" with expected output
 "Hello, Ada!\nYou are 36.". 1.1.0 is complete and live; the only open
 compiler item from this tranche is C25 (input runs keep the fresh-HOME
 workaround until it ships).
+
+Compiler lane (2026-10-03): **C25 fixed** at commit `3bc59dbc` - warm
+cache inherits stdin, `--no-cache`/`--jit` are actually read, `--jit`
+skips the cache. Red-before verified with CLI lock
+`c25_warm_cache_inherits_stdin_and_no_cache_bypasses` + fixture
+(run_script_cli 3/3); `c25/run.sh` passes on a build with the commit.
+Ships in the next toolchain release; at that pin bump: delete the
+fresh-HOME workaround in `server.js`, `tools/lesson-audit.js` and
+`tools/generate-expected-outputs.js` (native + WSL worker), confirm
+`c25/run.sh` -> `C25 fixed: yes`, and re-run the stdin suite test and the
+L1-51 audit. Tracked in ROADMAP.

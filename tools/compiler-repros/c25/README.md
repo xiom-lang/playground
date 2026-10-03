@@ -1,5 +1,11 @@
 # C25: `xiom run` script-cache hits close stdin
 
+**Fixed upstream 2026-10-03 at compiler commit `3bc59dbc`** (warm cache
+inherits stdin; `--no-cache`/`--jit` are actually read; `--jit` skips the
+cache). It ships in the next toolchain release; this pack stays as the
+acceptance check (`run.sh` must print `C25 fixed: yes`) for the pin bump
+that removes the playground's fresh-HOME workaround.
+
 Playground finding C25 (AUDIT 33.7), found while wiring input lessons on
 v0.62.3 (after C24 was fixed): the **first** run of a program reads piped
 input, but every later run of the same source reads EOF, because the

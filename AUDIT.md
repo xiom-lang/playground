@@ -2359,3 +2359,13 @@ empty HOME** (server, audit, generator), so the cache lookup misses, the
 program compiles and inherits stdin via the normal compile path; the cost
 is a normal ~1.3s compile per input run. Tracked in ROADMAP "v0.62.3
 tracking" / phase plan.
+
+**C25 fixed upstream (2026-10-03, compiler commit `3bc59dbc`):** the
+cache-hit path now inherits stdin, `--no-cache`/`--jit` are actually read
+and `--jit` skips the cache; red-before verified with the CLI lock
+`c25_warm_cache_inherits_stdin_and_no_cache_bypasses` plus fixture
+(run_script_cli 3/3), and `tools/compiler-repros/c25/run.sh` prints
+`C25 fixed: yes` on a build with this commit. It ships in the next
+toolchain release; at that pin bump, delete the fresh-HOME workaround
+(`server.js` run path, `tools/lesson-audit.js`, and both paths of
+`tools/generate-expected-outputs.js`) and re-run the input tests/lesson.

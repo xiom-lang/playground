@@ -426,11 +426,14 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
 - [ ] Re-run the production E2E checks after the deploy (`xiom.bmp`,
   `xiom.loss`, the hello/csv example) and confirm `/api/version` reports
   toolchain v0.62.3.
-- [ ] **C25** (new, found during the input tranche): script-cache hits
-  close stdin and `--no-cache` does not bypass a warm cache. The
-  playground gives input runs a fresh empty HOME until it ships; then
-  delete that workaround and confirm
-  `tools/compiler-repros/c25/run.sh` prints `C25 fixed: yes` (AUDIT 33.7).
+- [x] **C25 fixed upstream** at `3bc59dbc` (warm cache inherits stdin,
+  `--no-cache`/`--jit` read, `--jit` skips the cache; CLI lock +
+  fixture green). It ships in the **next toolchain release**; at that pin
+  bump delete the fresh-HOME workaround (`server.js` run path,
+  `tools/lesson-audit.js`, `tools/generate-expected-outputs.js` native +
+  WSL worker), confirm `tools/compiler-repros/c25/run.sh` prints
+  `C25 fixed: yes`, and re-run the stdin suite test and the L1-51 audit
+  (AUDIT 33.7).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Idea: a third mode next to Lessons and the free playground where
