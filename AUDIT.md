@@ -2193,8 +2193,8 @@ with `undefined variable`. The `stageForRun` bridge stages package sources
 into `<tmp>/xiom_run/packages` until the run path adds the script's
 directory (mirroring `check_source`, including the guarded grandparent).
 Fixed upstream on compiler main `563aaff2` (verified against the same
-packages shape; ships in v0.62.2): delete the bridge at the next pin
-bump. Production timing with the bridge today: package runs through
+packages shape; delete the bridge at the next pin bump, v0.62.3).
+Production timing with the bridge today: package runs through
 `/api/compile` take 5.0-7.5 s (30 s timeout), including a bundle-only
 package and a cold run.
 
@@ -2265,7 +2265,12 @@ generate-expected-outputs tools now execute at `-O0` (matching the
 server), and the three `expected_output` values were regenerated
 tool-driven to 2/2/2; a full WSL execution audit then reports 0
 mismatches. Relay to the compiler lane as finding C23 with the three
-solutions as repros; v0.62.2 is the target for a fix.
+solutions as repros. **Fixed in v0.62.3** (2026-10-03): verified from
+this lane against the official Linux asset
+(`xiom-0.62.3-linux-x64.tar.gz` sha256 `4cc5d62b...`) -
+`tools/compiler-repros/c23/run.sh` prints `C23 present: no` (all three
+solutions print 2 at -O2 and -O0). The pin bump waits on the dl mirror
+sync; see ROADMAP "v0.62.3 tracking".
 ### 33.5 io.read_line() is broken on v0.62.1 (C24, 2026-10-02)
 
 While evaluating stdin-based lessons, `io.read_line()` returned an empty
@@ -2280,3 +2285,9 @@ check -> "C24 fixed: no" on the pin). The playground cannot teach text
 input until this is fixed; the stdin plumbing (API field, input box) and
 input lessons wait for the fix, and the runner already accepts an `input`
 option so the server side is a small follow-up.
+
+**Fixed in v0.62.3** (2026-10-03, m175: Int FFI handles to pointer params
+via `inttoptr`). Verified from this lane against the official Linux asset:
+`tools/compiler-repros/c24/run.sh` prints `C24 fixed: yes` (`got: [Ada]`
+in run and compile mode). Input features are unblocked pending the dl
+mirror sync and the pin bump (ROADMAP "v0.62.3 tracking").

@@ -15,16 +15,18 @@ the sections below hold the detailed specs.
 ### 1.0.x -- maintenance (now)
 
 - Patches for fixes and docs; production hygiene.
-- Compiler follow-ups are **with the compiler lane**: C23 (-O2
-  miscompile) and C24 (stdin) are expected in the next toolchain release
-  (v0.62.2). The playground absorbs the pin when it ships (see "v0.62.2
+- Compiler follow-ups: C23 (-O2 miscompile) and C24 (stdin) shipped in
+  **v0.62.3** and are verified from this lane against the official
+  assets; the pin bump waits on the dl mirror sync (see "v0.62.3
   tracking" and `tools/compiler-repros/`).
 
-### 1.1.0 -- input + toolchain refresh (blocked on v0.62.2)
+### 1.1.0 -- input + toolchain refresh (unblocked; v0.62.3 verified)
 
-- Absorb v0.62.2: `tools/compiler-repros/c23/run.sh` must print
-  `C23 present: no`; delete `packages.stageForRun`; re-run the package
-  tests and the full gate.
+- Absorb v0.62.3: `tools/compiler-repros/c23/run.sh` prints
+  `C23 present: no` and `tools/compiler-repros/c24/run.sh` prints
+  `C24 fixed: yes` (both verified against the official asset); delete
+  `packages.stageForRun`; re-run the package tests and the full gate.
+  The pin bump waits only on the dl.xiom-lang.org mirror sync.
 - Wire stdin end-to-end: `/api/compile` gains a bounded `stdin` field,
   the run panel gains an Input box, lessons gain `sample_input` used by
   the audit and expected-output generator (runner support already
@@ -388,18 +390,36 @@ Sweep 411/411, stdlib surface 6,932 functions, baseline refreshed, audit
 green. Direct `for x in Vec` works on the pin now, so the Phase E sweep can
 simplify the `range`+index workarounds back to direct iteration.
 
-## v0.62.2 tracking (2026-09-29)
+## v0.62.3 tracking (2026-10-03)
 
-The compiler lane fixed C22 (`xiom run` now adds the script's parent
-directory to the catalog) on main at `563aaff2`; it ships in v0.62.2,
-together with the PERF-1 atomics fix (the release to target for the
-public benchmark). On the next pin bump:
+The compiler lane confirmed the fixes shipped in **v0.62.3** (not
+v0.62.2): C23 (-O2 miscompile) and C24 (stdin; m175 - Int FFI handles
+to pointer params via `inttoptr`). The release is live on GitHub
+(`xiom-0.62.3-linux-x64.tar.gz` sha256 `4cc5d62b...`, windows zip
+`011af7dd...`, wasm assets verified), and the dl.xiom-lang.org mirror
+has not synced yet, so the pin bump waits for it (CI fetches from dl).
 
-- delete `packages.stageForRun` and its `runProgram` call (the run path
-  resolves work-dir packages directly at >= 563aaff2; the bridge only
-  produces W001 duplicate-module warnings by then);
-- re-run the package tests (`tools/test-server.js`) and the production
-  E2E checks (`xiom.bmp`, `xiom.loss`, the hello/csv example).
+Verified early against the official Linux asset (staged at
+`/home/lefteris/xiom_v0623/tc`):
+
+- `tools/compiler-repros/c23/run.sh` -> `C23 present: no` (all three
+  solutions print 2 at -O2 and -O0);
+- `tools/compiler-repros/c24/run.sh` -> `C24 fixed: yes` (`got: [Ada]`
+  in run and compile mode).
+
+Absorption checklist for the pin bump (1.1.0):
+
+- `TOOLCHAIN_VERSION` -> v0.62.3, `WASM_VERSION` -> v0.62.3, replace the
+  root `xiom-wasm.js` / `xiom-wasm.d.ts` / `xiom-wasm_bg.wasm` from the
+  verified assets; run `tools/fetch-toolchain.ps1` once the mirror syncs.
+- delete `packages.stageForRun` and its `runProgram` call (C22 fixed at
+  `563aaff2`; the bridge only produces W001 noise by then);
+- regenerate/verify the generated data (`generate-stdlib-ref.js --check`,
+  `generate-limitations.js --check`, `generate-expected-outputs.js
+  --check`), run the full lesson audit on the new pin (started
+  2026-10-03, results in AUDIT), and re-run `tools/test-server.js`;
+- re-run the production E2E checks after deploy (`xiom.bmp`, `xiom.loss`,
+  the hello/csv example).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Idea: a third mode next to Lessons and the free playground where

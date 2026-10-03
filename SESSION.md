@@ -1210,3 +1210,27 @@ compare illustration 800x500, landing feature-card 640x400, OG image
 9 level emblems 512x512, A4-landscape certificate + seal). Style brief:
 flat geometric, indigo #5C6BFF on transparent, no embedded text,
 readable on both themes, consistent stroke weight.
+
+## 26. v0.62.3 unblocks C23 + C24 (2026-10-03)
+
+Compiler-lane correction: both fixes shipped in **v0.62.3**, not v0.62.2
+(m175: Int FFI handles to pointer params via inttoptr - the
+read_line/stdin bug). The release is live on GitHub (published
+2026-10-03T18:07Z) with all assets; the dl.xiom-lang.org mirror has not
+synced yet, so the pin bump waits for it (CI fetches from dl).
+
+Verified from this lane against the official Linux asset
+(`/home/lefteris/xiom_v0623/tc`, tarball sha256 `4cc5d62b...`):
+
+- `tools/compiler-repros/c23/run.sh` -> `C23 present: no` (l6-15/l7-39/
+  l8-09 all print 2 at -O2 and -O0);
+- `tools/compiler-repros/c24/run.sh` -> `C24 fixed: yes` (`got: [Ada]` in
+  both modes).
+
+Staged locally and checksum-verified against the official SHA256SUMS:
+`xiom-0.62.3-windows-x64.zip` (`011af7dd...`), `xiom-wasm.js`,
+`xiom-wasm.d.ts`, `xiom-wasm_bg.wasm` (`c1363fed...`). Absorption
+checklist (1.1.0) is in ROADMAP "v0.62.3 tracking"; AUDIT 33.3/33.4/33.5
+updated. The full lesson audit on the v0.62.3 asset is running (results
+land in AUDIT/SESSION when it finishes). Next: pin + wasm bump once the
+mirror syncs, delete `stageForRun`, then the input features.
