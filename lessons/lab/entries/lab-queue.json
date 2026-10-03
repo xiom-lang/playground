@@ -1,0 +1,11 @@
+{
+  "id": "lab-queue",
+  "title": "Queue (FIFO)",
+  "category": "structures",
+  "view": {
+    "type": "cells",
+    "queue": true
+  },
+  "blurb": "Enqueue at the back and serve from the front: first in, first out.",
+  "code": "// Queue (FIFO) -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Enqueue jobs at the back and serve them from the front: first in, first out.\nuse xiom.io;\n\nfn join_ints(v: &Vec[Int]) -> Str {\n  var out = \"\";\n  var i = 0;\n  while i < v.len() {\n    if i > 0 { out = out + \",\"; };\n    out = out + v.get(i).unwrap().to_str();\n    i += 1;\n  };\n  out\n}\n\nfn main() {\n  var jobs: Vec[Int] = Vec[Int].new();\n  jobs.push(5); jobs.push(3); jobs.push(8); jobs.push(1);\n  io.println(\"v1|init|queue=1|vals=\" + join_ints(&jobs) + \"|step=init\"); // @step init\n\n  var i = 0;\n  while i < jobs.len() {\n    let x = jobs.get(i).unwrap();\n    io.println(\"v1|enqueue|v=\" + x.to_str() + \"|step=enqueue\"); // @step enqueue\n    i += 1;\n  };\n\n  var out: Vec[Int] = Vec[Int].new();\n  var k = 0;\n  while k < jobs.len() {\n    let x = jobs.get(k).unwrap();\n    out.push(x);\n    io.println(\"v1|dequeue|v=\" + x.to_str() + \"|step=dequeue\"); // @step dequeue\n    k += 1;\n  };\n  io.println(\"v1|done|result=\" + join_ints(&out) + \"|step=done\"); // @step done\n}\n"
+}

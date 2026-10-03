@@ -18,6 +18,9 @@
     "limitations": "node tools/generate-limitations.js",
     "limitations:check": "node tools/generate-limitations.js --check",
     "expected": "node tools/generate-expected-outputs.js",
-    "expected:check": "node tools/generate-expected-outputs.js --check"
+    "expected:check": "node tools/generate-expected-outputs.js --check",
+    "lab:index": "node tools/generate-lab-index.js",
+    "lab:index:check": "node tools/generate-lab-index.js --check",
+    "lab:audit": "node tools/lab-audit.js"
   }
 }

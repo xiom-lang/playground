@@ -49,6 +49,12 @@ jobs:
       - name: Expected outputs are current
         run: node tools/generate-expected-outputs.js --check
 
+      - name: Lab catalog is current
+        run: node tools/generate-lab-index.js --check
+
+      - name: Lab programs and traces
+        run: node tools/lab-audit.js
+
       - name: Lesson audit (type checks vs baseline)
         run: node tools/lesson-audit.js --check-only --baseline tools/lesson-baseline.json
 

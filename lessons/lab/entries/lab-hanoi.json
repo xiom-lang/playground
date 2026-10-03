@@ -1,0 +1,10 @@
+{
+  "id": "lab-hanoi",
+  "title": "Towers of Hanoi",
+  "category": "recursion",
+  "view": {
+    "type": "tree"
+  },
+  "blurb": "The recursion tree: every move happens between two child subtrees.",
+  "code": "// Towers of Hanoi -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// The recursion tree: every call is a node, and a node's move happens between\n// its two child subtrees. Move disk n from peg \"from\" to peg \"to\" using the\n// spare peg.\nuse xiom.io;\n\ntype Builder = {\n  next: Int;\n}\n\nfn hanoi(b: &mut Builder, n: Int, from: Int, to: Int, via: Int, parent: Int) {\n  let id = b.next;\n  b.next += 1;\n  io.println(\"v1|node|id=\" + id.to_str() + \"|parent=\" + parent.to_str() +\n             \"|v=\" + n.to_str() + \"|from=\" + from.to_str() + \"|to=\" + to.to_str() +\n             \"|step=node\"); // @step node\n  if n > 1 {\n    hanoi(b, n - 1, from, via, to, id);\n    io.println(\"v1|mark|id=\" + id.to_str() + \"|role=move|from=\" + from.to_str() +\n               \"|to=\" + to.to_str() + \"|step=move\"); // @step move\n    hanoi(b, n - 1, via, to, from, id);\n  } else {\n    if n == 1 {\n      io.println(\"v1|mark|id=\" + id.to_str() + \"|role=move|from=\" + from.to_str() +\n                 \"|to=\" + to.to_str() + \"|step=move\"); // @step move\n    };\n  };\n}\n\nfn main() {\n  var b = Builder{ next: 0 };\n  io.println(\"v1|init|n=3|step=init\"); // @step init\n  hanoi(&mut b, 3, 1, 3, 2, -1);\n  io.println(\"v1|done|result=\" + b.next.to_str() + \"|step=done\"); // @step done\n}\n"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "lab-binary-search",
+  "title": "Binary Search",
+  "category": "searching",
+  "view": {
+    "type": "cells"
+  },
+  "blurb": "Compare the middle cell and keep the half that can still contain the target.",
+  "code": "// Binary Search -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Halve the search window on a sorted list: compare the middle cell, then\n// keep the half that can still contain the target.\nuse xiom.io;\n\nfn join_ints(v: &Vec[Int]) -> Str {\n  var out = \"\";\n  var i = 0;\n  while i < v.len() {\n    if i > 0 { out = out + \",\"; };\n    out = out + v.get(i).unwrap().to_str();\n    i += 1;\n  };\n  out\n}\n\nfn main() {\n  var v: Vec[Int] = Vec[Int].new();\n  v.push(1); v.push(3); v.push(5); v.push(7);\n  v.push(9); v.push(11); v.push(13); v.push(15);\n  v.push(17); v.push(19); v.push(21); v.push(23);\n  io.println(\"v1|init|vals=\" + join_ints(&v) + \"|step=init\"); // @step init\n  io.println(\"v1|mark|i=6|role=target|step=target\"); // @step target\n\n  let target = 13;\n  let n = v.len();\n  var lo = 0;\n  var hi = n - 1;\n  var ans = -1;\n  var found = false;\n  while lo <= hi && !found {\n    let mid = (lo + hi) / 2;\n    io.println(\"v1|mark|i=\" + lo.to_str() + \"|role=lo|step=mark\"); // @step mark\n    io.println(\"v1|mark|i=\" + hi.to_str() + \"|role=hi|step=mark\"); // @step mark\n    io.println(\"v1|mark|i=\" + mid.to_str() + \"|role=mid|step=mark\"); // @step mark\n    let x = v.get(mid).unwrap();\n    io.println(\"v1|compare|a=\" + x.to_str() + \"|b=\" + target.to_str() + \"|step=compare\"); // @step compare\n    if x == target {\n      found = true;\n      ans = mid;\n      io.println(\"v1|mark|i=\" + mid.to_str() + \"|role=found|step=found\"); // @step found\n    } else {\n      if x < target {\n        lo = mid + 1;\n        io.println(\"v1|mark|i=\" + lo.to_str() + \"|role=lo|step=narrow\"); // @step narrow\n      } else {\n        hi = mid - 1;\n        io.println(\"v1|mark|i=\" + hi.to_str() + \"|role=hi|step=narrow\"); // @step narrow\n      };\n    };\n  };\n  io.println(\"v1|done|result=\" + ans.to_str() + \"|step=done\"); // @step done\n}\n"
+}

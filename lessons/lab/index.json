@@ -1,0 +1,200 @@
+{
+  "version": "1.0.0",
+  "protocol": "v1",
+  "total_entries": 16,
+  "categories": [
+    {
+      "id": "sorting",
+      "name": "Sorting",
+      "icon": "📊",
+      "blurb": "Watch bars compare, swap and settle into order.",
+      "entries": [
+        {
+          "id": "lab-bubble-sort",
+          "title": "Bubble Sort",
+          "file": "entries/lab-bubble-sort.json",
+          "view": {
+            "type": "bars"
+          },
+          "blurb": "Compare neighbours and swap them when out of order; the largest values bubble to the end."
+        },
+        {
+          "id": "lab-insertion-sort",
+          "title": "Insertion Sort",
+          "file": "entries/lab-insertion-sort.json",
+          "view": {
+            "type": "bars"
+          },
+          "blurb": "Grow a sorted region on the left by shifting larger items and inserting each new key."
+        },
+        {
+          "id": "lab-selection-sort",
+          "title": "Selection Sort",
+          "file": "entries/lab-selection-sort.json",
+          "view": {
+            "type": "bars"
+          },
+          "blurb": "Scan the unsorted tail for the smallest value, then swap it into the next sorted slot."
+        }
+      ]
+    },
+    {
+      "id": "searching",
+      "name": "Searching",
+      "icon": "🔍",
+      "blurb": "Find a target in a sorted row, one pointer at a time.",
+      "entries": [
+        {
+          "id": "lab-linear-search",
+          "title": "Linear Search",
+          "file": "entries/lab-linear-search.json",
+          "view": {
+            "type": "cells"
+          },
+          "blurb": "Check every cell from left to right until the target is found."
+        },
+        {
+          "id": "lab-binary-search",
+          "title": "Binary Search",
+          "file": "entries/lab-binary-search.json",
+          "view": {
+            "type": "cells"
+          },
+          "blurb": "Compare the middle cell and keep the half that can still contain the target."
+        }
+      ]
+    },
+    {
+      "id": "grid",
+      "name": "Grid traversal",
+      "icon": "🗺️",
+      "blurb": "Explore a maze: breadth-first, depth-first, or flood fill.",
+      "entries": [
+        {
+          "id": "lab-bfs",
+          "title": "Breadth-First Search",
+          "file": "entries/lab-bfs.json",
+          "view": {
+            "type": "grid"
+          },
+          "blurb": "A queue explores the maze in rings; the first path it finds is a shortest path."
+        },
+        {
+          "id": "lab-dfs",
+          "title": "Depth-First Search",
+          "file": "entries/lab-dfs.json",
+          "view": {
+            "type": "grid"
+          },
+          "blurb": "A stack dives as deep as it can before backing up to the last choice point."
+        },
+        {
+          "id": "lab-flood-fill",
+          "title": "Flood Fill",
+          "file": "entries/lab-flood-fill.json",
+          "view": {
+            "type": "grid"
+          },
+          "blurb": "Paint every open cell connected to the start; walls stop the spread."
+        }
+      ]
+    },
+    {
+      "id": "structures",
+      "name": "Data structures",
+      "icon": "🧱",
+      "blurb": "Stacks, queues and linked lists, seen as they work.",
+      "entries": [
+        {
+          "id": "lab-stack",
+          "title": "Stack (LIFO)",
+          "file": "entries/lab-stack.json",
+          "view": {
+            "type": "stack"
+          },
+          "blurb": "Push values on, pop them off: the output is the reverse of the input."
+        },
+        {
+          "id": "lab-queue",
+          "title": "Queue (FIFO)",
+          "file": "entries/lab-queue.json",
+          "view": {
+            "type": "cells",
+            "queue": true
+          },
+          "blurb": "Enqueue at the back and serve from the front: first in, first out."
+        },
+        {
+          "id": "lab-linked-list",
+          "title": "Linked List",
+          "file": "entries/lab-linked-list.json",
+          "view": {
+            "type": "graph"
+          },
+          "blurb": "Follow next pointers from the head until the target value is reached."
+        }
+      ]
+    },
+    {
+      "id": "numbers",
+      "name": "Numbers",
+      "icon": "🔢",
+      "blurb": "Sieves, Euclid and the Collatz path.",
+      "entries": [
+        {
+          "id": "lab-sieve",
+          "title": "Sieve of Eratosthenes",
+          "file": "entries/lab-sieve.json",
+          "view": {
+            "type": "grid"
+          },
+          "blurb": "Cancel the multiples of every prime below 50; what survives is prime."
+        },
+        {
+          "id": "lab-gcd",
+          "title": "Euclid's GCD",
+          "file": "entries/lab-gcd.json",
+          "view": {
+            "type": "matrix"
+          },
+          "blurb": "Write each division as a table row; the last non-zero remainder is the GCD."
+        },
+        {
+          "id": "lab-collatz",
+          "title": "Collatz Trajectory",
+          "file": "entries/lab-collatz.json",
+          "view": {
+            "type": "timeline"
+          },
+          "blurb": "Halve an even number, triple-plus-one an odd one, and watch the path to 1."
+        }
+      ]
+    },
+    {
+      "id": "recursion",
+      "name": "Recursion",
+      "icon": "🌀",
+      "blurb": "Call stacks and recursion trees, step by step.",
+      "entries": [
+        {
+          "id": "lab-factorial",
+          "title": "Factorial",
+          "file": "entries/lab-factorial.json",
+          "view": {
+            "type": "stack"
+          },
+          "blurb": "Each call pushes a frame; the base case returns 1 and the frames multiply back up."
+        },
+        {
+          "id": "lab-hanoi",
+          "title": "Towers of Hanoi",
+          "file": "entries/lab-hanoi.json",
+          "view": {
+            "type": "tree"
+          },
+          "blurb": "The recursion tree: every move happens between two child subtrees."
+        }
+      ]
+    }
+  ]
+}

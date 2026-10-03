@@ -1,0 +1,10 @@
+{
+  "id": "lab-selection-sort",
+  "title": "Selection Sort",
+  "category": "sorting",
+  "view": {
+    "type": "bars"
+  },
+  "blurb": "Scan the unsorted tail for the smallest value, then swap it into the next sorted slot.",
+  "code": "// Selection Sort -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Repeatedly scan the unsorted tail for the smallest value and swap it into\n// the next sorted position.\nuse xiom.io;\n\nfn join_ints(v: &Vec[Int]) -> Str {\n  var out = \"\";\n  var i = 0;\n  while i < v.len() {\n    if i > 0 { out = out + \",\"; };\n    out = out + v.get(i).unwrap().to_str();\n    i += 1;\n  };\n  out\n}\n\nfn main() {\n  var v: Vec[Int] = Vec[Int].new();\n  v.push(5); v.push(3); v.push(8); v.push(1);\n  v.push(9); v.push(2); v.push(7); v.push(4);\n  io.println(\"v1|init|vals=\" + join_ints(&v) + \"|step=init\"); // @step init\n\n  let n = v.len();\n  var i = 0;\n  while i < n - 1 {\n    var minpos = i;\n    io.println(\"v1|mark|i=\" + minpos.to_str() + \"|role=minpos|step=minpos\"); // @step minpos\n    var j = i + 1;\n    while j < n {\n      io.println(\"v1|compare|i=\" + minpos.to_str() + \"|j=\" + j.to_str() + \"|step=compare\"); // @step compare\n      let best = v.get(minpos).unwrap();\n      let candidate = v.get(j).unwrap();\n      if candidate < best {\n        minpos = j;\n        io.println(\"v1|mark|i=\" + minpos.to_str() + \"|role=minpos|step=minpos\"); // @step minpos\n      };\n      j += 1;\n    };\n    if minpos != i {\n      let a = v.get(i).unwrap();\n      let b = v.get(minpos).unwrap();\n      v.set(i, b);\n      v.set(minpos, a);\n      io.println(\"v1|swap|i=\" + i.to_str() + \"|j=\" + minpos.to_str() + \"|step=swap\"); // @step swap\n    };\n    io.println(\"v1|mark|i=\" + i.to_str() + \"|role=sorted|step=sorted\"); // @step sorted\n    i += 1;\n  };\n  io.println(\"v1|mark|i=\" + (n - 1).to_str() + \"|role=sorted|step=sorted\"); // @step sorted\n  io.println(\"v1|done|result=\" + join_ints(&v) + \"|step=done\"); // @step done\n}\n"
+}

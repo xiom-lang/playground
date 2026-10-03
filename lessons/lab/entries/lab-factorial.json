@@ -1,0 +1,10 @@
+{
+  "id": "lab-factorial",
+  "title": "Factorial",
+  "category": "recursion",
+  "view": {
+    "type": "stack"
+  },
+  "blurb": "Each call pushes a frame; the base case returns 1 and the frames multiply back up.",
+  "code": "// Factorial -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Recursion builds a call stack: every call pushes a frame, the base case\n// returns 1, and each frame multiplies on the way back up.\nuse xiom.io;\n\nfn fact(n: Int) -> Int {\n  io.println(\"v1|call|fn=fact|n=\" + n.to_str() + \"|step=call\"); // @step call\n  if n <= 1 {\n    io.println(\"v1|ret|fn=fact|v=1|step=base\"); // @step base\n    return 1;\n  };\n  let sub = fact(n - 1);\n  let result = n * sub;\n  io.println(\"v1|ret|fn=fact|v=\" + result.to_str() + \"|step=return\"); // @step return\n  result\n}\n\nfn main() {\n  io.println(\"v1|init|n=6|step=init\"); // @step init\n  let r = fact(6);\n  io.println(\"v1|done|result=\" + r.to_str() + \"|step=done\"); // @step done\n}\n"
+}

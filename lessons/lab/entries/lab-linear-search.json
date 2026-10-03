@@ -1,0 +1,10 @@
+{
+  "id": "lab-linear-search",
+  "title": "Linear Search",
+  "category": "searching",
+  "view": {
+    "type": "cells"
+  },
+  "blurb": "Check every cell from left to right until the target is found.",
+  "code": "// Linear Search -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Check every cell from left to right until the target value is found.\nuse xiom.io;\n\nfn join_ints(v: &Vec[Int]) -> Str {\n  var out = \"\";\n  var i = 0;\n  while i < v.len() {\n    if i > 0 { out = out + \",\"; };\n    out = out + v.get(i).unwrap().to_str();\n    i += 1;\n  };\n  out\n}\n\nfn main() {\n  var v: Vec[Int] = Vec[Int].new();\n  v.push(1); v.push(3); v.push(5); v.push(7);\n  v.push(9); v.push(11); v.push(13); v.push(15);\n  v.push(17); v.push(19); v.push(21); v.push(23);\n  io.println(\"v1|init|vals=\" + join_ints(&v) + \"|step=init\"); // @step init\n  io.println(\"v1|mark|i=6|role=target|step=target\"); // @step target\n\n  let target = 13;\n  let n = v.len();\n  var i = 0;\n  var found = false;\n  while i < n && !found {\n    io.println(\"v1|mark|i=\" + i.to_str() + \"|role=cursor|step=cursor\"); // @step cursor\n    let x = v.get(i).unwrap();\n    io.println(\"v1|compare|a=\" + x.to_str() + \"|b=\" + target.to_str() + \"|step=compare\"); // @step compare\n    if x == target {\n      io.println(\"v1|mark|i=\" + i.to_str() + \"|role=found|step=found\"); // @step found\n      found = true;\n    } else {\n      i += 1;\n    };\n  };\n  if found {\n    io.println(\"v1|done|result=\" + i.to_str() + \"|step=done\"); // @step done\n  } else {\n    io.println(\"v1|done|result=-1|step=done\"); // @step done\n  };\n}\n"
+}

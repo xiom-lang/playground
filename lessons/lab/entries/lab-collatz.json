@@ -1,0 +1,10 @@
+{
+  "id": "lab-collatz",
+  "title": "Collatz Trajectory",
+  "category": "numbers",
+  "view": {
+    "type": "timeline"
+  },
+  "blurb": "Halve an even number, triple-plus-one an odd one, and watch the path to 1.",
+  "code": "// Collatz trajectory -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// From n: if even halve it, if odd triple it and add one. The timeline shows\n// every value until the sequence reaches 1.\nuse xiom.io;\n\nfn main() {\n  var x = 27;\n  io.println(\"v1|init|n=\" + x.to_str() + \"|step=init\"); // @step init\n\n  var steps = 0;\n  var peak = x;\n  io.println(\"v1|point|v=\" + x.to_str() + \"|step=point\"); // @step point\n  while x != 1 {\n    if x % 2 == 0 {\n      x = x / 2;\n    } else {\n      x = 3 * x + 1;\n    };\n    steps += 1;\n    if x > peak { peak = x; };\n    io.println(\"v1|point|v=\" + x.to_str() + \"|step=point\"); // @step point\n  };\n  io.println(\"v1|done|result=\" + steps.to_str() + \"|peak=\" + peak.to_str() + \"|step=done\"); // @step done\n}\n"
+}

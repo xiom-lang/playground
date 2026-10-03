@@ -1,0 +1,10 @@
+{
+  "id": "lab-sieve",
+  "title": "Sieve of Eratosthenes",
+  "category": "numbers",
+  "view": {
+    "type": "grid"
+  },
+  "blurb": "Cancel the multiples of every prime below 50; what survives is prime.",
+  "code": "// Sieve of Eratosthenes -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Mark every multiple of every prime, starting from p*p. What is left\n// unmarked when p passes the square root is prime.\nuse xiom.io;\n\nfn main() {\n  let n = 50;\n  let cols = 10;\n  var vals = \"\";\n  var v = 1;\n  while v <= n {\n    if v > 1 { vals = vals + \",\"; };\n    vals = vals + v.to_str();\n    v += 1;\n  };\n\n  var flags: Vec[Int] = Vec[Int].new();\n  var k = 0;\n  while k <= n { flags.push(0); k += 1; };\n\n  io.println(\"v1|init|rows=5|cols=\" + cols.to_str() + \"|vals=\" + vals + \"|step=init\"); // @step init\n\n  var p = 2;\n  while p <= n {\n    if flags.get(p).unwrap() == 0 {\n      let r = (p - 1) / cols;\n      let c = (p - 1) % cols;\n      io.println(\"v1|mark|r=\" + r.to_str() + \"|c=\" + c.to_str() + \"|role=prime|step=prime\"); // @step prime\n      if p * p <= n {\n        var m = p * p;\n        while m <= n {\n          if flags.get(m).unwrap() == 0 {\n            flags.set(m, 1);\n            let mr = (m - 1) / cols;\n            let mc = (m - 1) % cols;\n            io.println(\"v1|mark|r=\" + mr.to_str() + \"|c=\" + mc.to_str() + \"|role=composite|step=composite\"); // @step composite\n          };\n          m += p;\n        };\n      };\n    };\n    p += 1;\n  };\n\n  var primes = 0;\n  var q = 2;\n  while q <= n {\n    if flags.get(q).unwrap() == 0 { primes += 1; };\n    q += 1;\n  };\n  io.println(\"v1|done|result=\" + primes.to_str() + \"|step=done\"); // @step done\n}\n"
+}

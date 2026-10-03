@@ -1,0 +1,10 @@
+{
+  "id": "lab-linked-list",
+  "title": "Linked List",
+  "category": "structures",
+  "view": {
+    "type": "graph"
+  },
+  "blurb": "Follow next pointers from the head until the target value is reached.",
+  "code": "// Linked List traversal -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// A list of nodes where each node stores the index of the next one. The\n// traversal follows those links from the head until it finds the target.\nuse xiom.io;\n\nfn edges_str(nexts: &Vec[Int]) -> Str {\n  var out = \"\";\n  var i = 0;\n  while i < nexts.len() {\n    let nxt = nexts.get(i).unwrap();\n    if nxt != -1 {\n      if out.len() > 0 { out = out + \",\"; };\n      out = out + i.to_str() + \"-\" + nxt.to_str();\n    };\n    i += 1;\n  };\n  out\n}\n\nfn main() {\n  var values: Vec[Int] = Vec[Int].new();\n  values.push(10); values.push(20); values.push(30);\n  values.push(40); values.push(50);\n  var nexts: Vec[Int] = Vec[Int].new();\n  nexts.push(1); nexts.push(2); nexts.push(3); nexts.push(4); nexts.push(-1);\n\n  io.println(\"v1|init|n=\" + values.len().to_str() + \"|edges=\" + edges_str(&nexts) + \"|step=init\"); // @step init\n\n  let target = 40;\n  var cur = 0;\n  var found = false;\n  var index = -1;\n  var step = 0;\n  while cur != -1 && !found {\n    io.println(\"v1|mark|id=\" + cur.to_str() + \"|role=cursor|step=cursor\"); // @step cursor\n    io.println(\"v1|visit|id=\" + cur.to_str() + \"|step=visit\"); // @step visit\n    let value = values.get(cur).unwrap();\n    io.println(\"v1|compare|a=\" + value.to_str() + \"|b=\" + target.to_str() + \"|step=compare\"); // @step compare\n    if value == target {\n      found = true;\n      index = cur;\n      io.println(\"v1|mark|id=\" + cur.to_str() + \"|role=found|step=found\"); // @step found\n    } else {\n      cur = nexts.get(cur).unwrap();\n      step += 1;\n    };\n  };\n  io.println(\"v1|done|result=\" + index.to_str() + \"|step=done\"); // @step done\n}\n"
+}

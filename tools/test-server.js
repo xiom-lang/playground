@@ -20,6 +20,15 @@ const path = require('path');
 const { spawn } = require('child_process');
 const { REPO, XIOM_BIN, childEnv } = require('./lib/toolchain');
 const { friendlyDenial, messages: denialMessages } = require('../lib/denials');
+const {
+  labParseTrace,
+  labParseTraceLine,
+  labExtractAnnotations,
+  labIntField,
+  labIntListField,
+  LAB_TRACE_MAX_EVENTS,
+} = require('../js/lab-trace');
+const { createLabPlayer } = require('../js/lab-player');
 
 const PORT = 3400 + Math.floor(Math.random() * 200);
 const HOST = '127.0.0.1';
@@ -391,6 +400,174 @@ async function main() {
         denialMessages.read);
       assert.strictEqual(friendlyDenial('CONTRACT VIOLATION: requires failed'), '');
       assert.strictEqual(friendlyDenial(''), '');
+    });
+
+    console.log('algorithm lab:');
+
+    ok('lab trace parses a valid event', () => {
+      const parsed = labParseTraceLine('v1|compare|i=0|j=1|step=compare', 7);
+      assert.strictEqual(parsed.ok, true);
+      assert.strictEqual(parsed.event.event, 'compare');
+      assert.deepStrictEqual(parsed.event.fields, { i: '0', j: '1' });
+      assert.strictEqual(parsed.event.step, 'compare');
+      assert.strictEqual(parsed.event.line, 7);
+    });
+
+    ok('lab trace rejects malformed events', () => {
+      assert.strictEqual(labParseTraceLine('hello', 1).reason, 'not-trace');
+      assert.strictEqual(labParseTraceLine('v1|Compare|step=x', 1).reason, 'bad-event-name');
+      assert.strictEqual(labParseTraceLine('v1|init|vals', 1).reason, 'bad-field');
+      assert.strictEqual(labParseTraceLine('v1|init||step=init', 1).reason, 'empty-field');
+      assert.strictEqual(labParseTraceLine('v1|init|vals=1 2|step=init', 1).reason, 'bad-field');
+      assert.strictEqual(labParseTraceLine('v1|init|vals=' + '1'.repeat(600) + '|step=init', 1).reason, 'line-too-long');
+      assert.strictEqual(labParseTraceLine('v1|init|' + Array.from({ length: 33 }, (_, i) => 'k' + i + '=1').join('|'), 1).reason, 'too-many-fields');
+    });
+
+    ok('lab trace separates events, ignored lines and errors', () => {
+      const parsed = labParseTrace('noise line\nv1|init|vals=5,3|step=init\nv1|done|step=done\n');
+      assert.strictEqual(parsed.ok, true);
+      assert.strictEqual(parsed.events.length, 2);
+      assert.strictEqual(parsed.ignored.length, 1);
+      assert.strictEqual(parsed.errors.length, 0);
+
+      const invalid = labParseTrace('v1|init|vals=5,3|step=init\nv1|bad|step=[|step=x\n');
+      assert.strictEqual(invalid.ok, false);
+      assert.strictEqual(invalid.errors.length, 1);
+    });
+
+    ok('lab trace bounds the event count', () => {
+      const line = 'v1|point|v=1|step=point';
+      const text = Array.from({ length: LAB_TRACE_MAX_EVENTS + 5 }, () => line).join('\n');
+      const parsed = labParseTrace(text);
+      assert.strictEqual(parsed.truncated, true);
+      assert.strictEqual(parsed.events.length, LAB_TRACE_MAX_EVENTS);
+    });
+
+    ok('lab annotations map names to source lines', () => {
+      const source = 'fn main() {\n  io.println("v1|init|step=init"); // @step init\n  // @step compare\n  io.println("v1|compare|step=compare"); // @step compare\n}';
+      const annotations = labExtractAnnotations(source);
+      assert.deepStrictEqual(annotations.names, ['compare', 'init']);
+      assert.deepStrictEqual(annotations.map.init, [2]);
+      assert.deepStrictEqual(annotations.map.compare, [3, 4]);
+    });
+
+    ok('lab numeric fields are bounded', () => {
+      assert.strictEqual(labIntField({ i: '12' }, 'i'), 12);
+      assert.strictEqual(labIntField({ i: '-3' }, 'i'), -3);
+      assert.strictEqual(labIntField({ i: '999999999' }, 'i'), null);
+      assert.strictEqual(labIntField({}, 'i'), null);
+      assert.deepStrictEqual(labIntListField({ vals: '1,2,3' }, 'vals'), [1, 2, 3]);
+      assert.strictEqual(labIntListField({ vals: '1,x' }, 'vals'), null);
+      assert.deepStrictEqual(labIntListField({}, 'vals'), []);
+    });
+
+    ok('lab player advances by steps-per-second', () => {
+      const events = labParseTrace([
+        'v1|init|vals=1|step=init',
+        'v1|compare|i=0|j=1|step=compare',
+        'v1|done|step=done',
+      ].join('\n')).events;
+      let now = 0;
+      const player = createLabPlayer({ now: () => now, stepsPerSecond: 10 });
+      player.load(events);
+      assert.strictEqual(player.getState().status, 'ready');
+      player.play();
+      assert.strictEqual(player.getState().status, 'playing');
+      now = 250;
+      assert.strictEqual(player.tick(now), 2);
+      assert.strictEqual(player.getState().index, 2);
+      now = 350;
+      assert.strictEqual(player.tick(now), 1);
+      assert.strictEqual(player.getState().status, 'done');
+      assert.strictEqual(player.tick(now + 1000), 0, 'a finished player does not advance');
+    });
+
+    ok('lab player supports pause, step, seek and reset', () => {
+      const events = labParseTrace([
+        'v1|init|step=init',
+        'v1|compare|i=0|j=1|step=compare',
+        'v1|swap|i=0|j=1|step=swap',
+        'v1|compare|i=1|j=2|step=compare',
+        'v1|done|step=done',
+      ].join('\n')).events;
+      const player = createLabPlayer({ now: () => 0, stepsPerSecond: 8 });
+      player.load(events);
+      player.play();
+      player.pause();
+      assert.strictEqual(player.getState().status, 'paused');
+      player.stepForward();
+      assert.strictEqual(player.getState().index, 1);
+      player.stepBack();
+      assert.strictEqual(player.getState().index, 0);
+      assert.strictEqual(player.stepBack(), false);
+      player.seek(999);
+      assert.strictEqual(player.getState().index, 5);
+      assert.strictEqual(player.getState().status, 'done');
+      player.stepBack();
+      assert.strictEqual(player.getState().status, 'paused');
+      player.reset();
+      assert.strictEqual(player.getState().index, 0);
+      assert.strictEqual(player.getState().status, 'ready');
+      assert.strictEqual(player.getState().counters.compares, 0);
+    });
+
+    ok('lab player counts compares and swaps with prefix sums', () => {
+      const events = labParseTrace([
+        'v1|init|step=init',
+        'v1|compare|step=compare',
+        'v1|swap|step=swap',
+        'v1|compare|step=compare',
+        'v1|done|step=done',
+      ].join('\n')).events;
+      const player = createLabPlayer({ now: () => 0 });
+      player.load(events);
+      assert.deepStrictEqual(player.getState().counters, { steps: 0, compares: 0, swaps: 0 });
+      player.seek(3);
+      assert.deepStrictEqual(player.getState().counters, { steps: 3, compares: 1, swaps: 1 });
+      player.seek(5);
+      assert.deepStrictEqual(player.getState().counters, { steps: 5, compares: 2, swaps: 1 });
+      assert.strictEqual(player.getState().currentStep, 'done');
+    });
+
+    ok('lab player clamps speed to the supported range', () => {
+      const player = createLabPlayer({ now: () => 0 });
+      assert.strictEqual(player.setSpeed(1000), 64);
+      assert.strictEqual(player.setSpeed(0), 1);
+      assert.strictEqual(player.setSpeed(12.6), 13);
+    });
+
+    await okAsync('GET /lessons/lab/index.json serves the Lab catalog', async () => {
+      const res = await request('GET', '/lessons/lab/index.json');
+      assert.strictEqual(res.status, 200);
+      const payload = JSON.parse(res.body);
+      assert.strictEqual(payload.protocol, 'v1');
+      assert.strictEqual(payload.total_entries, 16);
+      assert.strictEqual(payload.categories.length, 6);
+      const viewTypes = new Set(['bars', 'cells', 'grid', 'graph', 'tree', 'matrix', 'stack', 'timeline']);
+      let count = 0;
+      for (const category of payload.categories) {
+        assert.ok(category.entries.length > 0, category.id + ' is empty');
+        for (const entry of category.entries) {
+          count += 1;
+          assert.ok(viewTypes.has(entry.view.type), entry.id + ' view ' + JSON.stringify(entry.view));
+        }
+      }
+      assert.strictEqual(count, 16);
+    });
+
+    await okAsync('every Lab entry ships code with @step annotations', async () => {
+      const index = JSON.parse((await request('GET', '/lessons/lab/index.json')).body);
+      for (const category of index.categories) {
+        for (const entry of category.entries) {
+          const res = await request('GET', '/lessons/lab/' + entry.file);
+          assert.strictEqual(res.status, 200, entry.file + ' should be served');
+          const payload = JSON.parse(res.body);
+          assert.strictEqual(payload.id, entry.id);
+          assert.ok(typeof payload.code === 'string' && payload.code.indexOf('fn main') >= 0, entry.id + ' has no main');
+          const annotations = labExtractAnnotations(payload.code);
+          assert.ok(annotations.names.length >= 3, entry.id + ' has too few @step annotations');
+        }
+      }
     });
 
     await okAsync('GET /js/limitations.json matches the baseline blocked set', async () => {
