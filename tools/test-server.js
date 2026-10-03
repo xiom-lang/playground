@@ -571,6 +571,34 @@ async function main() {
       assert.ok(labJs.body.indexOf('lab-step-line') >= 0, 'decoration class missing');
     });
 
+    ok('lab viz animates transitions and honors reduced motion', () => {
+      let now = 1000;
+      const moving = labVizCreate({ type: 'bars' }, { now: () => now });
+      labVizApply(moving, { event: 'init', fields: { vals: '3,1' }, step: 'init' });
+      labVizApply(moving, { event: 'swap', fields: { i: '0', j: '1' }, step: 'swap' });
+      assert.strictEqual(moving.isAnimating(now), true, 'a fresh swap should animate');
+      assert.deepStrictEqual(moving.state.values, [1, 3], 'values land immediately');
+      now += 1000;
+      assert.strictEqual(moving.isAnimating(now), false, 'the transition must finish');
+
+      const still = labVizCreate({ type: 'bars' }, { now: () => now, motion: false });
+      labVizApply(still, { event: 'init', fields: { vals: '3,1' }, step: 'init' });
+      labVizApply(still, { event: 'swap', fields: { i: '0', j: '1' }, step: 'swap' });
+      assert.strictEqual(still.isAnimating(now), false, 'reduced motion draws the end state only');
+    });
+
+    ok('lab viz moves search pointers over time', () => {
+      let now = 500;
+      const renderer = labVizCreate({ type: 'cells' }, { now: () => now });
+      labVizApply(renderer, { event: 'init', fields: { vals: '1,3,5,7' }, step: 'init' });
+      labVizApply(renderer, { event: 'mark', fields: { i: '0', role: 'cursor' }, step: 'cursor' });
+      labVizApply(renderer, { event: 'mark', fields: { i: '3', role: 'cursor' }, step: 'cursor' });
+      assert.strictEqual(renderer.state.roleIndex.cursor, 3);
+      assert.strictEqual(renderer.isAnimating(now), true, 'pointer moves should tween');
+      now += 1000;
+      assert.strictEqual(renderer.isAnimating(now), false);
+    });
+
     await okAsync('GET /lessons/lab/index.json serves the Lab catalog', async () => {
       const res = await request('GET', '/lessons/lab/index.json');
       assert.strictEqual(res.status, 200);

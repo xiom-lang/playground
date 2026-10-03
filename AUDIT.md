@@ -2450,3 +2450,25 @@ dropdown override, and status color reset during playback.
 and lessons header gained Algorithm Lab entry points; Escape returns to the
 landing. Docs: `docs/LAB_PROTOCOL.md` added, ROADMAP phase plan updated,
 SESSION handoff section 28.
+
+### 34.5 Lab polish (2.0.1, 2026-10-04)
+
+Owner feedback right after the 2.0.0 launch: make the default pace slower
+and the transitions smoother. Delivered as **2.0.1**:
+
+- Default speed is **4 steps/s** (was 8); the slider still spans 1-32.
+- `js/lab-viz.js` gained a transition layer: bars slide past each other on
+  swaps and tween on shifts (`set`), search pointers glide between cells,
+  visited/frontier/path grid cells fade in (and the found path draws as a
+  polyline), queue cells slide in while dequeued cells fade out, stack
+  frames rise and leave, tree nodes scale in, marks pulse, and the Collatz
+  timeline grows segment by segment. Transitions run off the same
+  requestAnimationFrame clock as playback; the renderer reports
+  `isAnimating(now)` so the Lab only redraws while something is moving.
+- Reduced motion unchanged: `prefers-reduced-motion: reduce` disables the
+  transition layer entirely (end state drawn instantly) and keeps autoplay
+  off.
+- Verification: suite 63/0/1 (motion on/off and pointer tweening covered in
+  `tools/test-server.js`); headless Edge captures the swap mid-flight (two
+  traveler bars crossing), reports default speed 4, transitions ending
+  within ~300 ms, and no transitions under reduced motion.

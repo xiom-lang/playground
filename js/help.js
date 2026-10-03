@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'A gentler Lab pace',
+    items: [
+      'Algorithm Lab now starts at 4 steps per second (was 8) so first looks are easier to follow; the speed slider goes down to 1.',
+      'Smooth in-canvas transitions: bars slide when swapped, search pointers glide, visited cells fade in, and stack frames rise and drop.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Algorithm Lab (2.0)',
     items: [
       'New Algorithm Lab: watch real XIOM programs run step by step - bars swapping, mazes flooding, call stacks growing - with the executing line highlighted in the source.',
@@ -20,7 +28,7 @@ var XIOM_WHATS_NEW = [
     date: '2026-10-02',
     title: 'Playground 1.0',
     items: [
-      'The playground now has its own version line, shown in the footer: starting at 1.0.0, with 2.0 reserved for the gamified learning update.',
+      'The playground now has its own version line, shown in the footer: starting at 1.0.0, with 2.0 reserved for the Algorithm Lab.',
       'The app version moves independently of the toolchain pin, so playground fixes no longer wait for a compiler release.',
     ],
   },

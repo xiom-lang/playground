@@ -64,6 +64,16 @@ the sections below hold the detailed specs.
 - App version bumped to **2.0.0**; catalogs regenerated (`lessons/index.json`,
   `lessons/lab/index.json`).
 
+### 2.0.1 -- Lab polish (COMPLETE 2026-10-04)
+
+- [x] Gentler default pace after owner feedback: 4 steps/s (was 8),
+  slider 1-32.
+- [x] Animated canvas transitions (swap travelers, set tweening, pointer
+  glides, grid fade-ins + path polyline, queue enter/exit, stack
+  enter/exit, tree scale-in, mark pulses, timeline growth) on the shared
+  playback clock, fully disabled under reduced motion.
+- [x] Browser-verified mid-flight (AUDIT 34.5); suite 63/0/1.
+
 ### 2.1.0 -- Lab expansion
 
 - Tier 2 algorithms: merge/quick/heap/counting/radix sort; Dijkstra,

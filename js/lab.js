@@ -13,7 +13,7 @@ var labRafId = null;
 var labColorsCache = null;
 var labEditors = {};          // pane -> { mode: 'monaco'|'textarea', editor, container }
 var labInitialized = false;
-var LAB_DEFAULT_SPEED = 8;
+var LAB_DEFAULT_SPEED = 4;
 
 function labPrefersReducedMotion() {
   return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -304,7 +304,7 @@ function labRunPane(pane) {
 
 function labLoadTrace(pane, events) {
   var state = labState[pane];
-  state.renderer = window.LabViz.create(state.entry.view);
+  state.renderer = window.LabViz.create(state.entry.view, { motion: !labPrefersReducedMotion() });
   state.lastIndex = 0;
   state.player = window.LabPlayer.create({ stepsPerSecond: LAB_DEFAULT_SPEED });
   state.player.onUpdate(function (snapshot) { labOnPlayerUpdate(pane, snapshot); });
@@ -328,7 +328,7 @@ function labOnPlayerUpdate(pane, snapshot) {
   var events = state.player.getEvents();
   for (var i = state.lastIndex; i < index; i++) window.LabViz.apply(state.renderer, events[i]);
   state.lastIndex = index;
-  labDraw(pane);
+  labDraw(pane, performance.now());
   labUpdateDecorations(pane, snapshot);
   labUpdateCounters(pane, snapshot);
   if (pane === 'A') {
@@ -603,15 +603,17 @@ function labResizeCanvases() {
   });
 }
 
-function labDraw(pane) {
+function labDraw(pane, now) {
   var state = labState[pane];
   var canvas = labCanvas(pane);
   if (!state || !canvas || !state.renderer) return;
   var sized = labResizeCanvas(pane);
   if (!sized) return;
+  var stamp = typeof now === 'number' ? now
+    : (window.performance && performance.now ? performance.now() : Date.now());
   var ctx = sized.ctx;
   ctx.clearRect(0, 0, sized.width, sized.height);
-  state.renderer.draw(ctx, sized.width, sized.height, labColors());
+  state.renderer.draw(ctx, sized.width, sized.height, labColors(), stamp);
 }
 
 function labDrawEmpty(pane) {
@@ -643,9 +645,11 @@ function labStartLoop() {
     labRafId = window.requestAnimationFrame(step);
     ['A', 'B'].forEach(function (pane) {
       var state = labState[pane];
-      if (!state || !state.player) return;
+      if (!state) return;
       if (pane === 'B' && !labCompare) return;
-      state.player.tick(ts);
+      if (state.player) state.player.tick(ts);
+      // Transitions keep drawing on their own between trace events.
+      if (state.renderer && state.renderer.isAnimating(ts)) labDraw(pane, ts);
     });
     labUpdatePlayButton();
   };

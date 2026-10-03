@@ -2,11 +2,79 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 // Algorithm Lab drawing primitives: bars, cells, grid, graph, tree, matrix,
 // stack, timeline. Each renderer applies protocol v1 events to a small state
-// object and draws that state on a canvas. No DOM beyond the canvas, no
-// HTML interpolation, ES5 only.
+// object and draws that state on a canvas, with short eased transitions when
+// motion is enabled (disabled under prefers-reduced-motion). No DOM beyond
+// the canvas, no HTML interpolation, ES5 only.
 'use strict';
 
 var LAB_VIZ_MAX_CELLS = 400;
+
+// Transition durations in milliseconds. Longer than a UI flicker so a slow
+// pace still reads as motion, short enough not to lag behind playback.
+var LAB_VIZ_DUR = {
+  swap: 300,
+  set: 240,
+  compare: 180,
+  mark: 460,
+  pointer: 260,
+  visit: 300,
+  frontier: 300,
+  path: 320,
+  enter: 240,
+  exit: 240,
+  point: 280,
+  pulse: 460,
+  current: 260,
+};
+
+function labVizNow() {
+  return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+}
+
+function labClamp01(value) {
+  if (value < 0) return 0;
+  if (value > 1) return 1;
+  return value;
+}
+
+function labEaseOut(t) {
+  var inv = 1 - t;
+  return 1 - inv * inv * inv;
+}
+
+function labLerp(from, to, t) {
+  return from + (to - from) * t;
+}
+
+/** Active transition for a named animation, or null when finished/disabled. */
+function labAnim(state, name, now) {
+  var anim = state.anim && state.anim[name];
+  if (!anim || anim.at <= -1e8) return null;
+  var t = (now - anim.at) / anim.dur;
+  if (t <= 0) t = 0;
+  if (t >= 1) return null;
+  return { t: labEaseOut(t), raw: t, anim: anim };
+}
+
+/** Fade alpha (0..1) for an element whose transition started at `at`. */
+function labFadeAlpha(at, dur, now) {
+  if (at == null || at <= -1e8) return 1;
+  return labEaseOut(labClamp01((now - at) / dur));
+}
+
+function labAnimAt(motion) {
+  return motion && motion.enabled ? motion.now() : -1e9;
+}
+
+function labVizIsAnimating(state, now) {
+  if (!state.anim) return false;
+  for (var key in state.anim) {
+    var anim = state.anim[key];
+    if (!anim || anim.at <= -1e8) continue;
+    if (now < anim.at + anim.dur) return true;
+  }
+  return false;
+}
 
 function labNum(fields, key, fallback) {
   if (!fields || typeof fields[key] !== 'string') return fallback;
@@ -39,14 +107,14 @@ function labCoordList(fields, key) {
 
 function labVizInitial(view) {
   var type = (view && view.type) || 'bars';
-  if (type === 'bars') return { values: [], roles: {}, compare: [], flash: [], peak: 1 };
-  if (type === 'cells') return { values: [], roles: {}, visited: {}, compare: [], queue: Boolean(view.queue), pending: [], answer: null };
-  if (type === 'grid') return { rows: 0, cols: 0, walls: {}, labels: [], visited: {}, frontier: {}, path: {}, roles: {}, cursor: null, done: false };
-  if (type === 'graph') return { nodes: [], edges: [], roles: {}, visited: {}, cursor: null, done: false };
-  if (type === 'tree') return { nodes: {}, order: [], roles: {}, current: null, done: false };
-  if (type === 'matrix') return { rows: 0, cols: 0, labels: [], cells: {}, roles: {}, current: null, done: false };
-  if (type === 'stack') return { frames: [], lastPopped: null, done: false };
-  if (type === 'timeline') return { points: [], peak: 1, result: null, done: false };
+  if (type === 'bars') return { values: [], roles: {}, compare: [], flash: [], peak: 1, anim: {} };
+  if (type === 'cells') return { values: [], roles: {}, roleIndex: {}, visited: {}, compare: [], queue: Boolean(view.queue), pending: [], exiting: null, answer: null, anim: {} };
+  if (type === 'grid') return { rows: 0, cols: 0, walls: {}, labels: [], visited: {}, frontier: {}, path: {}, roles: {}, visitAt: {}, frontierAt: {}, pathAt: {}, pathOrder: [], cursor: null, done: false, anim: {} };
+  if (type === 'graph') return { nodes: [], edges: [], roles: {}, visited: {}, cursor: null, done: false, anim: {} };
+  if (type === 'tree') return { nodes: {}, order: [], roles: {}, current: null, done: false, anim: {} };
+  if (type === 'matrix') return { rows: 0, cols: 0, labels: [], cells: {}, roles: {}, current: null, done: false, anim: {} };
+  if (type === 'stack') return { frames: [], exiting: null, lastPopped: null, done: false, anim: {} };
+  if (type === 'timeline') return { points: [], pointAt: [], peak: 1, result: null, done: false, anim: {} };
   return {};
 }
 
@@ -59,9 +127,10 @@ function labRoleColor(colors, role) {
   return colors.indigo;
 }
 
-function labApplyEvent(type, state, event) {
+function labApplyEvent(type, state, event, motion) {
   var fields = event.fields || {};
   var name = event.event;
+  var at = labAnimAt(motion);
 
   if (type === 'bars') {
     if (name === 'init') {
@@ -70,22 +139,34 @@ function labApplyEvent(type, state, event) {
       for (var i = 0; i < state.values.length; i++) if (state.values[i] > state.peak) state.peak = state.values[i];
     } else if (name === 'compare') {
       state.compare = [labNum(fields, 'i', -1), labNum(fields, 'j', -1)];
+      state.anim.compare = { at: at, dur: LAB_VIZ_DUR.compare };
     } else if (name === 'swap') {
       var a = labNum(fields, 'i', -1);
       var b = labNum(fields, 'j', -1);
       if (a >= 0 && b >= 0 && a < state.values.length && b < state.values.length) {
-        var tmp = state.values[a];
-        state.values[a] = state.values[b];
-        state.values[b] = tmp;
+        var valueA = state.values[a];
+        var valueB = state.values[b];
+        state.values[a] = valueB;
+        state.values[b] = valueA;
+        state.anim.swap = { i: a, j: b, valueA: valueA, valueB: valueB, at: at, dur: LAB_VIZ_DUR.swap };
       }
       state.flash = [a, b];
+      state.anim.flash = { at: at, dur: LAB_VIZ_DUR.swap };
     } else if (name === 'set') {
-      var at = labNum(fields, 'i', -1);
-      if (at >= 0 && at < state.values.length) state.values[at] = labNum(fields, 'v', 0);
-      state.flash = [at, -1];
+      var atIndex = labNum(fields, 'i', -1);
+      if (atIndex >= 0 && atIndex < state.values.length) {
+        var previous = state.values[atIndex];
+        var next = labNum(fields, 'v', 0);
+        state.values[atIndex] = next;
+        state.anim.set = { i: atIndex, from: previous, to: next, at: at, dur: LAB_VIZ_DUR.set };
+      }
+      state.flash = [atIndex, -1];
     } else if (name === 'mark') {
       var roleIndex = labNum(fields, 'i', -1);
-      if (roleIndex >= 0) state.roles[roleIndex] = fields.role || 'mark';
+      if (roleIndex >= 0) {
+        state.roles[roleIndex] = fields.role || 'mark';
+        state.anim.mark = { i: roleIndex, at: at, dur: LAB_VIZ_DUR.mark };
+      }
     }
   } else if (type === 'cells') {
     if (name === 'init') {
@@ -93,22 +174,42 @@ function labApplyEvent(type, state, event) {
       state.queue = state.queue || fields.queue === '1';
     } else if (name === 'compare') {
       if (typeof fields.i === 'string') state.compare = [labNum(fields, 'i', -1), labNum(fields, 'j', -1)];
-      else state.compare = [state.roles.__cursor != null ? state.roles.__cursor : -1, -1];
+      else state.compare = [state.roleIndex.cursor != null ? state.roleIndex.cursor : -1, -1];
+      state.anim.compare = { at: at, dur: LAB_VIZ_DUR.compare };
     } else if (name === 'mark') {
       var markIndex = labNum(fields, 'i', -1);
-      if (markIndex >= 0) state.roles[markIndex] = fields.role || 'mark';
-      if (fields.role === 'cursor') state.roles.__cursor = markIndex;
-      if (fields.role === 'found') state.answer = markIndex;
+      if (markIndex >= 0) {
+        var role = fields.role || 'mark';
+        var previousIndex = state.roleIndex[role];
+        state.roles[markIndex] = role;
+        state.roleIndex[role] = markIndex;
+        if (role === 'cursor') state.roles.__cursor = markIndex;
+        if (role === 'found') {
+          state.answer = markIndex;
+          state.anim.found = { i: markIndex, at: at, dur: LAB_VIZ_DUR.mark };
+        }
+        if (previousIndex != null && previousIndex !== markIndex) {
+          state.anim['ptr_' + role] = { from: previousIndex, to: markIndex, at: at, dur: LAB_VIZ_DUR.pointer };
+        }
+      }
     } else if (name === 'visit') {
       var visitIndex = labNum(fields, 'i', -1);
-      if (visitIndex >= 0) state.visited[visitIndex] = true;
+      if (visitIndex >= 0) {
+        state.visited[visitIndex] = true;
+        state.anim.visit = { i: visitIndex, at: at, dur: LAB_VIZ_DUR.visit };
+      }
     } else if (name === 'set') {
       var setIndex = labNum(fields, 'i', -1);
       if (setIndex >= 0 && setIndex < state.values.length) state.values[setIndex] = labNum(fields, 'v', 0);
     } else if (name === 'enqueue') {
-      state.pending.push(labNum(fields, 'v', 0));
+      state.pending.push({ v: labNum(fields, 'v', 0), at: at });
+      state.anim.enqueue = { at: at, dur: LAB_VIZ_DUR.enter };
     } else if (name === 'dequeue') {
-      if (state.pending.length > 0) state.pending.shift();
+      if (state.pending.length > 0) {
+        var served = state.pending.shift();
+        state.exiting = { v: served.v, at: at };
+        state.anim.exit = { at: at, dur: LAB_VIZ_DUR.exit };
+      }
     }
   } else if (type === 'grid') {
     if (name === 'init') {
@@ -119,16 +220,26 @@ function labApplyEvent(type, state, event) {
       for (var w = 0; w < walls.length; w++) state.walls[walls[w][0] + ',' + walls[w][1]] = true;
     } else if (name === 'visit') {
       state.cursor = [labNum(fields, 'r', 0), labNum(fields, 'c', 0)];
-      state.visited[state.cursor[0] + ',' + state.cursor[1]] = true;
+      var visitKey = state.cursor[0] + ',' + state.cursor[1];
+      state.visited[visitKey] = true;
+      state.visitAt[visitKey] = at;
+      state.anim.cursor = { at: at, dur: LAB_VIZ_DUR.mark };
     } else if (name === 'frontier') {
-      state.frontier[labNum(fields, 'r', 0) + ',' + labNum(fields, 'c', 0)] = true;
+      var frontierKey = labNum(fields, 'r', 0) + ',' + labNum(fields, 'c', 0);
+      state.frontier[frontierKey] = true;
+      state.frontierAt[frontierKey] = at;
     } else if (name === 'path') {
-      state.path[labNum(fields, 'r', 0) + ',' + labNum(fields, 'c', 0)] = true;
+      var pathKey = labNum(fields, 'r', 0) + ',' + labNum(fields, 'c', 0);
+      state.path[pathKey] = true;
+      if (state.pathAt[pathKey] == null) state.pathOrder.push(pathKey);
+      state.pathAt[pathKey] = at;
     } else if (name === 'mark') {
-      var key = labNum(fields, 'r', 0) + ',' + labNum(fields, 'c', 0);
-      state.roles[key] = fields.role || 'mark';
+      var markKey = labNum(fields, 'r', 0) + ',' + labNum(fields, 'c', 0);
+      state.roles[markKey] = fields.role || 'mark';
+      state.anim.mark = { key: markKey, at: at, dur: LAB_VIZ_DUR.mark };
     } else if (name === 'set') {
       state.cursor = [labNum(fields, 'r', 0), labNum(fields, 'c', 0)];
+      state.anim.cursor = { at: at, dur: LAB_VIZ_DUR.mark };
     }
   } else if (type === 'graph') {
     if (name === 'init') {
@@ -143,10 +254,14 @@ function labApplyEvent(type, state, event) {
       if (visitedId >= 0) {
         state.visited[visitedId] = true;
         state.cursor = visitedId;
+        state.anim.pulse = { id: visitedId, at: at, dur: LAB_VIZ_DUR.pulse };
       }
     } else if (name === 'mark') {
       var markedId = labNum(fields, 'id', -1);
-      if (markedId >= 0) state.roles[markedId] = fields.role || 'mark';
+      if (markedId >= 0) {
+        state.roles[markedId] = fields.role || 'mark';
+        state.anim.pulse = { id: markedId, at: at, dur: LAB_VIZ_DUR.pulse };
+      }
       if (fields.role === 'cursor') state.cursor = markedId;
     } else if (name === 'edge') {
       state.edges.push({ a: labNum(fields, 'a', 0), b: labNum(fields, 'b', 0) });
@@ -161,15 +276,19 @@ function labApplyEvent(type, state, event) {
           v: labNum(fields, 'v', 0),
           from: labNum(fields, 'from', -1),
           to: labNum(fields, 'to', -1),
+          at: at,
         };
         state.order.push(id);
+        state.anim.enter = { id: id, at: at, dur: LAB_VIZ_DUR.enter };
       }
     } else if (name === 'mark') {
       var markId = labNum(fields, 'id', -1);
       if (markId >= 0) state.roles[markId] = fields.role || 'mark';
       state.current = markId;
+      state.anim.pulse = { id: markId, at: at, dur: LAB_VIZ_DUR.pulse };
     } else if (name === 'visit') {
       state.current = labNum(fields, 'id', -1);
+      state.anim.pulse = { id: state.current, at: at, dur: LAB_VIZ_DUR.pulse };
     }
   } else if (type === 'matrix') {
     if (name === 'init') {
@@ -184,34 +303,46 @@ function labApplyEvent(type, state, event) {
       if (row + 1 > state.rows) state.rows = row + 1;
       if (col + 1 > state.cols) state.cols = col + 1;
       state.current = [row, col];
+      state.anim.current = { at: at, dur: LAB_VIZ_DUR.current };
     } else if (name === 'mark') {
       state.roles[labNum(fields, 'r', 0) + ',' + labNum(fields, 'c', 0)] = fields.role || 'mark';
       state.current = [labNum(fields, 'r', 0), labNum(fields, 'c', 0)];
+      state.anim.current = { at: at, dur: LAB_VIZ_DUR.current };
     } else if (name === 'visit') {
       state.current = [labNum(fields, 'r', 0), labNum(fields, 'c', 0)];
+      state.anim.current = { at: at, dur: LAB_VIZ_DUR.current };
     }
   } else if (type === 'stack') {
     if (name === 'push') {
-      state.frames.push({ label: String(labNum(fields, 'v', 0)), role: 'value' });
+      state.frames.push({ label: String(labNum(fields, 'v', 0)), role: 'value', at: at });
       state.lastPopped = null;
+      state.anim.enter = { at: at, dur: LAB_VIZ_DUR.enter };
     } else if (name === 'pop') {
-      if (state.frames.length > 0) state.frames.pop();
+      var popped = state.frames.pop();
+      state.exiting = popped ? { label: popped.label, at: at } : null;
       state.lastPopped = labNum(fields, 'v', 0);
+      state.anim.exit = { at: at, dur: LAB_VIZ_DUR.exit };
     } else if (name === 'call') {
-      state.frames.push({ label: (fields.fn || 'fn') + '(' + labNum(fields, 'n', 0) + ')', role: 'call' });
+      state.frames.push({ label: (fields.fn || 'fn') + '(' + labNum(fields, 'n', 0) + ')', role: 'call', at: at });
       state.lastPopped = null;
+      state.anim.enter = { at: at, dur: LAB_VIZ_DUR.enter };
     } else if (name === 'ret') {
-      if (state.frames.length > 0) state.frames.pop();
+      var returned = state.frames.pop();
+      state.exiting = returned ? { label: returned.label, at: at } : null;
       state.lastPopped = labNum(fields, 'v', 0);
+      state.anim.exit = { at: at, dur: LAB_VIZ_DUR.exit };
     }
   } else if (type === 'timeline') {
     if (name === 'point') {
       var point = labNum(fields, 'v', 0);
       state.points.push(point);
+      state.pointAt.push(at);
       if (point > state.peak) state.peak = point;
+      state.anim.point = { at: at, dur: LAB_VIZ_DUR.point };
     } else if (name === 'mark') {
       var peak = labNum(fields, 'v', 0);
       if (peak > state.peak) state.peak = peak;
+      state.anim.peak = { at: at, dur: LAB_VIZ_DUR.pulse };
     }
   }
 
@@ -223,7 +354,10 @@ function labApplyEvent(type, state, event) {
       var donePeak = labNum(fields, 'peak', null);
       if (donePeak !== null) state.peak = donePeak;
     }
-    if (type === 'bars') { state.compare = []; state.flash = []; }
+    if (type === 'bars') {
+      state.compare = [];
+      state.flash = [];
+    }
     if (type === 'cells') state.compare = [];
   }
 }
@@ -295,11 +429,23 @@ function labEmptyMessage(ctx, w, h, colors) {
   ctx.fillText('Run the program to generate its trace, then press play.', w / 2, h / 2);
 }
 
+function labPulseRing(ctx, x, y, baseRadius, progress, color) {
+  if (!progress) return;
+  var alpha = 1 - progress.raw;
+  ctx.globalAlpha = alpha * 0.9;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(x, y, baseRadius + 4 + progress.raw * 10, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
 // ---------------------------------------------------------------------------
 // bars
 // ---------------------------------------------------------------------------
 
-function labDrawBars(state, ctx, w, h, colors) {
+function labDrawBars(state, ctx, w, h, colors, now) {
   if (state.values.length === 0) { labEmptyMessage(ctx, w, h, colors); return; }
   var pad = 14;
   var labelSpace = 20;
@@ -309,48 +455,107 @@ function labDrawBars(state, ctx, w, h, colors) {
   var gap = Math.max(2, (available - barWidth * state.values.length) / Math.max(1, state.values.length - 1));
   var totalWidth = barWidth * state.values.length + gap * (state.values.length - 1);
   var startX = (w - totalWidth) / 2;
+  var topLimit = pad + 24;
 
-  for (var i = 0; i < state.values.length; i++) {
-    var value = state.values[i];
-    var barHeight = Math.max(4, (value / Math.max(1, state.peak)) * (baseline - pad - 24));
-    var x = startX + i * (barWidth + gap);
+  function xFor(index) { return startX + index * (barWidth + gap); }
+  function heightFor(value) { return Math.max(4, (value / Math.max(1, state.peak)) * (baseline - topLimit)); }
+
+  function drawBar(x, value, fill, border, crossed) {
+    var barHeight = heightFor(value);
     var y = baseline - barHeight;
-    var color = colors.panel3;
-    var border = colors.border;
-    if (state.compare.indexOf(i) >= 0) { color = colors.amber; border = colors.amber; }
-    if (state.flash.indexOf(i) >= 0) { color = colors.indigo; border = colors.indigo; }
-    if (state.roles[i]) { color = labRoleColor(colors, state.roles[i]); border = color; }
-    ctx.fillStyle = color;
+    ctx.fillStyle = fill;
     ctx.strokeStyle = border;
     ctx.lineWidth = 1;
     labRoundRect(ctx, x, y, barWidth, barHeight, 4);
     ctx.fill();
-    if (state.compare.indexOf(i) >= 0 || state.flash.indexOf(i) >= 0 || state.roles[i]) ctx.stroke();
+    if (crossed) ctx.stroke();
     ctx.fillStyle = colors.hi;
-    var text = String(value);
+    var text = String(Math.round(value));
     labFitText(ctx, text, barWidth + 6, 12);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     ctx.fillText(text, x + barWidth / 2, y - 4);
-    ctx.fillStyle = colors.low;
-    ctx.font = '10px ui-monospace, Menlo, Consolas, monospace';
-    ctx.textBaseline = 'top';
-    ctx.fillText(String(i), x + barWidth / 2, baseline + 4);
   }
+
   ctx.strokeStyle = colors.border;
   ctx.beginPath();
   ctx.moveTo(pad, baseline + 0.5);
   ctx.lineTo(w - pad, baseline + 0.5);
   ctx.stroke();
+
+  var swap = labAnim(state, 'swap', now);
+  var setAnim = labAnim(state, 'set', now);
+  var markAnim = labAnim(state, 'mark', now);
+  var compareAlpha = state.anim.compare ? labFadeAlpha(state.anim.compare.at, state.anim.compare.dur, now) : 1;
+  var flashAlpha = state.anim.flash ? labFadeAlpha(state.anim.flash.at, state.anim.flash.dur, now) : 1;
+
+  for (var i = 0; i < state.values.length; i++) {
+    if (swap && (i === swap.anim.i || i === swap.anim.j)) continue; // travelers drawn below
+    var value = state.values[i];
+    if (setAnim && setAnim.anim.i === i) value = labLerp(setAnim.anim.from, setAnim.anim.to, setAnim.t);
+    var fill = colors.panel3;
+    var border = colors.border;
+    if (state.roles[i]) {
+      var roleColor = labRoleColor(colors, state.roles[i]);
+      fill = roleColor;
+      border = roleColor;
+    }
+    drawBar(xFor(i), value, fill, border, Boolean(state.roles[i]));
+    if (state.compare.indexOf(i) >= 0 && compareAlpha < 1) {
+      ctx.globalAlpha = compareAlpha;
+      ctx.fillStyle = colors.amber;
+      var cmpHeight = heightFor(value);
+      labRoundRect(ctx, xFor(i), baseline - cmpHeight, barWidth, cmpHeight, 4);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    } else if (state.compare.indexOf(i) >= 0) {
+      ctx.fillStyle = colors.amber;
+      var amberHeight = heightFor(value);
+      labRoundRect(ctx, xFor(i), baseline - amberHeight, barWidth, amberHeight, 4);
+      ctx.fill();
+    }
+    if (state.flash.indexOf(i) >= 0 && flashAlpha > 0 && !swap) {
+      ctx.globalAlpha = flashAlpha;
+      ctx.strokeStyle = colors.indigo;
+      ctx.lineWidth = 2;
+      var flashHeight = heightFor(value);
+      labRoundRect(ctx, xFor(i), baseline - flashHeight, barWidth, flashHeight, 4);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  if (swap) {
+    var progress = swap.t;
+    var xA = labLerp(xFor(swap.anim.i), xFor(swap.anim.j), progress);
+    var xB = labLerp(xFor(swap.anim.j), xFor(swap.anim.i), progress);
+    drawBar(xA, swap.anim.valueA, colors.indigo, colors.indigo, true);
+    drawBar(xB, swap.anim.valueB, colors.indigo, colors.indigo, true);
+  }
+
+  if (markAnim) {
+    var markIndex = markAnim.anim.i;
+    if (markIndex >= 0 && markIndex < state.values.length) {
+      labPulseRing(ctx, xFor(markIndex) + barWidth / 2, baseline - 6, barWidth * 0.45, markAnim, labRoleColor(colors, state.roles[markIndex] || 'cursor'));
+    }
+  }
+
+  ctx.fillStyle = colors.low;
+  ctx.font = '10px ui-monospace, Menlo, Consolas, monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (var index = 0; index < state.values.length; index++) {
+    ctx.fillText(String(index), xFor(index) + barWidth / 2, baseline + 4);
+  }
 }
 
 // ---------------------------------------------------------------------------
 // cells (search pointers, queue)
 // ---------------------------------------------------------------------------
 
-function labDrawCells(state, ctx, w, h, colors) {
+function labDrawCells(state, ctx, w, h, colors, now) {
   if (state.queue) {
-    labDrawQueue(state, ctx, w, h, colors);
+    labDrawQueue(state, ctx, w, h, colors, now);
     return;
   }
   if (state.values.length === 0) { labEmptyMessage(ctx, w, h, colors); return; }
@@ -361,56 +566,87 @@ function labDrawCells(state, ctx, w, h, colors) {
   var total = cellWidth * n + gap * (n - 1);
   var startX = (w - total) / 2;
   var top = h / 2 - cellWidth / 2;
+  function xFor(index) { return startX + index * (cellWidth + gap); }
 
-  var cursor = state.roles.__cursor != null ? state.roles.__cursor : -1;
+  var cursor = state.roleIndex.cursor != null ? state.roleIndex.cursor : -1;
+  var compareAlpha = state.anim.compare ? labFadeAlpha(state.anim.compare.at, state.anim.compare.dur, now) : 1;
+  var visitAnim = labAnim(state, 'visit', now);
+  var foundAnim = labAnim(state, 'found', now);
+
   for (var i = 0; i < n; i++) {
-    var x = startX + i * (cellWidth + gap);
+    var x = xFor(i);
     var fill = colors.panel2;
     var border = colors.border;
     var role = state.roles[i];
     if (state.visited[i]) fill = colors.indigoSoft;
-    if (state.compare.indexOf(i) >= 0) { border = colors.amber; fill = colors.amber; }
     if (role === 'target') border = colors.amber;
     if (role === 'found') { fill = colors.green; border = colors.green; }
-    if (role === 'lo' || role === 'hi') { border = colors.indigo; }
-    if (role === 'mid') { border = colors.amber; }
-    if (cursor === i) { border = colors.indigo; }
+    if (role === 'lo' || role === 'hi' || role === 'cursor') border = colors.indigo;
+    if (role === 'mid') border = colors.amber;
     ctx.fillStyle = fill;
     ctx.strokeStyle = border;
-    ctx.lineWidth = state.compare.indexOf(i) >= 0 || cursor === i || role ? 2 : 1;
+    ctx.lineWidth = cursor === i || role ? 2 : 1;
     labRoundRect(ctx, x, top, cellWidth, cellWidth, 5);
     ctx.fill();
     ctx.stroke();
+
+    if (visitAnim && visitAnim.anim.i === i && !state.roles[i]) {
+      ctx.globalAlpha = visitAnim.t;
+      ctx.fillStyle = colors.indigoSoft;
+      labRoundRect(ctx, x, top, cellWidth, cellWidth, 5);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    if (state.compare.indexOf(i) >= 0 && compareAlpha < 1) {
+      ctx.globalAlpha = compareAlpha;
+      ctx.fillStyle = colors.amber;
+      labRoundRect(ctx, x, top, cellWidth, cellWidth, 5);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    } else if (state.compare.indexOf(i) >= 0) {
+      ctx.fillStyle = colors.amber;
+      labRoundRect(ctx, x, top, cellWidth, cellWidth, 5);
+      ctx.fill();
+    }
+
     ctx.fillStyle = colors.hi;
     var label = String(state.values[i]);
     labFitText(ctx, label, cellWidth - 8, 13);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(label, x + cellWidth / 2, top + cellWidth / 2);
+  }
 
-    var pointers = [];
-    if (role === 'lo') pointers.push('lo');
-    if (role === 'mid') pointers.push('mid');
-    if (role === 'hi') pointers.push('hi');
-    if (cursor === i && pointers.length === 0) pointers.push('cursor');
-    if (role === 'target') pointers.push('target');
-    if (role === 'found') pointers.push('found');
-    if (pointers.length > 0) {
-      ctx.fillStyle = labRoleColor(colors, pointers[0]);
-      ctx.font = '600 10px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
-      ctx.textBaseline = 'bottom';
-      ctx.fillText(pointers.join(' '), x + cellWidth / 2, top - 4);
-    }
+  if (foundAnim && foundAnim.anim.i >= 0 && foundAnim.anim.i < n) {
+    labPulseRing(ctx, xFor(foundAnim.anim.i) + cellWidth / 2, top + cellWidth / 2, cellWidth * 0.5, foundAnim, colors.green);
+  }
+
+  var pointerRoles = ['lo', 'mid', 'hi', 'cursor', 'target', 'found'];
+  for (var p = 0; p < pointerRoles.length; p++) {
+    var pointerRole = pointerRoles[p];
+    var targetIndex = state.roleIndex[pointerRole];
+    if (targetIndex == null) continue;
+    var pointerX = xFor(targetIndex) + cellWidth / 2;
+    var move = labAnim(state, 'ptr_' + pointerRole, now);
+    if (move) pointerX = labInterpolateX(xFor(move.anim.from) + cellWidth / 2, pointerX, move.t);
+    ctx.fillStyle = labRoleColor(colors, pointerRole);
+    ctx.font = '600 10px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(pointerRole, pointerX, top - 4);
   }
 }
 
-function labDrawQueue(state, ctx, w, h, colors) {
+function labInterpolateX(from, to, t) {
+  return from + (to - from) * t;
+}
+
+function labDrawQueue(state, ctx, w, h, colors, now) {
   var pad = 24;
-  var n = Math.max(state.pending.length, 1);
   var cellWidth = Math.min(56, Math.max(26, (w - pad * 2) / 8 - 8));
   var gap = 8;
   var top = h / 2 - cellWidth / 2;
-  if (state.pending.length === 0) {
+  if (state.pending.length === 0 && !state.exiting) {
     ctx.fillStyle = colors.low;
     ctx.font = '13px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
     ctx.textAlign = 'center';
@@ -419,25 +655,50 @@ function labDrawQueue(state, ctx, w, h, colors) {
     return;
   }
   var startX = pad;
-  for (var i = 0; i < state.pending.length; i++) {
-    var x = startX + i * (cellWidth + gap);
-    if (x + cellWidth > w - pad) break;
-    var isHead = i === 0;
+  function drawCell(index, value, at, isHead, slide) {
+    var x = startX + index * (cellWidth + gap);
+    if (x + cellWidth > w - pad) return;
+    var enter = labFadeAlpha(at, LAB_VIZ_DUR.enter, now);
+    ctx.globalAlpha = enter;
+    var y = top + (slide ? (1 - enter) * -12 : 0);
     ctx.fillStyle = isHead ? colors.greenSoft : colors.panel2;
     ctx.strokeStyle = isHead ? colors.green : colors.border;
     ctx.lineWidth = isHead ? 2 : 1;
-    labRoundRect(ctx, x, top, cellWidth, cellWidth, 5);
+    labRoundRect(ctx, x, y, cellWidth, cellWidth, 5);
     ctx.fill();
     ctx.stroke();
     ctx.fillStyle = colors.hi;
     ctx.font = '600 13px ui-monospace, Menlo, Consolas, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(String(state.pending[i]), x + cellWidth / 2, top + cellWidth / 2);
+    ctx.fillText(String(value), x + cellWidth / 2, y + cellWidth / 2);
     ctx.fillStyle = isHead ? colors.green : colors.mid;
     ctx.font = '600 10px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
     ctx.textBaseline = 'bottom';
-    ctx.fillText(isHead ? 'front' : (i === state.pending.length - 1 ? 'back' : ''), x + cellWidth / 2, top - 4);
+    ctx.fillText(isHead ? 'front' : (index === state.pending.length - 1 ? 'back' : ''), x + cellWidth / 2, y - 4);
+    ctx.globalAlpha = 1;
+  }
+
+  if (state.exiting) {
+    var exit = labAnim(state, 'exit', now);
+    if (exit) {
+      ctx.globalAlpha = 1 - exit.raw;
+      var exitX = startX - (1 - exit.raw) * (cellWidth + gap) * 0.6;
+      ctx.strokeStyle = colors.amber;
+      ctx.lineWidth = 2;
+      labRoundRect(ctx, exitX, top, cellWidth, cellWidth, 5);
+      ctx.stroke();
+      ctx.fillStyle = colors.amber;
+      ctx.font = '600 12px ui-monospace, Menlo, Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(state.exiting.v), exitX + cellWidth / 2, top + cellWidth / 2);
+      ctx.globalAlpha = 1;
+    }
+  }
+  for (var i = 0; i < state.pending.length; i++) {
+    var item = state.pending[i];
+    drawCell(i, item.v, item.at, i === 0, true);
   }
 }
 
@@ -445,7 +706,7 @@ function labDrawQueue(state, ctx, w, h, colors) {
 // grid
 // ---------------------------------------------------------------------------
 
-function labDrawGrid(state, ctx, w, h, colors) {
+function labDrawGrid(state, ctx, w, h, colors, now) {
   if (state.rows === 0 || state.cols === 0) { labEmptyMessage(ctx, w, h, colors); return; }
   var pad = 12;
   var cell = Math.max(8, Math.min((w - pad * 2) / state.cols, (h - pad * 2) / state.rows));
@@ -453,23 +714,41 @@ function labDrawGrid(state, ctx, w, h, colors) {
   var gridH = cell * state.rows;
   var ox = (w - gridW) / 2;
   var oy = (h - gridH) / 2;
+  var cursorAnim = labAnim(state, 'cursor', now);
+  var markAnim = labAnim(state, 'mark', now);
 
-  for (var r = 0; r < state.rows; r++) {
-    for (var c = 0; c < state.cols; c++) {
+  var r;
+  var c;
+  for (r = 0; r < state.rows; r++) {
+    for (c = 0; c < state.cols; c++) {
       var key = r + ',' + c;
       var x = ox + c * cell;
       var y = oy + r * cell;
       var fill = colors.panel2;
       var border = colors.borderSoft;
       var textColor = colors.mid;
+      var alpha = 1;
       if (state.walls[key]) { fill = colors.panel3; border = colors.border; textColor = colors.low; }
-      if (state.frontier[key]) { fill = colors.indigoSoft; border = colors.indigo; }
-      if (state.visited[key]) { fill = colors.panel3; border = colors.borderSoft; }
-      if (state.path[key]) { fill = colors.greenSoft; border = colors.green; }
+      if (state.frontier[key]) {
+        fill = colors.indigoSoft;
+        border = colors.indigo;
+        alpha = labFadeAlpha(state.frontierAt[key], LAB_VIZ_DUR.frontier, now);
+      }
+      if (state.visited[key]) {
+        fill = colors.panel3;
+        border = colors.borderSoft;
+        alpha = labFadeAlpha(state.visitAt[key], LAB_VIZ_DUR.visit, now);
+      }
+      if (state.path[key]) {
+        fill = colors.greenSoft;
+        border = colors.green;
+        alpha = labFadeAlpha(state.pathAt[key], LAB_VIZ_DUR.path, now);
+      }
       var role = state.roles[key];
       if (role === 'prime') { border = colors.green; fill = colors.greenSoft; }
       if (role === 'composite') { border = colors.border; textColor = colors.low; }
       if (state.cursor && state.cursor[0] === r && state.cursor[1] === c) { border = colors.amber; }
+      ctx.globalAlpha = alpha;
       ctx.fillStyle = fill;
       ctx.strokeStyle = border;
       ctx.lineWidth = (border === colors.amber || border === colors.indigo || border === colors.green) ? 2 : 1;
@@ -483,7 +762,31 @@ function labDrawGrid(state, ctx, w, h, colors) {
         ctx.textBaseline = 'middle';
         ctx.fillText(text, x + cell / 2, y + cell / 2);
       }
+      ctx.globalAlpha = 1;
     }
+  }
+
+  if (state.pathOrder.length >= 2) {
+    ctx.strokeStyle = colors.green;
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (var p = 0; p < state.pathOrder.length; p++) {
+      var parts = state.pathOrder[p].split(',');
+      var px = ox + parseInt(parts[1], 10) * cell + cell / 2;
+      var py = oy + parseInt(parts[0], 10) * cell + cell / 2;
+      if (p === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+
+  if (cursorAnim && state.cursor) {
+    labPulseRing(ctx, ox + state.cursor[1] * cell + cell / 2, oy + state.cursor[0] * cell + cell / 2, cell * 0.5, cursorAnim, colors.amber);
+  }
+  if (markAnim && markAnim.anim.key) {
+    var markParts = markAnim.anim.key.split(',');
+    labPulseRing(ctx, ox + parseInt(markParts[1], 10) * cell + cell / 2, oy + parseInt(markParts[0], 10) * cell + cell / 2, cell * 0.5, markAnim, labRoleColor(colors, state.roles[markAnim.anim.key] || 'mark'));
   }
 }
 
@@ -540,7 +843,7 @@ function labGraphLayout(state, w, h) {
   return positions;
 }
 
-function labDrawGraph(state, ctx, w, h, colors) {
+function labDrawGraph(state, ctx, w, h, colors, now) {
   if (state.nodes.length === 0) { labEmptyMessage(ctx, w, h, colors); return; }
   var positions = labGraphLayout(state, w, h);
   for (var e = 0; e < state.edges.length; e++) {
@@ -550,6 +853,7 @@ function labDrawGraph(state, ctx, w, h, colors) {
     if (!from || !to) continue;
     labArrow(ctx, from.x + from.w / 2, from.y + from.h, to.x + to.w / 2, to.y, colors.borderHover);
   }
+  var pulse = labAnim(state, 'pulse', now);
   for (var i = 0; i < state.nodes.length; i++) {
     var pos = positions[i];
     if (!pos) continue;
@@ -577,6 +881,14 @@ function labDrawGraph(state, ctx, w, h, colors) {
       ctx.textBaseline = 'bottom';
       ctx.fillText(role, pos.x + pos.w / 2, pos.y - 3);
     }
+    if (pulse && pulse.anim.id === i) {
+      ctx.globalAlpha = (1 - pulse.raw) * 0.9;
+      ctx.strokeStyle = labRoleColor(colors, role || 'cursor');
+      ctx.lineWidth = 3;
+      labRoundRect(ctx, pos.x - 4 - pulse.raw * 6, pos.y - 4 - pulse.raw * 6, pos.w + 8 + pulse.raw * 12, pos.h + 8 + pulse.raw * 12, 8);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
   }
 }
 
@@ -600,7 +912,6 @@ function labTreeLayout(state, w, h) {
     }
   }
   var depths = {};
-  var nextX = 0;
   var order = [];
   function walk(id, depth) {
     var kids = children[id] || [];
@@ -624,14 +935,15 @@ function labTreeLayout(state, w, h) {
     var nodeId = order[index];
     var x = order.length === 1 ? w / 2 : pad + nodeR + (span * index) / (order.length - 1);
     positions[nodeId] = { x: x, y: pad + nodeR + depths[nodeId] * levelHeight, r: nodeR };
-    nextX += 1;
   }
   return positions;
 }
 
-function labDrawTree(state, ctx, w, h, colors) {
+function labDrawTree(state, ctx, w, h, colors, now) {
   if (state.order.length === 0) { labEmptyMessage(ctx, w, h, colors); return; }
   var positions = labTreeLayout(state, w, h);
+  var pulse = labAnim(state, 'pulse', now);
+  var enter = labAnim(state, 'enter', now);
   for (var i = 0; i < state.order.length; i++) {
     var id = state.order[i];
     var node = state.nodes[id];
@@ -658,13 +970,17 @@ function labDrawTree(state, ctx, w, h, colors) {
     var textColor = colors.hi;
     if (role === 'move') { fill = colors.indigoSoft; border = colors.indigo; }
     if (state.current === nodeId) { border = colors.amber; }
+    var scale = 1;
+    if (enter && enter.anim.id === nodeId) scale = 0.6 + enter.t * 0.4;
+    ctx.globalAlpha = (enter && enter.anim.id === nodeId) ? enter.t : 1;
     ctx.fillStyle = fill;
     ctx.strokeStyle = border;
     ctx.lineWidth = (role || state.current === nodeId) ? 2 : 1;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, p.r * scale, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
+    ctx.globalAlpha = 1;
     ctx.fillStyle = textColor;
     var label = String(nodeData.v);
     labFitText(ctx, label, p.r * 1.8, Math.min(13, p.r));
@@ -677,6 +993,9 @@ function labDrawTree(state, ctx, w, h, colors) {
       ctx.textBaseline = 'top';
       ctx.fillText(nodeData.from + '\u2192' + nodeData.to, p.x, p.y + p.r + 2);
     }
+    if (pulse && pulse.anim.id === nodeId) {
+      labPulseRing(ctx, p.x, p.y, p.r, pulse, labRoleColor(colors, role || 'cursor'));
+    }
   }
 }
 
@@ -684,7 +1003,7 @@ function labDrawTree(state, ctx, w, h, colors) {
 // matrix (growable table)
 // ---------------------------------------------------------------------------
 
-function labDrawMatrix(state, ctx, w, h, colors) {
+function labDrawMatrix(state, ctx, w, h, colors, now) {
   if (state.rows === 0) { labEmptyMessage(ctx, w, h, colors); return; }
   var cols = Math.max(state.cols, 1);
   var rows = Math.max(state.rows, 1);
@@ -695,6 +1014,7 @@ function labDrawMatrix(state, ctx, w, h, colors) {
   var totalW = cellW * cols;
   var ox = (w - totalW) / 2;
   var oy = (h - (cellH * rows + labelSpace)) / 2 + labelSpace;
+  var currentAnim = labAnim(state, 'current', now);
 
   for (var c = 0; c < cols; c++) {
     if (state.labels[c]) {
@@ -728,6 +1048,14 @@ function labDrawMatrix(state, ctx, w, h, colors) {
         ctx.textBaseline = 'middle';
         ctx.fillText(String(state.cells[key]), x + cellW / 2, y + cellH / 2);
       }
+      if (currentAnim && state.current && state.current[0] === r && state.current[1] === col && (role === 'current' || hasValue)) {
+        ctx.globalAlpha = (1 - currentAnim.raw) * 0.8;
+        ctx.strokeStyle = colors.amber;
+        ctx.lineWidth = 3;
+        labRoundRect(ctx, x - 2 - currentAnim.raw * 4, y - 2 - currentAnim.raw * 4, cellW + 4 + currentAnim.raw * 8, cellH + 4 + currentAnim.raw * 8, 6);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
     }
   }
   ctx.fillStyle = colors.low;
@@ -741,8 +1069,8 @@ function labDrawMatrix(state, ctx, w, h, colors) {
 // stack / call stack
 // ---------------------------------------------------------------------------
 
-function labDrawStack(state, ctx, w, h, colors) {
-  if (state.frames.length === 0) {
+function labDrawStack(state, ctx, w, h, colors, now) {
+  if (state.frames.length === 0 && !state.exiting) {
     ctx.fillStyle = colors.low;
     ctx.font = '13px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
     ctx.textAlign = 'center';
@@ -751,27 +1079,49 @@ function labDrawStack(state, ctx, w, h, colors) {
     return;
   }
   var pad = 16;
-  var frameH = Math.min(44, Math.max(20, (h - pad * 2) / state.frames.length - 6));
+  var frameH = Math.min(44, Math.max(20, (h - pad * 2) / Math.max(state.frames.length, 1) - 6));
   var frameW = Math.min(200, w - pad * 2);
   var x = (w - frameW) / 2;
   var gap = 6;
-  var totalH = state.frames.length * frameH + (state.frames.length - 1) * gap;
+  var totalH = state.frames.length * frameH + Math.max(0, state.frames.length - 1) * gap;
   var bottom = Math.min(h - pad, (h + totalH) / 2);
+  var enter = labAnim(state, 'enter', now);
+  var exit = labAnim(state, 'exit', now);
+
+  if (state.exiting && exit) {
+    var exitY = bottom - (state.frames.length + 1) * frameH - state.frames.length * gap - (1 - exit.raw) * 18;
+    ctx.globalAlpha = 1 - exit.raw;
+    ctx.strokeStyle = colors.amber;
+    ctx.lineWidth = 2;
+    labRoundRect(ctx, x, exitY, frameW, frameH, 5);
+    ctx.stroke();
+    ctx.fillStyle = colors.amber;
+    labFitText(ctx, state.exiting.label, frameW - 12, Math.min(14, frameH * 0.5));
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(state.exiting.label, x + frameW / 2, exitY + frameH / 2);
+    ctx.globalAlpha = 1;
+  }
+
   for (var i = 0; i < state.frames.length; i++) {
     var frame = state.frames[i];
     var y = bottom - (i + 1) * frameH - i * gap;
     var isTop = i === state.frames.length - 1;
+    var entering = enter && isTop;
+    var offset = entering ? (1 - enter.t) * -14 : 0;
+    ctx.globalAlpha = entering ? enter.t : 1;
     ctx.fillStyle = isTop ? colors.indigoSoft : colors.panel2;
     ctx.strokeStyle = isTop ? colors.indigo : colors.border;
     ctx.lineWidth = isTop ? 2 : 1;
-    labRoundRect(ctx, x, y, frameW, frameH, 5);
+    labRoundRect(ctx, x, y + offset, frameW, frameH, 5);
     ctx.fill();
     ctx.stroke();
     ctx.fillStyle = colors.hi;
     labFitText(ctx, frame.label, frameW - 12, Math.min(14, frameH * 0.5));
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(frame.label, x + frameW / 2, y + frameH / 2);
+    ctx.fillText(frame.label, x + frameW / 2, y + frameH / 2 + offset);
+    ctx.globalAlpha = 1;
   }
   ctx.fillStyle = colors.mid;
   ctx.font = '600 10px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
@@ -784,7 +1134,7 @@ function labDrawStack(state, ctx, w, h, colors) {
 // timeline
 // ---------------------------------------------------------------------------
 
-function labDrawTimeline(state, ctx, w, h, colors) {
+function labDrawTimeline(state, ctx, w, h, colors, now) {
   if (state.points.length === 0) { labEmptyMessage(ctx, w, h, colors); return; }
   var pad = 22;
   var left = pad + 26;
@@ -792,7 +1142,6 @@ function labDrawTimeline(state, ctx, w, h, colors) {
   var top = pad;
   var bottom = h - pad;
   var max = Math.max(1, state.peak);
-  var min = 0;
   var n = state.points.length;
 
   ctx.strokeStyle = colors.borderSoft;
@@ -801,7 +1150,7 @@ function labDrawTimeline(state, ctx, w, h, colors) {
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   for (var grid = 0; grid <= 4; grid++) {
-    var value = Math.round(min + ((max - min) * grid) / 4);
+    var value = Math.round((max * grid) / 4);
     var y = bottom - ((bottom - top) * grid) / 4;
     ctx.beginPath();
     ctx.moveTo(left, y + 0.5);
@@ -810,44 +1159,58 @@ function labDrawTimeline(state, ctx, w, h, colors) {
     ctx.fillText(String(value), left - 6, y);
   }
 
-  var xFor = function (index) { return n === 1 ? (left + right) / 2 : left + ((right - left) * index) / (n - 1); };
-  var yFor = function (value) { return bottom - ((bottom - top) * (value - min)) / (max - min); };
+  function xFor(index) { return n === 1 ? (left + right) / 2 : left + ((right - left) * index) / (n - 1); }
+  function yFor(point) { return bottom - ((bottom - top) * point) / max; }
+
+  var pointAnim = labAnim(state, 'point', now);
+  var drawn = n;
+  var tipX = n > 0 ? xFor(n - 1) : left;
+  var tipY = n > 0 ? yFor(state.points[n - 1]) : bottom;
+  if (pointAnim && n >= 2) {
+    var previousX = xFor(n - 2);
+    var previousY = yFor(state.points[n - 2]);
+    var currentX = xFor(n - 1);
+    var currentY = yFor(state.points[n - 1]);
+    tipX = labLerp(previousX, currentX, pointAnim.t);
+    tipY = labLerp(previousY, currentY, pointAnim.t);
+    drawn = n - 1;
+  }
 
   ctx.strokeStyle = colors.indigo;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  for (var i = 0; i < n; i++) {
+  for (var i = 0; i < drawn; i++) {
     var px = xFor(i);
     var py = yFor(state.points[i]);
     if (i === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   }
+  if (drawn > 0) ctx.lineTo(tipX, tipY);
   ctx.stroke();
 
-  var drawDot = function (i, color, radius) {
-    var px = xFor(i);
-    var py = yFor(state.points[i]);
+  function drawDot(index, x, y, color, radius) {
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(px, py, radius, 0, Math.PI * 2);
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
-  };
-  for (var dot = 0; dot < n; dot++) {
-    if (state.points[dot] === state.peak) drawDot(dot, colors.amber, 4);
-    else if (dot === n - 1) drawDot(dot, colors.indigo, 4);
-    else drawDot(dot, colors.borderHover, 2);
   }
-  var last = n - 1;
+  for (var dot = 0; dot < n - (pointAnim ? 1 : 0); dot++) {
+    if (state.points[dot] === state.peak) drawDot(dot, xFor(dot), yFor(state.points[dot]), colors.amber, 4);
+    else drawDot(dot, xFor(dot), yFor(state.points[dot]), colors.borderHover, 2);
+  }
+  if (pointAnim) drawDot(n - 1, tipX, tipY, colors.indigo, 2 + pointAnim.raw * 2);
+  else if (n > 0) drawDot(n - 1, xFor(n - 1), yFor(state.points[n - 1]), colors.indigo, 4);
+
   ctx.fillStyle = colors.hi;
   ctx.font = '600 12px ui-monospace, Menlo, Consolas, monospace';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'bottom';
-  ctx.fillText(String(state.points[last]), Math.min(xFor(last) + 8, right - 30), yFor(state.points[last]) - 6);
+  ctx.fillText(String(state.points[n - 1]), Math.min(tipX + 8, right - 30), tipY - 6);
   ctx.fillStyle = colors.mid;
   ctx.font = '10px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  ctx.fillText('step ' + last, left, bottom + 6);
+  ctx.fillText('step ' + (n - 1), left, bottom + 6);
 }
 
 // ---------------------------------------------------------------------------
@@ -865,14 +1228,26 @@ var LAB_VIZ_DRAWERS = {
   timeline: labDrawTimeline,
 };
 
-function labVizCreate(view) {
+/**
+ * @param {{type: string}} view
+ * @param {{motion?: boolean, now?: function}} options motion disabled under
+ *   prefers-reduced-motion: transitions jump straight to their end state.
+ */
+function labVizCreate(view, options) {
+  var opts = options || {};
   var renderer = {
     view: view || { type: 'bars' },
+    motionEnabled: opts.motion !== false,
+    now: opts.now || labVizNow,
     state: labVizInitial(view),
-    draw: function (ctx, w, h, colors) {
+    draw: function (ctx, w, h, colors, now) {
       var type = renderer.view.type || 'bars';
       if (type === 'cells' && renderer.view.queue) renderer.state.queue = true;
-      (LAB_VIZ_DRAWERS[type] || LAB_VIZ_DRAWERS.bars)(renderer.state, ctx, w, h, colors);
+      (LAB_VIZ_DRAWERS[type] || LAB_VIZ_DRAWERS.bars)(renderer.state, ctx, w, h, colors, typeof now === 'number' ? now : renderer.now());
+    },
+    isAnimating: function (now) {
+      var stamp = typeof now === 'number' ? now : renderer.now();
+      return renderer.motionEnabled && labVizIsAnimating(renderer.state, stamp);
     },
     reset: function () {
       renderer.state = labVizInitial(renderer.view);
@@ -883,7 +1258,7 @@ function labVizCreate(view) {
 }
 
 function labVizApply(renderer, event) {
-  labApplyEvent(renderer.view.type || 'bars', renderer.state, event);
+  labApplyEvent(renderer.view.type || 'bars', renderer.state, event, { enabled: renderer.motionEnabled, now: renderer.now });
 }
 
 var LAB_VIZ_DESCRIBE_KEYS = ['i', 'j', 'r', 'c', 'id', 'a', 'b', 'v', 'role', 'fn', 'n', 'from', 'to', 'result', 'peak'];
@@ -906,7 +1281,15 @@ function labVizSupportedTypes() {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { labVizCreate: labVizCreate, labVizApply: labVizApply, labVizDescribe: labVizDescribe, labVizInitial: labVizInitial, labApplyEvent: labApplyEvent, labVizSupportedTypes: labVizSupportedTypes };
+  module.exports = {
+    labVizCreate: labVizCreate,
+    labVizApply: labVizApply,
+    labVizDescribe: labVizDescribe,
+    labVizInitial: labVizInitial,
+    labApplyEvent: labApplyEvent,
+    labVizSupportedTypes: labVizSupportedTypes,
+    labVizIsAnimating: labVizIsAnimating,
+  };
 }
 if (typeof window !== 'undefined') {
   window.LabViz = LabViz;
