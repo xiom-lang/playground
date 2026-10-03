@@ -20,19 +20,24 @@ the sections below hold the detailed specs.
   assets; the pin bump waits on the dl mirror sync (see "v0.62.3
   tracking" and `tools/compiler-repros/`).
 
-### 1.1.0 -- input + toolchain refresh (unblocked; v0.62.3 verified)
+### 1.1.0 -- input + toolchain refresh (COMPLETE 2026-10-03)
 
-- Absorb v0.62.3: `tools/compiler-repros/c23/run.sh` prints
-  `C23 present: no` and `tools/compiler-repros/c24/run.sh` prints
-  `C24 fixed: yes` (both verified against the official asset); delete
-  `packages.stageForRun`; re-run the package tests and the full gate.
-  The pin bump waits only on the dl.xiom-lang.org mirror sync.
-- Wire stdin end-to-end: `/api/compile` gains a bounded `stdin` field,
-  the run panel gains an Input box, lessons gain `sample_input` used by
-  the audit and expected-output generator (runner support already
-  exists).
-- First input lesson (`read_line`/`read_int`) plus practice exercises.
-- Acceptance: an input lesson runs and auto-validates in the playground.
+- [x] Absorb v0.62.3: `c23/run.sh` prints `C23 present: no`,
+  `c24/run.sh` prints `C24 fixed: yes`; `packages.stageForRun` deleted;
+  package tests and the full gate re-run (AUDIT 33.6).
+- [x] Wire stdin end-to-end: `/api/compile` takes a bounded `stdin`
+  string (64 KB), the run panel has an Input box (localStorage, prefilled
+  from lesson `sample_input`), and the audit/generator pass
+  `sample_input` (AUDIT 33.7).
+- [x] First input lesson: L1-51 "Bonus: Programs That Talk Back"
+  (`io.read_line`/`io.read_int`), sample input "Ada\n36\n", tool-generated
+  expected output; catalog at 412 lessons.
+- [x] Acceptance: L1 audits 51/51 with the sample input; suite 47/0/1
+  (Windows) and 55/0 (WSL, execution).
+- [ ] Follow-up: compiler finding **C25** (cache-hit runs close stdin;
+  `--no-cache` inert). The playground runs input programs with a fresh
+  empty HOME until it ships; delete that workaround then
+  (`tools/compiler-repros/c25/run.sh` must print `C25 fixed: yes`).
 
 ### 2.0.0 -- Algorithm Lab (the visualization release)
 
@@ -421,6 +426,11 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
 - [ ] Re-run the production E2E checks after the deploy (`xiom.bmp`,
   `xiom.loss`, the hello/csv example) and confirm `/api/version` reports
   toolchain v0.62.3.
+- [ ] **C25** (new, found during the input tranche): script-cache hits
+  close stdin and `--no-cache` does not bypass a warm cache. The
+  playground gives input runs a fresh empty HOME until it ships; then
+  delete that workaround and confirm
+  `tools/compiler-repros/c25/run.sh` prints `C25 fixed: yes` (AUDIT 33.7).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Idea: a third mode next to Lessons and the free playground where

@@ -270,6 +270,16 @@
           <button class="tab" data-tab="diag">Diagnostics</button>
           <button class="tab" data-tab="tokens">Tokens</button>
           <button class="tab" data-tab="contracts">Contracts</button>
+          <button id="stdinToggle" class="tab stdin-toggle" type="button" onclick="toggleStdin()" title="Program input (stdin)">Input</button>
+        </div>
+        <div id="stdinRow" class="stdin-row hidden">
+          <label class="stdin-label" for="stdinInput">Program input (stdin)</label>
+          <textarea id="stdinInput" class="stdin-input" rows="3" spellcheck="false" maxlength="65536"
+            placeholder="Text passed on Run; read with io.read_line(), io.read_int(), io.read_float()"></textarea>
+          <div class="stdin-actions">
+            <span class="stdin-hint">Passed on Run &middot; up to 64 KB &middot; cleared after the program reads it</span>
+            <button type="button" class="btn-ghost stdin-clear" onclick="clearStdin()">Clear</button>
+          </div>
         </div>
         <div class="output-content">
           <pre id="output">Press Run &#x25B8; or Ctrl+Enter.</pre>

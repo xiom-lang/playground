@@ -1252,3 +1252,34 @@ packages 352, abuse ok). E2E on the new pin: the hello/csv example and
 `xiom.loss` (bundle-only) both compile and run (1.6-2.0s each). The v0.62.3
 absorption tranche is complete; 1.1.0 continues with the stdin wiring and
 the first input lesson.
+
+Input features (1.1.0) landed 2026-10-03: `/api/compile` takes a bounded
+`stdin` string (64 KB); the run panel has an Input box (localStorage,
+lesson `sample_input` prefills it); `tools/lesson-audit.js` and the
+expected-output generator pass `sample_input`; new bonus lesson **L1-51**
+teaches `io.read_line`/`io.read_int` with sample input "Ada\n36\n" and the
+tool-generated expected output "Hello, Ada!\nYou are 36." (catalog now 412
+lessons; baseline refreshed). Suite 47/0/1 on Windows and 55/0 in WSL
+(execution incl. the stdin test), L1 audit 51/51, generators current.
+
+**New compiler finding C25** (AUDIT 33.7, repro pack
+`tools/compiler-repros/c25/`): the script-cache hit path closes stdin
+(`Command::output()` in the M10 branch), so only the first run of a source
+reads piped input; every cached rerun gets EOF. On v0.62.3 `--no-cache` is
+also inert (does not bypass a warm cache). Playground workaround: input
+runs get a fresh empty HOME so they compile and inherit stdin (~1.3s);
+remove it when C25 ships; `c25/run.sh` is the acceptance check. Relay
+text:
+
+> Playground -> compiler (2026-10-03): C25 -- `xiom run` script-cache hits
+> close stdin. Repro pack at tools/compiler-repros/c25 (`read_input.xi` +
+> run.sh): `printf 'Ada\n' | xiom run -O0 read_input.xi` prints
+> `got: [Ada]` on the cold run, then `got: []` on every cached rerun, same
+> source and shell. Cause: the cache-hit path executes the cached binary
+> with `std::process::Command::output()` (main.rs M10 branch, ~1579),
+> which nulls the child's stdin; the compile path uses `.status()` and
+> inherits it. Also on v0.62.3: `--no-cache` does not bypass a warm cache
+> in any spelling (`run --no-cache`, `xiom --no-cache run`,
+> `XIOM_NO_CACHE=1`) and still appears to write cache entries. We
+> work around input runs with a fresh empty HOME; `c25/run.sh` must print
+> `C25 fixed: yes` (cold and cached both read `Ada`).

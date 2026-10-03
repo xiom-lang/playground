@@ -158,6 +158,7 @@ function loadJobs() {
         title: lesson.title,
         file,
         solution: data.solution,
+        sample_input: typeof data.sample_input === 'string' ? data.sample_input : null,
         existing: typeof data.expected_output === 'string' ? data.expected_output : null,
       });
     }
@@ -219,7 +220,21 @@ async function nativeRun(job, runIndex) {
   // -O0 matches the server's interactive runs and, on the v0.62.1 pin, the
   // default -O2 miscompiles some solutions on some hosts (see AUDIT 33.4:
   // L7-39/L8-09 silently print wrong answers at -O2 here).
-  const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], { cwd: dir, env: childEnv, timeoutMs: TIMEOUT });
+  // Runs with sample input get an empty HOME to bypass the script cache
+  // (C25: cache hits close stdin, so only the first run would see input;
+  // --no-cache is inert on the pin).
+  let env = childEnv;
+  if (job.sample_input != null) {
+    const home = path.join(dir, 'home');
+    fs.mkdirSync(home, { recursive: true });
+    env = Object.assign({}, childEnv, { HOME: home });
+  }
+  const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], {
+    cwd: dir,
+    env,
+    timeoutMs: TIMEOUT,
+    input: job.sample_input == null ? undefined : job.sample_input,
+  });
   fs.rmSync(dir, { recursive: true, force: true });
   return {
     ok: proc.success,
@@ -272,11 +287,18 @@ const PY_WORKER = [
   '    proc = None',
   '    try:',
   '        # -O0 matches the server; -O2 miscompiles some solutions on some hosts (AUDIT 33.4).',
-    '        proc = subprocess.Popen([binary, "run", "-O0", source], cwd=run_dir, env=env,',
+    '        run_env = env',
+  '        if job.get("sample_input") is not None:',
+  '            # C25: cache hits close stdin; give input runs an empty HOME.',
+  '            home = os.path.join(run_dir, "home")',
+  '            os.makedirs(home, exist_ok=True)',
+  '            run_env = dict(env, HOME=home)',
+  '        proc = subprocess.Popen([binary, "run", "-O0", source], cwd=run_dir, env=run_env,',
+  '                                stdin=subprocess.PIPE,',
   '                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,',
   '                                text=True, errors="replace", start_new_session=True)',
   '        try:',
-  '            out, err = proc.communicate(timeout=timeout_s)',
+  '            out, err = proc.communicate(input=job.get("sample_input") or "", timeout=timeout_s)',
   '            code = proc.returncode',
   '        except subprocess.TimeoutExpired:',
   '            timed_out = True',
@@ -385,7 +407,7 @@ async function wslSweep(jobs) {
     timeoutMs: TIMEOUT,
     concurrency: CONCURRENCY,
     workRoot: '/tmp/xiom_expected',
-    jobs: jobs.map((job) => ({ id: job.id, source: job.solution })),
+      jobs: jobs.map((job) => ({ id: job.id, source: job.solution, sample_input: job.sample_input })),
   }), 'utf8');
 
   console.log('Running ' + jobs.length + ' solutions x ' + RUNS + ' in WSL ' + WSL_DISTRO +

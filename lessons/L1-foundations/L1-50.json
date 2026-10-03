@@ -30,7 +30,7 @@
     "Mixing categories — keep math logic in math functions, string logic in string functions",
     "Skipping error handling — factorial(-5) and is_palindrome(\"\") should still work correctly"
   ],
-  "next_lesson": "L2-01",
+  "next_lesson": "L1-51",
   "related": [
     "L1-35",
     "L1-36",

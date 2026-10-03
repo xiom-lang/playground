@@ -331,13 +331,21 @@ async function main() {
       const res = await request('GET', '/api/lessons');
       assert.strictEqual(res.status, 200);
       const payload = JSON.parse(res.body);
-      assert.strictEqual(payload.total_lessons, 411);
+      assert.strictEqual(payload.total_lessons, 412);
     });
 
     await okAsync('GET /index.html serves the app', async () => {
       const res = await request('GET', '/index.html');
       assert.strictEqual(res.status, 200);
       assert.ok(res.body.indexOf('XIOM') >= 0 && res.body.indexOf('Playground') >= 0);
+    });
+
+    await okAsync('the run panel ships the stdin box', async () => {
+      const page = await request('GET', '/index.html');
+      assert.ok(page.body.indexOf('stdinInput') >= 0, 'stdinInput missing');
+      assert.ok(page.body.indexOf('toggleStdin()') >= 0, 'stdin toggle missing');
+      const compiler = await request('GET', '/js/compiler.js');
+      assert.ok(compiler.body.indexOf('readStdinValue') >= 0, 'stdin not wired into Run');
     });
 
     await okAsync('help and What\'s new ship in the app', async () => {
@@ -459,6 +467,19 @@ async function main() {
       assert.strictEqual(res.status, 400);
     });
 
+    await okAsync('rejects non-string stdin with 400', async () => {
+      const res = await request('POST', '/api/compile', { source: 'fn main() -> Int { return 0; }', stdin: 42 });
+      assert.strictEqual(res.status, 400);
+    });
+
+    await okAsync('rejects oversized stdin with 413', async () => {
+      const res = await request('POST', '/api/compile', {
+        source: 'fn main() -> Int { return 0; }',
+        stdin: 'x'.repeat(64 * 1024 + 1),
+      });
+      assert.strictEqual(res.status, 413);
+    });
+
     await okAsync('rejects unsupported method with 405', async () => {
       const res = await request('DELETE', '/api/lessons');
       assert.strictEqual(res.status, 405);
@@ -531,6 +552,15 @@ async function main() {
           for (const expected of ['Hello from xiom.hello!', 'Ada,36', 'rectangular: true']) {
             assert.ok(payload.output.indexOf(expected) >= 0, 'missing "' + expected + '" in: ' + payload.output);
           }
+        });
+
+        await okAsync('POST /api/compile pipes stdin into the program', async () => {
+          const source = 'use xiom.io;\n\nfn main() -> Int {\n  let name = io.read_line();\n  io.println("Hello, " + name + "!");\n  return 0;\n}\n';
+          const res = await request('POST', '/api/compile', { source, stdin: 'Ada\n' });
+          assert.strictEqual(res.status, 200);
+          const payload = JSON.parse(res.body);
+          assert.strictEqual(payload.success, true, JSON.stringify(payload.diagnostics));
+          assert.ok(payload.output.indexOf('Hello, Ada!') >= 0, 'stdin not delivered: ' + payload.output);
         });
 
         await okAsync('POST /api/compile reports a crashed run, not empty output', async () => {

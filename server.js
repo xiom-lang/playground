@@ -56,6 +56,9 @@ if (!process.env.XIOM_STDLIB) {
 const WORK_ROOT = path.join(os.tmpdir(), 'xiom_pg_work');
 const MAX_BODY_BYTES = 512 * 1024;
 const MAX_SOURCE_CHARS = 200 * 1024;
+// Program stdin (1.1.0): bounded bytes piped to the executed program; the
+// runner closes the stream after writing, so reads past the end get EOF.
+const MAX_STDIN_BYTES = 64 * 1024;
 const CHECK_TIMEOUT_MS = Number(process.env.XIOM_CHECK_TIMEOUT_MS) || 15000;
 const COMPILE_TIMEOUT_MS = Number(process.env.XIOM_COMPILE_TIMEOUT_MS) || 30000;
 const MAX_CHECKS = Math.max(1, Number(process.env.MAX_CHECKS) || 2);
@@ -488,7 +491,7 @@ async function checkProgram(source) {
   });
 }
 
-async function runProgram(source) {
+async function runProgram(source, stdin) {
   return withWorkDir(async (dir) => {
     const file = writeSource(dir, source);
     const started = Date.now();
@@ -498,7 +501,21 @@ async function runProgram(source) {
     // sources are instant via the script cache keyed on the level). Lessons
     // never need optimized binaries, and -O0 keeps trap/overflow behaviour
     // predictable.
-    const proc = await runXiom(['run', '-O0', file], { cwd: dir, timeoutMs: COMPILE_TIMEOUT_MS });
+    // C25 workaround: `xiom run`'s script-cache hit path closes stdin and
+    // `--no-cache` is inert on the pin, so input runs get an empty HOME:
+    // the cache lookup misses, the program compiles and inherits stdin.
+    // Runs without input keep the warm cache.
+    const runOptions = {
+      cwd: dir,
+      timeoutMs: COMPILE_TIMEOUT_MS,
+      input: stdin == null ? undefined : stdin,
+    };
+    if (stdin != null) {
+      const stdinHome = path.join(dir, 'stdin-home');
+      fs.mkdirSync(stdinHome, { recursive: true });
+      runOptions.env = Object.assign(userChildEnv(), { HOME: stdinHome });
+    }
+    const proc = await runXiom(['run', '-O0', file], runOptions);
     const result = {
       success: proc.success,
       stages: {},
@@ -718,6 +735,17 @@ function sourceOf(body) {
     throw Object.assign(new Error('Source exceeds ' + MAX_SOURCE_CHARS + ' characters'), { statusCode: 413 });
   }
   return source;
+}
+
+function stdinOf(body) {
+  if (body.stdin === undefined || body.stdin === null) return null;
+  if (typeof body.stdin !== 'string') {
+    throw Object.assign(new Error('Field "stdin" must be a string'), { statusCode: 400 });
+  }
+  if (Buffer.byteLength(body.stdin, 'utf8') > MAX_STDIN_BYTES) {
+    throw Object.assign(new Error('stdin exceeds ' + MAX_STDIN_BYTES + ' bytes'), { statusCode: 413 });
+  }
+  return body.stdin;
 }
 
 function sendJson(res, status, payload) {
@@ -1031,7 +1059,8 @@ const server = http.createServer(async (req, res) => {
         return;
       }
       if (url === '/api/compile') {
-        const result = await runCompileJob(() => runProgram(source));
+        const stdin = stdinOf(body);
+        const result = await runCompileJob(() => runProgram(source, stdin));
         sendJson(res, 200, result);
         return;
       }

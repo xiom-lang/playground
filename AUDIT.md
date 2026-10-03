@@ -2323,3 +2323,39 @@ The playground pin moved from v0.62.1 to **v0.62.3**, which carries the C23
   (baseline refreshed to the v0.62.3 toolchain); `tools/test-server.js` is
   44 passed / 0 failed / 1 skipped locally; the full prose snippet audit
   reports 204 ok + 72 missing-import + 145 excerpt + 0 failing.
+
+### 33.7 Program input (1.1.0) and compiler finding C25 (2026-10-03)
+
+With C24 fixed in v0.62.3, the playground now teaches text input:
+
+- `/api/compile` accepts a bounded `stdin` string (64 KB; 400 for
+  non-strings, 413 when over) and pipes it to the program. Runs without
+  input keep the warm script cache and instant reruns.
+- The run panel gained an **Input** box (Output tabs row), persisted in
+  `localStorage`; `Run` sends it and lessons can prefill from a new
+  `sample_input` field (L1-50 now chains to the bonus lesson).
+- First input lesson: **L1-51 "Bonus: Programs That Talk Back"**
+  (`io.read_line`, `io.read_int`, Result handling, the Input box), with
+  `sample_input` "Ada\n36\n" and the tool-generated expected output
+  "Hello, Ada!\nYou are 36.". The catalog is now 412 lessons; the
+  baseline and counts were regenerated tool-driven.
+- `tools/lesson-audit.js` and `tools/generate-expected-outputs.js`
+  (native and WSL worker) pass a lesson's `sample_input`, so input
+  lessons stay deterministic and auto-validated.
+
+**Finding C25 (compiler lane):** the script-cache hit path closes stdin.
+`xiom run` executes a cached script with `std::process::Command::output()`
+(main.rs M10 cache branch, ~line 1579), which nulls the child's stdin, so
+only the first (cold) run of a source reads piped input; every cached
+rerun gets EOF. Second observation on v0.62.3: `--no-cache` does not
+bypass a warm cache in any spelling (`run --no-cache`, global position,
+`XIOM_NO_CACHE=1`) and does not appear to prevent cache writes. Repro
+pack: `tools/compiler-repros/c25/` (`read_input.xi`, README, `run.sh` ->
+`C25 fixed: no` on the pin; core acceptance is that cold and cached runs
+both read the input).
+
+Workaround until C25 ships: runs that carry input are given a **fresh
+empty HOME** (server, audit, generator), so the cache lookup misses, the
+program compiles and inherits stdin via the normal compile path; the cost
+is a normal ~1.3s compile per input run. Tracked in ROADMAP "v0.62.3
+tracking" / phase plan.

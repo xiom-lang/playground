@@ -204,6 +204,7 @@ function loadLessonContent(lessonFile) {
         window.setMobileCode(lesson.code_template || '');
       }
       if (window.resetOutputMatch) window.resetOutputMatch();
+      if (window.prefillStdinSample) window.prefillStdinSample(lesson.sample_input);
       applyLessonAvailability(lesson);
       updateProgressSummary();
     })

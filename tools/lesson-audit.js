@@ -109,15 +109,27 @@ async function checkSource(source, id, kind) {
   };
 }
 
-async function runSource(source, id) {
+async function runSource(source, id, input) {
   const dir = makeJobDir(id, 'r');
   const file = path.join(dir, 'main.xi');
   fs.writeFileSync(file, source, 'utf8');
   const started = Date.now();
-  // -O0 matches the server's interactive runs and, on the v0.62.1 pin, the
-  // default -O2 miscompiles some solutions on some hosts (see AUDIT 33.4:
-  // L7-39/L8-09 silently print wrong answers at -O2 here).
-  const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], { cwd: dir, env: childEnv, timeoutMs: TIMEOUT_RUN });
+  // -O0 matches the server's interactive runs; input lessons pass their
+  // sample_input so auto-validation stays deterministic (1.1.0). Runs with
+  // input get an empty HOME to bypass the script cache (C25: cache hits
+  // close stdin and --no-cache is inert on the pin).
+  let env = childEnv;
+  if (input != null) {
+    const home = path.join(dir, 'home');
+    fs.mkdirSync(home, { recursive: true });
+    env = Object.assign({}, childEnv, { HOME: home });
+  }
+  const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], {
+    cwd: dir,
+    env,
+    timeoutMs: TIMEOUT_RUN,
+    input: input == null ? undefined : input,
+  });
   fs.rmSync(dir, { recursive: true, force: true });
   return {
     ok: proc.success,
@@ -169,7 +181,7 @@ async function auditLesson(lesson) {
   if (data.solution) record.check = await checkSource(data.solution, lesson.id, 's');
   if (data.code_template) record.template = await checkSource(data.code_template, lesson.id, 't');
   if (!CHECK_ONLY && record.check && record.check.ok && data.solution) {
-    record.run = await runSource(data.solution, lesson.id);
+    record.run = await runSource(data.solution, lesson.id, data.sample_input);
     if (typeof data.expected_output === 'string') {
       const expected = normalizeOutput(data.expected_output);
       const actual = record.run.ok ? normalizeOutput(record.run.stdout) : null;

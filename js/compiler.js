@@ -5,6 +5,53 @@
 // The server toolchain is authoritative (it is newer than the bundled WASM).
 // The in-browser compiler is used for an instant IR preview and as an offline
 // fallback for diagnostics; the server response overwrites both when it lands.
+//
+// Program input (1.1.0): the optional stdin textarea next to the Output tabs
+// is piped to the program on Run (io.read_line/read_int/read_float).
+var XIOM_STDIN_KEY = 'xiom_stdin';
+
+function readStdinValue() {
+  var el = document.getElementById('stdinInput');
+  return el ? el.value : '';
+}
+
+function setStdinValue(value) {
+  var el = document.getElementById('stdinInput');
+  if (!el) return;
+  el.value = value || '';
+  try { localStorage.setItem(XIOM_STDIN_KEY, el.value); } catch (e) { /* private mode */ }
+}
+
+function prefillStdinSample(sample) {
+  var el = document.getElementById('stdinInput');
+  if (!el || !sample) return;
+  // Lesson sample input fills the empty box; typed input always wins.
+  if (el.value === '') setStdinValue(sample);
+}
+
+function toggleStdin() {
+  var row = document.getElementById('stdinRow');
+  var toggle = document.getElementById('stdinToggle');
+  if (!row) return;
+  row.classList.toggle('hidden');
+  if (toggle) toggle.classList.toggle('active', !row.classList.contains('hidden'));
+  if (!row.classList.contains('hidden')) {
+    var el = document.getElementById('stdinInput');
+    if (el) el.focus();
+  }
+}
+
+function clearStdin() {
+  setStdinValue('');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    var saved = localStorage.getItem(XIOM_STDIN_KEY);
+    if (saved) setStdinValue(saved);
+  } catch (e) { /* private mode */ }
+});
+
 async function compile() {
   var screen = document.getElementById('lessonsScreen');
   if (!screen || screen.classList.contains('hidden')) return;
@@ -32,7 +79,10 @@ async function compile() {
     return;
   }
 
-  var body = JSON.stringify({ source: source });
+  var payload = { source: source };
+  var stdinValue = readStdinValue();
+  if (stdinValue) payload.stdin = stdinValue;
+  var body = JSON.stringify(payload);
   var headers = { 'Content-Type': 'application/json' };
 
   resetOutputMatch();

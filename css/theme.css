@@ -2571,3 +2571,21 @@ a:focus-visible,
 .info-close:hover { color: var(--hi); }
 .info-release { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
 .info-release:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+
+/* Program input (stdin) row in the output panel (1.1.0). */
+.stdin-toggle.active { color: var(--indigo); border-color: var(--indigo); }
+.stdin-row {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 8px 12px; border-bottom: 1px solid var(--border);
+  background: var(--panel-2);
+}
+.stdin-label { font-size: 11px; color: var(--low); text-transform: uppercase; letter-spacing: 0.05em; }
+.stdin-input {
+  width: 100%; resize: vertical; min-height: 48px; max-height: 160px;
+  background: var(--void); color: var(--hi); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 10px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.5;
+}
+.stdin-input:focus { outline: none; border-color: var(--indigo); }
+.stdin-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.stdin-hint { font-size: 10px; color: var(--low); }

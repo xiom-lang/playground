@@ -44,9 +44,10 @@ health checks stay responsive while a submission compiles.
 
 ## Features
 
-- Lesson browser with 411 interactive lessons across 9 levels
+- Lesson browser with 412 interactive lessons across 9 levels
 - Monaco editor, output tabs for Output / Diagnostics / LLVM IR / Tokens / Contracts
 - Keyboard shortcut Ctrl+Enter (Cmd+Enter) to run
+- Program input: an Input box in the run panel (per-lesson sample input) feeds `io.read_line()` / `io.read_int()` / `io.read_float()`
 - In-browser WASM compiler: instant IR preview and offline diagnostics for pure programs
 - Server toolchain is authoritative for diagnostics and produces real program output
 - Expected-output match for reference solutions ("Output matches the expected result")

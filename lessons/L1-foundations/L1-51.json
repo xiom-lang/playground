@@ -1,0 +1,38 @@
+{
+  "id": "L1-51",
+  "title": "Bonus: Programs That Talk Back",
+  "level": "L1",
+  "duration": "20 min",
+  "story": "Every program so far has only talked. Real programs also listen: a quiz asks for your name, a game asks for a move. That input arrives on standard input, and XIOM reads it with io.read_line() and io.read_int().",
+  "why": "Input turns a script into a conversation. It is how a program takes a name, a number, or a choice from the person using it, and how it stays useful when the values are not known in advance.",
+  "narrative": "## Programs That Talk Back\n\nSo far your programs print. Real programs also **listen**: they ask for a name, a number, a choice. That input arrives on **standard input** (stdin), and XIOM reads it with `io.read_line()`.\n\n### Reading a line\n\n```xiom\nuse xiom.io;\n\nfn main() -> Int {\n  let name = io.read_line();\n  io.println(\"Hello, \" + name + \"!\");\n  return 0;\n}\n```\n\nWith the input line `Ada`, this prints `Hello, Ada!`. `read_line()` returns one line **without** the newline, and returns an empty string when there is no more input.\n\n### Reading numbers\n\n`io.read_int()` parses the next line as an integer and hands it back as a `Result`:\n\n```xiom\nuse xiom.io;\n\nfn main() -> Int {\n  match io.read_int() {\n    Ok(age) => { io.println(\"Age: \" + age.to_str()); }\n    Err(message) => { io.println(\"That was not a number: \" + message); }\n  }\n  return 0;\n}\n```\n\n`io.read_float()` works the same way for decimal numbers.\n\n### Where the input comes from\n\nIn the playground, open **Input** next to the Output tabs and type the text your program should read - one value per line. This lesson ships sample input and fills the box for you:\n\n```text\nAda\n36\n```\n\nThe same program works on the real compiler: pipe a file or type into the terminal.",
+  "analogy": "Standard input is a mailbox: the program reads one letter (line) at a time, always from the top of the pile. When the mailbox is empty, a read returns nothing instead of waiting forever.",
+  "code_template": "use xiom.io;\n\n// TODO: read a name with io.read_line()\n\n// TODO: read an age with io.read_int() and handle Ok/Err\n\nfn main() -> Int {\n  // TODO: print \"Hello, <name>!\" then \"You are <age>.\"\n  return 0;\n}\n",
+  "solution": "use xiom.io;\n\nfn main() -> Int {\n  let name = io.read_line();\n  io.println(\"Hello, \" + name + \"!\");\n\n  let age = io.read_int();\n  match age {\n    Ok(value) => { io.println(\"You are \" + value.to_str() + \".\"); }\n    Err(message) => { io.println(\"I could not read the age: \" + message); }\n  }\n  return 0;\n}\n",
+  "expected_output": "Hello, Ada!\nYou are 36.",
+  "sample_input": "Ada\n36\n",
+  "try_it": "Change the program to read a third line and print it in uppercase, or read two numbers and print their sum.",
+  "concepts": [
+    "standard input",
+    "io.read_line",
+    "io.read_int",
+    "Result handling",
+    "interactive programs"
+  ],
+  "tips": [
+    "`io.read_line()` strips the trailing newline, so the text is ready to compare or join",
+    "`io.read_int()` and `io.read_float()` parse one whole line; a read past the end returns `Err` (and `read_line` returns \"\")",
+    "One value per line keeps sample input simple: `Ada` on the first line, `36` on the second"
+  ],
+  "common_mistakes": [
+    "Expecting `read_line()` to include the newline - it does not",
+    "Reading a number with `read_line()`: the result stays text, so use `io.read_int()` / `io.read_float()`",
+    "Forgetting the Input box: with no input every read returns empty text or `Err`"
+  ],
+  "next_lesson": "L2-01",
+  "related": [
+    "L1-01",
+    "L1-05",
+    "L2-01"
+  ]
+}
