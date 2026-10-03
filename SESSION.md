@@ -1,21 +1,24 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-09-29 (C3 delivered: offline packages vendored, wired
-and tested; Phase E sweep and B1-B5 complete; production verified).
-Branch `main` at/after this section 18 commit, working tree clean, all
-commits pushed to `origin/main`; CI green (Validate + CodeQL). Production
-serves the swept lessons and the capability metadata, and a live
-`/api/check` round-trips. The one batched ops mount request is in section
-18.2; the C22 compiler relay is in section 18.3. Production runs **toolchain v0.62.1** (stdlib
-0.62.0, wasm v0.62.1, `capabilities.format: true`) with P1 Landlock
-(`require`, ABI 4), P3 rate limits + external `abuse` monitor, P2
-host-side state and the repo-pinned VPS deploy (option C). Security P0-P3
-is fully closed (the rollback window closed and the retained pre-P2
-backup deleted on owner sign-off). The sandbox capability tiers ship in
-the reference panel; the only open item is C3 (registry bundle). Handoff
-detail: section 17.
-Read with `ROADMAP.md` (next work), `AUDIT.md` (findings and verification
-records), `README.md` and `DEPLOY.md`.
+Last updated: 2026-10-03 (v0.62.3 absorbed; program input / 1.1.0
+complete and live; C23/C24/C25 fixed upstream). Branch `main` at/after
+`d23a907`, working tree clean, all commits pushed to `origin/main`; CI
+green (Validate + CodeQL). Production runs **playground 1.0.0** +
+**toolchain v0.62.3** (stdlib 0.62.0, wasm v0.62.3,
+`capabilities.format: true`) with P1 Landlock (`require`, ABI 4), P3 rate
+limits + external `abuse` monitor, P2 host-side state, the C3 registry
+catalog mounted at `/registry-bundle` (352 packages), and the
+repo-pinned VPS deploy (option C). Security P0-P3 fully closed. All
+previous tranches are complete: Phase E sweep, B1-B5, C3, the range
+cleanup, the v0.62.3 absorption (C23 + C24 verified; C22 bridge deleted)
+and **1.1.0 program input** (stdin end-to-end, lesson L1-51, 412
+lessons). C25 is fixed upstream (`3bc59dbc`, next release) and the
+fresh-HOME workaround is queued for removal at that pin bump. The next
+milestone is **2.0.0 - Algorithm Lab**, approved and designed; it starts
+on the owner's go-ahead. Handoff detail and the ready-to-paste
+next-session prompt: section 27.
+Read with `ROADMAP.md` (phase plan + specs), `AUDIT.md` (findings and
+verification records), `README.md` and `DEPLOY.md`.
 
 ## 1. Repository and scope
 
@@ -827,7 +830,7 @@ Ops closed the P2 rollback window the same day: the retained
 restic snapshot 3052c07f contains the host state document and the dump is
 valid, and production is healthy (`abuse:ok`, `sandbox.mode=require`,
 landlock 4). The accounts backup stays until owner sign-off (AUDIT 31.1).
-## 17. Handoff (2026-09-28, end of session)
+## 17. Handoff (2026-09-28, historical) -- superseded by section 27
 
 State: pin **v0.62.1** (stdlib 0.62.0); the wasm loader is
 browser-verified on production; security P0-P3 closed (P2 rollback window
@@ -851,18 +854,13 @@ deployed API. Same day: the stdlib lane cut `stdlib-v0.62.0` (assets live,
 registry re-dispatch pending on their side); the pin is unchanged and
 `/api/version` reports `stdlib: 0.62.0` (516 modules).
 
-Next work:
-1. C3 is delivered and wired (section 18). Follow-ups: send the batched
-   ops mount request (18.2) when convenient, and remove the
-   `stageForRun` bridge once the compiler ships C22 (18.3).
-2. Range cleanup: done 2026-09-29 -- 11 prose fences reverted to direct
-   `for x in Vec` (L0-11 x3, L0-24 fence 1, L0-34 x2, L0-49, L0-50,
-   L1-37, L1-38, L5-13); L0-24 fence 2 (numeric range) and L5-04/L5-16
-   (vec used after the loop) keep the indexed form. Levels recompiled and
-   loop fences re-executed; see AUDIT 32.4's follow-up paragraph.
-3. Optional: if the compiler lane fixes C20 (module-local type identity
-   across modules, AUDIT 32.4), L6-10/L6-15 prose can pass structs
-   between modules again instead of the top-level shared type.
+Next work (all superseded by section 27; kept for history):
+1. C3 delivered and the mount is live (sections 18.1/18.2); the C22
+   bridge was deleted at the v0.62.3 absorption (AUDIT 33.6). Done.
+2. Range cleanup: done 2026-09-29 (AUDIT 32.4 follow-up). Done.
+3. Optional C20 follow-up (module-local type identity) still open with
+   the compiler lane; L6-10/L6-15 use the top-level shared type until
+   then (AUDIT 32.4).
 
 Sweep recipe (if a level needs a re-run): `tools/snippet-sweep/`
 `extract-level.js` -> WSL `compile-dir.sh` -> `fix-level.js` -> re-extract
@@ -1306,3 +1304,107 @@ fresh-HOME workaround in `server.js`, `tools/lesson-audit.js` and
 `tools/generate-expected-outputs.js` (native + WSL worker), confirm
 `c25/run.sh` -> `C25 fixed: yes`, and re-run the stdin suite test and the
 L1-51 audit. Tracked in ROADMAP.
+
+## 27. Handoff 2026-10-03 (current) -- next-session prompt
+
+### State
+
+- Playground **1.0.0** (`package.json`), toolchain/wasm **v0.62.3**,
+  **412 lessons**, production live and verified (health green, sandbox
+  `require`/ABI 4, packages 352, input E2E double-run returning
+  `Hello, Ada!`).
+- Completed: Phase E sweep + range cleanup; B1-B5; C3 (bundle verified,
+  vendored + mounted catalog, example + sandboxed tests); interactive
+  runs at `-O0` (~3x faster, which surfaced C23/C24); v0.62.3 absorption
+  (C23/C24 verified, C22 bridge deleted, expected outputs regenerated for
+  the compiler's blank-line fix, L2-51 enum patterns qualified); **1.1.0
+  program input** (API `stdin`, Input box, `sample_input` in audit +
+  generator, lesson L1-51).
+- Compiler findings: C20 (module type identity; open, optional),
+  C22 (fixed; bridge deleted), C23 (fixed in v0.62.3), C24 (fixed in
+  v0.62.3), **C25 (fixed upstream `3bc59dbc`, ships next release; the
+  fresh-HOME workaround is still in place)**.
+- Waiting on: the next toolchain release (remove the C25 workaround at
+  that pin bump); owner go-ahead for **2.0.0 Algorithm Lab**; designer
+  assets (ROADMAP "Graphics needed" - 12 for 2.0, 23 for 2.2).
+- Verification/records: AUDIT 33.3-33.7 (C22-C25, absorption, input),
+  AUDIT 32.4 (sweep), SESSION 18-26, ROADMAP phase plan.
+
+### Next-session prompt (paste-ready)
+
+```text
+You are the playground session for xiom-lang/playground at E:\xiom-lang\playground.
+
+Read SESSION.md section 27 (handoff + this prompt), ROADMAP.md ("Release phase
+plan", "Algorithm Lab", "Graphics needed", "v0.62.3 tracking"), AUDIT.md
+sections 33.3-33.7, then verify state first: git fetch; tree clean; HEAD ==
+origin/main (expect at/after d23a907); run the section 8 gate; curl
+https://playground.xiom-lang.org/api/version (expect playground 1.0.0,
+toolchain v0.62.3, wasm v0.62.3) and /api/health (sandbox.mode=require,
+landlock 4, abuse:ok, packages.bundlePackages ~352).
+
+Task 1 (primary) - 2.0.0 Algorithm Lab v1 (the approved visualization release):
+  1. Trace protocol v1: normal XIOM programs print pipe-delimited events
+     (e.g. v1|init|vals=5,3,8|step=init; v1|compare|i=0|j=1|step=compare;
+     v1|swap|i=0|j=1|step=swap; v1|set|i=2|v=7|step=set; v1|done). Parse
+     client-side as data only (no eval, no HTML interpolation), bounded.
+  2. Drawing primitives (start with what Tier 1 needs): bars, cells+pointers,
+     grid, graph, tree, matrix, call stack, timeline.
+  3. Split player: Monaco code + visualization; the executing line(s)
+     highlighted via `// @step <name>` annotations matched to the trace's
+     step field (Monaco decorations); play/pause, step forward/back, reset,
+     speed; reduced motion; mobile stacks with a collapsible code pane.
+  4. Tier 1 algorithms as real runnable lessons/programs: bubble/insertion/
+     selection sort, linear and binary search, BFS/DFS/flood fill, stack/
+     queue/linked list, sieve/GCD/Collatz, factorial/Hanoi. Nothing pre-baked:
+     every frame comes from the program's own trace.
+  5. Compare mode (first v2 increment): two presets from one shared clock at
+     equal steps-per-second (sync by rate, not index), per-pane counters,
+     desktop side-by-side / mobile stacked.
+  6. Tests: extend tools/test-server.js (trace parsing, player state machine,
+     markup) and verify in a real browser via headless Edge (open the Lab,
+     step through, confirm the highlight follows); both themes. Zero-dep
+     ES5 frontend (DOM/canvas, no bundlers); no new server endpoints unless
+     truly needed (sandboxed xiom run + stdout already carry the traces).
+
+Task 2 (only if the next toolchain release exists and contains 3bc59dbc):
+  absorb it - bump TOOLCHAIN_VERSION/WASM_VERSION, fetch through the dl
+  mirror, run tools/compiler-repros/c25/run.sh (expect "C25 fixed: yes"),
+  delete the fresh-HOME workaround (server.js run path, tools/lesson-audit.js,
+  tools/generate-expected-outputs.js native + WSL worker), re-run the stdin
+  suite test and the L1-51 audit, and record the absorption.
+
+Per tranche: implement; verify execution on Linux/WSL and UI in a real
+browser; update ROADMAP/AUDIT/SESSION; run the full gate (node --check,
+tools/test-server.js, generator --checks, lesson-audit --check-only, plus
+execution audits where relevant); commit -s with a conventional message; push
+origin main (never force); verify HEAD == origin/main and CI green;
+production deploys by the hourly VPS pull at minute 29.
+
+Constraints unchanged: zero-dependency Node tools and ES5 frontend; no
+bundlers; both themes; ASCII docs; never edit .kilo/ worktrees; never weaken
+the container sandbox; do not edit compiler/ops/registry/website repos (relay
+requests to the owner); never hand-edit js/stdlib-ref.json, js/limitations.json,
+tools/lesson-baseline.json or tools/expected-output-skips.json (regenerate
+tool-driven); main must stay deployable.
+
+Environment: Windows .toolchain is v0.62.3; the Linux sweep/audit toolchain is
+/home/lefteris/xiom_v0623/tc in WSL (node at
+/home/lefteris/node-v22.23.2-linux-x64/bin); WSL /tmp is wiped between
+invocations, so recreate /tmp copies inside one command; clear /tmp/xiom_run
+and ~/.xiom when switching builds; sweeps/audits run from Windows (the --wsl
+flag is Windows-only); lesson-audit check-only takes ~20-25 min and can
+intermittently crash under load (re-run); the full execution audit runs in
+WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
+```
+
+### Follow-up checklist
+
+1. Next toolchain release (contains `3bc59dbc`): pin bump + C25 workaround
+   removal + `c25/run.sh` acceptance + re-run input tests (Task 2 above).
+2. 2.0.0 Algorithm Lab v1 as scoped (Task 1 above); keep the trace protocol
+   pipe-delimited, the highlight annotation-driven, and compare sync by rate.
+3. Optional C20: if the compiler lane fixes module-local type identity,
+   L6-10/L6-15 prose can pass structs across modules again.
+4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style
+   brief for 2.0 (12 assets) and 2.2 (23 assets).
