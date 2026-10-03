@@ -1283,3 +1283,15 @@ text:
 > `XIOM_NO_CACHE=1`) and still appears to write cache entries. We
 > work around input runs with a fresh empty HOME; `c25/run.sh` must print
 > `C25 fixed: yes` (cold and cached both read `Ada`).
+
+Production verification for the input tranche (2026-10-03, after the
+20:29 UTC pull): two identical `/api/compile` requests with
+`stdin: "Ada\n"` both returned `Hello, Ada!` (2.3s and 1.8s - the
+fresh-HOME workaround compiles each input run, so a warm cache cannot
+drop the input); `/api/version` reports toolchain v0.62.3 and wasm
+v0.62.3; health green (sandbox require, packages 352, abuse ok); the
+landing page ships the Input box (`stdinInput`, `toggleStdin`); and the
+served `L1-51` carries `sample_input` "Ada\n36\n" with expected output
+"Hello, Ada!\nYou are 36.". 1.1.0 is complete and live; the only open
+compiler item from this tranche is C25 (input runs keep the fresh-HOME
+workaround until it ships).
