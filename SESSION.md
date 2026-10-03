@@ -1245,3 +1245,10 @@ refreshed (compiler no longer emits spurious blank lines: L6-17, L8-10,
 L8-11, L8-12, L8-13). Full lesson audit on v0.62.3: no regressions; suite
 44/0/1. Remaining for 1.1.0: wire stdin (API field + Input box +
 sample_input) and add the first input lesson - now unblocked.
+
+Production verification (2026-10-03, after the 19:29 UTC pull): `/api/version`
+reports toolchain v0.62.3 and wasm v0.62.3; health green (sandbox require,
+packages 352, abuse ok). E2E on the new pin: the hello/csv example and
+`xiom.loss` (bundle-only) both compile and run (1.6-2.0s each). The v0.62.3
+absorption tranche is complete; 1.1.0 continues with the stdin wiring and
+the first input lesson.
