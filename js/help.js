@@ -9,6 +9,13 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Three more sorts in the Lab',
+    items: [
+      'Tier 2 is arriving: Merge Sort, Quick Sort and Heap Sort join the Lab with the same real-trace playback and compare mode.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Lab on the phone',
     items: [
       'Algorithm Lab on narrow screens now highlights the executing line right in the plain-text editor, and follows it as the trace plays.',

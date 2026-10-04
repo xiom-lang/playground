@@ -608,8 +608,8 @@ async function main() {
       assert.strictEqual(res.status, 200);
       const payload = JSON.parse(res.body);
       assert.strictEqual(payload.protocol, 'v1');
-      assert.strictEqual(payload.total_entries, 16);
-      assert.strictEqual(payload.categories.length, 6);
+      assert.ok(payload.total_entries >= 16, 'the Tier 1 shelf must stay catalogued');
+      assert.ok(payload.categories.length >= 6, 'category count: ' + payload.categories.length);
       const viewTypes = new Set(['bars', 'cells', 'grid', 'graph', 'tree', 'matrix', 'stack', 'timeline']);
       let count = 0;
       for (const category of payload.categories) {
@@ -619,7 +619,7 @@ async function main() {
           assert.ok(viewTypes.has(entry.view.type), entry.id + ' view ' + JSON.stringify(entry.view));
         }
       }
-      assert.strictEqual(count, 16);
+      assert.strictEqual(count, payload.total_entries, 'the walk must match total_entries');
     });
 
     await okAsync('every Lab entry ships code with @step annotations', async () => {

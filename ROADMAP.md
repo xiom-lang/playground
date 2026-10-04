@@ -82,12 +82,18 @@ the sections below hold the detailed specs.
   visualization rebuilds from the edited trace; lessons stdin Input and
   output panel re-checked at 390x844 (AUDIT 34.6).
 
-### 2.1.0 -- Lab expansion
+### 2.1.0 -- Lab expansion (IN PROGRESS, started 2026-10-04)
 
-- Tier 2 algorithms: merge/quick/heap/counting/radix sort; Dijkstra,
-  A*, maze generation; DP (knapsack, LCS, edit distance, coin change);
-  BST/heap/trie; KMP; topological sort, cycle detection, union-find
-  (Kruskal/Prim); activity selection; Huffman.
+- [x] Wave A: merge sort, quick sort, heap sort (real trace programs,
+  audit-clean, browser-verified; AUDIT 34.7).
+- [ ] Wave B: counting sort, radix sort; DP (knapsack, LCS, edit distance,
+  coin change) on the matrix primitive.
+- [ ] Wave C: Dijkstra, A*, maze generation; topological sort, cycle
+  detection, union-find (Kruskal/Prim) on the graph primitive.
+- [ ] Wave D: BST, heap, trie (tree labels), KMP, activity selection,
+  Huffman.
+- Primitive extensions land with the wave that needs them (matrix row
+  labels, graph edge weights/roles, wall marks, tree labels).
 
 ### 2.2.0 -- Gamified learning
 

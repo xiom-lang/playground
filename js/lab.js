@@ -208,6 +208,9 @@ function labSelectEntry(pane, entry) {
   state.entry = entry;
   document.getElementById('labPreset' + pane).value = entry.id;
   labSetStatus(pane, 'Loading ' + entry.title + '...');
+  // Drop the previous trace immediately so the pane never shows one
+  // algorithm's visualization under another's title while the new entry loads.
+  labResetWork(pane);
   fetch('lessons/lab/' + entry.file)
     .then(function (resp) {
       if (!resp.ok) throw new Error('Entry not found: ' + entry.file);
@@ -217,7 +220,6 @@ function labSelectEntry(pane, entry) {
       state.code = payload.code;
       state.entry = { id: payload.id, title: payload.title, category: payload.category, view: payload.view, blurb: payload.blurb, file: entry.file };
       state.annotations = window.LabTrace.extractAnnotations(payload.code);
-      labResetWork(pane);
       labSetEditorCode(pane, payload.code);
       labSetCodePaneDefault(pane);
       if (pane === 'A') {

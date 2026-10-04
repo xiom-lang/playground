@@ -34,6 +34,30 @@
       "program": "selection-sort.xi"
     },
     {
+      "id": "lab-merge-sort",
+      "title": "Merge Sort",
+      "category": "sorting",
+      "view": { "type": "bars" },
+      "blurb": "Split the range in half, sort each half, then merge the two back in order.",
+      "program": "merge-sort.xi"
+    },
+    {
+      "id": "lab-quick-sort",
+      "title": "Quick Sort",
+      "category": "sorting",
+      "view": { "type": "bars" },
+      "blurb": "Partition around a pivot so smaller values move left, then recurse on both sides.",
+      "program": "quick-sort.xi"
+    },
+    {
+      "id": "lab-heap-sort",
+      "title": "Heap Sort",
+      "category": "sorting",
+      "view": { "type": "bars" },
+      "blurb": "Build a max-heap in the array, then extract the largest value to the end, one by one.",
+      "program": "heap-sort.xi"
+    },
+    {
       "id": "lab-linear-search",
       "title": "Linear Search",
       "category": "searching",

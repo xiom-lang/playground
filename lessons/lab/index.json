@@ -1,7 +1,7 @@
 {
   "version": "2.0.2",
   "protocol": "v1",
-  "total_entries": 16,
+  "total_entries": 19,
   "categories": [
     {
       "id": "sorting",
@@ -35,6 +35,33 @@
             "type": "bars"
           },
           "blurb": "Scan the unsorted tail for the smallest value, then swap it into the next sorted slot."
+        },
+        {
+          "id": "lab-merge-sort",
+          "title": "Merge Sort",
+          "file": "entries/lab-merge-sort.json",
+          "view": {
+            "type": "bars"
+          },
+          "blurb": "Split the range in half, sort each half, then merge the two back in order."
+        },
+        {
+          "id": "lab-quick-sort",
+          "title": "Quick Sort",
+          "file": "entries/lab-quick-sort.json",
+          "view": {
+            "type": "bars"
+          },
+          "blurb": "Partition around a pivot so smaller values move left, then recurse on both sides."
+        },
+        {
+          "id": "lab-heap-sort",
+          "title": "Heap Sort",
+          "file": "entries/lab-heap-sort.json",
+          "view": {
+            "type": "bars"
+          },
+          "blurb": "Build a max-heap in the array, then extract the largest value to the end, one by one."
         }
       ]
     },

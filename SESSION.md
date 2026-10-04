@@ -1,10 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-04 (**2.0.2 Lab on mobile** ready; 2.0.0 Algorithm
-Lab complete). Branch `main` at/after `c835474`, working tree clean, all
-commits pushed to `origin/main`; CI green (Validate + CodeQL). Production
-runs **playground 2.0.0** (the 2.0.1 polish and 2.0.2 mobile highlight land
-on the next hourly VPS pull) + **toolchain v0.62.3** (stdlib 0.62.0, wasm
+Last updated: 2026-10-04 (**2.1.0 Lab expansion in progress** - wave A
+landed; 2.0.x Lab complete and live). Branch `main` at/after `c835474`,
+working tree clean, all commits pushed to `origin/main`; CI green (Validate
++ CodeQL). Production runs **playground 2.0.2** + **toolchain v0.62.3**
+(stdlib 0.62.0, wasm
 v0.62.3, `capabilities.format: true`) with P1 Landlock (`require`, ABI 4),
 P3 rate limits + external `abuse` monitor, P2 host-side state, the C3
 registry catalog mounted at `/registry-bundle` (352 packages), and the
@@ -17,9 +17,10 @@ AUDIT 34.5) and the **2.0.2 mobile pass** (highlight strips in the phone
 editor with reveal-on-step, edit-and-Run verified at 390x844; AUDIT 34.6).
 C25 is fixed upstream (`3bc59dbc`, next release) and the fresh-HOME
 workaround is queued for removal at that pin bump. The next milestone is
-**2.1.0 - Lab expansion** (Tier 2 algorithms), pending the owner's
-go-ahead. Handoff detail and the ready-to-paste next-session prompt:
-section 28.
+**2.1.0 - Lab expansion** (Tier 2 algorithms): the owner gave the go-ahead
+on 2026-10-04 and **wave A** (merge/quick/heap sort) has landed; waves B-D
+are listed in ROADMAP 2.1.0. Handoff detail and the ready-to-paste
+next-session prompt: section 28.
 Read with `ROADMAP.md` (phase plan + specs), `AUDIT.md` (findings and
 verification records), `README.md` and `DEPLOY.md`.
 
@@ -1417,9 +1418,9 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 ### State
 
 - Playground **2.0.2** (`package.json`), toolchain/wasm **v0.62.3**,
-  **412 lessons** + **16 Lab programs**, production live and verified for
-  2.0.0 (health green, sandbox `require`/ABI 4, packages 352); the 2.0.1
-  and 2.0.2 polish land on the next hourly pull.
+  **412 lessons** + **19 Lab programs** (16 Tier 1 + wave A of Tier 2),
+  production live and verified (health green, sandbox `require`/ABI 4,
+  packages 352); the 2.0.1/2.0.2 polish rides the hourly pull.
 - Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
   (`docs/LAB_PROTOCOL.md`), parser and player (`js/lab-trace.js`,
   `js/lab-player.js`), eight canvas primitives (`js/lab-viz.js`), the Lab
@@ -1431,7 +1432,9 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
   4 steps/s and an animated transition layer in all eight primitives
   (disabled under reduced motion; AUDIT 34.5). Then **2.0.2 mobile pass**:
   highlight strips in the narrow-screen editor with reveal-on-step, and
-  edit-and-Run verified from the phone-size editor (AUDIT 34.6).
+  edit-and-Run verified from the phone-size editor (AUDIT 34.6). Then
+  **2.1.0 wave A** on the owner's 2026-10-04 go-ahead: merge sort, quick
+  sort, heap sort (AUDIT 34.7). Waves B-D are listed in ROADMAP 2.1.0.
 - Compiler findings: C20 (module type identity; open, optional), C25
   (fixed upstream `3bc59dbc`, ships next release; the fresh-HOME
   workaround is still in place).
@@ -1455,15 +1458,15 @@ toolchain v0.62.3, wasm v0.62.3) and /api/health (sandbox.mode=require,
 landlock 4, abuse:ok, packages.bundlePackages ~352). Also open the Lab once
 (https://playground.xiom-lang.org/, Algorithm Lab) and confirm a trace plays.
 
-Task 1 (primary, on owner go-ahead) - 2.1.0 Lab expansion (Tier 2):
-  add real trace programs + entries for merge/quick/heap/counting/radix
-  sort; Dijkstra, A*, maze generation; knapsack, LCS, edit distance, coin
-  change; BST, heap, trie; KMP; topological sort, cycle detection,
-  union-find (Kruskal/Prim); activity selection; Huffman. Reuse protocol v1
-  and the existing primitives (graph/tree/matrix finally carry the
-  algorithmic load); extend primitives only where a program needs it.
-  Same workflow: manifest + programs, audit twice on the pin, tests,
-  browser verification, docs.
+Task 1 (primary) - 2.1.0 Lab expansion, IN PROGRESS (owner go-ahead given
+  2026-10-04; wave A landed: merge/quick/heap sort). Continue with the
+  remaining waves from ROADMAP 2.1.0: wave B (counting/radix sort; DP
+  knapsack, LCS, edit distance, coin change on the matrix primitive), wave C
+  (Dijkstra, A*, maze generation; topological sort, cycle detection,
+  union-find Kruskal/Prim on the graph primitive), wave D (BST, heap, trie;
+  KMP; activity selection; Huffman). Reuse protocol v1; extend primitives
+  only with the wave that needs them (matrix row labels, graph edge
+  weights/roles, wall marks, tree labels) and audit twice on the pin.
 
 Task 2 (only if the next toolchain release exists and contains 3bc59dbc):
   absorb it - bump TOOLCHAIN_VERSION/WASM_VERSION, fetch through the dl

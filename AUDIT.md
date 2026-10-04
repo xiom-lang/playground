@@ -2493,3 +2493,26 @@ re-running the program. Delivered as **2.0.2**:
   was re-checked at the same size: mobile editor, Run, stdin Input box and
   output panel are all reachable.
 - Suite 63/0/1; shell test asserts the new markup and stylesheet markers.
+
+### 34.7 Tier 2 wave A: advanced sorts (2.1.0 in progress, 2026-10-04)
+
+Owner go-ahead for the 2.1.0 Lab expansion. Work is landing in waves; wave A
+adds three sorting programs on the existing `bars` primitive (no protocol or
+renderer change needed):
+
+- `merge-sort.xi` (58 events): recursive split marks, compare events,
+  merge write-backs as `set` (the bar tween makes the write-back readable).
+- `quick-sort.xi` (39 events): Lomuto partition with `pivot`, `compare`,
+  `swap`/`place` and `sorted` marks; single-element partitions mark sorted.
+- `heap-sort.xi` (43 events): sift-down with compare/swap, `extract` swaps
+  the root to the end, growing sorted suffix.
+
+All three pass `tools/lab-audit.js` twice each on the v0.62.3 pin with full
+annotation coverage, are covered by the catalog tests, and were
+browser-checked (merge sort at step 18 shows the first merged run with the
+merge write animating; the highlight follows the `step=merge` line).
+
+Catalog is now 19 entries / 6 categories. The catalog tests no longer
+hard-code counts: they walk the index and assert the walk matches
+`total_entries` (minimum shelf of 16 preserved). Wave B (counting/radix,
+DP matrix) is next; see ROADMAP 2.1.0 for the wave list.
