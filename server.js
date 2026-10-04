@@ -501,20 +501,13 @@ async function runProgram(source, stdin) {
     // sources are instant via the script cache keyed on the level). Lessons
     // never need optimized binaries, and -O0 keeps trap/overflow behaviour
     // predictable.
-    // C25 workaround: `xiom run`'s script-cache hit path closes stdin and
-    // `--no-cache` is inert on the pin, so input runs get an empty HOME:
-    // the cache lookup misses, the program compiles and inherits stdin.
-    // Runs without input keep the warm cache.
+    // C25 is fixed in v0.62.4: cache hits inherit stdin and --no-cache is
+    // honoured, so input runs share the warm cache like everything else.
     const runOptions = {
       cwd: dir,
       timeoutMs: COMPILE_TIMEOUT_MS,
       input: stdin == null ? undefined : stdin,
     };
-    if (stdin != null) {
-      const stdinHome = path.join(dir, 'stdin-home');
-      fs.mkdirSync(stdinHome, { recursive: true });
-      runOptions.env = Object.assign(userChildEnv(), { HOME: stdinHome });
-    }
     const proc = await runXiom(['run', '-O0', file], runOptions);
     const result = {
       success: proc.success,

@@ -2516,3 +2516,29 @@ Catalog is now 19 entries / 6 categories. The catalog tests no longer
 hard-code counts: they walk the index and assert the walk matches
 `total_entries` (minimum shelf of 16 preserved). Wave B (counting/radix,
 DP matrix) is next; see ROADMAP 2.1.0 for the wave list.
+
+## 35. v0.62.4 absorption: C25 (2026-10-04)
+
+The next toolchain release arrived on 2026-10-04T13:15Z carrying the C25
+fix (compiler commit `3bc59dbc`). Absorbed the same day:
+
+- Pins: `TOOLCHAIN_VERSION` and `WASM_VERSION` -> **v0.62.4**; the root wasm
+  bundle (`xiom-wasm.js`, `xiom-wasm_bg.wasm`, `xiom-wasm.d.ts`) replaced
+  from the release. Windows zip, Linux tar.gz and all three wasm assets
+  were fetched with SHA256 verification against the release `SHA256SUMS`.
+  Browser check: the in-browser compiler reports **"XIOM v0.62.4 (WASM)"**
+  and returns structured diagnostics.
+- C25 acceptance: `tools/compiler-repros/c25/run.sh` -> **`C25 fixed: yes`**
+  (cold, cached and `--no-cache` all read `Ada`).
+- Fresh-HOME workaround deleted in `server.js` (run path),
+  `tools/lesson-audit.js` and `tools/generate-expected-outputs.js` (native
+  and WSL worker). Input runs now share the warm script cache. Server E2E:
+  two identical `/api/compile` calls with `stdin: "Ada\n"` both return
+  `Hello, Ada!` (1.78s cold, **0.016s cached**).
+- Verification on the new pin: full suite in WSL with execution enabled is
+  **71 passed / 0 failed**; L1 audit 51/51 (L1-51 included); full lesson
+  audit **412/412, 0 failures at every level**; lab audit 19/19 programs x2;
+  stdlib surface unchanged (516 modules / 6,535 functions) and both
+  generated data files refreshed for the version line only.
+- Environment note: the Linux audit toolchain for this pin is at
+  `/home/lefteris/xiom_v0624/tc` in WSL.

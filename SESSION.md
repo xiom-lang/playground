@@ -3,9 +3,9 @@
 Last updated: 2026-10-04 (**2.1.0 Lab expansion in progress** - wave A
 landed; 2.0.x Lab complete and live). Branch `main` at/after `c835474`,
 working tree clean, all commits pushed to `origin/main`; CI green (Validate
-+ CodeQL). Production runs **playground 2.0.2** + **toolchain v0.62.3**
-(stdlib 0.62.0, wasm
-v0.62.3, `capabilities.format: true`) with P1 Landlock (`require`, ABI 4),
++ CodeQL). Production runs **playground 2.0.2** (the next hourly pull also
+carries **toolchain v0.62.4**) with stdlib 0.62.0, wasm
+v0.62.4, `capabilities.format: true`, P1 Landlock (`require`, ABI 4),
 P3 rate limits + external `abuse` monitor, P2 host-side state, the C3
 registry catalog mounted at `/registry-bundle` (352 packages), and the
 repo-pinned VPS deploy (option C). Security P0-P3 fully closed. All
@@ -15,8 +15,9 @@ with `// @step` highlight, compare mode; AUDIT 34), the **2.0.1 polish**
 (4 steps/s default, animated canvas transitions, reduced-motion-safe;
 AUDIT 34.5) and the **2.0.2 mobile pass** (highlight strips in the phone
 editor with reveal-on-step, edit-and-Run verified at 390x844; AUDIT 34.6).
-C25 is fixed upstream (`3bc59dbc`, next release) and the fresh-HOME
-workaround is queued for removal at that pin bump. The next milestone is
+C25 is absorbed in the **v0.62.4** pin bump (2026-10-04): `c25/run.sh`
+prints `C25 fixed: yes`, the fresh-HOME workaround is deleted, and
+warm-cache stdin runs share the cache (AUDIT 35). The next milestone is
 **2.1.0 - Lab expansion** (Tier 2 algorithms): the owner gave the go-ahead
 on 2026-10-04 and **wave A** (merge/quick/heap sort) has landed; waves B-D
 are listed in ROADMAP 2.1.0. Handoff detail and the ready-to-paste
@@ -1417,10 +1418,11 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 
 ### State
 
-- Playground **2.0.2** (`package.json`), toolchain/wasm **v0.62.3**,
-  **412 lessons** + **19 Lab programs** (16 Tier 1 + wave A of Tier 2),
-  production live and verified (health green, sandbox `require`/ABI 4,
-  packages 352); the 2.0.1/2.0.2 polish rides the hourly pull.
+- Playground **2.0.2** (`package.json`), toolchain/wasm **v0.62.4**
+  (C25 absorbed; AUDIT 35), **412 lessons** + **19 Lab programs** (16 Tier 1
+  + wave A of Tier 2), production live and verified (health green, sandbox
+  `require`/ABI 4, packages 352); the 2.0.1/2.0.2 polish and the v0.62.4 pin
+  ride the hourly pull.
 - Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
   (`docs/LAB_PROTOCOL.md`), parser and player (`js/lab-trace.js`,
   `js/lab-player.js`), eight canvas primitives (`js/lab-viz.js`), the Lab
@@ -1454,7 +1456,7 @@ plan", "Algorithm Lab", "Graphics needed", "v0.62.3 tracking"), AUDIT.md
 sections 33.3-33.7 and 34, then verify state first: git fetch; tree clean;
 HEAD == origin/main (expect at/after c835474); run the section 8 gate; curl
 https://playground.xiom-lang.org/api/version (expect playground 2.0.2,
-toolchain v0.62.3, wasm v0.62.3) and /api/health (sandbox.mode=require,
+toolchain v0.62.4, wasm v0.62.4) and /api/health (sandbox.mode=require,
 landlock 4, abuse:ok, packages.bundlePackages ~352). Also open the Lab once
 (https://playground.xiom-lang.org/, Algorithm Lab) and confirm a trace plays.
 
@@ -1468,12 +1470,10 @@ Task 1 (primary) - 2.1.0 Lab expansion, IN PROGRESS (owner go-ahead given
   only with the wave that needs them (matrix row labels, graph edge
   weights/roles, wall marks, tree labels) and audit twice on the pin.
 
-Task 2 (only if the next toolchain release exists and contains 3bc59dbc):
-  absorb it - bump TOOLCHAIN_VERSION/WASM_VERSION, fetch through the dl
-  mirror, run tools/compiler-repros/c25/run.sh (expect "C25 fixed: yes"),
-  delete the fresh-HOME workaround (server.js run path, tools/lesson-audit.js,
-  tools/generate-expected-outputs.js native + WSL worker), re-run the stdin
-  suite test and the L1-51 audit, and record the absorption.
+Task 2 (DONE 2026-10-04) - C25 absorbed in v0.62.4 (AUDIT 35): pins and
+  wasm bumped, c25/run.sh prints "C25 fixed: yes", the fresh-HOME workaround
+  is deleted, suite 71/0 and full audit 412/412 on the new pin. No action
+  needed; keep production on v0.62.4.
 
 Per tranche: implement; verify execution on Linux/WSL and UI in a real
 browser; update ROADMAP/AUDIT/SESSION; run the full gate (node --check,
@@ -1490,12 +1490,12 @@ requests to the owner); never hand-edit generated JSONs (js/stdlib-ref.json,
 js/limitations.json, tools/lesson-baseline.json, tools/expected-output-skips.json,
 lessons/lab/index.json, lessons/lab/entries/*); main must stay deployable.
 
-Environment: Windows .toolchain is v0.62.3; the Linux sweep/audit toolchain
-is /home/lefteris/xiom_v0623/tc in WSL (node at
+Environment: Windows .toolchain is v0.62.4; the Linux sweep/audit toolchain
+is /home/lefteris/xiom_v0624/tc in WSL (node at
 /home/lefteris/node-v22.23.2-linux-x64/bin); the WSL default distro is
 docker-desktop, so every command must use `wsl -d Ubuntu -e bash -lc ...`;
 lab-audit on Windows: `node tools/lab-audit.js --wsl --wsl-toolchain
-/home/lefteris/xiom_v0623/tc`; WSL /tmp is wiped between invocations;
+/home/lefteris/xiom_v0624/tc`; WSL /tmp is wiped between invocations;
 lesson-audit check-only takes ~20-25 min and can intermittently crash under
 load (re-run); browser verification uses headless Edge ("C:\Program Files
 (x86)\Microsoft\Edge\Application\msedge.exe") driven over the DevTools

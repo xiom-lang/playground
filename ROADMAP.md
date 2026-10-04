@@ -469,6 +469,9 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   WSL worker), confirm `tools/compiler-repros/c25/run.sh` prints
   `C25 fixed: yes`, and re-run the stdin suite test and the L1-51 audit
   (AUDIT 33.7).
+- [x] **Absorbed in v0.62.4** (2026-10-04): pins and wasm bundle bumped,
+  `c25/run.sh` prints `C25 fixed: yes`, the fresh-HOME workaround is
+  deleted, warm-cache stdin verified end to end (AUDIT 35).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;

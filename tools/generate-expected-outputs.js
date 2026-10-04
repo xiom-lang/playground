@@ -219,19 +219,11 @@ async function nativeRun(job, runIndex) {
   const started = Date.now();
   // -O0 matches the server's interactive runs and, on the v0.62.1 pin, the
   // default -O2 miscompiles some solutions on some hosts (see AUDIT 33.4:
-  // L7-39/L8-09 silently print wrong answers at -O2 here).
-  // Runs with sample input get an empty HOME to bypass the script cache
-  // (C25: cache hits close stdin, so only the first run would see input;
-  // --no-cache is inert on the pin).
-  let env = childEnv;
-  if (job.sample_input != null) {
-    const home = path.join(dir, 'home');
-    fs.mkdirSync(home, { recursive: true });
-    env = Object.assign({}, childEnv, { HOME: home });
-  }
+  // L7-39/L8-09 silently print wrong answers at -O2 here). C25 is fixed in
+  // v0.62.4, so input runs share the warm cache too.
   const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], {
     cwd: dir,
-    env,
+    env: childEnv,
     timeoutMs: TIMEOUT,
     input: job.sample_input == null ? undefined : job.sample_input,
   });
@@ -287,13 +279,8 @@ const PY_WORKER = [
   '    proc = None',
   '    try:',
   '        # -O0 matches the server; -O2 miscompiles some solutions on some hosts (AUDIT 33.4).',
-    '        run_env = env',
-  '        if job.get("sample_input") is not None:',
-  '            # C25: cache hits close stdin; give input runs an empty HOME.',
-  '            home = os.path.join(run_dir, "home")',
-  '            os.makedirs(home, exist_ok=True)',
-  '            run_env = dict(env, HOME=home)',
-  '        proc = subprocess.Popen([binary, "run", "-O0", source], cwd=run_dir, env=run_env,',
+  '        # C25 is fixed in v0.62.4: input runs share the warm cache.',
+  '        proc = subprocess.Popen([binary, "run", "-O0", source], cwd=run_dir, env=env,',
   '                                stdin=subprocess.PIPE,',
   '                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,',
   '                                text=True, errors="replace", start_new_session=True)',

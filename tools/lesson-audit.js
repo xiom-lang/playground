@@ -115,18 +115,12 @@ async function runSource(source, id, input) {
   fs.writeFileSync(file, source, 'utf8');
   const started = Date.now();
   // -O0 matches the server's interactive runs; input lessons pass their
-  // sample_input so auto-validation stays deterministic (1.1.0). Runs with
-  // input get an empty HOME to bypass the script cache (C25: cache hits
-  // close stdin and --no-cache is inert on the pin).
-  let env = childEnv;
-  if (input != null) {
-    const home = path.join(dir, 'home');
-    fs.mkdirSync(home, { recursive: true });
-    env = Object.assign({}, childEnv, { HOME: home });
-  }
+  // sample_input so auto-validation stays deterministic (1.1.0). C25 is
+  // fixed in v0.62.4, so cached runs read stdin too and no HOME override is
+  // needed.
   const proc = await runProcess(XIOM_BIN, ['run', '-O0', file], {
     cwd: dir,
-    env,
+    env: childEnv,
     timeoutMs: TIMEOUT_RUN,
     input: input == null ? undefined : input,
   });
