@@ -2542,3 +2542,41 @@ fix (compiler commit `3bc59dbc`). Absorbed the same day:
   generated data files refreshed for the version line only.
 - Environment note: the Linux audit toolchain for this pin is at
   `/home/lefteris/xiom_v0624/tc` in WSL.
+
+## 36. Input lessons pass (2.0.3, 2026-10-04)
+
+Owner feedback: make sure input lessons actually take the learner's input
+and are interactive. Findings and changes:
+
+- Audit: only two lessons touch stdin. **L1-51** already read input and
+  shipped sample input, but the Input box stayed hidden until the learner
+  found the tab. **L7-10 "Number Guessing Game"** promised a playable game
+  in its narrative while its runnable solution was a hardcoded bisection
+  simulation that never read input.
+- L7-10 is now a real game: `io.read_int()` in a loop with Too low!/Too
+  high! hints, attempt tracking, a score (`calculate_score`), a ten-attempt
+  limit and an out-of-attempts ending; the sample input walks a complete
+  winning game. The narrative and starter template were rewritten to
+  match, and the expected output was regenerated tool-driven on v0.62.4
+  (two deterministic runs; other lessons unchanged).
+- UX: lessons that read input now **auto-open the Input box**, load their
+  sample (the sample is lesson-scoped and overwrites the box on selection),
+  pulse the Input tab once (disabled under reduced motion), and the box
+  auto-closes for lessons that do not read input. Typing in the box clears
+  a stale result banner.
+- Expected-result check: running an input lesson with your own input is no
+  longer reported as a mismatch; the comparison only applies when the box
+  still holds the shipped sample. Editing the program keeps the existing
+  "Edited program" note.
+- Verification (headless Edge against the v0.62.4 WSL stack): L1-51 opens
+  with `Ada\n36\n` and prints `Hello, Ada!\nYou are 36.`; L7-10 opens with
+  the sample game and prints the full transcript ending `Correct!
+  Attempts: 7` / `Score: 14` with the green "Output matches" banner; a
+  custom losing game prints ten `Too low!` lines and `Out of attempts! The
+  number was 42.` with the neutral note; switching to L0-01 closes the box.
+- Full lesson audit on the changed catalog: 412/412 lessons ran with zero
+  solution/run/expected failures. One template failure surfaced (the new
+  L7-10 starter referenced an undefined identifier); the template now
+  type-checks and the L7 re-audit is clean (40/40, templateFail 0). The
+  lesson baseline was refreshed tool-driven to v0.62.4 (empty known
+  lists). Suite 63/0/1; lesson catalog and expected-output gates current.

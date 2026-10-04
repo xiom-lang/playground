@@ -356,6 +356,11 @@ async function main() {
       assert.ok(page.body.indexOf('toggleStdin()') >= 0, 'stdin toggle missing');
       const compiler = await request('GET', '/js/compiler.js');
       assert.ok(compiler.body.indexOf('readStdinValue') >= 0, 'stdin not wired into Run');
+      assert.ok(compiler.body.indexOf('setupStdinForLesson') >= 0, 'input lessons must auto-open the Input box');
+      const lessons = await request('GET', '/js/lessons.js');
+      assert.ok(lessons.body.indexOf('setupStdinForLesson') >= 0, 'lesson load must call the stdin setup');
+      const theme = await request('GET', '/css/theme.css');
+      assert.ok(theme.body.indexOf('stdin-toggle.attention') >= 0, 'Input tab attention cue missing');
     });
 
     await okAsync('help and What\'s new ship in the app', async () => {

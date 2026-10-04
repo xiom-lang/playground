@@ -2574,6 +2574,15 @@ a:focus-visible,
 
 /* Program input (stdin) row in the output panel (1.1.0). */
 .stdin-toggle.active { color: var(--indigo); border-color: var(--indigo); }
+/* Auto-opened for lessons that read input: a single gentle pulse. */
+.stdin-toggle.attention { animation: stdinPulse 1.6s ease-out 1; }
+@keyframes stdinPulse {
+  0% { box-shadow: 0 0 0 0 var(--indigo-glow); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stdin-toggle.attention { animation: none; }
+}
 .stdin-row {
   display: flex; flex-direction: column; gap: 6px;
   padding: 8px 12px; border-bottom: 1px solid var(--border);

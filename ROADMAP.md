@@ -82,6 +82,19 @@ the sections below hold the detailed specs.
   visualization rebuilds from the edited trace; lessons stdin Input and
   output panel re-checked at 390x844 (AUDIT 34.6).
 
+### 2.0.3 -- Lessons that listen (COMPLETE 2026-10-04)
+
+- [x] Input lessons auto-open the Input box with their sample loaded and
+  close it again for lessons that do not read input; the Input tab pulses
+  once (reduced-motion safe).
+- [x] L7-10 "Number Guessing Game" is genuinely interactive: reads guesses
+  with `io.read_int()`, hints Too low!/Too high!, tracks attempts and
+  score; the sample input walks a full winning game (expected output
+  regenerated tool-driven).
+- [x] Your own input no longer reads as "output differs": the
+  expected-result check compares against the shipped sample only, and
+  editing the box clears a stale banner (AUDIT 36).
+
 ### 2.1.0 -- Lab expansion (IN PROGRESS, started 2026-10-04)
 
 - [x] Wave A: merge sort, quick sort, heap sort (real trace programs,

@@ -29,12 +29,61 @@ function prefillStdinSample(sample) {
   if (el.value === '') setStdinValue(sample);
 }
 
+function showStdinRow() {
+  var row = document.getElementById('stdinRow');
+  var toggle = document.getElementById('stdinToggle');
+  if (!row) return;
+  row.classList.remove('hidden');
+  if (toggle) {
+    toggle.classList.add('active');
+    toggle.classList.add('attention');
+  }
+}
+
+function hideStdinRow() {
+  var row = document.getElementById('stdinRow');
+  var toggle = document.getElementById('stdinToggle');
+  if (!row) return;
+  row.classList.add('hidden');
+  if (toggle) toggle.classList.remove('active');
+}
+
+// Lessons that read stdin get the Input box opened for them (with the shipped
+// sample prefilled), so learners see where input comes from instead of having
+// to discover the tab. Switching to a lesson that does not read input closes
+// it again, but only when the box was auto-opened.
+var stdinAutoOpened = false;
+function lessonReadsInput(lesson) {
+  if (!lesson) return false;
+  var source = (lesson.solution || '') + '\n' + (lesson.code_template || '');
+  return /io\.(read_line|read_int|read_float)\s*\(/.test(source);
+}
+
+function setupStdinForLesson(lesson) {
+  if (lesson && lesson.sample_input != null) {
+    // The sample belongs to this lesson: overwrite whatever was in the box.
+    setStdinValue(lesson.sample_input);
+    showStdinRow();
+    stdinAutoOpened = true;
+  } else if (lessonReadsInput(lesson)) {
+    showStdinRow();
+    stdinAutoOpened = true;
+  } else if (stdinAutoOpened) {
+    hideStdinRow();
+    stdinAutoOpened = false;
+  }
+}
+
 function toggleStdin() {
   var row = document.getElementById('stdinRow');
   var toggle = document.getElementById('stdinToggle');
   if (!row) return;
   row.classList.toggle('hidden');
-  if (toggle) toggle.classList.toggle('active', !row.classList.contains('hidden'));
+  stdinAutoOpened = false;
+  if (toggle) {
+    toggle.classList.toggle('active', !row.classList.contains('hidden'));
+    toggle.classList.remove('attention');
+  }
   if (!row.classList.contains('hidden')) {
     var el = document.getElementById('stdinInput');
     if (el) el.focus();
@@ -50,6 +99,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var saved = localStorage.getItem(XIOM_STDIN_KEY);
     if (saved) setStdinValue(saved);
   } catch (e) { /* private mode */ }
+  var stdinEl = document.getElementById('stdinInput');
+  if (stdinEl) {
+    stdinEl.addEventListener('input', function () {
+      if (window.resetOutputMatch) window.resetOutputMatch();
+    });
+  }
 });
 
 async function compile() {
@@ -266,6 +321,16 @@ function renderOutputMatch(run) {
   var actual = run.runOutput != null ? run.runOutput : String(run.output || '');
   if (actual === 'Program ran with no output.') actual = '';
   var expected = lesson.expected_output;
+
+  // Input lessons: the expected output was generated from the shipped sample.
+  // Running with the learner's own input is the point, so do not call it a
+  // mismatch.
+  var sample = lesson.sample_input == null ? '' : lesson.sample_input;
+  if (typeof lessonReadsInput === 'function' && lessonReadsInput(lesson) && readStdinValue() !== sample) {
+    host.className = 'output-match note';
+    host.textContent = 'Running with your own input \u2014 the expected-output check compares against the sample input.';
+    return;
+  }
 
   var source = window.editor ? window.editor.getValue() : (window.getMobileCodeValue ? window.getMobileCodeValue() : '');
   var sourceMatches = typeof lesson.solution === 'string' &&

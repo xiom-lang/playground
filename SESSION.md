@@ -1,10 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-04 (**2.1.0 Lab expansion in progress** - wave A
-landed; 2.0.x Lab complete and live). Branch `main` at/after `c835474`,
-working tree clean, all commits pushed to `origin/main`; CI green (Validate
-+ CodeQL). Production runs **playground 2.0.2** (the next hourly pull also
-carries **toolchain v0.62.4**) with stdlib 0.62.0, wasm
+Last updated: 2026-10-04 (**2.0.3 Lessons that listen** ready; 2.1.0 wave A
+landed; v0.62.4 absorbed). Branch `main` at/after `46322af`, working tree
+clean, all commits pushed to `origin/main`; CI green (Validate + CodeQL).
+Production runs **playground 2.0.2** (the next hourly pull carries
+**2.0.3** and **toolchain v0.62.4**) with stdlib 0.62.0, wasm
 v0.62.4, `capabilities.format: true`, P1 Landlock (`require`, ABI 4),
 P3 rate limits + external `abuse` monitor, P2 host-side state, the C3
 registry catalog mounted at `/registry-bundle` (352 packages), and the
@@ -1418,11 +1418,11 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 
 ### State
 
-- Playground **2.0.2** (`package.json`), toolchain/wasm **v0.62.4**
+- Playground **2.0.3** (`package.json`), toolchain/wasm **v0.62.4**
   (C25 absorbed; AUDIT 35), **412 lessons** + **19 Lab programs** (16 Tier 1
   + wave A of Tier 2), production live and verified (health green, sandbox
-  `require`/ABI 4, packages 352); the 2.0.1/2.0.2 polish and the v0.62.4 pin
-  ride the hourly pull.
+  `require`/ABI 4, packages 352); the 2.0.3 build (including the input
+  lessons and the v0.62.4 pin) rides the next hourly pull.
 - Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
   (`docs/LAB_PROTOCOL.md`), parser and player (`js/lab-trace.js`,
   `js/lab-player.js`), eight canvas primitives (`js/lab-viz.js`), the Lab
@@ -1436,7 +1436,12 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
   highlight strips in the narrow-screen editor with reveal-on-step, and
   edit-and-Run verified from the phone-size editor (AUDIT 34.6). Then
   **2.1.0 wave A** on the owner's 2026-10-04 go-ahead: merge sort, quick
-  sort, heap sort (AUDIT 34.7). Waves B-D are listed in ROADMAP 2.1.0.
+  sort, heap sort (AUDIT 34.7). Then **v0.62.4 absorption** (C25:
+  cold/cached/--no-cache all read stdin, fresh-HOME workaround deleted;
+  AUDIT 35). Then **2.0.3 input-lesson pass**: Input box auto-opens for
+  input lessons, L7-10 is a real interactive guessing game, own input no
+  longer reads as a mismatch (AUDIT 36). Waves B-D are listed in ROADMAP
+  2.1.0.
 - Compiler findings: C20 (module type identity; open, optional), C25
   (fixed upstream `3bc59dbc`, ships next release; the fresh-HOME
   workaround is still in place).
@@ -1455,7 +1460,7 @@ Read SESSION.md section 28 (handoff + this prompt), ROADMAP.md ("Release phase
 plan", "Algorithm Lab", "Graphics needed", "v0.62.3 tracking"), AUDIT.md
 sections 33.3-33.7 and 34, then verify state first: git fetch; tree clean;
 HEAD == origin/main (expect at/after c835474); run the section 8 gate; curl
-https://playground.xiom-lang.org/api/version (expect playground 2.0.2,
+https://playground.xiom-lang.org/api/version (expect playground 2.0.3,
 toolchain v0.62.4, wasm v0.62.4) and /api/health (sandbox.mode=require,
 landlock 4, abuse:ok, packages.bundlePackages ~352). Also open the Lab once
 (https://playground.xiom-lang.org/, Algorithm Lab) and confirm a trace plays.

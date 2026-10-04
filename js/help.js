@@ -9,6 +9,15 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Lessons that listen',
+    items: [
+      'Lessons that read input now open the Input box automatically with their sample loaded, so you can see where the program gets its text - edit it and Run to play with the program.',
+      'The Number Guessing Game lesson is now a real game: it reads your guesses from the Input box and answers Too low! / Too high! until you find the secret.',
+      'Using your own input no longer counts as "output differs": the expected-result check only compares against the shipped sample input.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Three more sorts in the Lab',
     items: [
       'Tier 2 is arriving: Merge Sort, Quick Sort and Heap Sort join the Lab with the same real-trace playback and compare mode.',
