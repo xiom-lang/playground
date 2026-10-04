@@ -2707,3 +2707,31 @@ work, and path searches should show where they start and what they chase.
   (`6,3,9,1,8,2,7,4,10,5`) with live per-pane counters; browser
   screenshots show the green start and amber goal on the BFS grid.
 - Catalog regenerated (entries carry the new programs); app version 2.1.2.
+
+## 39. Conversation view for input lessons (2.1.3, 2026-10-04)
+
+Owner feedback: the Input tab broke the flow - learners had to imagine what
+the program would ask. Input lessons now show a **Conversation** panel
+under the output tabs: the program's output and the learner's answers are
+interleaved like a chat, with an answer box that re-runs the program with
+one more input line.
+
+- `js/conversation.js` builds the transcript from the per-answer runs
+  (`outputs[i]` = output with answers `0..i-1`): each answer is inserted at
+  the first line where the next run differs, so prompt-then-read programs
+  interleave perfectly; trailing runtime lines caused by reading past the
+  supplied input ("I could not read that: empty input") are hidden while
+  the next answer is pending.
+- Flow: the first answer seeds the no-input run, then runs with the
+  answer; every later answer re-runs with all answers (cache-warm, fast).
+  Restart clears the dialogue. The raw Input tab still works and is primed
+  with the lesson sample; the stdin row no longer auto-opens for input
+  lessons (the chat is the primary surface).
+- Verified with the Number Guessing Game in headless Edge: answers 50, 25,
+  37 produced the exact interleaved transcript
+  (prompt, "> 50", "Too high!", "> 25", "Too low!", "> 37", "Too low!")
+  with no trailing EOF line; suite 67/0/1 (transcript builder unit test,
+  including the pending-answer and EOF-cleanup cases).
+- Files: `js/conversation.js` (new, Node-testable), `index.html` (panel +
+  answer form), `js/compiler.js` (state, submit, run hook, lesson setup),
+  `css/theme.css` (chat styles).

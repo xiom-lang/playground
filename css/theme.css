@@ -2593,6 +2593,81 @@ a:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   .stdin-toggle.attention { animation: none; }
 }
+
+/* Conversation view for input lessons (2.1.3): program output and learner
+   answers interleaved like a chat, with an answer box at the bottom. */
+.conversation {
+  display: flex;
+  flex-direction: column;
+  max-height: 240px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+.conversation.hidden { display: none; }
+.conversation-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.conversation-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+.conversation-hint {
+  flex: 1;
+  font-size: 11px;
+  color: var(--low);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.conversation-restart {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--mid);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.conversation-restart:hover { color: var(--hi); border-color: var(--border-hover); }
+.conversation-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.conversation-line { white-space: pre-wrap; word-break: break-word; }
+.conversation-line.out { color: var(--hi); }
+.conversation-line.you { color: var(--indigo); }
+.conversation-line.you::before { content: '> '; color: var(--low); }
+.conversation-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--border-soft);
+}
+.conversation-caret { color: var(--indigo); font-family: var(--mono); }
+.conversation-input {
+  flex: 1;
+  background: var(--void);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--hi);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 6px 8px;
+  outline: none;
+}
+.conversation-input:focus { border-color: var(--indigo); }
 .stdin-row {
   display: flex; flex-direction: column; gap: 6px;
   padding: 8px 12px; border-bottom: 1px solid var(--border);

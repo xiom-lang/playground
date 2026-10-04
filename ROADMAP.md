@@ -129,6 +129,12 @@ the sections below hold the detailed specs.
 - [x] Start/goal markers: BFS/DFS/flood fill mark start and (where they
   have one) goal cells; Dijkstra/A* mark start and target nodes (AUDIT 38).
 
+### 2.1.3 -- Conversation view for input lessons (COMPLETE 2026-10-04)
+
+- [x] Input lessons show the program output and the learner's answers
+  interleaved as a chat with an answer box; each answer re-runs the
+  program with it. Raw Input tab stays for advanced use (AUDIT 39).
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light

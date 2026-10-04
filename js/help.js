@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Talk to your program',
+    items: [
+      'Input lessons now open a Conversation panel: the program\'s questions and your typed answers stay together like a chat, and each answer re-runs the program with it.',
+      'No more hiding input in a separate tab - the raw input box is still under the Input tab for advanced use.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Fairer races in Compare mode',
     items: [
       'Every sort now starts from the same ten values, so Bubble vs Quick vs Counting (and the rest) race on identical input.',

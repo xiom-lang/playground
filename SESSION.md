@@ -1,8 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-04 (**2.1.2 fair compare inputs** ready; 2.1.1 UI
-contrast; 2.1.0 Lab expansion complete - 37 programs, 10 categories;
-v0.62.4 absorbed). Branch `main` at/after `46322af`, working tree clean, all commits pushed to
+Last updated: 2026-10-04 (**2.1.3 conversation view** ready; 2.1.2 fair
+compare inputs; 2.1.1 UI contrast; 2.1.0 Lab expansion complete - 37
+programs, 10 categories; v0.62.4 absorbed; **v0.63.0 release is out but
+the dl mirror is still syncing - hourly cron will absorb it**). Branch
+`main` at/after `46322af`, working tree clean, all commits pushed to
 `origin/main`; CI green (Validate + CodeQL). Production runs **playground
 2.1.0** after the 16:29 pull (2.0.3 + v0.62.4 verified live); the 2.1.1
 contrast build follows on the next pull with stdlib 0.62.0,

@@ -284,6 +284,19 @@
             <button type="button" class="btn-ghost stdin-clear" onclick="clearStdin()">Clear</button>
           </div>
         </div>
+        <div id="conversation" class="conversation hidden" aria-label="Conversation with your program">
+          <div class="conversation-head">
+            <span class="conversation-title">Conversation</span>
+            <span id="conversationHint" class="conversation-hint">This program reads input: answer it here and the dialogue stays in view.</span>
+            <button id="conversationRestart" class="conversation-restart" type="button" onclick="conversationRestart()">Restart</button>
+          </div>
+          <div id="conversationLog" class="conversation-log" aria-live="polite"></div>
+          <form id="conversationForm" class="conversation-form" onsubmit="return conversationSubmit(event)">
+            <span class="conversation-caret" aria-hidden="true">&gt;</span>
+            <input id="conversationInput" class="conversation-input" type="text" autocomplete="off" spellcheck="false"
+              placeholder="Type your answer, press Enter" aria-label="Answer the program">
+          </form>
+        </div>
         <div class="output-content">
           <pre id="output">Press Run &#x25B8; or Ctrl+Enter.</pre>
           <pre id="ir" class="hidden"></pre>
@@ -433,6 +446,7 @@
 <script src="js/editor.js"></script>
 <script src="js/wasm-loader.js"></script>
 <script src="js/compiler.js"></script>
+<script src="js/conversation.js"></script>
 <script src="js/lessons.js"></script>
 <script src="js/lab-trace.js"></script>
 <script src="js/lab-player.js"></script>

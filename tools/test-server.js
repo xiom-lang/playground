@@ -30,6 +30,7 @@ const {
 } = require('../js/lab-trace');
 const { createLabPlayer } = require('../js/lab-player');
 const { labVizCreate, labVizApply, labVizSupportedTypes } = require('../js/lab-viz');
+const { xiomBuildConversation } = require('../js/conversation');
 
 const PORT = 3400 + Math.floor(Math.random() * 200);
 const HOST = '127.0.0.1';
@@ -560,6 +561,28 @@ async function main() {
           assert.ok(supported.indexOf(entry.view.type) >= 0, entry.id + ' uses unsupported view ' + entry.view.type);
         }
       }
+    });
+
+    ok('conversation interleaves answers at the first changed line', () => {
+      const outputs = [
+        'What is your name\nNice to meet you \nHow old are you?\nYou are .',
+        'What is your name\nNice to meet you Ada\nHow old are you?\nYou are .',
+        'What is your name\nNice to meet you Ada\nHow old are you?\nYou are 36.',
+      ];
+      const entries = xiomBuildConversation(outputs, ['Ada', '36']);
+      assert.deepStrictEqual(entries.map((e) => e.kind + ':' + e.text), [
+        'out:What is your name',
+        'you:Ada',
+        'out:Nice to meet you Ada',
+        'out:How old are you?',
+        'you:36',
+        'out:You are 36.',
+      ]);
+      const pending = xiomBuildConversation(outputs.slice(0, 2), ['Ada', '36']);
+      assert.strictEqual(pending[pending.length - 1].kind, 'you');
+      assert.strictEqual(pending[pending.length - 1].text, '36');
+      const eof = xiomBuildConversation(['Guess!\nToo high!\nI could not read that: empty input'], []);
+      assert.deepStrictEqual(eof.map((e) => e.text), ['Guess!', 'Too high!']);
     });
 
     await okAsync('the Lab screen and player ship in the app shell', async () => {

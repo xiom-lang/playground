@@ -60,18 +60,19 @@ function lessonReadsInput(lesson) {
 }
 
 function setupStdinForLesson(lesson) {
+  var reads = lessonReadsInput(lesson);
   if (lesson && lesson.sample_input != null) {
-    // The sample belongs to this lesson: overwrite whatever was in the box.
+    // Keep the raw Input tab primed with the sample; the conversation is the
+    // main surface for input lessons, so the stdin row stays closed.
     setStdinValue(lesson.sample_input);
-    showStdinRow();
-    stdinAutoOpened = true;
-  } else if (lessonReadsInput(lesson)) {
-    showStdinRow();
-    stdinAutoOpened = true;
-  } else if (stdinAutoOpened) {
+  }
+  if (!reads && stdinAutoOpened) {
     hideStdinRow();
     stdinAutoOpened = false;
   }
+  conversationSetVisible(reads);
+  conversationState = { answers: [], outputs: [] };
+  conversationRender();
 }
 
 function toggleStdin() {
@@ -92,6 +93,111 @@ function toggleStdin() {
 
 function clearStdin() {
   setStdinValue('');
+}
+
+// ---------------------------------------------------------------------------
+// Conversation view (input lessons): the program's output and the learner's
+// answers interleaved like a chat. Each answer re-runs the program with one
+// more input line; the transcript builder keeps the dialogue in order.
+// ---------------------------------------------------------------------------
+
+var conversationState = { answers: [], outputs: [] };
+var conversationRunCount = null;
+
+function conversationCompile(count) {
+  conversationRunCount = count;
+  return compile();
+}
+
+function conversationActive() {
+  var lesson = window.currentLessonData || null;
+  return !!(lesson && typeof lessonReadsInput === 'function' && lessonReadsInput(lesson));
+}
+
+function conversationReset() {
+  conversationState = { answers: [], outputs: [] };
+  conversationRender();
+}
+
+function conversationSetStdin() {
+  var text = conversationState.answers.length ? conversationState.answers.join('\n') + '\n' : '';
+  setStdinValue(text);
+}
+
+function conversationRender() {
+  var host = document.getElementById('conversationLog');
+  if (!host) return;
+  var builder = window.XiomConversation;
+  var entries = builder ? builder.build(conversationState.outputs, conversationState.answers) : [];
+  host.textContent = '';
+  for (var i = 0; i < entries.length; i++) {
+    var line = document.createElement('div');
+    line.className = 'conversation-line ' + entries[i].kind;
+    line.textContent = entries[i].text;
+    host.appendChild(line);
+  }
+  var hint = document.getElementById('conversationHint');
+  var input = document.getElementById('conversationInput');
+  var last = conversationState.outputs.length > 0
+    ? builder.lastPromptLine(conversationState.outputs[conversationState.outputs.length - 1])
+    : '';
+  if (input) {
+    input.disabled = false;
+    input.placeholder = last && last.length <= 60 ? last : 'Type your answer, press Enter';
+  }
+  if (hint) {
+    hint.textContent = conversationState.answers.length === 0
+      ? 'This program reads input: answer it here and the dialogue stays in view.'
+      : 'Answer ' + (conversationState.answers.length + 1) + ' - each answer re-runs the program with it.';
+  }
+  host.scrollTop = host.scrollHeight;
+}
+
+function conversationOnRun(run) {
+  if (!conversationActive()) return;
+  var count = conversationRunCount == null ? conversationState.answers.length : conversationRunCount;
+  conversationRunCount = null;
+  var output = run.runOutput != null ? run.runOutput : String(run.output || '');
+  conversationState.outputs[count] = output;
+  conversationRender();
+}
+
+function conversationSubmit(event) {
+  if (event && event.preventDefault) event.preventDefault();
+  if (!conversationActive()) return false;
+  var input = document.getElementById('conversationInput');
+  if (!input) return false;
+  var line = input.value.replace(/[\r\n]+/g, ' ').trim();
+  if (!line) return false;
+  conversationState.answers.push(line);
+  input.value = '';
+  conversationRender();
+  if (conversationState.outputs[0] == null) {
+    // Seed the no-input run first so the opening output is in place.
+    setStdinValue('');
+    conversationCompile(0).then(function () {
+      conversationSetStdin();
+      conversationCompile(conversationState.answers.length);
+    });
+  } else {
+    conversationSetStdin();
+    conversationCompile(conversationState.answers.length);
+  }
+  return false;
+}
+
+function conversationRestart() {
+  conversationState = { answers: [], outputs: [] };
+  setStdinValue('');
+  conversationRender();
+  var input = document.getElementById('conversationInput');
+  if (input) input.focus();
+}
+
+function conversationSetVisible(visible) {
+  var panel = document.getElementById('conversation');
+  if (!panel) return;
+  panel.classList.toggle('hidden', !visible);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -174,6 +280,7 @@ async function compile() {
     .then(function (r) { return r.json(); })
     .then(function (run) {
       renderRunResult(run, ids);
+      conversationOnRun(run);
       if (window.recordRun && window.currentLessonId) {
         window.recordRun(window.currentLessonId, run);
         if (window.renderHistoryBlock) window.renderHistoryBlock(window.currentLessonId);
