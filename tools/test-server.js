@@ -580,6 +580,24 @@ async function main() {
       assert.ok(labCss.body.indexOf('.lab-step-line') >= 0, 'Monaco decoration style missing');
     });
 
+    ok('lab viz handles weighted graph edges and recolours', () => {
+      const graph = labVizCreate({ type: 'graph' });
+      labVizApply(graph, { event: 'init', fields: { n: '3', edges: '0-1-7,1-2-3' } });
+      assert.strictEqual(graph.state.edges.length, 2);
+      assert.strictEqual(graph.state.edges[0].w, 7);
+      labVizApply(graph, { event: 'set', fields: { id: '1', v: '9' } });
+      assert.strictEqual(graph.state.nodes[1].v, 9);
+      labVizApply(graph, { event: 'edge', fields: { a: '0', b: '1', role: 'tree' } });
+      assert.strictEqual(graph.state.edges.length, 2, 'recolouring must not duplicate an edge');
+      assert.strictEqual(graph.state.edges[0].role, 'tree');
+
+      const grid = labVizCreate({ type: 'grid' });
+      labVizApply(grid, { event: 'init', fields: { rows: '2', cols: '2', walls: 'all' } });
+      assert.strictEqual(Object.keys(grid.state.walls).length, 4);
+      labVizApply(grid, { event: 'mark', fields: { r: '0', c: '0', role: 'open' } });
+      assert.strictEqual(grid.state.roles['0,0'], 'open');
+    });
+
     ok('lab viz fills DP matrices and clears between phases', () => {
       const matrix = labVizCreate({ type: 'matrix' });
       labVizApply(matrix, { event: 'init', fields: { rows: '2', cols: '3', rowlabels: 'a,b', labels: '0,1,2' } });

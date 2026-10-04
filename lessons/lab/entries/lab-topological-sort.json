@@ -1,0 +1,10 @@
+{
+  "id": "lab-topological-sort",
+  "title": "Topological Sort",
+  "category": "graphs",
+  "view": {
+    "type": "graph"
+  },
+  "blurb": "Kahn's algorithm: repeatedly emit a node with no incoming edges, then drop its outgoing ones.",
+  "code": "// Topological Sort (Kahn) -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Repeatedly take a node with no remaining incoming edges, emit it, and\n// drop its outgoing edges. If every node comes out, the graph has no cycle.\nuse xiom.io;\n\nfn main() {\n  let nodes = 6;\n  var fromV: Vec[Int] = Vec[Int].new();\n  var toV: Vec[Int] = Vec[Int].new();\n  fromV.push(5); toV.push(2);\n  fromV.push(5); toV.push(0);\n  fromV.push(4); toV.push(0);\n  fromV.push(4); toV.push(1);\n  fromV.push(2); toV.push(3);\n  fromV.push(3); toV.push(1);\n\n  io.println(\"v1|init|n=6|edges=5-2,5-0,4-0,4-1,2-3,3-1|step=init\"); // @step init\n\n  var indeg: Vec[Int] = Vec[Int].new();\n  var emitted: Vec[Int] = Vec[Int].new();\n  var i = 0;\n  while i < nodes { indeg.push(0); emitted.push(0); i += 1; };\n\n  var e = 0;\n  while e < fromV.len() {\n    let target = toV.get(e).unwrap();\n    indeg.set(target, indeg.get(target).unwrap() + 1);\n    e += 1;\n  };\n\n  var count = 0;\n  while count < nodes {\n    var u = -1;\n    i = 0;\n    while i < nodes {\n      if emitted.get(i).unwrap() == 0 && indeg.get(i).unwrap() == 0 && u < 0 {\n        u = i;\n      };\n      i += 1;\n    };\n    if u < 0 {\n      count = nodes;\n    } else {\n      emitted.set(u, 1);\n      count += 1;\n      io.println(\"v1|mark|id=\" + u.to_str() + \"|role=sorted|step=emit\"); // @step emit\n      e = 0;\n      while e < fromV.len() {\n        if fromV.get(e).unwrap() == u {\n          let v = toV.get(e).unwrap();\n          indeg.set(v, indeg.get(v).unwrap() - 1);\n          io.println(\"v1|edge|a=\" + u.to_str() + \"|b=\" + v.to_str() + \"|role=tree|step=drop\"); // @step drop\n        };\n        e += 1;\n      };\n    };\n  };\n  io.println(\"v1|done|result=\" + count.to_str() + \"|step=done\"); // @step done\n}\n"
+}

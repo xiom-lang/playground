@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
 Last updated: 2026-10-04 (**2.0.3 Lessons that listen** ready; 2.1.0 waves
-A/B landed; v0.62.4 absorbed). Branch `main` at/after `46322af`, working tree
+A/B/C landed; v0.62.4 absorbed). Branch `main` at/after `46322af`, working tree
 clean, all commits pushed to `origin/main`; CI green (Validate + CodeQL).
 Production runs **playground 2.0.2** (the next hourly pull carries
 **2.0.3** and **toolchain v0.62.4**) with stdlib 0.62.0, wasm
@@ -1419,8 +1419,8 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 ### State
 
 - Playground **2.0.3** (`package.json`), toolchain/wasm **v0.62.4**
-  (C25 absorbed; AUDIT 35), **412 lessons** + **25 Lab programs** (16 Tier 1
-  + waves A/B of Tier 2), production live and verified (health green,
+  (C25 absorbed; AUDIT 35), **412 lessons** + **31 Lab programs** (16 Tier 1
+  + waves A/B/C of Tier 2), production live and verified (health green,
   sandbox `require`/ABI 4, packages 352); the 2.0.3 build (including the
   input lessons and the v0.62.4 pin) rides the next hourly pull.
 - Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
@@ -1443,7 +1443,9 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
   longer reads as a mismatch (AUDIT 36). Then **wave B**: counting/radix
   sort plus a new Dynamic programming category (knapsack, LCS, edit
   distance, coin change) on an extended matrix primitive (AUDIT 34.8).
-  Waves C-D are listed in ROADMAP 2.1.0.
+  Then **wave C**: Dijkstra, A*, maze generation, topological sort, cycle
+  detection and Kruskal on weighted graphs with edge roles, plus grid
+  carving (AUDIT 34.9). Only wave D remains (ROADMAP 2.1.0).
 - Compiler findings: C20 (module type identity; open, optional); C25 is
   absorbed in v0.62.4 and the fresh-HOME workaround is deleted.
 - Waiting on: waves C-D of the 2.1.0 Lab expansion; designer assets
@@ -1466,13 +1468,10 @@ landlock 4, abuse:ok, packages.bundlePackages ~352). Also open the Lab once
 (https://playground.xiom-lang.org/, Algorithm Lab) and confirm a trace plays.
 
 Task 1 (primary) - 2.1.0 Lab expansion, IN PROGRESS (owner go-ahead given
-  2026-10-04; waves A and B landed: advanced sorts + DP). Continue with
-  the remaining waves from ROADMAP 2.1.0: wave C (Dijkstra, A*, maze
-  generation; topological sort, cycle detection, union-find Kruskal/Prim
-  on the graph primitive - add edge weights/roles and wall marks), wave D
-  (BST, heap, trie; KMP; activity selection; Huffman - add tree labels).
-  Reuse protocol v1; extend primitives only with the wave that needs them
-  and audit twice on the pin.
+  2026-10-04; waves A, B and C landed). Finish with wave D from ROADMAP
+  2.1.0: BST, heap and trie (tree node labels/chars), KMP, activity
+  selection and Huffman. Reuse protocol v1; extend the tree primitive with
+  labels only if a program needs it, and audit twice on the pin.
 
 Task 2 (DONE 2026-10-04) - C25 absorbed in v0.62.4 (AUDIT 35): pins and
   wasm bumped, c25/run.sh prints "C25 fixed: yes", the fresh-HOME workaround

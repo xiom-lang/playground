@@ -1,0 +1,10 @@
+{
+  "id": "lab-maze",
+  "title": "Maze Generation",
+  "category": "grid",
+  "view": {
+    "type": "grid"
+  },
+  "blurb": "Start from solid wall and carve a perfect maze with a depth-first walk.",
+  "code": "// Maze generation -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// The grid starts as solid wall. A depth-first carve walks two cells at a\n// time, opening the wall in between, until every room is connected.\nuse xiom.io;\n\nfn idx(r: Int, c: Int, cols: Int) -> Int {\n  r * cols + c\n}\n\nfn open_cell(r: Int, c: Int) {\n  io.println(\"v1|mark|r=\" + r.to_str() + \"|c=\" + c.to_str() + \"|role=open|step=carve\"); // @step carve\n}\n\nfn carve(maze: &mut Vec[Int], r: Int, c: Int, rows: Int, cols: Int) {\n  maze.set(idx(r, c, cols), 1);\n  open_cell(r, c);\n  io.println(\"v1|visit|r=\" + r.to_str() + \"|c=\" + c.to_str() + \"|step=carve\"); // @step carve\n\n  var nr = r - 2;\n  if nr >= 1 && maze.get(idx(nr, c, cols)).unwrap() == 0 {\n    open_cell(r - 1, c);\n    carve(maze, nr, c, rows, cols);\n  };\n  var nc = c + 2;\n  if nc <= cols - 2 && maze.get(idx(r, nc, cols)).unwrap() == 0 {\n    open_cell(r, c + 1);\n    carve(maze, r, nc, rows, cols);\n  };\n  nr = r + 2;\n  if nr <= rows - 2 && maze.get(idx(nr, c, cols)).unwrap() == 0 {\n    open_cell(r + 1, c);\n    carve(maze, nr, c, rows, cols);\n  };\n  nc = c - 2;\n  if nc >= 1 && maze.get(idx(r, nc, cols)).unwrap() == 0 {\n    open_cell(r, c - 1);\n    carve(maze, r, nc, rows, cols);\n  };\n}\n\nfn main() {\n  let rows = 7;\n  let cols = 9;\n  io.println(\"v1|init|rows=7|cols=9|walls=all|step=init\"); // @step init\n\n  var maze: Vec[Int] = Vec[Int].new();\n  var i = 0;\n  while i < rows * cols { maze.push(0); i += 1; };\n\n  carve(&mut maze, 1, 1, rows, cols);\n\n  var opened = 0;\n  i = 0;\n  while i < rows * cols {\n    if maze.get(i).unwrap() == 1 { opened += 1; };\n    i += 1;\n  };\n  io.println(\"v1|done|result=\" + opened.to_str() + \"|step=done\"); // @step done\n}\n"
+}

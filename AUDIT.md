@@ -2608,3 +2608,26 @@ Six programs landed on one renderer extension:
   carry supersede tokens, so stale responses are dropped.
 - Suite 63/0/1; new matrix unit test covers row labels, path marks and
   `clear`.
+
+### 34.9 Tier 2 wave C: weighted graphs, maze carving (2026-10-04)
+
+Six programs on graph/grid extensions:
+
+- Graph primitive: weighted edge lists (`a-b-w`), `edge` events that
+  recolour or reweight an existing edge (`tree`/`relax`/`reject`/`cycle`)
+  and node label updates via `set id v` (distance values). Grid: `walls=all`
+  start plus `wall`/`open` roles for carving.
+- `dijkstra.xi` (29 events; settle + relax, distance labels and green tree
+  edges), `astar.xi` (25 events; f = g + h picks, same graph),
+  `maze.xi` (37 events; recursive depth-first carve from solid wall),
+  `topological-sort.xi` (14 events; Kahn, edges dropped as nodes emit),
+  `cycle-detection.xi` (12 events; three-colour DFS where a leaf finishes
+  before the back edge closes the cycle) and `kruskal.xi` (11 events;
+  weight-ordered edges accepted/rejected via union-find).
+- All six audit twice each on v0.62.4 with full annotation coverage;
+  catalog is 31 entries / 8 categories; full lab audit 31/31.
+- Browser spot-checks: maze carving at step 30 shows solid wall opening
+  into corridors with the carve cursor; Dijkstra at step 12 shows distance
+  labels (0/7/9/14...), edge weights and the green settled tree edge.
+- Suite 65/0/1; new graph unit test covers weighted parsing, node `set`
+  and edge recolouring (no duplicates), plus `walls=all`.

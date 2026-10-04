@@ -4,6 +4,7 @@
     { "id": "sorting", "name": "Sorting", "icon": "\uD83D\uDCCA", "blurb": "Watch bars compare, swap and settle into order." },
     { "id": "searching", "name": "Searching", "icon": "\uD83D\uDD0D", "blurb": "Find a target in a sorted row, one pointer at a time." },
     { "id": "grid", "name": "Grid traversal", "icon": "\uD83D\uDDFA\uFE0F", "blurb": "Explore a maze: breadth-first, depth-first, or flood fill." },
+    { "id": "graphs", "name": "Graphs", "icon": "\uD83D\uDD78", "blurb": "Weighted graphs: shortest paths, orderings, cycles and spanning trees." },
     { "id": "structures", "name": "Data structures", "icon": "\uD83E\uDDF1", "blurb": "Stacks, queues and linked lists, seen as they work." },
     { "id": "numbers", "name": "Numbers", "icon": "\uD83D\uDD22", "blurb": "Sieves, Euclid and the Collatz path." },
     { "id": "recursion", "name": "Recursion", "icon": "\uD83C\uDF00", "blurb": "Call stacks and recursion trees, step by step." },
@@ -113,6 +114,54 @@
       "view": { "type": "grid" },
       "blurb": "Paint every open cell connected to the start; walls stop the spread.",
       "program": "flood-fill.xi"
+    },
+    {
+      "id": "lab-maze",
+      "title": "Maze Generation",
+      "category": "grid",
+      "view": { "type": "grid" },
+      "blurb": "Start from solid wall and carve a perfect maze with a depth-first walk.",
+      "program": "maze.xi"
+    },
+    {
+      "id": "lab-dijkstra",
+      "title": "Dijkstra",
+      "category": "graphs",
+      "view": { "type": "graph" },
+      "blurb": "Settle the nearest unsettled node and relax its edges; distance labels drop as shortcuts appear.",
+      "program": "dijkstra.xi"
+    },
+    {
+      "id": "lab-astar",
+      "title": "A* Search",
+      "category": "graphs",
+      "view": { "type": "graph" },
+      "blurb": "Pick by f = g + h: distance so far plus a guess to the goal, so fewer nodes get expanded.",
+      "program": "astar.xi"
+    },
+    {
+      "id": "lab-topological-sort",
+      "title": "Topological Sort",
+      "category": "graphs",
+      "view": { "type": "graph" },
+      "blurb": "Kahn's algorithm: repeatedly emit a node with no incoming edges, then drop its outgoing ones.",
+      "program": "topological-sort.xi"
+    },
+    {
+      "id": "lab-cycle-detection",
+      "title": "Cycle Detection",
+      "category": "graphs",
+      "view": { "type": "graph" },
+      "blurb": "Three-colour DFS: an edge back to a grey node closes a cycle.",
+      "program": "cycle-detection.xi"
+    },
+    {
+      "id": "lab-kruskal",
+      "title": "Kruskal + Union-Find",
+      "category": "graphs",
+      "view": { "type": "graph" },
+      "blurb": "Take edges cheapest first when their endpoints are still in different union-find sets.",
+      "program": "kruskal.xi"
     },
     {
       "id": "lab-stack",

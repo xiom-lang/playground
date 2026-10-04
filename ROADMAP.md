@@ -103,8 +103,10 @@ the sections below hold the detailed specs.
   coin change) on the matrix primitive, extended with row labels,
   `path`/`found` marks and a `clear` event for two-phase views (AUDIT
   34.8).
-- [ ] Wave C: Dijkstra, A*, maze generation; topological sort, cycle
-  detection, union-find (Kruskal/Prim) on the graph primitive.
+- [x] Wave C: Dijkstra, A*, maze generation; topological sort, cycle
+  detection, Kruskal (union-find) on the graph primitive, extended with
+  weighted edges, edge roles (`tree`/`relax`/`reject`/`cycle`), node
+  value updates and grid `wall`/`open` carving (AUDIT 34.9).
 - [ ] Wave D: BST, heap, trie (tree labels), KMP, activity selection,
   Huffman.
 - Primitive extensions land with the wave that needs them (matrix row

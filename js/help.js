@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Graphs in the Lab',
+    items: [
+      'A new Graphs shelf: Dijkstra and A* find shortest paths on a weighted graph (watch the distance labels drop), Topological Sort orders a DAG, Cycle Detection colours a DFS, and Kruskal grows a minimum spanning tree with union-find.',
+      'Maze Generation carves a perfect maze from solid wall with a depth-first walk.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Counting, radix and dynamic programming in the Lab',
     items: [
       'Two comparison-free sorts join the Lab: Counting Sort fills a counts table, Radix Sort runs three digit passes.',

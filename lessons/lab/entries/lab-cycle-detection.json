@@ -1,0 +1,10 @@
+{
+  "id": "lab-cycle-detection",
+  "title": "Cycle Detection",
+  "category": "graphs",
+  "view": {
+    "type": "graph"
+  },
+  "blurb": "Three-colour DFS: an edge back to a grey node closes a cycle.",
+  "code": "// Cycle Detection -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Depth-first search in three colours: white (unseen), grey (on the current\n// path), black (done). An edge back to a grey node is a cycle.\nuse xiom.io;\n\nfn dfs(u: Int, fromV: &Vec[Int], toV: &Vec[Int], color: &mut Vec[Int]) -> Bool {\n  color.set(u, 1);\n  io.println(\"v1|mark|id=\" + u.to_str() + \"|role=cursor|step=enter\"); // @step enter\n  var e = 0;\n  var found = false;\n  while e < fromV.len() && !found {\n    if fromV.get(e).unwrap() == u {\n      let v = toV.get(e).unwrap();\n      io.println(\"v1|edge|a=\" + u.to_str() + \"|b=\" + v.to_str() + \"|role=relax|step=walk\"); // @step walk\n      if color.get(v).unwrap() == 1 {\n        io.println(\"v1|edge|a=\" + u.to_str() + \"|b=\" + v.to_str() + \"|role=cycle|step=back\"); // @step back\n        found = true;\n      } else {\n        if color.get(v).unwrap() == 0 {\n          if dfs(v, fromV, toV, color) { found = true; };\n        };\n      };\n    };\n    e += 1;\n  };\n  if !found {\n    color.set(u, 2);\n    io.println(\"v1|mark|id=\" + u.to_str() + \"|role=sorted|step=finish\"); // @step finish\n  };\n  found\n}\n\nfn main() {\n  var fromV: Vec[Int] = Vec[Int].new();\n  var toV: Vec[Int] = Vec[Int].new();\n  fromV.push(0); toV.push(1);\n  fromV.push(0); toV.push(2);\n  fromV.push(2); toV.push(3);\n  fromV.push(3); toV.push(2);\n\n  io.println(\"v1|init|n=4|edges=0-1,0-2,2-3,3-2|step=init\"); // @step init\n\n  var color: Vec[Int] = Vec[Int].new();\n  var i = 0;\n  while i < 4 { color.push(0); i += 1; };\n\n  var cyclic = false;\n  i = 0;\n  while i < 4 && !cyclic {\n    if color.get(i).unwrap() == 0 {\n      if dfs(i, &fromV, &toV, &mut color) { cyclic = true; };\n    };\n    i += 1;\n  };\n  if cyclic {\n    io.println(\"v1|done|result=1|step=result\"); // @step result\n  } else {\n    io.println(\"v1|done|result=0|step=result\"); // @step result\n  };\n}\n"
+}

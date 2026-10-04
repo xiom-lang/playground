@@ -23,7 +23,8 @@ editing and re-running the code re-derives the visualization.
 - Fields are pipe-separated. Each field after the event name is `key=value`.
 - Field values are data only, restricted to `[A-Za-z0-9_.:,+*-]` so parsing is
   a split and never an eval. Lists are comma-separated (`vals=5,3,8`), grid
-  coordinates are `r-c` pairs (`walls=0-1,1-2`). Free text is not part of v1.
+  coordinates are `r-c` pairs (`walls=0-1,1-2`; `walls=all` starts a grid
+  as solid wall). Free text is not part of v1.
 - `step` ties the event to the source: `step=<name>` matches `// @step <name>`
   comments in the program, and the player highlights those lines while the
   event is current. Names are `[a-z0-9_]+`.
@@ -42,9 +43,10 @@ applied in order. Unknown events are preserved but ignored by renderers.
 |---|---|---|
 | `init` | view-specific: `vals`, `n`, `rows`, `cols`, `labels`, `rowlabels`, `edges`, `walls`, `max` | set up the view |
 | `clear` | none | wipe the mutable view data (matrix cells/roles) for a second phase |
+| `edge` | `a`,`b`, optional `w`, optional `role` | add a graph edge, or recolour/reweight an existing `a`→`b` edge (`tree`/`relax`/`reject`/`cycle`) |
 | `compare` | `i`,`j` (indices) or `a`,`b` (values) | two items under comparison |
 | `swap` | `i`,`j` | swap two positions |
-| `set` | `i`,`v` or `r`,`c`,`v` | write a value |
+| `set` | `i`,`v`, `r`,`c`,`v`, or `id`,`v` | write a value (graph `id` updates a node label) |
 | `mark` | `i`,`role` or `r`,`c`,`role` or `id`,`role` | tag a position with a role |
 | `visit` | `i`, `r`+`c`, or `id` | item/cell/node visited |
 | `frontier` | `r`,`c` | cell added to the search frontier |
@@ -70,8 +72,11 @@ events to drawing:
 - `bars` — value bars; compare/swap/set/mark/sorted.
 - `cells` — sorted cells with pointers (`lo`/`mid`/`hi`/`cursor`/`found`),
   linked-list cursor mode (`linked=1`), and queue mode (`queue=1`).
-- `grid` — rows x cols cells; walls, visit/frontier/path, labels.
-- `graph` — nodes and edges, laid out from the edge list; cursor/visit.
+- `grid` — rows x cols cells; walls, visit/frontier/path, labels; roles
+  `wall` and `open` support maze carving on a `walls=all` start.
+- `graph` — nodes and edges, laid out from the edge list; edges may carry
+  weights (`a-b-w`) and roles (`tree`, `relax`, `reject`, `cycle`); node
+  labels update with `set id v`; cursor/visit/pulse.
 - `tree` — nodes with `parent`, laid out by depth; move leaves.
 - `matrix` — growable table; row/column writes and highlights. `labels`
   names the columns, `rowlabels` names the rows; `mark` roles `path` and

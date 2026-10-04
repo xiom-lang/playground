@@ -216,8 +216,16 @@ function labApplyEvent(type, state, event, motion) {
       state.rows = labNum(fields, 'rows', 0);
       state.cols = labNum(fields, 'cols', 0);
       state.labels = labList(fields, 'vals');
-      var walls = labCoordList(fields, 'walls');
-      for (var w = 0; w < walls.length; w++) state.walls[walls[w][0] + ',' + walls[w][1]] = true;
+      if (fields.walls === 'all') {
+        for (var wallRow = 0; wallRow < state.rows; wallRow++) {
+          for (var wallCol = 0; wallCol < state.cols; wallCol++) {
+            state.walls[wallRow + ',' + wallCol] = true;
+          }
+        }
+      } else {
+        var walls = labCoordList(fields, 'walls');
+        for (var w = 0; w < walls.length; w++) state.walls[walls[w][0] + ',' + walls[w][1]] = true;
+      }
     } else if (name === 'visit') {
       state.cursor = [labNum(fields, 'r', 0), labNum(fields, 'c', 0)];
       var visitKey = state.cursor[0] + ',' + state.cursor[1];
@@ -263,8 +271,29 @@ function labApplyEvent(type, state, event, motion) {
         state.anim.pulse = { id: markedId, at: at, dur: LAB_VIZ_DUR.pulse };
       }
       if (fields.role === 'cursor') state.cursor = markedId;
+    } else if (name === 'set') {
+      var setNode = labNum(fields, 'id', -1);
+      if (setNode >= 0 && state.nodes[setNode]) {
+        state.nodes[setNode].v = labNum(fields, 'v', 0);
+        state.anim.pulse = { id: setNode, at: at, dur: LAB_VIZ_DUR.current };
+      }
     } else if (name === 'edge') {
-      state.edges.push({ a: labNum(fields, 'a', 0), b: labNum(fields, 'b', 0) });
+      var edgeA = labNum(fields, 'a', 0);
+      var edgeB = labNum(fields, 'b', 0);
+      var found = null;
+      for (var edgeIndex = 0; edgeIndex < state.edges.length; edgeIndex++) {
+        if (state.edges[edgeIndex].a === edgeA && state.edges[edgeIndex].b === edgeB) { found = state.edges[edgeIndex]; break; }
+      }
+      if (found) {
+        // Recolouring an existing edge (Dijkstra relax, Kruskal accept/reject).
+        if (typeof fields.role === 'string') found.role = fields.role;
+        if (typeof fields.w === 'string') found.w = labNum(fields, 'w', found.w || 0);
+      } else {
+        var newEdge = { a: edgeA, b: edgeB };
+        if (typeof fields.w === 'string') newEdge.w = labNum(fields, 'w', 0);
+        if (typeof fields.role === 'string') newEdge.role = fields.role;
+        state.edges.push(newEdge);
+      }
     }
   } else if (type === 'tree') {
     if (name === 'node') {
@@ -373,9 +402,12 @@ function labEdgeList(fields) {
   var parts = fields.edges.split(',');
   var out = [];
   for (var i = 0; i < parts.length; i++) {
-    var pair = parts[i].split('-');
-    if (pair.length !== 2 || !/^\d{1,4}$/.test(pair[0]) || !/^\d{1,4}$/.test(pair[1])) continue;
-    out.push({ a: parseInt(pair[0], 10), b: parseInt(pair[1], 10) });
+    var seg = parts[i].split('-');
+    if (seg.length === 2 && /^\d{1,4}$/.test(seg[0]) && /^\d{1,4}$/.test(seg[1])) {
+      out.push({ a: parseInt(seg[0], 10), b: parseInt(seg[1], 10) });
+    } else if (seg.length === 3 && /^\d{1,4}$/.test(seg[0]) && /^\d{1,4}$/.test(seg[1]) && /^\d{1,4}$/.test(seg[2])) {
+      out.push({ a: parseInt(seg[0], 10), b: parseInt(seg[1], 10), w: parseInt(seg[2], 10) });
+    }
   }
   return out;
 }
@@ -753,6 +785,8 @@ function labDrawGrid(state, ctx, w, h, colors, now) {
       var role = state.roles[key];
       if (role === 'prime') { border = colors.green; fill = colors.greenSoft; }
       if (role === 'composite') { border = colors.border; textColor = colors.low; }
+      if (role === 'wall') { fill = colors.panel3; border = colors.border; textColor = colors.low; }
+      if (role === 'open') { fill = colors.panel2; border = colors.borderSoft; textColor = colors.mid; }
       if (state.cursor && state.cursor[0] === r && state.cursor[1] === c) { border = colors.amber; }
       ctx.globalAlpha = alpha;
       ctx.fillStyle = fill;
@@ -857,7 +891,24 @@ function labDrawGraph(state, ctx, w, h, colors, now) {
     var from = positions[edge.a];
     var to = positions[edge.b];
     if (!from || !to) continue;
-    labArrow(ctx, from.x + from.w / 2, from.y + from.h, to.x + to.w / 2, to.y, colors.borderHover);
+    var edgeColor = colors.borderHover;
+    if (edge.role === 'tree' || edge.role === 'path' || edge.role === 'accepted' || edge.role === 'relaxed') edgeColor = colors.green;
+    else if (edge.role === 'frontier' || edge.role === 'relax' || edge.role === 'candidate') edgeColor = colors.indigo;
+    else if (edge.role === 'cycle') edgeColor = colors.error;
+    else if (edge.role === 'reject' || edge.role === 'rejected') edgeColor = colors.border;
+    else if (edge.role === 'current') edgeColor = colors.amber;
+    var x1 = from.x + from.w / 2;
+    var y1 = from.y + from.h;
+    var x2 = to.x + to.w / 2;
+    var y2 = to.y;
+    labArrow(ctx, x1, y1, x2, y2, edgeColor);
+    if (edge.w != null) {
+      ctx.fillStyle = edgeColor === colors.border ? colors.low : edgeColor;
+      ctx.font = '600 10px ui-monospace, Menlo, Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(edge.w), (x1 + x2) / 2 + 6, (y1 + y2) / 2);
+    }
   }
   var pulse = labAnim(state, 'pulse', now);
   for (var i = 0; i < state.nodes.length; i++) {

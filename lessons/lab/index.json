@@ -1,7 +1,7 @@
 {
   "version": "2.0.3",
   "protocol": "v1",
-  "total_entries": 25,
+  "total_entries": 31,
   "categories": [
     {
       "id": "sorting",
@@ -141,6 +141,68 @@
             "type": "grid"
           },
           "blurb": "Paint every open cell connected to the start; walls stop the spread."
+        },
+        {
+          "id": "lab-maze",
+          "title": "Maze Generation",
+          "file": "entries/lab-maze.json",
+          "view": {
+            "type": "grid"
+          },
+          "blurb": "Start from solid wall and carve a perfect maze with a depth-first walk."
+        }
+      ]
+    },
+    {
+      "id": "graphs",
+      "name": "Graphs",
+      "icon": "🕸",
+      "blurb": "Weighted graphs: shortest paths, orderings, cycles and spanning trees.",
+      "entries": [
+        {
+          "id": "lab-dijkstra",
+          "title": "Dijkstra",
+          "file": "entries/lab-dijkstra.json",
+          "view": {
+            "type": "graph"
+          },
+          "blurb": "Settle the nearest unsettled node and relax its edges; distance labels drop as shortcuts appear."
+        },
+        {
+          "id": "lab-astar",
+          "title": "A* Search",
+          "file": "entries/lab-astar.json",
+          "view": {
+            "type": "graph"
+          },
+          "blurb": "Pick by f = g + h: distance so far plus a guess to the goal, so fewer nodes get expanded."
+        },
+        {
+          "id": "lab-topological-sort",
+          "title": "Topological Sort",
+          "file": "entries/lab-topological-sort.json",
+          "view": {
+            "type": "graph"
+          },
+          "blurb": "Kahn's algorithm: repeatedly emit a node with no incoming edges, then drop its outgoing ones."
+        },
+        {
+          "id": "lab-cycle-detection",
+          "title": "Cycle Detection",
+          "file": "entries/lab-cycle-detection.json",
+          "view": {
+            "type": "graph"
+          },
+          "blurb": "Three-colour DFS: an edge back to a grey node closes a cycle."
+        },
+        {
+          "id": "lab-kruskal",
+          "title": "Kruskal + Union-Find",
+          "file": "entries/lab-kruskal.json",
+          "view": {
+            "type": "graph"
+          },
+          "blurb": "Take edges cheapest first when their endpoints are still in different union-find sets."
         }
       ]
     },
