@@ -512,10 +512,10 @@ function labDrawBars(state, ctx, w, h, colors, now) {
     var y = baseline - barHeight;
     ctx.fillStyle = fill;
     ctx.strokeStyle = border;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crossed ? 2 : 1;
     labRoundRect(ctx, x, y, barWidth, barHeight, 4);
     ctx.fill();
-    if (crossed) ctx.stroke();
+    ctx.stroke();
     ctx.fillStyle = colors.hi;
     var text = String(Math.round(value));
     labFitText(ctx, text, barWidth + 6, 12);
@@ -541,7 +541,7 @@ function labDrawBars(state, ctx, w, h, colors, now) {
     var value = state.values[i];
     if (setAnim && setAnim.anim.i === i) value = labLerp(setAnim.anim.from, setAnim.anim.to, setAnim.t);
     var fill = colors.panel3;
-    var border = colors.border;
+    var border = colors.vizStroke;
     if (state.roles[i]) {
       var roleColor = labRoleColor(colors, state.roles[i]);
       fill = roleColor;
@@ -587,8 +587,8 @@ function labDrawBars(state, ctx, w, h, colors, now) {
     }
   }
 
-  ctx.fillStyle = colors.low;
-  ctx.font = '10px ui-monospace, Menlo, Consolas, monospace';
+  ctx.fillStyle = colors.mid;
+  ctx.font = '11px ui-monospace, Menlo, Consolas, monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   for (var index = 0; index < state.values.length; index++) {
@@ -623,7 +623,7 @@ function labDrawCells(state, ctx, w, h, colors, now) {
   for (var i = 0; i < n; i++) {
     var x = xFor(i);
     var fill = colors.panel2;
-    var border = colors.border;
+    var border = colors.vizStroke;
     var role = state.roles[i];
     if (state.visited[i]) fill = colors.indigoSoft;
     if (role === 'target') border = colors.amber;
@@ -714,7 +714,7 @@ function labDrawQueue(state, ctx, w, h, colors, now) {
     ctx.globalAlpha = enter;
     var y = top + (slide ? (1 - enter) * -12 : 0);
     ctx.fillStyle = isHead ? colors.greenSoft : colors.panel2;
-    ctx.strokeStyle = isHead ? colors.green : colors.border;
+    ctx.strokeStyle = isHead ? colors.green : colors.vizStroke;
     ctx.lineWidth = isHead ? 2 : 1;
     labRoundRect(ctx, x, y, cellWidth, cellWidth, 5);
     ctx.fill();
@@ -777,10 +777,10 @@ function labDrawGrid(state, ctx, w, h, colors, now) {
       var x = ox + c * cell;
       var y = oy + r * cell;
       var fill = colors.panel2;
-      var border = colors.borderSoft;
+      var border = colors.vizStroke;
       var textColor = colors.mid;
       var alpha = 1;
-      if (state.walls[key]) { fill = colors.panel3; border = colors.border; textColor = colors.low; }
+      if (state.walls[key]) { fill = colors.vizWall; border = colors.vizStroke; textColor = colors.low; }
       if (state.frontier[key]) {
         fill = colors.indigoSoft;
         border = colors.indigo;
@@ -798,9 +798,9 @@ function labDrawGrid(state, ctx, w, h, colors, now) {
       }
       var role = state.roles[key];
       if (role === 'prime') { border = colors.green; fill = colors.greenSoft; }
-      if (role === 'composite') { border = colors.border; textColor = colors.low; }
-      if (role === 'wall') { fill = colors.panel3; border = colors.border; textColor = colors.low; }
-      if (role === 'open') { fill = colors.panel2; border = colors.borderSoft; textColor = colors.mid; }
+      if (role === 'composite') { border = colors.vizStroke; textColor = colors.low; }
+      if (role === 'wall') { fill = colors.vizWall; border = colors.vizStroke; textColor = colors.low; }
+      if (role === 'open') { fill = colors.panel2; border = colors.vizStroke; textColor = colors.mid; }
       if (state.cursor && state.cursor[0] === r && state.cursor[1] === c) { border = colors.amber; }
       ctx.globalAlpha = alpha;
       ctx.fillStyle = fill;
@@ -930,7 +930,7 @@ function labDrawGraph(state, ctx, w, h, colors, now) {
     if (!pos) continue;
     var role = state.roles[i];
     var fill = colors.panel2;
-    var border = colors.border;
+    var border = colors.vizStroke;
     if (state.visited[i]) fill = colors.indigoSoft;
     if (role === 'cursor') { border = colors.indigo; }
     if (role === 'found') { fill = colors.green; border = colors.green; }
@@ -1020,7 +1020,7 @@ function labDrawTree(state, ctx, w, h, colors, now) {
     if (!node || !pos) continue;
     var parentPos = node.parent >= 0 ? positions[node.parent] : null;
     if (parentPos) {
-      ctx.strokeStyle = colors.border;
+      ctx.strokeStyle = colors.vizStroke;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(parentPos.x, parentPos.y + parentPos.r);
@@ -1110,7 +1110,7 @@ function labDrawMatrix(state, ctx, w, h, colors, now) {
       var role = state.roles[key];
       var hasValue = state.cells[key] != null;
       var fill = colors.panel2;
-      var border = colors.borderSoft;
+      var border = colors.vizStroke;
       var textColor = colors.hi;
       if (hasValue) fill = colors.panel3;
       if (role === 'current') { border = colors.amber; fill = colors.amber; textColor = colors.void; }
@@ -1185,7 +1185,7 @@ function labDrawStack(state, ctx, w, h, colors, now) {
     var offset = entering ? (1 - enter.t) * -14 : 0;
     ctx.globalAlpha = entering ? enter.t : 1;
     ctx.fillStyle = isTop ? colors.indigoSoft : colors.panel2;
-    ctx.strokeStyle = isTop ? colors.indigo : colors.border;
+    ctx.strokeStyle = isTop ? colors.indigo : colors.vizStroke;
     ctx.lineWidth = isTop ? 2 : 1;
     labRoundRect(ctx, x, y + offset, frameW, frameH, 5);
     ctx.fill();

@@ -2655,3 +2655,31 @@ Final wave; the Lab expansion is complete at **37 programs / 10 categories**
   categories.
 - Browser spot-checks: BST renders a centred tree with sorted leaves and
   the in-order marks pulsing; Huffman builds the merged-weight tree.
+
+## 37. UI contrast and readability pass (2.1.1, 2026-10-04)
+
+Owner request: a UI pass over the lesson cards and the Lab graphics for
+better contrast and friendlier typography in both themes and on mobile.
+Measured with a WCAG contrast script before/after:
+
+- Muted text (`--low`) failed AA in both themes: dark 2.94:1, light
+  2.89:1 on panel. Now `#808592` (5.07 / 4.81 on panel/panel-2) in dark
+  and `#5f6871` (5.32 / 4.86) in light; light `--mid` also darkened to
+  `#545c66` (6.36 / 5.81) so secondary text clears AA on both surfaces.
+- Dark accent indigo was 4.46:1 (borderline fail); now `#6b79ff`
+  (5.17:1), with `--indigo-soft`/`--indigo-glow` re-derived.
+- Visualization fills sat at ~1.1:1 against the canvas (bars, cells,
+  walls). Added `--viz-stroke` (dark `#666c7c`, light `#7f8894`) used as
+  an always-on outline for bars, cells, queue boxes, matrix cells, stack
+  frames, graph nodes and tree edges (>=3:1 in both themes) and
+  `--viz-wall` (dark `#6d7384`, light `#737d89`) for grid walls
+  (>=3:1 against empty cells). Bar index labels moved to 11px `--mid`.
+- Lesson cards: mobile rows are now >=44px tall, search text 13px, the
+  active row border uses the accent token, and the Lab entry blurbs are
+  12px; Lab playback buttons get 40px minimum touch size on phones.
+- Verified by the audit script (all pairs >= target) and browser
+  screenshots in dark and light: light-mode bars now read as outlined
+  values with dark labels; the maze shows light solid walls against dark
+  opened corridors; the lessons sidebar and cards are legible in both
+  themes. The full Lab regression (playback, highlights, compare,
+  themes, mobile, keyboard) stayed green; suite 66/0/1.

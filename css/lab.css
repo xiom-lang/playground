@@ -109,8 +109,8 @@
 
 .lab-entry-blurb {
   display: block;
-  font-size: 11px;
-  line-height: 1.35;
+  font-size: 12px;
+  line-height: 1.4;
   color: var(--mid);
 }
 
@@ -401,6 +401,15 @@
 @media (max-width: 768px) {
   .lab-screen .header {
     flex-wrap: wrap;
+  }
+
+  .lab-entry {
+    min-height: 44px;
+  }
+
+  .lab-btn {
+    min-height: 40px;
+    min-width: 40px;
   }
 
   .lab-screen .header-actions {

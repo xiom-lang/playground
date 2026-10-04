@@ -113,6 +113,15 @@ the sections below hold the detailed specs.
 - **37 Lab programs / 10 categories**, every frame from the program's own
   trace; full lab audit 37/37 on v0.62.4; app version 2.1.0.
 
+### 2.1.1 -- UI contrast pass (COMPLETE 2026-10-04)
+
+- [x] WCAG audit of both themes: muted text was 2.9:1 (AA fail) and
+  visualization fills were ~1.1:1 (graphics fail). Fixed with new muted
+  values, a brighter dark accent, outlined bars/cells/frames
+  (`--viz-stroke`, >=3:1) and a distinct wall fill (`--viz-wall`,
+  >=3:1 vs empty cells). Lesson cards got larger mobile tap targets and
+  slightly larger small text (AUDIT 37).
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light

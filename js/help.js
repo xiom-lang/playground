@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Comfortable to read in both themes',
+    items: [
+      'A contrast pass over light and dark mode: muted labels, accents and lesson lists now clear WCAG AA, and the Lab charts use outlined bars and cells that stay readable in either theme.',
+      'Bigger tap targets on phones (lesson rows and Lab controls), slightly larger small text, and clearer maze walls vs open paths.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'The Lab grows trees and strings (2.1)',
     items: [
       'Binary Search Tree, Min-Heap and Trie join the Lab - and the tree view learned to show labels (letters, weights) next to values.',

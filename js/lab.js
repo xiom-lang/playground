@@ -40,6 +40,8 @@ function labColors() {
     greenSoft: read('--green-soft'),
     amber: read('--amber'),
     error: read('--error'),
+    vizStroke: read('--viz-stroke'),
+    vizWall: read('--viz-wall'),
   };
   return labColorsCache;
 }

@@ -16,14 +16,18 @@
   --border-hover: #3a3d47;
   --hi: #f2f3f6;
   --mid: #9497a3;
-  --low: #5c5f6b;
-  --indigo: #5c6bff;
-  --indigo-soft: rgba(92,107,255,0.14);
-  --indigo-glow: rgba(92,107,255,0.45);
+  --low: #808592;
+  --indigo: #6b79ff;
+  --indigo-soft: rgba(107,121,255,0.16);
+  --indigo-glow: rgba(107,121,255,0.45);
   --green: #34d399;
   --green-soft: rgba(52,211,153,0.12);
   --amber: #f0b445;
   --error: #ff5c7a;
+  /* Visualization neutrals: outline/data strokes that clear 3:1 against the
+     canvas panel, and a wall fill that clears 3:1 against an empty cell. */
+  --viz-stroke: #666c7c;
+  --viz-wall: #6d7384;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
   --radius-sm: 8px;
@@ -42,8 +46,8 @@ html.light-mode {
   --border-soft: #d8dee4;
   --border-hover: #b8c0c9;
   --hi: #1f2328;
-  --mid: #656d76;
-  --low: #8b949e;
+  --mid: #545c66;
+  --low: #5f6871;
   --indigo: #4c5ce6;
   --indigo-soft: rgba(76,92,230,0.10);
   --indigo-glow: rgba(76,92,230,0.25);
@@ -51,6 +55,8 @@ html.light-mode {
   --green-soft: rgba(26,127,55,0.10);
   --amber: #9a6700;
   --error: #cf222e;
+  --viz-stroke: #7f8894;
+  --viz-wall: #737d89;
 }
 
 /* ---- Reset ---- */
@@ -833,7 +839,7 @@ html.light-mode .output-content {
   border-radius: var(--radius-sm);
   color: var(--hi);
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: 13px;
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -877,7 +883,7 @@ html.light-mode .output-content {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   cursor: pointer;
   border-radius: var(--radius-sm);
   font-size: 13px;
@@ -893,7 +899,11 @@ html.light-mode .output-content {
 .lesson-item.active {
   background: var(--indigo-soft);
   color: var(--indigo);
-  border: 1px solid rgba(92,107,255,0.2);
+  border: 1px solid var(--indigo-glow);
+}
+
+@media (max-width: 768px) {
+  .lesson-item { min-height: 44px; }
 }
 
 .lesson-check {

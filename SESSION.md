@@ -1,11 +1,11 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-04 (**2.1.0 Lab expansion complete** - 37 programs,
-10 categories; 2.0.3 input lessons; v0.62.4 absorbed). Branch `main` at/after
-`46322af`, working tree clean, all commits pushed to `origin/main`; CI green
-(Validate + CodeQL). Production runs **playground 2.0.3** + **toolchain
-v0.62.4** (verified live: warm-cache stdin, input lessons E2E); the
-**2.1.0 build (waves B-D)** rides the next hourly pulls with stdlib 0.62.0,
+Last updated: 2026-10-04 (**2.1.1 UI contrast pass** ready; 2.1.0 Lab
+expansion complete - 37 programs, 10 categories; v0.62.4 absorbed).
+Branch `main` at/after `46322af`, working tree clean, all commits pushed to
+`origin/main`; CI green (Validate + CodeQL). Production runs **playground
+2.1.0** after the 16:29 pull (2.0.3 + v0.62.4 verified live); the 2.1.1
+contrast build follows on the next pull with stdlib 0.62.0,
 wasm v0.62.4, `capabilities.format: true`, P1 Landlock (`require`, ABI 4),
 P3 rate limits + external `abuse` monitor, P2 host-side state, the C3
 registry catalog mounted at `/registry-bundle` (352 packages), and the
@@ -1419,11 +1419,12 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 
 ### State
 
-- Playground **2.1.0** (`package.json`), toolchain/wasm **v0.62.4**
+- Playground **2.1.1** (`package.json`), toolchain/wasm **v0.62.4**
   (C25 absorbed; AUDIT 35), **412 lessons** + **37 Lab programs**
   (16 Tier 1 + waves A-D of Tier 2), production live and verified for
-  2.0.3 (health green, sandbox `require`/ABI 4, packages 352); the 2.1.0
-  build rides the next hourly pull.
+  2.0.3 (health green, sandbox `require`/ABI 4, packages 352); the 2.1.x
+  builds ride the next hourly pulls. 2.1.1 is the UI contrast/readability
+  pass (AUDIT 37).
 - Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
   (`docs/LAB_PROTOCOL.md`), parser and player (`js/lab-trace.js`,
   `js/lab-player.js`), eight canvas primitives (`js/lab-viz.js`), the Lab
