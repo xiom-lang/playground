@@ -580,6 +580,19 @@ async function main() {
       assert.ok(labCss.body.indexOf('.lab-step-line') >= 0, 'Monaco decoration style missing');
     });
 
+    ok('lab viz fills DP matrices and clears between phases', () => {
+      const matrix = labVizCreate({ type: 'matrix' });
+      labVizApply(matrix, { event: 'init', fields: { rows: '2', cols: '3', rowlabels: 'a,b', labels: '0,1,2' } });
+      assert.deepStrictEqual(matrix.state.rowLabels, ['a', 'b']);
+      labVizApply(matrix, { event: 'set', fields: { r: '1', c: '2', v: '7' } });
+      assert.strictEqual(matrix.state.cells['1,2'], 7);
+      labVizApply(matrix, { event: 'mark', fields: { r: '1', c: '2', role: 'path' } });
+      assert.strictEqual(matrix.state.roles['1,2'], 'path');
+      labVizApply(matrix, { event: 'clear' });
+      assert.deepStrictEqual(matrix.state.cells, {});
+      assert.deepStrictEqual(matrix.state.roles, {});
+    });
+
     ok('lab viz animates transitions and honors reduced motion', () => {
       let now = 1000;
       const moving = labVizCreate({ type: 'bars' }, { now: () => now });

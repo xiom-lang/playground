@@ -40,7 +40,8 @@ applied in order. Unknown events are preserved but ignored by renderers.
 
 | Event | Fields | Meaning |
 |---|---|---|
-| `init` | view-specific: `vals`, `n`, `rows`, `cols`, `labels`, `edges`, `walls`, `max` | set up the view |
+| `init` | view-specific: `vals`, `n`, `rows`, `cols`, `labels`, `rowlabels`, `edges`, `walls`, `max` | set up the view |
+| `clear` | none | wipe the mutable view data (matrix cells/roles) for a second phase |
 | `compare` | `i`,`j` (indices) or `a`,`b` (values) | two items under comparison |
 | `swap` | `i`,`j` | swap two positions |
 | `set` | `i`,`v` or `r`,`c`,`v` | write a value |
@@ -72,7 +73,10 @@ events to drawing:
 - `grid` — rows x cols cells; walls, visit/frontier/path, labels.
 - `graph` — nodes and edges, laid out from the edge list; cursor/visit.
 - `tree` — nodes with `parent`, laid out by depth; move leaves.
-- `matrix` — growable table; row/column writes and highlights.
+- `matrix` — growable table; row/column writes and highlights. `labels`
+  names the columns, `rowlabels` names the rows; `mark` roles `path` and
+  `found` paint green, `current` paints amber (used by the dynamic
+  programming programs and the GCD table).
 - `stack` — frames for `push`/`pop` and `call`/`ret` (the call stack).
 - `timeline` — sequence of `point` values with a cursor.
 

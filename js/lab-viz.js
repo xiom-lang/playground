@@ -112,7 +112,7 @@ function labVizInitial(view) {
   if (type === 'grid') return { rows: 0, cols: 0, walls: {}, labels: [], visited: {}, frontier: {}, path: {}, roles: {}, visitAt: {}, frontierAt: {}, pathAt: {}, pathOrder: [], cursor: null, done: false, anim: {} };
   if (type === 'graph') return { nodes: [], edges: [], roles: {}, visited: {}, cursor: null, done: false, anim: {} };
   if (type === 'tree') return { nodes: {}, order: [], roles: {}, current: null, done: false, anim: {} };
-  if (type === 'matrix') return { rows: 0, cols: 0, labels: [], cells: {}, roles: {}, current: null, done: false, anim: {} };
+  if (type === 'matrix') return { rows: 0, cols: 0, labels: [], rowLabels: [], cells: {}, roles: {}, current: null, done: false, anim: {} };
   if (type === 'stack') return { frames: [], exiting: null, lastPopped: null, done: false, anim: {} };
   if (type === 'timeline') return { points: [], pointAt: [], peak: 1, result: null, done: false, anim: {} };
   return {};
@@ -296,6 +296,12 @@ function labApplyEvent(type, state, event, motion) {
       state.cols = labNum(fields, 'cols', 0);
       state.labels = [];
       if (typeof fields.labels === 'string' && fields.labels) state.labels = fields.labels.split(',');
+      state.rowLabels = [];
+      if (typeof fields.rowlabels === 'string' && fields.rowlabels) state.rowLabels = fields.rowlabels.split(',');
+    } else if (name === 'clear') {
+      state.cells = {};
+      state.roles = {};
+      state.current = null;
     } else if (name === 'set') {
       var row = labNum(fields, 'r', 0);
       var col = labNum(fields, 'c', 0);
@@ -1008,12 +1014,13 @@ function labDrawMatrix(state, ctx, w, h, colors, now) {
   var cols = Math.max(state.cols, 1);
   var rows = Math.max(state.rows, 1);
   var pad = 18;
-  var labelSpace = state.labels.length ? 18 : 0;
-  var cellW = Math.min(110, (w - pad * 2 - 42) / cols);
-  var cellH = Math.min(40, (h - pad * 2 - labelSpace) / rows);
+  var topSpace = state.labels.length ? 18 : 0;
+  var rowLabelSpace = state.rowLabels.length ? 58 : 0;
+  var cellW = Math.min(110, Math.max(14, (w - pad * 2 - rowLabelSpace) / cols));
+  var cellH = Math.min(40, Math.max(12, (h - pad * 2 - topSpace) / rows));
   var totalW = cellW * cols;
-  var ox = (w - totalW) / 2;
-  var oy = (h - (cellH * rows + labelSpace)) / 2 + labelSpace;
+  var ox = pad + rowLabelSpace + Math.max(0, (w - pad * 2 - rowLabelSpace - totalW) / 2);
+  var oy = (h - (cellH * rows + topSpace)) / 2 + topSpace;
   var currentAnim = labAnim(state, 'current', now);
 
   for (var c = 0; c < cols; c++) {
@@ -1026,6 +1033,13 @@ function labDrawMatrix(state, ctx, w, h, colors, now) {
     }
   }
   for (var r = 0; r < rows; r++) {
+    if (state.rowLabels[r]) {
+      ctx.fillStyle = colors.mid;
+      ctx.font = '600 11px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(state.rowLabels[r], ox - 8, oy + r * cellH + cellH / 2);
+    }
     for (var col = 0; col < cols; col++) {
       var key = r + ',' + col;
       var x = ox + col * cellW;
@@ -1034,16 +1048,18 @@ function labDrawMatrix(state, ctx, w, h, colors, now) {
       var hasValue = state.cells[key] != null;
       var fill = colors.panel2;
       var border = colors.borderSoft;
+      var textColor = colors.hi;
       if (hasValue) fill = colors.panel3;
-      if (role === 'current') { border = colors.amber; fill = colors.amber; }
+      if (role === 'current') { border = colors.amber; fill = colors.amber; textColor = colors.void; }
+      if (role === 'path' || role === 'found') { border = colors.green; fill = colors.green; textColor = colors.void; }
       ctx.fillStyle = fill;
       ctx.strokeStyle = border;
-      ctx.lineWidth = role === 'current' ? 2 : 1;
+      ctx.lineWidth = role ? 2 : 1;
       ctx.fillRect(x + 0.5, y + 0.5, cellW - 1, cellH - 1);
       ctx.strokeRect(x + 0.5, y + 0.5, cellW - 1, cellH - 1);
       if (hasValue) {
-        ctx.fillStyle = role === 'current' ? colors.void : colors.hi;
-        ctx.font = '600 13px ui-monospace, Menlo, Consolas, monospace';
+        ctx.fillStyle = textColor;
+        labFitText(ctx, String(state.cells[key]), cellW - 6, Math.min(13, cellH * 0.5));
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(String(state.cells[key]), x + cellW / 2, y + cellH / 2);
@@ -1058,11 +1074,6 @@ function labDrawMatrix(state, ctx, w, h, colors, now) {
       }
     }
   }
-  ctx.fillStyle = colors.low;
-  ctx.font = '10px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText('each row = one division step', ox, oy + cellH * rows + 6);
 }
 
 // ---------------------------------------------------------------------------

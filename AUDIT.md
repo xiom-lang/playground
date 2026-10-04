@@ -2580,3 +2580,31 @@ and are interactive. Findings and changes:
   type-checks and the L7 re-audit is clean (40/40, templateFail 0). The
   lesson baseline was refreshed tool-driven to v0.62.4 (empty known
   lists). Suite 63/0/1; lesson catalog and expected-output gates current.
+
+### 34.8 Tier 2 wave B: counting/radix sort + dynamic programming (2026-10-04)
+
+Six programs landed on one renderer extension:
+
+- Matrix primitive: `rowlabels` on `init` (row headers), `path`/`found`
+  marks (green traceback cells) and a `clear` event that wipes
+  cells/roles for two-phase views. Protocol reference updated
+  (`docs/LAB_PROTOCOL.md`).
+- Sorting: `counting-sort.xi` (20 events; counts table indexed by value,
+  then `clear`, then the sorted row) and `radix-sort.xi` (29 events;
+  three LSD passes, bars animate each write-back; explicit ones/tens/
+  hundreds step names).
+- Dynamic programming (new "Dynamic programming" category, abacus icon):
+  `knapsack.xi` (32 events; items x capacities with the take-path),
+  `lcs.xi` (16 events; char-level table with the match path),
+  `edit-distance.xi` (19 events; base row/column plus fills, final cell
+  found) and `coin-change.xi` (43 events; one row per amount).
+- All six pass `tools/lab-audit.js` twice each on v0.62.4 with full
+  annotation coverage; catalog is 25 entries / 7 categories; full lab
+  audit 25/25. Browser spot-check: knapsack at step 31 renders the table
+  with row labels and both green traceback cells
+  ((item1,cap1) and (item4,cap6)), highlight on the `take` line.
+- Race fix found during verification: selecting an entry while a run is
+  in flight could briefly apply the older trace. Entry loads and runs now
+  carry supersede tokens, so stale responses are dropped.
+- Suite 63/0/1; new matrix unit test covers row labels, path marks and
+  `clear`.

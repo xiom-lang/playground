@@ -1,7 +1,7 @@
 {
   "version": "2.0.3",
   "protocol": "v1",
-  "total_entries": 19,
+  "total_entries": 25,
   "categories": [
     {
       "id": "sorting",
@@ -62,6 +62,24 @@
             "type": "bars"
           },
           "blurb": "Build a max-heap in the array, then extract the largest value to the end, one by one."
+        },
+        {
+          "id": "lab-counting-sort",
+          "title": "Counting Sort",
+          "file": "entries/lab-counting-sort.json",
+          "view": {
+            "type": "matrix"
+          },
+          "blurb": "Count how often each value occurs, then rewrite the values in order - no comparisons at all."
+        },
+        {
+          "id": "lab-radix-sort",
+          "title": "Radix Sort (LSD)",
+          "file": "entries/lab-radix-sort.json",
+          "view": {
+            "type": "bars"
+          },
+          "blurb": "Three stable counting-sort passes, one per digit; the array settles after the hundreds pass."
         }
       ]
     },
@@ -220,6 +238,50 @@
             "type": "tree"
           },
           "blurb": "The recursion tree: every move happens between two child subtrees."
+        }
+      ]
+    },
+    {
+      "id": "dp",
+      "name": "Dynamic programming",
+      "icon": "🧮",
+      "blurb": "Fill a table cell by cell and read the answer off the edge.",
+      "entries": [
+        {
+          "id": "lab-knapsack",
+          "title": "0/1 Knapsack",
+          "file": "entries/lab-knapsack.json",
+          "view": {
+            "type": "matrix"
+          },
+          "blurb": "Rows are items, columns are capacities; the traceback marks the items taken."
+        },
+        {
+          "id": "lab-lcs",
+          "title": "Longest Common Subsequence",
+          "file": "entries/lab-lcs.json",
+          "view": {
+            "type": "matrix"
+          },
+          "blurb": "Match characters on the diagonal, take the best neighbour otherwise; the path marks the shared subsequence."
+        },
+        {
+          "id": "lab-edit-distance",
+          "title": "Edit Distance",
+          "file": "entries/lab-edit-distance.json",
+          "view": {
+            "type": "matrix"
+          },
+          "blurb": "Fewest inserts, deletes and replaces that turn one word into the other."
+        },
+        {
+          "id": "lab-coin-change",
+          "title": "Coin Change",
+          "file": "entries/lab-coin-change.json",
+          "view": {
+            "type": "matrix"
+          },
+          "blurb": "One cell per amount: the fewest coins that make it."
         }
       ]
     }

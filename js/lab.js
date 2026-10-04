@@ -211,12 +211,15 @@ function labSelectEntry(pane, entry) {
   // Drop the previous trace immediately so the pane never shows one
   // algorithm's visualization under another's title while the new entry loads.
   labResetWork(pane);
+  state.loadToken = (state.loadToken || 0) + 1;
+  var loadToken = state.loadToken;
   fetch('lessons/lab/' + entry.file)
     .then(function (resp) {
       if (!resp.ok) throw new Error('Entry not found: ' + entry.file);
       return resp.json();
     })
     .then(function (payload) {
+      if (state.loadToken !== loadToken) return; // superseded by a newer selection
       state.code = payload.code;
       state.entry = { id: payload.id, title: payload.title, category: payload.category, view: payload.view, blurb: payload.blurb, file: entry.file };
       state.annotations = window.LabTrace.extractAnnotations(payload.code);
@@ -262,6 +265,8 @@ function labRunPane(pane) {
   var source = labGetCode(pane) || state.code;
   state.code = source;
   state.running = true;
+  state.runToken = (state.runToken || 0) + 1;
+  var runToken = state.runToken;
   labSetStatus(pane, 'Compiling and running...');
 
   fetch('/api/compile', {
@@ -271,6 +276,7 @@ function labRunPane(pane) {
   })
     .then(function (resp) { return resp.json(); })
     .then(function (run) {
+      if (state.runToken !== runToken) return; // a newer run or selection won
       state.running = false;
       if (!run.success) {
         var message = String(run.runError || run.output || 'Run failed.').split('\n')[0];
@@ -298,6 +304,7 @@ function labRunPane(pane) {
       }
     })
     .catch(function () {
+      if (state.runToken !== runToken) return;
       state.running = false;
       labSetStatus(pane, 'Server not reachable.');
       labSetStatusClass(pane, 'err');

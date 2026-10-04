@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-04 (**2.0.3 Lessons that listen** ready; 2.1.0 wave A
-landed; v0.62.4 absorbed). Branch `main` at/after `46322af`, working tree
+Last updated: 2026-10-04 (**2.0.3 Lessons that listen** ready; 2.1.0 waves
+A/B landed; v0.62.4 absorbed). Branch `main` at/after `46322af`, working tree
 clean, all commits pushed to `origin/main`; CI green (Validate + CodeQL).
 Production runs **playground 2.0.2** (the next hourly pull carries
 **2.0.3** and **toolchain v0.62.4**) with stdlib 0.62.0, wasm
@@ -1419,10 +1419,10 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 ### State
 
 - Playground **2.0.3** (`package.json`), toolchain/wasm **v0.62.4**
-  (C25 absorbed; AUDIT 35), **412 lessons** + **19 Lab programs** (16 Tier 1
-  + wave A of Tier 2), production live and verified (health green, sandbox
-  `require`/ABI 4, packages 352); the 2.0.3 build (including the input
-  lessons and the v0.62.4 pin) rides the next hourly pull.
+  (C25 absorbed; AUDIT 35), **412 lessons** + **25 Lab programs** (16 Tier 1
+  + waves A/B of Tier 2), production live and verified (health green,
+  sandbox `require`/ABI 4, packages 352); the 2.0.3 build (including the
+  input lessons and the v0.62.4 pin) rides the next hourly pull.
 - Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
   (`docs/LAB_PROTOCOL.md`), parser and player (`js/lab-trace.js`,
   `js/lab-player.js`), eight canvas primitives (`js/lab-viz.js`), the Lab
@@ -1440,14 +1440,14 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
   cold/cached/--no-cache all read stdin, fresh-HOME workaround deleted;
   AUDIT 35). Then **2.0.3 input-lesson pass**: Input box auto-opens for
   input lessons, L7-10 is a real interactive guessing game, own input no
-  longer reads as a mismatch (AUDIT 36). Waves B-D are listed in ROADMAP
-  2.1.0.
-- Compiler findings: C20 (module type identity; open, optional), C25
-  (fixed upstream `3bc59dbc`, ships next release; the fresh-HOME
-  workaround is still in place).
-- Waiting on: the next toolchain release (remove the C25 workaround at
-  that pin bump); owner go-ahead for **2.1.0 Lab expansion**; designer
-  assets (ROADMAP "Graphics needed" - 12 for 2.0, 23 for 2.2).
+  longer reads as a mismatch (AUDIT 36). Then **wave B**: counting/radix
+  sort plus a new Dynamic programming category (knapsack, LCS, edit
+  distance, coin change) on an extended matrix primitive (AUDIT 34.8).
+  Waves C-D are listed in ROADMAP 2.1.0.
+- Compiler findings: C20 (module type identity; open, optional); C25 is
+  absorbed in v0.62.4 and the fresh-HOME workaround is deleted.
+- Waiting on: waves C-D of the 2.1.0 Lab expansion; designer assets
+  (ROADMAP "Graphics needed" - 12 for 2.0, 23 for 2.2).
 - Verification/records: AUDIT 34 (2.0.0), AUDIT 33.3-33.7 (C22-C25,
   absorption, input), SESSION 18-27, ROADMAP phase plan.
 
@@ -1466,14 +1466,13 @@ landlock 4, abuse:ok, packages.bundlePackages ~352). Also open the Lab once
 (https://playground.xiom-lang.org/, Algorithm Lab) and confirm a trace plays.
 
 Task 1 (primary) - 2.1.0 Lab expansion, IN PROGRESS (owner go-ahead given
-  2026-10-04; wave A landed: merge/quick/heap sort). Continue with the
-  remaining waves from ROADMAP 2.1.0: wave B (counting/radix sort; DP
-  knapsack, LCS, edit distance, coin change on the matrix primitive), wave C
-  (Dijkstra, A*, maze generation; topological sort, cycle detection,
-  union-find Kruskal/Prim on the graph primitive), wave D (BST, heap, trie;
-  KMP; activity selection; Huffman). Reuse protocol v1; extend primitives
-  only with the wave that needs them (matrix row labels, graph edge
-  weights/roles, wall marks, tree labels) and audit twice on the pin.
+  2026-10-04; waves A and B landed: advanced sorts + DP). Continue with
+  the remaining waves from ROADMAP 2.1.0: wave C (Dijkstra, A*, maze
+  generation; topological sort, cycle detection, union-find Kruskal/Prim
+  on the graph primitive - add edge weights/roles and wall marks), wave D
+  (BST, heap, trie; KMP; activity selection; Huffman - add tree labels).
+  Reuse protocol v1; extend primitives only with the wave that needs them
+  and audit twice on the pin.
 
 Task 2 (DONE 2026-10-04) - C25 absorbed in v0.62.4 (AUDIT 35): pins and
   wasm bumped, c25/run.sh prints "C25 fixed: yes", the fresh-HOME workaround

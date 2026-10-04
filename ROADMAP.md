@@ -99,8 +99,10 @@ the sections below hold the detailed specs.
 
 - [x] Wave A: merge sort, quick sort, heap sort (real trace programs,
   audit-clean, browser-verified; AUDIT 34.7).
-- [ ] Wave B: counting sort, radix sort; DP (knapsack, LCS, edit distance,
-  coin change) on the matrix primitive.
+- [x] Wave B: counting sort, radix sort; DP (knapsack, LCS, edit distance,
+  coin change) on the matrix primitive, extended with row labels,
+  `path`/`found` marks and a `clear` event for two-phase views (AUDIT
+  34.8).
 - [ ] Wave C: Dijkstra, A*, maze generation; topological sort, cycle
   detection, union-find (Kruskal/Prim) on the graph primitive.
 - [ ] Wave D: BST, heap, trie (tree labels), KMP, activity selection,

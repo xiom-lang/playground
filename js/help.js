@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Counting, radix and dynamic programming in the Lab',
+    items: [
+      'Two comparison-free sorts join the Lab: Counting Sort fills a counts table, Radix Sort runs three digit passes.',
+      'Four dynamic-programming programs arrive with a new table view: 0/1 Knapsack, Longest Common Subsequence, Edit Distance and Coin Change - watch the table fill and the traceback light up.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Lessons that listen',
     items: [
       'Lessons that read input now open the Input box automatically with their sample loaded, so you can see where the program gets its text - edit it and Run to play with the program.',
