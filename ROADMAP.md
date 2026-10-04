@@ -95,7 +95,7 @@ the sections below hold the detailed specs.
   expected-result check compares against the shipped sample only, and
   editing the box clears a stale banner (AUDIT 36).
 
-### 2.1.0 -- Lab expansion (IN PROGRESS, started 2026-10-04)
+### 2.1.0 -- Lab expansion (COMPLETE 2026-10-04)
 
 - [x] Wave A: merge sort, quick sort, heap sort (real trace programs,
   audit-clean, browser-verified; AUDIT 34.7).
@@ -107,10 +107,11 @@ the sections below hold the detailed specs.
   detection, Kruskal (union-find) on the graph primitive, extended with
   weighted edges, edge roles (`tree`/`relax`/`reject`/`cycle`), node
   value updates and grid `wall`/`open` carving (AUDIT 34.9).
-- [ ] Wave D: BST, heap, trie (tree labels), KMP, activity selection,
-  Huffman.
-- Primitive extensions land with the wave that needs them (matrix row
-  labels, graph edge weights/roles, wall marks, tree labels).
+- [x] Wave D: BST, min-heap and trie (tree labels, in-place relabels),
+  KMP, activity selection and Huffman, plus a proper in-order tree layout
+  (AUDIT 34.10).
+- **37 Lab programs / 10 categories**, every frame from the program's own
+  trace; full lab audit 37/37 on v0.62.4; app version 2.1.0.
 
 ### 2.2.0 -- Gamified learning
 

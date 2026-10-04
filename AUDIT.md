@@ -2631,3 +2631,27 @@ Six programs on graph/grid extensions:
   labels (0/7/9/14...), edge weights and the green settled tree edge.
 - Suite 65/0/1; new graph unit test covers weighted parsing, node `set`
   and edge recolouring (no duplicates), plus `walls=all`.
+
+### 34.10 Tier 2 wave D: trees, strings, greedy - 2.1.0 complete (2026-10-04)
+
+Final wave; the Lab expansion is complete at **37 programs / 10 categories**
+(package version 2.1.0):
+
+- Tree primitive: optional node `label` (letters, weights) overriding the
+  numeric value, and re-emitting a node id updates it in place (heap
+  relabels) instead of duplicating it. Tree layout fixed to true in-order
+  x positions, so BSTs draw sorted left to right and roots centre over
+  their subtrees. Cells pointers now accept any mark role (`i`/`fallback`
+  pointers in KMP).
+- `bst.xi` (26 events; iterative insert with cursor walks + in-order
+  marking), `heap.xi` (24 events; bubble-up with node relabels),
+  `trie.xi` (22 events; letter labels, shared prefixes, word-end marks),
+  `kmp.xi` (45 events; failure table fallback pointers on cells),
+  `activity-selection.xi` (50 events; start/end/selected matrix with the
+  chosen columns green) and `huffman.xi` (13 events; merged weights,
+  leaves labelled A-F, WPL 224 as the result).
+- All six audit twice each on v0.62.4 with full annotation coverage;
+  full lab audit **37/37**; suite 66/0/1; catalog 37 entries / 10
+  categories.
+- Browser spot-checks: BST renders a centred tree with sorted leaves and
+  the in-order marks pulsing; Huffman builds the merged-weight tree.

@@ -9,6 +9,15 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'The Lab grows trees and strings (2.1)',
+    items: [
+      'Binary Search Tree, Min-Heap and Trie join the Lab - and the tree view learned to show labels (letters, weights) next to values.',
+      'KMP Pattern Search scans a text without ever stepping back; Activity Selection and Huffman Coding show greedy choices in action.',
+      'The 2.1 Lab expansion is complete: 37 algorithms, every frame still from the program\'s own trace.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Graphs in the Lab',
     items: [
       'A new Graphs shelf: Dijkstra and A* find shortest paths on a weighted graph (watch the distance labels drop), Topological Sort orders a DAG, Cycle Detection colours a DFS, and Kruskal grows a minimum spanning tree with union-find.',

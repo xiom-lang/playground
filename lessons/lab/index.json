@@ -1,7 +1,7 @@
 {
-  "version": "2.0.3",
+  "version": "2.1.0",
   "protocol": "v1",
-  "total_entries": 31,
+  "total_entries": 37,
   "categories": [
     {
       "id": "sorting",
@@ -239,6 +239,33 @@
             "type": "graph"
           },
           "blurb": "Follow next pointers from the head until the target value is reached."
+        },
+        {
+          "id": "lab-bst",
+          "title": "Binary Search Tree",
+          "file": "entries/lab-bst.json",
+          "view": {
+            "type": "tree"
+          },
+          "blurb": "Insert values by walking left or right from the root; an in-order walk lights them up sorted."
+        },
+        {
+          "id": "lab-heap",
+          "title": "Min-Heap Build",
+          "file": "entries/lab-heap.json",
+          "view": {
+            "type": "tree"
+          },
+          "blurb": "New values bubble up while smaller than their parent, so the root is always the minimum."
+        },
+        {
+          "id": "lab-trie",
+          "title": "Trie",
+          "file": "entries/lab-trie.json",
+          "view": {
+            "type": "tree"
+          },
+          "blurb": "Insert words letter by letter: shared prefixes reuse nodes, word ends get marked."
         }
       ]
     },
@@ -344,6 +371,49 @@
             "type": "matrix"
           },
           "blurb": "One cell per amount: the fewest coins that make it."
+        }
+      ]
+    },
+    {
+      "id": "strings",
+      "name": "Strings",
+      "icon": "🔤",
+      "blurb": "Pattern matching that never looks back.",
+      "entries": [
+        {
+          "id": "lab-kmp",
+          "title": "KMP Pattern Search",
+          "file": "entries/lab-kmp.json",
+          "view": {
+            "type": "cells"
+          },
+          "blurb": "Scan the text once with a failure table: mismatches fall back to the longest border, never backwards in the text."
+        }
+      ]
+    },
+    {
+      "id": "greedy",
+      "name": "Greedy",
+      "icon": "🎯",
+      "blurb": "Take the locally best choice and keep it.",
+      "entries": [
+        {
+          "id": "lab-activity-selection",
+          "title": "Activity Selection",
+          "file": "entries/lab-activity-selection.json",
+          "view": {
+            "type": "matrix"
+          },
+          "blurb": "Take every interval that starts after the last one ends; the table records the picks."
+        },
+        {
+          "id": "lab-huffman",
+          "title": "Huffman Coding",
+          "file": "entries/lab-huffman.json",
+          "view": {
+            "type": "tree"
+          },
+          "blurb": "Merge the two lightest nodes again and again: frequent letters end up close to the root."
         }
       ]
     }

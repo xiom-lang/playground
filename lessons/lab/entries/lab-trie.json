@@ -1,0 +1,10 @@
+{
+  "id": "lab-trie",
+  "title": "Trie",
+  "category": "structures",
+  "view": {
+    "type": "tree"
+  },
+  "blurb": "Insert words letter by letter: shared prefixes reuse nodes, word ends get marked.",
+  "code": "// Trie -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Insert words letter by letter: shared prefixes reuse nodes, new letters\n// become children. Node labels are the letters; found marks the word ends.\nuse xiom.io;\nuse xiom.string;\n\nfn find_child(labels: &Vec[Str], parents: &Vec[Int], parent: Int, label: Str) -> Int {\n  var i = 0;\n  var found = -1;\n  while i < labels.len() {\n    if parents.get(i).unwrap() == parent {\n      let here = labels.get(i).unwrap();\n      if here == label { found = i; };\n    };\n    i += 1;\n  };\n  found\n}\n\nfn main() {\n  var words: Vec[Str] = Vec[Str].new();\n  words.push(\"cat\"); words.push(\"car\"); words.push(\"dog\");\n\n  var labels: Vec[Str] = Vec[Str].new();\n  var parents: Vec[Int] = Vec[Int].new();\n  labels.push(\"_\");\n  parents.push(-1);\n\n  io.println(\"v1|init|n=8|step=init\"); // @step init\n  io.println(\"v1|node|id=0|parent=-1|v=0|label=_|step=init\"); // @step init\n\n  var next = 1;\n  var w = 0;\n  while w < words.len() {\n    let word = words.get(w).unwrap();\n    var cur = 0;\n    var pos = 0;\n    while pos < str_len(word) {\n      let ch = str_slice(word, pos, pos + 1);\n      io.println(\"v1|mark|id=\" + cur.to_str() + \"|role=cursor|step=walk\"); // @step walk\n      let child = find_child(&labels, &parents, cur, ch);\n      if child >= 0 {\n        cur = child;\n      } else {\n        labels.push(ch);\n        parents.push(cur);\n        io.println(\"v1|node|id=\" + next.to_str() + \"|parent=\" + cur.to_str() + \"|v=0|label=\" + ch + \"|step=add\"); // @step add\n        cur = next;\n        next += 1;\n      };\n      pos += 1;\n    };\n    io.println(\"v1|mark|id=\" + cur.to_str() + \"|role=found|step=word\"); // @step word\n    w += 1;\n  };\n  io.println(\"v1|done|result=\" + next.to_str() + \"|step=done\"); // @step done\n}\n"
+}

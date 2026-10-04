@@ -1,0 +1,10 @@
+{
+  "id": "lab-activity-selection",
+  "title": "Activity Selection",
+  "category": "greedy",
+  "view": {
+    "type": "matrix"
+  },
+  "blurb": "Take every interval that starts after the last one ends; the table records the picks.",
+  "code": "// Activity Selection -- Algorithm Lab program (docs/LAB_PROTOCOL.md).\n//\n// Intervals sorted by finish time: take an activity whenever it starts at or\n// after the last one ends. Row 2 records the choice.\nuse xiom.io;\n\nfn main() {\n  let n = 11;\n  var starts: Vec[Int] = Vec[Int].new();\n  starts.push(1); starts.push(3); starts.push(0); starts.push(5);\n  starts.push(3); starts.push(5); starts.push(6); starts.push(8);\n  starts.push(8); starts.push(2); starts.push(12);\n  var ends: Vec[Int] = Vec[Int].new();\n  ends.push(4); ends.push(5); ends.push(6); ends.push(7);\n  ends.push(9); ends.push(9); ends.push(10); ends.push(11);\n  ends.push(12); ends.push(14); ends.push(16);\n\n  io.println(\"v1|init|rows=3|cols=11|rowlabels=start,end,selected|labels=0,1,2,3,4,5,6,7,8,9,10|step=init\"); // @step init\n\n  var i = 0;\n  while i < n {\n    io.println(\"v1|set|r=0|c=\" + i.to_str() + \"|v=\" + starts.get(i).unwrap().to_str() + \"|step=table\"); // @step table\n    io.println(\"v1|set|r=1|c=\" + i.to_str() + \"|v=\" + ends.get(i).unwrap().to_str() + \"|step=table\"); // @step table\n    i += 1;\n  };\n\n  var lastEnd = 0;\n  var count = 0;\n  i = 0;\n  while i < n {\n    io.println(\"v1|mark|r=0|c=\" + i.to_str() + \"|role=current|step=scan\"); // @step scan\n    let start = starts.get(i).unwrap();\n    let end = ends.get(i).unwrap();\n    if start >= lastEnd {\n      lastEnd = end;\n      count += 1;\n      io.println(\"v1|set|r=2|c=\" + i.to_str() + \"|v=1|step=take\"); // @step take\n      io.println(\"v1|mark|r=2|c=\" + i.to_str() + \"|role=path|step=take\"); // @step take\n    } else {\n      io.println(\"v1|set|r=2|c=\" + i.to_str() + \"|v=0|step=skip\"); // @step skip\n    };\n    i += 1;\n  };\n  io.println(\"v1|done|result=\" + count.to_str() + \"|step=done\"); // @step done\n}\n"
+}

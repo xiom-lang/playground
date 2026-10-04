@@ -54,7 +54,7 @@ applied in order. Unknown events are preserved but ignored by renderers.
 | `enqueue` / `dequeue` | `v` | queue operations |
 | `push` / `pop` | `v` | stack operations |
 | `call` / `ret` | `fn`,`n` / `fn`,`v` | call-stack frame entered / left |
-| `node` | `id`,`parent`,`v` | tree node (binary/recursion tree) |
+| `node` | `id`,`parent`,`v`, optional `label` | tree node (label overrides the numeric `v`; re-emitting an id relabels it) |
 | `edge` | `a`,`b`, optional `w` | graph edge |
 | `point` | `v` | timeline sample |
 | `done` | optional `result` | end of trace |
@@ -70,8 +70,9 @@ Each catalog entry names one primitive in `"view".type`; the renderer maps
 events to drawing:
 
 - `bars` — value bars; compare/swap/set/mark/sorted.
-- `cells` — sorted cells with pointers (`lo`/`mid`/`hi`/`cursor`/`found`),
-  linked-list cursor mode (`linked=1`), and queue mode (`queue=1`).
+- `cells` — sorted cells with pointers (`lo`/`mid`/`hi`/`cursor`/`found`;
+  any other `mark` role becomes a pointer label too), linked-list cursor
+  mode (`linked=1`), and queue mode (`queue=1`).
 - `grid` — rows x cols cells; walls, visit/frontier/path, labels; roles
   `wall` and `open` support maze carving on a `walls=all` start.
 - `graph` — nodes and edges, laid out from the edge list; edges may carry

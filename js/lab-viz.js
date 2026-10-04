@@ -299,16 +299,25 @@ function labApplyEvent(type, state, event, motion) {
     if (name === 'node') {
       var id = labNum(fields, 'id', -1);
       if (id >= 0) {
-        state.nodes[id] = {
-          id: id,
-          parent: labNum(fields, 'parent', -1),
-          v: labNum(fields, 'v', 0),
-          from: labNum(fields, 'from', -1),
-          to: labNum(fields, 'to', -1),
-          at: at,
-        };
-        state.order.push(id);
-        state.anim.enter = { id: id, at: at, dur: LAB_VIZ_DUR.enter };
+        var existingNode = state.nodes[id];
+        if (existingNode) {
+          // Re-emitting a node relabels it (heap swaps) without re-layout.
+          existingNode.parent = labNum(fields, 'parent', existingNode.parent);
+          existingNode.v = labNum(fields, 'v', existingNode.v);
+          if (typeof fields.label === 'string' && fields.label) existingNode.label = fields.label;
+        } else {
+          state.nodes[id] = {
+            id: id,
+            parent: labNum(fields, 'parent', -1),
+            v: labNum(fields, 'v', 0),
+            from: labNum(fields, 'from', -1),
+            to: labNum(fields, 'to', -1),
+            at: at,
+          };
+          if (typeof fields.label === 'string' && fields.label) state.nodes[id].label = fields.label;
+          state.order.push(id);
+          state.anim.enter = { id: id, at: at, dur: LAB_VIZ_DUR.enter };
+        }
       }
     } else if (name === 'mark') {
       var markId = labNum(fields, 'id', -1);
@@ -660,6 +669,11 @@ function labDrawCells(state, ctx, w, h, colors, now) {
   }
 
   var pointerRoles = ['lo', 'mid', 'hi', 'cursor', 'target', 'found'];
+  for (var extraRole in state.roleIndex) {
+    if (pointerRoles.indexOf(extraRole) === -1 && extraRole !== 'sorted' && extraRole !== 'current' && extraRole !== 'visited') {
+      pointerRoles.push(extraRole);
+    }
+  }
   for (var p = 0; p < pointerRoles.length; p++) {
     var pointerRole = pointerRoles[p];
     var targetIndex = state.roleIndex[pointerRole];
@@ -972,14 +986,12 @@ function labTreeLayout(state, w, h) {
   var order = [];
   function walk(id, depth) {
     var kids = children[id] || [];
-    if (kids.length === 0) {
-      depths[id] = depth;
-      order.push(id);
-      return;
-    }
-    for (var k = 0; k < kids.length; k++) walk(kids[k], depth + 1);
+    // In-order: first child's subtree, this node, then the rest. This keeps
+    // left-to-right x positions monotonic (BST in-order comes out sorted).
+    if (kids.length > 0) walk(kids[0], depth + 1);
     depths[id] = depth;
     order.push(id);
+    for (var k = 1; k < kids.length; k++) walk(kids[k], depth + 1);
   }
   for (var r = 0; r < roots.length; r++) walk(roots[r], 0);
   var maxDepth = 0;
@@ -1039,7 +1051,7 @@ function labDrawTree(state, ctx, w, h, colors, now) {
     ctx.stroke();
     ctx.globalAlpha = 1;
     ctx.fillStyle = textColor;
-    var label = String(nodeData.v);
+    var label = nodeData.label != null ? nodeData.label : String(nodeData.v);
     labFitText(ctx, label, p.r * 1.8, Math.min(13, p.r));
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';

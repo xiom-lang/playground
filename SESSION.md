@@ -1,11 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-04 (**2.0.3 Lessons that listen** ready; 2.1.0 waves
-A/B/C landed; v0.62.4 absorbed). Branch `main` at/after `46322af`, working tree
-clean, all commits pushed to `origin/main`; CI green (Validate + CodeQL).
-Production runs **playground 2.0.2** (the next hourly pull carries
-**2.0.3** and **toolchain v0.62.4**) with stdlib 0.62.0, wasm
-v0.62.4, `capabilities.format: true`, P1 Landlock (`require`, ABI 4),
+Last updated: 2026-10-04 (**2.1.0 Lab expansion complete** - 37 programs,
+10 categories; 2.0.3 input lessons; v0.62.4 absorbed). Branch `main` at/after
+`46322af`, working tree clean, all commits pushed to `origin/main`; CI green
+(Validate + CodeQL). Production runs **playground 2.0.3** + **toolchain
+v0.62.4** (verified live: warm-cache stdin, input lessons E2E); the
+**2.1.0 build (waves B-D)** rides the next hourly pulls with stdlib 0.62.0,
+wasm v0.62.4, `capabilities.format: true`, P1 Landlock (`require`, ABI 4),
 P3 rate limits + external `abuse` monitor, P2 host-side state, the C3
 registry catalog mounted at `/registry-bundle` (352 packages), and the
 repo-pinned VPS deploy (option C). Security P0-P3 fully closed. All
@@ -1418,11 +1419,11 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 
 ### State
 
-- Playground **2.0.3** (`package.json`), toolchain/wasm **v0.62.4**
-  (C25 absorbed; AUDIT 35), **412 lessons** + **31 Lab programs** (16 Tier 1
-  + waves A/B/C of Tier 2), production live and verified (health green,
-  sandbox `require`/ABI 4, packages 352); the 2.0.3 build (including the
-  input lessons and the v0.62.4 pin) rides the next hourly pull.
+- Playground **2.1.0** (`package.json`), toolchain/wasm **v0.62.4**
+  (C25 absorbed; AUDIT 35), **412 lessons** + **37 Lab programs**
+  (16 Tier 1 + waves A-D of Tier 2), production live and verified for
+  2.0.3 (health green, sandbox `require`/ABI 4, packages 352); the 2.1.0
+  build rides the next hourly pull.
 - Completed 2026-10-04: **2.0.0 Algorithm Lab** - trace protocol v1
   (`docs/LAB_PROTOCOL.md`), parser and player (`js/lab-trace.js`,
   `js/lab-player.js`), eight canvas primitives (`js/lab-viz.js`), the Lab
@@ -1445,11 +1446,15 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
   distance, coin change) on an extended matrix primitive (AUDIT 34.8).
   Then **wave C**: Dijkstra, A*, maze generation, topological sort, cycle
   detection and Kruskal on weighted graphs with edge roles, plus grid
-  carving (AUDIT 34.9). Only wave D remains (ROADMAP 2.1.0).
+  carving (AUDIT 34.9). Then **wave D**: BST, min-heap, trie, KMP,
+  activity selection, Huffman, with tree labels and a true in-order tree
+  layout (AUDIT 34.10). **2.1.0 is complete** (37 programs / 10
+  categories).
 - Compiler findings: C20 (module type identity; open, optional); C25 is
   absorbed in v0.62.4 and the fresh-HOME workaround is deleted.
-- Waiting on: waves C-D of the 2.1.0 Lab expansion; designer assets
-  (ROADMAP "Graphics needed" - 12 for 2.0, 23 for 2.2).
+- Waiting on: the owner's go-ahead for **2.2.0** (gamification: levels,
+  streaks, badges) and the designer assets (ROADMAP "Graphics needed" -
+  12 for 2.0, 23 for 2.2).
 - Verification/records: AUDIT 34 (2.0.0), AUDIT 33.3-33.7 (C22-C25,
   absorption, input), SESSION 18-27, ROADMAP phase plan.
 
@@ -1467,11 +1472,12 @@ toolchain v0.62.4, wasm v0.62.4) and /api/health (sandbox.mode=require,
 landlock 4, abuse:ok, packages.bundlePackages ~352). Also open the Lab once
 (https://playground.xiom-lang.org/, Algorithm Lab) and confirm a trace plays.
 
-Task 1 (primary) - 2.1.0 Lab expansion, IN PROGRESS (owner go-ahead given
-  2026-10-04; waves A, B and C landed). Finish with wave D from ROADMAP
-  2.1.0: BST, heap and trie (tree node labels/chars), KMP, activity
-  selection and Huffman. Reuse protocol v1; extend the tree primitive with
-  labels only if a program needs it, and audit twice on the pin.
+Task 1 (DONE 2026-10-04) - 2.1.0 Lab expansion complete: 37 programs in
+  10 categories (waves A-D: advanced sorts, DP, weighted graphs/maze,
+  trees/strings/greedy), all audit-clean on v0.62.4 and browser-verified.
+  Next milestone when the owner gives the go-ahead is **2.2.0**
+  (gamification: levels, streaks, badges) per ROADMAP; designer assets are
+  listed there too.
 
 Task 2 (DONE 2026-10-04) - C25 absorbed in v0.62.4 (AUDIT 35): pins and
   wasm bumped, c25/run.sh prints "C25 fixed: yes", the fresh-HOME workaround

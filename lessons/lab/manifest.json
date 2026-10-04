@@ -8,7 +8,9 @@
     { "id": "structures", "name": "Data structures", "icon": "\uD83E\uDDF1", "blurb": "Stacks, queues and linked lists, seen as they work." },
     { "id": "numbers", "name": "Numbers", "icon": "\uD83D\uDD22", "blurb": "Sieves, Euclid and the Collatz path." },
     { "id": "recursion", "name": "Recursion", "icon": "\uD83C\uDF00", "blurb": "Call stacks and recursion trees, step by step." },
-    { "id": "dp", "name": "Dynamic programming", "icon": "\uD83E\uDDEE", "blurb": "Fill a table cell by cell and read the answer off the edge." }
+    { "id": "dp", "name": "Dynamic programming", "icon": "\uD83E\uDDEE", "blurb": "Fill a table cell by cell and read the answer off the edge." },
+    { "id": "strings", "name": "Strings", "icon": "\uD83D\uDD24", "blurb": "Pattern matching that never looks back." },
+    { "id": "greedy", "name": "Greedy", "icon": "\uD83C\uDFAF", "blurb": "Take the locally best choice and keep it." }
   ],
   "entries": [
     {
@@ -226,6 +228,54 @@
       "view": { "type": "tree" },
       "blurb": "The recursion tree: every move happens between two child subtrees.",
       "program": "hanoi.xi"
+    },
+    {
+      "id": "lab-bst",
+      "title": "Binary Search Tree",
+      "category": "structures",
+      "view": { "type": "tree" },
+      "blurb": "Insert values by walking left or right from the root; an in-order walk lights them up sorted.",
+      "program": "bst.xi"
+    },
+    {
+      "id": "lab-heap",
+      "title": "Min-Heap Build",
+      "category": "structures",
+      "view": { "type": "tree" },
+      "blurb": "New values bubble up while smaller than their parent, so the root is always the minimum.",
+      "program": "heap.xi"
+    },
+    {
+      "id": "lab-trie",
+      "title": "Trie",
+      "category": "structures",
+      "view": { "type": "tree" },
+      "blurb": "Insert words letter by letter: shared prefixes reuse nodes, word ends get marked.",
+      "program": "trie.xi"
+    },
+    {
+      "id": "lab-kmp",
+      "title": "KMP Pattern Search",
+      "category": "strings",
+      "view": { "type": "cells" },
+      "blurb": "Scan the text once with a failure table: mismatches fall back to the longest border, never backwards in the text.",
+      "program": "kmp.xi"
+    },
+    {
+      "id": "lab-activity-selection",
+      "title": "Activity Selection",
+      "category": "greedy",
+      "view": { "type": "matrix" },
+      "blurb": "Take every interval that starts after the last one ends; the table records the picks.",
+      "program": "activity-selection.xi"
+    },
+    {
+      "id": "lab-huffman",
+      "title": "Huffman Coding",
+      "category": "greedy",
+      "view": { "type": "tree" },
+      "blurb": "Merge the two lightest nodes again and again: frequent letters end up close to the root.",
+      "program": "huffman.xi"
     },
     {
       "id": "lab-knapsack",

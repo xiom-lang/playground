@@ -580,6 +580,16 @@ async function main() {
       assert.ok(labCss.body.indexOf('.lab-step-line') >= 0, 'Monaco decoration style missing');
     });
 
+    ok('lab viz relabels tree nodes without duplicating them', () => {
+      const tree = labVizCreate({ type: 'tree' });
+      labVizApply(tree, { event: 'node', fields: { id: '0', parent: '-1', v: '5', label: 'A' } });
+      assert.strictEqual(tree.state.nodes[0].label, 'A');
+      labVizApply(tree, { event: 'node', fields: { id: '0', parent: '-1', v: '9', label: 'B' } });
+      assert.strictEqual(tree.state.nodes[0].v, 9);
+      assert.strictEqual(tree.state.nodes[0].label, 'B');
+      assert.strictEqual(tree.state.order.length, 1, 'relabel must not duplicate the node');
+    });
+
     ok('lab viz handles weighted graph edges and recolours', () => {
       const graph = labVizCreate({ type: 'graph' });
       labVizApply(graph, { event: 'init', fields: { n: '3', edges: '0-1-7,1-2-3' } });
