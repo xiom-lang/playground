@@ -2683,3 +2683,27 @@ Measured with a WCAG contrast script before/after:
   opened corridors; the lessons sidebar and cards are legible in both
   themes. The full Lab regression (playback, highlights, compare,
   themes, mobile, keyboard) stayed green; suite 66/0/1.
+
+## 38. Comparable inputs for Compare mode (2.1.2, 2026-10-04)
+
+Owner request: same-category algorithms should race on more and identical
+work, and path searches should show where they start and what they chase.
+
+- All comparison sorts plus counting sort now use the **same ten values**
+  (`6,3,9,1,8,2,7,4,10,5`): bubble/insertion/selection/merge/quick/heap and
+  counting. Counting's table grew to 0..10 (11 cells) and the sorted
+  rewrite to ten cells; radix sort keeps its three-digit values because
+  the digit passes are its point (blurb says so).
+- Event counts after the change: bubble 77, insertion 77, selection 87,
+  merge 80, quick 51, heap 59, counting 24 - enough steps for a real race
+  while keeping the fast O(n+k) finish visible.
+- Start/goal markers: grid roles `start` (green fill) and `target` (amber
+  border + 22% amber wash) are emitted by BFS/DFS (start (0,0), goal
+  (5,7)) and flood fill (start only); graph roles `start`/`target` are
+  emitted by Dijkstra and A* (nodes 0 and 5). The renderers label and
+  colour them in both themes.
+- Verified: all 12 changed programs audit twice each on v0.62.4; compare
+  race check shows both panes' init `vals` identical
+  (`6,3,9,1,8,2,7,4,10,5`) with live per-pane counters; browser
+  screenshots show the green start and amber goal on the BFS grid.
+- Catalog regenerated (entries carry the new programs); app version 2.1.2.

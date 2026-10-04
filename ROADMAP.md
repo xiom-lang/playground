@@ -122,6 +122,13 @@ the sections below hold the detailed specs.
   >=3:1 vs empty cells). Lesson cards got larger mobile tap targets and
   slightly larger small text (AUDIT 37).
 
+### 2.1.2 -- Comparable inputs for Compare mode (COMPLETE 2026-10-04)
+
+- [x] All seven sorts share the same ten values (`6,3,9,1,8,2,7,4,10,5`)
+  so races are fair; counting's table grew to 0..10.
+- [x] Start/goal markers: BFS/DFS/flood fill mark start and (where they
+  have one) goal cells; Dijkstra/A* mark start and target nodes (AUDIT 38).
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light

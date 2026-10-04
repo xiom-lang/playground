@@ -48,6 +48,8 @@ fn main() {
   };
   g.set(0, 0);
   io.println("v1|set|id=0|v=0|step=open"); // @step open
+  io.println("v1|mark|id=0|role=start|step=start"); // @step start
+  io.println("v1|mark|id=5|role=target|step=goal"); // @step goal
 
   var settled = 0;
   while settled < nodes {

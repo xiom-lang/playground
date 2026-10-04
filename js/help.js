@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Fairer races in Compare mode',
+    items: [
+      'Every sort now starts from the same ten values, so Bubble vs Quick vs Counting (and the rest) race on identical input.',
+      'Breadth-First Search, Depth-First Search and Dijkstra now mark their start (green) and goal (amber), so the paths they find have a visible target.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'Comfortable to read in both themes',
     items: [
       'A contrast pass over light and dark mode: muted labels, accents and lesson lists now clear WCAG AA, and the Lab charts use outlined bars and cells that stay readable in either theme.',

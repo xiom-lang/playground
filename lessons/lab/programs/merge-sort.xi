@@ -60,8 +60,9 @@ fn msort(v: &mut Vec[Int], lo: Int, hi: Int) {
 
 fn main() {
   var v: Vec[Int] = Vec[Int].new();
-  v.push(5); v.push(3); v.push(8); v.push(1);
-  v.push(9); v.push(2); v.push(7); v.push(4);
+  v.push(6); v.push(3); v.push(9); v.push(1);
+  v.push(8); v.push(2); v.push(7); v.push(4);
+  v.push(10); v.push(5);
   io.println("v1|init|vals=" + join_ints(&v) + "|step=init"); // @step init
 
   let last = v.len() - 1;

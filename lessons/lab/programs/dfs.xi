@@ -66,6 +66,8 @@ fn main() {
 
   io.println("v1|init|rows=" + rows.to_str() + "|cols=" + cols.to_str() +
              "|walls=" + walls_str(&walls, rows, cols) + "|step=init"); // @step init
+  io.println("v1|mark|r=0|c=0|role=start|step=start"); // @step start
+  io.println("v1|mark|r=5|c=7|role=target|step=goal"); // @step goal
 
   var seen: Vec[Int] = Vec[Int].new();
   var parent: Vec[Int] = Vec[Int].new();

@@ -801,6 +801,8 @@ function labDrawGrid(state, ctx, w, h, colors, now) {
       if (role === 'composite') { border = colors.vizStroke; textColor = colors.low; }
       if (role === 'wall') { fill = colors.vizWall; border = colors.vizStroke; textColor = colors.low; }
       if (role === 'open') { fill = colors.panel2; border = colors.vizStroke; textColor = colors.mid; }
+      if (role === 'start') { border = colors.green; fill = colors.greenSoft; }
+      if (role === 'target') { border = colors.amber; }
       if (state.cursor && state.cursor[0] === r && state.cursor[1] === c) { border = colors.amber; }
       ctx.globalAlpha = alpha;
       ctx.fillStyle = fill;
@@ -808,6 +810,12 @@ function labDrawGrid(state, ctx, w, h, colors, now) {
       ctx.lineWidth = (border === colors.amber || border === colors.indigo || border === colors.green) ? 2 : 1;
       ctx.fillRect(x + 0.5, y + 0.5, cell - 1, cell - 1);
       ctx.strokeRect(x + 0.5, y + 0.5, cell - 1, cell - 1);
+      if (role === 'target') {
+        ctx.globalAlpha = 0.22;
+        ctx.fillStyle = colors.amber;
+        ctx.fillRect(x + 0.5, y + 0.5, cell - 1, cell - 1);
+      }
+      ctx.globalAlpha = 1;
       if (r * state.cols + c < state.labels.length) {
         var text = String(state.labels[r * state.cols + c]);
         ctx.fillStyle = role === 'composite' ? colors.low : textColor;
@@ -933,6 +941,8 @@ function labDrawGraph(state, ctx, w, h, colors, now) {
     var border = colors.vizStroke;
     if (state.visited[i]) fill = colors.indigoSoft;
     if (role === 'cursor') { border = colors.indigo; }
+    if (role === 'start') { border = colors.green; fill = colors.greenSoft; }
+    if (role === 'target') { border = colors.amber; }
     if (role === 'found') { fill = colors.green; border = colors.green; }
     ctx.fillStyle = fill;
     ctx.strokeStyle = border;
@@ -946,7 +956,7 @@ function labDrawGraph(state, ctx, w, h, colors, now) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(label, pos.x + pos.w / 2, pos.y + pos.h / 2);
-    if (role === 'cursor' || role === 'found') {
+    if (role === 'cursor' || role === 'found' || role === 'start' || role === 'target') {
       ctx.fillStyle = labRoleColor(colors, role);
       ctx.font = '600 10px -apple-system, Segoe UI, Helvetica, Arial, sans-serif';
       ctx.textBaseline = 'bottom';
