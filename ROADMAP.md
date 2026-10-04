@@ -512,6 +512,9 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
 - [x] **Absorbed in v0.62.4** (2026-10-04): pins and wasm bundle bumped,
   `c25/run.sh` prints `C25 fixed: yes`, the fresh-HOME workaround is
   deleted, warm-cache stdin verified end to end (AUDIT 35).
+- [x] **Absorbed in v0.63.0** (2026-10-04): pins and wasm bumped; the run
+  temp-root fix, warm-compile caches and valid SMT contracts are live on
+  the pin (AUDIT 40).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;

@@ -1,13 +1,11 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-04 (**2.1.3 conversation view** ready; 2.1.2 fair
-compare inputs; 2.1.1 UI contrast; 2.1.0 Lab expansion complete - 37
-programs, 10 categories; v0.62.4 absorbed; **v0.63.0 release is out but
-the dl mirror is still syncing - hourly cron will absorb it**). Branch
-`main` at/after `46322af`, working tree clean, all commits pushed to
-`origin/main`; CI green (Validate + CodeQL). Production runs **playground
-2.1.0** after the 16:29 pull (2.0.3 + v0.62.4 verified live); the 2.1.1
-contrast build follows on the next pull with stdlib 0.62.0,
+Last updated: 2026-10-04 (**v0.63.0 absorbed**; 2.1.3 conversation view;
+2.1.2 fair compare inputs; 2.1.1 UI contrast; 2.1.0 Lab expansion complete
+- 37 programs, 10 categories). Branch `main` at/after `46322af`, working
+tree clean, all commits pushed to `origin/main`; CI green (Validate +
+CodeQL). Production serves 2.1.2/2.1.3 builds; the v0.63.0 pin follows on
+the next hourly pull with stdlib 0.62.0,
 wasm v0.62.4, `capabilities.format: true`, P1 Landlock (`require`, ABI 4),
 P3 rate limits + external `abuse` monitor, P2 host-side state, the C3
 registry catalog mounted at `/registry-bundle` (352 packages), and the
@@ -1421,8 +1419,8 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 
 ### State
 
-- Playground **2.1.2** (`package.json`), toolchain/wasm **v0.62.4**
-  (C25 absorbed; AUDIT 35), **412 lessons** + **37 Lab programs**
+- Playground **2.1.3** (`package.json`), toolchain/wasm **v0.63.0**
+  (C25 absorbed; AUDIT 35/40), **412 lessons** + **37 Lab programs**
   (16 Tier 1 + waves A-D of Tier 2), production live and verified for
   2.0.3 (health green, sandbox `require`/ABI 4, packages 352); the 2.1.x
   builds ride the next hourly pulls. 2.1.1 is the UI contrast pass
@@ -1503,12 +1501,12 @@ requests to the owner); never hand-edit generated JSONs (js/stdlib-ref.json,
 js/limitations.json, tools/lesson-baseline.json, tools/expected-output-skips.json,
 lessons/lab/index.json, lessons/lab/entries/*); main must stay deployable.
 
-Environment: Windows .toolchain is v0.62.4; the Linux sweep/audit toolchain
-is /home/lefteris/xiom_v0624/tc in WSL (node at
+Environment: Windows .toolchain is v0.63.0; the Linux sweep/audit toolchain
+is /home/lefteris/xiom_v0630/tc in WSL (node at
 /home/lefteris/node-v22.23.2-linux-x64/bin); the WSL default distro is
 docker-desktop, so every command must use `wsl -d Ubuntu -e bash -lc ...`;
 lab-audit on Windows: `node tools/lab-audit.js --wsl --wsl-toolchain
-/home/lefteris/xiom_v0624/tc`; WSL /tmp is wiped between invocations;
+/home/lefteris/xiom_v0630/tc`; WSL /tmp is wiped between invocations;
 lesson-audit check-only takes ~20-25 min and can intermittently crash under
 load (re-run); browser verification uses headless Edge ("C:\Program Files
 (x86)\Microsoft\Edge\Application\msedge.exe") driven over the DevTools

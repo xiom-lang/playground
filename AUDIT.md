@@ -2735,3 +2735,29 @@ one more input line.
 - Files: `js/conversation.js` (new, Node-testable), `index.html` (panel +
   answer form), `js/compiler.js` (state, submit, run hook, lesson setup),
   `css/theme.css` (chat styles).
+
+## 40. v0.63.0 absorption (2026-10-04)
+
+The compiler lane flagged v0.63.0 (run temp-root fix so cold runs stop
+indexing the host temp tree, runtime-object + catalog-index caches for
+warm compiles, valid SMT in the contracts view). Absorbed the same day:
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.63.0**; Windows zip and
+  Linux tar.gz fetched with SHA256 verification (Linux audit root
+  `/home/lefteris/xiom_v0630/tc`). The wasm binary
+  (`xiom-wasm_bg.wasm`, hash `9aace261...`) replaced with verification;
+  the JS and `.d.ts` bindings are byte-identical to v0.62.4; loader
+  comment updated.
+- Acceptance on the new pin: `c25/run.sh` prints **`C25 fixed: yes`**
+  (cold, cached and `--no-cache` all read `Ada`); full suite in WSL with
+  execution enabled is **75 passed / 0 failed**; lab audit **37/37 x2**;
+  full lesson audit **412/412 with zero failures at every level**;
+  expected outputs current (no regeneration needed); stdlib surface
+  unchanged (516 modules / 6,535 functions; regenerated data files differ
+  only in the version line).
+- Contracts: compiling L4-25's contract solution through the server
+  returns 1,337 characters of SMT-LIB 2.6 with `assert` declarations and
+  no parse/error text, confirming the contracts view now receives valid
+  SMT.
+- Environment note: the Linux audit toolchain for this pin is
+  `/home/lefteris/xiom_v0630/tc` in WSL.
