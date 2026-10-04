@@ -2472,3 +2472,24 @@ and the transitions smoother. Delivered as **2.0.1**:
   `tools/test-server.js`); headless Edge captures the swap mid-flight (two
   traveler bars crossing), reports default speed 4, transitions ending
   within ~300 ms, and no transitions under reduced motion.
+
+### 34.6 Lab on mobile (2.0.2, 2026-10-04)
+
+Owner follow-up: the executing-line highlight must be visible on phones
+(where Monaco is not loaded) and the phone editor must allow editing and
+re-running the program. Delivered as **2.0.2**:
+
+- The narrow-screen editor is now a textarea layered over a highlight
+  strip container; `labPositionTextareaHighlight` paints one strip per
+  active `// @step` line with the same font metrics as the textarea,
+  tracks scrolling, and reveals the active line when it falls outside the
+  visible part (mirroring Monaco's `revealLineInCenterIfOutsideViewport`).
+  The text stays fully visible and editable; strips are pointer-events
+  none.
+- Verified in headless Edge at 390x844: step 3 highlights the `swap` emit
+  line (one 20 px strip, in view at y=350), the textarea is editable, and
+  editing `v.push(9)` to `v.push(90)` then pressing Run re-derives the
+  trace from the edit (`init vals=5,3,8,1,90,2,7,4`). The lessons playground
+  was re-checked at the same size: mobile editor, Run, stdin Input box and
+  output panel are all reachable.
+- Suite 63/0/1; shell test asserts the new markup and stylesheet markers.

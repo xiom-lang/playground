@@ -74,6 +74,14 @@ the sections below hold the detailed specs.
   playback clock, fully disabled under reduced motion.
 - [x] Browser-verified mid-flight (AUDIT 34.5); suite 63/0/1.
 
+### 2.0.2 -- Lab on mobile (COMPLETE 2026-10-04)
+
+- [x] Executing-line highlight on narrow screens: textarea overlay strips
+  (Monaco is not loaded on phones), scroll-synced with reveal-on-step.
+- [x] Phone editing verified end to end: edit the program, press Run, the
+  visualization rebuilds from the edited trace; lessons stdin Input and
+  output panel re-checked at 390x844 (AUDIT 34.6).
+
 ### 2.1.0 -- Lab expansion
 
 - Tier 2 algorithms: merge/quick/heap/counting/radix sort; Dijkstra,

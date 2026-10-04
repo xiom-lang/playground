@@ -492,6 +492,11 @@ function labEnsureEditor(pane) {
   }
   container.innerHTML = '';
   if (wanted === 'textarea') {
+    var edit = document.createElement('div');
+    edit.className = 'lab-code-edit';
+    var highlight = document.createElement('div');
+    highlight.className = 'lab-code-highlight';
+    highlight.setAttribute('aria-hidden', 'true');
     var area = document.createElement('textarea');
     area.className = 'lab-code-textarea';
     area.spellcheck = false;
@@ -500,8 +505,14 @@ function labEnsureEditor(pane) {
     area.addEventListener('input', function () {
       if (labState[pane]) labState[pane].code = area.value;
     });
-    container.appendChild(area);
-    labEditors[pane] = { mode: 'textarea', editor: area, container: container };
+    area.addEventListener('scroll', function () {
+      var holder = labEditors[pane];
+      if (holder) labPositionTextareaHighlight(pane, holder.highlightLines || []);
+    });
+    edit.appendChild(highlight);
+    edit.appendChild(area);
+    container.appendChild(edit);
+    labEditors[pane] = { mode: 'textarea', editor: area, highlightEl: highlight, highlightLines: [], container: container };
   } else {
     var paneState = labState[pane];
     window.loadMonaco(function () {
@@ -524,6 +535,7 @@ function labSetEditorCode(pane, code) {
     if (holder.editor.getValue() !== code) holder.editor.setValue(code);
   } else {
     holder.editor.value = code;
+    labPositionTextareaHighlight(pane, holder.highlightLines || []);
   }
 }
 
@@ -540,14 +552,56 @@ function labClearDecorations(pane) {
   if (holder && holder.mode === 'monaco' && holder.decorations) {
     holder.decorations.clear();
   }
+  if (holder && holder.mode === 'textarea') {
+    holder.highlightLines = [];
+    labPositionTextareaHighlight(pane, []);
+  }
+}
+
+// Mobile/narrow screens have no Monaco, so the executing line is shown as a
+// highlight strip layered behind the plain-textarea editor: the text stays
+// fully visible and editable, the strip tracks the active // @step lines.
+function labPositionTextareaHighlight(pane, lines) {
+  var holder = labEditors[pane];
+  if (!holder || holder.mode !== 'textarea' || !holder.highlightEl || !holder.editor) return;
+  holder.highlightLines = lines;
+  var area = holder.editor;
+  var style = window.getComputedStyle(area);
+  var lineHeight = parseFloat(style.lineHeight);
+  if (!isFinite(lineHeight) || lineHeight <= 0) lineHeight = 19.5;
+  var padTop = parseFloat(style.paddingTop) || 0;
+  var scrollTop = area.scrollTop;
+  // Follow the trace like Monaco's reveal: scroll the active line into view
+  // only when it is outside the visible part (manual scrolling is kept).
+  if (lines.length > 0 && area.clientHeight > 0) {
+    var lineTop = padTop + (lines[0] - 1) * lineHeight;
+    if (lineTop < scrollTop || lineTop + lineHeight > scrollTop + area.clientHeight) {
+      scrollTop = Math.max(0, lineTop - area.clientHeight / 2);
+      area.scrollTop = scrollTop;
+    }
+  }
+  holder.highlightEl.textContent = '';
+  for (var i = 0; i < lines.length; i++) {
+    if (lines[i] < 1) continue;
+    var strip = document.createElement('div');
+    strip.className = 'lab-code-highlight-line';
+    strip.style.top = (padTop + (lines[i] - 1) * lineHeight - scrollTop) + 'px';
+    strip.style.height = lineHeight + 'px';
+    holder.highlightEl.appendChild(strip);
+  }
 }
 
 function labUpdateDecorations(pane, snapshot) {
   var holder = labEditors[pane];
-  if (!holder || holder.mode !== 'monaco') return;
+  if (!holder) return;
   var state = labState[pane];
   var step = snapshot.currentStep;
   var lines = (step && state.annotations.map[step]) || [];
+  if (holder.mode === 'textarea') {
+    labPositionTextareaHighlight(pane, lines);
+    return;
+  }
+  if (holder.mode !== 'monaco') return;
   var decorations = [];
   for (var i = 0; i < lines.length; i++) {
     decorations.push({

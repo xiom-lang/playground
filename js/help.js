@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-04',
+    title: 'Lab on the phone',
+    items: [
+      'Algorithm Lab on narrow screens now highlights the executing line right in the plain-text editor, and follows it as the trace plays.',
+      'Edit the program on your phone and press Run: the visualization rebuilds from your version of the code.',
+    ],
+  },
+  {
+    date: '2026-10-04',
     title: 'A gentler Lab pace',
     items: [
       'Algorithm Lab now starts at 4 steps per second (was 8) so first looks are easier to follow; the speed slider goes down to 1.',

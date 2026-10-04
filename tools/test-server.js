@@ -569,6 +569,10 @@ async function main() {
       const labJs = await request('GET', '/js/lab.js');
       assert.ok(labJs.body.indexOf('createDecorationsCollection') >= 0, 'line highlight must use Monaco decorations');
       assert.ok(labJs.body.indexOf('lab-step-line') >= 0, 'decoration class missing');
+      assert.ok(labJs.body.indexOf('lab-code-highlight-line') >= 0, 'narrow-screen highlight strips missing');
+      const labCss = await request('GET', '/css/lab.css');
+      assert.ok(labCss.body.indexOf('.lab-code-highlight-line') >= 0, 'highlight strip style missing');
+      assert.ok(labCss.body.indexOf('.lab-step-line') >= 0, 'Monaco decoration style missing');
     });
 
     ok('lab viz animates transitions and honors reduced motion', () => {
