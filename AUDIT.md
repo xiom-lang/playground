@@ -2862,3 +2862,26 @@ The streaming runner scoped in 2.1.5 is delivered.
   The post-deploy check exercises a live session against production; if
   the sandbox cannot stream, the client falls back to replay and the
   terminal still works (the delivered UI is unaffected).
+
+## 44. Live sessions: production wrapper finding + capability gate (2.1.7, 2026-10-05)
+
+Post-deploy verification of 2.1.6 found that live sessions work on the WSL
+dev host (sandbox binary present) but not in the production container: the
+session's output showed `Hello, !` / `err` and the frame exited by signal,
+i.e. the program saw EOF immediately and none of the later stdin writes
+arrived. The wrapper build in the container consumes stdin up front, so
+interactive writes cannot be assumed to reach the child.
+
+- `/api/live/start` now returns **503** whenever the program would run
+  under the sandbox wrapper, and `/api/version` exposes
+  `capabilities.live` (`= !sandboxActive()`). The Terminal's existing
+  fallback turns that into replay automatically, so production users get
+  the working terminal with no broken live attempt.
+- Live sessions stay enabled when the program runs unwrapped (local dev,
+  CI without the sandbox binary). The server test is capability-gated and
+  skips with a note under the wrapper.
+- Follow-up (compiler/ops): make the sandbox wrapper forward interactive
+  stdin; when it does, drop the gate and switch production to live.
+- Verification: WSL suite 75/0/1 (live test skipped under sandbox),
+  Windows 67/0/1; production re-check expected: `capabilities.live:false`,
+  `/api/live/start` 503, browser terminal working via replay.

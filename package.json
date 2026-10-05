@@ -1,6 +1,6 @@
 {
   "name": "xiom-playground",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "private": true,
   "description": "XIOM Playground - browser lessons and a sandboxed server that compiles and runs XIOM programs",
   "license": "MIT OR Apache-2.0",

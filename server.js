@@ -949,6 +949,13 @@ async function handleLiveRoute(req, res, method, url) {
   if (method === 'POST' && route === '/api/live/start') {
     const retryAfterMs = rateLimitRetryMs(req);
     if (retryAfterMs) { sendRateLimited(res, retryAfterMs); return; }
+    if (sandboxActive()) {
+      // The sandbox wrapper consumes stdin up front, so an interactive child
+      // never sees later writes. Live sessions are offered only when the
+      // program runs unwrapped; clients fall back to replay elsewhere.
+      sendJson(res, 503, { error: 'Live sessions are unavailable under the sandbox; using replay' });
+      return;
+    }
     const body = await readJson(req);
     const source = sourceOf(body);
     if (!source || typeof source !== 'string') { sendJson(res, 400, { error: 'Missing source' }); return; }
@@ -1061,7 +1068,7 @@ const server = http.createServer(async (req, res) => {
     if (url === '/api/version' && method === 'GET') {
       const format = await formatAvailable();
       const payload = Object.assign(versionPayload(), {
-        capabilities: { format: format.ok },
+        capabilities: { format: format.ok, live: !sandboxActive() },
       });
       sendJson(res, 200, payload);
       return;

@@ -163,6 +163,11 @@ the sections below hold the detailed specs.
   output as it appears; answers go straight to the running process;
   when live start fails it falls back to replay transparently
   (AUDIT 43).
+- [x] 2.1.7: production sandbox wrapper consumes stdin up front, so live
+  sessions are capability-gated to unwrapped runs (`/api/version`
+  `capabilities.live`, `/api/live/start` 503 under the wrapper); the
+  Terminal replays in production until the wrapper streams stdin
+  (AUDIT 44).
 
 ### 2.2.0 -- Gamified learning
 

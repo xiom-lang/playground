@@ -882,6 +882,12 @@ async function main() {
           assert.ok(payload.output.indexOf('Hello, Ada!') >= 0, 'stdin not delivered: ' + payload.output);
         });
 
+        const liveVersion = JSON.parse((await request('GET', '/api/version')).body);
+        const liveAvailable = !!(liveVersion.capabilities && liveVersion.capabilities.live);
+        if (!liveAvailable) {
+          skipped.push('live sessions (unavailable while the program runs under the sandbox wrapper)');
+          console.log('  skip live session test (capabilities.live=false)');
+        } else {
         await okAsync('live sessions stream prompts and take answers', async () => {
           const source = 'use xiom.io;\n\nfn main() -> Int {\n  io.println("Name?");\n  let name = io.read_line();\n  io.println("Hello, " + name + "!");\n  let parsed = io.read_int();\n  match parsed {\n    Ok(v) => { io.println("N=" + v.to_str()); }\n    Err(m) => { io.println("err"); }\n  };\n  return 0;\n}\n';
           const started = await request('POST', '/api/live/start', { source });
@@ -910,6 +916,7 @@ async function main() {
           assert.strictEqual(finished.exited, true, 'the session must exit after the last answer');
           await request('POST', '/api/live/close', { id });
         });
+        }
 
         await okAsync('POST /api/compile reports a crashed run, not empty output', async () => {
           // Mutually recursive functions with no base case compile, then die
