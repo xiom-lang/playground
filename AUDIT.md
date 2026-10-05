@@ -2968,3 +2968,42 @@ suite on the new pin and recorded the results.
 - Environment note: the Linux audit toolchain for this pin is
   `/home/lefteris/xiom_v0631/tc` in WSL (the WSL kernel reports Landlock
   ABI 3; the production VPS kernel is ABI 4 and is verified by ops).
+
+## 48. Live terminal enabled (2.1.10, 2026-10-05)
+
+Ops implemented `--keep-stdin` in the wrapper (`ca5d98c`) and accepted it
+with production-grade evidence (13-check verify-sandbox, interactive
+fixture, kill chain, fd hygiene; DEPLOY.md). The playground now enables
+live sessions whenever the running wrapper advertises the capability.
+
+- Server start: after the existing probe/canary, `probeSandbox()` runs
+  `xiom-sandbox --keep-stdin --probe` and stores the result in
+  `sandbox.keepStdin` (exit 0 plus `"restrict_self":"ok"`). The capability
+  is never assumed from the wrapper source: an old wrapper fails this
+  probe and it stays false.
+- `liveStart` spawns the sandboxed program as
+  `xiom-sandbox --keep-stdin -- XIOM_BIN run -O0 FILE`; the non-sandbox
+  path is unchanged. A sandboxed live start without the capability throws
+  (fail closed) and `/api/live/start` answers 503, which the Terminal
+  turns into the replay fallback it already had.
+- `/api/version` reports `capabilities.live = !sandboxActive() ||
+  sandbox.keepStdin`; `/api/health` reports `sandbox.keepStdin` and the
+  startup log prints `keep_stdin=...`, so the deployed image can be
+  verified at a glance. One-shot compiles are untouched (`runXiom` still
+  spawns the wrapper without the flag, byte-identical semantics).
+- Verification, WSL on v0.63.1 with the in-repo wrapper: suite **76/0**
+  (previously 75/0/1) - the live test now runs under `XIOM_SANDBOX=require`
+  and streams `Name? -> Ada -> Hello, Ada! -> 7 -> N=7`; startup reports
+  `keep_stdin=true`; Windows suite **67/0/1**. One intermediate WSL run hit
+  a transient wall-clock flake on the legacy `elapsedMs` check assertion
+  (not reproducible in a focused 20x probe of `/api/check` or the rerun).
+  Negative path with an old-wrapper simulator (supports `--probe`/`-- CMD`, rejects `--keep-stdin`): startup
+  `keep_stdin=false`, `/api/version` `"live":false`, `/api/health`
+  `"keepStdin":false`, `/api/live/start` -> **503**. The replay fallback
+  is unchanged in both cases.
+- Post-deploy check (after the next hourly pull): the external live probe
+  (`live-prod-check.js`) and the browser multi-input probe must show the
+  real prompt/answer/exit where the production gate previously returned
+  503, and `/api/version` must report playground 2.1.10 with
+  `capabilities.live:true` (VPS kernel ABI 4, wrapper from `ca5d98c`).
+  Ops is asked to verify the live terminal from the outside as well.

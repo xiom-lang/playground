@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'Live Terminals everywhere',
+    items: [
+      'The live Terminal - the program keeps running and waits at each read, prompts appear the moment they print, answers stream straight to it - is now enabled in production as well; it no longer falls back to replay there.',
+      'Replay remains the safety net: if a live session cannot start, the terminal restarts the program with your answers as before.',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'The Terminal follows your code',
     items: [
       'Write your own program that reads input and press Run: the Output tab becomes a Terminal for it too, not just for the lessons that ship input.',

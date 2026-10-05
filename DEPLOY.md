@@ -99,12 +99,12 @@ Modes, from `XIOM_SANDBOX` (set to `require` in `docker-compose.yml`):
 - `off` -- the rollback switch (`XIOM_SANDBOX=off` + redeploy). The env
   whitelist and secret rotation stay in force.
 
-`/api/health` reports `sandbox: {mode, active, landlock, error}`; ops reads
-it after deploys. The denial suite is `tools/verify-sandbox.js` (control,
-`/tmp` read-write, escape read/write, `/proc`, `/etc`, spawned shell, TCP,
-warm-run timing, plus the `--keep-stdin` canary/denial/interactive probes);
-CI runs it on every push and the nightly job executes all 410 lessons under
-the wrapper. The env whitelist from P0
+`/api/health` reports `sandbox: {mode, active, landlock, keepStdin, error}`;
+ops reads it after deploys. The denial suite is `tools/verify-sandbox.js`
+(control, `/tmp` read-write, escape read/write, `/proc`, `/etc`, spawned
+shell, TCP, warm-run timing, plus the `--keep-stdin` canary/denial/
+interactive probes); CI runs it on every push and the nightly job executes
+all 410 lessons under the wrapper. The env whitelist from P0
 (`server.js`, `userChildEnv()`) remains defense in depth.
 
 `--keep-stdin` (default off, added 2026-10-05 for live Terminal sessions):
@@ -117,6 +117,13 @@ and the user program with no orphans. Without the flag the one-shot path is
 byte-identical. Supported spellings: `xiom-sandbox --keep-stdin -- CMD ...`,
 `xiom-sandbox --keep-stdin --probe`, and the capability probe
 `xiom-sandbox --keep-stdin -- XIOM_BIN --version`.
+
+The server probes `xiom-sandbox --keep-stdin --probe` at startup and stores
+the result as `sandbox.keepStdin`; `/api/live/*` sessions spawn through
+`xiom-sandbox --keep-stdin -- XIOM_BIN run -O0 FILE` and `/api/version`
+reports `capabilities.live:true` only when the capability is present (or the
+sandbox is off). An image whose wrapper lacks the flag keeps the 503 gate
+and the Terminal's replay fallback; one-shot compiles never pass the flag.
 
 In-container isolation limits before P1 (audited 2026-09-25, AUDIT section
 28): the server and every submitted program share one uid, so a program

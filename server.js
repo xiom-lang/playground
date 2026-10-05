@@ -256,7 +256,10 @@ function userChildEnv() {
 //   auto    -- sandbox when it demonstrably works (dev boxes, CI);
 //   off     -- rollback switch; the env whitelist still applies.
 // The wrapper is also validated end-to-end with a `xiom --version` canary so
-// a sandbox that cannot even exec the compiler never silently "works".
+// a sandbox that cannot even exec the compiler never silently "works". Live
+// Terminal sessions additionally need stdin pass-through; the wrapper
+// advertises it by accepting `--keep-stdin --probe` (capability probe,
+// stored as sandbox.keepStdin).
 
 const SANDBOX_MODE = (() => {
   const raw = String(process.env.XIOM_SANDBOX || 'auto').toLowerCase();
@@ -279,7 +282,7 @@ const SANDBOX_BIN = (() => {
 // ABI 3 handles every filesystem right; ABI 4 adds the TCP rules.
 const SANDBOX_MIN_ABI = Math.max(1, Number(process.env.XIOM_SANDBOX_MIN_ABI) || 3);
 
-const sandbox = { mode: SANDBOX_MODE, bin: SANDBOX_BIN, abi: null, canary: false, error: null };
+const sandbox = { mode: SANDBOX_MODE, bin: SANDBOX_BIN, abi: null, canary: false, keepStdin: false, error: null };
 
 function probeSandbox() {
   if (SANDBOX_MODE === 'off') {
@@ -316,6 +319,12 @@ function probeSandbox() {
     sandbox.error = 'sandbox cannot exec the toolchain: ' + detail;
     return;
   }
+  // Live-terminal capability: a keep-stdin wrapper parses the flag and
+  // applies the same policy (`--keep-stdin --probe` exits 0). Older
+  // wrappers treat the flag as the command and fail, so a false here keeps
+  // live sessions gated behind replay.
+  const keepProbe = spawnSync(SANDBOX_BIN, ['--keep-stdin', '--probe'], { encoding: 'utf8', timeout: 5000 });
+  sandbox.keepStdin = keepProbe.status === 0 && String(keepProbe.stdout || '').indexOf('"restrict_self":"ok"') >= 0;
   sandbox.error = null;
 }
 
@@ -910,12 +919,19 @@ async function liveStart(source, ip) {
     // Fail closed exactly like runXiom: no user code runs without confinement.
     throw new Error('sandbox required but inactive');
   }
+  const sandboxed = sandboxActive();
+  if (sandboxed && !sandbox.keepStdin) {
+    // A wrapper without stdin pass-through gives the child EOF before any
+    // answer arrives; the route turns this into a replay fallback (503).
+    throw new Error('sandbox wrapper lacks --keep-stdin');
+  }
   await fsp.mkdir(WORK_ROOT, { recursive: true });
   const dir = await fsp.mkdtemp(path.join(WORK_ROOT, 'live-'));
   const file = writeSource(dir, source);
-  const sandboxed = sandboxActive();
   const bin = sandboxed ? SANDBOX_BIN : XIOM_BIN;
-  const argv = sandboxed ? ['--', XIOM_BIN, 'run', '-O0', file] : ['run', '-O0', file];
+  const argv = sandboxed
+    ? ['--keep-stdin', '--', XIOM_BIN, 'run', '-O0', file]
+    : ['run', '-O0', file];
   const child = spawn(bin, argv, { cwd: dir, env: userChildEnv(), stdio: ['pipe', 'pipe', 'pipe'] });
   const session = {
     id: require('crypto').randomUUID(),
@@ -949,10 +965,11 @@ async function handleLiveRoute(req, res, method, url) {
   if (method === 'POST' && route === '/api/live/start') {
     const retryAfterMs = rateLimitRetryMs(req);
     if (retryAfterMs) { sendRateLimited(res, retryAfterMs); return; }
-    if (sandboxActive()) {
-      // The sandbox wrapper consumes stdin up front, so an interactive child
-      // never sees later writes. Live sessions are offered only when the
-      // program runs unwrapped; clients fall back to replay elsewhere.
+    if (sandboxActive() && !sandbox.keepStdin) {
+      // The wrapper consumes stdin up front, so an interactive child never
+      // sees later writes. Live sessions are offered only when the sandbox
+      // passes stdin through (or the program runs unwrapped); clients fall
+      // back to replay elsewhere.
       sendJson(res, 503, { error: 'Live sessions are unavailable under the sandbox; using replay' });
       return;
     }
@@ -1058,6 +1075,7 @@ const server = http.createServer(async (req, res) => {
           mode: sandbox.mode,
           active: sandboxActive(),
           landlock: sandbox.abi,
+          keepStdin: sandbox.keepStdin,
           error: sandbox.error,
         },
         packages: packages.status(),
@@ -1068,7 +1086,7 @@ const server = http.createServer(async (req, res) => {
     if (url === '/api/version' && method === 'GET') {
       const format = await formatAvailable();
       const payload = Object.assign(versionPayload(), {
-        capabilities: { format: format.ok, live: !sandboxActive() },
+        capabilities: { format: format.ok, live: !sandboxActive() || sandbox.keepStdin },
       });
       sendJson(res, 200, payload);
       return;
@@ -1312,6 +1330,7 @@ server.listen(PORT, HOST, () => {
   console.log('Work root: ' + WORK_ROOT + ' (jobs: ' + MAX_COMPILES + ', checks: ' + MAX_CHECKS + ')');
   console.log('Sandbox: mode=' + sandbox.mode + ' active=' + sandboxActive() +
     ' landlock_abi=' + (sandbox.abi == null ? 'n/a' : sandbox.abi) +
+    ' keep_stdin=' + sandbox.keepStdin +
     (sandbox.error ? ' (' + sandbox.error + ')' : ''));
   console.log('Rate limit: burst=' + RATE_LIMIT_BURST + ' refill=' + RATE_LIMIT_REFILL_MS + 'ms' +
     (RATE_LIMIT_BURST > 0 ? '' : ' (disabled)'));

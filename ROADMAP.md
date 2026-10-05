@@ -168,13 +168,11 @@ the sections below hold the detailed specs.
   `capabilities.live`, `/api/live/start` 503 under the wrapper); the
   Terminal replays in production until the wrapper streams stdin
   (AUDIT 44).
-- [ ] Follow-up for compiler/ops (AUDIT 46): make the sandbox wrapper pass
-  stdin through to the child without reading it (one-shot callers already
-  write all input and close; a `--keep-stdin` flag is fine). Then drop the
-  503 gate, `capabilities.live` turns true, and production switches to
-  live pause-at-read terminals automatically. Full request with the
-  threat model and acceptance criteria:
-  `docs/OPS_REQUEST_LIVE_TERMINAL.md`.
+- [x] Wrapper fix delivered and live enabled (2.1.10): `--keep-stdin`
+  pass-through landed (`ca5d98c`, AUDIT 46 request), is probed at server
+  start, spawns live sessions through the sandbox, keeps the 503 gate only
+  for wrappers without the capability, and flips `capabilities.live` in
+  production; one-shot compiles are byte-identical (AUDIT 48).
 
 ### 2.1.8 -- Terminal follows the typed source (COMPLETE 2026-10-05)
 
@@ -182,6 +180,17 @@ the sections below hold the detailed specs.
   programs the learner writes get the Terminal too (Output tab renamed,
   terminal visible), and the dialogue resets when the source changes
   (AUDIT 45).
+
+### 2.1.10 -- Live terminal enabled (COMPLETE 2026-10-05)
+
+- [x] The `--keep-stdin` wrapper fix (ops, `ca5d98c`) is probed at server
+  start (`--keep-stdin --probe`, stored as `sandbox.keepStdin`); live
+  sessions spawn through it, `/api/live/start` stays 503 only for wrappers
+  without the capability, `/api/health` reports `sandbox.keepStdin`, and
+  `capabilities.live` flips to true in production (AUDIT 48). One-shot
+  compiles are byte-identical.
+- [x] WSL suite 76/0 (live test under `XIOM_SANDBOX=require`), negative
+  gate verified with an old-wrapper simulator (503 + `"live":false`).
 
 ### 2.2.0 -- Gamified learning
 
