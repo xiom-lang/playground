@@ -1,11 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-05 (**2.1.15: blocking errors show in the Terminal,
-Diagnostics carries red/amber count badges; warnings stay in Diagnostics**;
-2.1.14 verified in production; 2.1.13 patience + "?" key; 2.1.12
+Last updated: 2026-10-05 (**2.1.15 verified in production: blocking errors
+show in the Terminal, red/amber count badges in Diagnostics, warnings stay
+in Diagnostics**; v0.64.0 just announced by the compiler lane - absorption
+next; 2.1.14 verified in production; 2.1.13 patience + "?" key; 2.1.12
 answer-after-exit restart; 2.1.11 live verified incl. ops external check;
 v0.63.1 absorbed; 2.1.0 Lab expansion complete - 37 programs, 10
-categories). Branch `main` at/after `c75f0f5`, all commits pushed to
+categories). Branch `main` at/after `4c1ab64`, all commits pushed to
 `origin/main`; CI green (Validate + CodeQL). Toolchain/wasm **v0.63.1**, stdlib 0.62.4 (516 modules),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry

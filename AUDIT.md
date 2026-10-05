@@ -3217,3 +3217,11 @@ went silent while Diagnostics held the details.
   Terminal unchanged; forced replay path -> the same structured error in
   the Terminal. WSL suite 76/0, Windows 67/0/1, generator checks
   current; catalogs at 2.1.15.
+- **Production verified (2026-10-05, 2.1.15 deployed)**: headless Edge
+  against https://playground.xiom-lang.org/ reproduced all four states -
+  bad source + Run -> `error[P001] line 6:3 - expected ';', found io` in
+  the Terminal with a red `1 error` Diagnostics badge; fixed source ->
+  streamed prompt with no error line and no badge; sample warning ->
+  amber `1 warning` badge with the Terminal unchanged; forced replay ->
+  the same structured error. Live fixture regression check:
+  `Name? -> Ada -> Hello, Ada! -> 7 -> N=7` (exit 0).
