@@ -2908,3 +2908,32 @@ no Terminal, and ran straight through without waiting for input. Two parts:
   (`What is your name?` / `> Ada` / `Nice to meet you Ada.` /
   `How old are you?` / `> 36` / `Age 36 is lovely.`) and the input was
   re-enabled. Suite 67/0/1 with a source-check assertion.
+
+## 46. Why replay restarts, and the wrapper request (2.1.9, 2026-10-05)
+
+Owner questions: why does each answer re-run/compile the program instead
+of keeping state, should different read functions be used, and is true
+pause-at-read possible or are we working around the architecture?
+
+- The one-shot API compiles and runs a program per request; it cannot keep
+  process memory between answers. Replay therefore restarts the program
+  with **all answers so far** each time, which is why it "recompiles"
+  (warm-cache fast) and why earlier answers are replayed rather than
+  remembered. The values are consistent - the same prefix produces the
+  same output - but internal state (loop position, counters) starts over.
+- True pause-at-read **is implemented** (`/api/live/*`, 2.1.6) and works
+  wherever the program runs unwrapped: local dev and CI. In production the
+  container's sandbox wrapper consumes stdin before exec, so the child
+  sees EOF; 2.1.7 disables live there and the Terminal replays instead.
+- The read functions are correct and there is no better alternative:
+  `io.read_line()` and `io.read_int()` (with the `Result` match) are the
+  intended API; `stdin()` returns 0 and is not a line reader.
+- Request to the compiler/ops lane (cannot be fixed in this repo): make
+  the sandbox wrapper pass stdin through to the child **without reading
+  it** (one-shot callers already write all input and close), optionally
+  behind a flag such as `--keep-stdin`. Then `/api/live/start` can drop
+  its 503 gate, `capabilities.live` turns true, and production gets true
+  pause-at-read terminals automatically.
+- UX honesty meanwhile: the Terminal labels replay mode ("replay mode:
+  the sandbox here cannot stream stdin") so the behavior is explained
+  rather than looking like a bug.

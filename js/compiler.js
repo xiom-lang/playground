@@ -331,11 +331,13 @@ function conversationRender() {
     input.placeholder = last && last.length <= 60 ? last : 'Type your answer, press Enter';
   }
   if (hint) {
-    hint.textContent = conversationState.running
+    var mode = conversationState.live ? 'live' : (conversationState.liveFailed ? 'replay' : '');
+    var base = conversationState.running
       ? 'Running the program with your answer\u2026'
       : (conversationState.answers.length === 0
         ? 'Type an answer and press Enter; the program runs with your input.'
         : 'Answer ' + (conversationState.answers.length + 1) + ' - each answer re-runs the program with it.');
+    hint.textContent = base + (mode === 'replay' ? ' (replay mode: the sandbox here cannot stream stdin)' : '');
   }
   host.scrollTop = host.scrollHeight;
 }

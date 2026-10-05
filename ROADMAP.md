@@ -168,6 +168,11 @@ the sections below hold the detailed specs.
   `capabilities.live`, `/api/live/start` 503 under the wrapper); the
   Terminal replays in production until the wrapper streams stdin
   (AUDIT 44).
+- [ ] Follow-up for compiler/ops (AUDIT 46): make the sandbox wrapper pass
+  stdin through to the child without reading it (one-shot callers already
+  write all input and close; a `--keep-stdin` flag is fine). Then drop the
+  503 gate, `capabilities.live` turns true, and production switches to
+  live pause-at-read terminals automatically.
 
 ### 2.1.8 -- Terminal follows the typed source (COMPLETE 2026-10-05)
 
