@@ -626,6 +626,10 @@ html.light-mode .output-content {
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
+  max-width: min(38vw, 420px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .example-select {
@@ -2596,10 +2600,12 @@ a:focus-visible,
 
 /* Conversation view for input lessons (2.1.3): program output and learner
    answers interleaved like a chat, with an answer box at the bottom. */
+.output-panel.conversation-active #output { display: none; }
 .conversation {
   display: flex;
   flex-direction: column;
-  max-height: 240px;
+  flex: 1;
+  min-height: 160px;
   border-bottom: 1px solid var(--border);
   background: var(--panel);
 }

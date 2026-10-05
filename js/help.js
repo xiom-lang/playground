@@ -8,6 +8,14 @@
 
 var XIOM_WHATS_NEW = [
   {
+    date: '2026-10-05',
+    title: 'Input fixes',
+    items: [
+      'Answering several questions in a row now always keeps every answer (fast typing used to race the runs); the answer box disables while the program runs and refocuses after.',
+      'The Input tab no longer hides the output panel, and it mirrors the conversation answers; the conversation hides while the raw box is open.',
+    ],
+  },
+  {
     date: '2026-10-04',
     title: 'Talk to your program',
     items: [

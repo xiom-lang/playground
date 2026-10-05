@@ -135,6 +135,14 @@ the sections below hold the detailed specs.
   interleaved as a chat with an answer box; each answer re-runs the
   program with it. Raw Input tab stays for advanced use (AUDIT 39).
 
+### 2.1.4 -- Input fixes (COMPLETE 2026-10-05)
+
+- [x] Conversation runs are serialized (fast multiple answers can no
+  longer lose or mis-key inputs); the answer box disables while running.
+- [x] The Input tab no longer hides the output panels; it mirrors the
+  conversation answers, and the conversation hides while it is open
+  (AUDIT 41).
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light

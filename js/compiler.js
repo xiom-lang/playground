@@ -71,6 +71,9 @@ function setupStdinForLesson(lesson) {
     stdinAutoOpened = false;
   }
   conversationSetVisible(reads);
+  conversationGen += 1;
+  conversationQueue = Promise.resolve();
+  conversationRunCount = null;
   conversationState = { answers: [], outputs: [] };
   conversationRender();
 }
@@ -81,13 +84,18 @@ function toggleStdin() {
   if (!row) return;
   row.classList.toggle('hidden');
   stdinAutoOpened = false;
+  var shown = !row.classList.contains('hidden');
   if (toggle) {
-    toggle.classList.toggle('active', !row.classList.contains('hidden'));
+    toggle.classList.toggle('active', shown);
     toggle.classList.remove('attention');
   }
-  if (!row.classList.contains('hidden')) {
-    var el = document.getElementById('stdinInput');
-    if (el) el.focus();
+  // The raw input box and the conversation are alternatives, never stacked.
+  conversationSetVisible(conversationActive() && !shown);
+  var el = document.getElementById('stdinInput');
+  if (shown && el) el.focus();
+  else {
+    var conv = document.getElementById('conversationInput');
+    if (conv && conversationActive() && !conv.disabled) conv.focus();
   }
 }
 
@@ -103,9 +111,13 @@ function clearStdin() {
 
 var conversationState = { answers: [], outputs: [] };
 var conversationRunCount = null;
+var conversationRunGen = 0;
+var conversationGen = 0;
+var conversationQueue = Promise.resolve();
 
 function conversationCompile(count) {
   conversationRunCount = count;
+  conversationRunGen = conversationGen;
   return compile();
 }
 
@@ -156,48 +168,75 @@ function conversationRender() {
 function conversationOnRun(run) {
   if (!conversationActive()) return;
   var count = conversationRunCount == null ? conversationState.answers.length : conversationRunCount;
+  var stale = conversationRunCount != null && conversationRunGen !== conversationGen;
   conversationRunCount = null;
-  var output = run.runOutput != null ? run.runOutput : String(run.output || '');
-  conversationState.outputs[count] = output;
-  conversationRender();
+  if (!stale) {
+    var output = run.runOutput != null ? run.runOutput : String(run.output || '');
+    conversationState.outputs[count] = output;
+    conversationRender();
+  }
+  var input = document.getElementById('conversationInput');
+  if (input) {
+    input.disabled = false;
+    input.focus();
+  }
 }
 
 function conversationSubmit(event) {
   if (event && event.preventDefault) event.preventDefault();
   if (!conversationActive()) return false;
   var input = document.getElementById('conversationInput');
-  if (!input) return false;
+  if (!input || input.disabled) return false;
   var line = input.value.replace(/[\r\n]+/g, ' ').trim();
   if (!line) return false;
   conversationState.answers.push(line);
   input.value = '';
+  input.disabled = true;
   conversationRender();
-  if (conversationState.outputs[0] == null) {
-    // Seed the no-input run first so the opening output is in place.
-    setStdinValue('');
-    conversationCompile(0).then(function () {
-      conversationSetStdin();
-      conversationCompile(conversationState.answers.length);
-    });
-  } else {
+  // Serialize runs: each answer compiles from the answers snapshot taken when
+  // its turn comes, so fast typing cannot mis-key the transcript outputs.
+  conversationQueue = conversationQueue.then(function () {
+    if (conversationState.outputs[0] == null) {
+      setStdinValue('');
+      return conversationCompile(0).then(function () {
+        conversationSetStdin();
+        return conversationCompile(conversationState.answers.length);
+      });
+    }
     conversationSetStdin();
-    conversationCompile(conversationState.answers.length);
-  }
+    return conversationCompile(conversationState.answers.length);
+  }).catch(function () {
+    var el = document.getElementById('conversationInput');
+    if (el) el.disabled = false;
+  });
   return false;
 }
 
 function conversationRestart() {
   conversationState = { answers: [], outputs: [] };
+  conversationQueue = Promise.resolve();
+  conversationRunCount = null;
   setStdinValue('');
   conversationRender();
   var input = document.getElementById('conversationInput');
-  if (input) input.focus();
+  if (input) {
+    input.disabled = false;
+    input.focus();
+  }
 }
 
 function conversationSetVisible(visible) {
   var panel = document.getElementById('conversation');
-  if (!panel) return;
-  panel.classList.toggle('hidden', !visible);
+  if (panel) panel.classList.toggle('hidden', !visible);
+  var outputPanel = document.querySelector('.output-panel');
+  if (outputPanel) outputPanel.classList.toggle('conversation-active', !!visible);
+}
+
+/** Tab changes: the conversation belongs to the Output tab only. */
+function conversationTabChanged(tabName) {
+  var stdinRow = document.getElementById('stdinRow');
+  var stdinShown = stdinRow && !stdinRow.classList.contains('hidden');
+  conversationSetVisible(conversationActive() && tabName === 'output' && !stdinShown);
 }
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -262,6 +262,7 @@ function setupTabs() {
       tab.classList.add('active');
 
       var tabName = tab.dataset.tab;
+      if (!tabName) return; // the Input toggle only shows/hides the stdin row
       var outputEl = parent.nextElementSibling;
       if (!outputEl) return;
       var ids = { output: 'output', ir: 'ir', diag: 'diag', tokens: 'tokens', contracts: 'contracts' };
@@ -270,6 +271,9 @@ function setupTabs() {
         var el = document.getElementById(ids[key]);
         if (el) el.classList.toggle('hidden', key !== tabName);
       });
+
+      // The conversation view only belongs on the Output tab.
+      if (window.conversationTabChanged) window.conversationTabChanged(tabName);
 
       // Lazy-load IR and Tokens on first click
       if ((tabName === 'ir' || tabName === 'tokens') && window.lazyLoadTab) {

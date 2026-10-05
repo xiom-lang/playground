@@ -2761,3 +2761,35 @@ warm compiles, valid SMT in the contracts view). Absorbed the same day:
   SMT.
 - Environment note: the Linux audit toolchain for this pin is
   `/home/lefteris/xiom_v0630/tc` in WSL.
+
+## 41. Input conversation fixes (2.1.4, 2026-10-05)
+
+Owner bug report: with several println/read pairs, only the first answer
+seemed to take, and after the first input the Input tab looked empty and
+merged into the output panel. Two root causes:
+
+- **Run race (answers lost)**: conversation runs shared a single
+  `conversationRunCount`, so submitting answers quickly let a completing
+  run consume the wrong count and overwrite another slot; a sparse
+  `outputs` array then made the transcript builder drop the dialogue.
+  Fixed by serializing conversation runs through a promise queue
+  (`conversationQueue`), storing the expected count immediately before
+  each compile, guarding against stale runs from a previous lesson
+  (generation counter), and disabling + refocusing the answer box around
+  each run. Rapid double-submit now keeps every answer: Ada/36 produces
+  `you:Ada | you:36 | out:Hello, Ada! | out:You are 36.`.
+- **Input tab / layout**: the INPUT tab is a plain toggle, but the tab
+  click handler treated it as a content tab (no `data-tab`), hiding every
+  output panel; meanwhile the conversation panel stayed visible, so the
+  panes looked merged. Fixed in `app.js` (`if (!tabName) return;`), the
+  conversation now hides while the raw Input box is open and returns when
+  it closes, and it only shows on the Output tab. The stdin box mirrors
+  the conversation answers (Ada/36 shown as two lines), and the raw
+  output `pre` is hidden while the conversation owns the output area so
+  the same text is never shown twice.
+- Also fixed: long lesson titles now ellipsize in the header instead of
+  overlapping the nav (visible with "Bonus: Programs That Talk Back").
+- Verified in headless Edge: rapid double-submit transcript correct, input
+  re-enabled, INPUT toggle shows the stdin row with both answers while the
+  output panel stays visible, toggling back restores the chat; suite
+  67/0/1 with new source-level assertions for the queue and tab guard.

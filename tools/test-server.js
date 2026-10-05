@@ -358,6 +358,10 @@ async function main() {
       const compiler = await request('GET', '/js/compiler.js');
       assert.ok(compiler.body.indexOf('readStdinValue') >= 0, 'stdin not wired into Run');
       assert.ok(compiler.body.indexOf('setupStdinForLesson') >= 0, 'input lessons must auto-open the Input box');
+      assert.ok(compiler.body.indexOf('conversationQueue') >= 0, 'conversation runs must be serialized');
+      assert.ok(compiler.body.indexOf('conversationTabChanged') >= 0, 'tab changes must coordinate the conversation');
+      const app = await request('GET', '/js/app.js');
+      assert.ok(app.body.indexOf('if (!tabName) return;') >= 0, 'the Input toggle must not hide the output panels');
       const lessons = await request('GET', '/js/lessons.js');
       assert.ok(lessons.body.indexOf('setupStdinForLesson') >= 0, 'lesson load must call the stdin setup');
       const theme = await request('GET', '/css/theme.css');
