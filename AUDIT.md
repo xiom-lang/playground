@@ -3181,3 +3181,11 @@ the owner's source).
   the same source streams at 1.3 s, waits, and answers at 1.45 s. WSL
   suite 76/0 (symbols canary added), Windows 67/0/1, generator checks
   current; catalogs at 2.1.14.
+- **Production verified (2026-10-05, 2.1.14 deployed)**: headless Edge
+  against https://playground.xiom-lang.org/ pressed Run on the owner's
+  program - the transcript showed `Hello, XIOM!` / `Whast your name`
+  with the session alive and the input enabled (stopped at the read);
+  answering `Lefteris` appended `Hello,Lefteris`. The external fixture
+  streamed `Name? -> Ada -> Hello, Ada! -> 7 -> N=7` (exit 0), and
+  patience held: `STILL ALIVE` at 46.5 s with a late answer read as
+  `A:late` (exit 0).

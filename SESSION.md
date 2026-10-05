@@ -1,11 +1,11 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-05 (**2.1.14: Run starts the Terminal live and
-streams while it waits; bare read_line/read_int detected**; 2.1.13
-patience + "?" key; 2.1.12 answer-after-exit restart; 2.1.11 live
-verified in production incl. ops external check; v0.63.1 absorbed; 2.1.0
+Last updated: 2026-10-05 (**2.1.14 verified in production: Run starts the
+Terminal live and streams while it waits; bare read_line/read_int
+detected**; 2.1.13 patience + "?" key; 2.1.12 answer-after-exit restart;
+2.1.11 live verified incl. ops external check; v0.63.1 absorbed; 2.1.0
 Lab expansion complete - 37 programs, 10 categories). Branch `main`
-at/after `a590d13`, all commits pushed to `origin/main`; CI green
+at/after `c75f0f5`, all commits pushed to `origin/main`; CI green
 (Validate + CodeQL). Toolchain/wasm **v0.63.1**, stdlib 0.62.4 (516 modules),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
