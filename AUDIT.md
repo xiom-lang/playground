@@ -2939,3 +2939,32 @@ pause-at-read possible or are we working around the architecture?
 - UX honesty meanwhile: the Terminal labels replay mode ("replay mode:
   the sandbox here cannot stream stdin") so the behavior is explained
   rather than looking like a bug.
+
+## 47. v0.63.1 absorption (2026-10-05)
+
+Pin bump completed after the handoff (section 29) left it in progress: the
+pins and the Windows/Linux toolchains were already fetched and
+hash-verified; this tranche finished the wasm bundle, ran the acceptance
+suite on the new pin and recorded the results.
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.63.1**; Windows zip and
+  Linux tar.gz hash-verified against the release `SHA256SUMS` (Linux audit
+  root `/home/lefteris/xiom_v0631/tc`). The wasm binary
+  (`xiom-wasm_bg.wasm`, sha256 `1ccc83f7...`) was replaced with
+  verification; `xiom-wasm.js` and `xiom-wasm.d.ts` are byte-identical to
+  v0.63.0 (their hashes match the v0.63.1 `SHA256SUMS`), so only the loader
+  comment changed.
+- Acceptance on the new pin: `tools/compiler-repros/c25/run.sh` prints
+  **`C25 fixed: yes`** (cold, cached and `--no-cache` all read `Ada`);
+  full suite in WSL is **75 passed / 0 failed / 1 skipped** (the
+  live-terminal test is capability-gated while the production wrapper
+  lacks `--keep-stdin`); lab audit **37/37 x2**; full lesson audit
+  **412/412 with zero failures at every level** (expected outputs match;
+  no baseline refresh needed).
+- Generated data: `js/stdlib-ref.json` and `js/limitations.json`
+  regenerated (differ only in the version line and timestamp; surface
+  unchanged at 516 modules / 6,535 functions, zero blocked lessons); the
+  index, lab-index and expected-outputs checks are current.
+- Environment note: the Linux audit toolchain for this pin is
+  `/home/lefteris/xiom_v0631/tc` in WSL (the WSL kernel reports Landlock
+  ABI 3; the production VPS kernel is ABI 4 and is verified by ops).

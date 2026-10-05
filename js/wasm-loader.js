@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Eleftherios Notas and The XIOM Authors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 // ============================================================================
-// XIOM WASM compiler loader (v0.63.0)
+// XIOM WASM compiler loader (v0.63.1)
 // Loads the in-browser compiler (xiom-wasm.js + xiom-wasm_bg.wasm) built from
 // crates/xiom-wasm via wasm-bindgen --target web and shipped with the release
-// (v0.63.0 assets: xiom-wasm.js, xiom-wasm.d.ts, xiom-wasm_bg.wasm).
+// (v0.63.1 assets: xiom-wasm.js, xiom-wasm.d.ts, xiom-wasm_bg.wasm).
 // Exposes a promise that resolves to { compile(source)->JSON-string, version }
 // or null when the WASM cannot load (then the playground falls back to the
 // server endpoints).

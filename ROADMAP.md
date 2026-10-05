@@ -563,6 +563,10 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
 - [x] **Absorbed in v0.63.0** (2026-10-04): pins and wasm bumped; the run
   temp-root fix, warm-compile caches and valid SMT contracts are live on
   the pin (AUDIT 40).
+- [x] **Absorbed in v0.63.1** (2026-10-05): pins and wasm bumped (JS and
+  `.d.ts` unchanged); C25 stays fixed, WSL suite 75/0/1 (live test
+  capability-gated), lab 37/37 x2 and full lesson audit 412/412 on the new
+  pin (AUDIT 47).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;
