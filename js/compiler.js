@@ -323,20 +323,21 @@ function conversationRender() {
   }
   var hint = document.getElementById('conversationHint');
   var input = document.getElementById('conversationInput');
-  var last = conversationState.outputs.length > 0
-    ? builder.lastPromptLine(conversationState.outputs[conversationState.outputs.length - 1])
-    : '';
   if (input) {
+    // A terminal has no placeholder: the program's last line is already in
+    // the scrollback and the '>' prompt marks where typing happens.
     input.disabled = false;
-    input.placeholder = last && last.length <= 60 ? last : 'Type your answer, press Enter';
+    input.placeholder = '';
   }
   if (hint) {
     var mode = conversationState.live ? 'live' : (conversationState.liveFailed ? 'replay' : '');
     var base = conversationState.running
       ? 'Running the program with your answer\u2026'
-      : (conversationState.answers.length === 0
-        ? 'Type an answer and press Enter; the program runs with your input.'
-        : 'Answer ' + (conversationState.answers.length + 1) + ' - each answer re-runs the program with it.');
+      : (conversationState.live
+        ? 'Live session: type your answer at the > prompt and press Enter.'
+        : (conversationState.answers.length === 0
+          ? 'Type an answer and press Enter; the program runs with your input.'
+          : 'Answer ' + (conversationState.answers.length + 1) + ' - each answer re-runs the program with it.'));
     hint.textContent = base + (mode === 'replay' ? ' (replay mode: the sandbox here cannot stream stdin)' : '');
   }
   host.scrollTop = host.scrollHeight;

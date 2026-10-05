@@ -284,6 +284,26 @@ const SANDBOX_MIN_ABI = Math.max(1, Number(process.env.XIOM_SANDBOX_MIN_ABI) || 
 
 const sandbox = { mode: SANDBOX_MODE, bin: SANDBOX_BIN, abi: null, canary: false, keepStdin: false, error: null };
 
+// Live sessions need the program's prompts to reach the client while it waits
+// at a read. Compiled programs use C stdio, which block-buffers stdout when
+// it is a pipe, so `io.println` before a read never streams until exit. GNU
+// coreutils `stdbuf -o0` (LD_PRELOAD) forces stdout unbuffered across the
+// whole child tree (driver -> compiled program) without touching the
+// compiler or weakening the sandbox; /usr is already read+exec under the
+// policy. Without it, Linux live sessions stay gated to replay.
+const STDBUF_BIN = (() => {
+  if (process.platform !== 'linux') return null; // no stdbuf on Windows
+  const candidates = [process.env.XIOM_STDBUF_BIN, '/usr/bin/stdbuf'].filter(Boolean);
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+})();
+
+function liveStreams() {
+  return process.platform !== 'linux' || Boolean(STDBUF_BIN);
+}
+
 function probeSandbox() {
   if (SANDBOX_MODE === 'off') {
     sandbox.error = 'disabled by XIOM_SANDBOX=off';
@@ -925,13 +945,19 @@ async function liveStart(source, ip) {
     // answer arrives; the route turns this into a replay fallback (503).
     throw new Error('sandbox wrapper lacks --keep-stdin');
   }
+  if (!liveStreams()) {
+    // Without stdbuf the compiled program block-buffers its prompt, so the
+    // client could never see it in time; the route falls back to replay.
+    throw new Error('stdbuf unavailable for prompt streaming');
+  }
   await fsp.mkdir(WORK_ROOT, { recursive: true });
   const dir = await fsp.mkdtemp(path.join(WORK_ROOT, 'live-'));
   const file = writeSource(dir, source);
   const bin = sandboxed ? SANDBOX_BIN : XIOM_BIN;
+  const runner = STDBUF_BIN ? [STDBUF_BIN, '-o0'] : [];
   const argv = sandboxed
-    ? ['--keep-stdin', '--', XIOM_BIN, 'run', '-O0', file]
-    : ['run', '-O0', file];
+    ? ['--keep-stdin', '--'].concat(runner, [XIOM_BIN, 'run', '-O0', file])
+    : runner.concat([XIOM_BIN, 'run', '-O0', file]);
   const child = spawn(bin, argv, { cwd: dir, env: userChildEnv(), stdio: ['pipe', 'pipe', 'pipe'] });
   const session = {
     id: require('crypto').randomUUID(),
@@ -965,12 +991,12 @@ async function handleLiveRoute(req, res, method, url) {
   if (method === 'POST' && route === '/api/live/start') {
     const retryAfterMs = rateLimitRetryMs(req);
     if (retryAfterMs) { sendRateLimited(res, retryAfterMs); return; }
-    if (sandboxActive() && !sandbox.keepStdin) {
-      // The wrapper consumes stdin up front, so an interactive child never
-      // sees later writes. Live sessions are offered only when the sandbox
-      // passes stdin through (or the program runs unwrapped); clients fall
+    if ((sandboxActive() && !sandbox.keepStdin) || !liveStreams()) {
+      // Without stdin pass-through the child sees EOF before any answer; and
+      // without stdbuf the prompt never streams while the child waits at a
+      // read. Live sessions are offered only when both hold; clients fall
       // back to replay elsewhere.
-      sendJson(res, 503, { error: 'Live sessions are unavailable under the sandbox; using replay' });
+      sendJson(res, 503, { error: 'Live sessions are unavailable here; using replay' });
       return;
     }
     const body = await readJson(req);
@@ -1070,7 +1096,7 @@ const server = http.createServer(async (req, res) => {
         counters: Object.assign({}, counters),
         rateLimit: { burst: RATE_LIMIT_BURST, refillMs: RATE_LIMIT_REFILL_MS, buckets: rateBuckets.size },
         abuse: abuseStatus(),
-        live: { sessions: liveSessions.size },
+        live: { sessions: liveSessions.size, runner: STDBUF_BIN ? 'stdbuf' : (process.platform === 'linux' ? 'none' : 'direct') },
         sandbox: {
           mode: sandbox.mode,
           active: sandboxActive(),
@@ -1086,7 +1112,10 @@ const server = http.createServer(async (req, res) => {
     if (url === '/api/version' && method === 'GET') {
       const format = await formatAvailable();
       const payload = Object.assign(versionPayload(), {
-        capabilities: { format: format.ok, live: !sandboxActive() || sandbox.keepStdin },
+        capabilities: {
+          format: format.ok,
+          live: (!sandboxActive() || sandbox.keepStdin) && liveStreams(),
+        },
       });
       sendJson(res, 200, payload);
       return;

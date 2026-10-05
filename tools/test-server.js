@@ -896,24 +896,40 @@ async function main() {
           const id = JSON.parse(started.body).id;
           let collected = '';
           let after = 0;
+          const readNext = async () => {
+            const res = await request('GET', '/api/live/output?id=' + id + '&after=' + after);
+            assert.strictEqual(res.status, 200, res.body);
+            const payload = JSON.parse(res.body);
+            collected += payload.text;
+            after = payload.length;
+            return payload;
+          };
           const waitFor = async (needle) => {
             for (let i = 0; i < 160; i++) {
-              const res = await request('GET', '/api/live/output?id=' + id + '&after=' + after);
-              assert.strictEqual(res.status, 200, res.body);
-              const payload = JSON.parse(res.body);
-              collected += payload.text;
-              after = payload.length;
+              const payload = await readNext();
               if (collected.indexOf(needle) >= 0) return payload;
               if (payload.exited) return payload;
               await new Promise((resolve) => setTimeout(resolve, 150));
             }
             throw new Error('timed out waiting for ' + needle + ' in: ' + collected);
           };
-          await waitFor('Name?');
+          const waitExit = async () => {
+            for (let i = 0; i < 160; i++) {
+              const payload = await readNext();
+              if (payload.exited) return payload;
+              await new Promise((resolve) => setTimeout(resolve, 100));
+            }
+            throw new Error('timed out waiting for the session to exit: ' + collected);
+          };
+          const promptPayload = await waitFor('Name?');
+          assert.ok(!promptPayload.exited, 'the session exited before the prompt was answered: ' + JSON.stringify(collected));
           await request('POST', '/api/live/input', { id, line: 'Ada' });
           await waitFor('Hello, Ada!');
+          assert.ok(collected.indexOf('Hello, Ada!') >= 0, 'the first answer was not handled live: ' + JSON.stringify(collected));
           await request('POST', '/api/live/input', { id, line: '7' });
-          const finished = await waitFor('N=7');
+          await waitFor('N=7');
+          assert.ok(collected.indexOf('N=7') >= 0, 'the second answer was not handled live: ' + JSON.stringify(collected));
+          const finished = await waitExit();
           assert.strictEqual(finished.exited, true, 'the session must exit after the last answer');
           await request('POST', '/api/live/close', { id });
         });

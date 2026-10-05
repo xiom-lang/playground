@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'A Terminal that streams like one',
+    items: [
+      'Live sessions now show the program\'s prompts the moment they print, and each answer goes straight to the running program - no waiting, no restart.',
+      'The Terminal is one surface: your answer appears after a > prompt in the same scrollback as the program output, like a real shell.',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'Live Terminals everywhere',
     items: [
       'The live Terminal - the program keeps running and waits at each read, prompts appear the moment they print, answers stream straight to it - is now enabled in production as well; it no longer falls back to replay there.',

@@ -3007,3 +3007,57 @@ live sessions whenever the running wrapper advertises the capability.
   503, and `/api/version` must report playground 2.1.10 with
   `capabilities.live:true` (VPS kernel ABI 4, wrapper from `ca5d98c`).
   Ops is asked to verify the live terminal from the outside as well.
+  **Correction (AUDIT 49): the live test below was vacuous - `waitFor`
+  returned on `exited`, so the suite passed while prompts never streamed.
+  Live sessions were not actually interactive until 2.1.11.**
+
+## 49. Live terminal: stdout buffering and the terminal look (2.1.11, 2026-10-05)
+
+The manual production deploy exposed what the 2.1.10 verification missed:
+`/api/live/*` answered 200 and `sandbox.keepStdin` was true, but the live
+transcript was `Name?\nHello, !\nerr\n` - the program read EOF instead of
+waiting for an answer. Root cause and fix:
+
+- Compiled programs use C stdio (`puts`), which **block-buffers stdout when
+  it is a pipe**: `io.println("Name?")` before `read_line()` never reaches
+  the client while the program waits. The client waits for the prompt
+  before answering, so no input is ever sent; the server's idle sweep then
+  kills the driver, which closes the stdin write end, the program reads
+  EOF, and its buffered output flushes all at once - looking like a broken
+  interactive session. `strace` of the container: the script's `read(0)`
+  blocked for 24 s and returned 0 the instant the server closed the driver
+  (server `close(20)`), then one `write(1, "Name?\nHello, !\nerr\n")`.
+- The 2.1.10 live test was vacuous: its `waitFor` returned as soon as
+  `payload.exited` was true, and the only assertion was
+  `finished.exited === true`, so an immediate EOF "passed" the test. The
+  test now asserts that the prompt arrives **before** the session exits,
+  that `Hello, Ada!` and `N=7` are really in the transcript, and that the
+  session eventually exits.
+- Fix, zero dependencies: live sessions on Linux spawn through
+  `stdbuf -o0` (GNU coreutils, LD_PRELOAD), sandboxed as
+  `xiom-sandbox --keep-stdin -- /usr/bin/stdbuf -o0 XIOM run -O0 FILE`.
+  `stdbuf` forces stdout unbuffered across the whole child tree (driver ->
+  compiled program) without touching the compiler and without weakening
+  the sandbox (`/usr` is already read+exec under the policy). The
+  capability gate now needs **both** stdin pass-through and stdbuf on
+  Linux: `/api/live/start` stays 503 otherwise, `capabilities.live`
+  reflects it, and `/api/health` reports `live.runner` (`stdbuf` | `none`
+  | `direct` on Windows). One-shot compiles are byte-identical.
+- Terminal look (owner request): the answer line is no longer a separate
+  bordered input box. The form has no border/separator and shares the
+  terminal background; the input is transparent with no placeholder and a
+  `>` prompt caret, so the transcript reads as one terminal surface with
+  the cursor at the bottom of the scrollback. Hint text now says "Live
+  session: type your answer at the > prompt and press Enter."
+- Verification: `stdbuf -o0` prompt streams while the program waits
+  (`Name?` at 20.257 s, program still blocked); WSL suite **76/0** with
+  the hardened live test under `XIOM_SANDBOX=require`; container A/B -
+  pre-fix image fails `live-prod-check` with the old transcript, rebuilt
+  image passes with `Name? -> Ada -> Hello, Ada! -> 7 -> N=7` (rc 0);
+  headless Edge against a real live session shows
+  `> Ada | > 36 | Hello, Ada! | You are 36.` with a borderless transparent
+  input (placeholder empty) in both dark and light themes.
+- Upstream note (compiler lane): the durable fix is for the runtime to
+  flush stdout before a blocking read (or line-buffer when stdin is not a
+  TTY); `stdbuf` is the playground-side workaround, relayed to ops with
+  the trace evidence.

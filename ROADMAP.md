@@ -192,6 +192,20 @@ the sections below hold the detailed specs.
 - [x] WSL suite 76/0 (live test under `XIOM_SANDBOX=require`), negative
   gate verified with an old-wrapper simulator (503 + `"live":false`).
 
+### 2.1.11 -- Live terminal: real streaming + terminal look (COMPLETE 2026-10-05)
+
+- [x] Root cause of the "live" EOF transcript: compiled programs
+  block-buffer stdout on pipes, so prompts never streamed while the
+  program waited; the idle sweep then closed the driver and the program
+  flushed on EOF. The 2.1.10 live test was vacuous and hid it (AUDIT 49).
+- [x] Fix: live sessions spawn through `stdbuf -o0` (zero deps) inside the
+  sandbox; the gate requires keep-stdin **and** stdbuf on Linux;
+  `capabilities.live` and `/api/health` (`live.runner`) reflect it. The
+  test asserts the prompt arrives before exit and both answers land.
+- [x] Terminal UI per owner request: one terminal surface, `>` prompt
+  line, transparent borderless input with no placeholder; verified in
+  headless Edge (dark + light) on a real live session.
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light
