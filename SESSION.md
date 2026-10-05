@@ -1445,7 +1445,11 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 - Live sessions exist (`/api/live/*`, AUDIT 43) but are gated: 503 under a
   wrapper without keep-stdin, `capabilities.live=false` in production; the
   Terminal replays (restart per answer, labelled) and that path is solid.
-- Durable request: `docs/OPS_REQUEST_LIVE_TERMINAL.md` (accepted by ops).
+- Durable request: `docs/OPS_REQUEST_LIVE_TERMINAL.md`; ops landed the
+  implementation in-repo at `ca5d98c` (feat(sandbox): --keep-stdin
+  pass-through) touching `sandbox/xiom-sandbox.c`, `tools/verify-sandbox.js`
+  (13-check acceptance) and `DEPLOY.md` (image build/verification notes) -
+  read DEPLOY.md before enabling live sessions.
 
 ### Next-session prompt (paste-ready)
 
@@ -1453,8 +1457,10 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 You are the playground session for xiom-lang/playground at E:\xiom-lang\playground.
 
 Read SESSION.md section 29 (this prompt), ROADMAP.md (2.1.6-2.1.9, release
-phase plan, v0.62.3 tracking), AUDIT.md 43-46 and docs/OPS_REQUEST_LIVE_TERMINAL.md,
-then verify state: git fetch; expect main at/after 421703b. The working tree is
+phase plan, v0.62.3 tracking), AUDIT.md 43-46, DEPLOY.md and
+docs/OPS_REQUEST_LIVE_TERMINAL.md, then verify state: git fetch; expect main
+at/after 22c17c5 (includes ops's ca5d98c --keep-stdin implementation under
+sandbox/). The working tree is
 INTENTIONALLY dirty with the v0.63.1 pin bump (TOOLCHAIN_VERSION/WASM_VERSION
 already say v0.63.1; the wasm binary is still v0.63.0). Do not discard it;
 finish it.
