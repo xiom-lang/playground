@@ -1,10 +1,9 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-05 (**2.1.11 live terminal streams for real +
-terminal look**; 2.1.10 is deployed in production but its live sessions
-were not interactive - prompts were block-buffered - so redeploy is
-required; v0.63.1 absorbed; 2.1.0 Lab expansion complete - 37 programs,
-10 categories). Branch `main` at/after `228b7b9`, all commits pushed to
+Last updated: 2026-10-05 (**2.1.11 live verified in production**; live
+sessions stream prompts and take answers, terminal is one `>` surface;
+v0.63.1 absorbed; 2.1.0 Lab expansion complete - 37 programs, 10
+categories). Branch `main` at/after `84abb92`, all commits pushed to
 `origin/main`; CI green (Validate + CodeQL). Toolchain/wasm **v0.63.1**, stdlib 0.62.4 (516 modules),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
@@ -1439,7 +1438,12 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
   `--keep-stdin`, the 503 gate applies only to wrappers without it,
   `capabilities.live` flips, and the WSL suite is 76/0 - the negative path
   was verified with an old-wrapper simulator (503 + `"live":false`).
-  Production verification runs after the next hourly pull.
+  **Production verified 2026-10-05**: 2.1.11 was manually redeployed;
+  `/api/version`/`/api/health` are correct (`live.runner=stdbuf`, ABI 4)
+  and the external live probe streams `Name? -> Ada -> Hello, Ada! -> 7 ->
+  N=7` (exit 0) with the browser probe passing the terminal look. The
+  2.1.10 live test was vacuous; see AUDIT 49 for the buffering root cause
+  and the stdbuf fix.
 - Wrapper facts: the repo carries the wrapper source (`sandbox/xiom-sandbox`,
   `sandbox/xiom-sandbox.c`); the Windows toolchain zip ships
   `xiom-sandbox.exe`; the Linux toolchain bin does not (the production

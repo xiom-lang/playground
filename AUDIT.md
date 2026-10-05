@@ -3061,3 +3061,19 @@ waiting for an answer. Root cause and fix:
   flush stdout before a blocking read (or line-buffer when stdin is not a
   TTY); `stdbuf` is the playground-side workaround, relayed to ops with
   the trace evidence.
+- **Production verified (2026-10-05, after the manual 2.1.11 redeploy)**:
+  `/api/version` reports 2.1.11 + toolchain/wasm v0.63.1 with
+  `capabilities.live:true`; `/api/health` reports `mode=require`,
+  `active=true`, Landlock ABI 4, `keepStdin=true`, `live.runner=stdbuf`,
+  abuse ok. The external fixture streams and answers for real:
+  `Name? -> Ada -> Hello, Ada! -> 7 -> N=7` (`exited=true code=0`, rc 0),
+  and the headless-Edge probe against production shows the live
+  transcript (`> Ada | > 36 | Hello, Ada! | You are 36.`), an enabled
+  borderless input with no placeholder, one terminal background, and a
+  working theme toggle.
+- Support finding from owner testing: `io.stdin()` is the numeric-fd
+  accessor and evaluates to `0`; a program that writes `age = stdin()`
+  stores 0 and never reads, so it finishes before a second answer. The
+  reading APIs are `io.read_line()` / `io.read_int()` (as the lessons
+  teach). No playground change; noted here so the question is answerable
+  from the record.
