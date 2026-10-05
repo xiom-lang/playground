@@ -3109,3 +3109,14 @@ appeared to do nothing.
   `Ada -> Hello, Ada!` at 1.96 s, `7 -> N=7` at 2.11 s, exit 0 at
   2.18 s, `close` ok, `live.sessions:0` after (no leak), sandbox
   require/ABI 4, `keepStdin:true`. Ops side complete.
+- Desired interactive flow confirmed live on production (2026-10-05,
+  2.1.11) with the reading API: `What is your name` at 1.45 s -> answer
+  `Lefteris` -> `Nice to meet you Lefteris` / `Whats your Age Lefteris?`
+  at 1.59 s -> answer `39` -> `39 lovely age.` at 1.73 s, exit 0. So the
+  `cin`-style pause-at-each-read model is not a compiler limitation; the
+  only user trap is `io.stdin()`, which is the numeric fd accessor
+  (`STDIN_FILENO`, returns 0), not a reader.
+- Relay to the compiler/docs lane: consider a clearer name or a
+  diagnostic/documentation callout for `io.stdin()` so it is not mistaken
+  for `cin` (`io.read_line`/`io.read_int` are the readers). API-clarity
+  only; no functional gap found.
