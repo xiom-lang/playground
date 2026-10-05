@@ -1,11 +1,10 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-05 (**2.1.5 terminal run panel**; 2.1.4 input fixes;
-v0.63.0 absorbed; 2.1.0 Lab expansion complete - 37 programs, 10
-categories). Branch `main` at/after `46322af`, working tree clean, all
-commits pushed to `origin/main`; CI green (Validate + CodeQL). Production
-serves **2.1.4 + v0.63.0** (verified 07:37); 2.1.5 follows on the next
-pull. Toolchain/wasm **v0.63.0**, stdlib 0.62.4 (516 modules),
+Last updated: 2026-10-05 (**2.1.6 live terminal runner** shipped; 2.1.5
+terminal panel; v0.63.0 absorbed; 2.1.0 Lab expansion complete - 37
+programs, 10 categories). Branch `main` at/after `46322af`, working tree
+clean, all commits pushed to `origin/main`; CI green (Validate + CodeQL).
+Production serves **2.1.5 + v0.63.0**; 2.1.6 follows on the next pull. Toolchain/wasm **v0.63.0**, stdlib 0.62.4 (516 modules),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned

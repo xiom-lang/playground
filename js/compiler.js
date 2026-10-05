@@ -76,7 +76,8 @@ function setupStdinForLesson(lesson) {
   conversationGen += 1;
   conversationQueue = Promise.resolve();
   conversationRunCount = null;
-  conversationState = { answers: [], outputs: [], running: false };
+  liveReset();
+  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
   conversationRender();
 }
 
@@ -111,16 +112,146 @@ function clearStdin() {
 // more input line; the transcript builder keeps the dialogue in order.
 // ---------------------------------------------------------------------------
 
-var conversationState = { answers: [], outputs: [], running: false };
+var conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
 var conversationRunCount = null;
 var conversationRunGen = 0;
 var conversationGen = 0;
 var conversationQueue = Promise.resolve();
+var liveSession = null;
 
 function conversationCompile(count) {
   conversationRunCount = count;
   conversationRunGen = conversationGen;
   return compile();
+}
+
+function liveReset() {
+  if (liveSession && liveSession.id) {
+    fetch('/api/live/close', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: liveSession.id }),
+    }).catch(function () { /* best effort */ });
+  }
+  liveSession = null;
+}
+
+function liveAppendText(text) {
+  var entries = conversationState.liveEntries;
+  var parts = String(text).split('\n');
+  for (var i = 0; i < parts.length; i++) {
+    if (i === 0 && entries.length > 0 && entries[entries.length - 1].kind === 'out') {
+      entries[entries.length - 1].text += parts[i];
+    } else {
+      entries.push({ kind: 'out', text: parts[i] });
+    }
+  }
+  // Drop a single trailing blank produced by a trailing newline.
+  if (entries.length > 0 && entries[entries.length - 1].kind === 'out' && entries[entries.length - 1].text === '' && parts.length > 1) {
+    entries.pop();
+  }
+}
+
+function livePoll() {
+  if (!liveSession || liveSession.polling) return;
+  liveSession.polling = true;
+  var tick = function () {
+    var session = liveSession;
+    if (!session) return;
+    fetch('/api/live/output?id=' + encodeURIComponent(session.id) + '&after=' + session.after)
+      .then(function (r) { return r.json(); })
+      .then(function (payload) {
+        if (!liveSession || liveSession !== session) return;
+        if (payload.text) {
+          liveAppendText(payload.text);
+          conversationState.running = false;
+        }
+        session.after = payload.length;
+        if (payload.exited) {
+          session.exited = true;
+          conversationState.running = false;
+          conversationRender();
+          var input = document.getElementById('conversationInput');
+          if (input) {
+            input.disabled = false;
+            input.focus();
+          }
+          return;
+        }
+        tick();
+      })
+      .catch(function () {
+        if (!liveSession || liveSession !== session) return;
+        setTimeout(tick, 500);
+      });
+  };
+  tick();
+}
+
+// Start a live session for the current program; fall back to replay when the
+// server refuses (offline, limits) so the terminal always works.
+function liveStart(source) {
+  fetch('/api/live/start', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ source: source }),
+  })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (payload) {
+      if (!payload || !payload.id) throw new Error('live unavailable');
+      liveSession = { id: payload.id, after: 0 };
+      conversationState.live = true;
+      conversationState.liveStarting = false;
+      // Flush every answer so far, in order (covers fast successive submits).
+      var lines = conversationState.answers.slice();
+      var chain = Promise.resolve();
+      for (var i = 0; i < lines.length; i++) {
+        chain = chain.then((function (line) {
+          return function () {
+            return fetch('/api/live/input', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: liveSession.id, line: line }),
+            });
+          };
+        })(lines[i]));
+      }
+      return chain.then(function () {
+        conversationState.liveSent = lines.length;
+        conversationRender();
+        var field = document.getElementById('conversationInput');
+        if (field) {
+          field.disabled = false;
+          field.focus();
+        }
+        livePoll();
+      });
+    })
+    .catch(function () {
+      // Replay path: queue the run with the accumulated answers.
+      conversationState.liveFailed = true;
+      conversationState.liveStarting = false;
+      var input = document.getElementById('conversationInput');
+      if (input) {
+        input.disabled = true;
+        conversationState.running = true;
+      }
+      conversationRender();
+      conversationQueue = conversationQueue.then(function () {
+        if (conversationState.outputs[0] == null) {
+          setStdinValue('');
+          return conversationCompile(0).then(function () {
+            conversationSetStdin();
+            return conversationCompile(conversationState.answers.length);
+          });
+        }
+        conversationSetStdin();
+        return conversationCompile(conversationState.answers.length);
+      }).catch(function () {
+        var el = document.getElementById('conversationInput');
+        if (el) el.disabled = false;
+      });
+    });
 }
 
 function conversationActive() {
@@ -129,7 +260,8 @@ function conversationActive() {
 }
 
 function conversationReset() {
-  conversationState = { answers: [], outputs: [], running: false };
+  liveReset();
+  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
   conversationRender();
 }
 
@@ -142,7 +274,9 @@ function conversationRender() {
   var host = document.getElementById('conversationLog');
   if (!host) return;
   var builder = window.XiomConversation;
-  var entries = builder ? builder.build(conversationState.outputs, conversationState.answers) : [];
+  var entries = conversationState.live
+    ? conversationState.liveEntries.slice()
+    : (builder ? builder.build(conversationState.outputs, conversationState.answers) : []);
   host.textContent = '';
   for (var i = 0; i < entries.length; i++) {
     var line = document.createElement('div');
@@ -204,6 +338,39 @@ function conversationSubmit(event) {
   input.value = '';
   input.disabled = true;
   conversationState.running = true;
+  if (window.resetOutputMatch) window.resetOutputMatch();
+  if (conversationState.live) {
+    conversationState.liveEntries.push({ kind: 'you', text: line });
+    conversationRender();
+    // Send only when the session is alive and every earlier answer was sent;
+    // answers queued while the session started are flushed by liveStart.
+    if (liveSession && !liveSession.exited && conversationState.liveSent === conversationState.answers.length - 1) {
+      conversationState.liveSent = conversationState.answers.length;
+      fetch('/api/live/input', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: liveSession.id, line: line }),
+      }).catch(function () { /* the poll will surface the exit */ });
+      input.disabled = false;
+      input.focus();
+    }
+    return false;
+  }
+  if (conversationState.liveStarting) {
+    conversationState.liveEntries.push({ kind: 'you', text: line });
+    conversationRender();
+    return false;
+  }
+  if (!conversationState.liveFailed) {
+    // First answer tries a live session; the terminal falls back to replay.
+    conversationState.liveStarting = true;
+    conversationState.liveEntries.push({ kind: 'you', text: line });
+    conversationRender();
+    var ed = window.editor;
+    var liveSource = ed ? ed.getValue() : (window.getMobileCodeValue ? window.getMobileCodeValue() : '');
+    liveStart(liveSource);
+    return false;
+  }
   conversationRender();
   // Serialize runs: each answer compiles from the answers snapshot taken when
   // its turn comes, so fast typing cannot mis-key the transcript outputs.
@@ -225,9 +392,10 @@ function conversationSubmit(event) {
 }
 
 function conversationRestart() {
-  conversationState = { answers: [], outputs: [], running: false };
   conversationQueue = Promise.resolve();
   conversationRunCount = null;
+  liveReset();
+  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
   setStdinValue('');
   conversationRender();
   var input = document.getElementById('conversationInput');

@@ -30,7 +30,7 @@ const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
 const os = require('os');
-const { spawnSync } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const { runProcess } = require('./lib/run-xiom');
 const { XIOM_BIN, childEnv } = require('./lib/toolchain');
 const auth = require('./lib/auth');
@@ -838,6 +838,185 @@ function resolveStaticPath(requestUrl) {
 }
 
 // ---------------------------------------------------------------------------
+// Live terminal sessions (2.2.0): a sandboxed program stays alive with piped
+// stdin/stdout so the Terminal panel can answer prompts as they appear.
+// Limits: 2 sessions per IP, 90s wall clock, 30s idle, bounded output/input.
+// ---------------------------------------------------------------------------
+const LIVE_MAX_SESSIONS_PER_IP = 2;
+const LIVE_WALL_MS = Math.max(10000, Number(process.env.XIOM_LIVE_WALL_MS) || 90000);
+const LIVE_IDLE_MS = Math.max(5000, Number(process.env.XIOM_LIVE_IDLE_MS) || 30000);
+const LIVE_MAX_OUTPUT = 262144;
+const LIVE_MAX_LINE = 65536;
+const LIVE_MAX_INPUT = 262144;
+const LIVE_KEEP_EXITED_MS = 60000;
+const LIVE_WAIT_MS = 5000;
+const liveSessions = new Map();
+
+function liveClientIp(req) {
+  if (req.headers && typeof req.headers['x-forwarded-for'] === 'string') {
+    return req.headers['x-forwarded-for'].split(',')[0].trim();
+  }
+  return req.socket && req.socket.remoteAddress ? req.socket.remoteAddress : 'unknown';
+}
+
+function liveCountForIp(ip) {
+  let count = 0;
+  for (const session of liveSessions.values()) if (session.ip === ip) count += 1;
+  return count;
+}
+
+function liveNotify(session) {
+  const waiters = session.waiters.splice(0);
+  for (const resolve of waiters) resolve();
+}
+
+function liveAppend(session, text) {
+  if (!text) return;
+  if (session.output.length < LIVE_MAX_OUTPUT) {
+    session.output += text.slice(0, LIVE_MAX_OUTPUT - session.output.length);
+  }
+  session.lastActivity = Date.now();
+  liveNotify(session);
+}
+
+function liveFinish(session, code) {
+  if (session.exited) return;
+  session.exited = true;
+  session.code = typeof code === 'number' ? code : null;
+  session.exitedAt = Date.now();
+  liveNotify(session);
+}
+
+function liveReap(session) {
+  liveSessions.delete(session.id);
+  fsp.rm(session.dir, { recursive: true, force: true }).catch(() => {});
+}
+
+setInterval(() => {
+  const now = Date.now();
+  for (const session of liveSessions.values()) {
+    if (session.exited) {
+      if (now - session.exitedAt > LIVE_KEEP_EXITED_MS) liveReap(session);
+      continue;
+    }
+    if (now - session.createdAt > LIVE_WALL_MS || now - session.lastActivity > LIVE_IDLE_MS) {
+      try { session.child.kill('SIGKILL'); } catch { /* already gone */ }
+    }
+  }
+}, 5000).unref();
+
+async function liveStart(source, ip) {
+  if (SANDBOX_MODE === 'require' && !sandboxActive()) {
+    // Fail closed exactly like runXiom: no user code runs without confinement.
+    throw new Error('sandbox required but inactive');
+  }
+  await fsp.mkdir(WORK_ROOT, { recursive: true });
+  const dir = await fsp.mkdtemp(path.join(WORK_ROOT, 'live-'));
+  const file = writeSource(dir, source);
+  const sandboxed = sandboxActive();
+  const bin = sandboxed ? SANDBOX_BIN : XIOM_BIN;
+  const argv = sandboxed ? ['--', XIOM_BIN, 'run', '-O0', file] : ['run', '-O0', file];
+  const child = spawn(bin, argv, { cwd: dir, env: userChildEnv(), stdio: ['pipe', 'pipe', 'pipe'] });
+  const session = {
+    id: require('crypto').randomUUID(),
+    ip,
+    child,
+    dir,
+    output: '',
+    stderrTail: '',
+    inputBytes: 0,
+    createdAt: Date.now(),
+    lastActivity: Date.now(),
+    exited: false,
+    code: null,
+    exitedAt: 0,
+    waiters: [],
+  };
+  child.stdout.on('data', (chunk) => liveAppend(session, chunk.toString('utf8')));
+  child.stderr.on('data', (chunk) => {
+    session.stderrTail = (session.stderrTail + chunk.toString('utf8')).slice(-4096);
+  });
+  child.on('error', () => liveFinish(session, -1));
+  child.on('close', (code) => liveFinish(session, code));
+  liveSessions.set(session.id, session);
+  return session;
+}
+
+async function handleLiveRoute(req, res, method, url) {
+  const parsed = new URL(url, 'http://localhost');
+  const route = parsed.pathname;
+
+  if (method === 'POST' && route === '/api/live/start') {
+    const retryAfterMs = rateLimitRetryMs(req);
+    if (retryAfterMs) { sendRateLimited(res, retryAfterMs); return; }
+    const body = await readJson(req);
+    const source = sourceOf(body);
+    if (!source || typeof source !== 'string') { sendJson(res, 400, { error: 'Missing source' }); return; }
+    const ip = liveClientIp(req);
+    if (liveCountForIp(ip) >= LIVE_MAX_SESSIONS_PER_IP) {
+      sendJson(res, 429, { error: 'Too many live sessions; close one first' });
+      return;
+    }
+    try {
+      const session = await liveStart(source, ip);
+      sendJson(res, 200, { id: session.id });
+    } catch {
+      sendJson(res, 500, { error: 'Could not start the session' });
+    }
+    return;
+  }
+
+  if (method === 'POST' && route === '/api/live/input') {
+    const body = await readJson(req);
+    const target = liveSessions.get(String((body && body.id) || ''));
+    if (!target || target.exited) { sendJson(res, 404, { error: 'No such session' }); return; }
+    const line = body && typeof body.line === 'string' ? body.line : '';
+    if (line.length > LIVE_MAX_LINE || target.inputBytes + line.length > LIVE_MAX_INPUT) {
+      sendJson(res, 413, { error: 'Input too large' });
+      return;
+    }
+    target.inputBytes += line.length;
+    target.lastActivity = Date.now();
+    try { target.child.stdin.write(line + '\n'); } catch { /* closed */ }
+    sendJson(res, 200, { ok: true });
+    return;
+  }
+
+  if (method === 'POST' && route === '/api/live/close') {
+    const body = await readJson(req);
+    const target = liveSessions.get(String((body && body.id) || ''));
+    if (target) {
+      try { target.child.kill('SIGKILL'); } catch { /* already gone */ }
+      liveReap(target);
+    }
+    sendJson(res, 200, { ok: true });
+    return;
+  }
+
+  if (method === 'GET' && route === '/api/live/output') {
+    const target = liveSessions.get(parsed.searchParams.get('id') || '');
+    if (!target) { sendJson(res, 404, { error: 'No such session' }); return; }
+    const after = Math.max(0, Number(parsed.searchParams.get('after')) || 0);
+    if (target.output.length <= after && !target.exited) {
+      await new Promise((resolve) => {
+        const timer = setTimeout(resolve, LIVE_WAIT_MS);
+        target.waiters.push(() => { clearTimeout(timer); resolve(); });
+      });
+    }
+    sendJson(res, 200, {
+      text: target.output.slice(after),
+      length: target.output.length,
+      exited: target.exited,
+      code: target.code,
+      stderr: target.exited && target.code !== 0 ? target.stderrTail : '',
+    });
+    return;
+  }
+
+  sendJson(res, 404, { error: 'Unknown live route' });
+}
+
+// ---------------------------------------------------------------------------
 // Routes
 // ---------------------------------------------------------------------------
 
@@ -852,6 +1031,12 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    // --- Live terminal sessions (2.2.0) -----------------------------------
+    if (url.startsWith('/api/live/')) {
+      await handleLiveRoute(req, res, method, url);
+      return;
+    }
+
     if (url === '/api/health' && (method === 'GET' || method === 'HEAD')) {
       sendJson(res, 200, {
         status: 'ok',
@@ -861,6 +1046,7 @@ const server = http.createServer(async (req, res) => {
         counters: Object.assign({}, counters),
         rateLimit: { burst: RATE_LIMIT_BURST, refillMs: RATE_LIMIT_REFILL_MS, buckets: rateBuckets.size },
         abuse: abuseStatus(),
+        live: { sessions: liveSessions.size },
         sandbox: {
           mode: sandbox.mode,
           active: sandboxActive(),

@@ -882,6 +882,35 @@ async function main() {
           assert.ok(payload.output.indexOf('Hello, Ada!') >= 0, 'stdin not delivered: ' + payload.output);
         });
 
+        await okAsync('live sessions stream prompts and take answers', async () => {
+          const source = 'use xiom.io;\n\nfn main() -> Int {\n  io.println("Name?");\n  let name = io.read_line();\n  io.println("Hello, " + name + "!");\n  let parsed = io.read_int();\n  match parsed {\n    Ok(v) => { io.println("N=" + v.to_str()); }\n    Err(m) => { io.println("err"); }\n  };\n  return 0;\n}\n';
+          const started = await request('POST', '/api/live/start', { source });
+          assert.strictEqual(started.status, 200, started.body);
+          const id = JSON.parse(started.body).id;
+          let collected = '';
+          let after = 0;
+          const waitFor = async (needle) => {
+            for (let i = 0; i < 160; i++) {
+              const res = await request('GET', '/api/live/output?id=' + id + '&after=' + after);
+              assert.strictEqual(res.status, 200, res.body);
+              const payload = JSON.parse(res.body);
+              collected += payload.text;
+              after = payload.length;
+              if (collected.indexOf(needle) >= 0) return payload;
+              if (payload.exited) return payload;
+              await new Promise((resolve) => setTimeout(resolve, 150));
+            }
+            throw new Error('timed out waiting for ' + needle + ' in: ' + collected);
+          };
+          await waitFor('Name?');
+          await request('POST', '/api/live/input', { id, line: 'Ada' });
+          await waitFor('Hello, Ada!');
+          await request('POST', '/api/live/input', { id, line: '7' });
+          const finished = await waitFor('N=7');
+          assert.strictEqual(finished.exited, true, 'the session must exit after the last answer');
+          await request('POST', '/api/live/close', { id });
+        });
+
         await okAsync('POST /api/compile reports a crashed run, not empty output', async () => {
           // Mutually recursive functions with no base case compile, then die
           // in the runtime fault trap: the Linux driver exits 0 with

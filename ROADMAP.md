@@ -153,6 +153,17 @@ the sections below hold the detailed specs.
   stdin/stdout (program pauses at a read), sandboxed with per-IP slots
   and idle/wall timeouts.
 
+### 2.1.6 -- Live terminal runner (COMPLETE 2026-10-05)
+
+- [x] Streaming sessions: `/api/live/start|input|output|close` run the
+  sandboxed program with piped stdin/stdout, long-poll output, 2
+  sessions/IP, 90s wall / 30s idle limits, bounded buffers, fail-closed
+  under `XIOM_SANDBOX=require`; `/api/health` reports live sessions.
+- [x] The Terminal uses the live session for input lessons and streams
+  output as it appears; answers go straight to the running process;
+  when live start fails it falls back to replay transparently
+  (AUDIT 43).
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light

@@ -2829,3 +2829,36 @@ terminal-style surface. Delivered the look now (streaming runner queued):
 - True live reads (process pauses at a read and resumes on your input)
   need a streaming stdin/stdout runner; scoped in ROADMAP 2.2.0 with
   sandbox slots and timeouts.
+
+## 43. Live terminal runner (2.1.6, 2026-10-05)
+
+The streaming runner scoped in 2.1.5 is delivered.
+
+- Server: `/api/live/start` (POST, rate-limited) spawns the sandboxed
+  program with piped stdin/stdout; `/api/live/input` writes one line;
+  `/api/live/output?id&after` long-polls (5 s hold) returning new text,
+  length, exit code and a stderr tail; `/api/live/close` kills and reaps.
+  Limits: **2 sessions per IP, 90 s wall, 30 s idle, 256 KB output,
+  64 KB per line, 256 KB total input**; exited sessions stay 60 s for
+  final reads; a 5 s sweeper (unref'd) kills and reaps; `/api/health`
+  reports `live.sessions`. `liveStart` fails closed when
+  `XIOM_SANDBOX=require` and the sandbox is inactive, exactly like
+  `runXiom`.
+- Client: the Terminal starts a live session on the first answer, flushes
+  every answer collected so far in order (fast successive submits are
+  safe), then streams output into the scrollback as it arrives; the
+  answer box stays enabled while the program runs and waits at a read;
+  sessions close on lesson change/restart. Any live-start failure falls
+  back to the 2.1.3 replay path transparently, so the terminal always
+  works. The one-shot Run button is unchanged and still powers the
+  expected-output check.
+- Verification: server test `live sessions stream prompts and take
+  answers` (start → `Name?` → Ada → `Hello, Ada!` → 7 → `N=7`, then the
+  session exits) passes on the v0.63.0 pin; full suite **76/0** in WSL and
+  67/0/1 on Windows; browser check on L1-51 with two instant answers
+  produced `> Ada | > 36 | Hello, Ada! | You are 36.` from the live
+  session, input re-enabled, Terminal tab intact.
+- Production note: the sandbox wrapper must stream pipes for live mode.
+  The post-deploy check exercises a live session against production; if
+  the sandbox cannot stream, the client falls back to replay and the
+  terminal still works (the delivered UI is unaffected).

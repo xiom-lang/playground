@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'A live Terminal',
+    items: [
+      'Input lessons now run live: the program keeps running in the Terminal while it waits for your answer - prompts appear as they are printed and your line goes straight to the program, like a real terminal for its own input/output (still no command execution).',
+      'When a live session is not available the terminal falls back to the previous answer-and-replay mode, so it always works.',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'A Terminal in the run panel',
     items: [
       'For lessons that read input, the Output tab is now a Terminal: the program\'s lines and your answers share one scrollback with a > prompt, and the separate Input tab is gone.',
