@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'Run starts the Terminal live',
+    items: [
+      'Press Run on a program that reads input and it starts in the Terminal and stops at its first read, waiting for you - no more full run with empty answers first.',
+      'Its prompts stream into the Terminal as they print, and the reader names are recognized with or without the io. prefix (read_line / io.read_line, read_int, read_float).',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'A patient Terminal, and typing "?"',
     items: [
       'A live session now stays open while you think: it waits at each read until you answer (up to five minutes) instead of ending after half a minute of silence.',

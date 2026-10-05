@@ -3153,3 +3153,31 @@ measurements:
 - Verification: idle-sweep repro (33.0 s exit) and early/late input
   measurements above; WSL suite 76/0, Windows 67/0/1, generator checks
   current; catalogs at 2.1.13.
+
+## 52. Run goes live; streamed output renders while waiting (2.1.14, 2026-10-05)
+
+Owner report: on a program that prints before `read_line`, pressing Run
+showed the whole output including the post-read println and the terminal
+never stopped at the read (bare `read_line()` without the `io.` prefix in
+the owner's source).
+
+- Two client gaps: (1) Run always did a one-shot preview with empty
+  input, so the read hit EOF and the program finished; (2) `livePoll`
+  appended streamed output to `liveEntries` but only called
+  `conversationRender()` on submit/exit, so even a live session showed a
+  frozen terminal until the program ended.
+- Fixes: `conversationTryRunLive()` makes Run (and Ctrl+Enter) start a
+  live session for input programs - streamed output, stopped at each
+  read - while diagnostics still refresh in the background; `livePoll`
+  renders on every output chunk. Input detection now also recognizes the
+  bare reader names (`read_line(`, `read_int(`, `read_float(`) that
+  `use xiom.io;` brings into scope, excluding other-member calls like
+  `buf.read_line(`. The API check stays as before; one-shot compiles are
+  untouched.
+- Verification (headless Edge, sandboxed local server): press Run with
+  the owner's program -> transcript shows `Hello, XIOM!` and
+  `Whast your name`, session alive, input enabled (stopped at the read);
+  answering `Lefteris` appends `Hello,Lefteris`. The raw live API with
+  the same source streams at 1.3 s, waits, and answers at 1.45 s. WSL
+  suite 76/0 (symbols canary added), Windows 67/0/1, generator checks
+  current; catalogs at 2.1.14.

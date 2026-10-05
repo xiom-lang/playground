@@ -53,10 +53,18 @@ function hideStdinRow() {
 // to discover the tab. Switching to a lesson that does not read input closes
 // it again, but only when the box was auto-opened.
 var stdinAutoOpened = false;
+
+// A program reads input through io.read_line/read_int/read_float; with
+// `use xiom.io;` the bare names (read_line, ...) are in scope too, so both
+// spellings count. The leading class keeps other-member calls out
+// (buf.read_line is not stdin) while still allowing io.read_line.
+function sourceReadsInput(text) {
+  return /(^|[^.\w])(?:io\.)?(read_line|read_int|read_float)\s*\(/.test(String(text == null ? '' : text));
+}
+
 function lessonReadsInput(lesson) {
   if (!lesson) return false;
-  var source = (lesson.solution || '') + '\n' + (lesson.code_template || '');
-  return /io\.(read_line|read_int|read_float)\s*\(/.test(source);
+  return sourceReadsInput((lesson.solution || '') + '\n' + (lesson.code_template || ''));
 }
 
 function setupStdinForLesson(lesson) {
@@ -130,7 +138,7 @@ function conversationApplyVisibility(reads) {
 
 function conversationSourceCheck(source) {
   var text = String(source == null ? '' : source);
-  var reads = /io\.(read_line|read_int|read_float)\s*\(/.test(text);
+  var reads = sourceReadsInput(text);
   var changed = conversationLastSource != null && text !== conversationLastSource;
   conversationLastSource = text;
   conversationSourceReads = reads;
@@ -178,6 +186,24 @@ function liveRestartWithHistory() {
   liveStart(source);
 }
 
+// Run on an input program goes straight to the live Terminal: the program
+// streams and stops at its first read instead of a one-shot preview with
+// empty input. Falls back to the one-shot path when live is unavailable
+// (the caller keeps its normal compile flow in that case).
+function conversationTryRunLive(source) {
+  if (!conversationActive()) return false;
+  if (conversationState.liveFailed) return false;
+  if (conversationState.live) {
+    if (liveSession && !liveSession.exited) return true;
+    liveRestartWithHistory();
+    return true;
+  }
+  if (conversationState.liveStarting) return true;
+  conversationState.liveStarting = true;
+  liveStart(source);
+  return true;
+}
+
 function liveAppendText(text) {
   var entries = conversationState.liveEntries;
   var parts = String(text).split('\n');
@@ -205,8 +231,11 @@ function livePoll() {
       .then(function (payload) {
         if (!liveSession || liveSession !== session) return;
         if (payload.text) {
+          // Stream: render as the program talks so a prompt is visible
+          // while the program waits at its read.
           liveAppendText(payload.text);
           conversationState.running = false;
+          conversationRender();
         }
         session.after = payload.length;
         if (payload.exited) {
@@ -510,6 +539,22 @@ async function compile() {
     statusSettled = true;
     statusEl.textContent = 'This lesson is blocked by a known compiler bug; see the notice above.';
     statusEl.className = 'status-bar err';
+    if (btn) btn.classList.remove('running');
+    return;
+  }
+
+  // Input programs run live from the Terminal: the program streams and
+  // stops at its first read instead of a one-shot preview with empty
+  // input. Diagnostics still refresh in the background.
+  if (conversationActive() && conversationTryRunLive(source)) {
+    fetch('/api/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ source: source }) })
+      .then(function (r) { return r.json(); })
+      .then(function (check) { renderDiagnostics(check.diagnostics || [], !!check.success, ids, false); })
+      .catch(function () { /* diagnostics stay as they are */ });
+    if (window.stopCompileClock) window.stopCompileClock();
+    statusSettled = true;
+    statusEl.textContent = 'Running live in the Terminal\u2026';
+    statusEl.className = 'status-bar ok';
     if (btn) btn.classList.remove('running');
     return;
   }
