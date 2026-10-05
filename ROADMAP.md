@@ -169,6 +169,13 @@ the sections below hold the detailed specs.
   Terminal replays in production until the wrapper streams stdin
   (AUDIT 44).
 
+### 2.1.8 -- Terminal follows the typed source (COMPLETE 2026-10-05)
+
+- [x] `compile()` detects stdin reads in the actual editor source, so
+  programs the learner writes get the Terminal too (Output tab renamed,
+  terminal visible), and the dialogue resets when the source changes
+  (AUDIT 45).
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light

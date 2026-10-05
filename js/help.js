@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'The Terminal follows your code',
+    items: [
+      'Write your own program that reads input and press Run: the Output tab becomes a Terminal for it too, not just for the lessons that ship input.',
+      'Typed programs get the same question-and-answer flow; where live sessions are available it streams, otherwise it replays each answer through the program.',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'A live Terminal',
     items: [
       'Input lessons now run live: the program keeps running in the Terminal while it waits for your answer - prompts appear as they are printed and your line goes straight to the program, like a real terminal for its own input/output (still no command execution).',

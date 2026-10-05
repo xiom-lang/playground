@@ -70,9 +70,8 @@ function setupStdinForLesson(lesson) {
     hideStdinRow();
     stdinAutoOpened = false;
   }
-  conversationSetVisible(reads);
-  var outputTab = document.querySelector('.output-tabs .tab[data-tab="output"]');
-  if (outputTab) outputTab.textContent = reads ? 'Terminal' : 'Output';
+  conversationSourceReads = reads;
+  conversationApplyVisibility(reads);
   conversationGen += 1;
   conversationQueue = Promise.resolve();
   conversationRunCount = null;
@@ -118,6 +117,37 @@ var conversationRunGen = 0;
 var conversationGen = 0;
 var conversationQueue = Promise.resolve();
 var liveSession = null;
+var conversationSourceReads = false;
+var conversationLastSource = null;
+
+// The Terminal is driven by what the program actually reads: the lesson's
+// own source, or whatever the learner typed in the editor.
+function conversationApplyVisibility(reads) {
+  conversationSetVisible(!!reads);
+  var outputTab = document.querySelector('.output-tabs .tab[data-tab="output"]');
+  if (outputTab) outputTab.textContent = reads ? 'Terminal' : 'Output';
+}
+
+function conversationSourceCheck(source) {
+  var text = String(source == null ? '' : source);
+  var reads = /io\.(read_line|read_int|read_float)\s*\(/.test(text);
+  var changed = conversationLastSource != null && text !== conversationLastSource;
+  conversationLastSource = text;
+  conversationSourceReads = reads;
+  if (changed) {
+    // New program: the old dialogue no longer applies.
+    liveReset();
+    conversationQueue = Promise.resolve();
+    conversationRunCount = null;
+    conversationGen += 1;
+    conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
+    setStdinValue('');
+  }
+  var lesson = window.currentLessonData || null;
+  var lessonReads = !!(lesson && typeof lessonReadsInput === 'function' && lessonReadsInput(lesson));
+  conversationApplyVisibility(reads || lessonReads);
+  conversationRender();
+}
 
 function conversationCompile(count) {
   conversationRunCount = count;
@@ -255,6 +285,7 @@ function liveStart(source) {
 }
 
 function conversationActive() {
+  if (conversationSourceReads) return true;
   var lesson = window.currentLessonData || null;
   return !!(lesson && typeof lessonReadsInput === 'function' && lessonReadsInput(lesson));
 }
@@ -449,6 +480,7 @@ async function compile() {
   statusEl.style.display = '';
   var statusSettled = false;
   window._lastSource = source;
+  conversationSourceCheck(source);
 
   if (window.isCurrentLessonLimited && window.isCurrentLessonLimited()) {
     if (window.stopCompileClock) window.stopCompileClock();

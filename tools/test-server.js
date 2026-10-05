@@ -362,6 +362,7 @@ async function main() {
       assert.ok(compiler.body.indexOf('conversationQueue') >= 0, 'conversation runs must be serialized');
       assert.ok(compiler.body.indexOf('conversationTabChanged') >= 0, 'tab changes must coordinate the terminal');
       assert.ok(compiler.body.indexOf("'Terminal'") >= 0, 'the output tab must be renamed for input lessons');
+      assert.ok(compiler.body.indexOf('conversationSourceCheck') >= 0, 'the terminal must follow the typed source');
       const app = await request('GET', '/js/app.js');
       assert.ok(app.body.indexOf('if (!tabName) return;') >= 0, 'non-content tabs must not hide the output panels');
       const lessons = await request('GET', '/js/lessons.js');

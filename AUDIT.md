@@ -2885,3 +2885,26 @@ interactive writes cannot be assumed to reach the child.
 - Verification: WSL suite 75/0/1 (live test skipped under sandbox),
   Windows 67/0/1; production re-check expected: `capabilities.live:false`,
   `/api/live/start` 503, browser terminal working via replay.
+
+## 45. Terminal follows the typed source (2.1.8, 2026-10-05)
+
+Owner report after the 2.1.6 deploy: their own program showed plain output,
+no Terminal, and ran straight through without waiting for input. Two parts:
+
+- The production container still served the pre-gate 2.1.6 build at the
+  time (the 2.1.7 gate deploys with 2.1.8); the broken live attempt made
+  the program run on empty input. Fixed by the 2.1.7 capability gate.
+- Real gap: Terminal visibility was lesson-driven only, so a program the
+  learner typed (in any lesson or free play) never got the Terminal.
+  `compile()` now runs `conversationSourceCheck(source)`: it detects
+  `io.read_line/read_int/read_float` in the actual editor source,
+  shows/renames the Output tab to Terminal accordingly, and resets the
+  dialogue when the source changes so an old conversation cannot leak
+  into a new program.
+- Verified in headless Edge with a custom two-read program typed into a
+  non-input lesson and live start forced to 503 (production-like): the
+  Terminal appeared (`label: Terminal`, `reads: true`), the replay
+  fallback produced the exact interleaved transcript
+  (`What is your name?` / `> Ada` / `Nice to meet you Ada.` /
+  `How old are you?` / `> 36` / `Age 36 is lovely.`) and the input was
+  re-enabled. Suite 67/0/1 with a source-check assertion.
