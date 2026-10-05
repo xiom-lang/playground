@@ -3270,3 +3270,12 @@ absorbed it the same day.
   source. Verified locally: the PowerShell fetcher reported "mirror
   missing ... falling back to the GitHub release" and installed the
   hash-verified v0.64.0 zip.
+- **Production verified (2026-10-05, deployed)**: `/api/version` reports
+  server 2.1.15, toolchain v0.64.0, wasm v0.64.0, stdlib 0.63.1 (516
+  modules); `/api/health` keeps require/active Landlock ABI 4,
+  `keepStdin`, `live.runner=stdbuf`, abuse ok, no sessions. The live
+  fixture streams `Name? -> Ada -> Hello, Ada! -> 7 -> N=7` (exit 0);
+  patience held (`STILL ALIVE` at 46.5 s with a late answer read as
+  `A:late`); the error surface stayed correct (structured error + red
+  badge, clean run without a badge, amber warning badge, replay error);
+  the served `js/wasm-loader.js` reports v0.64.0.
