@@ -1,13 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-05 (**2.1.9 replay-mode labelling + wrapper request**;
-2.1.8 terminal follows typed source; 2.1.7 live gate; v0.63.0 absorbed;
-2.1.0 Lab expansion complete - 37 programs, 10 categories). Branch `main`
-at/after `46322af`, working tree clean, all commits pushed to
+Last updated: 2026-10-05 (**v0.63.1 pin bump in progress in the working
+tree**; ops accepted `--keep-stdin` for live sessions; 2.1.9 in production;
+v0.63.0 absorbed; 2.1.0 Lab expansion complete - 37 programs, 10
+categories). Branch `main` at `421703b`, all commits pushed to
 `origin/main`; CI green (Validate + CodeQL). Production serves
-**2.1.8 + v0.63.0**; 2.1.9 follows on the next pull. Blocked on the
-compiler/ops wrapper fix for true live terminals in production
-(AUDIT 46; full request: `docs/OPS_REQUEST_LIVE_TERMINAL.md`). Toolchain/wasm **v0.63.0**, stdlib 0.62.4 (516 modules),
+**2.1.9 + v0.63.0**. Working tree is intentionally dirty: see section 29
+for the exact in-progress state and the paste-ready next-session prompt. Toolchain/wasm **v0.63.0**, stdlib 0.62.4 (516 modules),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1412,7 +1411,131 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style
    brief for 2.0 (12 assets) and 2.2 (23 assets).
 
-## 28. Handoff 2026-10-04 (current) -- next-session prompt
+## 29. Handoff 2026-10-05 (current) -- next-session prompt
+
+### State
+
+- `main` == `origin/main` == `421703b` (docs: ops request). CI green per
+  commit. Production serves **playground 2.1.9 + toolchain v0.63.0**
+  (2.1.9 = replay-mode label + source-driven Terminal).
+- **Ops accepted `--keep-stdin`** with production-grade evidence (VPS
+  kernel, Landlock ABI 4, acceptance image from `ca5d98c`): verify-sandbox
+  13/13 ok (control, tmp-rw, escape read/write, /proc, /etc, spawn,
+  tcp-connect denied), warm-run 12 ms, `--keep-stdin --probe` unchanged
+  (ABI 4), `-- XIOM_BIN --version` v0.63.0, denial under the flag, and the
+  interactive fixture `prompt -> Ada -> Hello, Ada! -> 7 -> N=7 -> exit 0`
+  in 37 ms (rc=0). Extra probes: one-shot A/B stdout+exit identical; a
+  command after `--` still works; group SIGKILL leaves no orphans; child
+  fds exactly 0,1,2; closed stdin repaired to /dev/null.
+- **IN-PROGRESS, UNCOMMITTED (working tree intentionally dirty)**: pin
+  bump to **v0.63.1** -
+  - `TOOLCHAIN_VERSION` and `WASM_VERSION` already say `v0.63.1`;
+  - Windows `.toolchain` already fetched and hash-verified (v0.63.1);
+  - Linux installed and hash-verified at `/home/lefteris/xiom_v0631/tc`;
+  - **wasm binary is still v0.63.0** - must fetch `xiom-wasm_bg.wasm`
+    (sha256 `1ccc83f7c47c96b38d1be949a27ee4011556d9d42412a9c8c25313481e786477`)
+    and replace it; `xiom-wasm.js` / `xiom-wasm.d.ts` are byte-identical to
+    v0.63.0 (no change); update the `js/wasm-loader.js` comment to v0.63.1;
+  - `c25/run.sh`, suites, audits, generators and docs are NOT yet run for
+    v0.63.1; nothing for this pin is committed.
+- Wrapper facts: the repo carries the wrapper source (`sandbox/xiom-sandbox`,
+  `sandbox/xiom-sandbox.c`); the Windows toolchain zip ships
+  `xiom-sandbox.exe`; the Linux toolchain bin does not (the production
+  wrapper is ops-built into the image).
+- Live sessions exist (`/api/live/*`, AUDIT 43) but are gated: 503 under a
+  wrapper without keep-stdin, `capabilities.live=false` in production; the
+  Terminal replays (restart per answer, labelled) and that path is solid.
+- Durable request: `docs/OPS_REQUEST_LIVE_TERMINAL.md` (accepted by ops).
+
+### Next-session prompt (paste-ready)
+
+```text
+You are the playground session for xiom-lang/playground at E:\xiom-lang\playground.
+
+Read SESSION.md section 29 (this prompt), ROADMAP.md (2.1.6-2.1.9, release
+phase plan, v0.62.3 tracking), AUDIT.md 43-46 and docs/OPS_REQUEST_LIVE_TERMINAL.md,
+then verify state: git fetch; expect main at/after 421703b. The working tree is
+INTENTIONALLY dirty with the v0.63.1 pin bump (TOOLCHAIN_VERSION/WASM_VERSION
+already say v0.63.1; the wasm binary is still v0.63.0). Do not discard it;
+finish it.
+
+Task 1 - finish the v0.63.1 absorption:
+  - Download the v0.63.1 wasm binary and verify sha256
+    1ccc83f7c47c96b38d1be949a27ee4011556d9d42412a9c8c25313481e786477, then
+    replace the root xiom-wasm_bg.wasm (the JS and .d.ts are unchanged);
+    update the js/wasm-loader.js version comment to v0.63.1.
+  - Run tools/compiler-repros/c25/run.sh with /home/lefteris/xiom_v0631/tc
+    (expect "C25 fixed: yes").
+  - Full suite in WSL on v0.63.1 (expect 75/0/1 with the live test skipped
+    under the wrapper, unless Task 2 lands first); lab audit 37/37 with the
+    same toolchain; full lesson audit 412/412 (WSL; refresh
+    tools/lesson-baseline.json tool-driven if needed); generators:
+    regenerate js/stdlib-ref.json and js/limitations.json, check
+    expected outputs.
+  - Docs: AUDIT 47 (v0.63.1 absorption), ROADMAP tracking bullet, SESSION
+    env paths (/home/lefteris/xiom_v0631/tc).
+  - Commit -s (chore(pin): absorb v0.63.1), push, CI green, schedule the
+    production check after the next hourly pull.
+
+Task 2 - enable live sessions (ops accepted --keep-stdin):
+  - Probe wrapper support at server start (e.g.
+    spawnSync(SANDBOX_BIN, ['--keep-stdin', '--probe']) succeeds) and store
+    sandbox.keepStdin.
+  - liveStart: when sandboxed, argv becomes
+    ['--keep-stdin', '--', XIOM_BIN, 'run', '-O0', file]; non-sandbox path
+    unchanged.
+  - Gate: /api/live/start returns 503 only when
+    SANDBOX_MODE/active wrapper lacks keepStdin; capabilities.live =
+    !sandboxActive() || sandbox.keepStdin.
+  - test-server: the live test is already capability-gated; keep it.
+  - Docs (AUDIT 48, ROADMAP tick, SESSION, help.js What's new), bump the app
+    to 2.1.10 (or 2.2.0 if the owner wants the live terminal as the 2.2
+    headline), regenerate catalogs, commit -s, push, CI.
+  - After the deploy: verify live end to end from outside with
+    C:\Users\lefte\AppData\Local\Temp\kilo\lab-verify\live-prod-check.js
+    (expect prompt/answer/exit instead of 503) and the browser
+    multi-input-probe; then tell the owner to ping ops so ops verifies the
+    live terminal from the outside too.
+
+Task 3 (after live): 2.2.0 gamification (levels/streaks/badges) on the
+owner's go-ahead; designer assets remain listed in ROADMAP.
+
+Per tranche: implement; verify execution on Linux/WSL and UI in a real
+browser; update ROADMAP/AUDIT/SESSION; run the full gate (node --check,
+tools/test-server.js, generator --checks, lab audit, lesson audit
+--check-only, execution audits where relevant); commit -s; push; verify CI;
+production deploys by the hourly VPS pull at minute 29.
+
+Constraints: zero-dependency Node tools and ES5 frontend; no bundlers; both
+themes; ASCII docs; never edit .kilo/ worktrees; never weaken the container
+sandbox; do not edit compiler/ops/registry/website repos (relay to the
+owner); never hand-edit generated JSONs (js/stdlib-ref.json,
+js/limitations.json, tools/lesson-baseline.json,
+tools/expected-output-skips.json, lessons/lab/index.json,
+lessons/lab/entries/*); main must stay deployable.
+
+Environment: Windows .toolchain is now v0.63.1 (fetched); Linux audit
+toolchain /home/lefteris/xiom_v0631/tc; WSL default distro is
+docker-desktop, so always `wsl -d Ubuntu -e bash -lc ...`; lab-audit on
+Windows: node tools/lab-audit.js --wsl --wsl-toolchain
+/home/lefteris/xiom_v0631/tc; lesson-audit check-only from Windows takes
+~20-25 min; full lesson audit runs in WSL (~13 min); browser verification
+uses headless Edge ("C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
+driven over CDP from zero-dep Node scripts; live-probe scripts live in
+C:\Users\lefte\AppData\Local\Temp\kilo\lab-verify\ (multi-input-probe.js,
+custom-terminal-probe.js, live-prod-check.js, compare-demo.js,
+entry-spot.js, verify-lab.js).
+```
+
+### Follow-up checklist
+
+1. Task 1: finish the v0.63.1 pin (wasm + acceptance + docs + commit).
+2. Task 2: keep-stdin probe + live enablement + 2.1.10 + production live
+   verification + ops ping.
+3. After live: 2.2.0 gamification on owner go-ahead; designer assets per
+   ROADMAP "Graphics needed".
+
+## 28. Handoff 2026-10-04 (historical) -- next-session prompt
 
 ### State
 
