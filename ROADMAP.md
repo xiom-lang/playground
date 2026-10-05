@@ -590,6 +590,12 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   `.d.ts` unchanged); C25 stays fixed, WSL suite 75/0/1 (live test
   capability-gated), lab 37/37 x2 and full lesson audit 412/412 on the new
   pin (AUDIT 47).
+- [x] **Absorbed in v0.64.0** (2026-10-05): major correctness release
+  (generic receivers, receiver-less `read` gate, confined-unsafe hoist,
+  installed-lib runtime resolution); pins and wasm bumped (JS/.d.ts
+  unchanged), stdlib 0.63.1 with the surface unchanged apart from the
+  `lz4_*_checked` rename; C25 fixed, WSL 76/0, lab 37/37 and lessons
+  412/412 on the new pin (AUDIT 54).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;

@@ -3225,3 +3225,38 @@ went silent while Diagnostics held the details.
   amber `1 warning` badge with the Terminal unchanged; forced replay ->
   the same structured error. Live fixture regression check:
   `Name? -> Ada -> Hello, Ada! -> 7 -> N=7` (exit 0).
+
+## 54. v0.64.0 absorption (2026-10-05)
+
+The compiler lane shipped v0.64.0 - a major correctness release (m195
+angle-bracket generic receivers fix the reflect heap corruption, m196
+gates the receiver-less `read` builtin, m192 hoists confined-unsafe
+contexts, R65 installed-lib runtime resolution, m193 extern dedupe,
+m194 exact float bits, plus a `xiom run` hint) - and the playground
+absorbed it the same day.
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.0**. Assets were
+  fetched from the GitHub release because the mirror
+  (dl.xiom-lang.org) had not published v0.64.0 yet at absorption time;
+  all five artifacts hash-verified against the release `SHA256SUMS`
+  (linux tar.gz `432096e0...`, windows zip `38557d65...`, wasm_bg
+  `754dd19d...`). `xiom-wasm.js`/`xiom-wasm.d.ts` are byte-identical to
+  v0.63.1 (same hashes), so only the wasm binary and the loader comment
+  changed.
+- Surface delta: stdlib manifest **0.62.4 -> 0.63.1**; module/function
+  counts unchanged (516 / 6,535). The one API change is
+  `compress.lz4_compress`/`lz4_decompress` ->
+  `lz4_compress_checked`/`lz4_decompress_checked`; no lesson uses them,
+  so no lesson edits. `js/stdlib-ref.json` and `js/limitations.json`
+  regenerated; index, lab-index and expected-output checks current.
+- Acceptance on the new pin: c25 prints **`C25 fixed: yes`** (cold,
+  cached, `--no-cache`); WSL suite **76/0**; Lab audit **37/37 x2**;
+  full lesson audit **412/412 with zero failures at every level**
+  (expected outputs match); Windows suite 67/0/1.
+- Environment: Linux toolchain installed at
+  `/home/lefteris/xiom_v0640/tc` in WSL for the audits; Windows
+  `.toolchain` refreshed from the release zip (`bin/xiom.exe` reports
+  v0.64.0). Production moves to the pin on the next deploy - the VPS
+  deploy fetches from the mirror, so the mirror must carry v0.64.0
+  first (checked again before deploy; GitHub assets verified either
+  way).
