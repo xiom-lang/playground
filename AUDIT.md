@@ -3120,3 +3120,36 @@ appeared to do nothing.
   diagnostic/documentation callout for `io.stdin()` so it is not mistaken
   for `cin` (`io.read_line`/`io.read_int` are the readers). API-clarity
   only; no functional gap found.
+
+## 51. Live patience, polling activity and the "?" key (2.1.13, 2026-10-05)
+
+Owner follow-up: "it doesn't wait for the second input; it displays both
+and takes only the first - I need it to stop at each read". Isolated with
+measurements:
+
+- The live path itself is correct: with early input (sent 0.5 s after
+  start, during compile) and late input (after the first prompt), a
+  two-read program consumes both answers and blocks at each read
+  (`Got1`/`Got2`), so pre-start input is not EOF-capped.
+- The actual failure was the **idle sweep**: `LIVE_IDLE_MS` was 30 s and
+  `lastActivity` only moved on writes and program output, so a learner
+  thinking at a prompt was killed at ~30 s. Measured on production: a
+  waiting session exited at **33.0 s** with `P?\nA:\n` - the read
+  returned EOF, exactly the owner's "displays both, takes only the
+  first". Earlier browser probes that looked like EOF failures were the
+  same 30 s sweep (the DOM only showed the second prompt in the final
+  flush).
+- Fix: `LIVE_IDLE_MS` 30 s -> **120 s**, `LIVE_WALL_MS` 90 s -> **300 s**,
+  and `/api/live/output` polls now count as activity - an open terminal
+  keeps its session while the client polls (every <=5 s), so idle means
+  "nobody is watching"; the wall limit still reaps every session. This is
+  what makes "stop at each read, wait for me, continue" work at human
+  pacing; 2.1.12's restart already covers answers after an exit.
+- `?` keybinding: the global shortcut opened the overlay even while
+  typing, so `?` (Shift+/) could not be typed in the editor or the answer
+  line. The handler now ignores editable targets (input, textarea,
+  select, contenteditable, CodeMirror); the header ? button still opens
+  the list and the help text says so.
+- Verification: idle-sweep repro (33.0 s exit) and early/late input
+  measurements above; WSL suite 76/0, Windows 67/0/1, generator checks
+  current; catalogs at 2.1.13.

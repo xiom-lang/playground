@@ -872,8 +872,8 @@ function resolveStaticPath(requestUrl) {
 // Limits: 2 sessions per IP, 90s wall clock, 30s idle, bounded output/input.
 // ---------------------------------------------------------------------------
 const LIVE_MAX_SESSIONS_PER_IP = 2;
-const LIVE_WALL_MS = Math.max(10000, Number(process.env.XIOM_LIVE_WALL_MS) || 90000);
-const LIVE_IDLE_MS = Math.max(5000, Number(process.env.XIOM_LIVE_IDLE_MS) || 30000);
+const LIVE_WALL_MS = Math.max(10000, Number(process.env.XIOM_LIVE_WALL_MS) || 300000);
+const LIVE_IDLE_MS = Math.max(5000, Number(process.env.XIOM_LIVE_IDLE_MS) || 120000);
 const LIVE_MAX_OUTPUT = 262144;
 const LIVE_MAX_LINE = 65536;
 const LIVE_MAX_INPUT = 262144;
@@ -1046,6 +1046,11 @@ async function handleLiveRoute(req, res, method, url) {
   if (method === 'GET' && route === '/api/live/output') {
     const target = liveSessions.get(parsed.searchParams.get('id') || '');
     if (!target) { sendJson(res, 404, { error: 'No such session' }); return; }
+    // A polling client is a watching client: count the poll as activity so
+    // a learner thinking at a prompt is not swept while the terminal is
+    // open. Idle now means "nobody is watching"; LIVE_WALL_MS still bounds
+    // the session, and the client stops polling once it exits.
+    if (!target.exited) target.lastActivity = Date.now();
     const after = Math.max(0, Number(parsed.searchParams.get('after')) || 0);
     if (target.output.length <= after && !target.exited) {
       await new Promise((resolve) => {

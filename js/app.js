@@ -284,6 +284,15 @@ function setupTabs() {
 }
 
 // ========== KEYBOARD SHORTCUTS ==========
+function isTypingTarget(target) {
+  if (!target) return false;
+  var tag = target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  if (target.isContentEditable) return true;
+  if (target.closest && target.closest('.CodeMirror, .cm-editor')) return true;
+  return false;
+}
+
 document.addEventListener('keydown', function (e) {
   var lessonsScreen = document.getElementById('lessonsScreen');
   var isLessonsVisible = lessonsScreen && !lessonsScreen.classList.contains('hidden');
@@ -314,7 +323,9 @@ document.addEventListener('keydown', function (e) {
     }
     if (syntaxVisible) toggleSyntax();
   }
-  if (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+  // '?' must be typeable in the editor and the terminal answer line; only
+  // open the shortcuts overlay from a non-editing context.
+  if (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey && !isTypingTarget(e.target)) {
     e.preventDefault();
     toggleShortcuts();
   }

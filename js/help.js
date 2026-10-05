@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'A patient Terminal, and typing "?"',
+    items: [
+      'A live session now stays open while you think: it waits at each read until you answer (up to five minutes) instead of ending after half a minute of silence.',
+      'You can type "?" in the editor and in the answer line; the shortcuts list moved to the header button.',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'Keep answering after the program ends',
     items: [
       'If the program finishes and you type another answer, the Terminal starts it again with your full answer history instead of getting stuck on "running...".',
