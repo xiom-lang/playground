@@ -1,28 +1,22 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-05 (**2.1.4 input fixes** ready; 2.1.3 conversation
-view; v0.63.0 absorbed; 2.1.0 Lab expansion complete - 37 programs, 10
+Last updated: 2026-10-05 (**2.1.5 terminal run panel**; 2.1.4 input fixes;
+v0.63.0 absorbed; 2.1.0 Lab expansion complete - 37 programs, 10
 categories). Branch `main` at/after `46322af`, working tree clean, all
 commits pushed to `origin/main`; CI green (Validate + CodeQL). Production
-serves **2.1.4 + v0.63.0** (verified 2026-10-05 07:37: multi-input
-conversation, Input-tab behavior, compare race, BFS markers, contracts
-SMT); stdlib 0.62.4,
-wasm v0.62.4, `capabilities.format: true`, P1 Landlock (`require`, ABI 4),
-P3 rate limits + external `abuse` monitor, P2 host-side state, the C3
-registry catalog mounted at `/registry-bundle` (352 packages), and the
-repo-pinned VPS deploy (option C). Security P0-P3 fully closed. All
-previous tranches are complete, including the **2.0.0 Algorithm Lab**
-(trace protocol v1, eight primitives, 16 Tier 1 programs, split player
-with `// @step` highlight, compare mode; AUDIT 34), the **2.0.1 polish**
-(4 steps/s default, animated canvas transitions, reduced-motion-safe;
-AUDIT 34.5) and the **2.0.2 mobile pass** (highlight strips in the phone
-editor with reveal-on-step, edit-and-Run verified at 390x844; AUDIT 34.6).
-C25 is absorbed in the **v0.62.4** pin bump (2026-10-04): `c25/run.sh`
-prints `C25 fixed: yes`, the fresh-HOME workaround is deleted, and
-warm-cache stdin runs share the cache (AUDIT 35). The next milestone is
-**2.1.0 - Lab expansion** (Tier 2 algorithms): the owner gave the go-ahead
-on 2026-10-04 and **wave A** (merge/quick/heap sort) has landed; waves B-D
-are listed in ROADMAP 2.1.0. Handoff detail and the ready-to-paste
+serves **2.1.4 + v0.63.0** (verified 07:37); 2.1.5 follows on the next
+pull. Toolchain/wasm **v0.63.0**, stdlib 0.62.4 (516 modules),
+`capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
+limits + external `abuse` monitor, P2 host-side state, the C3 registry
+catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
+VPS deploy (option C). Security P0-P3 fully closed. All previous tranches
+are complete: **2.0.0 Algorithm Lab** (AUDIT 34), 2.0.1 polish (34.5),
+2.0.2 mobile (34.6), 2.0.3 input lessons (36), **2.1.0 Lab expansion**
+waves A-D (34.7-34.10), **v0.62.4 absorption** (35), **v0.63.0
+absorption** (40), 2.1.1 contrast (37), 2.1.2 fair compare inputs (38),
+2.1.3 conversation view (39), 2.1.4 input fixes (41) and 2.1.5 terminal
+run panel (42). The true live-terminal runner (streaming stdin/stdout) is
+scoped for 2.2.0 in ROADMAP. Handoff detail and the ready-to-paste
 next-session prompt: section 28.
 Read with `ROADMAP.md` (phase plan + specs), `AUDIT.md` (findings and
 verification records), `README.md` and `DEPLOY.md`.

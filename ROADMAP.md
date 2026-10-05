@@ -143,6 +143,16 @@ the sections below hold the detailed specs.
   conversation answers, and the conversation hides while it is open
   (AUDIT 41).
 
+### 2.1.5 -- Terminal run panel (COMPLETE 2026-10-05)
+
+- [x] The Input tab is removed; for lessons that read input the Output
+  tab is renamed **Terminal** with one shared scrollback (program lines +
+  `>` answers), a persistent prompt hinting the program's last line, and
+  a "running..." indicator (AUDIT 42).
+- [ ] Follow-up (queued for 2.2.0): a streaming runner for true live
+  stdin/stdout (program pauses at a read), sandboxed with per-IP slots
+  and idle/wall timeouts.
+
 ### 2.2.0 -- Gamified learning
 
 - Visible completion (level rings/percentages on the landing), light

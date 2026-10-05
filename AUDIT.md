@@ -2793,3 +2793,39 @@ merged into the output panel. Two root causes:
   re-enabled, INPUT toggle shows the stdin row with both answers while the
   output panel stays visible, toggling back restores the chat; suite
   67/0/1 with new source-level assertions for the queue and tab guard.
+
+## 42. Terminal run panel; stdin() diagnosis (2.1.5, 2026-10-05)
+
+Owner report: their example still "only took the first read_line".
+Diagnosed by running the exact program on the v0.63.0 pin with real
+newline input (`Ada\n25\n`):
+
+```
+What is your name
+Nice to meet you Ada
+Whats your Age Ada?
+0 lovely age.
+```
+
+`io.read_line()` read the first line correctly; the second value was
+`age = stdin()` - `stdin()` is a builtin that returned `0`, not a line
+reader, so the program never consumed the second line. The playground
+delivered both input lines; the fix is `io.read_int()` with a `Result`
+match (as L1-51/L7-10 teach). No playground bug in that example.
+
+Owner then asked to drop the Input tab and turn the Output tab into a
+terminal-style surface. Delivered the look now (streaming runner queued):
+
+- The Input tab button is removed; the hidden textarea remains only as
+  the stdin data store for runs. `setupStdinForLesson` renames the Output
+  tab to **Terminal** for input lessons (and back to Output otherwise).
+- The chat panel is restyled as a terminal: `TERMINAL` header, void
+  scrollback, `>` answer prefix, the program's last line as the prompt
+  placeholder, autofocus, and a "running..." pending line while a run is
+  in flight (input disabled, re-enabled after).
+- Verified in headless Edge: multi-input transcript
+  (`> Ada | > 36 | Hello, Ada! | You are 36.`), `stdinToggle` gone, tab
+  label `Terminal`, terminal visible; suite 67/0/1.
+- True live reads (process pauses at a read and resumes on your input)
+  need a streaming stdin/stdout runner; scoped in ROADMAP 2.2.0 with
+  sandbox slots and timeouts.

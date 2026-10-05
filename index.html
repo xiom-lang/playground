@@ -273,7 +273,6 @@
           <button class="tab" data-tab="diag">Diagnostics</button>
           <button class="tab" data-tab="tokens">Tokens</button>
           <button class="tab" data-tab="contracts">Contracts</button>
-          <button id="stdinToggle" class="tab stdin-toggle" type="button" onclick="toggleStdin()" title="Program input (stdin)">Input</button>
         </div>
         <div id="stdinRow" class="stdin-row hidden">
           <label class="stdin-label" for="stdinInput">Program input (stdin)</label>
@@ -286,8 +285,8 @@
         </div>
         <div id="conversation" class="conversation hidden" aria-label="Conversation with your program">
           <div class="conversation-head">
-            <span class="conversation-title">Conversation</span>
-            <span id="conversationHint" class="conversation-hint">This program reads input: answer it here and the dialogue stays in view.</span>
+            <span class="conversation-title">Terminal</span>
+            <span id="conversationHint" class="conversation-hint">Type an answer and press Enter; the program runs with your input.</span>
             <button id="conversationRestart" class="conversation-restart" type="button" onclick="conversationRestart()">Restart</button>
           </div>
           <div id="conversationLog" class="conversation-log" aria-live="polite"></div>

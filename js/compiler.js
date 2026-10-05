@@ -71,10 +71,12 @@ function setupStdinForLesson(lesson) {
     stdinAutoOpened = false;
   }
   conversationSetVisible(reads);
+  var outputTab = document.querySelector('.output-tabs .tab[data-tab="output"]');
+  if (outputTab) outputTab.textContent = reads ? 'Terminal' : 'Output';
   conversationGen += 1;
   conversationQueue = Promise.resolve();
   conversationRunCount = null;
-  conversationState = { answers: [], outputs: [] };
+  conversationState = { answers: [], outputs: [], running: false };
   conversationRender();
 }
 
@@ -109,7 +111,7 @@ function clearStdin() {
 // more input line; the transcript builder keeps the dialogue in order.
 // ---------------------------------------------------------------------------
 
-var conversationState = { answers: [], outputs: [] };
+var conversationState = { answers: [], outputs: [], running: false };
 var conversationRunCount = null;
 var conversationRunGen = 0;
 var conversationGen = 0;
@@ -127,7 +129,7 @@ function conversationActive() {
 }
 
 function conversationReset() {
-  conversationState = { answers: [], outputs: [] };
+  conversationState = { answers: [], outputs: [], running: false };
   conversationRender();
 }
 
@@ -148,6 +150,12 @@ function conversationRender() {
     line.textContent = entries[i].text;
     host.appendChild(line);
   }
+  if (conversationState.running) {
+    var pending = document.createElement('div');
+    pending.className = 'conversation-line pending';
+    pending.textContent = 'running\u2026';
+    host.appendChild(pending);
+  }
   var hint = document.getElementById('conversationHint');
   var input = document.getElementById('conversationInput');
   var last = conversationState.outputs.length > 0
@@ -158,23 +166,26 @@ function conversationRender() {
     input.placeholder = last && last.length <= 60 ? last : 'Type your answer, press Enter';
   }
   if (hint) {
-    hint.textContent = conversationState.answers.length === 0
-      ? 'This program reads input: answer it here and the dialogue stays in view.'
-      : 'Answer ' + (conversationState.answers.length + 1) + ' - each answer re-runs the program with it.';
+    hint.textContent = conversationState.running
+      ? 'Running the program with your answer\u2026'
+      : (conversationState.answers.length === 0
+        ? 'Type an answer and press Enter; the program runs with your input.'
+        : 'Answer ' + (conversationState.answers.length + 1) + ' - each answer re-runs the program with it.');
   }
   host.scrollTop = host.scrollHeight;
 }
 
 function conversationOnRun(run) {
   if (!conversationActive()) return;
+  conversationState.running = false;
   var count = conversationRunCount == null ? conversationState.answers.length : conversationRunCount;
   var stale = conversationRunCount != null && conversationRunGen !== conversationGen;
   conversationRunCount = null;
   if (!stale) {
     var output = run.runOutput != null ? run.runOutput : String(run.output || '');
     conversationState.outputs[count] = output;
-    conversationRender();
   }
+  conversationRender();
   var input = document.getElementById('conversationInput');
   if (input) {
     input.disabled = false;
@@ -192,6 +203,7 @@ function conversationSubmit(event) {
   conversationState.answers.push(line);
   input.value = '';
   input.disabled = true;
+  conversationState.running = true;
   conversationRender();
   // Serialize runs: each answer compiles from the answers snapshot taken when
   // its turn comes, so fast typing cannot mis-key the transcript outputs.
@@ -213,7 +225,7 @@ function conversationSubmit(event) {
 }
 
 function conversationRestart() {
-  conversationState = { answers: [], outputs: [] };
+  conversationState = { answers: [], outputs: [], running: false };
   conversationQueue = Promise.resolve();
   conversationRunCount = null;
   setStdinValue('');

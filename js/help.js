@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'A Terminal in the run panel',
+    items: [
+      'For lessons that read input, the Output tab is now a Terminal: the program\'s lines and your answers share one scrollback with a > prompt, and the separate Input tab is gone.',
+      'While the program runs the prompt shows "running..." and disables; every answer re-runs the program with it, and the prompt suggests the program\'s last line.',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'Input fixes',
     items: [
       'Answering several questions in a row now always keeps every answer (fast typing used to race the runs); the answer box disables while the program runs and refocuses after.',

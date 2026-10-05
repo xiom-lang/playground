@@ -351,17 +351,19 @@ async function main() {
       assert.ok(res.body.indexOf('XIOM') >= 0 && res.body.indexOf('Playground') >= 0);
     });
 
-    await okAsync('the run panel ships the stdin box', async () => {
+    await okAsync('the run panel ships the terminal (stdin removed as a tab)', async () => {
       const page = await request('GET', '/index.html');
       assert.ok(page.body.indexOf('stdinInput') >= 0, 'stdinInput missing');
-      assert.ok(page.body.indexOf('toggleStdin()') >= 0, 'stdin toggle missing');
+      assert.ok(page.body.indexOf('id="stdinToggle"') === -1, 'the Input tab must be removed');
+      assert.ok(page.body.indexOf('conversationInput') >= 0, 'terminal input missing');
       const compiler = await request('GET', '/js/compiler.js');
       assert.ok(compiler.body.indexOf('readStdinValue') >= 0, 'stdin not wired into Run');
-      assert.ok(compiler.body.indexOf('setupStdinForLesson') >= 0, 'input lessons must auto-open the Input box');
+      assert.ok(compiler.body.indexOf('setupStdinForLesson') >= 0, 'input lessons must set up the terminal');
       assert.ok(compiler.body.indexOf('conversationQueue') >= 0, 'conversation runs must be serialized');
-      assert.ok(compiler.body.indexOf('conversationTabChanged') >= 0, 'tab changes must coordinate the conversation');
+      assert.ok(compiler.body.indexOf('conversationTabChanged') >= 0, 'tab changes must coordinate the terminal');
+      assert.ok(compiler.body.indexOf("'Terminal'") >= 0, 'the output tab must be renamed for input lessons');
       const app = await request('GET', '/js/app.js');
-      assert.ok(app.body.indexOf('if (!tabName) return;') >= 0, 'the Input toggle must not hide the output panels');
+      assert.ok(app.body.indexOf('if (!tabName) return;') >= 0, 'non-content tabs must not hide the output panels');
       const lessons = await request('GET', '/js/lessons.js');
       assert.ok(lessons.body.indexOf('setupStdinForLesson') >= 0, 'lesson load must call the stdin setup');
       const theme = await request('GET', '/css/theme.css');
