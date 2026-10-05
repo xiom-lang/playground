@@ -172,7 +172,9 @@ the sections below hold the detailed specs.
   stdin through to the child without reading it (one-shot callers already
   write all input and close; a `--keep-stdin` flag is fine). Then drop the
   503 gate, `capabilities.live` turns true, and production switches to
-  live pause-at-read terminals automatically.
+  live pause-at-read terminals automatically. Full request with the
+  threat model and acceptance criteria:
+  `docs/OPS_REQUEST_LIVE_TERMINAL.md`.
 
 ### 2.1.8 -- Terminal follows the typed source (COMPLETE 2026-10-05)
 

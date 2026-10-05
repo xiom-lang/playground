@@ -2931,7 +2931,9 @@ pause-at-read possible or are we working around the architecture?
 - Request to the compiler/ops lane (cannot be fixed in this repo): make
   the sandbox wrapper pass stdin through to the child **without reading
   it** (one-shot callers already write all input and close), optionally
-  behind a flag such as `--keep-stdin`. Then `/api/live/start` can drop
+  behind a flag such as `--keep-stdin`. Full request with the threat
+  model and acceptance criteria: `docs/OPS_REQUEST_LIVE_TERMINAL.md`.
+  Then `/api/live/start` can drop
   its 503 gate, `capabilities.live` turns true, and production gets true
   pause-at-read terminals automatically.
 - UX honesty meanwhile: the Terminal labels replay mode ("replay mode:
