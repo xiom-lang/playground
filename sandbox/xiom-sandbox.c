@@ -19,9 +19,18 @@
 //               of /dev; TCP connect and bind are denied on ABI >= 4.
 //
 // Usage:
-//   xiom-sandbox --probe                print ABI and restrict_self result
-//   xiom-sandbox -- CMD [ARG...]        apply the policy, exec CMD
-//   xiom-sandbox ARG...                 exec $XIOM_SANDBOX_TARGET (or xiom)
+//   xiom-sandbox [--keep-stdin] --probe     print ABI and restrict_self result
+//   xiom-sandbox [--keep-stdin] -- CMD ...  apply the policy, exec CMD
+//   xiom-sandbox [--keep-stdin] ARG...      exec $XIOM_SANDBOX_TARGET (or xiom)
+//
+// --keep-stdin (default off): interactive-session contract. The inherited
+// stdin fd 0 is passed to the child EXACTLY as-is -- never read, never
+// closed early, never replaced. Only a CLOSED fd 0 is repaired with
+// /dev/null so exec does not start with an EBADF descriptor. Without the
+// flag the one-shot path is byte-identical (no stdin handling at all);
+// with it, the child stays in this process image via exec, so the
+// playground's process-group SIGKILL reaches the compiler and the user
+// program with no orphans.
 //
 // Exit codes: 0 ok; 2 usage; 125 policy application failed; 126 Landlock
 // unavailable; 127 exec failed.
@@ -190,7 +199,40 @@ static void print_probe(int abi, int code) {
   }
 }
 
+/* --keep-stdin: guarantee the child starts with a valid, inherited fd 0.
+ * An OPEN stdin (pipe / TTY / file -- the live-terminal shapes) is left
+ * untouched: no read, no close, no substitution. Only a CLOSED fd 0 is
+ * repaired with /dev/null, because every read would otherwise fail EBADF.
+ * Runs BEFORE the Landlock self-restriction; /dev/null is allowed by the
+ * policy anyway, so either order is safe. */
+static void preserve_stdin(void) {
+  if (fcntl(STDIN_FILENO, F_GETFD) != -1 || errno != EBADF) return;
+  int fd = open("/dev/null", O_RDONLY);
+  if (fd < 0) return;
+  if (fd != STDIN_FILENO) {
+    if (dup2(fd, STDIN_FILENO) == -1) {
+      /* Leave it closed; exec still runs (reads fail EBADF as before). */
+    }
+    close(fd);
+  }
+}
+
 int main(int argc, char **argv) {
+  /* Parse --keep-stdin out of the wrapper's own argument tail (stop at the
+   * command separator: `-- cmd --keep-stdin` is a COMMAND argument and must
+   * survive). Preserves argv order for every other token. */
+  int keep_stdin = 0;
+  for (int i = 1; i < argc;) {
+    if (strcmp(argv[i], "--") == 0) break;
+    if (strcmp(argv[i], "--keep-stdin") == 0) {
+      keep_stdin = 1;
+      for (int j = i; j + 1 < argc; j++) argv[j] = argv[j + 1];
+      argc--;
+    } else {
+      i++;
+    }
+  }
+
   if (argc >= 2 && strcmp(argv[1], "--probe") == 0) {
     int abi = landlock_abi();
     int code = abi < 1 ? EXIT_NO_LANDLOCK : apply_policy();
@@ -217,6 +259,8 @@ int main(int argc, char **argv) {
     wrapped[argc] = NULL;
     exec_argv = wrapped;
   }
+
+  if (keep_stdin) preserve_stdin();
 
   int code = apply_policy();
   if (code != 0) {

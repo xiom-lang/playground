@@ -102,9 +102,21 @@ Modes, from `XIOM_SANDBOX` (set to `require` in `docker-compose.yml`):
 `/api/health` reports `sandbox: {mode, active, landlock, error}`; ops reads
 it after deploys. The denial suite is `tools/verify-sandbox.js` (control,
 `/tmp` read-write, escape read/write, `/proc`, `/etc`, spawned shell, TCP,
-warm-run timing); CI runs it on every push and the nightly job executes all
-410 lessons under the wrapper. The env whitelist from P0
+warm-run timing, plus the `--keep-stdin` canary/denial/interactive probes);
+CI runs it on every push and the nightly job executes all 410 lessons under
+the wrapper. The env whitelist from P0
 (`server.js`, `userChildEnv()`) remains defense in depth.
+
+`--keep-stdin` (default off, added 2026-10-05 for live Terminal sessions):
+the wrapper passes the inherited stdin fd 0 to the executed child exactly
+as-is -- never read, never closed early, never substituted; only a CLOSED
+fd 0 is repaired with `/dev/null` so exec does not start with an EBADF
+descriptor. The child stays in the wrapper's process image via `exec`, in
+the same process group, so the server's group SIGKILL reaches the compiler
+and the user program with no orphans. Without the flag the one-shot path is
+byte-identical. Supported spellings: `xiom-sandbox --keep-stdin -- CMD ...`,
+`xiom-sandbox --keep-stdin --probe`, and the capability probe
+`xiom-sandbox --keep-stdin -- XIOM_BIN --version`.
 
 In-container isolation limits before P1 (audited 2026-09-25, AUDIT section
 28): the server and every submitted program share one uid, so a program

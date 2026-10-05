@@ -31,7 +31,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { spawnSync } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 
 const REPO = path.resolve(__dirname, '..');
 const WORK = path.join(os.tmpdir(), 'xiom-sandbox-verify');
@@ -85,13 +85,13 @@ function resolveSetup(opts) {
   return { sandbox, bin, stdlib };
 }
 
-function runProgram(ctx, name, source, timeoutMs) {
+function runProgram(ctx, name, source, timeoutMs, sandboxArgs) {
   fs.mkdirSync(WORK, { recursive: true });
   fs.mkdirSync(HOME, { recursive: true });
   const file = path.join(WORK, name + '.xi');
   fs.writeFileSync(file, source, 'utf8');
   const started = Date.now();
-  const proc = spawnSync(ctx.sandbox, ['--', ctx.bin, 'run', file], {
+  const proc = spawnSync(ctx.sandbox, (sandboxArgs || []).concat(['--', ctx.bin, 'run', file]), {
     encoding: 'utf8',
     timeout: timeoutMs || 60000,
     env: {
@@ -192,10 +192,95 @@ function runTcpProbe(ctx, probe) {
   };
 }
 
-function main() {
+// Interactive fixture for `--keep-stdin`: a child that prints a prompt, BLOCKS
+// on a read, echoes the answer, blocks on a second read, then exits. The
+// driver only writes each line after seeing the previous output, so a wrapper
+// that reads, closes, or substitutes stdin cannot produce the full sequence.
+function runInteractive(ctx, timeoutMs) {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const script =
+      'printf "Name? "; IFS= read -r a; printf "Hello, %s!\\n" "$a"; ' +
+      'IFS= read -r b; printf "N=%s\\n" "$b"';
+    const child = spawn(ctx.sandbox, ['--keep-stdin', '--', '/bin/sh', '-c', script], {
+      cwd: os.tmpdir(),
+      env: { PATH: process.env.PATH || '/usr/bin:/bin', HOME: HOME, TMPDIR: os.tmpdir() },
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    let out = '';
+    let err = '';
+    let answered = 0;
+    let prompted = false;
+    let settled = false;
+    const finish = (extra) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try { child.kill('SIGKILL'); } catch { /* already gone */ }
+      resolve({
+        status: -1,
+        stdout: out,
+        stderr: err + (extra ? ' [' + extra + ']' : ''),
+        ms: Date.now() - started,
+      });
+    };
+    const timer = setTimeout(() => finish('timeout'), timeoutMs || 15000);
+    child.on('error', (e) => { err += String(e && e.message ? e.message : e); finish('spawn-error'); });
+    child.stderr.on('data', (d) => { err += d; });
+    child.stdout.on('data', (d) => {
+      out += String(d);
+      if (!prompted && out.indexOf('Name? ') >= 0) {
+        prompted = true;
+        child.stdin.write('Ada\n');
+      }
+      if (prompted && answered === 0 && out.indexOf('Hello, Ada!') >= 0) {
+        answered = 1;
+        child.stdin.write('7\n');
+      }
+      if (answered === 1 && out.indexOf('N=7') >= 0) {
+        answered = 2;
+        child.stdin.end();
+      }
+    });
+    child.on('close', (code, signal) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({
+        status: code == null ? -1 : code,
+        stdout: out,
+        stderr: err + (signal ? ' [signal ' + signal + ']' : ''),
+        ms: Date.now() - started,
+      });
+    });
+  });
+}
+
+async function runInteractiveProbe(ctx, results) {
+  const run = await runInteractive(ctx);
+  const sequence = run.stdout;
+  const pass =
+    run.status === 0 &&
+    sequence.indexOf('Name? ') >= 0 &&
+    sequence.indexOf('Hello, Ada!') >= 0 &&
+    sequence.indexOf('N=7') >= 0;
+  results.push({
+    probe: 'keep-stdin',
+    pass: pass,
+    detail: pass
+      ? 'prompt -> Ada -> Hello, Ada! -> 7 -> N=7 -> exit 0 (' + run.ms + 'ms)'
+      : 'expected the interactive sequence, got: ' +
+        JSON.stringify((sequence || run.stderr).trim()).slice(0, 240) +
+        ' exit=' + run.status,
+    ms: run.ms,
+  });
+  return pass;
+}
+
+async function main() {
   if (process.platform !== 'linux') {
     console.log('verify-sandbox: skipped (Landlock is Linux-only; platform=' + process.platform + ')');
-    return;
+    return Promise.resolve();
   }
   const opts = parseArgs(process.argv.slice(2));
   const ctx = resolveSetup(opts);
@@ -326,6 +411,41 @@ function main() {
     });
   }
 
+  // 8. --keep-stdin default-off contract: canary, toolchain probe and the
+  //    denial policy are unchanged; interactive stdin passes through.
+  const flagProbe = spawnSync(ctx.sandbox, ['--keep-stdin', '--probe'], {
+    encoding: 'utf8', timeout: 10000,
+  });
+  let flagAbi = 0;
+  try { flagAbi = Number(JSON.parse(flagProbe.stdout).landlock_abi) || 0; } catch { flagAbi = 0; }
+  results.push({
+    probe: 'flag-canary',
+    pass: flagProbe.status === 0 && flagAbi === abi,
+    detail: flagProbe.status === 0 && flagAbi === abi
+      ? '--keep-stdin --probe unchanged (ABI ' + flagAbi + ')'
+      : 'probe changed under the flag: ' + JSON.stringify((flagProbe.stdout || flagProbe.stderr).trim()).slice(0, 200),
+    ms: 0,
+  });
+  const flagVersion = spawnSync(ctx.sandbox, ['--keep-stdin', '--', ctx.bin, '--version'], {
+    encoding: 'utf8',
+    timeout: 30000,
+    env: { PATH: process.env.PATH || '/usr/bin:/bin', HOME: HOME, TMPDIR: os.tmpdir() },
+  });
+  results.push({
+    probe: 'flag-version',
+    pass: flagVersion.status === 0,
+    detail: flagVersion.status === 0
+      ? String(flagVersion.stdout || '').trim().split('\n')[0] || '-- XIOM_BIN --version ok'
+      : 'version probe failed: ' + JSON.stringify((flagVersion.stderr || '').trim()).slice(0, 200),
+    ms: 0,
+  });
+  checkPatch('flag-denial', runProgram(ctx, 'flag-escape-read',
+    'use xiom.io;\nfn main() {\n' +
+    '  match io.read_file(' + xiomString(canary) + ') {\n' +
+    '    Ok(s) => io.println("escaperead=LEAK"),\n    Err(e) => io.println("escaperead=denied"),\n  }\n}\n', 60000, ['--keep-stdin']),
+    'escaperead=denied', results);
+  await runInteractiveProbe(ctx, results);
+
   const escaped = results.some((r) => !r.pass);
   if (!opts.quiet) {
     console.log('sandbox:   ' + ctx.sandbox);
@@ -340,4 +460,7 @@ function main() {
   process.exit(escaped ? 1 : 0);
 }
 
-main();
+main().catch((err) => {
+  console.error('verify-sandbox: ' + (err && err.stack ? err.stack : err));
+  process.exit(1);
+});
