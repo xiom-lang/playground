@@ -166,6 +166,18 @@ function liveReset() {
   liveSession = null;
 }
 
+// The program finished (or the session died) but the learner kept answering:
+// start a fresh live session and replay the whole answer history, exactly
+// like the replay path does, so the terminal never stalls on "running...".
+function liveRestartWithHistory() {
+  liveReset();
+  conversationState.live = false;
+  conversationState.liveStarting = true;
+  var ed = window.editor;
+  var source = ed ? ed.getValue() : (window.getMobileCodeValue ? window.getMobileCodeValue() : '');
+  liveStart(source);
+}
+
 function liveAppendText(text) {
   var entries = conversationState.liveEntries;
   var parts = String(text).split('\n');
@@ -378,6 +390,8 @@ function conversationSubmit(event) {
     conversationRender();
     // Send only when the session is alive and every earlier answer was sent;
     // answers queued while the session started are flushed by liveStart.
+    // When the program has already finished, restart with the full history
+    // instead of leaving the answer stranded behind "running...".
     if (liveSession && !liveSession.exited && conversationState.liveSent === conversationState.answers.length - 1) {
       conversationState.liveSent = conversationState.answers.length;
       fetch('/api/live/input', {
@@ -385,6 +399,12 @@ function conversationSubmit(event) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: liveSession.id, line: line }),
       }).catch(function () { /* the poll will surface the exit */ });
+      input.disabled = false;
+      input.focus();
+    } else if (!liveSession || liveSession.exited) {
+      liveRestartWithHistory();
+    } else {
+      // Defensive: never leave the terminal unable to accept input.
       input.disabled = false;
       input.focus();
     }

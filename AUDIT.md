@@ -3077,3 +3077,35 @@ waiting for an answer. Root cause and fix:
   reading APIs are `io.read_line()` / `io.read_int()` (as the lessons
   teach). No playground change; noted here so the question is answerable
   from the record.
+
+## 50. Live terminal: answering after the program exits (2.1.12, 2026-10-05)
+
+Owner report after the 2.1.11 deploy: "you can't input anything; the
+program executes once, you see the whole output, and it doesn't let you
+input". Reproduced in headless Edge against production: once a live
+session has exited, the next submitted answer still took the live branch,
+was appended to the transcript, and was never sent - no new session
+started, `running` stayed true, and the terminal showed `running...`
+forever. The input element itself was re-enabled by the render, so typing
+appeared to do nothing.
+
+- Cause: `conversationSubmit`'s live branch only had a path for an alive
+  session (`liveSession && !liveSession.exited && liveSent ===
+  answers.length - 1`). Every other state fell through with no send, no
+  restart and no state cleanup - the stranded `running` flag also matched
+  the owner's `stdin()` program, which finishes on its first run.
+- Fix: when the session is gone or exited, `liveRestartWithHistory()`
+  closes it, flips back to the live-start path and replays the whole
+  answer history through a fresh session (the same semantics replay mode
+  uses, in live form); a defensive branch re-enables the input if the
+  session is alive but an earlier answer is still in flight.
+- Verification: headless Edge against a local sandboxed server - after
+  the program exits, a third answer (`again`) restarts the session;
+  `running` clears, `liveSent` reaches 3 and the replayed transcript
+  (`Hello, Ada!` / `You are 36.`) appears; no console errors. WSL suite
+  76/0, Windows 67/0/1, generator checks current.
+- Ops external verification (2026-10-05, production 2.1.11): live session
+  driven from an external host - start 200, `Name?` streamed at 1.81 s,
+  `Ada -> Hello, Ada!` at 1.96 s, `7 -> N=7` at 2.11 s, exit 0 at
+  2.18 s, `close` ok, `live.sessions:0` after (no leak), sandbox
+  require/ABI 4, `keepStdin:true`. Ops side complete.

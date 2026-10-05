@@ -9,6 +9,13 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'Keep answering after the program ends',
+    items: [
+      'If the program finishes and you type another answer, the Terminal starts it again with your full answer history instead of getting stuck on "running...".',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'A Terminal that streams like one',
     items: [
       'Live sessions now show the program\'s prompts the moment they print, and each answer goes straight to the running program - no waiting, no restart.',
