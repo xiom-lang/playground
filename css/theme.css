@@ -1342,6 +1342,8 @@ html.light-mode .output-content {
   color: #fff;
   vertical-align: middle;
 }
+.tab-badge.err { background: var(--error); }
+.tab-badge.warn { background: var(--amber); color: #14161c; }
 
 .output-content {
   background: var(--void);
@@ -2658,6 +2660,7 @@ a:focus-visible,
 .conversation-line.you { color: var(--indigo); }
 .conversation-line.you::before { content: '> '; color: var(--low); }
 .conversation-line.pending { color: var(--low); font-style: italic; }
+.conversation-line.err { color: #ff8a98; }
 .conversation-form {
   display: flex;
   align-items: baseline;

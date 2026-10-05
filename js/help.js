@@ -9,6 +9,14 @@
 var XIOM_WHATS_NEW = [
   {
     date: '2026-10-05',
+    title: 'Errors show up in the Terminal',
+    items: [
+      'If your program does not compile, the first error now appears in the Terminal - no more silent runs. The full list is in Diagnostics, whose tab shows a red count badge.',
+      'Warnings stay in Diagnostics only, with an amber count badge, so the Terminal keeps to what blocks the program.',
+    ],
+  },
+  {
+    date: '2026-10-05',
     title: 'Run starts the Terminal live',
     items: [
       'Press Run on a program that reads input and it starts in the Terminal and stops at its first read, waiting for you - no more full run with empty answers first.',

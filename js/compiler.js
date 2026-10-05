@@ -84,7 +84,7 @@ function setupStdinForLesson(lesson) {
   conversationQueue = Promise.resolve();
   conversationRunCount = null;
   liveReset();
-  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
+  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false, errorLine: null, liveDiags: [] };
   conversationRender();
 }
 
@@ -119,7 +119,7 @@ function clearStdin() {
 // more input line; the transcript builder keeps the dialogue in order.
 // ---------------------------------------------------------------------------
 
-var conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
+var conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false, errorLine: null, liveDiags: [] };
 var conversationRunCount = null;
 var conversationRunGen = 0;
 var conversationGen = 0;
@@ -148,7 +148,7 @@ function conversationSourceCheck(source) {
     conversationQueue = Promise.resolve();
     conversationRunCount = null;
     conversationGen += 1;
-    conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
+    conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false, errorLine: null, liveDiags: [] };
     setStdinValue('');
   }
   var lesson = window.currentLessonData || null;
@@ -204,6 +204,32 @@ function conversationTryRunLive(source) {
   return true;
 }
 
+// Compact error text for the Terminal: the first blocking diagnostic plus a
+// pointer to Diagnostics when there are more; falls back to the first line
+// of compiler stderr for runtime failures. Warnings never come here.
+function conversationErrorSummary(diags, fallbackText) {
+  var errors = (diags || []).filter(isErrorDiagnostic);
+  if (errors.length) {
+    var d = errors[0];
+    var line = 'error[' + d.code + '] line ' + d.line + ':' + (d.col || 1) + ' - ' + d.message;
+    if (errors.length > 1) line += ' (+' + (errors.length - 1) + ' more in Diagnostics)';
+    return line;
+  }
+  var lines = String(fallbackText || '').trim().split('\n').filter(function (s) { return s.trim(); });
+  if (!lines.length) return '';
+  var first = lines[0].trim();
+  if (first.length > 160) first = first.slice(0, 157) + '...';
+  return lines.length > 1 ? first + ' (+' + (lines.length - 1) + ' more lines in Diagnostics)' : first;
+}
+
+function conversationNoteErrors(diags) {
+  conversationState.liveDiags = (diags || []).filter(isErrorDiagnostic);
+}
+
+function conversationShowLiveFailure(payload) {
+  conversationState.errorLine = conversationErrorSummary(conversationState.liveDiags, payload && payload.stderr);
+}
+
 function liveAppendText(text) {
   var entries = conversationState.liveEntries;
   var parts = String(text).split('\n');
@@ -241,6 +267,13 @@ function livePoll() {
         if (payload.exited) {
           session.exited = true;
           conversationState.running = false;
+          if (payload.code !== 0) {
+            // Compile errors or a runtime crash: surface the first message in
+            // the Terminal; the full list lives in Diagnostics.
+            conversationShowLiveFailure(payload);
+          } else {
+            conversationState.errorLine = null;
+          }
           conversationRender();
           var input = document.getElementById('conversationInput');
           if (input) {
@@ -273,6 +306,8 @@ function liveStart(source) {
       liveSession = { id: payload.id, after: 0 };
       conversationState.live = true;
       conversationState.liveStarting = false;
+      conversationState.errorLine = null;
+      conversationState.liveDiags = [];
       // Flush every answer so far, in order (covers fast successive submits).
       var lines = conversationState.answers.slice();
       var chain = Promise.resolve();
@@ -333,7 +368,7 @@ function conversationActive() {
 
 function conversationReset() {
   liveReset();
-  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
+  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false, errorLine: null, liveDiags: [] };
   conversationRender();
 }
 
@@ -355,6 +390,12 @@ function conversationRender() {
     line.className = 'conversation-line ' + entries[i].kind;
     line.textContent = entries[i].text;
     host.appendChild(line);
+  }
+  if (conversationState.errorLine) {
+    var errLine = document.createElement('div');
+    errLine.className = 'conversation-line err';
+    errLine.textContent = conversationState.errorLine;
+    host.appendChild(errLine);
   }
   if (conversationState.running) {
     var pending = document.createElement('div');
@@ -393,6 +434,13 @@ function conversationOnRun(run) {
   if (!stale) {
     var output = run.runOutput != null ? run.runOutput : String(run.output || '');
     conversationState.outputs[count] = output;
+    // Replay/one-shot failures still surface in the Terminal: first error
+    // message plus a pointer to Diagnostics.
+    if (run.success === false) {
+      conversationState.errorLine = conversationErrorSummary(run.diagnostics || [], run.output || '');
+    } else {
+      conversationState.errorLine = null;
+    }
   }
   conversationRender();
   var input = document.getElementById('conversationInput');
@@ -410,6 +458,7 @@ function conversationSubmit(event) {
   var line = input.value.replace(/[\r\n]+/g, ' ').trim();
   if (!line) return false;
   conversationState.answers.push(line);
+  conversationState.errorLine = null;
   input.value = '';
   input.disabled = true;
   conversationState.running = true;
@@ -478,7 +527,7 @@ function conversationRestart() {
   conversationQueue = Promise.resolve();
   conversationRunCount = null;
   liveReset();
-  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false };
+  conversationState = { answers: [], outputs: [], running: false, live: false, liveStarting: false, liveSent: 0, liveEntries: [], liveFailed: false, errorLine: null, liveDiags: [] };
   setStdinValue('');
   conversationRender();
   var input = document.getElementById('conversationInput');
@@ -549,7 +598,20 @@ async function compile() {
   if (conversationActive() && conversationTryRunLive(source)) {
     fetch('/api/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ source: source }) })
       .then(function (r) { return r.json(); })
-      .then(function (check) { renderDiagnostics(check.diagnostics || [], !!check.success, ids, false); })
+      .then(function (check) {
+        var diags = check.diagnostics || [];
+        renderDiagnostics(diags, !!check.success, ids, false);
+        conversationNoteErrors(diags);
+        // A live failure may render before the check lands: upgrade the
+        // stderr fallback to the structured first diagnostic when available.
+        if (conversationState.live && liveSession && liveSession.exited) {
+          var summary = conversationErrorSummary(diags, '');
+          if (summary) {
+            conversationState.errorLine = summary;
+            conversationRender();
+          }
+        }
+      })
       .catch(function () { /* diagnostics stay as they are */ });
     if (window.stopCompileClock) window.stopCompileClock();
     statusSettled = true;
@@ -644,13 +706,38 @@ function renderWasmPreview(res, ids) {
   }
 }
 
+function isErrorDiagnostic(d) {
+  var kind = (d && d.kind) || '';
+  var code = (d && d.code) || '';
+  return kind === 'error' || kind === 'type_error' || kind === 'parse_error' || kind === 'lex_error' ||
+    code.charAt(0) === 'E' || code.charAt(0) === 'P' || code.charAt(0) === 'T';
+}
+
+// Errors get a red badge, warnings an amber one; errors also appear in the
+// Terminal (blocking failures must be visible where the learner looks),
+// while warnings stay in Diagnostics only.
+function updateDiagnosticsBadge(diags) {
+  var tab = document.querySelector('.output-tabs .tab[data-tab="diag"]');
+  if (!tab) return;
+  var old = tab.querySelector('.diag-badge');
+  if (old) old.remove();
+  var errors = 0;
+  var warnings = 0;
+  (diags || []).forEach(function (d) { if (isErrorDiagnostic(d)) errors++; else warnings++; });
+  if (!errors && !warnings) return;
+  var b = document.createElement('span');
+  b.className = 'tab-badge diag-badge ' + (errors ? 'err' : 'warn');
+  b.textContent = String(errors || warnings);
+  b.title = errors
+    ? (errors + ' error' + (errors === 1 ? '' : 's'))
+    : (warnings + ' warning' + (warnings === 1 ? '' : 's'));
+  tab.appendChild(b);
+}
+
 function renderDiagnostics(diags, success, ids, fromWasm) {
   var diagEl = document.getElementById(ids.diag);
   if (!diagEl) return;
-  var isError = function (d) {
-    var kind = d.kind || '';
-    return kind === 'error' || kind === 'type_error' || kind === 'parse_error' || kind === 'lex_error' || (d.code || '').charAt(0) === 'E' || (d.code || '').charAt(0) === 'P' || (d.code || '').charAt(0) === 'T';
-  };
+  var isError = isErrorDiagnostic;
   if (diags.length > 0) {
     diagEl.innerHTML = diags.map(function (d) {
       return '<div class="diag-item ' + (isError(d) ? 'diag-error' : 'diag-warn') + '">[' + d.code + '] line ' + d.line + ':' + d.col + ' - ' + escapeHtml(d.message) + '</div>';
@@ -658,6 +745,7 @@ function renderDiagnostics(diags, success, ids, fromWasm) {
   } else if (success) {
     diagEl.innerHTML = '<span style="color:#34d399">No diagnostics - clean code. [OK]' + (fromWasm ? ' (WASM)' : '') + '</span>';
   }
+  updateDiagnosticsBadge(diags);
   if (window.editor && window.monaco) {
     monaco.editor.setModelMarkers(window.editor.getModel(), 'xiom', diags.filter(function (d) { return d.line > 0; }).map(function (d) {
       return {

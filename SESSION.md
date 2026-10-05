@@ -1,12 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-05 (**2.1.14 verified in production: Run starts the
-Terminal live and streams while it waits; bare read_line/read_int
-detected**; 2.1.13 patience + "?" key; 2.1.12 answer-after-exit restart;
-2.1.11 live verified incl. ops external check; v0.63.1 absorbed; 2.1.0
-Lab expansion complete - 37 programs, 10 categories). Branch `main`
-at/after `c75f0f5`, all commits pushed to `origin/main`; CI green
-(Validate + CodeQL). Toolchain/wasm **v0.63.1**, stdlib 0.62.4 (516 modules),
+Last updated: 2026-10-05 (**2.1.15: blocking errors show in the Terminal,
+Diagnostics carries red/amber count badges; warnings stay in Diagnostics**;
+2.1.14 verified in production; 2.1.13 patience + "?" key; 2.1.12
+answer-after-exit restart; 2.1.11 live verified incl. ops external check;
+v0.63.1 absorbed; 2.1.0 Lab expansion complete - 37 programs, 10
+categories). Branch `main` at/after `c75f0f5`, all commits pushed to
+`origin/main`; CI green (Validate + CodeQL). Toolchain/wasm **v0.63.1**, stdlib 0.62.4 (516 modules),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -20,11 +20,13 @@ fixes (41), 2.1.5 terminal run panel (42), 2.1.6-2.1.9 live terminal
 runner and gate (43-46), **v0.63.1 absorption** (47), **2.1.10 live
 terminal enabled** (48), **2.1.11 real streaming + terminal look** (49),
 **2.1.12 answer-after-exit restart** (50), **2.1.13 patience + "?" key**
-(51) and **2.1.14 Run-goes-live + streaming render** (52). Live sessions
-are genuinely interactive: Run starts them, prompts stream while the
-program waits, answers reach it, the session waits while you think, and a
-finished program restarts with the answer history instead of stalling.
-Handoff detail and the ready-to-paste next-session prompt: section 29.
+(51), **2.1.14 Run-goes-live + streaming render** (52) and **2.1.15 errors
+in the Terminal + Diagnostics badges** (53). Live sessions are genuinely
+interactive: Run starts them, prompts stream while the program waits,
+answers reach it, the session waits while you think, a finished program
+restarts with the answer history, and blocking errors surface in the
+Terminal. Handoff detail and the ready-to-paste next-session prompt:
+section 29.
 Read with `ROADMAP.md` (phase plan + specs), `AUDIT.md` (findings and
 verification records), `README.md` and `DEPLOY.md`.
 

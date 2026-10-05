@@ -3189,3 +3189,31 @@ the owner's source).
   streamed `Name? -> Ada -> Hello, Ada! -> 7 -> N=7` (exit 0), and
   patience held: `STILL ALIVE` at 46.5 s with a late answer read as
   `A:late` (exit 0).
+
+## 53. Errors in the Terminal; warnings in Diagnostics (2.1.15, 2026-10-05)
+
+Owner decision: blocking failures must be visible where the learner is
+looking, while warnings should not train people to ignore Terminal noise.
+Before this, a live compile error produced empty stdout, exit 1 and the
+compiler text only on stderr (which the client ignored): the Terminal
+went silent while Diagnostics held the details.
+
+- Terminal now shows a compact blocking error: the first diagnostic as
+  `error[P001] line 6:3 - expected ';', found io`, with a
+  `(+N more in Diagnostics)` pointer when there are several. When the
+  check lands after a live failure, the structured diagnostic replaces
+  the first-stderr-line fallback. Runtime crashes (clean check) show the
+  first stderr line. Applied on both paths: live exit with a non-zero
+  code and replay/one-shot `success === false`; a successful run clears
+  the error line.
+- Diagnostics tab carries a badge: red with the error count when any
+  blocking diagnostic exists, amber with the warning count otherwise
+  (warnings never appear in the Terminal). Badges are refreshed on every
+  check result.
+- Verification (headless Edge, sandboxed local server): bad source +
+  Run -> Terminal shows `error[P001] line 6:3 - expected ';', found io`,
+  Diagnostics badge red "1 error"; fixed source + Run -> streamed prompt,
+  no error line, no badge; a sample warning -> amber "1 warning" and the
+  Terminal unchanged; forced replay path -> the same structured error in
+  the Terminal. WSL suite 76/0, Windows 67/0/1, generator checks
+  current; catalogs at 2.1.15.
