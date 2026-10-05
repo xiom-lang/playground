@@ -14,8 +14,20 @@ cd "$REPO"
 TAG="${TOOLCHAIN_TAG:-$(tr -d '\r\n ' < TOOLCHAIN_VERSION)}"
 VERSION="${TAG#v}"
 BASE_URL="https://dl.xiom-lang.org/releases/${TAG}"
+GITHUB_URL="https://github.com/xiom-lang/xiom/releases/download/${TAG}"
 DEST="$REPO/.toolchain"
 STAGE="$REPO/.toolchain.stage"
+
+# The mirror is the preferred source, but a fresh release may not be
+# published there yet; fall back to the GitHub release. Hash verification
+# below is unchanged, so both sources are equally trusted.
+fetch_asset() {
+  if curl -fsSL "$BASE_URL/$1" -o "$2" 2>/dev/null; then
+    return 0
+  fi
+  echo "mirror missing $1; falling back to the GitHub release" >&2
+  curl -fsSL "$GITHUB_URL/$1" -o "$2"
+}
 
 case "$(uname -s)-$(uname -m)" in
   Linux-x86_64)  ASSET="xiom-${VERSION}-linux-x64.tar.gz" ;;
@@ -29,8 +41,8 @@ rm -rf "$STAGE"
 mkdir -p "$STAGE"
 echo "toolchain: ${TAG} (${ASSET})"
 
-curl -fsSL "$BASE_URL/SHA256SUMS" -o "$STAGE/SHA256SUMS"
-curl -fsSL "$BASE_URL/${ASSET}" -o "$STAGE/${ASSET}"
+fetch_asset SHA256SUMS "$STAGE/SHA256SUMS"
+fetch_asset "${ASSET}" "$STAGE/${ASSET}"
 (
   cd "$STAGE"
   grep " ${ASSET}\$" SHA256SUMS | sha256sum -c -

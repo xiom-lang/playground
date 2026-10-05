@@ -3260,3 +3260,13 @@ absorbed it the same day.
   deploy fetches from the mirror, so the mirror must carry v0.64.0
   first (checked again before deploy; GitHub assets verified either
   way).
+- Deploy tooling: CI failed at first with `curl: (22) ... 404` because
+  `tools/fetch-toolchain.sh` requires the mirror, which had not
+  published v0.64.0 yet. Both fetchers now fall back to the GitHub
+  release when the mirror lacks an asset (mirror first, then
+  `github.com/xiom-lang/xiom/releases/download/<tag>/<asset>`) with the
+  SHA256SUMS verification unchanged, so CI and deploys unblock as soon
+  as a release is published while the mirror remains the preferred
+  source. Verified locally: the PowerShell fetcher reported "mirror
+  missing ... falling back to the GitHub release" and installed the
+  hash-verified v0.64.0 zip.

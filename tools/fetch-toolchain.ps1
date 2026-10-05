@@ -16,15 +16,28 @@ if ($env:TOOLCHAIN_TAG) {
 $Version = $Tag.TrimStart('v')
 $Asset = "xiom-$Version-windows-x64.zip"
 $BaseUrl = "https://dl.xiom-lang.org/releases/$Tag"
+$GitHubUrl = "https://github.com/xiom-lang/xiom/releases/download/$Tag"
 $Dest = Join-Path $Repo '.toolchain'
 $Stage = Join-Path $Repo '.toolchain.stage'
+
+# The mirror is the preferred source, but a fresh release may not be
+# published there yet; fall back to the GitHub release. Hash verification
+# below is unchanged, so both sources are equally trusted.
+function Get-ReleaseAsset([string]$Name, [string]$OutFile) {
+  try {
+    Invoke-WebRequest -Uri "$BaseUrl/$Name" -OutFile $OutFile -UseBasicParsing
+  } catch {
+    Write-Output "mirror missing $Name; falling back to the GitHub release"
+    Invoke-WebRequest -Uri "$GitHubUrl/$Name" -OutFile $OutFile -UseBasicParsing
+  }
+}
 
 Remove-Item -Recurse -Force $Stage -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $Stage | Out-Null
 Write-Output "toolchain: $Tag ($Asset)"
 
-Invoke-WebRequest -Uri "$BaseUrl/SHA256SUMS" -OutFile (Join-Path $Stage 'SHA256SUMS') -UseBasicParsing
-Invoke-WebRequest -Uri "$BaseUrl/$Asset" -OutFile (Join-Path $Stage $Asset) -UseBasicParsing
+Get-ReleaseAsset 'SHA256SUMS' (Join-Path $Stage 'SHA256SUMS')
+Get-ReleaseAsset $Asset (Join-Path $Stage $Asset)
 
 $sumLine = Get-Content -LiteralPath (Join-Path $Stage 'SHA256SUMS') | Where-Object { $_ -match [regex]::Escape($Asset) } | Select-Object -First 1
 if (-not $sumLine) { throw "SHA256SUMS has no entry for $Asset" }
