@@ -3327,3 +3327,37 @@ knowledge; earlier concepts may be assumed once taught.
   prose fields changed there.
 - Next: owner tests with the two young programmers; feedback folds
   back into the same audit loop.
+
+## 56. Open Collective support rollout (2026-10-07)
+
+The website lane shipped the Open Collective support rollout (shared
+`xiom-website/style.css` classes) and relayed it to the playground. The
+playground is a single-page app, so placements were adapted:
+
+- Landing page: a "Support XIOM" section with the shared markup
+  (`[data-support-tiers]` eco-grid, `[data-support-backers]` line and
+  the "read live from the collective" note) plus `js/support-tiers.js`,
+  a verbatim copy of the website script. It reads the public GraphQL
+  tiers anonymously and the financial-contributor count from
+  `opencollective.com/xiom.json`; no token is ever added; every card
+  links to `/donate/profile?amount=<n>&interval=month`; on any failure
+  the authored fallback stands and the containers stay hidden.
+- Footer: the Open Collective icon (Simple Icons path, aria-label
+  "XIOM on Open Collective") after Instagram, and a "Support XIOM" link
+  in the project links row (the playground has no column footer; the
+  row is the equivalent - there is no Contributing item to restore).
+- App header: a "Support" nav link as the last item before the Run CTA.
+- Privacy: the help modal ("Where your code runs") now states that the
+  support section reads public funding data from Open Collective, which
+  receives the request.
+- CSS: shared `.eco-grid`/`.eco-card` styles ported into `theme.css`
+  using playground variables; `--signal` aliased to `--indigo` for the
+  script's inline link style.
+- Verification (headless Edge at 1440 and 414): six live tiers render
+  with the collective's exact names/emoji and amounts (XIOM Backer
+  EUR 5/mo, Support XIOM from EUR 10, XIOM Sponsor EUR 15/mo, Bronze
+  EUR 100/mo, Silver EUR 250/mo, Gold EUR 500/mo); every card link is
+  pre-filled and resolves 200; the backers line stays hidden at count
+  zero; desktop wraps 4+2 without overflow, 414 stacks one column; no
+  console errors; no new third-party script or iframe was added (the
+  two Monaco CDN scripts are the pre-existing editor).

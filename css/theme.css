@@ -20,6 +20,9 @@
   --indigo: #6b79ff;
   --indigo-soft: rgba(107,121,255,0.16);
   --indigo-glow: rgba(107,121,255,0.45);
+  /* Shared with xiom-website: support-tiers.js styles its links with
+     var(--signal); alias it to the playground accent. */
+  --signal: var(--indigo);
   --green: #34d399;
   --green-soft: rgba(52,211,153,0.12);
   --amber: #f0b445;
@@ -2697,3 +2700,39 @@ a:focus-visible,
 .stdin-input:focus { outline: none; border-color: var(--indigo); }
 .stdin-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .stdin-hint { font-size: 10px; color: var(--low); }
+
+/* Open Collective support section: classes shared with xiom-website so the
+   live tier cards (js/support-tiers.js) render with the same structure. */
+.eco-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.eco-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.eco-card h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--hi);
+}
+.eco-card p {
+  flex: 1 1 auto;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--mid);
+  margin: 0;
+}
+.eco-card > a {
+  margin-top: auto;
+  padding-top: 4px;
+  color: var(--signal);
+  font-size: 13px;
+}

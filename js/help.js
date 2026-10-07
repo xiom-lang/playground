@@ -8,6 +8,13 @@
 
 var XIOM_WHATS_NEW = [
   {
+    date: '2026-10-07',
+    title: 'Support XIOM',
+    items: [
+      'The landing page now shows the live Open Collective tiers - and the footer and header link to the collective. The playground stays free; contributions happen on Open Collective.',
+    ],
+  },
+  {
     date: '2026-10-05',
     title: 'Errors show up in the Terminal',
     items: [
