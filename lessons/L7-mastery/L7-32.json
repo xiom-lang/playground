@@ -20,11 +20,11 @@
   ],
   "tips": [
     "Convert to a common unit first (meters, grams, seconds), then to target — clean two-step pattern",
-    "Temperature is special — it has offset (32°F, 273.15K) not just multiplication",
+    "Temperature is special — it has offset (32°F, 273.15K) not only multiplication",
     "Use Int for exact conversions, Float64 when precision matters"
   ],
   "common_mistakes": [
-    "Treating temperature as linear — 0°C ≠ 0°F, so you can't just multiply",
+    "Treating temperature as linear — 0°C ≠ 0°F, so multiplication alone fails",
     "Converting both ways without an intermediate — every source→target pair needs a factor",
     "Integer division for conversions that need fractions — use Float64 for km/mile etc."
   ],

@@ -19,8 +19,8 @@
   ],
   "tips": [
     "Convert Option to Result when you need to attach an error message to a missing value",
-    "Convert Result to Option when the caller doesn't care WHY something failed, just whether it did",
-    "The conversion functions are just match statements — write them once and reuse them"
+    "Convert Result to Option when the caller doesn't care WHY something failed, only whether it did",
+    "The conversion functions are plain match statements — write them once and reuse them"
   ],
   "common_mistakes": [
     "Converting `Some(error_msg)` to `Err(error_msg)` — Some means success in Option world, Ok means success in Result world",

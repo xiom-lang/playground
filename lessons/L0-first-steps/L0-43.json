@@ -5,7 +5,7 @@
   "duration": "6 min",
   "story": "You crack open a fortune cookie and read: 'An exciting opportunity awaits you.' Wouldn't it be cool to build your own digital fortune teller that gives a new prediction every time?",
   "why": "Combining random numbers with if/elif creates interactive programs that respond differently depending on chance.",
-  "narrative": "## Building a Digital Fortune Teller\n\nNow you know both random numbers AND if/elif statements. It's time to combine them into something fun! Your fortune teller will randomly pick from a list of fortunes and display one.\n\n### How It Works\n\n```xiom\nfn main() {\n  let roll: Int = math.random_range(1, 3);\n  io.println(\"Your fortune cookie says...\");\n\n  if roll == 1 {\n    io.println(\"An exciting adventure is coming your way!\");\n  } elif roll == 2 {\n    io.println(\"A surprise gift will arrive soon.\");\n  } else {\n    io.println(\"Today is your lucky day — take a chance!\");\n  }\n}\n```\n\nThe program generates a random number 1 to 3, then uses `if/elif/else` to pick the matching fortune. The `elif` (else-if) checks a second condition if the first one is false. The `else` at the end catches anything that didn't match — in this case, when `roll` is 3.\n\nRun it a few times. You'll get different fortunes each time. You've just built your own fortune cookie!",
+  "narrative": "## Building a Digital Fortune Teller\n\nNow you know both random numbers AND if/elif statements. It's time to combine them into something fun! Your fortune teller will randomly pick from a list of fortunes and display one.\n\n### How It Works\n\n```xiom\nuse xiom.io;\nuse xiom.math;\n\nfn main() {\n  let roll: Int = math.random_range(1, 3);\n  io.println(\"Your fortune cookie says...\");\n\n  if roll == 1 {\n    io.println(\"An exciting adventure is coming your way!\");\n  } elif roll == 2 {\n    io.println(\"A surprise gift will arrive soon.\");\n  } else {\n    io.println(\"Today is your lucky day — take a chance!\");\n  }\n}\n```\n\nThe program generates a random number 1 to 3, then uses `if/elif/else` to pick the matching fortune. The `elif` (else-if) checks a second condition if the first one is false. The `else` at the end catches anything that didn't match — in this case, when `roll` is 3.\n\nRun it a few times. You'll get different fortunes each time. You've just built your own fortune cookie!",
   "analogy": "A fortune teller is like a choose-your-own-adventure book — the random number picks which page (fortune) you land on.",
   "code_template": "use xiom.io;\n\nfn main() {\n  // TODO: generate a random number from 1 to 3\n  // TODO: use if/elif/else to print a different fortune for each number\n}\n",
   "solution": "use xiom.io;\n\nuse xiom.math;\nfn main() {\n  let roll: Int = math.random_range(1, 3);\n  io.println(\"Your fortune: \");\n  if roll == 1 {\n    io.println(\"An exciting adventure is coming your way!\");\n  } elif roll == 2 {\n    io.println(\"A surprise gift will arrive soon.\");\n  } else {\n    io.println(\"Today is your lucky day — take a chance!\");\n  }\n}\n",
@@ -14,7 +14,7 @@
   "concepts": [
     "if-elif-else",
     "random",
-    "conditional-logic",
+    "conditions",
     "branching"
   ],
   "tips": [

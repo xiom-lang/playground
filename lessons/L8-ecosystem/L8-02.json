@@ -22,7 +22,7 @@
   "tips": [
     "Match on Op enum for clean, exhaustive dispatch — compiler warns on missing arms",
     "Cap history at last N entries to prevent unbounded memory growth",
-    "Memory is just a second register — store, recall, add-to, clear"
+    "Memory is a second register — store, recall, add-to, clear"
   ],
   "common_mistakes": [
     "Not checking for division by zero — the most common calculator bug",

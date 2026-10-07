@@ -21,7 +21,7 @@
     "generic-data-structure"
   ],
   "tips": [
-    "Stack uses Vec.pop() which already returns Option[T] — the stack's pop is just a wrapper",
+    "Stack uses Vec.pop() which already returns Option[T] — the stack's pop is a wrapper",
     "Push = add to end (top), Pop = remove from end (top) — both are O(1) with Vec",
     "The balanced parentheses algorithm is the classic stack interview question — know it well"
   ],

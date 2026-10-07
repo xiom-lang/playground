@@ -26,7 +26,7 @@
     "common_mistakes":  [
                             "Assuming fields are independent after a struct move — they all moved together",
                             "Trying to use a struct field after partially moving it — that field is gone",
-                            "Forgetting that \u0026struct.field borrows the entire struct, not just the field"
+                            "Forgetting that \u0026struct.field borrows the entire struct, not only the field"
                         ],
     "next_lesson":  "L4-24",
     "related":  [

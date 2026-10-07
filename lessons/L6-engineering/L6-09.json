@@ -25,7 +25,7 @@
     "Private helpers can change freely — rename, refactor, delete them without worrying about external callers"
   ],
   "common_mistakes": [
-    "Making everything pub 'just in case' — you can't un-publish something later without breaking users",
+    "Making everything pub 'to be safe' — you can't un-publish something later without breaking users",
     "Forgetting `pub` on functions users need — the error message when calling a private function tells you exactly what's wrong",
     "Marking types as pub but forgetting to mark their methods — a pub type with private methods is a locked door"
   ],

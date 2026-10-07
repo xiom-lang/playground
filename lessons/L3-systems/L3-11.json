@@ -19,7 +19,7 @@
   ],
   "tips": [
     "`if let Ok(n) = result` lets you check success without caring about the error value",
-    "Use `Err(_)` in match to ignore the error message when you just need to know it failed",
+    "Use `Err(_)` in match to ignore the error message when you only need to know it failed",
     "Track counts separately so you can report metrics like '3 of 5 fields were valid'"
   ],
   "common_mistakes": [

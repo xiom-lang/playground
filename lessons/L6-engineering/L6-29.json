@@ -3,7 +3,7 @@
   "title": "Interface Default Methods",
   "level": "L6",
   "duration": "9 min",
-  "story": "Your `Playable` interface has `play()`, `pause()`, and `stop()`. But `stop()` is the same for every type: just call `pause()` then reset. Instead of making every type re-implement `stop()`, give the interface a default implementation.",
+  "story": "Your `Playable` interface has `play()`, `pause()`, and `stop()`. But `stop()` is the same for every type: call `pause()` then reset. Instead of making every type re-implement `stop()`, give the interface a default implementation.",
   "why": "Default methods in interfaces provide shared behavior that types can inherit without re-implementing, reducing code duplication.",
   "narrative": "## Default Methods in Interfaces\n\n### The Pattern\n\n```xiom\ninterface Playable {\n  fn play(&mut self);\n  fn pause(&mut self);\n\n  fn stop(&mut self) {\n    self.pause();\n  }\n}\n```\n\n`stop()` has a default body. Any type implementing `Playable` automatically gets `stop()` for free. If a type wants custom stop behavior, it can override the default.\n\n### Complete Example\n\n```xiom\ninterface Greeter {\n  fn name(&self) -> Str;\n\n  fn greet(&self) -> Str {\n    let base = \"Hello, \";\n    string.str_concat(base, self.name())\n  }\n\n  fn farewell(&self) -> Str {\n    let base = \"Goodbye, \";\n    string.str_concat(base, self.name())\n  }\n}\n\ntype User { username: Str; }\nfn User.name(&self) -> Str { self.username.clone() }\n\n// User automatically has greet() and farewell()!\n```\n\n### When to Use Default Methods\n\n- When behavior can be expressed in terms of other interface methods\n- For convenience methods that all implementors would write the same way\n- To add new methods to existing interfaces without breaking implementors\n\n### Override When Needed\n\n```xiom\nfn Admin.greet(&self) -> Str {\n  \"Welcome back, Administrator\"\n}\n```\n\nAdmin overrides `greet()` with a custom message while keeping the default `farewell()`.",
   "analogy": "A smartphone comes with default apps (calculator, calendar) that work for everyone. But you can install custom apps to replace them. Default interface methods are the built-in apps — they work out of the box, but you can override them with custom behavior.",
@@ -26,7 +26,7 @@
   "common_mistakes": [
     "Putting complex logic in defaults that can't be expressed via other methods",
     "Forgetting that defaults can call other interface methods — that's their power",
-    "Overriding when the default is fine — don't override just because you can"
+    "Overriding when the default is fine — don't override it merely because you can"
   ],
   "next_lesson": "L6-30",
   "related": [

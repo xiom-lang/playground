@@ -13,7 +13,7 @@
   "try_it": "Search for different letters in \"chocolate\": try 'o', 'x', 'c', 'e'. Add a `find_all` concept that tracks multiple positions. Add a `FoundFirst(position: Int)` variant that only stores position (not the item).",
   "concepts": [
     "enum",
-    "Option pattern",
+    "missing values",
     "search",
     "match",
     "NotFound"

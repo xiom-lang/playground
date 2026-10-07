@@ -9,8 +9,10 @@ const LESSONS_DIR = path.join(__dirname, '..', 'lessons');
 
 const VALID_LEVELS = new Set(['L0', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8']);
 
-const ID_PATTERN = /^L\d-\d{2}$/;
-const NEXT_LESSON_PATTERN = /^L\d-\d{2}$/;
+// Lesson ids are L<level>-<nn>, with an optional lowercase suffix for
+// inserted bonus lessons (e.g. L0-01b "Say It in Order").
+const ID_PATTERN = /^L\d-\d{2}[a-z]?$/;
+const NEXT_LESSON_PATTERN = /^L\d-\d{2}[a-z]?$/;
 
 const GREEN  = '\x1b[32m';
 const RED    = '\x1b[31m';
@@ -35,6 +37,7 @@ function collectLessonFiles(dir) {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (entry.name === 'lab') continue; // Lab entries use a different schema.
       results.push(...collectLessonFiles(fullPath));
     } else if (entry.isFile() && path.extname(entry.name).toLowerCase() === '.json') {
       if (entry.name === 'index.json') continue;

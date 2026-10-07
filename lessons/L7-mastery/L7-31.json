@@ -21,7 +21,7 @@
   ],
   "tips": [
     "Track history in a Vec — each entry contains the operation and result",
-    "Memory is just a separate stored value — simple but powerful",
+    "Memory is a separate stored value — simple but powerful",
     "Every operation updates current_value and pushes to history"
   ],
   "common_mistakes": [

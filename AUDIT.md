@@ -3279,3 +3279,51 @@ absorbed it the same day.
   `A:late`); the error surface stayed correct (structured error + red
   badge, clean run without a badge, amber warning badge, replay error);
   the served `js/wasm-loader.js` reports v0.64.0.
+
+## 55. Beginner-friendliness lesson review (2026-10-07)
+
+Owner request before testing the playground with new programmers (ages
+13 and 16): every lesson's story, tips, common mistakes and concept
+chips must explain new ideas in plain words - no assumed programming
+knowledge; earlier concepts may be assumed once taught.
+
+- Tooling: `tools/lesson-style-audit.js` (required fields, concepts
+  named/described where first introduced, no jargon before it is taught
+  without an inline explanation, sentence/paragraph readability, empathy
+  words) and `tools/lesson-code-audit.js` (solutions printing
+  hard-coded answers instead of computed variables, narrative code
+  blocks missing `use xiom.*;`, lost-arrow "?" artifacts).
+  `tools/validate-lessons.js` now skips the Lab catalog and accepts the
+  inserted bonus id `L0-01b`. Human report: `docs/LESSON_REVIEW.md`
+  (generated JSON reports are gitignored).
+- Result: 81 lessons were flagged (4 errors + 93 warnings); after the
+  pass both audits are clean - **0 errors, 0 warnings across 412
+  lessons** (`--strict` ready for future lessons).
+- Concept chips now match what each lesson actually teaches and names:
+  formal tags get one plain-language introduction (sequential
+  execution, iteration, assignment, conditional, collection/array
+  literal, mutation, authentication, decomposition/single
+  responsibility, guard clause, memoization/dynamic programming, ...)
+  and author-only tags ("creative coding", "conditional-logic",
+  "Option pattern", duplicates) were retagged to the real skill.
+- Content bugs fixed beyond style (code audit plus manual review):
+  ~30 solutions in L0/L1 printed hard-coded literals or placeholder
+  text instead of their computed values - L0-10/L0-33 counted down by
+  printing `10` forever, L0-29's score never changed, L0-18/19/20 had
+  wrong expected outputs, L1-43 printed "Calculated!" instead of the
+  multiplication table, L1-50's capstone computed eight values and
+  printed none, L1-08 printed a leftover "Double 5 is 10". L0/L1
+  expected outputs were regenerated from real runs on v0.64.0 (13
+  files) and the full lesson audit is green: **412/412**, zero failures
+  at every level.
+- Text damage repaired: lone `?` artifacts (lost arrows) in nine
+  lessons (L8-14's is a legitimate Morse `?`), missing imports in
+  narrative code blocks (L0-39, L0-43, L6-25/31/40), and L6-11's local
+  `math` module is now recognized by the audit as not needing
+  `xiom.math`.
+- Verification: both audits clean; `validate-lessons.js` 412/412 exit
+  0; generator checks current; full lesson audit 412/412 on v0.64.0.
+  Three parallel workers handled L3-L8 and a diff audit confirmed only
+  prose fields changed there.
+- Next: owner tests with the two young programmers; feedback folds
+  back into the same audit loop.

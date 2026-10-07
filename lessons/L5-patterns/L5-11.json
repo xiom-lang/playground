@@ -26,7 +26,7 @@
     "Call `.contains()` before `.remove()` if you want to avoid the Option — but matching on remove is often cleaner"
   ],
   "common_mistakes": [
-    "Using `.get()` just to check existence — `.get()` requires matching on Option; `.contains()` gives a clean Bool",
+    "Using `.get()` only to check existence — `.get()` requires matching on Option; `.contains()` gives a clean Bool",
     "Forgetting that `.remove()` returns `Option[V]` — if the key wasn't there, you get None, not a crash",
     "Expecting `.remove()` to keep the old value accessible — once removed, the data is gone from the Map"
   ],

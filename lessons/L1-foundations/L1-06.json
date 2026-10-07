@@ -20,7 +20,8 @@
     "Arguments match parameters by position — first to first, second to second",
     "Use descriptive parameter names so callers know what goes where",
     "Each parameter needs its own type annotation: `(x: Int, y: Str)` not `(x, y: Str)`",
-    "`to_string` is for whole numbers only. For decimals use `float_to_string(...)` with float operands: `float_to_string(2.0 + 2.5)` prints 4.5. Do not call `.to_str()` on a mixed expression like `(2 + 2.5).to_str()` — the W005 stub makes it print 0; store it in an annotated `Float64` local first if you need the method."
+    "To print a decimal number use `float_to_string(2.0 + 2.5)` - it prints 4.5.",
+    "Mixing whole and decimal numbers? Store the result in a `Float64` variable first, then print it with `.to_str()`; printing a mixed expression directly can show nothing."
   ],
   "common_mistakes": [
     "Swapping argument order accidentally — `subtract(3, 10)` gives -7, not 7",

@@ -25,7 +25,7 @@
     "Interface satisfaction is checked at the CALL SITE — you'll see errors where you pass the wrong type, not where you define it"
   ],
   "common_mistakes": [
-    "Trying to add `implements Greetable` to a type — XIOM uses structural typing; just having the method is enough",
+    "Trying to add `implements Greetable` to a type — XIOM uses structural typing; having the method is enough",
     "Forgetting `self` parameter on methods — `fn greet() -> Str` on the interface means `fn greet(self) -> Str` on the type",
     "Writing `fn introduce(thing: &Greetable)` instead of using generics — interfaces are constraints on generics, not standalone types"
   ],

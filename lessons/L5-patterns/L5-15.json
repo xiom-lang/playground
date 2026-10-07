@@ -24,7 +24,7 @@
   ],
   "tips": [
     "Use a Set to track 'seen' items when scanning a Vec — it's the fastest way to detect duplicates",
-    "`.contains()` is O(1) — just as fast as Map lookup, regardless of Set size",
+    "`.contains()` is O(1) — as fast as a Map lookup, regardless of Set size",
     "When you need both membership testing AND counting, use Map instead — Set only tracks presence"
   ],
   "common_mistakes": [

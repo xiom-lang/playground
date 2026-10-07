@@ -27,7 +27,7 @@
   "common_mistakes": [
     "Building display logic into the main function instead of the type — display should live with the type, not the caller",
     "Making one mega-interface instead of focused ones — 'Printable + Serializable + Comparable' should be three separate interfaces",
-    "Returning incomplete info from display — include enough fields to identify the value, not just one field"
+    "Returning incomplete info from display — include enough fields to identify the value, not only one field"
   ],
   "next_lesson": "L6-04",
   "related": [

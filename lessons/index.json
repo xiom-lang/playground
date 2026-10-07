@@ -319,8 +319,7 @@
           "concepts": [
             "for-loop",
             "iteration",
-            "list",
-            "collections"
+            "list"
           ]
         },
         {
@@ -460,7 +459,6 @@
           "concepts": [
             "for",
             "list",
-            "Vec",
             "iteration",
             "string.str_concat",
             "collection"
@@ -538,7 +536,7 @@
             "variables",
             "template",
             "string building",
-            "creative coding"
+            "strings"
           ]
         },
         {
@@ -594,7 +592,7 @@
           "concepts": [
             "if-elif-else",
             "random",
-            "conditional-logic",
+            "conditions",
             "branching"
           ]
         },
@@ -730,7 +728,7 @@
             "return-values",
             "return-type",
             "function-output",
-            "calculations"
+            "arithmetic"
           ]
         },
         {
@@ -1970,7 +1968,7 @@
           "duration": "9 min",
           "concepts": [
             "enum",
-            "Option pattern",
+            "missing values",
             "search",
             "match",
             "NotFound"
@@ -2187,7 +2185,7 @@
           "file": "L3-systems/L3-09.json",
           "duration": "8 min",
           "concepts": [
-            "Result-unwrap_or",
+            "unwrap_or",
             "default-value",
             "fallback",
             "error-suppression"

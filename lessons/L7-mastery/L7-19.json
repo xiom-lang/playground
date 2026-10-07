@@ -24,7 +24,7 @@
     "Password strength = length × character set diversity"
   ],
   "common_mistakes": [
-    "Generating from only lowercase — trivially crackable",
+    "Generating from only lowercase — easy to crack",
     "Using predictable seed — every run produces the same password",
     "Making passwords too short — 8 chars minimum, 12+ recommended"
   ],

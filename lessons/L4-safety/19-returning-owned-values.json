@@ -26,7 +26,7 @@
   "common_mistakes": [
     "Trying to return a reference (&) to a local variable — the local variable is destroyed",
     "Forgetting that returning consumes the value — you can't use it in the function after return",
-    "Cloning a value just to return it — return already moves ownership safely"
+    "Cloning a value only to return it — return already moves ownership safely"
   ],
   "next_lesson": "L4-20",
   "related": [

@@ -14,7 +14,6 @@
   "concepts": [
     "for",
     "list",
-    "Vec",
     "iteration",
     "string.str_concat",
     "collection"

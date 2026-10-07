@@ -22,7 +22,7 @@
   "tips": [
     "Define interfaces in their OWN module — don't put the Logger interface in the console module",
     "Backend modules import the interface module, never each other — they only know about the contract",
-    "The structural typing of XIOM means ANY module's type can satisfy ANY other module's interface — just have the method"
+    "The structural typing of XIOM means ANY module's type can satisfy ANY other module's interface — it only needs the method"
   ],
   "common_mistakes": [
     "Defining the interface in the same module as one implementation — this couples the interface to that implementation",

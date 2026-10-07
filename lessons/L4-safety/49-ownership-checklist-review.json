@@ -19,7 +19,7 @@
                  ],
     "tips":  [
                  "The compiler IS your checklist — every borrow error is one of the 5 rules being violated",
-                 "When you get a borrow error, identify which rule is broken, then fix the design, not just the syntax",
+                 "When you get a borrow error, identify which rule is broken, then fix the design, not only the syntax",
                  "Practice tracing ownership on paper until it becomes mental — it\u0027s the fastest way to fluency"
              ],
     "common_mistakes":  [
