@@ -2703,6 +2703,7 @@ a:focus-visible,
 
 /* Open Collective support section: classes shared with xiom-website so the
    live tier cards (js/support-tiers.js) render with the same structure. */
+.support-section { margin-top: 48px; }
 .eco-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
