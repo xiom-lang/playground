@@ -3435,3 +3435,8 @@ raw `<span class="code-keyword">` markup instead of highlighted code.
   render code blocks with 0 occurrences of raw tags in textContent and
   correct token spans (222 keywords / 48 strings / 49 numbers / 205
   operators / 6 comments); metaphors clean; no console exceptions.
+- **Production verified (2026-10-08, deployed by the next hourly pull)**:
+  the served `js/syntax.js` carries the single-pass highlighter and the
+  same probe against https://playground.xiom-lang.org/ reports 30 cards
+  with 0 raw-tag code blocks, the same token span counts, clean
+  metaphors and no console exceptions.
