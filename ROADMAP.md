@@ -596,6 +596,12 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   unchanged), stdlib 0.63.1 with the surface unchanged apart from the
   `lz4_*_checked` rename; C25 fixed, WSL 76/0, lab 37/37 and lessons
   412/412 on the new pin (AUDIT 54).
+- [x] **Absorbed in v0.64.1** (2026-10-08): correctness and tooling
+  release (type aliases in vectors, nested payloads, function-pointer
+  refs, Float32 enum payloads; CLI project build/deterministic mode);
+  pins and wasm bumped (JS/.d.ts unchanged), stdlib surface unchanged;
+  C25 fixed, WSL 76/0, lab 37/37 and lessons 412/412 on the new pin
+  (AUDIT 57).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;

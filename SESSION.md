@@ -1,12 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-07 (**Open Collective support rollout live** on the
-landing page, footer and header; **beginner-friendliness lesson review
-complete** - both audits 0/0 across 412 lessons, 412/412 full audit, see
-docs/LESSON_REVIEW.md and AUDIT 55; v0.64.0 verified in production;
-2.1.15 verified; live terminal interactive). Branch `main` at/after
-`d004e17`, all commits pushed to `origin/main`; CI green (Validate +
-CodeQL). Toolchain/wasm **v0.64.0**, stdlib 0.63.1 (516 modules),
+Last updated: 2026-10-08 (**v0.64.1 absorbed** - pins, wasm, acceptance
+green, mirror lags so the GitHub fallback installed the toolchain;
+pending deploy. Open Collective support live; beginner-friendliness
+lesson review complete - both audits 0/0 across 412 lessons, 412/412
+full audit, see docs/LESSON_REVIEW.md and AUDIT 55). Branch `main`
+at/after `5995150`, all commits pushed to `origin/main`; CI green
+(Validate + CodeQL). Toolchain/wasm **v0.64.1**, stdlib 0.63.1 (516 modules),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned

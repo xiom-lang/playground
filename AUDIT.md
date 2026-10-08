@@ -3361,3 +3361,36 @@ playground is a single-page app, so placements were adapted:
   zero; desktop wraps 4+2 without overflow, 414 stacks one column; no
   console errors; no new third-party script or iframe was added (the
   two Monaco CDN scripts are the pre-existing editor).
+
+## 57. v0.64.1 absorption (2026-10-08)
+
+The compiler lane shipped v0.64.1 - a correctness and tooling release
+(package type aliases inside vectors, nested option/result payload
+chains, function-pointer references, Float32 enum payloads and
+vector-field math, plus CLI project build / deterministic mode / icon
+embedding; no breaking changes) - and the playground absorbed it the
+same day.
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.1**. The mirror
+  had not published the tag yet, so the fetchers exercised the
+  GitHub-release fallback (AUDIT 54) and installed from the verified
+  release: linux tar.gz `6f6787a3...`, windows zip `4023114a...`,
+  wasm_bg `86459ca6...`. `xiom-wasm.js`/`.d.ts` are byte-identical to
+  v0.64.0 (same hashes), so only the wasm binary and the loader comment
+  changed.
+- Surface: stdlib unchanged at 516 modules / 6,535 functions;
+  `js/stdlib-ref.json` and `js/limitations.json` regenerated (version
+  line only); index, lab-index and expected-output checks current.
+- Acceptance on the new pin: c25 **`C25 fixed: yes`** (cold, cached,
+  `--no-cache`); WSL suite **76/0**; Lab audit **37/37 x2**; full
+  lesson audit **412/412** with zero failures at every level; Windows
+  suite 67/0/1.
+- Environment: Linux toolchain at `/home/lefteris/xiom_v0641/tc` in
+  WSL; Windows `.toolchain` refreshed via
+  `tools/fetch-toolchain.ps1` (`xiom.exe` reports v0.64.1).
+- The release notes list known open issues (optional-value assignment
+  into existing vector elements, mutating methods through nested
+  fields, `Str.from_utf8` by reference, some enum-payload lowering
+  nondeterminism). None surfaced in the acceptance above; the lesson
+  and lab audits run each program twice, so nondeterminism in the
+  pinned corpus would have been flagged.
