@@ -3411,3 +3411,27 @@ same day.
   no console errors, and its spacing-tweak CSS is live; lesson content
   shows the review fixes (L0-10 counts down 5..1, L1-50 prints its
   values).
+
+## 58. Concepts reference highlighter fix (2026-10-08)
+
+Owner report: every Reference -> Concepts card showed the example code's
+raw `<span class="code-keyword">` markup instead of highlighted code.
+
+- Cause: `highlightCode()` in `js/syntax.js` ran five successive
+  replace passes over the same string. Each pass re-read the spans
+  inserted by the previous one: the string pass matched the quotes in
+  `class="code-comment"`, the keyword pass could match words inside the
+  markup, and the operator pass split every `=` inside the inserted
+  tags. The result was invalid HTML that the browser rendered as
+  visible `<span ...>` text.
+- Fix: one single-pass regex with ordered alternatives (comment |
+  string | keyword | number | operator) and one replacement callback
+  that escapes only the matched source text. Tokens of the original
+  code are matched exactly once, so inserted markup can never be
+  re-processed. This also fixes two latent bugs: `//` inside a string
+  was treated as a comment, and operators inside strings/comments were
+  re-wrapped.
+- Verification (headless Edge, local server): all 30 concept cards
+  render code blocks with 0 occurrences of raw tags in textContent and
+  correct token spans (222 keywords / 48 strings / 49 numbers / 205
+  operators / 6 comments); metaphors clean; no console exceptions.

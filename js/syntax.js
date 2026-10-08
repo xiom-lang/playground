@@ -249,23 +249,28 @@ function filterConcepts(query) {
 }
 
 function highlightCode(code) {
-  var escaped = String(code)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  // Single pass: every piece of the original source is matched exactly once,
+  // so the spans inserted for one token can never be re-read (and mangled) by
+  // a later pass. The old multi-pass version wrapped attributes inside its own
+  // spans (the string pass matched class="code-comment" and the operator pass
+  // then split every `=`), which rendered as visible <span> text.
+  var pattern = new RegExp([
+    '(\\/\\/[^\\n]*)',                                  // 1 comment
+    '("(?:[^"\\\\]|\\\\.)*")',                          // 2 string
+    '\\b(fn|return|let|var|const|if|elif|else|match|while|for|in|type|enum|struct|interface|derive|module|use|pub|as|unsafe|extern|requires|ensures|invariant|spawn|async|await|comptime|true|false|self|Some|None|Ok|Err|is|and|or|not|where|Option|Result|Vec|Str|Int|Bool|Float64)\\b', // 3 keyword
+    '\\b(\\d+(?:\\.\\d+)?)\\b',                         // 4 number
+    '(&&|[|]{2}|[+\\-*/%=<>!]=?|->|=>|::|\\.|\\?|&|[|^~]|<<|>>)', // 5 operator
+  ].join('|'), 'g');
 
-  escaped = escaped.replace(/(\/\/.*$)/gm, '<span class="code-comment">$1</span>');
-
-  escaped = escaped.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="code-string">$1</span>');
-
-  var keywords = /\b(fn|return|let|var|const|if|elif|else|match|while|for|in|type|enum|struct|interface|derive|module|use|pub|as|unsafe|extern|requires|ensures|invariant|spawn|async|await|comptime|true|false|self|Some|None|Ok|Err|is|and|or|not|where|Option|Result|Vec|Str|Int|Bool|Float64)\b/g;
-  escaped = escaped.replace(keywords, '<span class="code-keyword">$1</span>');
-
-  escaped = escaped.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="code-number">$1</span>');
-
-  escaped = escaped.replace(/(&&|[|]{2}|[+\-*/%=<>!]=?|->|=>|::|\.|\?|&|[|^~]|<<|>>)/g, '<span class="code-operator">$1</span>');
-
-  return escaped;
+  return String(code).replace(pattern, function (match, comment, string, keyword, number, operator) {
+    var cls = 'code-operator';
+    var text = operator || match;
+    if (comment) { cls = 'code-comment'; text = comment; }
+    else if (string) { cls = 'code-string'; text = string; }
+    else if (keyword) { cls = 'code-keyword'; text = keyword; }
+    else if (number) { cls = 'code-number'; text = number; }
+    return '<span class="' + cls + '">' + escapeHtml(text) + '</span>';
+  });
 }
 
 function escapeHtml(str) {

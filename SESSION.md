@@ -23,8 +23,10 @@ terminal enabled** (48), **2.1.11 real streaming + terminal look** (49),
 **2.1.12 answer-after-exit restart** (50), **2.1.13 patience + "?" key**
 (51), **2.1.14 Run-goes-live + streaming render** (52), **2.1.15 errors
 in the Terminal + Diagnostics badges** (53), **v0.64.0 absorption**
-(54) and **beginner-friendliness lesson review** (55). Live sessions are
-genuinely interactive: Run starts them, prompts stream while the program
+(54), **beginner-friendliness lesson review** (55), **Open Collective
+support rollout** (56), **v0.64.1 absorption** (57) and **Concepts
+highlighter fix** (58). Live sessions are genuinely interactive: Run
+starts them, prompts stream while the program
 waits, answers reach it, the session waits while you think, a finished
 program restarts with the answer history, and blocking errors surface in
 the Terminal. Handoff detail and the ready-to-paste next-session prompt:
