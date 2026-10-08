@@ -3394,3 +3394,20 @@ same day.
   nondeterminism). None surfaced in the acceptance above; the lesson
   and lab audits run each program twice, so nondeterminism in the
   pinned corpus would have been flagged.
+- Deploy: the mirror lag was a timing race - v0.64.1 was published on
+  GitHub at 12:21Z, four minutes after that hour's 12:17Z mirror sweep,
+  so the VPS deploy failed closed before rebuilding (mirror-first,
+  verified-bytes-only is deliberate; no second fetch path on the VPS).
+  Ops ran the immediate unblock (`dl-deploy.sh` then
+  `playground-deploy.sh`) and deployed the pin.
+- **Production verified (2026-10-08, deployed)**: `/api/version` reports
+  server 2.1.15, toolchain v0.64.1, wasm v0.64.1, stdlib 0.63.1 (516
+  modules); the served `js/wasm-loader.js` reports v0.64.1; the live
+  fixture streams `Name? -> Hello, Ada! -> N=7` (exit 0); patience held
+  (`STILL ALIVE` at 46.3 s with a late answer read as `A:late`); the
+  error surface is intact (structured error + red badge, clean run
+  without a badge, amber warning badge, replay error); the support
+  section renders six live tiers, 4+2 desktop / one column mobile with
+  no console errors, and its spacing-tweak CSS is live; lesson content
+  shows the review fixes (L0-10 counts down 5..1, L1-50 prints its
+  values).
