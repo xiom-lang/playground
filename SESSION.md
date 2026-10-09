@@ -1,13 +1,14 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-08 (**v0.64.1 verified in production** - toolchain
-and wasm v0.64.1, loaders and live/patience/error probes green; the
-mirror lag was an hourly-sweep race, ops deployed after the immediate
-unblock. Open Collective support live; beginner-friendliness lesson
-review complete - both audits 0/0 across 412 lessons, 412/412 full
-audit, see docs/LESSON_REVIEW.md and AUDIT 55). Branch `main` at/after
-`3fe50ce`, all commits pushed to `origin/main`; CI green (Validate +
-CodeQL). Toolchain/wasm **v0.64.1**, stdlib 0.63.1 (516 modules),
+Last updated: 2026-10-09 (**v0.64.2 absorbed** - pins, wasm, catalogs,
+acceptance green (lessons 412/412); `xiom run` now exits with the
+program's status, so clean non-zero returns are no longer crash-labelled
+and the corrected detection exposed + fixed four lesson bugs (L6-34,
+L8-17, L1-50, L8-11); pending deploy. v0.64.1 verified in production;
+Open Collective support live; beginner-friendliness lesson review
+complete - both audits 0/0 across 412 lessons). Branch `main` at/after
+`46bf6c0`, all commits pushed to `origin/main`; CI green (Validate +
+CodeQL). Toolchain/wasm **v0.64.2**, stdlib 0.63.1 (516 modules, 6,539 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -24,8 +25,9 @@ terminal enabled** (48), **2.1.11 real streaming + terminal look** (49),
 (51), **2.1.14 Run-goes-live + streaming render** (52), **2.1.15 errors
 in the Terminal + Diagnostics badges** (53), **v0.64.0 absorption**
 (54), **beginner-friendliness lesson review** (55), **Open Collective
-support rollout** (56), **v0.64.1 absorption** (57) and **Concepts
-highlighter fix** (58). Live sessions are genuinely interactive: Run
+support rollout** (56), **v0.64.1 absorption** (57), **Concepts
+highlighter fix** (58) and **v0.64.2 absorption** (59). Live sessions
+are genuinely interactive: Run
 starts them, prompts stream while the program
 waits, answers reach it, the session waits while you think, a finished
 program restarts with the answer history, and blocking errors surface in

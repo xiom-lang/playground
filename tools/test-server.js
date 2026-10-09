@@ -939,9 +939,10 @@ async function main() {
 
         await okAsync('POST /api/compile reports a crashed run, not empty output', async () => {
           // Mutually recursive functions with no base case compile, then die
-          // in the runtime fault trap: the Linux driver exits 0 with
-          // `exit code: -1` on stderr, Windows reports 0xC000001D on the
-          // process. The runner must name the crash.
+          // in the runtime fault trap: the fault reports `exit code: -1` on
+          // Linux and a negative NTSTATUS (0xC000001D) on Windows, while a
+          // program's own non-zero return keeps its status. The runner must
+          // name the fault, not confuse it with a clean exit code.
           const source = 'fn a() { b(); }\nfn b() { a(); }\nfn main() { a(); }\n';
           const res = await request('POST', '/api/compile', { source });
           assert.strictEqual(res.status, 200);
@@ -949,6 +950,19 @@ async function main() {
           assert.strictEqual(payload.success, false, JSON.stringify(payload));
           assert.ok(/Program crashed \(exit code /.test(payload.output), 'unexpected output: ' + payload.output);
           assert.ok(payload.output.indexOf('ran with no output') === -1, payload.output);
+        });
+
+        await okAsync('POST /api/compile keeps a clean non-zero exit as the program status', async () => {
+          // Since v0.64.2 the driver exits with the program's own status and
+          // lessons return status codes on purpose; only the fault trap is a
+          // crash.
+          const source = 'use xiom.io;\nfn main() -> Int {\n  io.println("status-check");\n  return 5;\n}\n';
+          const res = await request('POST', '/api/compile', { source });
+          assert.strictEqual(res.status, 200);
+          const payload = JSON.parse(res.body);
+          assert.strictEqual(payload.success, true, JSON.stringify(payload));
+          assert.ok(payload.output.indexOf('status-check') >= 0, 'unexpected output: ' + payload.output);
+          assert.ok(payload.output.indexOf('Program crashed') === -1, 'clean non-zero exit was labelled a crash: ' + payload.output);
         });
 
         await okAsync('POST /api/compile scrubs the server env from programs', async () => {

@@ -464,19 +464,35 @@ function failureOutput(diagnostics, proc) {
   return firstLine ? firstLine.trim() : 'Compilation failed.';
 }
 
-// The driver prints a trailing `exit code: N` line for every `xiom run`
-// (0 on success). A runtime fault is reported as -1 there while the driver
-// itself still exits 0 on Linux; on Windows the raw status (for example
-// 0xC000001D for the fault trap) arrives as the process exit. Either way the
-// program died, which is not the same as "ran with no output".
+// The driver prints a trailing `exit code: N` line for every `xiom run`.
+// Since v0.64.2 the driver also exits with the program's own status, so a
+// non-negative reported value is the program's exit code - a lesson that
+// returns 5 on purpose is not a crash. The runtime fault trap is the
+// platform's abnormal status: `-1` on Linux, a negative NTSTATUS (for
+// example -10737 for 0xC000001D) on Windows. On Windows a clean
+// `return -1` also reports exactly -1, so only non-Windows platforms treat
+// that value as the trap sentinel. Without a reported line, a non-zero
+// process status is the driver's compile/failure path.
 const REPORTED_EXIT_RE = /(?:^|\n)\s*exit code:\s*(-?\d+)\s*(?:\n|$)/;
+
+function isFaultExitCode(reported) {
+  if (reported === null) return false;
+  if (reported === -1) return process.platform !== 'win32';
+  return reported < 0;
+}
 
 function runFailure(proc) {
   if (!proc || proc.timedOut || proc.spawnError) return null;
   if (proc.signal) return { signal: proc.signal };
-  if (typeof proc.code === 'number' && proc.code !== 0) return { code: proc.code };
   const match = REPORTED_EXIT_RE.exec(String(proc.stderr || ''));
-  if (match && Number(match[1]) !== 0) return { code: Number(match[1]) };
+  if (match) {
+    const reported = Number(match[1]);
+    return isFaultExitCode(reported) ? { code: reported } : null;
+  }
+  // No reported status: the driver failed before/while running the program
+  // (a compile error that carried no structured diagnostics, a driver-level
+  // error). Keep the old failure path for this case.
+  if (typeof proc.code === 'number' && proc.code !== 0) return { code: proc.code, driver: true };
   return null;
 }
 
@@ -558,15 +574,16 @@ async function runProgram(source, stdin) {
       result.output = failureOutput(result.diagnostics, proc);
       result.runError = result.output;
     } else if (failure) {
-      // Compiles, then dies: surface the exit instead of an empty output.
       result.success = false;
-      result.output = crashOutput(failure, proc.stdout, proc.stderr);
+      result.output = failure.driver
+        ? failureOutput(result.diagnostics, proc)
+        : crashOutput(failure, proc.stdout, proc.stderr);
       result.runError = result.output;
-    } else if (!proc.success) {
-      result.output = failureOutput(result.diagnostics, proc);
-      result.runError = result.output;
-    } else if (!result.output) {
-      result.output = 'Program ran with no output.';
+    } else {
+      // Clean exit, including the program's own non-zero status since
+      // v0.64.2: the output is the program's stdout.
+      result.success = true;
+      if (!result.output) result.output = 'Program ran with no output.';
     }
     if (result.success) result.runOutput = result.output;
 

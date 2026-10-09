@@ -602,6 +602,14 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   pins and wasm bumped (JS/.d.ts unchanged), stdlib surface unchanged;
   C25 fixed, WSL 76/0, lab 37/37 and lessons 412/412 on the new pin
   (AUDIT 57).
+- [x] **Absorbed in v0.64.2** (2026-10-09): correctness release (vector
+  element layout, alias/enum payloads, byte-vector references and
+  nested-field writes, loop stack) plus `xiom run` exiting with the
+  program's status; pins and wasm bumped, stdlib +4 additive functions;
+  clean non-zero exits are no longer crash-labelled, which exposed and
+  fixed four lesson bugs (L6-34 reference-based fn pointers, L8-17
+  out-of-range index, L1-50 d7/off-by-one, L8-11 3d7); C25 fixed,
+  WSL 77/0, lab 37/37 and lessons 412/412 (AUDIT 59).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;

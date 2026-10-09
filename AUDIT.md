@@ -3440,3 +3440,55 @@ raw `<span class="code-keyword">` markup instead of highlighted code.
   same probe against https://playground.xiom-lang.org/ reports 30 cards
   with 0 raw-tag code blocks, the same token span counts, clean
   metaphors and no console exceptions.
+
+## 59. v0.64.2 absorption (2026-10-09)
+
+The compiler lane shipped v0.64.2 - a correctness release (vector element
+layout for structs, alias/enum payload resolution and determinism,
+byte-vector references and nested-field writes, loop temporaries and
+module-level vector builtins, and `xiom run` now exits with the
+program's own exit code) - and the playground absorbed it the same day.
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.2**; the mirror had
+  not published the tag yet, so the fetchers used the verified
+  GitHub-release fallback (linux tar.gz `bc2026af...`, windows zip
+  `05d54f4b...`, wasm_bg `da81a136...`). `xiom-wasm.js`/`.d.ts` are
+  byte-identical to v0.64.1, so only the wasm binary and the loader
+  comment changed.
+- Stdlib surface grew additively: 6,535 -> 6,539 functions (crypto
+  `hmac_sha256_hex`, io.fs `fs_remove`, net `TcpStream.write_all`,
+  net.server `ServerRequest` + `server_parse_request`); modules stay
+  516. Catalogs regenerated; all checks current.
+- **Exit-code semantics change**: `xiom run` now exits with the program's
+  own status, so a clean non-zero return is no longer a crash. The lesson
+  audit flagged 95 lessons as run failures (their output still matched);
+  `runFailure` in `server.js`, the lesson audit's runtime check and a new
+  suite test now treat a non-negative reported status as success and only
+  the runtime fault trap as a crash - the trap is the negative
+  `exit code: -1` on Linux and a negative NTSTATUS on Windows (where a
+  clean `return -1` also reports -1, distinguished by platform). The
+  suite still catches the infinite-recursion fault (WSL 77/0).
+- The corrected detection exposed, and we fixed, real lesson bugs:
+  - L6-34 used by-reference function-pointer parameters, which still
+    fault in v0.64.2; the lesson now uses the working by-value form
+    (`fn(T, T) -> Bool` with `.clone()` at the call), narrative and
+    template included.
+  - L8-17 indexed `random_range(0, chars.len())` (upper bound
+    inclusive) -> out-of-range fault; now `(0, chars.len() - 1)`.
+  - L1-50 rolled a d7 (`random_range(1, 7)`) and could index a five-item
+    list with `(0, 5)`; now `(1, 6)` and `(0, 4)`.
+  - L8-11 rolled 3d7 for stats; now 3d6, and the narrative's stale
+    `type Character {` / `random.range` block is fixed to current syntax.
+  Expected outputs for the four lessons regenerated (x2 deterministic).
+- Acceptance on the new pin: c25 **`C25 fixed: yes`**; WSL suite
+  **77/0** (new clean-non-zero test included); Lab audit **37/37 x2**;
+  full lesson audit **412/412 with zero failures at every level**;
+  Windows suite 67/0/1 (execution tests are skipped on Windows by
+  design).
+- Environment note for the compiler lane: `xiom run` hangs when the
+  source file lives on the WSL drvfs mount (`/mnt/c/...`); sources copied
+  into the native filesystem (the audits, the generator and the server
+  all do this) run normally. Relayed for awareness; no playground
+  action needed.
+- Production picks the pin up on the next mirror sweep/pull and is
+  verified after deploy (see AUDIT 59 follow-up in SESSION).

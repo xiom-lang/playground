@@ -125,9 +125,20 @@ async function runSource(source, id, input) {
     input: input == null ? undefined : input,
   });
   fs.rmSync(dir, { recursive: true, force: true });
+  // Since v0.64.2 the driver exits with the program's own status, so a
+  // clean non-zero return is not a runtime failure - many lessons return a
+  // status code on purpose (for example -1 for "not found"). The fault trap
+  // is the platform's abnormal status: -1 on Linux, a negative NTSTATUS on
+  // Windows (where a clean return -1 also reports exactly -1).
+  const reported = /(?:^|\n)\s*exit code:\s*(-?\d+)\s*(?:\n|$)/.exec(proc.stderr || '');
+  const reportedCode = reported ? Number(reported[1]) : null;
+  const fault = reportedCode !== null
+    ? (reportedCode === -1 ? process.platform !== 'win32' : reportedCode < 0)
+    : (typeof proc.code === 'number' && proc.code !== 0);
   return {
-    ok: proc.success,
+    ok: !proc.timedOut && !proc.signal && !proc.spawnError && !fault,
     exit: proc.code,
+    exitReported: reportedCode,
     timedOut: proc.timedOut,
     ms: Date.now() - started,
     stdout: proc.stdout.slice(0, 65536),
