@@ -3458,7 +3458,8 @@ program's own exit code) - and the playground absorbed it the same day.
 - Stdlib surface grew additively: 6,535 -> 6,539 functions (crypto
   `hmac_sha256_hex`, io.fs `fs_remove`, net `TcpStream.write_all`,
   net.server `ServerRequest` + `server_parse_request`); modules stay
-  516. Catalogs regenerated; all checks current.
+  516 and the manifest version moves to **0.64.2**. Catalogs
+  regenerated; all checks current.
 - **Exit-code semantics change**: `xiom run` now exits with the program's
   own status, so a clean non-zero return is no longer a crash. The lesson
   audit flagged 95 lessons as run failures (their output still matched);
@@ -3492,3 +3493,12 @@ program's own exit code) - and the playground absorbed it the same day.
   action needed.
 - Production picks the pin up on the next mirror sweep/pull and is
   verified after deploy (see AUDIT 59 follow-up in SESSION).
+- **Production verified (2026-10-09, deployed by the hourly pull; the
+  mirror published v0.64.2 on the sweep)**: `/api/version` reports server
+  2.1.15, toolchain v0.64.2, wasm v0.64.2, stdlib 0.64.2 (516 modules);
+  the served `js/wasm-loader.js` reports v0.64.2; live fixture
+  `Name? -> Hello, Ada! -> N=7` (exit 0); patience held (`STILL ALIVE`
+  at 46.8 s, late answer read `A:late`); the fixed lessons are served
+  (L8-17 `random_range(0, chars.len() - 1)`, L6-34 `fn(T, T) -> Bool` in
+  solution and narrative, L1-50 `(1, 6)` dice and `(0, 4)` fortune); the
+  support section markup, script and footer/header links stay live.

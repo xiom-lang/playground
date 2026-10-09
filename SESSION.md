@@ -8,7 +8,7 @@ L8-17, L1-50, L8-11); pending deploy. v0.64.1 verified in production;
 Open Collective support live; beginner-friendliness lesson review
 complete - both audits 0/0 across 412 lessons). Branch `main` at/after
 `46bf6c0`, all commits pushed to `origin/main`; CI green (Validate +
-CodeQL). Toolchain/wasm **v0.64.2**, stdlib 0.63.1 (516 modules, 6,539 functions),
+CodeQL). Toolchain/wasm **v0.64.2**, stdlib 0.64.2 (516 modules, 6,539 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
