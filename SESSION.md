@@ -36,6 +36,14 @@ section 29.
 Read with `ROADMAP.md` (phase plan + specs), `AUDIT.md` (findings and
 verification records), `README.md` and `DEPLOY.md`.
 
+Cross-lane coordination (since 2026-10-10) goes through the private
+`xiom-relays` bus: at session start and before finishing any task, pull
+it and process items addressed to this lane
+(`python tools/relay.py view --lane playground`); never edit another
+lane's item -- open a new item instead. The doorbell is a recurring
+session check while active. Full protocol: `xiom-relays/PROTOCOL.md`;
+see also `AGENTS.md`.
+
 ## 1. Repository and scope
 
 `xiom-lang/playground` (E:\xiom-lang\playground): browser editor + lessons at

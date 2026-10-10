@@ -3060,7 +3060,8 @@ waiting for an answer. Root cause and fix:
 - Upstream note (compiler lane): the durable fix is for the runtime to
   flush stdout before a blocking read (or line-buffer when stdin is not a
   TTY); `stdbuf` is the playground-side workaround, relayed to ops with
-  the trace evidence.
+  the trace evidence. Tracked as **REL-20261010-1554-playground** on the
+  xiom-relays bus.
 - **Production verified (2026-10-05, after the manual 2.1.11 redeploy)**:
   `/api/version` reports 2.1.11 + toolchain/wasm v0.63.1 with
   `capabilities.live:true`; `/api/health` reports `mode=require`,
@@ -3119,7 +3120,8 @@ appeared to do nothing.
 - Relay to the compiler/docs lane: consider a clearer name or a
   diagnostic/documentation callout for `io.stdin()` so it is not mistaken
   for `cin` (`io.read_line`/`io.read_int` are the readers). API-clarity
-  only; no functional gap found.
+  only; no functional gap found. Tracked as
+  **REL-20261010-1554-playground-4** on the xiom-relays bus.
 
 ## 51. Live patience, polling activity and the "?" key (2.1.13, 2026-10-05)
 
@@ -3473,7 +3475,8 @@ program's own exit code) - and the playground absorbed it the same day.
   - L6-34 used by-reference function-pointer parameters, which still
     fault in v0.64.2; the lesson now uses the working by-value form
     (`fn(T, T) -> Bool` with `.clone()` at the call), narrative and
-    template included.
+    template included. The underlying limitation is tracked as
+    **REL-20261010-1553-playground-2** on the xiom-relays bus.
   - L8-17 indexed `random_range(0, chars.len())` (upper bound
     inclusive) -> out-of-range fault; now `(0, chars.len() - 1)`.
   - L1-50 rolled a d7 (`random_range(1, 7)`) and could index a five-item
@@ -3489,8 +3492,8 @@ program's own exit code) - and the playground absorbed it the same day.
 - Environment note for the compiler lane: `xiom run` hangs when the
   source file lives on the WSL drvfs mount (`/mnt/c/...`); sources copied
   into the native filesystem (the audits, the generator and the server
-  all do this) run normally. Relayed for awareness; no playground
-  action needed.
+  all do this) run normally. Tracked as
+  **REL-20261010-1553-playground-3** on the xiom-relays bus.
 - Production picks the pin up on the next mirror sweep/pull and is
   verified after deploy (see AUDIT 59 follow-up in SESSION).
 - **Production verified (2026-10-09, deployed by the hourly pull; the
