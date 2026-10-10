@@ -1,11 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-10 (**v0.64.3 absorbed** - pins, wasm, catalogs,
-acceptance green (lessons 412/412); first release absorbed through the
-xiom-relays bus: all five playground compiler items re-verified as not
-fixed on the new pin, release-check rows filled; pending deploy. v0.64.2
-verified in production; v0.64.1 verified; Open Collective support live;
-beginner-friendliness lesson review complete - both audits 0/0).
+Last updated: 2026-10-10 (**v0.64.3 verified in production** - toolchain,
+wasm and stdlib 0.64.3 live, loader and live/patience probes green; the
+first release absorbed through the xiom-relays bus: all five playground
+compiler items re-verified as not fixed on the new pin, release-check
+rows filled, compiler acked them. v0.64.2 verified; Open Collective
+support live; beginner-friendliness lesson review complete - both audits
+0/0).
 Branch `main` at/after `3db6e08`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.3**, stdlib 0.64.3 (516 modules, 6,541 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate

@@ -3541,3 +3541,11 @@ bus (see the release-check verdicts below).
   nothing; now emits the W005 stub warning).
 - Production picks the pin up on the next mirror sweep/pull; verified
   after deploy.
+- **Production verified (2026-10-10, deployed by the hourly pull; the
+  mirror published v0.64.3)**: `/api/version` reports server 2.1.15,
+  toolchain v0.64.3, wasm v0.64.3, stdlib 0.64.3 (516 modules), live
+  true; the served `js/wasm-loader.js` reports v0.64.3; the live fixture
+  streams `Name? -> Hello, Ada! -> N=7` (exit 0); patience held
+  (`STILL ALIVE` at 46.5 s with a late answer read as `A:late`). On the
+  bus, the compiler acked all five playground items (post-cut triage)
+  and PULSE acked the architecture reply, which is now closed.
