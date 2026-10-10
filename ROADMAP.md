@@ -610,6 +610,13 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   fixed four lesson bugs (L6-34 reference-based fn pointers, L8-17
   out-of-range index, L1-50 d7/off-by-one, L8-11 3d7); C25 fixed,
   WSL 77/0, lab 37/37 and lessons 412/412 (AUDIT 59).
+- [x] **Absorbed in v0.64.3** (2026-10-10): correctness and performance
+  (hardened bounds/null checks, warm-recompile library cache,
+  by-reference optional/result generics, user-local alloc/free); pins
+  and wasm bumped, stdlib +2 additive functions; C25 fixed, WSL 77/0,
+  lab 37/37 and lessons 412/412; first release absorbed through the
+  xiom-relays bus - all five playground compiler items re-verified as
+  not fixed on the new pin (AUDIT 60).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;

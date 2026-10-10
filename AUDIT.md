@@ -3505,3 +3505,39 @@ program's own exit code) - and the playground absorbed it the same day.
   (L8-17 `random_range(0, chars.len() - 1)`, L6-34 `fn(T, T) -> Bool` in
   solution and narrative, L1-50 `(1, 6)` dice and `(0, 4)` fortune); the
   support section markup, script and footer/header links stay live.
+
+## 60. v0.64.3 absorption (2026-10-10)
+
+The compiler lane shipped v0.64.3 - correctness and performance
+(hardened bounds/null checks, warm-recompile library-check cache,
+by-reference optional/result generics + slice-to-vector bridge,
+user-local `alloc`/`free` binding) - and the playground absorbed it the
+same day. This is also the first release absorbed through the xiom-relays
+bus (see the release-check verdicts below).
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.3**; the mirror had
+  not published the tag yet, so the fetchers used the verified
+  GitHub-release fallback (linux tar.gz `791abe25...`, windows zip
+  `5140b863...`, wasm_bg `23371ffc...`). `xiom-wasm.js`/`.d.ts` are
+  byte-identical to v0.64.2, so only the wasm binary and the loader
+  comment changed.
+- Stdlib grew additively: 6,539 -> 6,541 functions
+  (os.signal `signal_handle`, `signal_pending`); modules stay 516.
+  Catalogs regenerated; all checks current.
+- Acceptance on the new pin: c25 **`C25 fixed: yes`** (cold, cached,
+  `--no-cache`); WSL suite **77/0**; Lab audit **37/37 x2**; full lesson
+  audit **412/412 with zero failures at every level**; Windows suite
+  67/0/1.
+- **Relay release-check (compiler-v0.64.3, first bus release)**: all
+  five playground items were re-reproduced on the new toolchain and are
+  **not fixed** in v0.64.3, verdicts recorded in
+  `release-checks/compiler-compiler-v0.64.3.md`:
+  REL-20261010-1553-playground-2 (by-reference fn-pointer params still
+  trap, exit -1), REL-20261010-1553-playground-3 (drvfs `/mnt/c`
+  sources still hang; `/tmp` control runs), REL-20261010-1554-playground
+  (prompt still buffered until input: write at 3002 ms, output at
+  3004 ms), REL-20261010-1554-playground-2 (Int+Str still prints 122),
+  REL-20261010-1554-playground-3 (mixed `.to_str()` still prints
+  nothing; now emits the W005 stub warning).
+- Production picks the pin up on the next mirror sweep/pull; verified
+  after deploy.
