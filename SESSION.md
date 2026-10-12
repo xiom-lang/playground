@@ -1,14 +1,12 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-12 (**v0.64.3 verified in production** - toolchain,
-wasm and stdlib 0.64.3 live, loader and live/patience probes green; all
-tranches through AUDIT 60 done; **section 30 is the current handoff with
-the paste-ready next-session prompt** (written for a context-full
-handoff). Relay bus live: five compiler items acked awaiting fixes
-(re-verify at v0.64.4), two PULSE items awaiting their close; PULSE 0.3.0
-static-site staging test will ping. v0.64.2 verified; Open Collective
-support live; beginner-friendliness lesson review complete - both audits
-0/0).
+Last updated: 2026-10-12 (**v0.64.4 absorbed** - pins, wasm, catalogs,
+acceptance green (lessons 412/412); relay verdicts filed: all five open
+playground items remain red on the new pin; pending deploy. **section 30
+is the current handoff with the paste-ready next-session prompt**.
+v0.64.3 verified in production until the pull ships v0.64.4; Open
+Collective support live; beginner-friendliness lesson review complete -
+both audits 0/0).
 Branch `main` at/after `805a572`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.3**, stdlib 0.64.3 (516 modules, 6,541 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1467,11 +1465,13 @@ absorbed. All commits pushed; CI green.
    - REL-20261010-1703-pulse / -1819-pulse: PULSE items acked, awaiting
      their close; PULSE 0.3.0 static-site mode will ping for a staging
      test of the playground bundle.
-   When compiler v0.64.4 ships (six-batch wave m254-m273; at handoff the
-   compiler reported "pin pending stdlib tag"), the compiler lane creates
-   release-checks/compiler-compiler-v0.64.4.md: absorb the pin the usual
-   way, re-verify each open playground item from its witness on the new
-   toolchain, then set verified + close or return to acked with a note.
+   v0.64.4 is already absorbed (AUDIT 61) and the release-check verdicts
+   are filed: all five playground items remain red on the new pin, items
+   stay acked (no fix refs). Immediate next step: production verification
+   of v0.64.4 (the scheduled check covers it). For the next release
+   (v0.64.5+): repeat the same flow - absorb the pin, then re-verify each
+   open item from its witness on the new toolchain and set verified +
+   close, or note the verdict.
 
 2. Production deploys by the hourly VPS pull at minute 29 (mirror sweep
    at :17; the fetch scripts fall back to the GitHub release when the
@@ -1515,10 +1515,11 @@ DevTools protocol; production is playground.xiom-lang.org.
 You are the playground session for xiom-lang/playground at
 E:\xiom-lang\playground. Read SESSION.md section 30 and follow it. Key
 points: pull xiom-relays and process items to playground (doorbell cron
-every 3h; recreate it if expired); production is v0.64.3 verified - keep
-it that way; when compiler v0.64.4 ships, absorb the pin and re-verify
-the five open playground items (REL-20261010-1553-playground-2 and -3,
-REL-20261010-1554-playground, -2 and -3) from the v0.64.4 release check,
+every 3h; recreate it if expired); v0.64.4 is absorbed and its
+release-check verdicts are filed (five playground items still red) -
+confirm production is on v0.64.4 (version + loader + live/patience) and
+keep it current; re-verify the five items (REL-20261010-1553-playground-2
+and -3, REL-20261010-1554-playground, -2 and -3) at the next release,
 keeping the L6-34 by-ref fn-pointer workaround until -2 is fixed; PULSE
 will ping for a 0.3.0 static-site staging test of the bundle.
 

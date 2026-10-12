@@ -617,6 +617,12 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   lab 37/37 and lessons 412/412; first release absorbed through the
   xiom-relays bus - all five playground compiler items re-verified as
   not fixed on the new pin (AUDIT 60).
+- [x] **Absorbed in v0.64.4** (2026-10-12): six-batch reliability wave
+  (name resolution/module isolation, function-value marshalling, safer
+  installs, Float32 vector stores); pins and wasm bumped, stdlib count
+  unchanged with iter adapters now inherent on Range; C25 fixed,
+  WSL 77/0, lab 37/37 and lessons 412/412; relay verdicts filed - the
+  five playground items remain red on the new pin (AUDIT 61).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;

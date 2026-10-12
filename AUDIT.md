@@ -3549,3 +3549,41 @@ bus (see the release-check verdicts below).
   (`STILL ALIVE` at 46.5 s with a late answer read as `A:late`). On the
   bus, the compiler acked all five playground items (post-cut triage)
   and PULSE acked the architecture reply, which is now closed.
+
+## 61. v0.64.4 absorption (2026-10-12)
+
+The compiler lane shipped v0.64.4 - the six-batch reliability wave
+(strict name resolution and module isolation, function-value
+marshalling through C boundaries/struct fields/locals/vector elements,
+safer install paths and packages home, Float32 vector-store
+conversion) - and the playground absorbed it the same day; the mirror
+had already published it, so both toolchains installed mirror-first.
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.4**; hashes
+  verified against the release (linux tar.gz `72a131cc...`, windows zip
+  `44a41aea...`, wasm_bg `6776db2f...`). `xiom-wasm.js`/`.d.ts` are
+  byte-identical to v0.64.3, so only the wasm binary and the loader
+  comment changed.
+- Stdlib: 516 modules / 6,541 functions (count unchanged). Twelve
+  signatures changed shape: the display form `Vec<Str>` -> `Vec[Str]`
+  for the `env` helpers and the iter adapters (`step_by`,
+  `take_while`, `skip_while`, `inspect`) moving from `Iterator[T]`
+  extension methods to **`Range` inherent methods**. No lesson or lab
+  program uses those adapters, so no lesson edits; catalogs regenerated
+  and all checks current.
+- Acceptance on the new pin: c25 **`C25 fixed: yes`** (cold, cached,
+  `--no-cache`); WSL suite **77/0**; Lab audit **37/37 x2**; full
+  lesson audit **412/412 with zero failures at every level**; Windows
+  suite 67/0/1.
+- **Relay release-check (compiler-v0.64.4)**: all five playground items
+  were re-reproduced on the new toolchain and remain red - verdicts
+  recorded in `release-checks/compiler-compiler-v0.64.4.md`:
+  -1553-playground-2 (by-ref fn-pointer params still trap, exit -1),
+  -1553-playground-3 (drvfs `/mnt/c` sources still hang; `/tmp`
+  control prints), -1554-playground (output only after the write:
+  3002 ms -> 3004 ms), -1554-playground-2 (still prints 122),
+  -1554-playground-3 (still prints nothing; W005 stub warning). The
+  items stay `acked` (no fix refs yet); the wave's fn-value fixes went
+  to the bindings lane's items, not this by-reference form.
+- Production picks the pin up on the hourly pull (mirror published the
+  tag) and is verified after deploy.
