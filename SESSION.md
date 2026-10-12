@@ -1,13 +1,15 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-10 (**v0.64.3 verified in production** - toolchain,
-wasm and stdlib 0.64.3 live, loader and live/patience probes green; the
-first release absorbed through the xiom-relays bus: all five playground
-compiler items re-verified as not fixed on the new pin, release-check
-rows filled, compiler acked them. v0.64.2 verified; Open Collective
+Last updated: 2026-10-12 (**v0.64.3 verified in production** - toolchain,
+wasm and stdlib 0.64.3 live, loader and live/patience probes green; all
+tranches through AUDIT 60 done; **section 30 is the current handoff with
+the paste-ready next-session prompt** (written for a context-full
+handoff). Relay bus live: five compiler items acked awaiting fixes
+(re-verify at v0.64.4), two PULSE items awaiting their close; PULSE 0.3.0
+static-site staging test will ping. v0.64.2 verified; Open Collective
 support live; beginner-friendliness lesson review complete - both audits
 0/0).
-Branch `main` at/after `3db6e08`, all commits pushed to `origin/main`;
+Branch `main` at/after `805a572`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.3**, stdlib 0.64.3 (516 modules, 6,541 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
@@ -1434,7 +1436,93 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style
    brief for 2.0 (12 assets) and 2.2 (23 assets).
 
-## 29. Handoff 2026-10-05 (current) -- next-session prompt
+## 30. Handoff 2026-10-12 (current) -- next-session prompt
+
+### State (exact)
+
+Production is **v0.64.3 verified** (server 2.1.15, toolchain/wasm v0.64.3,
+stdlib 0.64.3, 516 modules / 6,541 functions, `capabilities.live: true`;
+live fixture and patience probes green). Windows `.toolchain` and the WSL
+audit toolchain are v0.64.3 (`/home/lefteris/xiom_v0643/tc`). Everything
+through AUDIT 60 is complete: beginner-friendliness lesson review (style
+and code audits 0/0 across 412 lessons), Open Collective support live,
+live terminal interactive, Concepts highlighter fixed, all pin releases
+absorbed. All commits pushed; CI green.
+
+### Open threads (action for the next session)
+
+1. **Relay bus (doorbell cron every 3h, `0 */3 * * *`; recreate if
+   expired).** At session start and before finishing any task: pull
+   xiom-relays and process items to playground
+   (`python tools/relay.py view --lane playground`). Open playground
+   items on the bus (all `acked` by the compiler/stdlib lanes, awaiting
+   fixes; keep the L6-34 by-value fn-pointer workaround until
+   -1553-playground-2 is fixed):
+   - REL-20261010-1553-playground-2 by-ref fn-pointer params trap
+   - REL-20261010-1553-playground-3 xiom run hangs on drvfs sources
+   - REL-20261010-1554-playground prompts not flushed before a read
+   - REL-20261010-1554-playground-2 Int+Str coercion prints 122
+   - REL-20261010-1554-playground-3 mixed .to_str() prints nothing
+   - REL-20261010-1554-playground-4 io.stdin() clarity (stdlib wishlist)
+   - REL-20261010-1703-pulse / -1819-pulse: PULSE items acked, awaiting
+     their close; PULSE 0.3.0 static-site mode will ping for a staging
+     test of the playground bundle.
+   When compiler v0.64.4 ships (six-batch wave m254-m273; at handoff the
+   compiler reported "pin pending stdlib tag"), the compiler lane creates
+   release-checks/compiler-compiler-v0.64.4.md: absorb the pin the usual
+   way, re-verify each open playground item from its witness on the new
+   toolchain, then set verified + close or return to acked with a note.
+
+2. Production deploys by the hourly VPS pull at minute 29 (mirror sweep
+   at :17; the fetch scripts fall back to the GitHub release when the
+   mirror lags). After each pin absorption, verify `/api/version`, the
+   served `js/wasm-loader.js`, and run live-prod-check.js plus
+   patience-check.js from %TEMP%\kilo\lab-verify.
+
+### Per-tranche workflow (unchanged)
+
+Implement; verify execution on Linux/WSL and UI in a real browser; update
+ROADMAP/AUDIT/SESSION; run the full gate (node --check,
+tools/test-server.js, generator --checks, lab audit, lesson audit,
+lesson style/code audits); commit -s with a conventional message; push
+origin main (never force); verify CI green.
+
+### Constraints (unchanged)
+
+Zero-dependency Node tools and ES5 frontend; no bundlers; both themes;
+ASCII docs; never edit .kilo/ worktrees; never weaken the container
+sandbox; do not edit compiler/ops/registry/website repos (coordinate via
+xiom-relays); never hand-edit generated JSONs (js/stdlib-ref.json,
+js/limitations.json, tools/lesson-baseline.json,
+tools/expected-output-skips.json, lessons/lab/index.json,
+lessons/lab/entries/*); main must stay deployable.
+
+### Environment
+
+Windows `.toolchain` v0.64.3; every WSL command goes through
+`wsl -d Ubuntu -e bash -lc ...`; Linux toolchains per release at
+`/home/lefteris/xiom_v06NN/tc` (v0.64.3 now; node at
+/home/lefteris/node-v22.23.2-linux-x64/bin/node); WSL /tmp is wiped
+between invocations; PowerShell mangles `$` inside inline commands --
+prefer script files under %TEMP%\kilo for WSL probes; `xiom run` hangs
+on drvfs source paths (/mnt/c), so probe sources live in /tmp; lab audit
+from Windows: `node tools/lab-audit.js --wsl --wsl-toolchain
+/home/lefteris/xiom_v0643/tc`; browser checks use headless Edge over the
+DevTools protocol; production is playground.xiom-lang.org.
+
+### Next-session prompt (paste-ready)
+
+You are the playground session for xiom-lang/playground at
+E:\xiom-lang\playground. Read SESSION.md section 30 and follow it. Key
+points: pull xiom-relays and process items to playground (doorbell cron
+every 3h; recreate it if expired); production is v0.64.3 verified - keep
+it that way; when compiler v0.64.4 ships, absorb the pin and re-verify
+the five open playground items (REL-20261010-1553-playground-2 and -3,
+REL-20261010-1554-playground, -2 and -3) from the v0.64.4 release check,
+keeping the L6-34 by-ref fn-pointer workaround until -2 is fixed; PULSE
+will ping for a 0.3.0 static-site staging test of the bundle.
+
+## 29. Handoff 2026-10-05 (historical -- executed) -- next-session prompt
 
 ### State
 
