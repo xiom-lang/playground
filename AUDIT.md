@@ -3587,3 +3587,10 @@ had already published it, so both toolchains installed mirror-first.
   to the bindings lane's items, not this by-reference form.
 - Production picks the pin up on the hourly pull (mirror published the
   tag) and is verified after deploy.
+- **Production verified (2026-10-12, deployed by the hourly pull)**:
+  `/api/version` reports server 2.1.15, toolchain v0.64.4, wasm
+  v0.64.4, stdlib 0.64.4 (516 modules); the served `js/wasm-loader.js`
+  reports v0.64.4; live fixture `Name? -> Hello, Ada! -> N=7` (prompt
+  visible while running, both answers handled live, exit 0); patience
+  held (`STILL ALIVE` at 46.4 s, late answer read `A:late`, exit at
+  46.7 s).

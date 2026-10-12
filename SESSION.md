@@ -1,14 +1,14 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-12 (**v0.64.4 absorbed** - pins, wasm, catalogs,
-acceptance green (lessons 412/412); relay verdicts filed: all five open
-playground items remain red on the new pin; pending deploy. **section 30
+Last updated: 2026-10-12 (**v0.64.4 verified in production** - pins,
+wasm, catalogs, acceptance green (lessons 412/412); relay verdicts
+filed: all five open playground items remain red on the new pin;
+version/loader/live/patience green after the hourly pull. **section 30
 is the current handoff with the paste-ready next-session prompt**.
-v0.64.3 verified in production until the pull ships v0.64.4; Open
-Collective support live; beginner-friendliness lesson review complete -
-both audits 0/0).
-Branch `main` at/after `805a572`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.64.3**, stdlib 0.64.3 (516 modules, 6,541 functions),
+Open Collective support live; beginner-friendliness lesson review
+complete - both audits 0/0).
+Branch `main` at/after `17c96c1`, all commits pushed to `origin/main`;
+CI green (Validate + CodeQL). Toolchain/wasm **v0.64.4**, stdlib 0.64.4 (516 modules, 6,541 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1465,10 +1465,11 @@ absorbed. All commits pushed; CI green.
    - REL-20261010-1703-pulse / -1819-pulse: PULSE items acked, awaiting
      their close; PULSE 0.3.0 static-site mode will ping for a staging
      test of the playground bundle.
-   v0.64.4 is already absorbed (AUDIT 61) and the release-check verdicts
-   are filed: all five playground items remain red on the new pin, items
-   stay acked (no fix refs). Immediate next step: production verification
-   of v0.64.4 (the scheduled check covers it). For the next release
+   v0.64.4 is absorbed (AUDIT 61), the release-check verdicts are filed
+   (all five playground items remain red on the new pin, items stay
+   acked, no fix refs), and production is verified on the pin
+   (2026-10-12 post-deploy check: version + loader + live + patience
+   green). For the next release
    (v0.64.5+): repeat the same flow - absorb the pin, then re-verify each
    open item from its witness on the new toolchain and set verified +
    close, or note the verdict.
