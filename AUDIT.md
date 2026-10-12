@@ -3588,9 +3588,17 @@ had already published it, so both toolchains installed mirror-first.
 - Production picks the pin up on the hourly pull (mirror published the
   tag) and is verified after deploy.
 - **Production verified (2026-10-12, deployed by the hourly pull)**:
-  `/api/version` reports server 2.1.15, toolchain v0.64.4, wasm
-  v0.64.4, stdlib 0.64.4 (516 modules); the served `js/wasm-loader.js`
-  reports v0.64.4; live fixture `Name? -> Hello, Ada! -> N=7` (prompt
-  visible while running, both answers handled live, exit 0); patience
-  held (`STILL ALIVE` at 46.4 s, late answer read `A:late`, exit at
-  46.7 s).
+  `/api/version` reports server 2.1.15, toolchain v0.64.4, wasm v0.64.4,
+  stdlib v0.64.4 (516 modules), live true; the served
+  `js/wasm-loader.js` reports v0.64.4; a live session streams for real
+  (`Name?` at 1.48 s -> `Hello, Ada!` at 1.68 s, exit 0); the patience
+  probe held (`STILL ALIVE` at 45.3 s with a late answer read as
+  `A:late`); one-shot compile of the two-read fixture takes 333 ms.
+- Observation from the verification (not a defect): a live session whose
+  source pulls more stdlib (the two-read fixture with `io.read_int`) can
+  take 12-30 s to show its first prompt in the sandboxed container when
+  that exact source is cold in the script cache - the original probe
+  fixtures timed out waiting, but the session completes and streams once
+  compiled (reproduced in the local container at 11.9 s; simple sources
+  stream in ~1.5 s). Probe windows were widened accordingly; the
+  verification bullet above used the widened window and a warmer cache.
