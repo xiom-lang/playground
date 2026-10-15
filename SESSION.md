@@ -7,8 +7,8 @@ closed, the flush-before-read and io.stdin items stay closed, the
 by-ref fn-pointer item returned to acked (still traps), the coercion
 and `.to_str()` stub items stay red; **section 32 is the current
 handoff with the paste-ready next-session prompt**. Production verified
-v0.64.4 until the v0.64.5 pull (the mirror published the tag; the
-hourly deploy carries it); Open Collective support live;
+**v0.64.5** (deployed by the hourly pull; version + loader + live +
+patience green); Open Collective support live;
 beginner-friendliness lesson review complete - both audits 0/0).
 Branch `main` at/after `d21f15c`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.5**, stdlib 0.64.5 (517 modules, 6,576 functions),

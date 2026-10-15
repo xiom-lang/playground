@@ -3675,6 +3675,15 @@ comment changed.
 - Production picks the pin up on the hourly pull (the mirror published
   v0.64.5; `latest.json` = v0.64.5 and SHA256SUMS byte-identical to
   GitHub) and is verified after deploy.
+- **Production verified (2026-10-15, deployed by the hourly pull)**:
+  `/api/version` reports server 2.1.15, toolchain v0.64.5, wasm v0.64.5,
+  stdlib 0.64.5 (517 modules), live true; the served
+  `js/wasm-loader.js` reports v0.64.5; `/api/health` keeps `abuse:ok`,
+  sandbox `require` / landlock 4 / `keepStdin:true`, bundle 352
+  packages; a live session streams for real (`Name?` -> `Hello, Ada!`
+  -> `N=7`, exit 0, prompt visible while the program waited) and the
+  patience probe held (`STILL ALIVE` at 48.4 s with a late answer read
+  as `A:late`); one-shot compile of the two-read fixture takes 615 ms.
 - **Follow-up for a later tranche**: the m308 flush fix makes the live
   terminal's `stdbuf -o0` workaround redundant; probe a live session
   without it after the deploy and drop the workaround if prompts stream
