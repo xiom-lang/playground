@@ -1459,17 +1459,17 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
   - `REL-20261010-1554-playground-4` (io.stdin clarity) - **VERIFIED
     FIXED**: v0.64.5 `io.xi` line 721 documents fd 0 / NOT a reader /
     never blocks.
-  - `REL-20261010-1553-playground-2` (by-ref fn-pointer params) was
-    marked fixed (m308) but **still needs a clean verdict**: my generic
-    `less: fn(&T, &T)` Str probe still trapped (exit `-1`) on the
-    v0.64.5 tarball, while the non-generic shape test was inconclusive
-    (my probe script printed exit 1 with empty output and did not show
-    stderr). Re-probe cleanly (print FULL stderr; shapes: generic Str,
-    non-generic Str, generic Int) and then either verify + close or
-    return to `acked` with a note. Keep the L6-34 by-value workaround
-    until this is settled.
+  - `REL-20261010-1553-playground-2` (by-ref fn-pointer params): the
+    parallel playground session re-probed all four shapes on the v0.64.5
+    tarball (2026-10-15T20:22Z) - generic/non-generic Str and Int, named
+    fn and inline closure - **all still trap (`exit code: -1`)**; the
+    item is back to `acked` with that evidence (the m308 strcmp branch
+    does not reach the dynamic-index element-ref call path). L6-34 keeps
+    the by-value workaround; no playground action until the by-ref batch.
+  - `REL-20261010-1553-playground-3` (drvfs `/mnt/c` hang) - **VERIFIED
+    FIXED on the v0.64.5 tarball and closed**: a source on `/mnt/c` runs
+    and `--check` passes; the /tmp control is unchanged.
   - Still acked, watch the next release checks:
-    `-1553-playground-3` (drvfs `/mnt/c` hang),
     `-1554-playground-2` (Int+Str coercion prints 122),
     `-1554-playground-3` (mixed `.to_str()` W005 stub).
   - PULSE items `-1703-pulse` / `-1819-pulse` are acked awaiting their
