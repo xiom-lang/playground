@@ -1,13 +1,13 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-12 (**v0.64.4 verified in production** - pins,
-wasm, catalogs, acceptance green (lessons 412/412); relay verdicts
-filed: all five open playground items remain red on the new pin;
-version/loader/live/patience green after the hourly pull. **section 30
-is the current handoff with the paste-ready next-session prompt**.
-Open Collective support live; beginner-friendliness lesson review
-complete - both audits 0/0).
-Branch `main` at/after `17c96c1`, all commits pushed to `origin/main`;
+Last updated: 2026-10-15 (**v0.64.5 released; absorption pending in this
+checkout** - the flush-before-read and io.stdin items are verified and
+closed; the by-ref comparator verdict is still open (clean re-probe
+needed); **section 31 is the current handoff with the paste-ready
+next-session prompt**. Production verified v0.64.4 until the v0.64.5
+pull; Open Collective support live; lesson review complete - both
+audits 0/0).
+Branch `main` at/after `28d7b69`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.4**, stdlib 0.64.4 (516 modules, 6,541 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
@@ -1434,7 +1434,94 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style
    brief for 2.0 (12 assets) and 2.2 (23 assets).
 
-## 30. Handoff 2026-10-12 (current) -- next-session prompt
+## 31. Handoff 2026-10-15 (current) -- v0.64.5 + item verification
+
+### State (exact)
+
+- Working tree: pins still **v0.64.4** (`TOOLCHAIN_VERSION`), HEAD
+  `28d7b69`, tree clean. **v0.64.5 is NOT yet absorbed in this
+  checkout.** A parallel playground session appeared to be mid-absorb
+  (the Windows release zip was locked by another process while this
+  session downloaded assets at 19:2xZ on 2026-10-15); re-check
+  `git log`/`TOOLCHAIN_VERSION` before starting so you do not duplicate.
+- v0.64.5 is RELEASED: tag `84f761c5`, release run green, assets on
+  GitHub (mirror was 404 at check time). The release carries **m308
+  `d52a813f`** (ancestor of the tag).
+- Relay (xiom-relays, doorbell cron `wku_13ecab8d3001UdkxvVcKnEaI0E`,
+  `0 */3 * * *`): two items verified and CLOSED this session:
+  - `REL-20261010-1554-playground` (stdout flush before a blocking read)
+    - **VERIFIED FIXED on the v0.64.5 tarball**: probe streamed `Name?`
+    at 1504 ms while the program was blocked; exit 0.
+  - `REL-20261010-1554-playground-4` (io.stdin clarity) - **VERIFIED
+    FIXED**: v0.64.5 `io.xi` line 721 documents fd 0 / NOT a reader /
+    never blocks.
+  - `REL-20261010-1553-playground-2` (by-ref fn-pointer params) was
+    marked fixed (m308) but **still needs a clean verdict**: my generic
+    `less: fn(&T, &T)` Str probe still trapped (exit `-1`) on the
+    v0.64.5 tarball, while the non-generic shape test was inconclusive
+    (my probe script printed exit 1 with empty output and did not show
+    stderr). Re-probe cleanly (print FULL stderr; shapes: generic Str,
+    non-generic Str, generic Int) and then either verify + close or
+    return to `acked` with a note. Keep the L6-34 by-value workaround
+    until this is settled.
+  - Still acked, watch the next release checks:
+    `-1553-playground-3` (drvfs `/mnt/c` hang),
+    `-1554-playground-2` (Int+Str coercion prints 122),
+    `-1554-playground-3` (mixed `.to_str()` W005 stub).
+  - PULSE items `-1703-pulse` / `-1819-pulse` are acked awaiting their
+    close; PULSE 0.3.0 static-site staging test will ping.
+- Assets for v0.64.5 are cached at `%TEMP%\kilo\v0645` (linux tar
+  sha256 `246e5e82...`, wasm_bg `06f11532...`, JS/.d.ts unchanged). The
+  Windows zip may still be locked by the other session - use
+  `gh release download v0.64.5 ... --clobber` if needed.
+- **Important follow-up**: the m308 flush fix makes the live terminal's
+  `stdbuf -o0` workaround redundant on v0.64.5. After the pin is
+  absorbed and deployed, probe a live session WITHOUT stdbuf; if prompts
+  stream natively, remove the workaround in a later tranche (keeps the
+  live spawn simpler); until then keep `stdbuf` (harmless).
+
+### Next steps (in order)
+
+1. Check the parallel session's absorption state; if v0.64.5 is not
+   absorbed: absorb it (assets cached; mirror-first fetchers, GitHub
+   fallback), run the full acceptance (c25, WSL suite, lab audit, full
+   lesson audit, Windows suite, generator checks) and commit/push.
+2. Re-probe `-1553-playground-2` on v0.64.5 with full stderr and settle
+   its verdict (verify + close, or return to acked with evidence).
+3. Production verification after the hourly pull (version/loader, live
+   fixture, patience). Note the widened window: cold live compiles of
+   stdlib-heavier sources in the sandbox can take 12-30 s (AUDIT 61
+   observation).
+4. Watch for the compiler's `release-checks/compiler-compiler-v0.64.5.md`
+   and file the playground rows once it appears.
+
+### Environment (unchanged essentials)
+
+Windows `.toolchain` v0.64.4 until the absorption; WSL commands via
+`wsl -d Ubuntu -e bash -lc ...`; Linux toolchains at
+`/home/lefteris/xiom_v06NN/tc`; node at
+/home/lefteris/node-v22.23.2-linux-x64/bin/node; WSL /tmp is wiped
+between invocations (extract + probe in the SAME invocation); prefer
+script files under %TEMP%\kilo for WSL probes (PowerShell mangles `$`);
+`xiom run` on drvfs source paths hangs (use /tmp); production is
+playground.xiom-lang.org.
+
+### Next-session prompt (paste-ready)
+
+You are the playground session for xiom-lang/playground at
+E:\xiom-lang\playground. Read SESSION.md section 31 and follow it.
+Key points: pull xiom-relays and process items to playground (doorbell
+cron every 3h; recreate if expired); v0.64.5 is released (tag
+84f761c5) and the flush-before-read + io.stdin items are already
+verified and closed - absorb the v0.64.5 pin if the checkout is still
+on v0.64.4 (assets cached in %TEMP%\kilo\v0645; a parallel session may
+have done it - check first), then settle REL-20261010-1553-playground-2
+with a clean re-probe (generic/non-generic Str and Int by-ref
+comparators, full stderr) and verify or return it; after the deploy,
+verify production and consider dropping the live stdbuf workaround
+(the m308 flush fix makes it redundant).
+
+## 30. Handoff 2026-10-12 (historical -- executed) -- next-session prompt
 
 ### State (exact)
 
