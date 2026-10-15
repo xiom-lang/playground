@@ -3602,3 +3602,80 @@ had already published it, so both toolchains installed mirror-first.
   compiled (reproduced in the local container at 11.9 s; simple sources
   stream in ~1.5 s). Probe windows were widened accordingly; the
   verification bullet above used the widened window and a warmer cache.
+
+## 62. v0.64.5 absorption (2026-10-15)
+
+The compiler lane shipped v0.64.5 - the largest wave absorbed so far
+(m276-m333, ~120 commits: name resolution and module identity,
+function-value marshalling, contract evaluation, FFI pointer batches,
+the registry/install cluster, Int128/UInt64 semantics, the thread
+gateway, the engine constant surface, and the release-gate rounds) -
+carrying the playground cluster m308 `d52a813f`: `&Str` comparator
+strcmp, stdout flush before text-stdio reads, and guard-page elision
+for arena-free blocks. The mirror was mid-publish during the release
+ramp (404 at asset time), so both toolchains were installed from the
+GitHub-release assets with the SHA256SUMS cross-checked against the
+later mirror copy (byte-identical): linux tar.gz `246e5e82...`, windows
+zip `bd71e2d3...`, wasm_bg `06f11532...`. `xiom-wasm.js`/`.d.ts` are
+byte-identical to v0.64.4, so only the wasm binary and the loader
+comment changed.
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.5**; Windows
+  `.toolchain` and the WSL audit toolchain
+  (`/home/lefteris/xiom_v0645/tc`) installed from the verified cache and
+  version-checked (`xiom --version`, `lib/package.xi` both 0.64.5).
+- Stdlib grew: 516 -> 517 modules, 6,541 -> 6,576 functions. New module
+  `os.watch` (5); additive `io` (+9: fsync/read_at/write_at/append/
+  truncate/remove_dir/...), `net.socket` (+9: chunked streaming, poll,
+  recv-timeout, reuseport), `os.signal` (+2:
+  signal_install/signal_wait), `os.sync_io` (+5: open_append/open_read/
+  open_rw/close_fd/truncate_fd); `net.websocket` re-spelled 4 entries
+  to `&mut`/`Result` forms (docs tier; no lesson uses them). Catalogs
+  regenerated (`js/stdlib-ref.json`, `js/limitations.json`); all
+  generator checks current.
+- **One lesson output changed on the pin**: L5-21 "Vec of Anything"
+  now prints the bool items as `true/false/true` (the stored expected
+  was `1/0/1`). On v0.64.4 the generic context `print_all[T]` calling
+  `item.to_str()` with T=Bool fell to a builtin printing `1`/`0`, while
+  a non-generic `Bool.to_str()` already printed `true`/`false`; v0.64.5
+  routes the generic case through `convert.bool_to_string` (contract:
+  "true"/"false"), matching the lesson prose. Expected output
+  regenerated on the pin (`--id L5-21`); no other lesson output changed
+  (full audit clean).
+- Acceptance on the new pin: c25 **`C25 fixed: yes`** (cold, cached,
+  `--no-cache`); WSL suite **77/0**; Windows suite **67/0/1**; Lab audit
+  **37/37 x2**; full lesson audit **412/412 with zero failures at every
+  level**.
+- **Relay verdicts (all five playground items re-probed on the release
+  tarball)**:
+  - `-1554-playground` (stdout flush before a blocking read) and
+    `-1554-playground-4` (io.stdin clarity) were verified on the
+    tarball and closed before this absorption.
+  - `-1553-playground-3` (drvfs `/mnt/c` source hang) - **VERIFIED
+    FIXED**: `xiom run -O0` with the source on `/mnt/c` prints
+    `drvfs-ok` (exit 0, seconds) and `xiom --check` on the same path
+    reports `Type check PASSED` (exit 0); the old hang is gone. Closed
+    by the reporter on the bus.
+  - `-1553-playground-2` (by-ref fn-pointer params) - **RETURNED TO
+    `acked`**: at `-O0` all four shapes trap with `exit code: -1` and
+    empty stdout - generic `find_min[T]` with Int and with Str,
+    non-generic Str with a named comparator fn, and non-generic Str
+    with an inline closure. Controls: the by-value generic form prints
+    `3` (exit 0) and a single by-ref call with constant-index element
+    refs prints correctly, while the same single call with a dynamic
+    index traps - the m308 strcmp branch did not reach the fn-pointer
+    call plumbing the L6-34 repro needs. L6-34 keeps its by-value
+    workaround.
+  - `-1554-playground-2` (Int+Str coercion) - still prints `122`
+    (unchanged; stays acked).
+  - `-1554-playground-3` (mixed `.to_str()`) - the isolated
+    `io.println((2 + 2.5).to_str())` still prints nothing and emits the
+    W005 stub warning; the annotated-Float64 and `float_to_string`
+    controls print `4.5` (stays acked).
+- Production picks the pin up on the hourly pull (the mirror published
+  v0.64.5; `latest.json` = v0.64.5 and SHA256SUMS byte-identical to
+  GitHub) and is verified after deploy.
+- **Follow-up for a later tranche**: the m308 flush fix makes the live
+  terminal's `stdbuf -o0` workaround redundant; probe a live session
+  without it after the deploy and drop the workaround if prompts stream
+  natively.

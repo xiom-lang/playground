@@ -1,14 +1,17 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-15 (**v0.64.5 released; absorption pending in this
-checkout** - the flush-before-read and io.stdin items are verified and
-closed; the by-ref comparator verdict is still open (clean re-probe
-needed); **section 31 is the current handoff with the paste-ready
-next-session prompt**. Production verified v0.64.4 until the v0.64.5
-pull; Open Collective support live; lesson review complete - both
-audits 0/0).
-Branch `main` at/after `28d7b69`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.64.4**, stdlib 0.64.4 (516 modules, 6,541 functions),
+Last updated: 2026-10-15 (**v0.64.5 absorbed** - pins, wasm, catalogs,
+acceptance green (lessons 412/412); all five playground relay items
+re-probed on the release tarball: the drvfs hang is verified fixed and
+closed, the flush-before-read and io.stdin items stay closed, the
+by-ref fn-pointer item returned to acked (still traps), the coercion
+and `.to_str()` stub items stay red; **section 32 is the current
+handoff with the paste-ready next-session prompt**. Production verified
+v0.64.4 until the v0.64.5 pull (the mirror published the tag; the
+hourly deploy carries it); Open Collective support live;
+beginner-friendliness lesson review complete - both audits 0/0).
+Branch `main` at/after `d21f15c`, all commits pushed to `origin/main`;
+CI green (Validate + CodeQL). Toolchain/wasm **v0.64.5**, stdlib 0.64.5 (517 modules, 6,576 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -26,14 +29,15 @@ terminal enabled** (48), **2.1.11 real streaming + terminal look** (49),
 in the Terminal + Diagnostics badges** (53), **v0.64.0 absorption**
 (54), **beginner-friendliness lesson review** (55), **Open Collective
 support rollout** (56), **v0.64.1 absorption** (57), **Concepts
-highlighter fix** (58), **v0.64.2 absorption** (59) and **v0.64.3
-absorption** (60). Live sessions
+highlighter fix** (58), **v0.64.2 absorption** (59), **v0.64.3
+absorption** (60), **v0.64.4 absorption** (61) and **v0.64.5
+absorption** (62). Live sessions
 are genuinely interactive: Run
 starts them, prompts stream while the program
 waits, answers reach it, the session waits while you think, a finished
 program restarts with the answer history, and blocking errors surface in
 the Terminal. Handoff detail and the ready-to-paste next-session prompt:
-section 29.
+section 32.
 Read with `ROADMAP.md` (phase plan + specs), `AUDIT.md` (findings and
 verification records), `README.md` and `DEPLOY.md`.
 
@@ -1434,7 +1438,7 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
 4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style
    brief for 2.0 (12 assets) and 2.2 (23 assets).
 
-## 31. Handoff 2026-10-15 (current) -- v0.64.5 + item verification
+## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 
 ### State (exact)
 
@@ -1520,6 +1524,82 @@ with a clean re-probe (generic/non-generic Str and Int by-ref
 comparators, full stderr) and verify or return it; after the deploy,
 verify production and consider dropping the live stdbuf workaround
 (the m308 flush fix makes it redundant).
+
+## 32. Handoff 2026-10-15 (current) -- v0.64.5 absorbed
+
+### State (exact)
+
+- Working tree: pins **v0.64.5** (`TOOLCHAIN_VERSION`/`WASM_VERSION`),
+  all commits pushed. Windows `.toolchain` and the WSL audit toolchain
+  (`/home/lefteris/xiom_v0645/tc`) are v0.64.5 (linux tar.gz
+  `246e5e82...`, windows zip `bd71e2d3...`, wasm_bg `06f11532...`);
+  `xiom-wasm.js`/`.d.ts` byte-identical to v0.64.4, loader comment
+  bumped.
+- Stdlib 517 modules / 6,576 functions; catalogs regenerated; L5-21
+  expected output refreshed (generic `Bool.to_str()` now prints
+  `true/false`, matching the stdlib contract and the lesson prose); no
+  other lesson edits. Acceptance on the pin: c25 `C25 fixed: yes`
+  (cold/cached/--no-cache), WSL suite 77/0, Windows suite 67/0/1, lab
+  37/37 x2, full lesson audit 412/412 zero failures (AUDIT 62).
+- Relay (doorbell cron `wku_1411357a5001HjPraTIfURDmqT`, `0 */3 * * *`):
+  all five playground items re-probed on the release tarball -
+  `-1554-playground` (flush) and `-1554-playground-4` (io.stdin) stayed
+  closed; `-1553-playground-3` (drvfs) verified fixed and closed;
+  `-1553-playground-2` (by-ref fn-pointer) returned to `acked` (all four
+  shapes still trap exit -1 at -O0; dynamic-index element refs trigger
+  the trap; L6-34 keeps the by-value workaround); `-1554-playground-2`
+  (Int+Str 122) and `-1554-playground-3` (mixed `.to_str()`, W005 stub)
+  stay red/acked.
+- Production: the mirror published v0.64.5 (`latest.json` = v0.64.5,
+  SHA256SUMS byte-identical to GitHub), so the hourly pull at minute 29
+  deploys the pin; verified post-deploy (AUDIT 62).
+- Follow-up: the m308 flush fix makes the live terminal's `stdbuf -o0`
+  workaround redundant - probe a live session WITHOUT it on v0.64.5 and
+  drop the workaround in a later tranche if prompts stream natively.
+- Watch on the bus: `release-checks/compiler-compiler-v0.64.5.md` had
+  not appeared yet; when it does, fill the playground rows with the
+  verdicts above (drvfs = verified fixed, by-ref = still red, coercion =
+  still red, `.to_str()` = still red; flush/io.stdin rows close).
+
+### Next steps (in order)
+
+1. After the deploy: verify production (`/api/version` should read
+   toolchain v0.64.5 / wasm v0.64.5 / stdlib 0.64.5 / 517 modules;
+   served `js/wasm-loader.js` v0.64.5; live session streaming; patience
+   window widened per AUDIT 61's cold-compile observation), then probe a
+   live session WITHOUT `stdbuf -o0`.
+2. When `release-checks/compiler-compiler-v0.64.5.md` appears: fill the
+   playground rows (verdicts in this section) and update items per the
+   protocol.
+3. Optional: once `-1553-playground-2` lands, revert L6-34 to the
+   by-ref comparator (remove the `.clone()` by-value workaround) and
+   refresh the lesson expected output.
+
+### Environment (unchanged essentials)
+
+Windows `.toolchain` v0.64.5; WSL commands via `wsl -d Ubuntu -e bash
+-lc ...`; Linux toolchain at `/home/lefteris/xiom_v0645/tc` (v0.64.4 at
+`/home/lefteris/xiom_v0644/tc` kept for A/B); node at
+/home/lefteris/node-v22.23.2-linux-x64/bin/node; WSL /tmp is wiped
+between invocations (copy + probe in ONE invocation); prefer script
+files under %TEMP%\kilo for WSL probes (PowerShell single-quote the
+bash payload); `xiom run` on drvfs source paths works again on this
+pin; production is playground.xiom-lang.org.
+
+### Next-session prompt (paste-ready)
+
+You are the playground session for xiom-lang/playground at
+E:\xiom-lang\playground. Read SESSION.md section 32 and follow it.
+Key points: pull xiom-relays and process items to playground (doorbell
+cron every 3h; recreate if expired); v0.64.5 is absorbed (pins, wasm,
+catalogs, acceptance green); verify production post-deploy and probe a
+live session WITHOUT the `stdbuf -o0` workaround (m308 flush fix makes
+it redundant; drop it in a later tranche if prompts stream natively);
+when the compiler's release-checks/compiler-compiler-v0.64.5.md
+appears, fill the playground rows (drvfs verified fixed - close it;
+by-ref fn-pointer still red - returned to acked; Int+Str 122 and mixed
+`.to_str()` W005 still red); once REL-20261010-1553-playground-2 lands,
+revert L6-34's by-value workaround and refresh its expected output.
 
 ## 30. Handoff 2026-10-12 (historical -- executed) -- next-session prompt
 
