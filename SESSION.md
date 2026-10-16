@@ -1560,7 +1560,11 @@ verify production and consider dropping the live stdbuf workaround
   appeared 2026-10-15T21:03Z and the three playground rows were filed
   2026-10-16 (all "still red on v0.64.5": by-ref fn-pointer acked with
   evidence, Int+Str coercion acked, mixed `.to_str()` W005 acked;
-  drvfs/flush/io.stdin items are closed and not in the check).
+  drvfs/flush/io.stdin items are closed and not in the check). A
+  pre-release `compiler-compiler-v0.64.6.md` (candidate coverage plan,
+  created 2026-10-16T11:48Z) carries the same three playground rows;
+  they stay empty until the v0.64.6 archive exists (no release yet on
+  GitHub or the mirror at check time).
 
 ### Next steps (in order)
 
