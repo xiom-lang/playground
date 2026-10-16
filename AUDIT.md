@@ -3736,3 +3736,15 @@ official archive and are corroborated by this lane's independent probes.
   (`REL-20261016-2103-playground`): the parallel session's row filing
   and this session's independent re-probes crossed in flight but
   agreed; keep the claim-first pattern for the next release.
+- **Production verified (2026-10-16, deployed by the hourly pull)**:
+  `/api/version` reports server 2.1.15, toolchain v0.64.6, wasm
+  v0.64.6 (517 modules); the served `js/wasm-loader.js` reports
+  v0.64.6; live fixture `Name? -> Hello, Ada! -> N=7` (prompt visible
+  while the program waited, both answers handled live, exit 0);
+  patience held (`STILL ALIVE` at 46.6 s, late answer read `A:late`,
+  exit at 46.9 s). Bundle observation: the official v0.64.6 bundle's
+  `lib/package.xi` still declares `version: "0.64.5"` (both platforms),
+  so `/api/version`'s stdlib string reads `0.64.5` while the served
+  stdlib is the v0.64.6 bundle (517 modules; the function catalog
+  matches the regenerated `js/stdlib-ref.json`); the manifest bump
+  belongs to the compiler/stdlib lane at a later cut.

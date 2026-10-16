@@ -7,7 +7,9 @@ the official v0.64.6 archive and still red (by-ref fn-pointer trap,
 Int+Str `122`, W005 stub; items stay acked with notes, L6-34 keeps the
 by-value workaround); production verification follows the hourly pull.
 **section 32 is the current handoff with the paste-ready next-session
-prompt**. Production verified **v0.64.5** until the pull ships v0.64.6;
+prompt**. Production verified **v0.64.6** (deployed by the hourly pull;
+version + loader + live + patience green; the bundle's stdlib manifest
+still reads `0.64.5` - see AUDIT 63);
 Open Collective support live; beginner-friendliness lesson review
 complete - both audits 0/0).
 Branch `main` at/after `d21f15c`, all commits pushed to `origin/main`;
