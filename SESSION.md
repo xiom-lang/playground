@@ -1556,22 +1556,21 @@ verify production and consider dropping the live stdbuf workaround
 - Follow-up: the m308 flush fix makes the live terminal's `stdbuf -o0`
   workaround redundant - probe a live session WITHOUT it on v0.64.5 and
   drop the workaround in a later tranche if prompts stream natively.
-- Watch on the bus: `release-checks/compiler-compiler-v0.64.5.md` had
-  not appeared yet; when it does, fill the playground rows with the
-  verdicts above (drvfs = verified fixed, by-ref = still red, coercion =
-  still red, `.to_str()` = still red; flush/io.stdin rows close).
+- Bus: the compiler's `release-checks/compiler-compiler-v0.64.5.md`
+  appeared 2026-10-15T21:03Z and the three playground rows were filed
+  2026-10-16 (all "still red on v0.64.5": by-ref fn-pointer acked with
+  evidence, Int+Str coercion acked, mixed `.to_str()` W005 acked;
+  drvfs/flush/io.stdin items are closed and not in the check).
 
 ### Next steps (in order)
 
-1. After the deploy: verify production (`/api/version` should read
-   toolchain v0.64.5 / wasm v0.64.5 / stdlib 0.64.5 / 517 modules;
-   served `js/wasm-loader.js` v0.64.5; live session streaming; patience
-   window widened per AUDIT 61's cold-compile observation), then probe a
-   live session WITHOUT `stdbuf -o0`.
-2. When `release-checks/compiler-compiler-v0.64.5.md` appears: fill the
-   playground rows (verdicts in this section) and update items per the
-   protocol.
-3. Optional: once `-1553-playground-2` lands, revert L6-34 to the
+1. Probe a live session WITHOUT `stdbuf -o0` (m308 flush fix; the
+   release-tarball probe already streamed `Name?` at 1.5 s while the
+   program was blocked), then drop the workaround in a `server.js`
+   tranche if prompts stream natively. (Production was verified
+   post-deploy 2026-10-15 - version, loader, live fixture and patience
+   green; see AUDIT 62.)
+2. Optional: once `-1553-playground-2` lands, revert L6-34 to the
    by-ref comparator (remove the `.clone()` by-value workaround) and
    refresh the lesson expected output.
 
@@ -1595,10 +1594,8 @@ cron every 3h; recreate if expired); v0.64.5 is absorbed (pins, wasm,
 catalogs, acceptance green); verify production post-deploy and probe a
 live session WITHOUT the `stdbuf -o0` workaround (m308 flush fix makes
 it redundant; drop it in a later tranche if prompts stream natively);
-when the compiler's release-checks/compiler-compiler-v0.64.5.md
-appears, fill the playground rows (drvfs verified fixed - close it;
-by-ref fn-pointer still red - returned to acked; Int+Str 122 and mixed
-`.to_str()` W005 still red); once REL-20261010-1553-playground-2 lands,
+the compiler release-check rows are already filed (all three playground
+items still red on v0.64.5); once REL-20261010-1553-playground-2 lands,
 revert L6-34's by-value workaround and refresh its expected output.
 
 ## 30. Handoff 2026-10-12 (historical -- executed) -- next-session prompt
