@@ -1,19 +1,17 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-16 (**v0.64.5 absorbed and verified in
-production**; **v0.64.6 released 2026-10-16T20:33Z** - compiler-only
-cut, absorption pending (next session's call); all five playground
-relay items re-probed on the v0.64.5 tarball: the drvfs hang is
-verified fixed and closed, the flush-before-read and io.stdin items
-stay closed, the by-ref fn-pointer item is back to acked (still
-traps), the coercion and `.to_str()` stub items stay red - all three
-"still red" rows also filed in the v0.64.6 release check; **section 32
-is the current handoff with the paste-ready next-session prompt**. Production verified
-**v0.64.5** (deployed by the hourly pull; version + loader + live +
-patience green); Open Collective support live;
-beginner-friendliness lesson review complete - both audits 0/0).
+Last updated: 2026-10-16 (**v0.64.6 absorbed** - pins, wasm and
+catalogs bumped, acceptance green (c25, WSL 77/0, Windows 67/0/1, lab
+37/37, lessons 412/412); the three open playground items re-probed on
+the official v0.64.6 archive and still red (by-ref fn-pointer trap,
+Int+Str `122`, W005 stub; items stay acked with notes, L6-34 keeps the
+by-value workaround); production verification follows the hourly pull.
+**section 32 is the current handoff with the paste-ready next-session
+prompt**. Production verified **v0.64.5** until the pull ships v0.64.6;
+Open Collective support live; beginner-friendliness lesson review
+complete - both audits 0/0).
 Branch `main` at/after `d21f15c`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.64.5**, stdlib 0.64.5 (517 modules, 6,576 functions),
+CI green (Validate + CodeQL). Toolchain/wasm **v0.64.6**, stdlib 0.64.6 (517 modules, 6,585 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned

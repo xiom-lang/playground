@@ -3688,3 +3688,51 @@ comment changed.
   terminal's `stdbuf -o0` workaround redundant; probe a live session
   without it after the deploy and drop the workaround if prompts stream
   natively.
+
+## 63. v0.64.6 absorption (2026-10-16)
+
+The compiler lane shipped v0.64.6 - the m334-m343 wave plus the darwin
+stream (inline Str-producer tuple elements m334/b5b97427, B-29 big-int
+bitop triage m335, C-ORBIT-12 tuple-namer family m336, varfn parse
+surface m342, E001 move coverage m344, layout-aware clause rebind m345,
+stdlib fixes 2bc064e/9d6a4d5/e72288f) - and the playground absorbed it
+the same day. The release check `compiler-compiler-v0.64.6.md` was
+created at cut time; the three open playground rows were filed from the
+official archive and are corroborated by this lane's independent probes.
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.6**; installed
+  from the GitHub-release assets (the mirror was mid-publish at asset
+  time; SHA256SUMS verified): linux tar.gz `82a7417b...`, windows zip
+  `a32bf7fa...`, wasm_bg `48afb9d4...`. `xiom-wasm.js`/`.d.ts` are
+  byte-identical to v0.64.5, so only the wasm binary and the loader
+  comment changed.
+- Stdlib: 517 modules / 6,585 functions (was 6,576; +9 additive).
+  Additions: `net` `tcp_listen_with_backlog`; `net.socket`
+  `socket_set_nodelay`/`socket_set_keepalive`; `net.tls`
+  `alpn_encode`/`alpn_decode` + the `TlsBackend`/`tls_backend_load`/
+  `tls_backend_available` surface; `num.float`
+  `f32_bits`/`bits_to_f32`; `thread.pool` `PoolJob`/`ThreadPool` type
+  entries. Catalogs regenerated (`js/stdlib-ref.json`,
+  `js/limitations.json`, `tools/expected-output-skips.json` stamp ->
+  v0.64.6); all generator checks current.
+- Acceptance on the new pin: c25 **`C25 fixed: yes`** (cold, cached,
+  `--no-cache`); WSL suite **77/0**; Windows suite 67/0/1; Lab audit
+  **37/37 x2**; full expected-output sweep **412 solutions x2,
+  deterministic - no lesson output changed**; full lesson audit
+  **412/412 with zero failures at every level**; lesson style audit
+  clean and code audit 0 errors / 0 warnings (318 pre-existing info
+  notes).
+- **Relay release-check (compiler-v0.64.6)**: the three open playground
+  items were re-probed on the official v0.64.6 archive and remain red -
+  `-1553-playground-2` (by-ref fn-pointer params: all four witness
+  shapes still trap `exit code: -1` with empty stdout at -O0; the
+  m334-m343 wave did not touch the fn-pointer call plumbing; L6-34
+  keeps the by-value workaround), `-1554-playground-2` (Int+Str
+  coercion still prints `122`), `-1554-playground-3` (mixed `.to_str()`
+  still prints nothing; W005 stub warning). The items stay `acked`;
+  per-item notes carry the probe evidence.
+- Production picks the pin up on the hourly pull and is verified after
+  deploy. This absorption ran as a single claimed writer
+  (`REL-20261016-2103-playground`): the parallel session's row filing
+  and this session's independent re-probes crossed in flight but
+  agreed; keep the claim-first pattern for the next release.

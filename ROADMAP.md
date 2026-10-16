@@ -632,6 +632,14 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   412/412; relay verdicts - drvfs hang verified fixed and closed, by-ref
   fn-pointer item returned to acked (still traps), coercion and stub
   items still red (AUDIT 62).
+- [x] **Absorbed in v0.64.6** (2026-10-16): correctness wave
+  (m334-m343 + the darwin stream; inline Str-producer tuple elements,
+  B-29 big-int bitop triage, C-ORBIT-12 tuple namers, varfn parse
+  surface, E001 move coverage, layout-aware clause rebind); pins and
+  wasm bumped, stdlib +9 functions (net backlog/socket options, TLS
+  ALPN surface, f32 bitcast pair, thread.pool types); C25 fixed,
+  WSL 77/0, Windows 67/0/1, lab 37/37 and lessons 412/412; relay
+  verdicts - the three open playground items remain red (AUDIT 63).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;
