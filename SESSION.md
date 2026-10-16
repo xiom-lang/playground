@@ -1,12 +1,14 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-15 (**v0.64.5 absorbed** - pins, wasm, catalogs,
-acceptance green (lessons 412/412); all five playground relay items
-re-probed on the release tarball: the drvfs hang is verified fixed and
-closed, the flush-before-read and io.stdin items stay closed, the
-by-ref fn-pointer item returned to acked (still traps), the coercion
-and `.to_str()` stub items stay red; **section 32 is the current
-handoff with the paste-ready next-session prompt**. Production verified
+Last updated: 2026-10-16 (**v0.64.5 absorbed and verified in
+production**; **v0.64.6 released 2026-10-16T20:33Z** - compiler-only
+cut, absorption pending (next session's call); all five playground
+relay items re-probed on the v0.64.5 tarball: the drvfs hang is
+verified fixed and closed, the flush-before-read and io.stdin items
+stay closed, the by-ref fn-pointer item is back to acked (still
+traps), the coercion and `.to_str()` stub items stay red - all three
+"still red" rows also filed in the v0.64.6 release check; **section 32
+is the current handoff with the paste-ready next-session prompt**. Production verified
 **v0.64.5** (deployed by the hourly pull; version + loader + live +
 patience green); Open Collective support live;
 beginner-friendliness lesson review complete - both audits 0/0).
@@ -1557,14 +1559,18 @@ verify production and consider dropping the live stdbuf workaround
   workaround redundant - probe a live session WITHOUT it on v0.64.5 and
   drop the workaround in a later tranche if prompts stream natively.
 - Bus: the compiler's `release-checks/compiler-compiler-v0.64.5.md`
-  appeared 2026-10-15T21:03Z and the three playground rows were filed
-  2026-10-16 (all "still red on v0.64.5": by-ref fn-pointer acked with
-  evidence, Int+Str coercion acked, mixed `.to_str()` W005 acked;
-  drvfs/flush/io.stdin items are closed and not in the check). A
-  pre-release `compiler-compiler-v0.64.6.md` (candidate coverage plan,
-  created 2026-10-16T11:48Z) carries the same three playground rows;
-  they stay empty until the v0.64.6 archive exists (no release yet on
-  GitHub or the mirror at check time).
+  (2026-10-15T21:03Z) and `compiler-compiler-v0.64.6.md`
+  (2026-10-16T11:48Z) each carry the same three playground rows; both
+  sets are now filed by playground - all three items are "still red" on
+  both archives (by-ref fn-pointer traps `exit code: -1`, Int+Str
+  prints 122, mixed `.to_str()` silent + W005; controls green), items
+  stay acked. drvfs/flush/io.stdin items are closed and not in the
+  checks.
+- v0.64.6 was **released 2026-10-16T20:33Z** (compiler-only cut: the
+  shipped `lib/package.xi` manifest still reads 0.64.5; official linux
+  archive sha256 `82a7417b02bd...`, probed in WSL at
+  `/home/lefteris/xiom_v0646/tc`). Absorption is the next session's
+  call - no playground-affecting fixes in the cut.
 
 ### Next steps (in order)
 
