@@ -1586,6 +1586,11 @@ verify production and consider dropping the live stdbuf workaround
   playground rows are filed in `compiler-compiler-v0.64.6.md` (still
   red; controls green) and the items carry matching per-item notes. No
   outstanding playground work from the v0.64.6 cycle.
+- Next release train: a pre-release `compiler-compiler-v0.64.7.md`
+  (created 2026-10-16T20:45Z) carries the same three playground rows,
+  which the compiler's planning note assigns to its backlog wave; the
+  rows stay empty until the v0.64.7 archive ships (not released at
+  2026-10-17T03:00Z check: GitHub has no tag, mirror latest = v0.64.6).
 
 ### Next steps (in order)
 
