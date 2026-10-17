@@ -1527,16 +1527,27 @@ comparators, full stderr) and verify or return it; after the deploy,
 verify production and consider dropping the live stdbuf workaround
 (the m308 flush fix makes it redundant).
 
-## 32. Handoff 2026-10-15 (current) -- v0.64.5 absorbed
+## 32. Handoff 2026-10-17 (current) -- v0.64.5 + v0.64.6 absorbed
 
 ### State (exact)
 
-- Working tree: pins **v0.64.5** (`TOOLCHAIN_VERSION`/`WASM_VERSION`),
-  all commits pushed. Windows `.toolchain` and the WSL audit toolchain
-  (`/home/lefteris/xiom_v0645/tc`) are v0.64.5 (linux tar.gz
-  `246e5e82...`, windows zip `bd71e2d3...`, wasm_bg `06f11532...`);
-  `xiom-wasm.js`/`.d.ts` byte-identical to v0.64.4, loader comment
-  bumped.
+- Working tree: pins **v0.64.6** (`TOOLCHAIN_VERSION`/`WASM_VERSION`),
+  all commits pushed (HEAD `42b9b1e`). Windows `.toolchain` and the WSL
+  audit toolchain are v0.64.6 (linux tar.gz `82a7417b...`, windows zip
+  `a32bf7fa...`, wasm_bg `48afb9d4...`); WSL keeps v0.64.5
+  (`/home/lefteris/xiom_v0645/tc`) and v0.64.4 for A/B. `xiom-wasm.js`/
+  `.d.ts` are byte-identical across v0.64.4-v0.64.6; only the wasm
+  binary and the loader comment change.
+- v0.64.6 absorbed the same day it was released (parallel session,
+  `df3fdfd`, 2026-10-16): acceptance c25 `C25 fixed: yes`, WSL suite
+  77/0, Windows suite 67/0/1, lab 37/37 x2, expected-outputs 412x2
+  deterministic (no lesson output changed), full lesson audit 412/412
+  zero failures; stdlib 517 modules / 6,585 functions (+9 additive:
+  net backlog, socket options, TLS ALPN, f32 bitcast pair, thread.pool
+  types); AUDIT 63. Quirk faithfully inherited from the release: the
+  shipped `lib/package.xi` manifest still reads 0.64.5, so
+  `/api/version` reports stdlib 0.64.5 on the v0.64.6 pin (toolchain and
+  wasm report v0.64.6).
 - Stdlib 517 modules / 6,576 functions; catalogs regenerated; L5-21
   expected output refreshed (generic `Bool.to_str()` now prints
   `true/false`, matching the stdlib contract and the lesson prose); no
@@ -1552,9 +1563,12 @@ verify production and consider dropping the live stdbuf workaround
   the trap; L6-34 keeps the by-value workaround); `-1554-playground-2`
   (Int+Str 122) and `-1554-playground-3` (mixed `.to_str()`, W005 stub)
   stay red/acked.
-- Production: the mirror published v0.64.5 (`latest.json` = v0.64.5,
-  SHA256SUMS byte-identical to GitHub), so the hourly pull at minute 29
-  deploys the pin; verified post-deploy (AUDIT 62).
+- Production: verified on **v0.64.6** (deployed by the 2026-10-16 22:29Z
+  hourly pull; `42b9b1e`): `/api/version` toolchain/wasm v0.64.6 (stdlib
+  string 0.64.5 per the manifest quirk, 517 modules), served loader
+  v0.64.6, live fixture `Name?` -> `Hello, Ada!` -> `N=7` (exit 0,
+  prompt visible while waiting), patience `STILL ALIVE` at 46.6 s with a
+  late answer read.
 - Follow-up: the m308 flush fix makes the live terminal's `stdbuf -o0`
   workaround redundant - probe a live session WITHOUT it on v0.64.5 and
   drop the workaround in a later tranche if prompts stream natively.
@@ -1566,47 +1580,52 @@ verify production and consider dropping the live stdbuf workaround
   prints 122, mixed `.to_str()` silent + W005; controls green), items
   stay acked. drvfs/flush/io.stdin items are closed and not in the
   checks.
-- v0.64.6 was **released 2026-10-16T20:33Z** (compiler-only cut: the
-  shipped `lib/package.xi` manifest still reads 0.64.5; official linux
-  archive sha256 `82a7417b02bd...`, probed in WSL at
-  `/home/lefteris/xiom_v0646/tc`). Absorption is the next session's
-  call - no playground-affecting fixes in the cut.
+- v0.64.6 cycle closed on the bus: the parallel session's
+  single-writer claim (`REL-20261016-2103-playground`) is `acked`/DONE
+  after the production verification; tree write lock released. Three
+  playground rows are filed in `compiler-compiler-v0.64.6.md` (still
+  red; controls green) and the items carry matching per-item notes. No
+  outstanding playground work from the v0.64.6 cycle.
 
 ### Next steps (in order)
 
 1. Probe a live session WITHOUT `stdbuf -o0` (m308 flush fix; the
    release-tarball probe already streamed `Name?` at 1.5 s while the
    program was blocked), then drop the workaround in a `server.js`
-   tranche if prompts stream natively. (Production was verified
-   post-deploy 2026-10-15 - version, loader, live fixture and patience
-   green; see AUDIT 62.)
+   tranche if prompts stream natively. (Production is verified
+   post-deploy on v0.64.6 - version, loader, live fixture and patience
+   green; see AUDIT 63.)
 2. Optional: once `-1553-playground-2` lands, revert L6-34 to the
    by-ref comparator (remove the `.clone()` by-value workaround) and
    refresh the lesson expected output.
 
 ### Environment (unchanged essentials)
 
-Windows `.toolchain` v0.64.5; WSL commands via `wsl -d Ubuntu -e bash
--lc ...`; Linux toolchain at `/home/lefteris/xiom_v0645/tc` (v0.64.4 at
+Windows `.toolchain` v0.64.6; WSL commands via `wsl -d Ubuntu -e bash
+-lc ...`; Linux toolchain at `/home/lefteris/xiom_v0646/tc` (v0.64.5 at
+`/home/lefteris/xiom_v0645/tc` and v0.64.4 at
 `/home/lefteris/xiom_v0644/tc` kept for A/B); node at
 /home/lefteris/node-v22.23.2-linux-x64/bin/node; WSL /tmp is wiped
 between invocations (copy + probe in ONE invocation); prefer script
 files under %TEMP%\kilo for WSL probes (PowerShell single-quote the
-bash payload); `xiom run` on drvfs source paths works again on this
-pin; production is playground.xiom-lang.org.
+bash payload); `xiom run` on drvfs source paths works again on these
+pins; production is playground.xiom-lang.org.
 
 ### Next-session prompt (paste-ready)
 
 You are the playground session for xiom-lang/playground at
 E:\xiom-lang\playground. Read SESSION.md section 32 and follow it.
 Key points: pull xiom-relays and process items to playground (doorbell
-cron every 3h; recreate if expired); v0.64.5 is absorbed (pins, wasm,
-catalogs, acceptance green); verify production post-deploy and probe a
-live session WITHOUT the `stdbuf -o0` workaround (m308 flush fix makes
-it redundant; drop it in a later tranche if prompts stream natively);
-the compiler release-check rows are already filed (all three playground
-items still red on v0.64.5); once REL-20261010-1553-playground-2 lands,
-revert L6-34's by-value workaround and refresh its expected output.
+cron every 3h; recreate if expired); v0.64.5 and v0.64.6 are absorbed
+and production-verified (pins, wasm, catalogs, acceptance green; the
+v0.64.6 stdlib string reports 0.64.5 per the shipped manifest - not a
+deploy issue); probe a live session WITHOUT the `stdbuf -o0` workaround
+(m308 flush fix makes it redundant; drop it in a server.js tranche if
+prompts stream natively); the compiler release-check rows are already
+filed (all three playground items still red on v0.64.5 and v0.64.6 -
+fn-pointer trap, Int+Str 122, W005 stub); once
+REL-20261010-1553-playground-2 lands, revert L6-34's by-value
+workaround and refresh its expected output.
 
 ## 30. Handoff 2026-10-12 (historical -- executed) -- next-session prompt
 
