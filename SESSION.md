@@ -9,8 +9,9 @@ red - fn-pointer traps, Int+Str `122`, and the W005 stub now FAULTS
 (SIGSEGV/exit 70) instead of silent; items stay acked with notes,
 L6-34 keeps the by-value workaround; production verification follows
 the hourly pull. **section 32 is the current handoff with the
-paste-ready next-session prompt**. Production verified **v0.64.6**
-until the pull ships v0.64.7; Open Collective support live;
+paste-ready next-session prompt**. Production verified **v0.64.7**
+(deployed by the hourly pull; version + loader + live + patience
+green; stdlib manifest now 0.64.7); Open Collective support live;
 beginner-friendliness lesson review complete - both audits 0/0).
 Branch `main` at/after `d21f15c`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.7**, stdlib 0.64.7 (538 modules, 6,879 functions),

@@ -3796,3 +3796,11 @@ night (release published 2026-10-17T22:59Z).
   row filing.
 - Production picks the pin up on the hourly pull and is verified after
   deploy.
+- **Production verified (2026-10-18, deployed by the hourly pull)**:
+  `/api/version` reports server 2.1.15, toolchain v0.64.7, wasm
+  v0.64.7, **stdlib 0.64.7** (538 modules) - the manifest now matches,
+  resolving the v0.64.6 observation upstream; the served
+  `js/wasm-loader.js` reports v0.64.7; live fixture
+  `Name? -> Hello, Ada! -> N=7` (prompt visible while the program
+  waited, both answers handled live, exit 0); patience held
+  (`STILL ALIVE` at 46.7 s, late answer read `A:late`, exit at 47.0 s).
