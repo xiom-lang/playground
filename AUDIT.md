@@ -3748,3 +3748,51 @@ official archive and are corroborated by this lane's independent probes.
   stdlib is the v0.64.6 bundle (517 modules; the function catalog
   matches the regenerated `js/stdlib-ref.json`); the manifest bump
   belongs to the compiler/stdlib lane at a later cut.
+
+## 64. v0.64.7 absorption (2026-10-18)
+
+The compiler lane shipped v0.64.7 - the four-lane coverage wave on top
+of m334-m343, with the stdlib on the same track for the first time (the
+bundle's `lib/package.xi` declares `0.64.7`; the v0.64.6 manifest lag is
+fixed by the lane's hard gate) - and the playground absorbed it the same
+night (release published 2026-10-17T22:59Z).
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.64.7**; installed
+  from the GitHub-release assets (SHA256SUMS verified): linux tar.gz
+  `153f0cc9...`, windows zip `16a436c4...`, wasm_bg `8c778711...`.
+  `xiom-wasm.js`/`.d.ts` remain byte-identical; only the wasm binary
+  and the loader comment changed.
+- Stdlib: **538 modules / 6,879 functions** (was 517 / 6,585; +21
+  modules, +294 functions) - the largest single-release expansion
+  absorbed so far: `collect.*` (bitset, composite, eventlog, graph,
+  groupfold, mailbox, stringmap, vecops, vecstr), `compress.*`
+  (brotli, crc32, deflate, zip, accept_encoding), `net.h2` plus
+  net.tls/net.sse/net.socket additions, `crypto.hash`/`keccak`,
+  `encoding.base32`/`le`/`percent`, `serialize.json`/`xml`, `regex`,
+  `math.fixed`/`int`, `misc.glob`, `os.proc_ffi`, `string.*` (ascii,
+  builder, codepoint, lines, split, view), and more. Catalogs
+  regenerated; expected-output skips stamp -> v0.64.7; all generator
+  checks current; no lesson output changed (sweep 412 x2
+  deterministic).
+- Acceptance on the new pin: c25 **`C25 fixed: yes`**; WSL suite
+  **77/0**; Windows suite 67/0/1; Lab audit **37/37 x2**; full lesson
+  audit **412/412 with zero failures at every level**; lesson style
+  audit clean, code audit 0 errors / 0 warnings (318 pre-existing info
+  notes); `node --check` 44 files.
+- **Relay release-check (compiler-v0.64.7)**: the three open playground
+  items were re-probed on the official archive and remain red -
+  `-1553-playground-2` (all by-ref comparator shapes still trap; L6-34
+  keeps the by-value workaround), `-1554-playground-2` (Int+Str still
+  prints `122`), and `-1554-playground-3` **with a changed failure
+  mode**: the mixed `.to_str()` now emits the W005 stub warning and the
+  confined block faults (`SIGSEGV`; unhandled-confined exit 70 on
+  Linux, 0xC0000409 on Windows) instead of silently printing nothing -
+  still not fixed and now a crash rather than just a silent stub. Items
+  stay `acked` with per-item notes.
+- Environment note: the WSL VM wedged during this run (Ubuntu stopped;
+  `HCS_E_CONNECTION_TIMEOUT` on start). Recovered with `wsl --shutdown`
+  + restart while Ubuntu was already down for every session; the
+  parallel session hit the same wedge and probed on Windows for its
+  row filing.
+- Production picks the pin up on the hourly pull and is verified after
+  deploy.

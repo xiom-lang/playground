@@ -1,19 +1,19 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-16 (**v0.64.6 absorbed** - pins, wasm and
-catalogs bumped, acceptance green (c25, WSL 77/0, Windows 67/0/1, lab
-37/37, lessons 412/412); the three open playground items re-probed on
-the official v0.64.6 archive and still red (by-ref fn-pointer trap,
-Int+Str `122`, W005 stub; items stay acked with notes, L6-34 keeps the
-by-value workaround); production verification follows the hourly pull.
-**section 32 is the current handoff with the paste-ready next-session
-prompt**. Production verified **v0.64.6** (deployed by the hourly pull;
-version + loader + live + patience green; the bundle's stdlib manifest
-still reads `0.64.5` - see AUDIT 63);
-Open Collective support live; beginner-friendliness lesson review
-complete - both audits 0/0).
+Last updated: 2026-10-18 (**v0.64.7 absorbed** - pins, wasm and
+catalogs bumped, stdlib 538 modules / 6,879 functions (+21/+294, the
+stdlib now on the same track; manifest 0.64.7), acceptance green (c25,
+WSL 77/0, Windows 67/0/1, lab 37/37, lessons 412/412); the three open
+playground items re-probed on the official v0.64.7 archive and still
+red - fn-pointer traps, Int+Str `122`, and the W005 stub now FAULTS
+(SIGSEGV/exit 70) instead of silent; items stay acked with notes,
+L6-34 keeps the by-value workaround; production verification follows
+the hourly pull. **section 32 is the current handoff with the
+paste-ready next-session prompt**. Production verified **v0.64.6**
+until the pull ships v0.64.7; Open Collective support live;
+beginner-friendliness lesson review complete - both audits 0/0).
 Branch `main` at/after `d21f15c`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.64.6**, stdlib 0.64.6 (517 modules, 6,585 functions),
+CI green (Validate + CodeQL). Toolchain/wasm **v0.64.7**, stdlib 0.64.7 (538 modules, 6,879 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned

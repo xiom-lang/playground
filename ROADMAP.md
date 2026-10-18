@@ -640,6 +640,15 @@ Absorption executed 2026-10-03 (details in AUDIT 33.6):
   ALPN surface, f32 bitcast pair, thread.pool types); C25 fixed,
   WSL 77/0, Windows 67/0/1, lab 37/37 and lessons 412/412; relay
   verdicts - the three open playground items remain red (AUDIT 63).
+- [x] **Absorbed in v0.64.7** (2026-10-17): four-lane coverage wave
+  with the stdlib on the same track (bundle manifest 0.64.7, the
+  v0.64.6 manifest lag fixed); pins and wasm bumped, stdlib **+21
+  modules / +294 functions** (collect.*, compress.*/brotli, net.h2 +
+  TLS/SSE, crypto/encoding, serialize, regex, os.proc_ffi, string.*);
+  C25 fixed, WSL 77/0, Windows 67/0/1, lab 37/37 and lessons 412/412;
+  relay verdicts - the three open playground items remain red, with
+  `-1554-playground-3` now faulting (W005 + SIGSEGV) instead of silent
+  (AUDIT 64).
 ## Algorithm visualization ("Algorithm Lab") - 2.0 phase, approved (owner, 2026-10-02)
 
 Status: **delivered as 2.0.0 on 2026-10-04** (verification record: AUDIT 34;
