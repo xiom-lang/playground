@@ -7,11 +7,15 @@ WSL 77/0, Windows 67/0/1, lab 37/37, lessons 412/412); the three open
 playground items re-probed on the official v0.64.7 archive and still
 red - fn-pointer traps, Int+Str `122`, and the W005 stub now FAULTS
 (SIGSEGV/exit 70) instead of silent; items stay acked with notes,
-L6-34 keeps the by-value workaround. **section 32 is the current handoff
-with the paste-ready next-session prompt**. Production verified
-**v0.64.7** (deployed by the hourly pull; version + loader + live +
-patience green; stdlib manifest now 0.64.7); Open Collective support
-live; beginner-friendliness lesson review complete - both audits 0/0).
+L6-34 keeps the by-value workaround. **v0.64.8 (released 2026-10-19) is
+HELD unabsorbed**: its absorption aborted at the suite gate on an
+absolute-path package-discovery regression (`REL-20261019-1810-playground`,
+open, high); tree reverted, production stays v0.64.7. **section 32 is
+the current handoff with the paste-ready next-session prompt**.
+Production verified **v0.64.7** (deployed by the hourly pull; version +
+loader + live + patience green; stdlib manifest now 0.64.7); Open
+Collective support live; beginner-friendliness lesson review complete -
+both audits 0/0).
 Branch `main` at/after `b3f002e`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.7**, stdlib 0.64.7 (538 modules, 6,879 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1547,6 +1551,23 @@ verify production and consider dropping the live stdbuf workaround
   crypto/encoding, serialize, regex, os.proc_ffi, string.*) and the
   bundle manifest now reads 0.64.7, resolving the v0.64.6 display quirk.
   AUDIT 64.
+- **v0.64.8 (released 2026-10-19T17:49Z) is HELD - not absorbed.** The
+  parallel session's attempt aborted at the suite gate (claim
+  `REL-20261019-1800-playground-2`, HOLD note): WSL suite 76/1 and
+  Windows 66/1/1 because v0.64.8 regressed single-file package discovery
+  for ABSOLUTE source paths - `xiom --check /abs/path/main.xi` no longer
+  finds the sibling `packages/<name>/` tree (T001 unresolved import),
+  while the relative-path form and the v0.64.7 archive with absolute
+  paths both pass. The playground server always passes absolute paths,
+  so C3 offline vendored packages break. Filed high-severity
+  `REL-20261019-1810-playground` (open, playground -> compiler) with the
+  minimal repro and both controls. At the abort point c25, catalog and
+  generator checks, and the 412x2 expected-output sweep were green on
+  v0.64.8; the lab and full lesson audits were not run (blocking gate).
+  Local absorption changes were reverted: tree clean at the v0.64.7 pin,
+  production stays v0.64.7. The v0.64.8 toolchain remains installed in
+  WSL at `/home/lefteris/xiom_v0648/tc` (manifest 0.64.8) for the
+  re-attempt; the Windows `.toolchain` is back on v0.64.7.
 - v0.64.6 absorbed 2026-10-16 (parallel session, `df3fdfd`): acceptance
   green; stdlib 517 modules / 6,585 functions; its cut shipped a
   `lib/package.xi` manifest still reading 0.64.5 (fixed upstream in
@@ -1595,13 +1616,22 @@ verify production and consider dropping the live stdbuf workaround
 
 ### Next steps (in order)
 
-1. Probe a live session WITHOUT `stdbuf -o0` (m308 flush fix; the
+1. Watch `REL-20261019-1810-playground` (absolute-path package discovery
+   on v0.64.8) on the bus. When the compiler fixes it, re-attempt the
+   v0.64.8 absorption (toolchain already at
+   `/home/lefteris/xiom_v0648/tc`; re-run the full gate, including the
+   lab + full lesson audits that the abort skipped, then production
+   verify). If the compiler declares the absolute-path behavior
+   intentional, the alternative is to switch the server's compiler
+   invocations (`--check`/compile/run/ir) to relative paths - a
+   `server.js` tranche with its own acceptance - before absorbing.
+2. Probe a live session WITHOUT `stdbuf -o0` (m308 flush fix; the
    release-tarball probe already streamed `Name?` at 1.5 s while the
    program was blocked), then drop the workaround in a `server.js`
    tranche if prompts stream natively. (Production is verified
    post-deploy on v0.64.7 - version, loader, live fixture and patience
    green; see AUDIT 64.)
-2. Optional: once `-1553-playground-2` lands, revert L6-34 to the
+3. Optional: once `-1553-playground-2` lands, revert L6-34 to the
    by-ref comparator (remove the `.clone()` by-value workaround) and
    refresh the lesson expected output.
 
@@ -1623,12 +1653,16 @@ E:\xiom-lang\playground. Read SESSION.md section 32 and follow it.
 Key points: pull xiom-relays and process items to playground (doorbell
 cron every 3h; recreate if expired); v0.64.5, v0.64.6 and v0.64.7 are
 absorbed and production-verified (pins, wasm, catalogs, acceptance
-green; stdlib 538 modules / 6,879 functions on v0.64.7); probe a live
-session WITHOUT the `stdbuf -o0` workaround (m308 flush fix makes it
-redundant; drop it in a server.js tranche if prompts stream natively);
-the compiler release-check rows are already filed (all three playground
-items still red on v0.64.5/.6/.7 - fn-pointer trap, Int+Str 122, and
-the mixed `.to_str()` case now W005 + confined fault); once
+green; stdlib 538 modules / 6,879 functions on v0.64.7); **v0.64.8 is
+HELD unabsorbed** - its suite gate fails on absolute-path package
+discovery (`REL-20261019-1810-playground`), re-attempt only when fixed
+(or switch server invocations to relative paths if the compiler says
+the behavior is intentional); probe a live session WITHOUT the
+`stdbuf -o0` workaround (m308 flush fix makes it redundant; drop it in
+a server.js tranche if prompts stream natively); the compiler
+release-check rows are already filed (all three playground items still
+red on v0.64.5/.6/.7 - fn-pointer trap, Int+Str 122, and the mixed
+`.to_str()` case now W005 + confined fault); once
 REL-20261010-1553-playground-2 lands, revert L6-34's by-value
 workaround and refresh its expected output.
 
