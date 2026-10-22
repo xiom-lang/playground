@@ -8,9 +8,11 @@ P0 correctness + P1 hardening + the MCU first wave; the pin stays v0.64.7
 until that archive ships and re-verifies. The three long-standing playground
 items stay acked and red; L6-34 keeps the by-value workaround. **Section 33 is
 the current handoff with the paste-ready next-session prompt**. A live-terminal
-regression found on 2026-10-22 is fixed: a warm compiler script cache captured
-stdout and stalled prompts, so live sessions now pass `--no-cache` (filed as
-REL-20261022-2032-playground; deploy verification pending the hourly pull).
+regression found on 2026-10-22 is fixed and deployed: a warm compiler script
+cache captured stdout and stalled prompts, so live sessions now pass
+`--no-cache` (filed as REL-20261022-2032-playground). Production verified after
+the 21:29Z deploy: two identical sessions both stream (cold prompt 3.4 s, warm
+prompt 1.3 s, both exit 0).
 Production verified **v0.64.7** (version + loader + live + patience green;
 stdlib 0.64.7, 538 modules / 6,879 functions); Open Collective support live;
 beginner-friendliness lesson review complete - both audits 0/0).
@@ -1723,7 +1725,9 @@ workaround and refresh its expected output.
   under sandbox `require`; the direct-spawn argv no longer repeats
   `XIOM_BIN` (that broke live on Windows dev hosts). Filed as
   **REL-20261022-2032-playground** (high, to compiler). Production
-  verification is pending the hourly pull.
+  verified after the hourly deploy (container uptime reset; two
+  identical sessions stream: cold prompt 3.4 s, warm prompt 1.3 s, both
+  exit 0).
 - Relay bus: doorbell cron recreated in this session (see below);
   PULSE items `-1703-pulse` / `-1819-pulse` remain acked awaiting their
   close; the PULSE 0.3.0 static-site staging test will ping.
@@ -1740,12 +1744,12 @@ workaround and refresh its expected output.
    `--check` pair on the official archive before confirming the pin.
 2. Re-probe the three acked items on that archive; verify + close any
    that pass, otherwise add evidence notes.
-3. After the hourly deploy, verify production (version/loader/live/
-   patience) and run the live fixture twice (cold + warm cache); both
-   must stream. Then probe a live session without `stdbuf` on the
-   deployed pin and drop the workaround if it streams (the `--no-cache`
-   fix already makes the cache path live-safe; `stdbuf` is
-   belt-and-braces only).
+3. Production live is verified post-deploy (2026-10-22T21:33Z: version/
+   loader green, two identical live sessions stream - cold prompt 3.4 s,
+   warm prompt 1.3 s, both exit 0). Remaining: drop the `stdbuf` runner
+   in a small server.js tranche (the fresh path streams without it on
+   the pin; `--no-cache` makes the cache path live-safe), then deploy
+   and re-run the two-session probe; keep `liveStreams()` true on Linux.
 4. Once `REL-20261010-1553-playground-2` is fixed, revert L6-34's
    by-value workaround and refresh its expected output.
 
@@ -1777,10 +1781,11 @@ next cut is v0.65.0 (P0 correctness + P1 hardening + MCU first wave).
 Absorb v0.65.0 only when its official archive ships, then re-run the
 full gate, re-verify the two witnesses AND the absolute+relative
 `--check` package pair, and re-probe the three acked playground items.
-The live warm-cache stall is fixed in the tree (`--no-cache` on live
-sessions; REL-20261022-2032-playground to compiler): after the hourly
-deploy, run the live fixture twice and confirm both stream, then probe
-without `stdbuf` on the deployed pin before dropping the workaround.
+The live warm-cache stall is fixed and deployed (`--no-cache` on live
+sessions; REL-20261022-2032-playground to compiler); production is
+verified with two identical sessions (cold + warm cache) both streaming
+and exiting 0. Remaining: drop the `stdbuf` runner in a server.js
+tranche, deploy, and re-run the two-session probe.
 
 ## 30. Handoff 2026-10-12 (historical -- executed) -- next-session prompt
 

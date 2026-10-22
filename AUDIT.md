@@ -3849,3 +3849,11 @@ upstream as **REL-20261022-2032-playground** (high, compiler): make the cached
 path live-safe (inherit stdio or stream without replay), propagate the child's
 exit status, and stop re-running on a non-zero cached exit.
 
+**Production verified (2026-10-22T21:33Z, deployed by the hourly pull)**: the
+container rebuilt (uptime reset), `/api/version` reports toolchain/wasm/stdlib
+v0.64.7 and live true; two identical live sessions both stream and exit 0 -
+cold prompt at 3.4 s, warm-cache prompt at 1.3 s (the second session is the
+case that previously produced no output for 10.5 s). The `stdbuf` runner is
+kept for now; dropping it is a separate server.js tranche once the fresh-path
+no-stdbuf probe is repeated on the deployed pin.
+
