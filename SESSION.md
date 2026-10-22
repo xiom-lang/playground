@@ -1,22 +1,18 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-18 (**v0.64.7 absorbed** - pins, wasm and
-catalogs bumped, stdlib 538 modules / 6,879 functions (+21/+294, the
-stdlib now on the same track; manifest 0.64.7), acceptance green (c25,
-WSL 77/0, Windows 67/0/1, lab 37/37, lessons 412/412); the three open
-playground items re-probed on the official v0.64.7 archive and still
-red - fn-pointer traps, Int+Str `122`, and the W005 stub now FAULTS
-(SIGSEGV/exit 70) instead of silent; items stay acked with notes,
-L6-34 keeps the by-value workaround. **v0.64.8 (released 2026-10-19) is
-HELD unabsorbed**: its absorption aborted at the suite gate on an
-absolute-path package-discovery regression (`REL-20261019-1810-playground`,
-open, high); tree reverted, production stays v0.64.7. **section 32 is
-the current handoff with the paste-ready next-session prompt**.
-Production verified **v0.64.7** (deployed by the hourly pull; version +
-loader + live + patience green; stdlib manifest now 0.64.7); Open
-Collective support live; beginner-friendliness lesson review complete -
-both audits 0/0).
-Branch `main` at/after `b3f002e`, all commits pushed to `origin/main`;
+Last updated: 2026-10-22 (**v0.64.7 pin + production verified**; the
+v0.64.8 absolute-path regression is FIXED in v0.64.9 and its item was
+verified + closed, but **v0.64.9 is HELD unabsorbed** - its official
+archives fail the 1451/1550 witnesses (`p_iter_enumerate_tuple`,
+`p_nested_generic_ptr_read`; confirmed on the Windows archive) per
+`REL-20261022-1410-stdlib`, so the pin waits for the compiler's archive
+fix; the three long-standing playground items stay acked and red;
+L6-34 keeps the by-value workaround. **section 33 is the current
+handoff with the paste-ready next-session prompt**. Production verified
+**v0.64.7** (version + loader + live + patience green; stdlib 0.64.7,
+538 modules / 6,879 functions); Open Collective support live;
+beginner-friendliness lesson review complete - both audits 0/0).
+Branch `main` at/after `4bddf6e`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.64.7**, stdlib 0.64.7 (538 modules, 6,879 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
@@ -1142,14 +1138,14 @@ Keep `XIOM_WHATS_NEW` updated whenever a user-visible change ships.
 
 `package.json` now carries the playground's own semver, independent of the
 toolchain pin: 1.0.0 today (server version, `/api/version` `server`
-field, footer "v1.0.0 · toolchain v0.62.1"), with **2.0 reserved for the
+field, footer "v1.0.0 ï¿½ toolchain v0.62.1"), with **2.0 reserved for the
 gamified learning milestone** (ROADMAP "Product versioning" and "UX /
 gamification ideas"). Policy: patch = fixes, minor = features, toolchain
 upgrades do not bump the app line; toolchain/stdlib/wasm stay separately
 pinned and reported alongside. The suite asserts the app version matches
 package.json and is semver; "What's new" gained the 1.0 entry. Verified
 live after the 14:29 UTC deploy: `/api/version` `server: "1.0.0"` and the
-browser-rendered footer `v1.0.0 · toolchain v0.62.1`.
+browser-rendered footer `v1.0.0 ï¿½ toolchain v0.62.1`.
 
 ## 22. Input lessons blocked on C24 (2026-10-02)
 
@@ -1531,7 +1527,7 @@ comparators, full stderr) and verify or return it; after the deploy,
 verify production and consider dropping the live stdbuf workaround
 (the m308 flush fix makes it redundant).
 
-## 32. Handoff 2026-10-18 (current) -- v0.64.5, v0.64.6 and v0.64.7 absorbed
+## 32. Handoff 2026-10-18 (historical -- executed) -- v0.64.5, v0.64.6 and v0.64.7 absorbed
 
 ### State (exact)
 
@@ -1679,6 +1675,85 @@ red on v0.64.5/.6/.7 - fn-pointer trap, Int+Str 122, and the mixed
 `.to_str()` case now W005 + confined fault); once
 REL-20261010-1553-playground-2 lands, revert L6-34's by-value
 workaround and refresh its expected output.
+
+## 33. Handoff 2026-10-22 (current) -- v0.64.9 released, HELD; archive fix pending
+
+### State (exact)
+
+- Pins **v0.64.7** (`TOOLCHAIN_VERSION`/`WASM_VERSION`), tree clean at
+  `4bddf6e` (this handoff commit follows); Windows `.toolchain` and the
+  WSL audit toolchain are v0.64.7. Production is verified **v0.64.7**
+  (version/loader/live/patience green; stdlib 0.64.7, 538 modules /
+  6,879 functions).
+- **v0.64.8 held** on the absolute-path package-discovery regression;
+  that regression is **fixed in v0.64.9**, and
+  `REL-20261019-1810-playground` was verified (absolute + relative
+  `--check` of `examples/packages/main.xi` with the vendored
+  xiom-hello/xiom-csv both PASS, exit 0, on the official Windows
+  archive) and closed on the bus.
+- **v0.64.9 released 2026-10-22 but NOT absorbed**: the stdlib report
+  `REL-20261022-1410-stdlib` (open, high, to compiler) is confirmed on
+  the official archives - `p_iter_enumerate_tuple.xi` prints `i1=0` and
+  exits 3; `p_nested_generic_ptr_read.xi` prints `nested=0 local=0` and
+  exits 1 (debug build passes; archive-only regressions in the
+  1451/1550 fixes). Hold the pin until the compiler ships the archive
+  fix (a re-cut or the next cut).
+- Three long-standing playground items stay **acked** (red on v0.64.9,
+  Windows archive evidence): `REL-20261010-1553-playground-2` by-ref
+  fn-pointer trap (generic Int/Str crash 0xC0000005; non-generic trips
+  T001), `REL-20261010-1554-playground-2` Int+Str coercion prints
+  `122`, `REL-20261010-1554-playground-3` mixed `.to_str()` W005 stub +
+  fault. L6-34 keeps the by-value workaround.
+- Relay bus: doorbell cron `wku_15bc2714c001pDvY17nl24jfZe`
+  (`0 */3 * * *`, expires 2026-10-28; recreate if gone). PULSE items
+  `-1703-pulse` / `-1819-pulse` remain acked awaiting their close; the
+  PULSE 0.3.0 static-site staging test will ping.
+- Held-pin assets are cached at `%TEMP%\kilo\v0649` (windows zip
+  `1b759541...`, linux tar.gz `b331dd4d...`) with `tc649` extracted.
+
+### Next steps (in order)
+
+1. Pull xiom-relays; watch for the compiler's archive fix (a v0.64.9
+   re-cut or the next release) and its release-check file. When it
+   ships: absorb the pin (mirror first, GitHub fallback), run the full
+   gate (c25, WSL suite, lab audit, full lesson audit, generator
+   checks, Windows suite), and verify the two witnesses
+   `p_iter_enumerate_tuple.xi` and `p_nested_generic_ptr_read.xi` on the
+   official archive before confirming the pin.
+2. Re-probe the three acked items on that archive; verify + close any
+   that pass, otherwise add evidence notes.
+3. After the deploy, verify production (version/loader/live/patience)
+   and consider dropping the live `stdbuf -o0` workaround (the m308
+   flush fix makes it redundant; keep it until a no-stdbuf live probe
+   streams natively on the deployed pin).
+4. Once `REL-20261010-1553-playground-2` is fixed, revert L6-34's
+   by-value workaround and refresh its expected output.
+
+### Environment
+
+Windows `.toolchain` v0.64.7; WSL commands via `wsl -d Ubuntu -e bash
+-lc ...`; Linux toolchains per release at `/home/lefteris/xiom_v06NN/tc`
+(v0.64.7; v0.64.9 only as a temp copy); node at
+/home/lefteris/node-v22.23.2-linux-x64/bin/node; WSL /tmp is wiped
+between invocations (extract + probe in ONE invocation); prefer script
+files under %TEMP%\kilo for WSL probes (PowerShell mangles `$` inside
+inline commands); `xiom run` on drvfs paths works again on v0.64.7;
+production is playground.xiom-lang.org.
+
+### Next-session prompt (paste-ready)
+
+You are the playground session for xiom-lang/playground at
+E:\xiom-lang\playground. Read SESSION.md section 33 and follow it. Key
+points: pull xiom-relays and process items to playground (doorbell cron
+every 3h; recreate if expired); pins and production are v0.64.7
+(verified); v0.64.9 is released but HELD - its official archives fail
+the 1451/1550 witnesses (p_iter_enumerate_tuple, p_nested_generic_ptr_read)
+per REL-20261022-1410-stdlib, confirmed on the Windows archive. Absorb
+v0.64.9 or its successor only after the compiler ships the archive fix,
+and re-run the full gate plus those two witnesses; then re-probe the
+three acked playground items and verify/close what passes. The live
+stdbuf workaround can be dropped once a no-stdbuf live probe streams on
+the deployed pin.
 
 ## 30. Handoff 2026-10-12 (historical -- executed) -- next-session prompt
 
