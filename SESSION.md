@@ -1535,6 +1535,19 @@ verify production and consider dropping the live stdbuf workaround
 
 ### State (exact)
 
+**2026-10-22 update (doorbell session): v0.64.9 is RELEASED and the v0.64.8
+HOLD is CLEARED.** `REL-20261019-1810-playground` (absolute-path package
+discovery) was verified fixed on the official v0.64.9 Windows archive
+(absolute and relative `--check` of `examples/packages/main.xi` with the
+vendored xiom-hello/xiom-csv both PASS, exit 0) and **closed** on the bus.
+The three long-standing items were re-probed on the same archive and
+remain red (generic by-ref comparators crash 0xC0000005, non-generic
+trips T001, Int+Str coercion prints `122`, W005 stub + fault). Pins are
+still **v0.64.7**; next action is to **absorb v0.64.9** (assets at
+`dl.xiom-lang.org/releases/v0.64.9/`, windows zip sha256 `1b759541...`,
+linux tar.gz `b331dd4d...`), run the full gate, then production
+verification.
+
 - Working tree: pins **v0.64.7** (`TOOLCHAIN_VERSION`/`WASM_VERSION`),
   all commits pushed (HEAD `b3f002e`). Windows `.toolchain` and the WSL
   audit toolchain (`/home/lefteris/xiom_v0647/tc`) are v0.64.7 (linux
