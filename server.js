@@ -285,12 +285,14 @@ const SANDBOX_MIN_ABI = Math.max(1, Number(process.env.XIOM_SANDBOX_MIN_ABI) || 
 const sandbox = { mode: SANDBOX_MODE, bin: SANDBOX_BIN, abi: null, canary: false, keepStdin: false, error: null };
 
 // Live sessions need the program's prompts to reach the client while it waits
-// at a read. Compiled programs use C stdio, which block-buffers stdout when
-// it is a pipe, so `io.println` before a read never streams until exit. GNU
-// coreutils `stdbuf -o0` (LD_PRELOAD) forces stdout unbuffered across the
-// whole child tree (driver -> compiled program) without touching the
-// compiler or weakening the sandbox; /usr is already read+exec under the
-// policy. Without it, Linux live sessions stay gated to replay.
+// at a read. Compiled programs use C stdio, which block-buffers stdout when it
+// is a pipe. Since the m308 runtime fix the compiler flushes stdout before a
+// blocking read, so the compile path streams on its own (verified 2026-10-22 on
+// v0.64.7, with and without stdbuf: prompt at ~3.8 s while the child waited).
+// GNU coreutils `stdbuf -o0` (LD_PRELOAD) is kept as the belt-and-braces
+// runner until a no-stdbuf live probe passes on the deployed pin; /usr is
+// already read+exec under the policy. `liveStreams()` stays the capability
+// gate so a platform without it still falls back to replay.
 const STDBUF_BIN = (() => {
   if (process.platform !== 'linux') return null; // no stdbuf on Windows
   const candidates = [process.env.XIOM_STDBUF_BIN, '/usr/bin/stdbuf'].filter(Boolean);
@@ -963,18 +965,28 @@ async function liveStart(source, ip) {
     throw new Error('sandbox wrapper lacks --keep-stdin');
   }
   if (!liveStreams()) {
-    // Without stdbuf the compiled program block-buffers its prompt, so the
-    // client could never see it in time; the route falls back to replay.
+    // Keep the capability gate: a Linux host without stdbuf still falls back
+    // to replay even though the runtime itself now flushes before a read.
     throw new Error('stdbuf unavailable for prompt streaming');
   }
   await fsp.mkdir(WORK_ROOT, { recursive: true });
   const dir = await fsp.mkdtemp(path.join(WORK_ROOT, 'live-'));
   const file = writeSource(dir, source);
   const bin = sandboxed ? SANDBOX_BIN : XIOM_BIN;
+  // The compiler's `xiom run` script cache serves a warm hit through
+  // `Command::output()` and replays stdout only after the child exits, so a
+  // cached live session never streams its prompt (and loses the child's
+  // stderr). Live sessions therefore force `--no-cache`: the compile path runs
+  // the program with inherited stdio, which streams natively. Filed upstream
+  // as REL-20261022-2032-playground; drop the flag when the compiler makes the
+  // cached path live-safe.
   const runner = STDBUF_BIN ? [STDBUF_BIN, '-o0'] : [];
+  // Only the sandbox wrapper needs the compiler path as its command argument;
+  // a direct spawn already runs XIOM_BIN (passing it again made the driver read
+  // the executable as the source file on Windows dev hosts).
   const argv = sandboxed
-    ? ['--keep-stdin', '--'].concat(runner, [XIOM_BIN, 'run', '-O0', file])
-    : runner.concat([XIOM_BIN, 'run', '-O0', file]);
+    ? ['--keep-stdin', '--'].concat(runner, [XIOM_BIN, 'run', '--no-cache', '-O0', file])
+    : runner.concat(['run', '--no-cache', '-O0', file]);
   const child = spawn(bin, argv, { cwd: dir, env: userChildEnv(), stdio: ['pipe', 'pipe', 'pipe'] });
   const session = {
     id: require('crypto').randomUUID(),
@@ -1009,10 +1021,9 @@ async function handleLiveRoute(req, res, method, url) {
     const retryAfterMs = rateLimitRetryMs(req);
     if (retryAfterMs) { sendRateLimited(res, retryAfterMs); return; }
     if ((sandboxActive() && !sandbox.keepStdin) || !liveStreams()) {
-      // Without stdin pass-through the child sees EOF before any answer; and
-      // without stdbuf the prompt never streams while the child waits at a
-      // read. Live sessions are offered only when both hold; clients fall
-      // back to replay elsewhere.
+      // Without stdin pass-through the child sees EOF before any answer
+      // arrives; without the streaming runner the host cannot offer live
+      // sessions. Clients fall back to replay.
       sendJson(res, 503, { error: 'Live sessions are unavailable here; using replay' });
       return;
     }

@@ -3804,3 +3804,48 @@ night (release published 2026-10-17T22:59Z).
   `Name? -> Hello, Ada! -> N=7` (prompt visible while the program
   waited, both answers handled live, exit 0); patience held
   (`STILL ALIVE` at 46.7 s, late answer read `A:late`, exit at 47.0 s).
+
+## 65. Live sessions force --no-cache (warm script cache stalled prompts, 2026-10-22)
+
+While probing whether the m308 flush fix makes the live terminal's `stdbuf -o0`
+workaround redundant, the probe reproduced a different, live-only failure: a
+session whose source is already in the compiler's script cache never streams
+its prompt.
+
+Evidence on the v0.64.7 pin:
+
+- WSL, `xiom run -O0 live.xi` with piped stdio: a fresh compile streams
+  `Name?` at 3.8 s while the child is blocked at the read; the identical
+  command on a warm cache produces no output for 12 s and flushes
+  `Name?\nHello, !\nerr\n` only when stdin closes.
+- The cached binary itself streams when executed directly (prompt at 0.002 s),
+  with or without `stdbuf`; the stall is in the driver, not the program.
+- `crates/xiom/src/main.rs:1690-1707` serves a cache hit through
+  `Command::output()` with stdin inherited: stdout and stderr are captured and
+  only stdout is replayed after exit. `stdbuf` cannot help because the child is
+  not attached to the response pipe, and the child's stderr is dropped on a
+  cache hit. A non-zero cached exit also falls through and recompiles/runs the
+  program a second time.
+- Production (v0.64.7, deployed 2026-10-18): the first session of the fixture
+  streamed `Name?` at 2.3 s and finished; an identical second session produced
+  no output for 10.5 s and had to be closed. The previous single-session live
+  test missed this because the first run always compiles.
+
+Fix (playground side): live sessions pass `--no-cache` to `xiom run`
+(`server.js`), so the compile path runs the program with inherited stdio. The
+regression test now runs the same source twice (cold + warm cache) and asserts
+the prompt streams both times. The `stdbuf -o0` runner stays for now; it can be
+dropped after a no-stdbuf live probe passes on the deployed pin. The same
+function also stopped repeating `XIOM_BIN` in the direct-spawn argv - only the
+sandbox wrapper needs the compiler path as its command argument, and the
+duplicate made the driver read the executable as the source file on a Windows
+dev host, where live sessions were unavailable.
+
+Verification: WSL full server suite **77/0** on v0.64.7 under
+`mode=require active=true landlock_abi=3 keep_stdin=true`, including
+`live sessions stream prompts and take answers (cold + warm cache)`; the
+Windows dev probe (sandbox off, toolchain v0.64.7) streams both runs. Filed
+upstream as **REL-20261022-2032-playground** (high, compiler): make the cached
+path live-safe (inherit stdio or stream without replay), propagate the child's
+exit status, and stop re-running on a non-zero cached exit.
+

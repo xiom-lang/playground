@@ -891,7 +891,7 @@ async function main() {
           skipped.push('live sessions (unavailable while the program runs under the sandbox wrapper)');
           console.log('  skip live session test (capabilities.live=false)');
         } else {
-        await okAsync('live sessions stream prompts and take answers', async () => {
+        const runLiveSession = async () => {
           const source = 'use xiom.io;\n\nfn main() -> Int {\n  io.println("Name?");\n  let name = io.read_line();\n  io.println("Hello, " + name + "!");\n  let parsed = io.read_int();\n  match parsed {\n    Ok(v) => { io.println("N=" + v.to_str()); }\n    Err(m) => { io.println("err"); }\n  };\n  return 0;\n}\n';
           const started = await request('POST', '/api/live/start', { source });
           assert.strictEqual(started.status, 200, started.body);
@@ -934,6 +934,14 @@ async function main() {
           const finished = await waitExit();
           assert.strictEqual(finished.exited, true, 'the session must exit after the last answer');
           await request('POST', '/api/live/close', { id });
+        };
+        await okAsync('live sessions stream prompts and take answers (cold + warm cache)', async () => {
+          // Run the identical source twice: the second session is served from
+          // the compiler's warm script cache. That path used to capture stdout
+          // with Command::output() and replay it only at exit, so the prompt
+          // never streamed and the client stalled until the sweep.
+          await runLiveSession();
+          await runLiveSession();
         });
         }
 
