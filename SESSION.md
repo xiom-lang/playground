@@ -1,12 +1,13 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-22 (**v0.64.7 pin + production verified**; v0.64.9 is
-**WITHDRAWN from adoption** - GitHub pre-release, official archives fail the
-1451/1550 witnesses (`p_iter_enumerate_tuple`, `p_nested_generic_ptr_read`)
-and the nested-pattern/m372 family, and the next cut is **v0.65.0** gated on
-P0 correctness + P1 hardening + the MCU first wave; the pin stays v0.64.7
-until that archive ships and re-verifies. The three long-standing playground
-items stay acked and red; L6-34 keeps the by-value workaround. **Section 33 is
+Last updated: 2026-10-24 (**v0.64.7 pin + production verified**; v0.64.9 is
+**WITHDRAWN from adoption**; **v0.65.0 is RELEASED and absorbable** - both
+withdrawn 1451/1550 witnesses now pass on the official v0.65.0 archive
+(`enumerate tuple ok`; `nested=42 local=42`, exit 0), while the three
+long-standing playground items stay acked and red (by-ref trap, coercion
+`122`, W005 stub) and the live warm-cache stall still reproduces upstream
+(the playground's `--no-cache` live workaround covers it). The pin stays
+v0.64.7 until v0.65.0 is absorbed. **Section 33 is
 the current handoff with the paste-ready next-session prompt**. A live-terminal
 regression found on 2026-10-22 is fixed and deployed: a warm compiler script
 cache captured stdout and stalled prompts, so live sessions now pass
@@ -1708,12 +1709,17 @@ workaround and refresh its expected output.
   substitution + release-compiler parity + m1511 + C07, P1 hardening,
   P2 MCU first wave. Do not absorb v0.64.9; re-test the holds on the
   v0.65.0 archive.
-- Three long-standing playground items stay **acked** (red on v0.64.9,
+- **v0.65.0 RELEASED (2026-10-24)** and is the absorbable pin: the
+  withdrawn v0.64.9 archive regressions are cleared - both 1451/1550
+  witnesses pass on the official v0.65.0 Windows archive (sha256
+  `ff4abb4a...`: `enumerate tuple ok`; `nested=42 local=42`, exit 0).
+  Three long-standing playground items stay **acked** (red on v0.65.0,
   Windows archive evidence): `REL-20261010-1553-playground-2` by-ref
   fn-pointer trap (generic Int/Str crash 0xC0000005; non-generic trips
   T001), `REL-20261010-1554-playground-2` Int+Str coercion prints
   `122`, `REL-20261010-1554-playground-3` mixed `.to_str()` W005 stub +
-  fault. L6-34 keeps the by-value workaround.
+  fault. L6-34 keeps the by-value workaround. Verdicts filed in
+  `release-checks/compiler-compiler-v0.65.0.md`.
 - **Live warm-cache stall found and fixed (2026-10-22)**: `xiom run`
   serves a script-cache hit through `Command::output()` and replays
   stdout only after exit, so a repeat live session (same source) never
