@@ -3857,3 +3857,45 @@ case that previously produced no output for 10.5 s). The `stdbuf` runner is
 kept for now; dropping it is a separate server.js tranche once the fresh-path
 no-stdbuf probe is repeated on the deployed pin.
 
+## 66. v0.65.2 absorption (2026-10-27)
+
+The compiler lane shipped v0.65.2 (annotated tag `fe1994b1` on `8ec0904a5`;
+release run `40566604850`, published 2026-10-27T19:19Z) with packed Vec slots,
+arm64 `Result[Str, E]` contract payloads, inline `Result.value[i]` typing,
+bound Str drops, and borrowed/aggregate Vec reclaim - and the playground
+absorbed it the same day, jumping **v0.64.7 -> v0.65.2**. v0.65.0 and v0.65.1
+were released and their release checks were re-probed, but the pin stayed at
+v0.64.7 until .2 carried the complete wave (including the warm-cache driver
+fix `cfc17e92c`, verified on main and closed as REL-20261022-2032).
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.65.2**; installed from the
+  GitHub release (SHA256SUMS verified): windows zip `0a328560...`, linux
+  tar.gz `ca55a088...`, wasm_bg `f4e5356e...`. `xiom-wasm.js`/`.d.ts` are
+  byte-identical to v0.64.7; only the wasm binary and the loader comment
+  changed.
+- Stdlib: **538 modules / 6,915 functions** (was 538 / 6,879; +36
+  additive): `net.h2` `H2HeaderBlock` + HPACK dynamic table + Huffman,
+  `net.socket` `socket_recv_into`/`socket_recv_timeout_into`,
+  `serialize.json` ref variants and object/array builders,
+  `sync.channel` `ChannelHandle`, and an `EnumerateIter[Int]`
+  specialization. `js/stdlib-ref.json` and `js/limitations.json`
+  regenerated; all generator checks current.
+- Gate: c25 `C25 fixed: yes` (cold, cached and `--no-cache`); Windows suite
+  **67/0/1**; WSL suite **77/0** (sandbox `require`, Landlock ABI 3,
+  keep-stdin); Lab audit **37/37 x2**; full lesson audit **412/412 zero
+  failures**; expected outputs **412/412** up to date; lesson style **0/0**
+  and code **0 errors / 0 warnings** (318 pre-existing info); `node --check`
+  **50 files, 0 failures**.
+- Release check `compiler-compiler-v0.65.2.md`: the three playground rows
+  remain **still red** on the official archive (by-ref comparator trap for
+  Int and Str `0xC0000005`, coercion `122`, W005 stub + `0xC0000409`) and
+  the clone-hygiene row 2039 persists (stale `compiler-v0.64.8.md` dirty in
+  the shared clone).
+- WASM: the v0.65.2 binary loads and reports `XIOM v0.65.2 (WASM)`. The
+  compile smoke throws `RuntimeError: unreachable` in headless Edge, but the
+  v0.64.7 binary does the same in the same harness, so this is a pre-existing
+  harness limitation, not a v0.65.2 regression; the UI falls back to the
+  server compiler.
+- Deploy: the repo is pulled by `/opt/xiom/bin/playground-deploy.sh` hourly
+  at minute 29; production verification follows the 20:29Z rebuild.
+

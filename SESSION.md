@@ -1,24 +1,17 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-24 (**v0.64.7 pin + production verified**; v0.64.9 is
-**WITHDRAWN from adoption**; **v0.65.0 is RELEASED and absorbable** - both
-withdrawn 1451/1550 witnesses now pass on the official v0.65.0 archive
-(`enumerate tuple ok`; `nested=42 local=42`, exit 0), while the three
-long-standing playground items stay acked and red (by-ref trap, coercion
-`122`, W005 stub) and the live warm-cache stall still reproduces upstream
-(the playground's `--no-cache` live workaround covers it). The pin stays
-v0.64.7 until v0.65.0 is absorbed. **Section 33 is
-the current handoff with the paste-ready next-session prompt**. A live-terminal
-regression found on 2026-10-22 is fixed and deployed: a warm compiler script
-cache captured stdout and stalled prompts, so live sessions now pass
-`--no-cache` (filed as REL-20261022-2032-playground). Production verified after
-the 21:29Z deploy: two identical sessions both stream (cold prompt 3.4 s, warm
-prompt 1.3 s, both exit 0).
-Production verified **v0.64.7** (version + loader + live + patience green;
-stdlib 0.64.7, 538 modules / 6,879 functions); Open Collective support live;
-beginner-friendliness lesson review complete - both audits 0/0).
-Branch `main` at/after `4c476f8`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.64.7**, stdlib 0.64.7 (538 modules, 6,879 functions),
+Last updated: 2026-10-27 (**v0.65.2 absorbed, gate green; production deploy
+pending the 20:29Z hourly pull**). v0.65.0/v0.65.1 were released and their
+release-check rows filed, but not pinned; v0.65.2 carries the warm-cache fix
+(REL-20261022-2032, verified on main and closed), packed Vec slots, arm64
+contract payloads, and the borrowed/aggregate Vec reclaim. **Section 34 is the
+current handoff.** The three long-standing playground defects are still acked
+and red on v0.65.2 (by-ref comparator trap for Int and Str, coercion `122`,
+W005 stub + fault), and 2039 (shared clone stale file) stays open. The live
+`--no-cache` workaround remains until the live regression test is re-run against
+the deployed pin. Production is verified v0.64.7 until the deploy lands.
+Branch `main` at/after `3cbdc8e`, all commits pushed to `origin/main`;
+CI green (Validate + CodeQL). Toolchain/wasm **v0.65.2**, stdlib 0.65.2 (538 modules, 6,915 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1444,6 +1437,44 @@ WSL in ~13 min; never pipe binary through PowerShell (hash from files instead).
    L6-10/L6-15 prose can pass structs across modules again.
 4. Designer: ROADMAP "Graphics needed" lists the exact asset sets and style
    brief for 2.0 (12 assets) and 2.2 (23 assets).
+
+## 34. v0.65.2 absorbed (2026-10-27) -- current
+
+The compiler lane released v0.65.2 (tag `fe1994b1` on `8ec0904a5`, run
+`40566604850`, 2026-10-27T19:19Z) and the playground absorbed it the same
+day, going **v0.64.7 -> v0.65.2**. v0.65.0 and v0.65.1 were checked but not
+pinned; .2 carries the complete wave, including the warm-cache driver fix
+`cfc17e92c` (REL-20261022-2032 verified on main and closed).
+
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> v0.65.2; Windows zip
+  `0a328560...`, linux tar.gz `ca55a088...`, wasm_bg `f4e5356e...`
+  (SHA256SUMS verified; wasm js/.d.ts unchanged).
+- Stdlib 0.65.2: **538 modules / 6,915 functions** (+36 additive: HPACK/H2
+  header blocks, recv-into sockets, JSON refs/builders, channel handles,
+  EnumerateIter[Int]). Catalogs regenerated; all generator checks current.
+- Gate: c25 fixed; Windows **67/0/1**; WSL **77/0**; Lab **37/37 x2**; full
+  lesson audit **412/412**; expected outputs **412/412**; style **0/0**;
+  code audit 0 errors/warnings; `node --check` 50 files.
+- Release check `compiler-compiler-v0.65.2.md` has the playground verdicts:
+  the three defects are still red and 2039 stays open.
+- Production: hourly deploy at 20:29Z; after it, verify `/api/version`
+  (toolchain/wasm/stdlib v0.65.2), `/api/health` live, and one live session
+  with the `--no-cache` workaround. The workaround stays until the live
+  regression test runs against the deployed pin.
+- Environment for the next session: Windows `.toolchain` v0.65.2; WSL Linux
+  toolchain `/home/lefteris/xiom_v0652/tc`; Node at
+  `/home/lefteris/node-v22.23.2-linux-x64/bin/node`; always
+  `wsl -d Ubuntu -e bash -lc ...`; WSL `/tmp` is wiped between invocations.
+
+Paste-ready next-session prompt:
+
+> Read `SESSION.md` section 34 and `AUDIT.md` section 66. The playground is
+> on v0.65.2 (gate green). Verify the 20:29Z deploy: `/api/version` and
+> `/api/health`, a live session with `--no-cache`, and the wasm version. Then
+> re-run the release-check rows for the next compiler release and process the
+> xiom-relays queue for the playground lane. The three long-standing defects
+> (by-ref comparator trap, coercion `122`, W005 stub + fault) are still red;
+> do not re-open them unless a release claims a fix.
 
 ## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 
