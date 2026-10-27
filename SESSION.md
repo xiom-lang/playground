@@ -1,19 +1,19 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-27 (**v0.65.2 absorbed, gate green, production verified**). v0.65.0/v0.65.1 were released and their
-release-check rows filed, but not pinned; v0.65.2 carries the warm-cache fix
-(REL-20261022-2032, verified on main and closed), packed Vec slots, arm64
-contract payloads, and the borrowed/aggregate Vec reclaim. **Section 34 is the
-current handoff.** The three long-standing playground defects are still acked
-and red on v0.65.2 (by-ref comparator trap for Int and Str, coercion `122`,
-W005 stub + fault), and 2039 (shared clone stale file) stays open. The live
-`--no-cache` workaround remains until the live regression test is re-run against
-the deployed pin. Production verified **v0.65.2** after the 20:29Z hourly deploy
-(`/api/version` toolchain/wasm/stdlib v0.65.2; `/api/health` live `stdbuf`,
-sandbox require/ABI 4, 352 bundled packages; live session `Name?` ->
-`Hello, Ada!` -> `N=7`, exit 0).
-Branch `main` at/after `7290abe`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.65.2**, stdlib 0.65.2 (538 modules, 6,915 functions),
+Last updated: 2026-10-27 (**v0.65.1 pin: v0.65.2 rolled back after the upstream
+struct-push ownership regression; gate green**). v0.65.2 was released and
+briefly absorbed, then rolled back the same night: compiler
+REL-20261027-2128 reports that a named `Struct{...Vec}` pushed by value has its
+Vec freed at scope exit in .2, and the playground reproduced silent corruption
+(`bad=4`, exit 0). The fix is on compiler main `bb8eccf5a` for v0.65.3 (tag
+awaits owner GO); the accepted pin is **v0.65.1** (stdlib 0.65.1, 538 modules /
+6,900 functions), which still carries the warm-cache fix. **Section 35 is the
+current handoff.** The three long-standing playground defects remain acked/red
+on v0.65.1 (by-ref comparator trap, coercion `122`, W005 stub + fault), and 2039
+(shared clone stale file) stays open. The `--no-cache` live workaround stays
+until the live regression test is re-run against the deployed pin.
+Branch `main` at/after `45352f3`, all commits pushed to `origin/main`;
+CI green (Validate + CodeQL). Toolchain/wasm **v0.65.1**, stdlib 0.65.1 (538 modules, 6,900 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1479,6 +1479,36 @@ Paste-ready next-session prompt:
 > xiom-relays queue for the playground lane. The three long-standing defects
 > (by-ref comparator trap, coercion `122`, W005 stub + fault) are still red;
 > do not re-open them unless a release claims a fix.
+
+## 35. v0.65.2 rolled back to v0.65.1 (2026-10-27, current) -- upstream struct-push regression
+
+v0.65.2 was absorbed and deployed, then rolled back the same night after the
+compiler lane reported a durable-lane regression (REL-20261027-2128-compiler):
+a named `Struct{..., Vec}` pushed by value has its Vec freed at scope exit, so
+`Vec[Struct]` elements read freed memory. The playground reproduced the silent
+corruption with a minimal probe on the official v0.65.2 Windows archive
+(`bad=4`, exit 0, no diagnostic). The fix is on compiler main `bb8eccf5a` for
+v0.65.3 (tag awaits owner GO).
+
+Rollback state:
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.65.1**; official assets
+  verified (Windows `69de1e27...`, Linux `5785320f...`, wasm_bg `9c701c87...`).
+- Stdlib: **538 modules / 6,900 functions**; catalogs regenerated.
+- Gate: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL **77/0** (sandbox
+  require/ABI 3/keep-stdin); Lab **37/37 x2**; full lesson audit **412/412
+  zero failures**; style **0/0**; code 0 errors/warnings.
+- Release checks: the three playground defects stay red and 2039 stays open;
+  the v0.65.2 absorption item is superseded by this rollback.
+- Next: absorb **v0.65.3** (with the struct-push fix) after owner GO; re-run
+  the gate and verify production. Do not adopt v0.65.2 on any durable path.
+
+Paste-ready next-session prompt:
+
+> Read `SESSION.md` section 35 and `AUDIT.md` section 67. The playground is
+> rolled back to **v0.65.1** because v0.65.2 frees named `Struct{Vec}` payloads
+> on by-value push. Watch for **v0.65.3** (fix `bb8eccf5a`), absorb it with the
+> full gate, and verify production. Re-run the playground release-check rows
+> when the next compiler release is cut.
 
 ## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 

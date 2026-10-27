@@ -3904,3 +3904,38 @@ fix `cfc17e92c`, verified on main and closed as REL-20261022-2032).
   accepted `Ada`, then `7`, and exited 0 with `Name?\nHello, Ada!\nN=7\n`. The
   in-browser WASM asset reports v0.65.2 and the loader picks it up.
 
+**Correction (2026-10-27): v0.65.2 was rolled back to v0.65.1 - see section
+67.** The durable-lane struct-push regression below invalidates the pin; the
+absorption gate above passed because the lesson corpus does not exercise the
+failing shape.
+
+## 67. v0.65.2 rolled back to v0.65.1 (2026-10-27)
+
+The compiler lane reported a durable-lane regression in v0.65.2
+(REL-20261027-2128-compiler): a named `Struct{..., Vec}` passed by value to
+`Vec.push`/`insert`/`set` keeps a shallow copy in the container while the
+caller's aggregate drop frees the Vec at scope exit, so the element reads freed
+memory (WAL recovery and station double-free upstream). The playground probe on
+the official Windows archive reproduced it without any diagnostic:
+
+```xiom
+var r = R{ id: i, xs: xs };
+rs.push(r);              // element keeps xs, caller drop frees it
+```
+
+v0.65.2 printed `bad=4` and exited 0; the v0.65.1 control is clean. The compiler
+fix is on main `bb8eccf5a` (ownership transfer on container insertion + hoisted
+Str-drop slots); **v0.65.3** is not cut yet (tag awaits owner GO).
+
+Rollback state:
+- Pins: `TOOLCHAIN_VERSION`/`WASM_VERSION` -> **v0.65.1**; assets verified
+  against SHA256SUMS: Windows `69de1e27...`, Linux `5785320f...`, wasm_bg
+  `9c701c87...`.
+- Stdlib: **538 modules / 6,900 functions**; catalogs regenerated.
+- Gate: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL **77/0** (sandbox
+  require/ABI 3/keep-stdin); Lab **37/37 x2**; full lesson audit **412/412
+  zero failures**; lesson style **0/0**; code audit 0 errors/warnings.
+- Do not adopt v0.65.2 on any durable path. Absorb v0.65.3 (with the
+  struct-push fix) when released, re-run the full gate, and verify production.
+  Production verification of the rollback follows the 22:29Z deploy.
+
