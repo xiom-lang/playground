@@ -3937,5 +3937,10 @@ Rollback state:
   zero failures**; lesson style **0/0**; code audit 0 errors/warnings.
 - Do not adopt v0.65.2 on any durable path. Absorb v0.65.3 (with the
   struct-push fix) when released, re-run the full gate, and verify production.
-  Production verification of the rollback follows the 22:29Z deploy.
+- **Production verified after the 22:29Z deploy (playground `ef785dc`)**:
+  `/api/version` reports toolchain/wasm/stdlib v0.65.1 and 538 modules;
+  `/api/health` is ok with live `stdbuf`, sandbox require/ABI 4/keep-stdin and
+  352 bundled packages; a live session streamed `Name?`, accepted `Ada` and
+  `7`, and exited 0; the struct-push probe through `/api/compile` returns
+  `bad=0` (v0.65.2 returned `bad=4`).
 

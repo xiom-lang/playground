@@ -12,6 +12,11 @@ current handoff.** The three long-standing playground defects remain acked/red
 on v0.65.1 (by-ref comparator trap, coercion `122`, W005 stub + fault), and 2039
 (shared clone stale file) stays open. The `--no-cache` live workaround stays
 until the live regression test is re-run against the deployed pin.
+Production verified **v0.65.1** after the 22:29Z rollback deploy:
+`/api/version` reports toolchain/wasm/stdlib v0.65.1; `/api/health` is ok with
+live `stdbuf`, sandbox `require`/ABI 4/keep-stdin; a live session streams
+`Name?` -> `Hello, Ada!` -> `N=7`; and the struct-push probe through
+`/api/compile` returns `bad=0` (v0.65.2 returned `bad=4`).
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.1**, stdlib 0.65.1 (538 modules, 6,900 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1501,6 +1506,11 @@ Rollback state:
   the v0.65.2 absorption item is superseded by this rollback.
 - Next: absorb **v0.65.3** (with the struct-push fix) after owner GO; re-run
   the gate and verify production. Do not adopt v0.65.2 on any durable path.
+- Production **verified (2026-10-27T22:29Z deploy, playground `ef785dc`)**:
+  `/api/version` toolchain/wasm/stdlib v0.65.1, 538 modules; `/api/health` ok
+  with live `stdbuf`, sandbox require/ABI 4/keep-stdin, 352 bundled packages;
+  live session `Name?` -> `Hello, Ada!` -> `N=7`, exit 0; the struct-push
+  probe via `/api/compile` returns `bad=0` (v0.65.2: `bad=4`).
 
 Paste-ready next-session prompt:
 
