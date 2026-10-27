@@ -12,7 +12,7 @@ current handoff.** The three long-standing playground defects remain acked/red
 on v0.65.1 (by-ref comparator trap, coercion `122`, W005 stub + fault), and 2039
 (shared clone stale file) stays open. The `--no-cache` live workaround stays
 until the live regression test is re-run against the deployed pin.
-Branch `main` at/after `45352f3`, all commits pushed to `origin/main`;
+Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.1**, stdlib 0.65.1 (538 modules, 6,900 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
