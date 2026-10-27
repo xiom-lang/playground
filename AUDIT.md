@@ -3897,5 +3897,10 @@ fix `cfc17e92c`, verified on main and closed as REL-20261022-2032).
   harness limitation, not a v0.65.2 regression; the UI falls back to the
   server compiler.
 - Deploy: the repo is pulled by `/opt/xiom/bin/playground-deploy.sh` hourly
-  at minute 29; production verification follows the 20:29Z rebuild.
+  at minute 29. **Production verified after the 20:29Z rebuild (commit
+  `7290abe`)**: `/api/version` reports toolchain/wasm/stdlib v0.65.2 and 538
+  modules; `/api/health` is ok with live `stdbuf`, sandbox `require`/ABI
+  4/keep-stdin and 352 bundled packages; a live session streamed `Name?`,
+  accepted `Ada`, then `7`, and exited 0 with `Name?\nHello, Ada!\nN=7\n`. The
+  in-browser WASM asset reports v0.65.2 and the loader picks it up.
 

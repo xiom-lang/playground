@@ -1,7 +1,6 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-27 (**v0.65.2 absorbed, gate green; production deploy
-pending the 20:29Z hourly pull**). v0.65.0/v0.65.1 were released and their
+Last updated: 2026-10-27 (**v0.65.2 absorbed, gate green, production verified**). v0.65.0/v0.65.1 were released and their
 release-check rows filed, but not pinned; v0.65.2 carries the warm-cache fix
 (REL-20261022-2032, verified on main and closed), packed Vec slots, arm64
 contract payloads, and the borrowed/aggregate Vec reclaim. **Section 34 is the
@@ -9,8 +8,11 @@ current handoff.** The three long-standing playground defects are still acked
 and red on v0.65.2 (by-ref comparator trap for Int and Str, coercion `122`,
 W005 stub + fault), and 2039 (shared clone stale file) stays open. The live
 `--no-cache` workaround remains until the live regression test is re-run against
-the deployed pin. Production is verified v0.64.7 until the deploy lands.
-Branch `main` at/after `3cbdc8e`, all commits pushed to `origin/main`;
+the deployed pin. Production verified **v0.65.2** after the 20:29Z hourly deploy
+(`/api/version` toolchain/wasm/stdlib v0.65.2; `/api/health` live `stdbuf`,
+sandbox require/ABI 4, 352 bundled packages; live session `Name?` ->
+`Hello, Ada!` -> `N=7`, exit 0).
+Branch `main` at/after `7290abe`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.2**, stdlib 0.65.2 (538 modules, 6,915 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
@@ -1457,10 +1459,12 @@ pinned; .2 carries the complete wave, including the warm-cache driver fix
   code audit 0 errors/warnings; `node --check` 50 files.
 - Release check `compiler-compiler-v0.65.2.md` has the playground verdicts:
   the three defects are still red and 2039 stays open.
-- Production: hourly deploy at 20:29Z; after it, verify `/api/version`
-  (toolchain/wasm/stdlib v0.65.2), `/api/health` live, and one live session
-  with the `--no-cache` workaround. The workaround stays until the live
-  regression test runs against the deployed pin.
+- Production **verified (2026-10-27T20:29Z deploy, playground 7290abe)**:
+  `/api/version` reports toolchain/wasm/stdlib v0.65.2 and 538 modules;
+  `/api/health` is ok with live `stdbuf`, sandbox `require`/ABI 4/keep-stdin,
+  and 352 bundled packages; a live session printed `Name?` while running,
+  then `Hello, Ada!` and `N=7`, exit 0. The `--no-cache` workaround stays
+  until the live regression test runs against the deployed pin.
 - Environment for the next session: Windows `.toolchain` v0.65.2; WSL Linux
   toolchain `/home/lefteris/xiom_v0652/tc`; Node at
   `/home/lefteris/node-v22.23.2-linux-x64/bin/node`; always
