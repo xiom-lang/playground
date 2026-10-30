@@ -3967,6 +3967,12 @@ Official-archive gate:
   trap Int/Str `0xC0000005`, coercion `122`, W005 + `0xC0000409`); 2039 stays
   open.
 
+Known upstream regression: bindings' `xiom.epos` fails LLVM IR dominance on
+v0.65.3 (`alloca %struct.EposLibrary` field 5; REL-20261030-1540); the same
+source compiles 29/29 on v0.65.2. This is a compile-time failure, not silent
+corruption, and the playground corpus does not use epos. Keep v0.65.3 (v0.65.2
+would restore the struct-push UAF) and watch for v0.65.4.
+
 Deploy: the repo is pulled hourly at minute 29; production verification follows
 the 16:29Z rebuild (`/api/version` v0.65.3, `/api/health`, live session,
 struct-push `bad=0`).

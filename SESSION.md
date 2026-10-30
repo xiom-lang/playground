@@ -10,7 +10,10 @@ wasm_bg `5544d1f8...` (SHA256SUMS verified). Stdlib 0.65.3: **539 modules /
 long-standing playground defects remain acked/red (by-ref comparator trap,
 coercion `122`, W005 stub + fault), and 2039 (shared clone stale file) stays
 open. The struct-push regression control prints `bad=0` (v0.65.2 printed
-`bad=4`). The `--no-cache` live workaround stays until the live regression test
+`bad=4`). One known upstream regression remains: bindings' `xiom.epos` hits an
+LLVM IR dominance failure on v0.65.3 (REL-20261030-1540); it is a compile-time
+failure, the playground corpus does not use epos, and v0.65.2 must not be
+restored. Watch for v0.65.4. The `--no-cache` live workaround stays until the live regression test
 is re-run against the deployed pin. Production verified **v0.65.1** after the
 rollback; the v0.65.3 deploy is verified after the 16:29Z pull.
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
@@ -1530,6 +1533,12 @@ Windows **67/0/1**; WSL **77/0** (sandbox require/ABI 3/keep-stdin); Lab
 style **0/0**; code audit 0 errors/warnings; `node --check` 50 files.
 Stdlib 0.65.3: **539 modules / 6,962 functions**; catalogs regenerated. The
 three long-standing defects remain red and 2039 stays open.
+
+Known upstream regression: bindings' `xiom.epos` fails LLVM IR dominance on
+v0.65.3 (`alloca %struct.EposLibrary` field 5; REL-20261030-1540), while v0.65.2
+compiles it 29/29. It is a compile-time failure, not silent; the playground
+corpus does not use epos. Keep v0.65.3 (rolling back to v0.65.2 would restore
+the struct-push UAF) and watch for v0.65.4.
 
 Production: the 16:29Z hourly deploy picks up the pin; verify `/api/version`
 (toolchain/wasm/stdlib v0.65.3), `/api/health`, a live session, and the
