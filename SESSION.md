@@ -1,24 +1,22 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-30 (**v0.65.3 absorbed after the v0.65.2 rollback; gate
-green; production verified**). v0.65.2 remains
-rejected (named `Struct{...Vec}` push UAF); v0.65.3 carries the fix (main
-`bb8eccf5a`) and replaces the interim v0.65.1 pin. The published archives were
-rebuilt after the verified RC: windows `8383aa5b...`, linux `987752c4...`,
-wasm_bg `5544d1f8...` (SHA256SUMS verified). Stdlib 0.65.3: **539 modules /
-6,962 functions**. **Section 36 is the current handoff.** The three
-long-standing playground defects remain acked/red (by-ref comparator trap,
-coercion `122`, W005 stub + fault), and 2039 (shared clone stale file) stays
-open. The struct-push regression control prints `bad=0` (v0.65.2 printed
-`bad=4`). One known upstream regression remains: bindings' `xiom.epos` hits an
-LLVM IR dominance failure on v0.65.3 (REL-20261030-1540); it is a compile-time
-failure, the playground corpus does not use epos, and v0.65.2 must not be
-restored. Watch for v0.65.4. The `--no-cache` live workaround stays until the live regression test
-is re-run against the deployed pin. Production verified **v0.65.3** after the
-16:29Z deploy (`/api/version` toolchain/wasm/stdlib v0.65.3, 539 modules;
-`/api/health` ok; live session streams; struct-push probe `bad=0`).
+Last updated: 2026-10-30 (**v0.65.4 absorbed; gate green; production deploy
+pending the 00:29Z hourly pull**). v0.65.2 remains rejected (named
+`Struct{...Vec}` push UAF); v0.65.3 was the interim production pin. v0.65.4
+carries the struct-push fix (`bb8eccf5a`), the epos dominance fix
+(`34e42ad87`), the engine build-hang fix (`13fc28352`), and stdlib-v0.65.4
+(`407c92d`: arm64 socket ABI + POSIX SIGPIPE). The published assets were
+rebuilt after the RC: windows `49e02478...`, linux `0e8a7418...`, wasm_bg
+`425b9f26...` (SHA256SUMS verified). Stdlib 0.65.4: **539 modules / 6,962
+functions**. **Section 37 is the current handoff.** The three long-standing
+playground defects remain acked/red (by-ref comparator trap, coercion `122`,
+W005 stub + fault), and 2039 (shared clone stale file) stays open. The
+struct-push regression control prints `bad=0` (v0.65.2 printed `bad=4`). The
+`--no-cache` live workaround stays until the live regression test is re-run
+against the deployed pin. Production was verified on **v0.65.3**; the v0.65.4
+deploy is verified after the 00:29Z pull.
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.65.3**, stdlib 0.65.3 (539 modules, 6,962 functions),
+CI green (Validate + CodeQL). Toolchain/wasm **v0.65.4**, stdlib 0.65.4 (539 modules, 6,962 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1553,6 +1551,37 @@ Paste-ready next-session prompt:
 > **v0.65.3** (gate green; verify the 16:29Z deploy). Watch for the next
 > compiler release and re-run the release-check rows; the three long-standing
 > playground defects are still red. Do not adopt v0.65.2.
+
+## 37. v0.65.4 absorbed (2026-10-30) -- current
+
+v0.65.4 published 2026-10-30T23:35:43Z (tag `c0104e21e`, run 41144793224),
+bundling stdlib 0.65.4 at `407c92d` (the tag moved from d267317 to fix
+`net.xi`'s `xiom_socket_close -> Int`). It carries the epos dominance fix
+`34e42ad87` and the engine build-hang fix `13fc28352` in addition to the
+struct-push fix; v0.65.2 remains rejected.
+
+The published archives were rebuilt after both RCs, so acceptance was re-run
+on the final assets: windows `49e02478...`, linux `0e8a7418...`, wasm_bg
+`425b9f26...` (SHA256SUMS verified). Stdlib 0.65.4: **539 modules / 6,962
+functions**; catalogs regenerated.
+
+Gate on the published assets: struct-push control `bad=0`; c25 `C25 fixed:
+yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37 x2**; full lesson audit
+**412/412**; expected outputs **412/412**; style **0/0**; code audit 0
+errors/warnings; `node --check` 50 files. The three long-standing defects stay
+red and 2039 stays open. The epos regression is fixed upstream (bindings
+verified on the candidate) and does not affect the playground corpus.
+
+Production: the 00:29Z hourly deploy picks up the pin; verify `/api/version`
+(toolchain/wasm/stdlib v0.65.4), `/api/health`, a live session, and the
+struct-push probe through `/api/compile` (`bad=0`).
+
+Paste-ready next-session prompt:
+
+> Read `SESSION.md` section 37 and `AUDIT.md` section 69. The playground is on
+> **v0.65.4** (gate green; verify the 00:29Z deploy). Watch the relay for the
+> next release; the three long-standing playground defects are still red. Do
+> not adopt v0.65.2.
 
 ## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 

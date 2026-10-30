@@ -3980,3 +3980,32 @@ toolchain/wasm/stdlib v0.65.3 and 539 modules; `/api/health` is ok with live
 session streamed `Name?`, accepted `Ada` and `7`, and exited 0; the struct-push
 probe through `/api/compile` returns `bad=0`.
 
+## 69. v0.65.4 absorption (2026-10-30)
+
+v0.65.4 published 2026-10-30T23:35:43Z (tag `c0104e21e`, run 41144793224),
+bundling stdlib 0.65.4 at `407c92d`. It carries the epos dominance fix
+`34e42ad87` and the engine build-hang fix `13fc28352` in addition to the
+struct-push fix; v0.65.2 remains rejected.
+
+The release was rebuilt after the 22:12 RC (windows `efe7af95`) and the 23:08
+corrected RC (windows `1e763d0f`) because the stdlib-v0.65.4 tag moved from
+`d267317` to `407c92d` for the `net.xi` socket-close type. Acceptance was
+therefore re-run on the final published assets: windows `49e02478...`, linux
+`0e8a7418...`, wasm_bg `425b9f26...` (SHA256SUMS verified). Stdlib 0.65.4:
+**539 modules / 6,962 functions**.
+
+Published-asset gate:
+- Struct-push regression control: **`bad=0`**.
+- c25 `C25 fixed: yes` (cold, cached, `--no-cache`).
+- Windows **67/0/1**; WSL **77/0** (sandbox require/ABI 3/keep-stdin).
+- Lab **37/37 x2**; full lesson audit **412/412 zero failures**; expected
+  outputs **412/412**; style **0/0**; code audit 0 errors/warnings;
+  `node --check` 50 files; generator checks current.
+- The three long-standing playground defects remain red; 2039 stays open.
+  The epos dominance regression is fixed upstream and the playground corpus
+  does not use epos.
+
+Deploy: the repo is pulled hourly at minute 29; production verification follows
+the 00:29Z rebuild (`/api/version` v0.65.4, `/api/health`, live session,
+struct-push `bad=0`).
+
