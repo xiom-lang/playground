@@ -3944,3 +3944,30 @@ Rollback state:
   `7`, and exited 0; the struct-push probe through `/api/compile` returns
   `bad=0` (v0.65.2 returned `bad=4`).
 
+## 68. v0.65.3 absorption (2026-10-30)
+
+v0.65.3 published 2026-10-30T15:30:58Z after the release run was restarted
+(transient macOS-arm64 DNS fetching z3; tag/notes fixed first). This is the
+release that carries the struct-push ownership fix `bb8eccf5a` and ends the
+interim v0.65.1 pin; v0.65.2 remains rejected.
+
+The published archives were **rebuilt after the verified RC**, so acceptance
+was re-run on the official assets (not the RC): windows zip `8383aa5b...`,
+linux tar.gz `987752c4...`, wasm_bg `5544d1f8...` (matched the RC); all
+SHA256SUMS-verified. Stdlib 0.65.3: **539 modules / 6,962 functions**.
+
+Official-archive gate:
+- Struct-push regression control: **`bad=0`** (v0.65.2 printed `bad=4`).
+- c25 `C25 fixed: yes` (cold, cached, `--no-cache`).
+- Windows **67/0/1**; WSL **77/0** (sandbox require/ABI 3/keep-stdin).
+- Lab **37/37 x2**; full lesson audit **412/412 zero failures**; expected
+  outputs **412/412**; style **0/0**; code audit 0 errors/warnings;
+  `node --check` 50 files; all generator checks current.
+- The three long-standing playground defects remain red (by-ref comparator
+  trap Int/Str `0xC0000005`, coercion `122`, W005 + `0xC0000409`); 2039 stays
+  open.
+
+Deploy: the repo is pulled hourly at minute 29; production verification follows
+the 16:29Z rebuild (`/api/version` v0.65.3, `/api/health`, live session,
+struct-push `bad=0`).
+

@@ -1,24 +1,20 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-27 (**v0.65.1 pin: v0.65.2 rolled back after the upstream
-struct-push ownership regression; gate green**). v0.65.2 was released and
-briefly absorbed, then rolled back the same night: compiler
-REL-20261027-2128 reports that a named `Struct{...Vec}` pushed by value has its
-Vec freed at scope exit in .2, and the playground reproduced silent corruption
-(`bad=4`, exit 0). The fix is on compiler main `bb8eccf5a` for v0.65.3 (tag
-awaits owner GO); the accepted pin is **v0.65.1** (stdlib 0.65.1, 538 modules /
-6,900 functions), which still carries the warm-cache fix. **Section 35 is the
-current handoff.** The three long-standing playground defects remain acked/red
-on v0.65.1 (by-ref comparator trap, coercion `122`, W005 stub + fault), and 2039
-(shared clone stale file) stays open. The `--no-cache` live workaround stays
-until the live regression test is re-run against the deployed pin.
-Production verified **v0.65.1** after the 22:29Z rollback deploy:
-`/api/version` reports toolchain/wasm/stdlib v0.65.1; `/api/health` is ok with
-live `stdbuf`, sandbox `require`/ABI 4/keep-stdin; a live session streams
-`Name?` -> `Hello, Ada!` -> `N=7`; and the struct-push probe through
-`/api/compile` returns `bad=0` (v0.65.2 returned `bad=4`).
+Last updated: 2026-10-30 (**v0.65.3 absorbed after the v0.65.2 rollback; gate
+green; production deploy pending the 16:29Z hourly pull**). v0.65.2 remains
+rejected (named `Struct{...Vec}` push UAF); v0.65.3 carries the fix (main
+`bb8eccf5a`) and replaces the interim v0.65.1 pin. The published archives were
+rebuilt after the verified RC: windows `8383aa5b...`, linux `987752c4...`,
+wasm_bg `5544d1f8...` (SHA256SUMS verified). Stdlib 0.65.3: **539 modules /
+6,962 functions**. **Section 36 is the current handoff.** The three
+long-standing playground defects remain acked/red (by-ref comparator trap,
+coercion `122`, W005 stub + fault), and 2039 (shared clone stale file) stays
+open. The struct-push regression control prints `bad=0` (v0.65.2 printed
+`bad=4`). The `--no-cache` live workaround stays until the live regression test
+is re-run against the deployed pin. Production verified **v0.65.1** after the
+rollback; the v0.65.3 deploy is verified after the 16:29Z pull.
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.65.1**, stdlib 0.65.1 (538 modules, 6,900 functions),
+CI green (Validate + CodeQL). Toolchain/wasm **v0.65.3**, stdlib 0.65.3 (539 modules, 6,962 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1519,6 +1515,32 @@ Paste-ready next-session prompt:
 > on by-value push. Watch for **v0.65.3** (fix `bb8eccf5a`), absorb it with the
 > full gate, and verify production. Re-run the playground release-check rows
 > when the next compiler release is cut.
+
+## 36. v0.65.3 absorbed (2026-10-30) -- current
+
+v0.65.3 published 2026-10-30T15:30:58Z after the release run was restarted
+(transient macOS-arm64 DNS). The official archives were rebuilt after the
+verified RC and differ from it: windows `8383aa5b...`, linux `987752c4...`
+(wasm_bg `5544d1f8...` matched the RC), all SHA256SUMS-verified. The tag carries
+the struct-push fix `bb8eccf5a`; v0.65.2 remains rejected.
+
+Official-archive gate: struct-push control `bad=0`; c25 `C25 fixed: yes`;
+Windows **67/0/1**; WSL **77/0** (sandbox require/ABI 3/keep-stdin); Lab
+**37/37 x2**; full lesson audit **412/412**; expected outputs **412/412**;
+style **0/0**; code audit 0 errors/warnings; `node --check` 50 files.
+Stdlib 0.65.3: **539 modules / 6,962 functions**; catalogs regenerated. The
+three long-standing defects remain red and 2039 stays open.
+
+Production: the 16:29Z hourly deploy picks up the pin; verify `/api/version`
+(toolchain/wasm/stdlib v0.65.3), `/api/health`, a live session, and the
+struct-push probe through `/api/compile` (`bad=0`).
+
+Paste-ready next-session prompt:
+
+> Read `SESSION.md` section 36 and `AUDIT.md` section 68. The playground is on
+> **v0.65.3** (gate green; verify the 16:29Z deploy). Watch for the next
+> compiler release and re-run the release-check rows; the three long-standing
+> playground defects are still red. Do not adopt v0.65.2.
 
 ## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 
