@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
 Last updated: 2026-10-30 (**v0.65.3 absorbed after the v0.65.2 rollback; gate
-green; production deploy pending the 16:29Z hourly pull**). v0.65.2 remains
+green; production verified**). v0.65.2 remains
 rejected (named `Struct{...Vec}` push UAF); v0.65.3 carries the fix (main
 `bb8eccf5a`) and replaces the interim v0.65.1 pin. The published archives were
 rebuilt after the verified RC: windows `8383aa5b...`, linux `987752c4...`,
@@ -14,8 +14,9 @@ open. The struct-push regression control prints `bad=0` (v0.65.2 printed
 LLVM IR dominance failure on v0.65.3 (REL-20261030-1540); it is a compile-time
 failure, the playground corpus does not use epos, and v0.65.2 must not be
 restored. Watch for v0.65.4. The `--no-cache` live workaround stays until the live regression test
-is re-run against the deployed pin. Production verified **v0.65.1** after the
-rollback; the v0.65.3 deploy is verified after the 16:29Z pull.
+is re-run against the deployed pin. Production verified **v0.65.3** after the
+16:29Z deploy (`/api/version` toolchain/wasm/stdlib v0.65.3, 539 modules;
+`/api/health` ok; live session streams; struct-push probe `bad=0`).
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.3**, stdlib 0.65.3 (539 modules, 6,962 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1540,9 +1541,11 @@ compiles it 29/29. It is a compile-time failure, not silent; the playground
 corpus does not use epos. Keep v0.65.3 (rolling back to v0.65.2 would restore
 the struct-push UAF) and watch for v0.65.4.
 
-Production: the 16:29Z hourly deploy picks up the pin; verify `/api/version`
-(toolchain/wasm/stdlib v0.65.3), `/api/health`, a live session, and the
-struct-push probe through `/api/compile` (`bad=0`).
+Production **verified (2026-10-30T16:29Z deploy, playground `c430f0a`)**:
+`/api/version` reports toolchain/wasm/stdlib v0.65.3 and 539 modules;
+`/api/health` is ok with live `stdbuf`, sandbox require/ABI 4/keep-stdin, 352
+bundled packages; a live session streamed `Name?`, `Hello, Ada!`, `N=7` and
+exited 0; the struct-push probe through `/api/compile` returns `bad=0`.
 
 Paste-ready next-session prompt:
 
