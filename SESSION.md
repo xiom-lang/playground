@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-30 (**v0.65.4 absorbed; gate green; production deploy
-pending the 00:29Z hourly pull**). v0.65.2 remains rejected (named
+Last updated: 2026-10-30 (**v0.65.4 absorbed; gate green; production
+verified**). v0.65.2 remains rejected (named
 `Struct{...Vec}` push UAF); v0.65.3 was the interim production pin. v0.65.4
 carries the struct-push fix (`bb8eccf5a`), the epos dominance fix
 (`34e42ad87`), the engine build-hang fix (`13fc28352`), and stdlib-v0.65.4
@@ -13,8 +13,10 @@ playground defects remain acked/red (by-ref comparator trap, coercion `122`,
 W005 stub + fault), and 2039 (shared clone stale file) stays open. The
 struct-push regression control prints `bad=0` (v0.65.2 printed `bad=4`). The
 `--no-cache` live workaround stays until the live regression test is re-run
-against the deployed pin. Production was verified on **v0.65.3**; the v0.65.4
-deploy is verified after the 00:29Z pull.
+against the deployed pin. Production verified **v0.65.4** after the 00:29Z
+deploy (`/api/version` toolchain/wasm/stdlib v0.65.4, 539 modules;
+`/api/health` ok; live session `Name?` -> `Hello, Ada!` -> `N=7`; struct-push
+probe `bad=0`).
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.4**, stdlib 0.65.4 (539 modules, 6,962 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1572,9 +1574,11 @@ errors/warnings; `node --check` 50 files. The three long-standing defects stay
 red and 2039 stays open. The epos regression is fixed upstream (bindings
 verified on the candidate) and does not affect the playground corpus.
 
-Production: the 00:29Z hourly deploy picks up the pin; verify `/api/version`
-(toolchain/wasm/stdlib v0.65.4), `/api/health`, a live session, and the
-struct-push probe through `/api/compile` (`bad=0`).
+Production **verified (2026-10-31T00:29Z deploy, playground `3d9d9e7`)**:
+`/api/version` reports toolchain/wasm/stdlib v0.65.4 and 539 modules;
+`/api/health` is ok with live `stdbuf`, sandbox require/ABI 4/keep-stdin and
+352 bundled packages; a live session streamed `Name?`, `Hello, Ada!`, `N=7`
+and exited 0; the struct-push probe through `/api/compile` returns `bad=0`.
 
 Paste-ready next-session prompt:
 

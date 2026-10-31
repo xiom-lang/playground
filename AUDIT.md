@@ -4005,7 +4005,10 @@ Published-asset gate:
   The epos dominance regression is fixed upstream and the playground corpus
   does not use epos.
 
-Deploy: the repo is pulled hourly at minute 29; production verification follows
-the 00:29Z rebuild (`/api/version` v0.65.4, `/api/health`, live session,
-struct-push `bad=0`).
+Deploy: the repo is pulled hourly at minute 29. **Production verified after the
+00:29Z rebuild (playground `3d9d9e7`)**: `/api/version` reports
+toolchain/wasm/stdlib v0.65.4 and 539 modules; `/api/health` is ok with live
+`stdbuf`, sandbox require/ABI 4/keep-stdin and 352 bundled packages; a live
+session streamed `Name?`, accepted `Ada` and `7`, and exited 0; the struct-push
+probe through `/api/compile` returns `bad=0`.
 
