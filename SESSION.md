@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-11-02 (**v0.65.5 absorbed; gate green; production deploy
-pending the 16:29Z hourly pull**). v0.65.5 published 2026-11-02T14:38:13Z
+Last updated: 2026-11-02 (**v0.65.5 absorbed; gate green; production
+verified**). v0.65.5 published 2026-11-02T14:38:13Z
 (tag v0.65.5; compiler main b2538ae5a; stdlib-v0.65.5 d1e4b36 at 88f3c12) and
 replaces v0.65.4. Published assets: windows `86a253a5...`, linux `cae74441...`,
 wasm_bg `dae94d42...` (SHA256SUMS verified). Stdlib 0.65.5: **539 modules /
@@ -10,8 +10,9 @@ long-standing playground defects remain acked/red (by-ref comparator trap,
 coercion `122`, W005 stub + fault), and 2039 (shared clone stale file) stays
 open. The struct-push regression control prints `bad=0`. The `--no-cache` live
 workaround stays until the live regression test is re-run against the deployed
-pin. Production was verified on **v0.65.4**; the v0.65.5 deploy is verified
-after the 16:29Z pull.
+pin. Production verified **v0.65.5** after the 16:29Z deploy (`/api/version`
+toolchain/wasm/stdlib v0.65.5, 539 modules; `/api/health` ok; live session
+`Name?` -> `Hello, Ada!` -> `N=7`; struct-push probe `bad=0`).
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.5**, stdlib 0.65.5 (539 modules, 6,972 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1596,9 +1597,11 @@ yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37 x2**; full lesson audit
 errors/warnings; generator checks current. The three long-standing defects
 remain red and 2039 stays open.
 
-Production: the 16:29Z hourly deploy picks up the pin; verify `/api/version`
-(toolchain/wasm/stdlib v0.65.5), `/api/health`, a live session, and the
-struct-push probe through `/api/compile` (`bad=0`).
+Production **verified (2026-11-02T16:29Z deploy, playground `70011c6`)**:
+`/api/version` reports toolchain/wasm/stdlib v0.65.5 and 539 modules;
+`/api/health` is ok with live `stdbuf`, sandbox require/ABI 4/keep-stdin and
+352 bundled packages; a live session streamed `Name?`, `Hello, Ada!`, `N=7`
+and exited 0; the struct-push probe through `/api/compile` returns `bad=0`.
 
 Paste-ready next-session prompt:
 
