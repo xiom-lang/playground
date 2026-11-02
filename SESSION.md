@@ -1607,6 +1607,35 @@ Paste-ready next-session prompt:
 > next release; the three long-standing playground defects are still red. Do
 > not adopt v0.65.2.
 
+## 39. Beginner string pedagogy pass (2026-11-02)
+
+Feedback from the owner: early lessons used `string.str_concat` without
+teaching the call shape, claimed `+` did not work (it does), and some examples
+or solutions did not match their own lessons.
+
+- **L0-06**: added a "How to Read a Function Call" section (module, function
+  name, argument, return value) and made every snippet include its imports;
+  added an imports tip.
+- **L0-15**: now teaches `+` and `string.str_concat` together, explains the
+  exact two-argument call, shows three-piece chaining with both `+` and nested
+  `str_concat`, and offers the two-step version for beginners. Removed the
+  false "must not use `+`" mistake; the solution now joins in two clear steps.
+- **L0-17**: runnable snippets, one-argument signature explanation, and the
+  missing `use xiom.string;` in the template.
+- **L0-25**: explains the nested call inside-out; prints the measured
+  `name_len` instead of a hardcoded `4`.
+- **L0-34**: the solution now uses the `for item in groceries` loop taught in
+  the narrative (instead of `range` + indexing); explains the two-argument
+  `str_concat("Buy: ", item)` call.
+- **L0-39**: states the two-argument rule and how each call feeds the next.
+- **L1-29**: rewritten coherently - `shout`, `add_exclamation`, and
+  `repeat_word` (with its missing `return result;`); `main` actually prints the
+  formatted text and the chant; expected output updated.
+
+Audits: `validate-lessons` 412/412; lesson audit L0 **51/51** and L1 **51/51**
+zero failures; expected outputs 412/412; style 0/0; code audit 0 errors /
+0 warnings.
+
 ## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 
 ### State (exact)

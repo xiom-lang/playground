@@ -3,30 +3,32 @@
   "title": "String Formatter Functions",
   "level": "L1",
   "duration": "10 min",
-  "story": "Your social media posts look boring — all lowercase, no excitement. You need a set of text-transforming tools to title-case your headlines, add exclamation marks, and repeat catchy words for emphasis.",
-  "why": "String manipulation functions show how input text can be transformed through a pipeline of operations — a pattern used everywhere from web apps to compilers.",
-  "narrative": "## Building String Formatter Functions\n\nText transformation is a classic function pattern: take a string, apply an operation, return the modified string.\n\n### Title Case Converter\n\n```xiom\nfn title_case(text: Str) -> Str {\n  let first = string.str_upper(text);\n  return first;\n}\n```\n\nWait — that uppercases the ENTIRE string. For a simple title case, we want only the first letter uppercased. Here's one approach:\n\n```xiom\nfn title_case(text: Str) -> Str {\n  let first_char = string.str_upper(text);\n  return first_char;\n}\n```\n\nActually, a simpler \"title case\" for our purposes: uppercase the whole string. It's a start!\n\n### Add Exclamation\n\n```xiom\nfn add_exclamation(text: Str) -> Str {\n  return text + \"!!!\";\n}\n```\n\n### Repeat a Word\n\n```xiom\nfn repeat_word(word: Str, times: Int) -> Str {\n  var result = \"\";\n  var count = 0;\n  while count < times {\n    result = string.str_concat(result, word);\n    count = count + 1;\n  }\n  return result;\n}\n```\n\n### Composing the Formatters\n\n```xiom\nuse xiom.io;\n\nfn main() -> Int {\n  let headline = \"breaking news\";\n  let loud = title_case(headline);\n  let louder = add_exclamation(loud);\n  io.println(\"Formatted text ready!\");\n\n  let chant = repeat_word(\"Go! \", 3);\n  io.println(\"Chant ready!\");\n\n  return 0;\n}\n```\n\nEach function transforms a string and passes it to the next, like an assembly line for text.",
-  "analogy": "String formatting is like a photo editing app with filters. You apply the 'uppercase' filter, then the 'add excitement' filter, then the 'repeat' filter. Each filter transforms the image (string) and hands it to the next filter in the pipeline.",
-  "code_template": "use xiom.io;\nuse xiom.string;\n// TODO: Write title_case(text: Str) -> Str using string.str_upper\n// TODO: Write add_exclamation(text: Str) -> Str (append \"!!!\")\n// TODO: Write repeat_word(word: Str, times: Int) -> Str using a while loop\n\nfn main() {\n  let message = \"hello world\";\n  // TODO: Apply all three formatters to message in sequence\n  // TODO: Print the final formatted result\n}",
-  "solution": "use xiom.io;\nuse xiom.string;\nfn title_case(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn add_exclamation(text: Str) -> Str {\n  return text + \"!!!\";\n}\n\nfn repeat_word(word: Str, times: Int) -> Str {\n  var result = \"\";\n  var count = 0;\n  while count < times {\n    result = string.str_concat(result, word);\n    count = count + 1;\n  }\n}\nfn main() {\n  let message = \"hello world\";\n  let step1 = title_case(message);\n  let step2 = add_exclamation(step1);\n  io.println(\"Text formatting complete!\");\n  let chant = repeat_word(\"XIOM! \", 4);\n  io.println(\"Chant generated!\");\n}",
-  "expected_output": "Text formatting complete!\nChant generated!",
-  "try_it": "Write a `reverse_text(text: Str) -> Str` function that reverses a string using a while loop, and add it to the formatting pipeline before `add_exclamation`.",
+  "story": "Your school club wants a louder announcement for the hallway screen. You'll build small string-formatter functions, then chain them like an assembly line: make the text shout, add exclamation marks, and repeat a chant.",
+  "why": "String functions show how to transform text step by step. Chaining small functions is how real programs build formatted messages, reports, and UI labels.",
+  "narrative": "## Building String Formatter Functions\n\nText transformation is a classic function pattern: take a string, apply an operation, and return the new string. In this lesson you will write three small functions, then chain them.\n\n### A Function That Shouts\n\n`string.str_upper(text)` takes one string and returns a new uppercase string. Wrap it in a function so the rest of the program can ask for \"shout\" without knowing how it works:\n\n```xiom\nuse xiom.string;\n\nfn shout(text: Str) -> Str {\n  return string.str_upper(text);\n}\n```\n\n`text: Str` is the input and `-> Str` is the output type. The `return` line produces the result.\n\n### A Function That Adds Exclamation Marks\n\n`string.str_concat(a, b)` takes exactly two strings and returns them joined. Here the first piece is the text and the second is the punctuation:\n\n```xiom\nfn add_exclamation(text: Str) -> Str {\n  return string.str_concat(text, \"!!!\");\n}\n```\n\nThe `+` operator from L0-06 would also work (`text + \"!!!\"`). This lesson uses the function form so the join is explicit.\n\n### A Function That Repeats a Word\n\nA `while` loop can call `string.str_concat` once per repetition. The function must return the result after the loop:\n\n```xiom\nfn repeat_word(word: Str, times: Int) -> Str {\n  var result: Str = \"\";\n  var count: Int = 0;\n  while count < times {\n    result = string.str_concat(result, word);\n    count = count + 1;\n  }\n  return result;\n}\n```\n\nIf you forget the final `return result;`, the function promises a `Str` but never produces one, and the compiler will complain.\n\n### Chaining the Formatters\n\nNow use the three functions in a pipeline. Each step takes the previous result (the functions above are part of the same program):\n\n```xiom\nuse xiom.io;\n\nfn main() {\n  let headline: Str = \"breaking news\";\n  let loud: Str = shout(headline);\n  let louder: Str = add_exclamation(loud);\n  io.println(louder);\n\n  let chant: Str = repeat_word(\"ha\", 3);\n  io.println(chant);\n}\n```\n\nThis prints:\n\n```\nBREAKING NEWS!!!\nhahaha\n```\n\nEach function has one job, and the output of one becomes the input of the next.",
+  "analogy": "String formatting is like a photo editing app with filters. You apply the uppercase filter, then the add-excitement filter, then the repeat filter. Each filter transforms the string and hands it to the next one.",
+  "code_template": "use xiom.io;\nuse xiom.string;\n\n// TODO: write shout(text: Str) -> Str using string.str_upper\n// TODO: write add_exclamation(text: Str) -> Str using string.str_concat\n// TODO: write repeat_word(word: Str, times: Int) -> Str with a while loop and a final return\n\nfn main() {\n  let headline: Str = \"breaking news\";\n  // TODO: apply the formatters in order and print the final text\n  // TODO: print repeat_word(\"ha\", 3)\n}\n",
+  "solution": "use xiom.io;\nuse xiom.string;\n\nfn shout(text: Str) -> Str {\n  return string.str_upper(text);\n}\n\nfn add_exclamation(text: Str) -> Str {\n  return string.str_concat(text, \"!!!\");\n}\n\nfn repeat_word(word: Str, times: Int) -> Str {\n  var result: Str = \"\";\n  var count: Int = 0;\n  while count < times {\n    result = string.str_concat(result, word);\n    count = count + 1;\n  }\n  return result;\n}\n\nfn main() {\n  let headline: Str = \"breaking news\";\n  let loud: Str = shout(headline);\n  let louder: Str = add_exclamation(loud);\n  io.println(louder);\n\n  let chant: Str = repeat_word(\"ha\", 3);\n  io.println(chant);\n}\n",
+  "expected_output": "BREAKING NEWS!!!\nhahaha",
+  "try_it": "Add a `whisper(text: Str) -> Str` function using `string.str_lower`, then print both the shout and whisper versions of the headline.",
   "concepts": [
-    "string manipulation",
-    "while loop in functions",
-    "string concatenation",
+    "string functions",
+    "uppercase",
+    "concatenation",
+    "while loop",
     "function pipeline"
   ],
   "tips": [
-    "string.str_upper and string.str_lower transform the entire string",
-    "Use `+` to concatenate two strings simply; use string.str_concat in loops",
-    "Build pipelines by assigning each function's output to a new variable",
-    "A while loop inside a function lets you repeat operations a variable number of times"
+    "`string.str_upper(text)` takes one `Str` and returns a new `Str`; it does not change the original.",
+    "`string.str_concat(a, b)` takes exactly two `Str` values and returns their join. For three pieces, nest calls or use `+`.",
+    "Every function that promises `-> Str` must return a `Str` on every path; a while loop alone does not return a value.",
+    "Build a pipeline by storing each function's result in a new variable before passing it on."
   ],
   "common_mistakes": [
-    "Forgetting to initialize the result variable as an empty string `\"\"` before the loop",
-    "Not incrementing the counter in the while loop — causes infinite loop",
-    "Confusing string.str_upper (entire string) with capitalizing just the first letter"
+    "Forgetting `return result;` in `repeat_word` - the function promises a `Str`, so the compiler needs a returned value.",
+    "Passing three arguments to `string.str_concat`; it takes exactly two.",
+    "Forgetting spaces in the pieces: `string.str_concat(\"Go!\", \"Go!\")` gives `Go!Go!`.",
+    "Forgetting `use xiom.string;` when calling `string.*` helpers."
   ],
   "next_lesson": "L1-30",
   "related": [

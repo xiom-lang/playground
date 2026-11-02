@@ -5,10 +5,10 @@
   "duration": "6 min",
   "story": "You're making a custom birthday card for your best friend. Instead of writing the same message for everyone, you want the computer to mix and match greetings, names, and messages to create something personal!",
   "why": "Building strings from pieces lets programs create personalized messages, reports, and displays for every user.",
-  "narrative": "## Building Sentences from Pieces\n\nA string is just text between double quotes: `\"Hello\"`. But what if you want to build a sentence from smaller pieces? That's where `string.str_concat()` comes in!\n\n### What Is Concatenation?\n\nConcatenation is a fancy word for \"sticking strings together.\" The function `string.str_concat(a, b)` takes two strings and glues them into one. Think of it like linking paper clips into a chain.\n\n### Your First String Builder\n\n```xiom\nfn main() {\n  let greeting: Str = \"Happy Birthday, \";\n  let name: Str = \"Sam\";\n  let message: Str = string.str_concat(greeting, name);\n  io.println(message);\n}\n```\n\nThis prints `Happy Birthday, Sam`. Notice the space after the comma in `\"Happy Birthday, \"` — without it, you'd get `\"Happy Birthday,Sam\"`.\n\n### Chaining Multiple Pieces\n\n```xiom\nfn main() {\n  let part1: Str = \"I \";\n  let part2: Str = \"love \";\n  let part3: Str = \"pizza\";\n  let joined: Str = string.str_concat(part1, string.str_concat(part2, part3));\n  io.println(joined);\n}\n```\n\nWe nest one concat inside another to join three pieces. The innermost concat runs first, then the outer one adds on top!",
+  "narrative": "## Building Sentences from Pieces\n\nA string is just text between double quotes: `\"Hello\"`. You already know one way to join strings from L0-06: the `+` operator.\n\n### Two Ways to Join Strings\n\n`+` is the shortcut:\n\n```xiom\nuse xiom.io;\n\nfn main() {\n  let greeting: Str = \"Happy Birthday, \";\n  let name: Str = \"Sam\";\n  let message: Str = greeting + name;\n  io.println(message);\n}\n```\n\nXIOM also has a function that does the same job: `string.str_concat(a, b)`.\n\nRead the call in three parts:\n\n- `string` is the module (the toolbox that holds string helpers).\n- `str_concat` is the function name.\n- `(a, b)` are the arguments; it takes exactly two strings.\n\nIt returns a new string and leaves the inputs unchanged:\n\n```xiom\nuse xiom.io;\nuse xiom.string;\n\nfn main() {\n  let greeting: Str = \"Happy Birthday, \";\n  let name: Str = \"Sam\";\n  let message: Str = string.str_concat(greeting, name);\n  io.println(message);\n}\n```\n\nBoth programs print `Happy Birthday, Sam`. Notice the space after the comma in `\"Happy Birthday, \"` - without it you would get `\"Happy Birthday,Sam\"`.\n\n### Joining Three Pieces\n\nEach `+` or `str_concat` joins two pieces. To join three, chain them:\n\n```xiom\nuse xiom.io;\nuse xiom.string;\n\nfn main() {\n  let part1: Str = \"I \";\n  let part2: Str = \"love \";\n  let part3: Str = \"pizza\";\n  let joined: Str = part1 + part2 + part3;\n  io.println(joined);\n}\n```\n\nThe `+` version reads left to right. The function version nests one call inside another:\n\n```xiom\nlet joined: Str = string.str_concat(part1, string.str_concat(part2, part3));\n```\n\nThe inner call runs first: it joins `part2` and `part3`. The outer call then joins `part1` with that result. If nesting feels hard to read, do it in two steps:\n\n```xiom\nlet tail: Str = string.str_concat(part2, part3);\nlet joined: Str = string.str_concat(part1, tail);\n```\n\nWhich should you use? Use `+` for short, simple joins. Use `string.str_concat` when you want the join to stand out as a function call. Both are correct.",
   "analogy": "String concatenation is like building a LEGO tower — you snap pieces together one at a time until you have something big.",
   "code_template": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let adjective: Str = \"awesome\";\n  let noun: Str = \"coder\";\n  let space: Str = \" \";\n  // TODO: build the phrase \"awesome coder\" using string.str_concat\n  // TODO: print the result\n}\n",
-  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let adjective: Str = \"awesome\";\n  let noun: Str = \"coder\";\n  let space: Str = \" \";\n  let phrase: Str = string.str_concat(adjective, string.str_concat(space, noun));\n  io.println(phrase);\n}\n",
+  "solution": "use xiom.io;\n\nuse xiom.string;\nfn main() {\n  let adjective: Str = \"awesome\";\n  let noun: Str = \"coder\";\n  let space: Str = \" \";\n  let with_space: Str = string.str_concat(adjective, space);\n  let phrase: Str = string.str_concat(with_space, noun);\n  io.println(phrase);\n}\n",
   "expected_output": "awesome coder",
   "try_it": "Build a sentence about yourself from 3 variables! Create variables for your name, a verb (like \"loves\"), and a thing (like \"dogs\"), then concatenate them into a story.",
   "concepts": [
@@ -17,13 +17,16 @@
     "Str"
   ],
   "tips": [
-    "Always include spaces in your strings where needed — concat doesn't add them automatically!",
-    "You can nest concat calls to join more than two strings at once",
-    "String variables always need the type `Str` and values go in double quotes"
+    "Use `+` for short joins: `first + \" \" + last`.",
+    "`string.str_concat(a, b)` takes exactly two strings. For three pieces, nest calls or do it in two steps.",
+    "Spaces are not automatic - put them inside one of the pieces.",
+    "String variables use `Str` and double quotes; complete programs need `use xiom.io;` and, for string helpers, `use xiom.string;`."
   ],
   "common_mistakes": [
-    "Forgetting spaces between words — `\"Hello\" + \"World\"` becomes `\"HelloWorld\"`, not `\"Hello World\"`",
-    "Using `+` to join strings in XIOM — you must use `string.str_concat()`, not the plus sign"
+    "Forgetting spaces: `string.str_concat(\"Hello\", \"World\")` prints `HelloWorld`.",
+    "Passing a number: `string.str_concat(\"Score: \", 5)` fails because `5` is an `Int`. Convert it with `.to_str()` first.",
+    "Passing one or three arguments to `string.str_concat` - it takes exactly two.",
+    "Forgetting `use xiom.string;` before calling `string.str_concat`."
   ],
   "next_lesson": "L0-16",
   "related": [
