@@ -1,24 +1,19 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-10-30 (**v0.65.4 absorbed; gate green; production
-verified**). v0.65.2 remains rejected (named
-`Struct{...Vec}` push UAF); v0.65.3 was the interim production pin. v0.65.4
-carries the struct-push fix (`bb8eccf5a`), the epos dominance fix
-(`34e42ad87`), the engine build-hang fix (`13fc28352`), and stdlib-v0.65.4
-(`407c92d`: arm64 socket ABI + POSIX SIGPIPE). The published assets were
-rebuilt after the RC: windows `49e02478...`, linux `0e8a7418...`, wasm_bg
-`425b9f26...` (SHA256SUMS verified). Stdlib 0.65.4: **539 modules / 6,962
-functions**. **Section 37 is the current handoff.** The three long-standing
-playground defects remain acked/red (by-ref comparator trap, coercion `122`,
-W005 stub + fault), and 2039 (shared clone stale file) stays open. The
-struct-push regression control prints `bad=0` (v0.65.2 printed `bad=4`). The
-`--no-cache` live workaround stays until the live regression test is re-run
-against the deployed pin. Production verified **v0.65.4** after the 00:29Z
-deploy (`/api/version` toolchain/wasm/stdlib v0.65.4, 539 modules;
-`/api/health` ok; live session `Name?` -> `Hello, Ada!` -> `N=7`; struct-push
-probe `bad=0`).
+Last updated: 2026-11-02 (**v0.65.5 absorbed; gate green; production deploy
+pending the 16:29Z hourly pull**). v0.65.5 published 2026-11-02T14:38:13Z
+(tag v0.65.5; compiler main b2538ae5a; stdlib-v0.65.5 d1e4b36 at 88f3c12) and
+replaces v0.65.4. Published assets: windows `86a253a5...`, linux `cae74441...`,
+wasm_bg `dae94d42...` (SHA256SUMS verified). Stdlib 0.65.5: **539 modules /
+6,972 functions** (+10). **Section 38 is the current handoff.** The three
+long-standing playground defects remain acked/red (by-ref comparator trap,
+coercion `122`, W005 stub + fault), and 2039 (shared clone stale file) stays
+open. The struct-push regression control prints `bad=0`. The `--no-cache` live
+workaround stays until the live regression test is re-run against the deployed
+pin. Production was verified on **v0.65.4**; the v0.65.5 deploy is verified
+after the 16:29Z pull.
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.65.4**, stdlib 0.65.4 (539 modules, 6,962 functions),
+CI green (Validate + CodeQL). Toolchain/wasm **v0.65.5**, stdlib 0.65.5 (539 modules, 6,972 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1584,6 +1579,31 @@ Paste-ready next-session prompt:
 
 > Read `SESSION.md` section 37 and `AUDIT.md` section 69. The playground is on
 > **v0.65.4** (gate green; verify the 00:29Z deploy). Watch the relay for the
+> next release; the three long-standing playground defects are still red. Do
+> not adopt v0.65.2.
+
+## 38. v0.65.5 absorbed (2026-11-02) -- current
+
+v0.65.5 published 2026-11-02T14:38:13Z (tag v0.65.5; compiler main
+b2538ae5a; stdlib-v0.65.5 d1e4b36 at 88f3c12) and replaces v0.65.4. Published
+assets (SHA256SUMS verified): windows `86a253a5...`, linux `cae74441...`,
+wasm_bg `dae94d42...`. Stdlib 0.65.5: **539 modules / 6,972 functions** (+10);
+catalogs regenerated.
+
+Gate on the published assets: struct-push control `bad=0`; c25 `C25 fixed:
+yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37 x2**; full lesson audit
+**412/412**; expected outputs **412/412**; style **0/0**; code audit 0
+errors/warnings; generator checks current. The three long-standing defects
+remain red and 2039 stays open.
+
+Production: the 16:29Z hourly deploy picks up the pin; verify `/api/version`
+(toolchain/wasm/stdlib v0.65.5), `/api/health`, a live session, and the
+struct-push probe through `/api/compile` (`bad=0`).
+
+Paste-ready next-session prompt:
+
+> Read `SESSION.md` section 38 and `AUDIT.md` section 70. The playground is on
+> **v0.65.5** (gate green; verify the 16:29Z deploy). Watch the relay for the
 > next release; the three long-standing playground defects are still red. Do
 > not adopt v0.65.2.
 

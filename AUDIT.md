@@ -4012,3 +4012,24 @@ toolchain/wasm/stdlib v0.65.4 and 539 modules; `/api/health` is ok with live
 session streamed `Name?`, accepted `Ada` and `7`, and exited 0; the struct-push
 probe through `/api/compile` returns `bad=0`.
 
+## 70. v0.65.5 absorption (2026-11-02)
+
+v0.65.5 published 2026-11-02T14:38:13Z (tag v0.65.5; compiler main
+`b2538ae5a`; stdlib-v0.65.5 `d1e4b36` at `88f3c12`). Published assets
+verified against SHA256SUMS: windows `86a253a5...`, linux `cae74441...`,
+wasm_bg `dae94d42...`. Stdlib 0.65.5: **539 modules / 6,972 functions** (+10);
+catalogs regenerated.
+
+Published-asset gate:
+- Struct-push regression control: **`bad=0`**.
+- c25 `C25 fixed: yes` (cold, cached, `--no-cache`).
+- Windows **67/0/1**; WSL **77/0** (sandbox require/ABI 3/keep-stdin).
+- Lab **37/37 x2**; full lesson audit **412/412 zero failures**; expected
+  outputs **412/412**; style **0/0**; code audit 0 errors/warnings;
+  generator checks current.
+- The three long-standing playground defects remain red; 2039 stays open.
+
+Deploy: the repo is pulled hourly at minute 29; production verification follows
+the 16:29Z rebuild (`/api/version` v0.65.5, `/api/health`, live session,
+struct-push `bad=0`).
+
