@@ -1025,9 +1025,10 @@
           "file": "L1-foundations/L1-29-string-formatter.json",
           "duration": "10 min",
           "concepts": [
-            "string manipulation",
-            "while loop in functions",
-            "string concatenation",
+            "string functions",
+            "uppercase",
+            "concatenation",
+            "while loop",
             "function pipeline"
           ]
         },
