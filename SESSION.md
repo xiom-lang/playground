@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
 Last updated: 2026-11-04 (**v0.65.6 absorbed; gate green; production deploy
-pending the 19:29Z hourly pull**). v0.65.6 published 2026-11-04T14:19:54Z
+pending the 18:29Z hourly pull**). v0.65.6 published 2026-11-04T14:19:54Z
 (tag v0.65.6; compiler `6575b7c05`; stdlib-v0.65.6 `06795c88`) and replaces
 v0.65.5. Published assets: windows `a52b8cf3...`, linux `a8fc6668...`,
 wasm_bg `12dcabde...` (SHA256SUMS verified). Stdlib 0.65.6: **539 modules /
@@ -16,7 +16,7 @@ but the Str form still fails LLVM IR; 2039 stays open. **Section 40 is the
 current handoff.** Caveat: the published archive bundles stdlib `06795c8`; the
 gate-fix re-cut `02be60e` came after the immutable release, so watch for
 v0.65.7. Production was verified on **v0.65.5**; the v0.65.6 deploy is verified
-after the 19:29Z pull.
+after the 18:29Z pull.
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.6**, stdlib 0.65.6 (539 modules, 6,972 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1676,14 +1676,14 @@ code audit 0 errors/warnings; generators current.
 re-cut `02be60e` came after the immutable release. The playground gate is green
 on the published pair, but watch for v0.65.7 (stdlib re-cut + by-ref Str fix).
 
-Production: the 19:29Z hourly deploy picks up the pin; verify `/api/version`
+Production: the 18:29Z hourly deploy picks up the pin; verify `/api/version`
 (toolchain/wasm/stdlib v0.65.6), `/api/health`, a live session, and the
 struct-push probe (`bad=0`).
 
 Paste-ready next-session prompt:
 
 > Read `SESSION.md` section 40 and `AUDIT.md` section 71. The playground is on
-> **v0.65.6** (gate green; verify the 19:29Z deploy). Watch for v0.65.7 with
+> **v0.65.6** (gate green; verify the 18:29Z deploy). Watch for v0.65.7 with
 > the stdlib re-cut and the by-ref Str fix. The remaining playground items are
 > 1553 (Str comparator IR failure) and 2039 (shared clone stale file).
 

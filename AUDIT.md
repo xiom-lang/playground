@@ -4066,6 +4066,6 @@ code audit 0 errors/warnings; generators current.
 
 Caveat: the published archive bundles stdlib `06795c8`; the gate-fix re-cut
 `02be60e` came after the immutable release. Watch for v0.65.7. Production
-verification follows the 19:29Z rebuild (`/api/version` v0.65.6,
+verification follows the 18:29Z rebuild (`/api/version` v0.65.6,
 `/api/health`, live session, struct-push `bad=0`).
 
