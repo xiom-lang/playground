@@ -4036,3 +4036,36 @@ toolchain/wasm/stdlib v0.65.5 and 539 modules; `/api/health` is ok with live
 session streamed `Name?`, accepted `Ada` and `7`, and exited 0; the struct-push
 probe through `/api/compile` returns `bad=0`.
 
+## 71. v0.65.6 absorption + let/coercion migration (2026-11-04)
+
+v0.65.6 published 2026-11-04T14:19:54Z (tag v0.65.6; compiler `6575b7c05`;
+stdlib-v0.65.6 `06795c88`). Published assets verified against SHA256SUMS:
+windows `a52b8cf3...`, linux `a8fc6668...`, wasm_bg `12dcabde...`. Stdlib
+0.65.6: **539 modules / 6,972 functions**.
+
+v0.65.6 intentionally enforces `let` immutability and rejects implicit
+number-to-string concatenation (the benchmark lane updated its references to
+`var` and accepted). The playground migrated its corpus:
+
+- 62 lessons and `examples/packages/main.xi`: mutated `let` bindings became
+  `var`; string joins use explicit `.to_str()`/`to_string`; templates and
+  narratives were updated; four expected outputs corrected (L3-20, L4-30,
+  L4-48, L4-50).
+- L3-20 now teaches plain tuple destructuring. `(Some(5), Ok("ready"))` tuple
+  matches miscompile on v0.65.5/v0.65.6 (bindings read as 0/empty); that shape
+  is filed as a compiler bug and removed from the lesson.
+- `examples/packages/main.xi` uses `var i` (C3 fixture).
+
+Legacy defects: 1554-2 (coercion) and 1554-3 (mixed `.to_str()`) are fixed on
+v0.65.6; 1553 by-ref Int passes but the Str comparator still fails LLVM IR;
+2039 stays open.
+
+Gate: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37 x2**;
+full lesson audit **412/412**; expected outputs **412/412**; style **0/0**;
+code audit 0 errors/warnings; generators current.
+
+Caveat: the published archive bundles stdlib `06795c8`; the gate-fix re-cut
+`02be60e` came after the immutable release. Watch for v0.65.7. Production
+verification follows the 19:29Z rebuild (`/api/version` v0.65.6,
+`/api/health`, live session, struct-push `bad=0`).
+

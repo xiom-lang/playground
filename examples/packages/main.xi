@@ -18,7 +18,7 @@ fn main() -> Int {
   let rows: Vec[Vec[Str]] = csv.csv_parse("name,age\nAda,36\nGrace,45\n");
   io.println("rows: " + rows.len().to_str());
 
-  let i = 0;
+  var i = 0;
   while i < rows.len() {
     let row = rows[i];
     io.println(csv.csv_write_row(&row));

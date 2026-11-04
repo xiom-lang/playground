@@ -1,20 +1,24 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-11-02 (**v0.65.5 absorbed; gate green; production
-verified**). v0.65.5 published 2026-11-02T14:38:13Z
-(tag v0.65.5; compiler main b2538ae5a; stdlib-v0.65.5 d1e4b36 at 88f3c12) and
-replaces v0.65.4. Published assets: windows `86a253a5...`, linux `cae74441...`,
-wasm_bg `dae94d42...` (SHA256SUMS verified). Stdlib 0.65.5: **539 modules /
-6,972 functions** (+10). **Section 38 is the current handoff.** The three
-long-standing playground defects remain acked/red (by-ref comparator trap,
-coercion `122`, W005 stub + fault), and 2039 (shared clone stale file) stays
-open. The struct-push regression control prints `bad=0`. The `--no-cache` live
-workaround stays until the live regression test is re-run against the deployed
-pin. Production verified **v0.65.5** after the 16:29Z deploy (`/api/version`
-toolchain/wasm/stdlib v0.65.5, 539 modules; `/api/health` ok; live session
-`Name?` -> `Hello, Ada!` -> `N=7`; struct-push probe `bad=0`).
+Last updated: 2026-11-04 (**v0.65.6 absorbed; gate green; production deploy
+pending the 19:29Z hourly pull**). v0.65.6 published 2026-11-04T14:19:54Z
+(tag v0.65.6; compiler `6575b7c05`; stdlib-v0.65.6 `06795c88`) and replaces
+v0.65.5. Published assets: windows `a52b8cf3...`, linux `a8fc6668...`,
+wasm_bg `12dcabde...` (SHA256SUMS verified). Stdlib 0.65.6: **539 modules /
+6,972 functions**. v0.65.6 enforces `let` immutability and explicit
+number-to-string conversion, so **62 lessons + `examples/packages/main.xi`
+were migrated**: mutated `let` bindings became `var`; string concatenations
+use explicit `.to_str()`/`to_string`; four expected outputs were corrected and
+L3-20 now teaches plain tuple destructuring because `(Some(5), Ok("ready"))`
+tuple matches miscompile. Of the three long-standing defects, **1554-2
+(coercion) and 1554-3 (mixed `.to_str()`) are FIXED**; 1553 by-ref Int passes
+but the Str form still fails LLVM IR; 2039 stays open. **Section 40 is the
+current handoff.** Caveat: the published archive bundles stdlib `06795c8`; the
+gate-fix re-cut `02be60e` came after the immutable release, so watch for
+v0.65.7. Production was verified on **v0.65.5**; the v0.65.6 deploy is verified
+after the 19:29Z pull.
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.65.5**, stdlib 0.65.5 (539 modules, 6,972 functions),
+CI green (Validate + CodeQL). Toolchain/wasm **v0.65.6**, stdlib 0.65.6 (539 modules, 6,972 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1638,6 +1642,50 @@ or solutions did not match their own lessons.
 Audits: `validate-lessons` 412/412; lesson audit L0 **51/51** and L1 **51/51**
 zero failures; expected outputs 412/412; style 0/0; code audit 0 errors /
 0 warnings.
+
+## 40. v0.65.6 absorbed + let/coercion migration (2026-11-04) -- current
+
+v0.65.6 published 2026-11-04T14:19:54Z (tag v0.65.6; compiler `6575b7c05`;
+stdlib-v0.65.6 `06795c88`); published assets windows `a52b8cf3...`, linux
+`a8fc6668...`, wasm_bg `12dcabde...` (SHA256SUMS verified). Stdlib 0.65.6:
+**539 modules / 6,972 functions**.
+
+**Intentional tightening:** v0.65.6 enforces `let` immutability and rejects
+implicit number-to-string concatenation. The benchmark lane updated its
+references to `var` and accepted; the playground migrated its corpus:
+
+- 62 lessons and `examples/packages/main.xi` fixed: mutated `let` bindings
+  became `var`; string joins use explicit `.to_str()`/`to_string`; all
+  affected templates/narratives were updated.
+- Four expected outputs were corrected (L3-20, L4-30, L4-48, L4-50).
+- L3-20 now teaches plain tuple destructuring; `(Some(5), Ok("ready"))` tuple
+  matches miscompile on v0.65.5/v0.65.6 (bindings read as 0/empty), so that
+  shape is filed as a compiler bug and removed from the lesson.
+- `examples/packages/main.xi` uses `var i` for its loop counter (C3 fixture).
+
+**Legacy defects:** 1554-2 (silent Int+Str coercion) and 1554-3 (mixed
+`.to_str()`) are **fixed** on v0.65.6; 1553 by-ref Int passes, but the Str
+comparator still fails LLVM IR; 2039 stays open.
+
+Gate on the published assets: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL
+**77/0** (sandbox require/ABI 3/keep-stdin); Lab **37/37 x2**; full lesson
+audit **412/412 zero failures**; expected outputs **412/412**; style **0/0**;
+code audit 0 errors/warnings; generators current.
+
+**Caveat:** the published archive bundles stdlib `06795c8`; the gate-fix
+re-cut `02be60e` came after the immutable release. The playground gate is green
+on the published pair, but watch for v0.65.7 (stdlib re-cut + by-ref Str fix).
+
+Production: the 19:29Z hourly deploy picks up the pin; verify `/api/version`
+(toolchain/wasm/stdlib v0.65.6), `/api/health`, a live session, and the
+struct-push probe (`bad=0`).
+
+Paste-ready next-session prompt:
+
+> Read `SESSION.md` section 40 and `AUDIT.md` section 71. The playground is on
+> **v0.65.6** (gate green; verify the 19:29Z deploy). Watch for v0.65.7 with
+> the stdlib re-cut and the by-ref Str fix. The remaining playground items are
+> 1553 (Str comparator IR failure) and 2039 (shared clone stale file).
 
 ## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 
