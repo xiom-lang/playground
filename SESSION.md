@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-11-04 (**v0.65.6 absorbed; gate green; production deploy
-pending the 18:29Z hourly pull**). v0.65.6 published 2026-11-04T14:19:54Z
+Last updated: 2026-11-04 (**v0.65.6 absorbed; gate green; production
+verified**). v0.65.6 published 2026-11-04T14:19:54Z
 (tag v0.65.6; compiler `6575b7c05`; stdlib-v0.65.6 `06795c88`) and replaces
 v0.65.5. Published assets: windows `a52b8cf3...`, linux `a8fc6668...`,
 wasm_bg `12dcabde...` (SHA256SUMS verified). Stdlib 0.65.6: **539 modules /
@@ -15,8 +15,9 @@ tuple matches miscompile. Of the three long-standing defects, **1554-2
 but the Str form still fails LLVM IR; 2039 stays open. **Section 40 is the
 current handoff.** Caveat: the published archive bundles stdlib `06795c8`; the
 gate-fix re-cut `02be60e` came after the immutable release, so watch for
-v0.65.7. Production was verified on **v0.65.5**; the v0.65.6 deploy is verified
-after the 18:29Z pull.
+v0.65.7. Production verified **v0.65.6** after the 18:29Z deploy
+(`/api/version` toolchain/wasm/stdlib v0.65.6, 539 modules; `/api/health` ok;
+live session `Name?` -> `Hello, Ada!` -> `N=7`; struct-push probe `bad=0`).
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.6**, stdlib 0.65.6 (539 modules, 6,972 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1676,9 +1677,11 @@ code audit 0 errors/warnings; generators current.
 re-cut `02be60e` came after the immutable release. The playground gate is green
 on the published pair, but watch for v0.65.7 (stdlib re-cut + by-ref Str fix).
 
-Production: the 18:29Z hourly deploy picks up the pin; verify `/api/version`
-(toolchain/wasm/stdlib v0.65.6), `/api/health`, a live session, and the
-struct-push probe (`bad=0`).
+Production **verified (2026-11-04T18:29Z deploy, playground `061dd79`)**:
+`/api/version` reports toolchain/wasm/stdlib v0.65.6 and 539 modules;
+`/api/health` is ok with live `stdbuf`, sandbox require/ABI 4/keep-stdin;
+a live session streamed `Name?`, `Hello, Ada!`, `N=7`; the struct-push probe
+through `/api/compile` returns `bad=0`; the migrated L5-05 lesson is live.
 
 Paste-ready next-session prompt:
 

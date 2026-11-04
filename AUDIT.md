@@ -4065,7 +4065,12 @@ full lesson audit **412/412**; expected outputs **412/412**; style **0/0**;
 code audit 0 errors/warnings; generators current.
 
 Caveat: the published archive bundles stdlib `06795c8`; the gate-fix re-cut
-`02be60e` came after the immutable release. Watch for v0.65.7. Production
-verification follows the 18:29Z rebuild (`/api/version` v0.65.6,
-`/api/health`, live session, struct-push `bad=0`).
+`02be60e` came after the immutable release. Watch for v0.65.7.
+
+Deploy: the repo is pulled hourly at minute 29. **Production verified after the
+18:29Z rebuild (playground `061dd79`)**: `/api/version` reports
+toolchain/wasm/stdlib v0.65.6 and 539 modules; `/api/health` is ok with live
+`stdbuf`, sandbox require/ABI 4/keep-stdin; a live session streamed `Name?`,
+accepted `Ada` and `7`, and exited 0; the struct-push probe through
+`/api/compile` returns `bad=0`; the migrated L5-05 lesson is live.
 
