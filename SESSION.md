@@ -1,25 +1,24 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-11-04 (**v0.65.6 absorbed; gate green; production
-verified**). v0.65.6 published 2026-11-04T14:19:54Z
-(tag v0.65.6; compiler `6575b7c05`; stdlib-v0.65.6 `06795c88`) and replaces
-v0.65.5. Published assets: windows `a52b8cf3...`, linux `a8fc6668...`,
-wasm_bg `12dcabde...` (SHA256SUMS verified). Stdlib 0.65.6: **539 modules /
-6,972 functions**. v0.65.6 enforces `let` immutability and explicit
-number-to-string conversion, so **62 lessons + `examples/packages/main.xi`
-were migrated**: mutated `let` bindings became `var`; string concatenations
-use explicit `.to_str()`/`to_string`; four expected outputs were corrected and
-L3-20 now teaches plain tuple destructuring because `(Some(5), Ok("ready"))`
-tuple matches miscompile. Of the three long-standing defects, **1554-2
-(coercion) and 1554-3 (mixed `.to_str()`) are FIXED**; 1553 by-ref Int passes
-but the Str form still fails LLVM IR; 2039 stays open. **Section 40 is the
-current handoff.** Caveat: the published archive bundles stdlib `06795c8`; the
-gate-fix re-cut `02be60e` came after the immutable release, so watch for
-v0.65.7. Production verified **v0.65.6** after the 18:29Z deploy
-(`/api/version` toolchain/wasm/stdlib v0.65.6, 539 modules; `/api/health` ok;
-live session `Name?` -> `Hello, Ada!` -> `N=7`; struct-push probe `bad=0`).
+Last updated: 2026-11-07 (**v0.65.7 absorbed; gate green; production deploy
+pending the 16:29Z hourly pull**). v0.65.7 published 2026-11-07T15:06:12Z
+(tag v0.65.7, commit `9b535146`, tag object `7bbe9706`;
+STDLIB_COMMIT `4ec2055`, stdlib-v0.65.7). Published assets: windows
+`6db7c15d...`, linux `eabc06f6...`, wasm_bg `598200e6...` (SHA256SUMS
+verified); wasm.js/.d.ts unchanged. Stdlib 0.65.7: **539 modules / 6,972
+functions**.
+
+v0.65.7 fixes every tracked playground compiler defect:
+- by-ref comparator: Int prints `3` and **Str now prints `apple`** (1553);
+- coercion and mixed `.to_str()` remain fixed (1554-2/1554-3 already closed);
+- the `(Some(5), Ok("ready"))` tuple match now yields `n=5, msg=ready`
+  (tuple-match item verified fixed).
+The v0.65.6 corpus migration (let -> var, explicit `.to_str()`) remains in
+place. **Section 41 is the current handoff.** 2039 (shared clone stale file)
+stays open. Production was verified on **v0.65.6**; the v0.65.7 deploy is
+verified after the 16:29Z pull.
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
-CI green (Validate + CodeQL). Toolchain/wasm **v0.65.6**, stdlib 0.65.6 (539 modules, 6,972 functions),
+CI green (Validate + CodeQL). Toolchain/wasm **v0.65.7**, stdlib 0.65.7 (539 modules, 6,972 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
 limits + external `abuse` monitor, P2 host-side state, the C3 registry
 catalog mounted at `/registry-bundle` (352 packages), and the repo-pinned
@@ -1689,6 +1688,39 @@ Paste-ready next-session prompt:
 > **v0.65.6** (gate green; verify the 18:29Z deploy). Watch for v0.65.7 with
 > the stdlib re-cut and the by-ref Str fix. The remaining playground items are
 > 1553 (Str comparator IR failure) and 2039 (shared clone stale file).
+
+## 41. v0.65.7 absorbed -- all tracked playground defects fixed (2026-11-07) -- current
+
+v0.65.7 published 2026-11-07T15:06:12Z (tag v0.65.7, commit `9b535146`, tag
+object `7bbe9706`; STDLIB_COMMIT `4ec2055`, stdlib-v0.65.7). Published assets
+(SHA256SUMS verified): windows `6db7c15d...`, linux `eabc06f6...`, wasm_bg
+`598200e6...`; wasm.js/.d.ts unchanged. Stdlib 0.65.7: **539 modules / 6,972
+functions**.
+
+Verified fixes on the published assets:
+- struct-push control: `bad=0`;
+- by-ref comparator: Int prints `3`, **Str prints `apple`** (1553 fixed);
+- coercion: `12 + 2.to_string()` rejected with T001 (1554-2);
+- mixed `.to_str()`: prints `4.5` (1554-3);
+- `(Some(5), Ok("ready"))` tuple match: `n=5, msg=ready` (tuple bug fixed);
+- `Str.to_str()`: `hello|5|ready`.
+
+Gate: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37
+x2**; full lesson audit **412/412**; expected outputs **412/412**; style
+**0/0**; code audit 0 errors/warnings; generators current.
+
+The v0.65.6 corpus migration remains valid. 2039 (shared clone stale file) is
+the only open playground item.
+
+Production: the 16:29Z hourly deploy picks up the pin; verify `/api/version`
+(toolchain/wasm/stdlib v0.65.7), `/api/health`, a live session, and the
+struct-push probe (`bad=0`).
+
+Paste-ready next-session prompt:
+
+> Read `SESSION.md` section 41 and `AUDIT.md` section 72. The playground is on
+> **v0.65.7** (gate green; verify the 16:29Z deploy). All tracked compiler
+> defects are fixed; only 2039 (shared clone stale file) remains.
 
 ## 31. Handoff 2026-10-15 (historical -- executed) -- v0.64.5 + item verification
 

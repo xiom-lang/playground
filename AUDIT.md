@@ -4074,3 +4074,29 @@ toolchain/wasm/stdlib v0.65.6 and 539 modules; `/api/health` is ok with live
 accepted `Ada` and `7`, and exited 0; the struct-push probe through
 `/api/compile` returns `bad=0`; the migrated L5-05 lesson is live.
 
+## 72. v0.65.7 absorption -- all tracked playground defects fixed (2026-11-07)
+
+v0.65.7 published 2026-11-07T15:06:12Z (tag v0.65.7, commit `9b535146`, tag
+object `7bbe9706`; STDLIB_COMMIT `4ec2055`, stdlib-v0.65.7). Published assets
+verified against SHA256SUMS: windows `6db7c15d...`, linux `eabc06f6...`,
+wasm_bg `598200e6...`; wasm.js/.d.ts unchanged. Stdlib 0.65.7: **539 modules /
+6,972 functions**.
+
+Verified fixes on the published assets:
+- Struct-push control: **`bad=0`**.
+- By-ref comparator: Int prints `3`; **Str prints `apple`** (1553 fixed).
+- Coercion: `12 + 2.to_string()` rejected with T001 (1554-2).
+- Mixed `.to_str()`: prints `4.5` (1554-3).
+- `(Some(5), Ok("ready"))` tuple match: `n=5, msg=ready` (tuple-match bug
+  fixed).
+- `Str.to_str()`: `hello|5|ready`.
+
+Gate: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37 x2**;
+full lesson audit **412/412**; expected outputs **412/412**; style **0/0**;
+code audit 0 errors/warnings; generators current.
+
+The v0.65.6 let/coercion corpus migration remains valid. 2039 (shared clone
+stale file) is the only open playground item. Production verification follows
+the 16:29Z rebuild (`/api/version` v0.65.7, `/api/health`, live session,
+struct-push `bad=0`).
+
