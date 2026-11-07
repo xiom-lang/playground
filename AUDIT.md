@@ -4095,6 +4095,11 @@ Gate: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37 x2**;
 full lesson audit **412/412**; expected outputs **412/412**; style **0/0**;
 code audit 0 errors/warnings; generators current.
 
+Fetch note: the v0.65.7 release SHA256SUMS asset is CRLF-terminated;
+`tools/fetch-toolchain.sh` now normalizes it (`tr -d '\r'`) before
+`grep` + `sha256sum -c`. Without that, the CI fetch failed with
+`sha256sum: 'standard input': no properly formatted checksum lines found`.
+
 The v0.65.6 let/coercion corpus migration remains valid. 2039 (shared clone
 stale file) is the only open playground item. Production verification follows
 the 16:29Z rebuild (`/api/version` v0.65.7, `/api/health`, live session,

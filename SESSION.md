@@ -1709,6 +1709,10 @@ Gate: c25 `C25 fixed: yes`; Windows **67/0/1**; WSL **77/0**; Lab **37/37
 x2**; full lesson audit **412/412**; expected outputs **412/412**; style
 **0/0**; code audit 0 errors/warnings; generators current.
 
+Fetch note: the v0.65.7 release SHA256SUMS asset is CRLF-terminated;
+`tools/fetch-toolchain.sh` now strips CR before `grep` + `sha256sum -c` so the
+CI and VPS fetches verify correctly.
+
 The v0.65.6 corpus migration remains valid. 2039 (shared clone stale file) is
 the only open playground item.
 

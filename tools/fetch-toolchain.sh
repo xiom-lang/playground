@@ -45,7 +45,10 @@ fetch_asset SHA256SUMS "$STAGE/SHA256SUMS"
 fetch_asset "${ASSET}" "$STAGE/${ASSET}"
 (
   cd "$STAGE"
-  grep " ${ASSET}\$" SHA256SUMS | sha256sum -c -
+  # The GitHub release SHA256SUMS asset is CRLF-terminated; normalize it so
+  # grep's end-of-line anchor and sha256sum -c both see clean lines.
+  tr -d '\r' < SHA256SUMS > SHA256SUMS.lf
+  grep " ${ASSET}\$" SHA256SUMS.lf | sha256sum -c -
 )
 
 rm -rf "$STAGE/extract"
