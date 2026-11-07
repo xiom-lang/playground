@@ -4101,7 +4101,12 @@ Fetch note: the v0.65.7 release SHA256SUMS asset is CRLF-terminated;
 `sha256sum: 'standard input': no properly formatted checksum lines found`.
 
 The v0.65.6 let/coercion corpus migration remains valid. 2039 (shared clone
-stale file) is the only open playground item. Production verification follows
-the 16:29Z rebuild (`/api/version` v0.65.7, `/api/health`, live session,
-struct-push `bad=0`).
+stale file) is the only open playground item.
+
+Deploy: the repo is pulled hourly at minute 29. **Production verified after the
+16:29Z rebuild (playground `0a3ecf9`)**: `/api/version` reports
+toolchain/wasm/stdlib v0.65.7 and 539 modules; `/api/health` is ok with live
+`stdbuf`, sandbox require/ABI 4/keep-stdin; a live session streamed `Name?`,
+accepted `Ada` and `7`, and exited 0; the struct-push probe returns `bad=0` and
+the by-ref Str probe returns `apple` through `/api/compile`.
 

@@ -1,7 +1,7 @@
 # XIOM Playground -- Session Handoff
 
-Last updated: 2026-11-07 (**v0.65.7 absorbed; gate green; production deploy
-pending the 16:29Z hourly pull**). v0.65.7 published 2026-11-07T15:06:12Z
+Last updated: 2026-11-07 (**v0.65.7 absorbed; gate green; production
+verified**). v0.65.7 published 2026-11-07T15:06:12Z
 (tag v0.65.7, commit `9b535146`, tag object `7bbe9706`;
 STDLIB_COMMIT `4ec2055`, stdlib-v0.65.7). Published assets: windows
 `6db7c15d...`, linux `eabc06f6...`, wasm_bg `598200e6...` (SHA256SUMS
@@ -15,8 +15,10 @@ v0.65.7 fixes every tracked playground compiler defect:
   (tuple-match item verified fixed).
 The v0.65.6 corpus migration (let -> var, explicit `.to_str()`) remains in
 place. **Section 41 is the current handoff.** 2039 (shared clone stale file)
-stays open. Production was verified on **v0.65.6**; the v0.65.7 deploy is
-verified after the 16:29Z pull.
+stays open. Production verified **v0.65.7** after the 16:29Z deploy
+(`/api/version` toolchain/wasm/stdlib v0.65.7, 539 modules; `/api/health` ok;
+live session `Name?` -> `Hello, Ada!` -> `N=7`; struct-push `bad=0`; by-ref
+Str `apple`).
 Branch `main` at/after `f139192`, all commits pushed to `origin/main`;
 CI green (Validate + CodeQL). Toolchain/wasm **v0.65.7**, stdlib 0.65.7 (539 modules, 6,972 functions),
 `capabilities.format: true`, P1 Landlock (`require`, ABI 4), P3 rate
@@ -1716,9 +1718,12 @@ CI and VPS fetches verify correctly.
 The v0.65.6 corpus migration remains valid. 2039 (shared clone stale file) is
 the only open playground item.
 
-Production: the 16:29Z hourly deploy picks up the pin; verify `/api/version`
-(toolchain/wasm/stdlib v0.65.7), `/api/health`, a live session, and the
-struct-push probe (`bad=0`).
+Production **verified (2026-11-07T16:29Z deploy, playground `0a3ecf9`)**:
+`/api/version` reports toolchain/wasm/stdlib v0.65.7 and 539 modules;
+`/api/health` is ok with live `stdbuf`, sandbox require/ABI 4/keep-stdin;
+a live session streamed `Name?`, `Hello, Ada!`, `N=7`; the struct-push probe
+returns `bad=0` and the by-ref Str probe returns `apple` through
+`/api/compile`.
 
 Paste-ready next-session prompt:
 
